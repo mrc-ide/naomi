@@ -1,0 +1,6 @@
+iso3,area_level,n_areas,area_level_label,display,spectrum_level,epp_level,epp_urban_rural,pepfar_psnu_level
+MWI,0,1,Country,TRUE,TRUE,FALSE,FALSE,FALSE
+MWI,1,3,Region,TRUE,FALSE,TRUE,FALSE,FALSE
+MWI,2,5,Zone,TRUE,FALSE,FALSE,FALSE,TRUE
+MWI,3,28,District,TRUE,FALSE,FALSE,FALSE,FALSE
+MWI,4,32,District + Metro,TRUE,FALSE,FALSE,FALSE,FALSE
