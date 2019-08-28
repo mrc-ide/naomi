@@ -1,0 +1,78 @@
+---
+title: "Naomi data model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Naomi data model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE, message = FALSE}
+devtools::load_all()
+library(tidyverse)
+library(datamodelr)
+library(sf)
+```
+
+```{r load_datasets}
+#' Load datasets
+area_meta <- readRDS(system.file("extdata/areas/area_meta.rds", package = "naomi"))
+areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
+area_geom <- readRDS(system.file("extdata/areas/area_geom.rds", package = "naomi"))
+area_boundaries <- readRDS(system.file("extdata/areas/area_boundaries.rds", package = "naomi"))
+```
+
+```{r create_model, include = FALSE}
+dm_add_colors(
+  dm_color_scheme(
+    population = dm_palette(
+      line_color = "#8064A2",
+      header_bgcolor = "#B1A0C7",
+      header_font = "#FFFFFF",
+      bgcolor = "#E4DFEC"
+    ),
+    areas = dm_palette(
+      line_color = "#C0504D",
+      header_bgcolor = col2rgb("darkred") %>% {rgb(.[1], .[2], .[3], maxColorValue = 255)},
+      header_font = "#FFFFFF",
+      bgcolor = "#F2DCDB"
+    )
+  )
+)
+
+dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries) %>%
+  dm_set_key("area_meta", c("iso3", "area_level")) %>%
+  dm_set_key("areas", c("iso3", "area_id")) %>%
+  dm_set_key("area_geom", c("iso3", "area_id", "type")) %>%
+  dm_set_key("area_boundaries", c("iso3", "area_id")) %>%
+  dm_add_references(
+    areas$iso3 == area_meta$iso3,
+    areas$area_level == area_meta$area_level,
+    area_geom$iso3 == areas$iso3,
+    area_geom$area_id == areas$area_id,
+    area_boundaries$iso3 == areas$iso3,
+    area_boundaries$area_id == areas$area_id
+  ) %>%
+  dm_set_segment(
+    list("Areas" = c("area_meta", "areas", "area_geom", "area_boundaries"))
+  ) %>%
+  dm_set_display(
+    list(areas = c("area_meta", "areas", "area_geom"),
+         accent6 = "area_boundaries")
+  )
+
+```
+
+```{r create_graph, fig.width = 5, fig.height = 7, fig.align = "center"}
+#' Render graph
+dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type"),
+                columnArrows = TRUE) %>%
+  dm_render_graph()
+```
