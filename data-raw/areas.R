@@ -90,6 +90,7 @@ area_meta <- areas %>%
   arrange(area_level) %>%
   mutate(area_level_label = area_level %>% recode(`0` = "Country", `1` = "Region", `2` = "Zone", `3` = "District", `4` = "District + Metro"),
          display = TRUE,
+         analysis_level = if_else(area_level == 4, TRUE, FALSE),
          spectrum_level = if_else(area_level == 0, TRUE, FALSE),
          epp_level = if_else(area_level == 1, TRUE, FALSE),
          epp_urban_rural = FALSE,
@@ -135,9 +136,10 @@ saveRDS(area_geom, here("inst/extdata/areas/area_geom.rds"))
 write_csv(areas, here("inst/extdata/areas/areas.csv"))
 write_csv(area_meta, here("inst/extdata/areas/area_meta.csv"))
 
-st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"))
-st_write(area_boundaries %>% as_tibble %>% select(-geometry, -center), here("inst/extdata/areas/area_centers.geojson"))
-st_write(area_geom, here("inst/extdata/areas/area_geom.geojson"))
+st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"), delete_dsn = TRUE)
+st_write(area_boundaries %>% as_tibble %>% select(-geometry, -center),
+         here("inst/extdata/areas/area_centers.geojson"), delete_dsn = TRUE)
+st_write(area_geom, here("inst/extdata/areas/area_geom.geojson"), delete_dsn = TRUE)
 
 #' Save as zipped ESRI shape
 

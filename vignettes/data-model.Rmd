@@ -76,3 +76,45 @@ dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type"),
                 columnArrows = TRUE) %>%
   dm_render_graph()
 ```
+
+## Data model questions
+
+#### Spatial geometry format
+
+The area dataset may need to retain both area boundaries as polygons and area centroids, or adjusted centroids for plotting area level labels or statistics. Centroids are easily calculated from the polygons, however in some cases, points used for plotting or labelling may need to be manually adjusted to avoid overlap, and desire to save these adjusted point references. For example, Zomba and Zomba City in Malawi. 
+
+The data model above shows two approaches for capturing these data, only one of which should be retained:
+
+* The `area_boundaries` table is in 'wide' format with a column for boundary polygons, a column for centroid points, and column for adjusted centroid points. This wide format is accepted (under protest) by R's `sf` class, but GeoJSON and ESRI .shp formats do not admit multiple geometries, so polygon and point would need to be saved as separate layers in those formats.
+* The `area_geom` table is in 'long format' with an additional `type` columns specifying _boundary_, _centroid_, or _adjusted_centroid_. The type is filtered to select the desired geometry for a given plotting purpose. GeoJSON format accepts both polygon and point data in a single collection, however ESRI .shp format does not, requiring each type to be saved as a separate layer.
+
+Our current preference is to favour the `area_geom` 'long' format and save geometry data as GeoJSON format as default. It may also be that there are suitable algorithmic solutions to offsetting points for plotting such that saving adjusted centroid points is not needed.
+
+The figures below show example code for generating a typical plot with either boundary data format.
+
+```{r, fig.width=7, fig.height=4, warning=FALSE}
+#' Using area_geom
+areas %>%
+  left_join(area_boundaries) %>%
+  st_as_sf %>%
+  left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
+  mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
+  ggplot() +
+  geom_sf() +
+  geom_sf_label(aes(label = area_sort_order), data = . %>% st_set_geometry("center_adj")) +
+  facet_wrap(~area_level_label, nrow = 1) +
+  th_map() +
+  ggtitle("Using area_boundaries")
+
+#' Using area_geom
+areas %>%
+  left_join(area_geom) %>%
+  st_as_sf %>%
+  left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
+  mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
+  ggplot() +
+  geom_sf(data = . %>% filter(type == "boundary")) +
+  geom_sf_label(aes(label = area_sort_order), data = . %>% filter(type == "center_adj")) +
+  facet_wrap(~area_level_label, nrow = 1) +
+  th_map() +
+  ggtitle("Using area_geom")
