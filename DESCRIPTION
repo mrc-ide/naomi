@@ -15,8 +15,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Imports: 
     magrittr,
-    sf
+    sf,
+    zoo
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    rdhs,
+    survey,
+    testthat (>= 2.1.0)
 VignetteBuilder: knitr

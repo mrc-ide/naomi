@@ -21,12 +21,19 @@ library(datamodelr)
 library(sf)
 ```
 
+## Load datasets
+
 ```{r load_datasets}
-#' Load datasets
+#' areas
 area_meta <- readRDS(system.file("extdata/areas/area_meta.rds", package = "naomi"))
 areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
 area_geom <- readRDS(system.file("extdata/areas/area_geom.rds", package = "naomi"))
 area_boundaries <- readRDS(system.file("extdata/areas/area_boundaries.rds", package = "naomi"))
+
+#' population
+population_agesex <- readRDS(system.file("extdata/population/population_agesex.rds",
+                                         package = "naomi"))
+age_group_meta <- get_age_groups()
 ```
 
 ```{r create_model, include = FALSE}
@@ -47,26 +54,36 @@ dm_add_colors(
   )
 )
 
-dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries) %>%
+dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
+                          age_group_meta, population_agesex) %>%
   dm_set_key("area_meta", c("iso3", "area_level")) %>%
   dm_set_key("areas", c("iso3", "area_id")) %>%
   dm_set_key("area_geom", c("iso3", "area_id", "type")) %>%
   dm_set_key("area_boundaries", c("iso3", "area_id")) %>%
+  dm_set_key("age_group_meta", "age_group_id") %>%
+  dm_set_key("population_agesex", c("iso3", "area_id", "sex", "age_group_id", "source")) %>%
   dm_add_references(
     areas$iso3 == area_meta$iso3,
     areas$area_level == area_meta$area_level,
     area_geom$iso3 == areas$iso3,
     area_geom$area_id == areas$area_id,
     area_boundaries$iso3 == areas$iso3,
-    area_boundaries$area_id == areas$area_id
+    area_boundaries$area_id == areas$area_id,
+    population_agesex$area_id == areas$area_id,
+    population_agesex$age_group_id == age_group_meta$age_group_id
   ) %>%
   dm_set_segment(
-    list("Areas" = c("area_meta", "areas", "area_geom", "area_boundaries"))
+    list("Areas" = c("area_meta", "areas", "area_geom", "area_boundaries"),
+         "Population" = c("age_group_meta", "population_agesex"))
   ) %>%
   dm_set_display(
-    list(areas = c("area_meta", "areas", "area_geom"),
-         accent6 = "area_boundaries")
+    list(
+      areas = c("area_meta", "areas", "area_geom"),
+      population = c("age_group_meta", "population_agesex"),
+      accent6 = c("area_boundaries", "age_group_meta")
+    )
   )
+
 
 ```
 
