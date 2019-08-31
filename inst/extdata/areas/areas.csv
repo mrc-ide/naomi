@@ -1,4 +1,4 @@
-iso3,area_id,area_name,area_level,area_parent_id,area_sort_order
+iso3,area_id,area_name,area_level,parent_area_id,area_sort_order
 MWI,MWI,Malawi,0,NA,1
 MWI,MWI.1,Northern,1,MWI,2
 MWI,MWI.2,Central,1,MWI,3

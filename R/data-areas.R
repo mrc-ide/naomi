@@ -17,7 +17,7 @@ gather_areas <- function(x) {
              area_id = id0,
              area_name = name0,
              area_level = 0,
-             area_parent_id = NA) %>%
+             parent_area_id = NA) %>%
     summarise()
 
   for(i in 1:6)
@@ -29,8 +29,8 @@ gather_areas <- function(x) {
                  area_level = i) %>%
           rename(area_id = paste0("id", i),
                  area_name = paste0("name", i),
-                 area_parent_id = paste0("id", i-1)) %>%
-          group_by(iso3, area_id, area_name, area_level, area_parent_id) %>%
+                 parent_area_id = paste0("id", i-1)) %>%
+          group_by(iso3, area_id, area_name, area_level, parent_area_id) %>%
           summarise
         )
   val %>%
@@ -77,4 +77,49 @@ check_boundaries <- function(sh1, sh2 = NULL){
     compare_boundaries(sh1, sh2, aggregate = TRUE),
     compare_boundaries(sh1, sh2, aggregate = FALSE),
     nrow = 1)
+}
+
+#' Spread area hierarchy to wide format
+#'
+#' @param areas area hierarchy data.frame
+#' @param min_level integer specifying the minimum level
+#' 
+#' @examples
+#' areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
+#' areas_wide <- spread_areas(areas)
+#'
+#' @export
+spread_areas <- function(areas, min_level = min(areas$area_level), max_level = max(areas$area_level)) {
+
+  stopifnot(min_level >= min(areas$area_level))
+  stopifnot(max_level <= max(areas$area_level))
+
+  areas_wide <- areas %>%
+    dplyr::filter(area_level == min_level) %>%
+    dplyr::select(
+      iso3,
+      !!paste0("area_id", min_level) := area_id,
+      !!paste0("area_name", min_level) := area_name
+    )
+
+  for(level in (min_level + 1):max_level) {
+    
+    areas_wide <- areas_wide %>%
+      dplyr::left_join(
+        areas %>%
+        dplyr::filter(area_level == level) %>%
+        dplyr::select(
+          iso3,
+          !!paste0("area_id", level) := area_id,
+          !!paste0("area_name", level) := area_name,
+          parent_area_id)
+       ,
+        by = setNames(c("iso3", "parent_area_id"), c("iso3", paste0("area_id", level - 1L)))
+      )
+
+  }
+
+  areas_wide$area_id <- areas_wide[[paste0("area_id", max_level)]]
+
+  areas_wide
 }
