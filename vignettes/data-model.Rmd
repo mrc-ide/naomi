@@ -34,6 +34,21 @@ area_boundaries <- readRDS(system.file("extdata/areas/area_boundaries.rds", pack
 population_agesex <- readRDS(system.file("extdata/population/population_agesex.rds",
                                          package = "naomi"))
 age_group_meta <- get_age_groups()
+
+fertility <- data.frame(iso3 = character(0),
+                        area_id = character(0),
+                        time = numeric(0),
+                        age_group_id = integer(0),
+                        asfr = numeric(0))
+
+#' surveys
+survey_meta <- readRDS(system.file("extdata/survey/survey_meta.rds", package = "naomi"))
+survey_regions <- readRDS(system.file("extdata/survey/survey_regions.rds", package = "naomi"))
+survey_clusters <- readRDS(system.file("extdata/survey/survey_clusters.rds", package = "naomi"))
+survey_individuals <- readRDS(system.file("extdata/survey/survey_individuals.rds", package = "naomi"))
+survey_biomarker <- readRDS(system.file("extdata/survey/survey_biomarker.rds", package = "naomi"))
+
+survey_hiv_indicators <- readRDS(system.file("extdata/survey/survey_hiv_indicators.rds", package = "naomi"))
 ```
 
 ```{r create_model, include = FALSE}
@@ -55,13 +70,23 @@ dm_add_colors(
 )
 
 dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
-                          age_group_meta, population_agesex) %>%
+                          age_group_meta, population_agesex, fertility,
+                          survey_meta, survey_regions, survey_clusters,
+                          survey_individuals, survey_biomarker,
+                          survey_hiv_indicators) %>%
   dm_set_key("area_meta", c("iso3", "area_level")) %>%
   dm_set_key("areas", c("iso3", "area_id")) %>%
   dm_set_key("area_geom", c("iso3", "area_id", "type")) %>%
   dm_set_key("area_boundaries", c("iso3", "area_id")) %>%
   dm_set_key("age_group_meta", "age_group_id") %>%
-  dm_set_key("population_agesex", c("iso3", "area_id", "sex", "age_group_id", "source")) %>%
+  dm_set_key("population_agesex", c("iso3", "area_id", "time", "sex", "age_group_id", "source")) %>%
+  dm_set_key("fertility", c("iso3", "area_id", "time", "age_group_id")) %>%
+  dm_set_key("survey_meta", "survey_id") %>%
+  dm_set_key("survey_regions", c("survey_id", "survey_region_id")) %>%
+  dm_set_key("survey_clusters", c("survey_id", "cluster_id")) %>%
+  dm_set_key("survey_individuals", c("survey_id", "cluster_id", "household", "line")) %>%
+  dm_set_key("survey_biomarker", c("survey_id", "cluster_id", "household", "line")) %>%
+  dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "iso3", "area_id", "sex", "age_group_id")) %>%
   dm_add_references(
     areas$iso3 == area_meta$iso3,
     areas$area_level == area_meta$area_level,
@@ -69,17 +94,45 @@ dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
     area_geom$area_id == areas$area_id,
     area_boundaries$iso3 == areas$iso3,
     area_boundaries$area_id == areas$area_id,
+    population_agesex$iso3 == areas$iso3,
     population_agesex$area_id == areas$area_id,
-    population_agesex$age_group_id == age_group_meta$age_group_id
+    population_agesex$age_group_id == age_group_meta$age_group_id,
+    fertility$iso3 == population_agesex$iso3,
+    fertility$area_id == population_agesex$area_id,
+    fertility$time == population_agesex$time,
+    fertility$age_group_id == population_agesex$age_group_id,
+    population_agesex$age_group_id == age_group_meta$age_group_id,
+    survey_regions$survey_id == survey_meta$survey_id,
+    survey_regions$survey_region_area_id == areas$area_id,
+    survey_clusters$survey_id == survey_meta$survey_id,
+    survey_clusters$survey_id == survey_regions$survey_id,
+    survey_clusters$survey_region_id == survey_regions$survey_region_id,
+    survey_clusters$geoloc_area_id == areas$area_id,
+    survey_individuals$survey_id == survey_clusters$survey_id,
+    survey_individuals$cluster_id == survey_clusters$cluster_id,
+    survey_biomarker$survey_id == survey_individuals$survey_id,
+    survey_biomarker$cluster_id == survey_individuals$cluster_id,
+    survey_biomarker$household == survey_individuals$household,
+    survey_biomarker$line == survey_individuals$line,
+    survey_hiv_indicators$survey_id == survey_meta$survey_id,
+    survey_hiv_indicators$iso3 == areas$iso3,
+    survey_hiv_indicators$area_id == areas$area_id,
+    survey_hiv_indicators$age_group_id == age_group_meta$age_group_id
   ) %>%
   dm_set_segment(
-    list("Areas" = c("area_meta", "areas", "area_geom", "area_boundaries"),
-         "Population" = c("age_group_meta", "population_agesex"))
+    list(
+      "Areas" = c("area_meta", "areas", "area_geom", "area_boundaries"),
+      "Population" = c("age_group_meta", "population_agesex", "fertility"),
+      "Survey" = c("survey_meta", "survey_regions", "survey_clusters",
+                   "survey_individuals", "survey_biomarker",
+                   "survey_hiv_indicators")
+    )
   ) %>%
   dm_set_display(
     list(
       areas = c("area_meta", "areas", "area_geom"),
-      population = c("age_group_meta", "population_agesex"),
+      population = c("age_group_meta", "population_agesex", "fertility"),
+      accent4 = c("survey_meta", "survey_hiv_indicators"),
       accent6 = c("area_boundaries", "age_group_meta")
     )
   )
@@ -87,7 +140,12 @@ dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
 
 ```
 
-```{r create_graph, fig.width = 5, fig.height = 7, fig.align = "center"}
+## Data model diagramme
+
+* Coloured tables are required inputs to Naomi model.
+* White backgrond tables are in the ADR only.
+
+```{r create_graph, fig.width = 7, fig.height = 10, fig.align = "center"}
 #' Render graph
 dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type"),
                 columnArrows = TRUE) %>%
