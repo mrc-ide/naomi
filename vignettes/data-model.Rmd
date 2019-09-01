@@ -23,16 +23,23 @@ library(sf)
 
 ## Load datasets
 
-```{r load_datasets}
+```{r load_datasets, message = FALSE}
 #' areas
-area_meta <- readRDS(system.file("extdata/areas/area_meta.rds", package = "naomi"))
-areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
-area_geom <- readRDS(system.file("extdata/areas/area_geom.rds", package = "naomi"))
-area_boundaries <- readRDS(system.file("extdata/areas/area_boundaries.rds", package = "naomi"))
+area_meta <- naomi::mwi_area_meta
+areas <- naomi::mwi_areas
+area_geom <- naomi::mwi_area_geom
+area_boundaries <-
+  left_join(
+    st_read(system.file("extdata/areas/area_boundaries.geojson", package = "naomi")) %>%
+    as.data.frame
+   ,
+    st_read(system.file("extdata/areas/area_centers.geojson", package = "naomi")) %>%
+    as.data.frame %>%
+    rename(center_adj = geometry)
+)
 
 #' population
-population_agesex <- readRDS(system.file("extdata/population/population_agesex.rds",
-                                         package = "naomi"))
+population_agesex <- naomi::mwi_population_agesex
 age_group_meta <- get_age_groups()
 
 fertility <- data.frame(iso3 = character(0),
@@ -42,13 +49,13 @@ fertility <- data.frame(iso3 = character(0),
                         asfr = numeric(0))
 
 #' surveys
-survey_meta <- readRDS(system.file("extdata/survey/survey_meta.rds", package = "naomi"))
-survey_regions <- readRDS(system.file("extdata/survey/survey_regions.rds", package = "naomi"))
-survey_clusters <- readRDS(system.file("extdata/survey/survey_clusters.rds", package = "naomi"))
-survey_individuals <- readRDS(system.file("extdata/survey/survey_individuals.rds", package = "naomi"))
-survey_biomarker <- readRDS(system.file("extdata/survey/survey_biomarker.rds", package = "naomi"))
+survey_meta <- naomi::mwi_survey_meta
+survey_regions <- naomi::mwi_survey_regions
+survey_clusters <- naomi::mwi_survey_clusters
+survey_individuals <- naomi::mwi_survey_individuals
+survey_biomarker <- naomi::mwi_survey_biomarker
 
-survey_hiv_indicators <- readRDS(system.file("extdata/survey/survey_hiv_indicators.rds", package = "naomi"))
+survey_hiv_indicators <- naomi::mwi_survey_hiv_indicators
 ```
 
 ```{r create_model, include = FALSE}
@@ -147,8 +154,8 @@ dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
 
 ```{r create_graph, fig.width = 7, fig.height = 10, fig.align = "center"}
 #' Render graph
-dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type"),
-                columnArrows = TRUE) %>%
+dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type")) %>%
+                ## columnArrows = TRUE) %>%
   dm_render_graph()
 ```
 

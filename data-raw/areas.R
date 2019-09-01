@@ -125,13 +125,13 @@ areas %>%
 
 #' ## Save datasets
 
+mwi_area_meta <- area_meta
+mwi_areas <- areas
+mwi_area_geom <- area_geom
+
+usethis::use_data(mwi_areas, mwi_area_meta, mwi_area_geom)
+
 dir.create(here("inst/extdata/areas"))
-
-
-saveRDS(areas, here("inst/extdata/areas/areas.rds"))
-saveRDS(area_meta, here("inst/extdata/areas/area_meta.rds"))
-saveRDS(area_boundaries, here("inst/extdata/areas/area_boundaries.rds"))
-saveRDS(area_geom, here("inst/extdata/areas/area_geom.rds"))
 
 write_csv(areas, here("inst/extdata/areas/areas.csv"))
 write_csv(area_meta, here("inst/extdata/areas/area_meta.csv"))
@@ -142,7 +142,6 @@ st_write(area_boundaries %>% as_tibble %>% select(-geometry, -center),
 st_write(area_geom, here("inst/extdata/areas/area_geom.geojson"), delete_dsn = TRUE)
 
 #' Save as zipped ESRI shape
-
 
 tmp <- file.path(tempdir(), "area_boundaries")
 dir.create(tmp)

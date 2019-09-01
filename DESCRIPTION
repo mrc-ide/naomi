@@ -16,7 +16,8 @@ RoxygenNote: 6.1.1
 Imports: 
     magrittr,
     sf,
-    zoo
+    zoo,
+    dplyr
 Suggests: 
     knitr,
     rmarkdown,

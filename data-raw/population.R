@@ -5,7 +5,8 @@ library(here)
 
 devtools::load_all()
 
-areas <- readRDS(here("inst/extdata/areas/areas.rds"))
+data(mwi_areas)
+
 
 
 
@@ -37,7 +38,7 @@ a3 <- readxl::read_excel(here("data-raw/population", "Series A. Population Table
                            TRUE ~ 4),
     area_name = name
   ) %>%
-  left_join(areas %>% filter(area_level %in% c(0, 1, 4))) %>%
+  left_join(mwi_areas %>% filter(area_level %in% c(0, 1, 4))) %>%
   gather(sex, pop_a3, male, female)
 
 a3 %>% count(sex, area_level, wt = pop_a3)
@@ -56,7 +57,7 @@ a5 <- Map(readxl::read_excel,
   Map(mutate, ., area_name = list("Malawi", "Northern", "Central", "Southern")) %>%
   bind_rows %>%
   gather(sex, pop_a5, male, female) %>%
-  left_join(areas %>% filter(area_level %in% 0:1))
+  left_join(mwi_areas %>% filter(area_level %in% 0:1))
 
 a5aggr <- a5 %>%
   filter(age != "Total") %>%
@@ -77,11 +78,11 @@ a6 <- Map(readxl::read_excel,
   bind_rows() %>%
   mutate(area_name = sub(" Total", "", name) %>%
            recode("Nklhotakota" = "Nkhotakota")) %>%
-  left_join(areas %>% filter(area_level %in% c(1, 4))) 
+  left_join(mwi_areas %>% filter(area_level %in% c(1, 4))) 
 
 
 #' Initial population: district by age disaggregated by region sex ratio by age
-cens18 <- spread_areas(areas) %>%
+cens18 <- spread_areas(mwi_areas) %>%
   left_join(
     a6 %>%
     filter(area_level == 4, age_group != "Total") %>%
@@ -150,7 +151,7 @@ nso <- here::here("data-raw", "population", "Pop projections  2008-2030 Master f
          sex != "total") %>%
   left_join(get_age_groups() %>% select(age_group_id, age_group_label)) %>%
   left_join(
-    areas %>%
+    mwi_areas %>%
     filter(area_level == 4) %>%
     select(iso3, area_id, area_name)
   ) %>%
@@ -190,7 +191,7 @@ cens18adj <- nso %>%
 #' - Age 0-4 population much smaller: probably a combination of lower than
 #'   projected fertility and undercount of U5 population.
 cens18adj %>%  
-  left_join(areas %>% select(area_id, area_name, area_sort_order)) %>%
+  left_join(mwi_areas %>% select(area_id, area_name, area_sort_order)) %>%
   left_join(get_age_groups() %>% select(age_group_id, age_group_label)) %>%
   mutate(area = fct_reorder(area_name, area_sort_order),
          age_group = fct_reorder(age_group_label, age_group_id)) %>%
@@ -219,7 +220,9 @@ population_agesex <- nso %>%
 
 #' ## Save datasets
 
-dir.create(here("inst/extdata/population"))
+mwi_population_agesex <- population_agesex
 
-saveRDS(population_agesex, here("inst/extdata/population/population_agesex.rds"))
+usethis::use_data(mwi_population_agesex)
+
+dir.create(here("inst/extdata/population"))
 write_csv(population_agesex, here("inst/extdata/population/population_agesex.csv"))

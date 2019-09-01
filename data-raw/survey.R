@@ -28,16 +28,15 @@ st_read_zip_list <- function(zfile, pattern = "shp$") {
 
 #' ## Load datasets
 
-areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
+data(mwi_areas)
+data(mwi_area_geom)
 
-boundaries <- system.file("extdata/areas/area_geom.rds", package = "naomi") %>%
-  readRDS() %>%
+boundaries <- mwi_area_geom %>% 
   filter(type == "boundary")
 
-areas_wide <- spread_areas(areas)
+areas_wide <- spread_areas(mwi_areas)
 
-pop <- system.file("extdata/population/population_agesex.rds", package = "naomi") %>%
-  readRDS()
+data(mwi_population_agesex)
 
 
 #' ## DHS
@@ -493,7 +492,7 @@ mphia_zone_labels <- c("Northern" = 1L,
 #'       In MPHIA, it is allocated to South-West Zone.
 #' 
 
-mwi_area_survey_region <- areas %>%
+mwi_area_survey_region <- mwi_areas %>%
   spread_areas() %>% 
   mutate(
     survey_id = "MWI2016PHIA",
@@ -550,7 +549,7 @@ ge <- bind_rows(
 
 #' Aggregate area_ids and population size by survey regions
 
-area_sample <- pop %>%
+area_sample <- mwi_population_agesex %>%
   filter(source == "Census 2018") %>%
   interpolate_population_agesex(times = 2016.25) %>%
   inner_join(
@@ -585,7 +584,7 @@ phia_clusters <- ge %>%
 #' Check to confirm area_id is in correct zone
 phia_clusters %>%
   left_join(
-    areas %>%
+    mwi_areas %>%
     spread_areas %>%
     select(area_name2, area_id),
     by = c("geoloc_area_id" = "area_id")
@@ -597,7 +596,7 @@ phia_clusters %>%
   count(survey_region_id, geoloc_area_id) %>%
   arrange(n) %>%
   as.data.frame %>%
-  left_join(areas %>% select(area_id, area_name),
+  left_join(mwi_areas %>% select(area_id, area_name),
             by = c("geoloc_area_id" = "area_id"))
 
 
@@ -719,7 +718,7 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_clusters,
   survey_individuals,
   survey_biomarker,
-  areas)
+  mwi_areas)
   
 #' ## Save datasets
 #'
@@ -727,25 +726,29 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
 #' Consequently, save only empty data frames to show data structure.
 #' Users may request data access and use this script to reproduce the datasets.
 
+mwi_survey_meta <- survey_meta
+mwi_survey_regions <- survey_regions
+mwi_survey_clusters <- survey_clusters[NULL,]
+mwi_survey_individuals <- survey_individuals[NULL,]
+mwi_survey_biomarker <- survey_biomarker[NULL,]
+mwi_survey_hiv_indicators <- survey_hiv_indicators
+
+usethis::use_data(
+           mwi_survey_meta,
+           mwi_survey_regions,
+           mwi_survey_clusters,
+           mwi_survey_individuals,
+           mwi_survey_biomarker,
+           mwi_survey_hiv_indicators
+         )
+
+
+
 dir.create(here("inst/extdata/survey/"))
            
-saveRDS(survey_meta, here("inst/extdata/survey/survey_meta.rds"))
-write_csv(survey_meta, here("inst/extdata/survey/survey_meta.csv"))
-
-saveRDS(survey_regions, here("inst/extdata/survey/survey_regions.rds"))
-write_csv(survey_regions, here("inst/extdata/survey/survey_regions.csv"))
-
-survey_clusters <- survey_clusters[NULL,]
-saveRDS(survey_clusters, here("inst/extdata/survey/survey_clusters.rds"))
-write_csv(survey_clusters, here("inst/extdata/survey/survey_clusters.csv"))
-
-survey_individuals <- survey_individuals[NULL,]
-saveRDS(survey_individuals, here("inst/extdata/survey/survey_individuals.rds"))
-write_csv(survey_individuals, here("inst/extdata/survey/survey_individuals.csv"))
-
-survey_biomarker <- survey_biomarker[NULL,]
-saveRDS(survey_biomarker, here("inst/extdata/survey/survey_biomarker.rds"))
-write_csv(survey_biomarker, here("inst/extdata/survey/survey_biomarker.csv"))
-
-saveRDS(survey_hiv_indicators, here("inst/extdata/survey/survey_hiv_indicators.rds"))
-write_csv(survey_hiv_indicators, here("inst/extdata/survey/survey_hiv_indicators.csv"))
+write_csv(mwi_survey_meta, here("inst/extdata/survey/survey_meta.csv"))
+write_csv(mwi_survey_regions, here("inst/extdata/survey/survey_regions.csv"))
+write_csv(mwi_survey_clusters, here("inst/extdata/survey/survey_clusters.csv"))
+write_csv(mwi_survey_individuals, here("inst/extdata/survey/survey_individuals.csv"))
+write_csv(mwi_survey_biomarker, here("inst/extdata/survey/survey_biomarker.csv"))
+write_csv(mwi_survey_hiv_indicators, here("inst/extdata/survey/survey_hiv_indicators.csv"))
