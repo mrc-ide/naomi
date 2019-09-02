@@ -17,7 +17,8 @@ Imports:
     magrittr,
     sf,
     zoo,
-    dplyr
+    dplyr,
+    TMB
 Suggests: 
     knitr,
     rmarkdown,
@@ -25,3 +26,6 @@ Suggests:
     survey,
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
+LinkingTo: 
+    TMB,
+    RcppEigen
