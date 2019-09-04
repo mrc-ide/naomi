@@ -6,9 +6,12 @@ Type objective_function<Type>::operator() ()
 
   using namespace density;
 
-
   // ** Data **
 
+  // Population
+  DATA_VECTOR(population);
+
+  // Design matrices
   DATA_MATRIX(X);
   DATA_MATRIX(Z_area);
   DATA_MATRIX(Z_area_sex);
@@ -22,6 +25,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_prev);
   DATA_VECTOR(x_prev);
 
+  DATA_SPARSE_MATRIX(A_out);
   
   // ** Parameters **
 
@@ -106,9 +110,17 @@ Type objective_function<Type>::operator() ()
   for(int i = 0; i < idx_prev.size(); i++)
     val -= dbinom_robust(x_prev[i], n_prev[i], mu_rho[idx_prev[i]], true);
 
+  vector<Type> rho(invlogit(mu_rho));
+  vector<Type> plhiv_out(A_out * vector<Type>(rho * population));
+  vector<Type> rho_out(plhiv_out / (A_out * population));
+  
   REPORT(mu_rho);
   REPORT(phi_age);
   REPORT(sigma_age);
+  REPORT(plhiv_out);
+
+  ADREPORT(plhiv_out);
+  ADREPORT(rho_out);
 
   return val;
 }
