@@ -40,7 +40,9 @@ pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", p
 survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"))
 
 #' Programme data
-#' 
+#'
+
+#' Spectrum PJNZ
 
 #' # 2. Choose inputs
 
@@ -280,6 +282,16 @@ prev_dat <- df_model %>%
          x = n * est) %>%
   select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
 
+artcov_dat <- df_model %>%
+  inner_join(
+    mwi_survey_hiv_indicators %>%
+    filter(survey_id %in% surveys,
+           indicator == "artcov")
+  ) %>%
+  mutate(n = n_obs,
+         x = n * est) %>%
+  select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
+
 #' 5. Fit model
 #'
 #' Note: useful for how to include multiple TMB models: https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package
@@ -288,63 +300,70 @@ df <- df_model
 
 dtmb <- list(
   population = df$population,
-  X = model.matrix(~as.integer(sex == "female"), df),
-  Z_area = model.matrix(~0 + area_idf, df),
-  Z_age = model.matrix(~0 + age_group_idf, df),
-  Z_area_sex = model.matrix(~0 + area_idf, df) * (df$sex == "female"),
-  Z_age_sex = model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
-  Z_area_age = model.matrix(~0 + area_idf:age_group_idf, df),
-  Q_area = Q_scaled,
+  X_rho = model.matrix(~as.integer(sex == "female"), df),
+  X_alpha = model.matrix(~as.integer(sex == "female"), df),
+  Z_x = model.matrix(~0 + area_idf, df),
+  Z_a = model.matrix(~0 + age_group_idf, df),
+  Z_xs = model.matrix(~0 + area_idf, df) * (df$sex == "female"),
+  Z_as = model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
+  Z_xa = model.matrix(~0 + area_idf:age_group_idf, df),
+  Q_x = Q_scaled,
   A_out = A_out,
   idx_prev = prev_dat$idx - 1L,
   x_prev = prev_dat$x,
-  n_prev = prev_dat$n)
+  n_prev = prev_dat$n,
+  idx_artcov = artcov_dat$idx - 1L,
+  x_artcov = artcov_dat$x,
+  n_artcov = artcov_dat$n)
 
 ptmb <- list(
-  beta = numeric(ncol(dtmb$X)),
-  us_area = numeric(ncol(dtmb$Z_area)),
-  ui_area = numeric(ncol(dtmb$Z_area)),
-  us_area_sex = numeric(ncol(dtmb$Z_area_sex)),
-  ui_area_sex = numeric(ncol(dtmb$Z_area_sex)),
-  u_age = numeric(ncol(dtmb$Z_age)),
-  u_age_sex = numeric(ncol(dtmb$Z_age)),
-  logit_phi_age = 0,
-  log_sigma_age = 0,
-  logit_phi_age_sex = 0,
-  log_sigma_age_sex = 0,
-  logit_phi_area = 0,
-  log_sigma_area = 0,
-  logit_phi_area_sex = 0,
-  log_sigma_area_sex = 0
+  beta_rho = numeric(ncol(dtmb$X_rho)),
+  beta_alpha = numeric(ncol(dtmb$X_alpha)),
+  us_rho_x = numeric(ncol(dtmb$Z_x)),
+  ui_rho_x = numeric(ncol(dtmb$Z_x)),
+  us_rho_xs = numeric(ncol(dtmb$Z_xs)),
+  ui_rho_xs = numeric(ncol(dtmb$Z_xs)),
+  u_rho_a = numeric(ncol(dtmb$Z_a)),
+  u_rho_as = numeric(ncol(dtmb$Z_a)),
+  logit_phi_rho_a = 0,
+  log_sigma_rho_a = 0,
+  logit_phi_rho_as = 0,
+  log_sigma_rho_as = 0,
+  logit_phi_rho_x = 0,
+  log_sigma_rho_x = 0,
+  logit_phi_rho_xs = 0,
+  log_sigma_rho_xs = 0
 )
 
 obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "naomi", silent = TRUE,
-                      random = c("us_area", "ui_area",
-                                 "us_area_sex", "ui_area_sex",
-                                 "u_age", "u_age_sex"))
+                      random = c("us_rho_x", "ui_rho_x",
+                                 "us_rho_xs", "ui_rho_xs",
+                                 "u_rho_a", "u_rho_as"))
 
                  
 obj$control = list(trace = 4, maxit = 1000, REPORT = 1)
 
 nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
 
-ftmb <- TMB::sdreport(obj, bias.correct = FALSE)
+system.time(
+  ftmb <- TMB::sdreport(obj, bias.correct = FALSE,
+                        bias.correct.control = list(sd = FALSE))
+)
 
-system.time(ftmb <- TMB::sdreport(obj, bias.correct = FALSE),
-            bias.correct.control = list(sd = FALSE,
-                                        split = 1:100))
 
 
 
 #' 6. Plot some model outputs
 
-summary(ftmb)
+## summary(ftmb)
 
 df_out <- df_out %>%
   left_join(areas %>% select(area_id, area_level), by = "area_id")
 
 df_out$prev <- ftmb$value[names(ftmb$value) == "rho_out"]
+df_out$artcov <- ftmb$value[names(ftmb$value) == "alpha_out"]
 
+#' 15-49 prevalence by district
 df_out %>%
   filter(age_group_id == 18,
          area_level == 4) %>%
@@ -356,10 +375,13 @@ df_out %>%
   th_map() +
   facet_wrap(~sex)
 
+#' 15-49 prevalence by 28 districts, Southern region
+#'
+
 df_out %>%
   filter(age_group_id == 18,
-         area_level == 4) %>%
-  semi_join(get_area_collection(areas, area_scope = "MWI.3")) %>%
+         area_level == 3) %>%
+  semi_join(get_area_collection(areas, level = 3, area_scope = "MWI.3")) %>%
   left_join(boundaries, by = "area_id") %>%
   st_as_sf() %>%
   ggplot(aes(fill = prev)) +
@@ -367,6 +389,28 @@ df_out %>%
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
+
+df_out %>%
+  filter(area_level == 1,
+         sex != "both",
+         age_group_id %in% 1:17) %>%
+  ggplot(aes(age_group_id, prev, fill = sex)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~area_id)
+
+
+#' 15-64 ART coveragte
+df_out %>%
+  filter(age_group_id == 19,
+         area_level == 4) %>%
+  left_join(boundaries, by = "area_id") %>%
+  st_as_sf() %>%
+  ggplot(aes(fill = artcov)) +
+  geom_sf() +
+  viridis::scale_fill_viridis(labels = scales::percent_format()) +
+  th_map() +
+  facet_wrap(~sex)
+
 
 
 out %>%
