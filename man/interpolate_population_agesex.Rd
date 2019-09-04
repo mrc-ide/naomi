@@ -23,7 +23,7 @@ Log-linear interpolation of age/sex stratified population
 }
 \examples{
 ## Interpolate Malawi population at level 2 (Zone) at two time points 
-population_agesex <- readRDS(system.file("extdata/population/population_agesex.rds", package = "naomi"))
+-population_agesex <- readRDS(system.file("extdata/population/population_agesex.rds", package = "naomi"))
 pop_interp <- interpolate_population_agesex(population_agesex, c(2016.25, 2019.75))
 
 }

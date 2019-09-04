@@ -8,7 +8,7 @@
 #'
 #' @details
 #' CMC date is defined as the number of months since 1900:
-#' \deqn{cmc = (year - 1900) * 12 + momth
+#' \deqn{cmc = (year - 1900) * 12 + momth}
 #' 
 #' @references
 #' https://dhsprogram.com/Data/Guide-to-DHS-Statistics/Organization_of_DHS_Data.htm?rhtocid=_4_2_0#Structure_of_DHS_Databc-1
@@ -37,7 +37,8 @@ cmc_date <- function(date) {
 #'
 #' ## Get clusters at level 1 areas only
 #' expand_survey_clusters(survey_clusters, areas_long, top_level = 1, bottom_level = 1)
-#' @internal
+#'
+#' @keywords internal
 expand_survey_clusters <- function(survey_clusters,
                                    survey_regions,
                                    areas,

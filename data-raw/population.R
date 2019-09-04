@@ -1,5 +1,3 @@
-## code to prepare `population` dataset goes here
-
 library(tidyverse)
 library(here)
 
@@ -197,12 +195,16 @@ cens18adj %>%
          age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, cens18adj, color = sex, group = sex)) +
   geom_hline(yintercept = 1.0, linetype = "dashed") +
-  geom_line() +
+  geom_step() +
   scale_y_log10() +
   coord_cartesian(ylim = c(0.6, 2.0)) + 
   facet_wrap(~area, ncol = 8) +
+  theme_light() +
   theme(legend.position = "bottom",
-        axis.text.x = element_text(hjust = 1.0, angle = 90))
+        axis.text.x = element_text(hjust = 1.0, angle = 90)) +
+  ggtitle("Ratio of 2018 Census to 2008 population projections")
+
+ggsave("~/Downloads/mwi_census2018_projections2008_comparison.pdf", h=8.5, w=16)
 
 
 population_agesex <- nso %>%

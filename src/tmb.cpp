@@ -4,71 +4,96 @@ template<class Type>
 Type objective_function<Type>::operator() ()
 {
 
+  // indexing:
+  // 
+  // * rho: HIV prevalence model
+  // * alpha: ART coverage model
+  // * lambda: HIV incidence model
+  //
+  // * _x: area
+  // * _a: age
+  // * _s: sex
+  // * _t: time
+  
   using namespace density;
-
 
   // ** Data **
 
-  DATA_MATRIX(X);
-  DATA_MATRIX(Z_area);
-  DATA_MATRIX(Z_area_sex);
-  DATA_MATRIX(Z_age);
-  DATA_MATRIX(Z_age_sex);
+  // Population
+  DATA_VECTOR(population);
+
+  // Design matrices
+  DATA_MATRIX(X_rho);
+  DATA_MATRIX(X_alpha);
+
+  DATA_MATRIX(Z_x);
+  DATA_MATRIX(Z_xs);
+  DATA_MATRIX(Z_a);
+  DATA_MATRIX(Z_as);
 
   // Precision matrix for ICAR area model
-  DATA_MATRIX(Q_area);
+  DATA_MATRIX(Q_x);
   
   DATA_IVECTOR(idx_prev);
   DATA_VECTOR(n_prev);
   DATA_VECTOR(x_prev);
 
+  DATA_IVECTOR(idx_artcov);
+  DATA_VECTOR(n_artcov);
+  DATA_VECTOR(x_artcov);
+
+  DATA_SPARSE_MATRIX(A_out);
   
   // ** Parameters **
 
-  PARAMETER_VECTOR(beta);
-  PARAMETER_VECTOR(us_area);
-  PARAMETER_VECTOR(ui_area);
+  PARAMETER_VECTOR(beta_rho);
+  PARAMETER_VECTOR(beta_alpha);
 
-  PARAMETER_VECTOR(us_area_sex);
-  PARAMETER_VECTOR(ui_area_sex);
+  PARAMETER_VECTOR(us_rho_x);
+  PARAMETER_VECTOR(ui_rho_x);
+
+  PARAMETER_VECTOR(us_rho_xs);
+  PARAMETER_VECTOR(ui_rho_xs);
   
-  PARAMETER_VECTOR(u_age);
-  PARAMETER_VECTOR(u_age_sex);
+  PARAMETER_VECTOR(u_rho_a);
+  PARAMETER_VECTOR(u_rho_as);
 
-  PARAMETER(logit_phi_area);
-  PARAMETER(log_sigma_area);
+  PARAMETER(logit_phi_rho_x);
+  PARAMETER(log_sigma_rho_x);
 
-  PARAMETER(logit_phi_area_sex);
-  PARAMETER(log_sigma_area_sex);
+  PARAMETER(logit_phi_rho_xs);
+  PARAMETER(log_sigma_rho_xs);
 
-  PARAMETER(logit_phi_age);
-  PARAMETER(log_sigma_age);
+  PARAMETER(logit_phi_rho_a);
+  PARAMETER(log_sigma_rho_a);
 
-  PARAMETER(logit_phi_age_sex);
-  PARAMETER(log_sigma_age_sex);
+  PARAMETER(logit_phi_rho_as);
+  PARAMETER(log_sigma_rho_as);
 
 
-  Type phi_age(invlogit(logit_phi_age));
-  Type sigma_age(exp(log_sigma_age));
+  Type phi_rho_a(invlogit(logit_phi_rho_a));
+  Type sigma_rho_a(exp(log_sigma_rho_a));
 
-  Type phi_age_sex(invlogit(logit_phi_age_sex));
-  Type sigma_age_sex(exp(log_sigma_age_sex));
+  Type phi_rho_as(invlogit(logit_phi_rho_as));
+  Type sigma_rho_as(exp(log_sigma_rho_as));
 
-  Type phi_area(invlogit(logit_phi_area));
-  Type sigma_area(exp(log_sigma_area));
+  Type phi_rho_x(invlogit(logit_phi_rho_x));
+  Type sigma_rho_x(exp(log_sigma_rho_x));
 
-  Type phi_area_sex(invlogit(logit_phi_area_sex));
-  Type sigma_area_sex(exp(log_sigma_area_sex));
+  Type phi_rho_xs(invlogit(logit_phi_rho_xs));
+  Type sigma_rho_xs(exp(log_sigma_rho_xs));
 
-  vector<Type> u_area(sqrt(phi_area) * us_area + sqrt(1 - phi_area) * ui_area);
-  vector<Type> u_area_sex(sqrt(phi_area_sex) * us_area_sex + sqrt(1 - phi_area_sex) * ui_area_sex);
+  vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
+  vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
 		      
     
-  vector<Type> mu_rho(X * beta +		      
-		      Z_area * u_area * sigma_area +
-		      Z_area_sex * u_area_sex * sigma_area_sex +
-		      Z_age * u_age * sigma_age +
-		      Z_age_sex * u_age_sex * sigma_age_sex);
+  vector<Type> mu_rho(X_rho * beta_rho +
+		      Z_x * u_rho_x * sigma_rho_x +
+		      Z_xs * u_rho_xs * sigma_rho_xs +
+		      Z_a * u_rho_a * sigma_rho_a +
+		      Z_as * u_rho_as * sigma_rho_as);
+
+  vector<Type> mu_alpha(X_alpha * beta_alpha);
 
     
   // initialize nll
@@ -76,39 +101,60 @@ Type objective_function<Type>::operator() ()
 
   // hyperparameter priors
 
-  val -= dnorm(exp(log_sigma_area), Type(0.0), Type(2.5), true) + log_sigma_area;
+  val -= dnorm(exp(log_sigma_rho_x), Type(0.0), Type(2.5), true) + log_sigma_rho_x;
     
-  val -= log(phi_area) +  log(1 - phi_area);  // change of variables: logit_phi_area -> phi_area
-  val -= dbeta(phi_area, Type(0.5), Type(0.5), true);
+  val -= log(phi_rho_x) +  log(1 - phi_rho_x);  // change of variables: logit_phi_x -> phi_x
+  val -= dbeta(phi_rho_x, Type(0.5), Type(0.5), true);
 
-  val -= Type(-0.5) * (us_area * (Q_area * us_area)).sum();
-  val -= dnorm(sum(us_area), Type(0.0), Type(0.001) * us_area.size(), true); // soft sum-to-zero constraint
+  val -= Type(-0.5) * (us_rho_x * (Q_x * us_rho_x)).sum();
+  val -= dnorm(sum(us_rho_x), Type(0.0), Type(0.001) * us_rho_x.size(), true); // soft sum-to-zero constraint
 
-  val -= sum(dnorm(ui_area, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_rho_x, 0.0, 1.0, true));
 
 
-  val -= dnorm(exp(log_sigma_area_sex), Type(0.0), Type(2.5), true) + log_sigma_area_sex;
+  val -= dnorm(exp(log_sigma_rho_xs), Type(0.0), Type(2.5), true) + log_sigma_rho_xs;
     
-  val -= log(phi_area_sex) +  log(1 - phi_area_sex);  // change of variables: logit_phi_area_sex -> phi_area_sex
-  val -= dbeta(phi_area_sex, Type(0.5), Type(0.5), true);
+  val -= log(phi_rho_xs) +  log(1 - phi_rho_xs);  // change of variables: logit_phi_xs -> phi_xs
+  val -= dbeta(phi_rho_xs, Type(0.5), Type(0.5), true);
 
-  val -= Type(-0.5) * (us_area_sex * (Q_area * us_area_sex)).sum();
-  val -= dnorm(sum(us_area_sex), Type(0.0), Type(0.001) * us_area_sex.size(), true); // soft sum-to-zero constraint
+  val -= Type(-0.5) * (us_rho_xs * (Q_x * us_rho_xs)).sum();
+  val -= dnorm(sum(us_rho_xs), Type(0.0), Type(0.001) * us_rho_xs.size(), true); // soft sum-to-zero constraint
 
-  val -= sum(dnorm(ui_area_sex, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_rho_xs, 0.0, 1.0, true));
 
   
-  val += AR1(phi_age)(u_age);
-  val += AR1(phi_age_sex)(u_age_sex);
+  val += AR1(phi_rho_a)(u_rho_a);
+  val += AR1(phi_rho_as)(u_rho_as);
 
   // likelihood    
 
   for(int i = 0; i < idx_prev.size(); i++)
     val -= dbinom_robust(x_prev[i], n_prev[i], mu_rho[idx_prev[i]], true);
 
+  for(int i = 0; i < idx_artcov.size(); i++)
+    val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
+
+  vector<Type> rho(invlogit(mu_rho));
+  vector<Type> plhiv_out(A_out * vector<Type>(rho * population));
+  vector<Type> rho_out(plhiv_out / (A_out * population));
+
+  vector<Type> alpha(invlogit(mu_alpha));
+  vector<Type> artnum_out(A_out * vector<Type>(alpha * rho * population));
+  vector<Type> alpha_out(artnum_out / plhiv_out);
+
   REPORT(mu_rho);
-  REPORT(phi_age);
-  REPORT(sigma_age);
+  REPORT(phi_rho_a);
+  REPORT(sigma_rho_a);
+  REPORT(rho_out);
+  REPORT(plhiv_out);
+
+  REPORT(alpha_out);
+  REPORT(artnum_out);
+
+  ADREPORT(plhiv_out);
+  ADREPORT(rho_out);
+  ADREPORT(artnum_out);
+  ADREPORT(alpha_out);
 
   return val;
 }

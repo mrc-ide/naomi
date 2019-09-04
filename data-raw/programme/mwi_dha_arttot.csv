@@ -1,0 +1,1022 @@
+district32,year,quarter,art_tot
+Balaka,2011,1,6280
+Balaka,2011,2,6595
+Balaka,2011,3,7015
+Balaka,2011,4,7735
+Balaka,2012,1,8730
+Balaka,2012,2,9513
+Balaka,2012,3,9893
+Balaka,2012,4,10055
+Balaka,2013,1,10767
+Balaka,2013,2,11335
+Balaka,2013,3,11734
+Balaka,2013,4,12095
+Balaka,2014,1,12676
+Balaka,2014,2,12922
+Balaka,2014,3,13940
+Balaka,2014,4,14375
+Balaka,2015,1,15102
+Balaka,2015,2,15497
+Balaka,2015,3,15994
+Balaka,2015,4,16221
+Balaka,2016,1,16631
+Balaka,2016,2,17056
+Balaka,2016,3,17902
+Balaka,2016,4,18330
+Balaka,2017,1,18452
+Balaka,2017,2,18772
+Balaka,2017,3,19298
+Balaka,2017,4,19983
+Balaka,2018,1,20292
+Balaka,2018,2,20639
+Balaka,2018,3,20983
+Balaka,2018,4,20982
+Blantyre,2011,1,9686
+Blantyre,2011,2,10171
+Blantyre,2011,3,10939
+Blantyre,2011,4,11498
+Blantyre,2012,1,12067
+Blantyre,2012,2,12843
+Blantyre,2012,3,13318
+Blantyre,2012,4,13672
+Blantyre,2013,1,14590
+Blantyre,2013,2,14984
+Blantyre,2013,3,15424
+Blantyre,2013,4,15984
+Blantyre,2014,1,16415
+Blantyre,2014,2,16888
+Blantyre,2014,3,17222
+Blantyre,2014,4,17996
+Blantyre,2015,1,18236
+Blantyre,2015,2,18948
+Blantyre,2015,3,19811
+Blantyre,2015,4,19790
+Blantyre,2016,1,20121
+Blantyre,2016,2,20827
+Blantyre,2016,3,22539
+Blantyre,2016,4,22755
+Blantyre,2017,1,23954
+Blantyre,2017,2,24754
+Blantyre,2017,3,24696
+Blantyre,2017,4,24696
+Blantyre,2018,1,24908
+Blantyre,2018,2,25975
+Blantyre,2018,3,26066
+Blantyre,2018,4,26708
+Blantyre City,2011,1,23811
+Blantyre City,2011,2,24061
+Blantyre City,2011,3,25980
+Blantyre City,2011,4,27303
+Blantyre City,2012,1,29384
+Blantyre City,2012,2,30782
+Blantyre City,2012,3,32226
+Blantyre City,2012,4,33262
+Blantyre City,2013,1,34474
+Blantyre City,2013,2,35013
+Blantyre City,2013,3,36271
+Blantyre City,2013,4,37710
+Blantyre City,2014,1,38154
+Blantyre City,2014,2,39298
+Blantyre City,2014,3,40682
+Blantyre City,2014,4,42358
+Blantyre City,2015,1,43846
+Blantyre City,2015,2,44710
+Blantyre City,2015,3,46327
+Blantyre City,2015,4,47071
+Blantyre City,2016,1,48638
+Blantyre City,2016,2,49835
+Blantyre City,2016,3,51984
+Blantyre City,2016,4,53003
+Blantyre City,2017,1,54705
+Blantyre City,2017,2,56521
+Blantyre City,2017,3,57251
+Blantyre City,2017,4,58370
+Blantyre City,2018,1,60381
+Blantyre City,2018,2,61193
+Blantyre City,2018,3,63905
+Blantyre City,2018,4,64557
+Chikwawa,2011,1,8277
+Chikwawa,2011,2,8867
+Chikwawa,2011,3,8737
+Chikwawa,2011,4,9844
+Chikwawa,2012,1,10840
+Chikwawa,2012,2,11791
+Chikwawa,2012,3,12453
+Chikwawa,2012,4,13020
+Chikwawa,2013,1,13416
+Chikwawa,2013,2,14269
+Chikwawa,2013,3,14667
+Chikwawa,2013,4,15131
+Chikwawa,2014,1,16168
+Chikwawa,2014,2,16293
+Chikwawa,2014,3,17069
+Chikwawa,2014,4,17772
+Chikwawa,2015,1,18144
+Chikwawa,2015,2,18952
+Chikwawa,2015,3,19387
+Chikwawa,2015,4,19592
+Chikwawa,2016,1,20501
+Chikwawa,2016,2,20955
+Chikwawa,2016,3,21840
+Chikwawa,2016,4,22994
+Chikwawa,2017,1,23130
+Chikwawa,2017,2,24227
+Chikwawa,2017,3,24965
+Chikwawa,2017,4,25512
+Chikwawa,2018,1,26620
+Chikwawa,2018,2,27720
+Chikwawa,2018,3,28066
+Chikwawa,2018,4,28643
+Chiradzulu,2011,1,20340
+Chiradzulu,2011,2,21215
+Chiradzulu,2011,3,22035
+Chiradzulu,2011,4,24523
+Chiradzulu,2012,1,25916
+Chiradzulu,2012,2,27214
+Chiradzulu,2012,3,27827
+Chiradzulu,2012,4,28429
+Chiradzulu,2013,1,29089
+Chiradzulu,2013,2,29773
+Chiradzulu,2013,3,29865
+Chiradzulu,2013,4,25549
+Chiradzulu,2014,1,24160
+Chiradzulu,2014,2,32006
+Chiradzulu,2014,3,32292
+Chiradzulu,2014,4,33548
+Chiradzulu,2015,1,34045
+Chiradzulu,2015,2,34337
+Chiradzulu,2015,3,34922
+Chiradzulu,2015,4,34359
+Chiradzulu,2016,1,35570
+Chiradzulu,2016,2,35814
+Chiradzulu,2016,3,36741
+Chiradzulu,2016,4,37235
+Chiradzulu,2017,1,38329
+Chiradzulu,2017,2,38557
+Chiradzulu,2017,3,36282
+Chiradzulu,2017,4,38919
+Chiradzulu,2018,1,38739
+Chiradzulu,2018,2,39459
+Chiradzulu,2018,3,39610
+Chiradzulu,2018,4,39568
+Chitipa,2011,1,1805
+Chitipa,2011,2,1887
+Chitipa,2011,3,1961
+Chitipa,2011,4,2116
+Chitipa,2012,1,2213
+Chitipa,2012,2,2414
+Chitipa,2012,3,2539
+Chitipa,2012,4,2663
+Chitipa,2013,1,2833
+Chitipa,2013,2,2986
+Chitipa,2013,3,3088
+Chitipa,2013,4,3241
+Chitipa,2014,1,3390
+Chitipa,2014,2,3532
+Chitipa,2014,3,3536
+Chitipa,2014,4,3647
+Chitipa,2015,1,3705
+Chitipa,2015,2,4012
+Chitipa,2015,3,4101
+Chitipa,2015,4,4264
+Chitipa,2016,1,4386
+Chitipa,2016,2,4560
+Chitipa,2016,3,4684
+Chitipa,2016,4,4826
+Chitipa,2017,1,4834
+Chitipa,2017,2,4484
+Chitipa,2017,3,5051
+Chitipa,2017,4,4980
+Chitipa,2018,1,5493
+Chitipa,2018,2,5650
+Chitipa,2018,3,5858
+Chitipa,2018,4,5972
+Dedza,2011,1,5590
+Dedza,2011,2,5935
+Dedza,2011,3,6227
+Dedza,2011,4,6996
+Dedza,2012,1,7370
+Dedza,2012,2,7496
+Dedza,2012,3,8012
+Dedza,2012,4,8508
+Dedza,2013,1,8893
+Dedza,2013,2,9332
+Dedza,2013,3,9777
+Dedza,2013,4,9998
+Dedza,2014,1,10582
+Dedza,2014,2,10992
+Dedza,2014,3,11401
+Dedza,2014,4,11856
+Dedza,2015,1,12278
+Dedza,2015,2,12524
+Dedza,2015,3,13105
+Dedza,2015,4,13313
+Dedza,2016,1,13646
+Dedza,2016,2,14176
+Dedza,2016,3,15182
+Dedza,2016,4,15779
+Dedza,2017,1,16549
+Dedza,2017,2,16940
+Dedza,2017,3,17518
+Dedza,2017,4,17699
+Dedza,2018,1,18107
+Dedza,2018,2,18356
+Dedza,2018,3,18595
+Dedza,2018,4,18932
+Dowa,2011,1,5917
+Dowa,2011,2,6148
+Dowa,2011,3,6284
+Dowa,2011,4,6610
+Dowa,2012,1,6905
+Dowa,2012,2,7002
+Dowa,2012,3,7179
+Dowa,2012,4,7823
+Dowa,2013,1,7867
+Dowa,2013,2,8035
+Dowa,2013,3,8361
+Dowa,2013,4,8718
+Dowa,2014,1,8879
+Dowa,2014,2,9134
+Dowa,2014,3,9400
+Dowa,2014,4,9609
+Dowa,2015,1,9819
+Dowa,2015,2,9939
+Dowa,2015,3,10011
+Dowa,2015,4,10140
+Dowa,2016,1,10526
+Dowa,2016,2,10565
+Dowa,2016,3,11141
+Dowa,2016,4,11320
+Dowa,2017,1,11488
+Dowa,2017,2,11848
+Dowa,2017,3,12009
+Dowa,2017,4,11961
+Dowa,2018,1,12280
+Dowa,2018,2,12450
+Dowa,2018,3,12587
+Dowa,2018,4,12834
+Karonga,2011,1,4879
+Karonga,2011,2,5110
+Karonga,2011,3,5427
+Karonga,2011,4,5673
+Karonga,2012,1,6275
+Karonga,2012,2,6832
+Karonga,2012,3,7135
+Karonga,2012,4,7674
+Karonga,2013,1,7996
+Karonga,2013,2,8293
+Karonga,2013,3,8464
+Karonga,2013,4,8714
+Karonga,2014,1,8952
+Karonga,2014,2,9242
+Karonga,2014,3,9191
+Karonga,2014,4,9511
+Karonga,2015,1,9833
+Karonga,2015,2,10084
+Karonga,2015,3,10775
+Karonga,2015,4,10455
+Karonga,2016,1,11053
+Karonga,2016,2,11100
+Karonga,2016,3,11744
+Karonga,2016,4,12096
+Karonga,2017,1,11028
+Karonga,2017,2,12020
+Karonga,2017,3,12415
+Karonga,2017,4,12601
+Karonga,2018,1,13201
+Karonga,2018,2,13429
+Karonga,2018,3,13852
+Karonga,2018,4,13740
+Kasungu,2011,1,5403
+Kasungu,2011,2,5639
+Kasungu,2011,3,5975
+Kasungu,2011,4,6613
+Kasungu,2012,1,6949
+Kasungu,2012,2,7309
+Kasungu,2012,3,7701
+Kasungu,2012,4,7991
+Kasungu,2013,1,8429
+Kasungu,2013,2,8797
+Kasungu,2013,3,9360
+Kasungu,2013,4,9653
+Kasungu,2014,1,10290
+Kasungu,2014,2,10565
+Kasungu,2014,3,10972
+Kasungu,2014,4,11381
+Kasungu,2015,1,11819
+Kasungu,2015,2,11968
+Kasungu,2015,3,12379
+Kasungu,2015,4,12619
+Kasungu,2016,1,13026
+Kasungu,2016,2,13279
+Kasungu,2016,3,13767
+Kasungu,2016,4,14125
+Kasungu,2017,1,14399
+Kasungu,2017,2,14777
+Kasungu,2017,3,15293
+Kasungu,2017,4,15650
+Kasungu,2018,1,16161
+Kasungu,2018,2,16373
+Kasungu,2018,3,17012
+Kasungu,2018,4,17200
+Likoma,2011,1,199
+Likoma,2011,2,212
+Likoma,2011,3,229
+Likoma,2011,4,235
+Likoma,2012,1,285
+Likoma,2012,2,298
+Likoma,2013,1,315
+Likoma,2013,3,335
+Likoma,2013,4,387
+Likoma,2014,1,394
+Likoma,2014,2,391
+Likoma,2014,3,402
+Likoma,2014,4,408
+Likoma,2015,1,426
+Likoma,2015,2,439
+Likoma,2015,3,451
+Likoma,2015,4,463
+Likoma,2016,1,493
+Likoma,2016,2,510
+Likoma,2016,3,529
+Likoma,2016,4,553
+Likoma,2017,1,586
+Likoma,2017,2,606
+Likoma,2017,3,612
+Likoma,2017,4,614
+Likoma,2018,1,639
+Likoma,2018,2,643
+Likoma,2018,3,652
+Likoma,2018,4,675
+Lilongwe,2011,1,6372
+Lilongwe,2011,2,6604
+Lilongwe,2011,3,7412
+Lilongwe,2011,4,8376
+Lilongwe,2012,1,8758
+Lilongwe,2012,2,9325
+Lilongwe,2012,3,9834
+Lilongwe,2012,4,10195
+Lilongwe,2013,1,10746
+Lilongwe,2013,2,11272
+Lilongwe,2013,3,11535
+Lilongwe,2013,4,12091
+Lilongwe,2014,1,12919
+Lilongwe,2014,2,13467
+Lilongwe,2014,3,13862
+Lilongwe,2014,4,14330
+Lilongwe,2015,1,14822
+Lilongwe,2015,2,15043
+Lilongwe,2015,3,15607
+Lilongwe,2015,4,15835
+Lilongwe,2016,1,16500
+Lilongwe,2016,2,17346
+Lilongwe,2016,3,18448
+Lilongwe,2016,4,18605
+Lilongwe,2017,1,19298
+Lilongwe,2017,2,19931
+Lilongwe,2017,3,20505
+Lilongwe,2017,4,21367
+Lilongwe,2018,1,21892
+Lilongwe,2018,2,22387
+Lilongwe,2018,3,22280
+Lilongwe,2018,4,23012
+Lilongwe City,2011,1,32089
+Lilongwe City,2011,2,33535
+Lilongwe City,2011,3,35572
+Lilongwe City,2011,4,38065
+Lilongwe City,2012,1,39965
+Lilongwe City,2012,2,42407
+Lilongwe City,2012,3,43104
+Lilongwe City,2012,4,43842
+Lilongwe City,2013,1,45525
+Lilongwe City,2013,2,47058
+Lilongwe City,2013,3,48886
+Lilongwe City,2013,4,49448
+Lilongwe City,2014,1,50798
+Lilongwe City,2014,2,52126
+Lilongwe City,2014,3,54056
+Lilongwe City,2014,4,55469
+Lilongwe City,2015,1,57252
+Lilongwe City,2015,2,58774
+Lilongwe City,2015,3,60131
+Lilongwe City,2015,4,60810
+Lilongwe City,2016,1,62316
+Lilongwe City,2016,2,64721
+Lilongwe City,2016,3,66973
+Lilongwe City,2016,4,68220
+Lilongwe City,2017,1,69148
+Lilongwe City,2017,2,71238
+Lilongwe City,2017,3,72941
+Lilongwe City,2017,4,74113
+Lilongwe City,2018,1,75414
+Lilongwe City,2018,2,76329
+Lilongwe City,2018,3,77172
+Lilongwe City,2018,4,78704
+Machinga,2011,1,7706
+Machinga,2011,2,8103
+Machinga,2011,3,9695
+Machinga,2011,4,11376
+Machinga,2012,1,12815
+Machinga,2012,2,13269
+Machinga,2012,3,14228
+Machinga,2012,4,14540
+Machinga,2013,1,15205
+Machinga,2013,2,15656
+Machinga,2013,3,16243
+Machinga,2013,4,16542
+Machinga,2014,1,17265
+Machinga,2014,2,18226
+Machinga,2014,3,19045
+Machinga,2014,4,19190
+Machinga,2015,1,19835
+Machinga,2015,2,20668
+Machinga,2015,3,21247
+Machinga,2015,4,21888
+Machinga,2016,1,22283
+Machinga,2016,2,23005
+Machinga,2016,3,23681
+Machinga,2016,4,23919
+Machinga,2017,1,24953
+Machinga,2017,2,25845
+Machinga,2017,3,27767
+Machinga,2017,4,28150
+Machinga,2018,1,29551
+Machinga,2018,2,30168
+Machinga,2018,3,30329
+Machinga,2018,4,30428
+Mangochi,2011,1,11664
+Mangochi,2011,2,12393
+Mangochi,2011,3,13895
+Mangochi,2011,4,15223
+Mangochi,2012,1,16956
+Mangochi,2012,2,18200
+Mangochi,2012,3,19805
+Mangochi,2012,4,20403
+Mangochi,2013,1,21559
+Mangochi,2013,2,22484
+Mangochi,2013,3,23734
+Mangochi,2013,4,24563
+Mangochi,2014,1,25711
+Mangochi,2014,2,27134
+Mangochi,2014,3,28501
+Mangochi,2014,4,29650
+Mangochi,2015,1,30705
+Mangochi,2015,2,32236
+Mangochi,2015,3,33031
+Mangochi,2015,4,33666
+Mangochi,2016,1,35293
+Mangochi,2016,2,37112
+Mangochi,2016,3,39267
+Mangochi,2016,4,40368
+Mangochi,2017,1,41625
+Mangochi,2017,2,43431
+Mangochi,2017,3,45767
+Mangochi,2017,4,47539
+Mangochi,2018,1,49243
+Mangochi,2018,2,50944
+Mangochi,2018,3,52586
+Mangochi,2018,4,52801
+Mchinji,2011,1,4918
+Mchinji,2011,2,5070
+Mchinji,2011,3,5564
+Mchinji,2011,4,5750
+Mchinji,2012,1,6198
+Mchinji,2012,2,6628
+Mchinji,2012,3,7068
+Mchinji,2012,4,7392
+Mchinji,2013,1,7760
+Mchinji,2013,2,8180
+Mchinji,2013,3,8526
+Mchinji,2013,4,8886
+Mchinji,2014,1,9258
+Mchinji,2014,2,9614
+Mchinji,2014,3,10003
+Mchinji,2014,4,10374
+Mchinji,2015,1,10544
+Mchinji,2015,2,11049
+Mchinji,2015,3,11504
+Mchinji,2015,4,11878
+Mchinji,2016,1,12242
+Mchinji,2016,2,12851
+Mchinji,2016,3,13735
+Mchinji,2016,4,14066
+Mchinji,2017,1,14539
+Mchinji,2017,2,14799
+Mchinji,2017,3,15477
+Mchinji,2017,4,15469
+Mchinji,2018,1,15912
+Mchinji,2018,2,16253
+Mchinji,2018,3,16386
+Mchinji,2018,4,16852
+Mulanje,2011,1,10025
+Mulanje,2011,2,10597
+Mulanje,2011,3,11953
+Mulanje,2011,4,14585
+Mulanje,2012,1,16158
+Mulanje,2012,2,17737
+Mulanje,2012,3,19600
+Mulanje,2012,4,20770
+Mulanje,2013,1,22126
+Mulanje,2013,2,23505
+Mulanje,2013,3,24988
+Mulanje,2013,4,26255
+Mulanje,2014,1,27782
+Mulanje,2014,2,29770
+Mulanje,2014,3,31716
+Mulanje,2014,4,33445
+Mulanje,2015,1,34476
+Mulanje,2015,2,35703
+Mulanje,2015,3,36635
+Mulanje,2015,4,37494
+Mulanje,2016,1,38850
+Mulanje,2016,2,40349
+Mulanje,2016,3,43395
+Mulanje,2016,4,44793
+Mulanje,2017,1,45525
+Mulanje,2017,2,47337
+Mulanje,2017,3,48978
+Mulanje,2017,4,49196
+Mulanje,2018,1,51158
+Mulanje,2018,2,52185
+Mulanje,2018,3,52910
+Mulanje,2018,4,53753
+Mwanza,2011,1,2566
+Mwanza,2011,2,2628
+Mwanza,2011,3,2660
+Mwanza,2011,4,2831
+Mwanza,2012,1,2945
+Mwanza,2012,2,3044
+Mwanza,2012,3,3274
+Mwanza,2012,4,3298
+Mwanza,2013,1,3513
+Mwanza,2013,2,3375
+Mwanza,2013,3,3518
+Mwanza,2013,4,3658
+Mwanza,2014,1,3803
+Mwanza,2014,2,3853
+Mwanza,2014,3,3960
+Mwanza,2014,4,4056
+Mwanza,2015,1,4171
+Mwanza,2015,2,4325
+Mwanza,2015,3,4382
+Mwanza,2015,4,4504
+Mwanza,2016,1,4930
+Mwanza,2016,2,4889
+Mwanza,2016,3,5090
+Mwanza,2016,4,5181
+Mwanza,2017,1,5419
+Mwanza,2017,2,5533
+Mwanza,2017,3,5653
+Mwanza,2017,4,5646
+Mwanza,2018,1,5925
+Mwanza,2018,2,5874
+Mwanza,2018,3,5978
+Mwanza,2018,4,6033
+Mzimba,2011,1,6858
+Mzimba,2011,2,7082
+Mzimba,2011,3,7800
+Mzimba,2011,4,8492
+Mzimba,2012,1,9428
+Mzimba,2012,2,9985
+Mzimba,2012,3,10771
+Mzimba,2012,4,11453
+Mzimba,2013,1,11980
+Mzimba,2013,2,12218
+Mzimba,2013,3,13101
+Mzimba,2013,4,13918
+Mzimba,2014,1,14278
+Mzimba,2014,2,14845
+Mzimba,2014,3,15316
+Mzimba,2014,4,16218
+Mzimba,2015,1,16677
+Mzimba,2015,2,16946
+Mzimba,2015,3,17684
+Mzimba,2015,4,18157
+Mzimba,2016,1,18772
+Mzimba,2016,2,19606
+Mzimba,2016,3,20206
+Mzimba,2016,4,20914
+Mzimba,2017,1,21579
+Mzimba,2017,2,21231
+Mzimba,2017,3,22130
+Mzimba,2017,4,22845
+Mzimba,2018,1,23397
+Mzimba,2018,2,23480
+Mzimba,2018,3,24403
+Mzimba,2018,4,24941
+Mzuzu City,2011,1,7763
+Mzuzu City,2011,2,7962
+Mzuzu City,2011,3,8448
+Mzuzu City,2011,4,8921
+Mzuzu City,2012,1,9364
+Mzuzu City,2012,2,9295
+Mzuzu City,2012,3,9526
+Mzuzu City,2012,4,9813
+Mzuzu City,2013,1,9850
+Mzuzu City,2013,2,10040
+Mzuzu City,2013,3,10163
+Mzuzu City,2013,4,10361
+Mzuzu City,2014,1,10828
+Mzuzu City,2014,2,11029
+Mzuzu City,2014,3,11432
+Mzuzu City,2014,4,11993
+Mzuzu City,2015,1,11785
+Mzuzu City,2015,2,11955
+Mzuzu City,2015,3,12392
+Mzuzu City,2015,4,12455
+Mzuzu City,2016,1,12899
+Mzuzu City,2016,2,13202
+Mzuzu City,2016,3,13674
+Mzuzu City,2016,4,14021
+Mzuzu City,2017,1,14323
+Mzuzu City,2017,2,14545
+Mzuzu City,2017,3,14473
+Mzuzu City,2017,4,14757
+Mzuzu City,2018,1,15025
+Mzuzu City,2018,2,15250
+Mzuzu City,2018,3,15502
+Mzuzu City,2018,4,15634
+Neno,2011,1,3234
+Neno,2011,2,3419
+Neno,2011,3,3894
+Neno,2011,4,4080
+Neno,2012,1,4427
+Neno,2012,2,4678
+Neno,2012,3,4910
+Neno,2012,4,5096
+Neno,2013,1,5285
+Neno,2013,2,5459
+Neno,2013,3,5668
+Neno,2013,4,5845
+Neno,2014,1,5936
+Neno,2014,2,6258
+Neno,2014,3,6449
+Neno,2014,4,6583
+Neno,2015,1,6679
+Neno,2015,2,6788
+Neno,2015,3,6946
+Neno,2015,4,7074
+Neno,2016,1,7216
+Neno,2016,2,7253
+Neno,2016,3,7572
+Neno,2016,4,7651
+Neno,2017,1,7805
+Neno,2017,2,7963
+Neno,2017,3,8120
+Neno,2017,4,8107
+Neno,2018,1,8175
+Neno,2018,2,8270
+Neno,2018,3,8308
+Neno,2018,4,8354
+Nkhata Bay,2011,1,3245
+Nkhata Bay,2011,2,3418
+Nkhata Bay,2011,3,3568
+Nkhata Bay,2011,4,3867
+Nkhata Bay,2012,1,4267
+Nkhata Bay,2012,2,4539
+Nkhata Bay,2012,3,4652
+Nkhata Bay,2012,4,4866
+Nkhata Bay,2013,1,5162
+Nkhata Bay,2013,2,5365
+Nkhata Bay,2013,3,5464
+Nkhata Bay,2013,4,5803
+Nkhata Bay,2014,1,6295
+Nkhata Bay,2014,2,6286
+Nkhata Bay,2014,3,6761
+Nkhata Bay,2014,4,6708
+Nkhata Bay,2015,1,6639
+Nkhata Bay,2015,2,7123
+Nkhata Bay,2015,3,6952
+Nkhata Bay,2015,4,7439
+Nkhata Bay,2016,1,6748
+Nkhata Bay,2016,2,7487
+Nkhata Bay,2016,3,7919
+Nkhata Bay,2016,4,8231
+Nkhata Bay,2017,1,8077
+Nkhata Bay,2017,2,8716
+Nkhata Bay,2017,3,8826
+Nkhata Bay,2017,4,8899
+Nkhata Bay,2018,1,9244
+Nkhata Bay,2018,2,9413
+Nkhata Bay,2018,3,9518
+Nkhata Bay,2018,4,9697
+Nkhotakota,2011,1,4817
+Nkhotakota,2011,2,5004
+Nkhotakota,2011,3,5434
+Nkhotakota,2011,4,5506
+Nkhotakota,2012,1,5754
+Nkhotakota,2012,2,6000
+Nkhotakota,2012,3,6148
+Nkhotakota,2012,4,6322
+Nkhotakota,2013,1,6578
+Nkhotakota,2013,2,6990
+Nkhotakota,2013,3,6936
+Nkhotakota,2013,4,7287
+Nkhotakota,2014,1,7504
+Nkhotakota,2014,2,7690
+Nkhotakota,2014,3,8013
+Nkhotakota,2014,4,8248
+Nkhotakota,2015,1,8594
+Nkhotakota,2015,2,8823
+Nkhotakota,2015,3,9154
+Nkhotakota,2015,4,9268
+Nkhotakota,2016,1,9564
+Nkhotakota,2016,2,9602
+Nkhotakota,2016,3,10089
+Nkhotakota,2016,4,10258
+Nkhotakota,2017,1,10627
+Nkhotakota,2017,2,10823
+Nkhotakota,2017,3,11223
+Nkhotakota,2017,4,11429
+Nkhotakota,2018,1,11527
+Nkhotakota,2018,2,12478
+Nkhotakota,2018,3,12034
+Nkhotakota,2018,4,12066
+Nsanje,2011,1,6429
+Nsanje,2011,2,6639
+Nsanje,2011,3,6925
+Nsanje,2011,4,7508
+Nsanje,2012,1,8212
+Nsanje,2012,2,8581
+Nsanje,2012,3,9119
+Nsanje,2012,4,9725
+Nsanje,2013,1,10309
+Nsanje,2013,2,10991
+Nsanje,2013,3,11594
+Nsanje,2013,4,11897
+Nsanje,2014,1,12632
+Nsanje,2014,2,12762
+Nsanje,2014,3,13439
+Nsanje,2014,4,13729
+Nsanje,2015,1,13890
+Nsanje,2015,2,14597
+Nsanje,2015,3,15385
+Nsanje,2015,4,15754
+Nsanje,2016,1,16159
+Nsanje,2016,2,16317
+Nsanje,2016,3,17509
+Nsanje,2016,4,17307
+Nsanje,2017,1,18198
+Nsanje,2017,2,19056
+Nsanje,2017,3,18301
+Nsanje,2017,4,20049
+Nsanje,2018,1,20512
+Nsanje,2018,2,20641
+Nsanje,2018,3,21018
+Nsanje,2018,4,21475
+Ntcheu,2011,1,7716
+Ntcheu,2011,2,8048
+Ntcheu,2011,3,8453
+Ntcheu,2011,4,9255
+Ntcheu,2012,1,9986
+Ntcheu,2012,2,10771
+Ntcheu,2012,3,11682
+Ntcheu,2012,4,12165
+Ntcheu,2013,1,12952
+Ntcheu,2013,2,13211
+Ntcheu,2013,3,14013
+Ntcheu,2013,4,14530
+Ntcheu,2014,1,14835
+Ntcheu,2014,2,15473
+Ntcheu,2014,3,16102
+Ntcheu,2014,4,16651
+Ntcheu,2015,1,17095
+Ntcheu,2015,2,17563
+Ntcheu,2015,3,18046
+Ntcheu,2015,4,18341
+Ntcheu,2016,1,19437
+Ntcheu,2016,2,19849
+Ntcheu,2016,3,21078
+Ntcheu,2016,4,21943
+Ntcheu,2017,1,22368
+Ntcheu,2017,2,22610
+Ntcheu,2017,3,23939
+Ntcheu,2017,4,24248
+Ntcheu,2018,1,25487
+Ntcheu,2018,2,25538
+Ntcheu,2018,3,25772
+Ntcheu,2018,4,26245
+Ntchisi,2011,1,2134
+Ntchisi,2011,2,2398
+Ntchisi,2011,3,2326
+Ntchisi,2011,4,2428
+Ntchisi,2012,1,2556
+Ntchisi,2012,2,2548
+Ntchisi,2012,3,2691
+Ntchisi,2012,4,2774
+Ntchisi,2013,1,2877
+Ntchisi,2013,2,2922
+Ntchisi,2013,3,3004
+Ntchisi,2013,4,3047
+Ntchisi,2014,1,3093
+Ntchisi,2014,2,3171
+Ntchisi,2014,3,3276
+Ntchisi,2014,4,3390
+Ntchisi,2015,1,3469
+Ntchisi,2015,2,3532
+Ntchisi,2015,3,3574
+Ntchisi,2015,4,3747
+Ntchisi,2016,1,3708
+Ntchisi,2016,2,3835
+Ntchisi,2016,3,3984
+Ntchisi,2016,4,4007
+Ntchisi,2017,1,4259
+Ntchisi,2017,2,4270
+Ntchisi,2017,3,4335
+Ntchisi,2017,4,4385
+Ntchisi,2018,1,4458
+Ntchisi,2018,2,4524
+Ntchisi,2018,3,4538
+Ntchisi,2018,4,4609
+Phalombe,2011,1,5526
+Phalombe,2011,2,5998
+Phalombe,2011,3,6315
+Phalombe,2011,4,8514
+Phalombe,2012,1,9950
+Phalombe,2012,2,11370
+Phalombe,2012,3,12730
+Phalombe,2012,4,13718
+Phalombe,2013,1,14896
+Phalombe,2013,2,16193
+Phalombe,2013,3,17357
+Phalombe,2013,4,18025
+Phalombe,2014,1,18812
+Phalombe,2014,2,20195
+Phalombe,2014,3,20186
+Phalombe,2014,4,20574
+Phalombe,2015,1,21402
+Phalombe,2015,2,22395
+Phalombe,2015,3,23226
+Phalombe,2015,4,23545
+Phalombe,2016,1,23422
+Phalombe,2016,2,24590
+Phalombe,2016,3,26014
+Phalombe,2016,4,26319
+Phalombe,2017,1,27202
+Phalombe,2017,2,29311
+Phalombe,2017,3,29877
+Phalombe,2017,4,29548
+Phalombe,2018,1,31263
+Phalombe,2018,2,31895
+Phalombe,2018,3,32476
+Phalombe,2018,4,32938
+Rumphi,2011,1,3914
+Rumphi,2011,2,4043
+Rumphi,2011,3,4151
+Rumphi,2011,4,4555
+Rumphi,2012,1,4496
+Rumphi,2012,2,4332
+Rumphi,2012,3,4582
+Rumphi,2012,4,4795
+Rumphi,2013,1,4966
+Rumphi,2013,2,4914
+Rumphi,2013,3,5048
+Rumphi,2013,4,5370
+Rumphi,2014,1,5441
+Rumphi,2014,2,5508
+Rumphi,2014,3,5684
+Rumphi,2014,4,5989
+Rumphi,2015,1,6009
+Rumphi,2015,2,6078
+Rumphi,2015,3,6177
+Rumphi,2015,4,6711
+Rumphi,2016,1,6693
+Rumphi,2016,2,6658
+Rumphi,2016,3,6951
+Rumphi,2016,4,7095
+Rumphi,2017,1,7349
+Rumphi,2017,2,7284
+Rumphi,2017,3,7144
+Rumphi,2017,4,7426
+Rumphi,2018,1,7765
+Rumphi,2018,2,7693
+Rumphi,2018,3,7894
+Rumphi,2018,4,8316
+Salima,2011,1,5189
+Salima,2011,2,5486
+Salima,2011,3,5915
+Salima,2011,4,6495
+Salima,2012,1,7092
+Salima,2012,2,7501
+Salima,2012,3,7796
+Salima,2012,4,7966
+Salima,2013,1,8241
+Salima,2013,2,8600
+Salima,2013,3,8869
+Salima,2013,4,9030
+Salima,2014,1,9289
+Salima,2014,2,9577
+Salima,2014,3,10264
+Salima,2014,4,10628
+Salima,2015,1,10958
+Salima,2015,2,11233
+Salima,2015,3,11708
+Salima,2015,4,11902
+Salima,2016,1,12228
+Salima,2016,2,12663
+Salima,2016,3,13375
+Salima,2016,4,13718
+Salima,2017,1,14348
+Salima,2017,2,14512
+Salima,2017,3,14892
+Salima,2017,4,15341
+Salima,2018,1,15727
+Salima,2018,2,15913
+Salima,2018,3,16052
+Salima,2018,4,16275
+Thyolo,2011,1,19611
+Thyolo,2011,2,20215
+Thyolo,2011,3,21678
+Thyolo,2011,4,24515
+Thyolo,2012,1,27170
+Thyolo,2012,2,28978
+Thyolo,2012,3,31161
+Thyolo,2012,4,31592
+Thyolo,2013,1,32764
+Thyolo,2013,2,34208
+Thyolo,2013,3,35691
+Thyolo,2013,4,36814
+Thyolo,2014,1,37977
+Thyolo,2014,2,38545
+Thyolo,2014,3,39571
+Thyolo,2014,4,40049
+Thyolo,2015,1,40724
+Thyolo,2015,2,41483
+Thyolo,2015,3,42003
+Thyolo,2015,4,43240
+Thyolo,2016,1,43668
+Thyolo,2016,2,44867
+Thyolo,2016,3,46663
+Thyolo,2016,4,48159
+Thyolo,2017,1,47948
+Thyolo,2017,2,49698
+Thyolo,2017,3,50176
+Thyolo,2017,4,51000
+Thyolo,2018,1,51822
+Thyolo,2018,2,52373
+Thyolo,2018,3,53330
+Thyolo,2018,4,53887
+Zomba,2011,1,4101
+Zomba,2011,2,4261
+Zomba,2011,3,9037
+Zomba,2011,4,12566
+Zomba,2012,1,13942
+Zomba,2012,2,15020
+Zomba,2012,3,16145
+Zomba,2012,4,17047
+Zomba,2013,1,18011
+Zomba,2013,2,19091
+Zomba,2013,3,20173
+Zomba,2013,4,20639
+Zomba,2014,1,21511
+Zomba,2014,2,22891
+Zomba,2014,3,24034
+Zomba,2014,4,25042
+Zomba,2015,1,25973
+Zomba,2015,2,26796
+Zomba,2015,3,27144
+Zomba,2015,4,27979
+Zomba,2016,1,28670
+Zomba,2016,2,30094
+Zomba,2016,3,31570
+Zomba,2016,4,32590
+Zomba,2017,1,33838
+Zomba,2017,2,34750
+Zomba,2017,3,35642
+Zomba,2017,4,36653
+Zomba,2018,1,37939
+Zomba,2018,2,38058
+Zomba,2018,3,38947
+Zomba,2018,4,39000
+Zomba City,2011,1,12132
+Zomba City,2011,2,13007
+Zomba City,2011,3,13033
+Zomba City,2011,4,10094
+Zomba City,2012,1,9813
+Zomba City,2012,2,9809
+Zomba City,2012,3,9828
+Zomba City,2012,4,9881
+Zomba City,2013,1,10139
+Zomba City,2013,2,10252
+Zomba City,2013,3,10458
+Zomba City,2013,4,10488
+Zomba City,2014,1,10690
+Zomba City,2014,2,10984
+Zomba City,2014,3,11543
+Zomba City,2014,4,11677
+Zomba City,2015,1,11824
+Zomba City,2015,2,12013
+Zomba City,2015,3,12196
+Zomba City,2015,4,12188
+Zomba City,2016,1,12327
+Zomba City,2016,2,12422
+Zomba City,2016,3,12942
+Zomba City,2016,4,13069
+Zomba City,2017,1,13088
+Zomba City,2017,2,13252
+Zomba City,2017,3,13446
+Zomba City,2017,4,13865
+Zomba City,2018,1,13997
+Zomba City,2018,2,14092
+Zomba City,2018,3,14109
+Zomba City,2018,4,14033

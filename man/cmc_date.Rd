@@ -15,6 +15,10 @@ an integer vector of CMC dates
 \description{
 Converts a date to DHS Century Month Code (CMC).
 }
+\details{
+CMC date is defined as the number of months since 1900:
+\deqn{cmc = (year - 1900) * 12 + momth}
+}
 \examples{
 cmc_date(Sys.Date())
 cmc_date(as.Date("1987-02-11", format = "\%Y-\%m-\%d"))
