@@ -19,9 +19,7 @@
 #' level for efficiency, but it is equivalent to initialising the recursion
 #' at the highest level of the hierarchy.
 #'
-#' If `area_scope` is not null, a column `area_scope` is returned indicating the
-#' area in which each returned area is nesteed. `area_scope` can accept a vector
-#' of `area_id`s and they do not have to be
+#' `area_scope` can accept a vector of `area_id`s and they do not have to be
 #' at the same level. If the level of an area in `area_scope` is higher than
 #' area_level `level`, nothing is returned. An error is thrown if any `area_scope`
 #' are not recognized.
@@ -44,26 +42,20 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
   stopifnot(level %in% areas$area_level)
   
   if(is.null(area_scope))
-    return(dplyr::filter(areas, area_level == level) %>%
-           dplyr::select(area_id, area_level))
+    return(dplyr::filter(areas, area_level == level))
 
   stopifnot(all(area_scope %in% areas$area_id))
 
-  area_pinched <- dplyr::filter(areas, area_level <= level) %>%
-    dplyr::select(area_id, area_level, parent_area_id, area_sort_order)
-
-  val <- dplyr::filter(area_pinched, area_id %in% area_scope) %>%
-    dplyr::mutate(area_scope = area_id) 
+  area_pinched <- dplyr::filter(areas, area_level <= level)
+  val <- dplyr::filter(area_pinched, area_id %in% area_scope)
 
   while(any(val$area_level < level)) {
     done <- dplyr::filter(val, area_level == level)
-    new <- dplyr::filter(val, area_level < level) %>%
-      dplyr::select(area_scope, parent_area_id = area_id) %>%
-      dplyr::inner_join(area_pinched, by = "parent_area_id")
-
+    new <- dplyr::semi_join(area_pinched,
+                            dplyr::filter(val, area_level < level),
+                            by = c("parent_area_id" = "area_id"))
     val <- dplyr::bind_rows(done, new)
   }
 
-  dplyr::arrange(val, area_scope, area_sort_order) %>%
-    dplyr::select(area_scope, area_id, area_level)
+  dplyr::arrange(val, area_sort_order)
 }
