@@ -31,6 +31,9 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(Z_a);
   DATA_MATRIX(Z_as);
 
+  DATA_SPARSE_MATRIX(Z_ancrho_x);
+  DATA_SPARSE_MATRIX(Z_ancalpha_x);
+
   // Precision matrix for ICAR area model
   DATA_MATRIX(Q_x);
   
@@ -42,12 +45,23 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_artcov);
   DATA_VECTOR(x_artcov);
 
+  DATA_SPARSE_MATRIX(A_anc_prev);
+  DATA_VECTOR(n_anc_prev);
+  DATA_VECTOR(x_anc_prev);
+  
+  DATA_SPARSE_MATRIX(A_anc_artcov);
+  DATA_VECTOR(n_anc_artcov);
+  DATA_VECTOR(x_anc_artcov);
+
   DATA_SPARSE_MATRIX(A_out);
   
   // ** Parameters **
 
   PARAMETER_VECTOR(beta_rho);
   PARAMETER_VECTOR(beta_alpha);
+
+  PARAMETER(beta_anc_rho);
+  PARAMETER(beta_anc_alpha);
 
   PARAMETER_VECTOR(us_rho_x);
   PARAMETER_VECTOR(ui_rho_x);
@@ -57,6 +71,9 @@ Type objective_function<Type>::operator() ()
   
   PARAMETER_VECTOR(u_rho_a);
   PARAMETER_VECTOR(u_rho_as);
+
+  PARAMETER_VECTOR(ui_anc_rho_x);
+  PARAMETER_VECTOR(ui_anc_alpha_x);
 
   PARAMETER(logit_phi_rho_x);
   PARAMETER(log_sigma_rho_x);
@@ -70,6 +87,9 @@ Type objective_function<Type>::operator() ()
   PARAMETER(logit_phi_rho_as);
   PARAMETER(log_sigma_rho_as);
 
+  PARAMETER(log_sigma_ancrho_x);
+  PARAMETER(log_sigma_ancalpha_x);
+
 
   Type phi_rho_a(invlogit(logit_phi_rho_a));
   Type sigma_rho_a(exp(log_sigma_rho_a));
@@ -82,6 +102,9 @@ Type objective_function<Type>::operator() ()
 
   Type phi_rho_xs(invlogit(logit_phi_rho_xs));
   Type sigma_rho_xs(exp(log_sigma_rho_xs));
+
+  Type sigma_ancrho_x(exp(log_sigma_ancrho_x));
+  Type sigma_ancalpha_x(exp(log_sigma_ancalpha_x));
 
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
   vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
@@ -126,6 +149,9 @@ Type objective_function<Type>::operator() ()
   val += AR1(phi_rho_a)(u_rho_a);
   val += AR1(phi_rho_as)(u_rho_as);
 
+  val -= sum(dnorm(ui_anc_rho_x, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_anc_alpha_x, 0.0, 1.0, true));
+  
   // likelihood    
 
   for(int i = 0; i < idx_prev.size(); i++)
@@ -135,10 +161,25 @@ Type objective_function<Type>::operator() ()
     val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
 
   vector<Type> rho(invlogit(mu_rho));
+  vector<Type> alpha(invlogit(mu_alpha));
+
+  vector<Type> ones(rho.size());
+  ones.fill(1.0);
+  
+  vector<Type> mu_anc_rho(A_anc_prev * rho / (A_anc_prev * ones));
+  mu_anc_rho = logit(mu_anc_rho) + beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
+  val -= sum(dbinom_robust(x_anc_prev, n_anc_prev, mu_anc_rho, true));
+
+  vector<Type> mu_anc_alpha(A_anc_artcov * vector<Type>(rho * alpha) / (A_anc_artcov * rho));
+  mu_anc_alpha = logit(mu_anc_alpha) + beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
+  val -= sum(dbinom_robust(x_anc_artcov, n_anc_artcov, mu_anc_alpha, true));
+
+
+  
+		       
   vector<Type> plhiv_out(A_out * vector<Type>(rho * population));
   vector<Type> rho_out(plhiv_out / (A_out * population));
 
-  vector<Type> alpha(invlogit(mu_alpha));
   vector<Type> artnum_out(A_out * vector<Type>(alpha * rho * population));
   vector<Type> alpha_out(artnum_out / plhiv_out);
 
@@ -147,6 +188,9 @@ Type objective_function<Type>::operator() ()
   REPORT(sigma_rho_a);
   REPORT(rho_out);
   REPORT(plhiv_out);
+
+  REPORT(mu_anc_rho);
+  REPORT(mu_anc_alpha)
 
   REPORT(alpha_out);
   REPORT(artnum_out);

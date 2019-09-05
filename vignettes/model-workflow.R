@@ -40,9 +40,65 @@ pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", p
 survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"))
 
 #' Programme data
+
+art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
+art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
+anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
+
+
+#' Programme data
 #'
 
 #' Spectrum PJNZ
+
+pjnz <- "~/Data/Spectrum files/2019 final shared/SSA/Malawi_2019_v22_MM_BF.PJNZ"
+
+totpop <- specio::read_total_pop(pjnz, TRUE)
+hivpop <- specio::read_hiv_pop(pjnz, TRUE)
+artpop <- specio::read_art_pop(pjnz, TRUE)
+
+demp <- eppasm::read_specdp_demog_param(pjnz)
+specres <- eppasm::read_hivproj_output(pjnz)
+
+infections <- specres$infections %>%
+  as.data.frame.table(responseName = "infections") %>%
+  type.convert
+
+asfr <- demp$asfr %>%
+  as.data.frame.table(responseName = "asfr") %>%
+  type.convert
+
+spec <- totpop %>%
+  left_join(hivpop) %>%
+  left_join(artpop) %>%
+  rename(
+    totpop = total_pop,
+    hivpop = hiv_pop,
+    artpop = art_pop
+  ) %>%
+  left_join(
+    {.} %>%
+    mutate(susc_previous_year = totpop - hivpop,
+           year = year + 1) %>%
+    select(age:year, susc_previous_year)
+  ) %>%
+  left_join(infections) %>%
+  left_join(asfr %>% mutate(sex = "female")) %>%
+  mutate(births = if_else(is.na(asfr), 0, asfr * totpop)) %>%
+  mutate(age_group_label = cut(age, c(0:16*5, Inf), c(paste0(0:15*5, "-", 0:15*5+4), "80+"), TRUE, FALSE)) %>%
+  group_by(year, sex, age_group_label) %>%
+  summarise_at(vars(totpop, hivpop, artpop, susc_previous_year, infections, births), sum) %>%
+  mutate(prevalence = hivpop / totpop,
+         art_coverage = artpop / hivpop,
+         incidence = infections / susc_previous_year,
+         asfr = births / totpop) %>%
+  left_join(
+    get_age_groups() %>% select(age_group_id, age_group_label)
+  ) %>%
+  mutate(quarter_id = convert_quarter_id(2, year))
+  
+spec %>% filter(year == 2016) %>% print(n = Inf)
+
 
 #' # 2. Choose inputs
 
@@ -53,12 +109,16 @@ iso3 <- "MWI"
 level <- 4
 surveys <- c("MWI2016PHIA", "MWI2015DHS")
 
+artnum_quarter_id <- convert_quarter_id(1, 2016)
+anc_quarter_id <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
+
 
 #' # 3. Review input data
 #'
 #' ### Survey prevalence chlorpleth
 #'
 #' PHIA prevalence by Zone (level 2)
+
 
 ar <- get_area_collection(areas, level = 2)
 
@@ -173,6 +233,8 @@ area_id_model <- sh$area_id
 sex_model <- c("male", "female")
 age_group_id_model <- 1:17
 
+#' ### NEED TO MOVE area_idf CONSTRUCTION TO sh <-
+#' 
 construct_df_model <- function(area_id_model, sex_model, age_group_id_model) {
 
   tidyr::crossing(
@@ -192,6 +254,23 @@ df_model <- df_model %>%
     interpolate_population_agesex(pop_agesex, 2016.25) %>%
     select(-source, -iso3)
   )
+
+#' Add Spectrum estimates
+
+df_model <- df_model %>%
+  left_join(
+    spec %>%
+    filter(year == 2016) %>%
+    select(
+      sex,
+      age_group_id,
+      spec_prev = prevalence,
+      spec_incid = incidence,
+      spec_artcov = art_coverage,
+      asfr
+    )
+  )
+
 
 #' Data frame for outputs
 #' 
@@ -292,6 +371,64 @@ artcov_dat <- df_model %>%
          x = n * est) %>%
   select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
 
+
+anc_dat <-
+  anc_testing %>%
+  filter(quarter_id %in% anc_quarter_id) %>%
+  group_by(area_id) %>%
+  summarise_at(vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
+  mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
+  transmute(
+    area_id,
+    anc_idx = row_number(),
+    anc_prev_x = ancrt_totpos,
+    anc_prev_n = ancrt_hiv_status,
+    anc_artcov_x = ancrt_already_art,
+    anc_artcov_n = ancrt_totpos
+  ) %>%
+  left_join(distinct(df_model, area_id, area_idf))
+  
+
+A_anc_prev <- anc_dat %>%
+  inner_join(
+    df_model %>%
+    transmute(
+      area_id,
+      idx, 
+      births = asfr * population
+    ) %>%
+    filter(births > 0)
+  ) %>%
+  {
+    Matrix::spMatrix(nrow(anc_dat),
+                   nrow(df_model),
+                   .$anc_idx,
+                   .$idx,
+                   .$births)
+  }
+
+A_anc_artcov <- A_anc_prev
+
+
+
+art_number %>%
+  filter(quarter_id == artnum_quarter_id) %>%
+  mutate(artnum_idx = row_number())
+
+
+artnum_dat <- df %>%
+  select(iso3:idx) %>%
+  inner_join(
+    artnum %>%
+    filter(iso3 == !!iso3) %>%
+    filter(period_end == period_art) %>%
+    mutate(art15pl = `female 15+` + `male 15+`)
+  ) %>%
+  arrange(idx)
+
+
+
+
 #' 5. Fit model
 #'
 #' Note: useful for how to include multiple TMB models: https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package
@@ -307,6 +444,8 @@ dtmb <- list(
   Z_xs = model.matrix(~0 + area_idf, df) * (df$sex == "female"),
   Z_as = model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
   Z_xa = model.matrix(~0 + area_idf:age_group_idf, df),
+  Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
+  Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
   Q_x = Q_scaled,
   A_out = A_out,
   idx_prev = prev_dat$idx - 1L,
@@ -314,17 +453,29 @@ dtmb <- list(
   n_prev = prev_dat$n,
   idx_artcov = artcov_dat$idx - 1L,
   x_artcov = artcov_dat$x,
-  n_artcov = artcov_dat$n)
+  n_artcov = artcov_dat$n,
+  A_anc_prev = A_anc_prev,
+  x_anc_prev = anc_dat$anc_prev_x,
+  n_anc_prev = anc_dat$anc_prev_n,
+  A_anc_artcov = A_anc_artcov,
+  x_anc_artcov = anc_dat$anc_artcov_x,
+  n_anc_artcov = anc_dat$anc_artcov_n
+)
+
 
 ptmb <- list(
   beta_rho = numeric(ncol(dtmb$X_rho)),
   beta_alpha = numeric(ncol(dtmb$X_alpha)),
+  beta_anc_rho = numeric(1),
+  beta_anc_alpha = numeric(1),
   us_rho_x = numeric(ncol(dtmb$Z_x)),
   ui_rho_x = numeric(ncol(dtmb$Z_x)),
   us_rho_xs = numeric(ncol(dtmb$Z_xs)),
   ui_rho_xs = numeric(ncol(dtmb$Z_xs)),
   u_rho_a = numeric(ncol(dtmb$Z_a)),
   u_rho_as = numeric(ncol(dtmb$Z_a)),
+  ui_anc_rho_x = numeric(ncol(dtmb$Z_x)),
+  ui_anc_alpha_x = numeric(ncol(dtmb$Z_x)),
   logit_phi_rho_a = 0,
   log_sigma_rho_a = 0,
   logit_phi_rho_as = 0,
@@ -332,13 +483,16 @@ ptmb <- list(
   logit_phi_rho_x = 0,
   log_sigma_rho_x = 0,
   logit_phi_rho_xs = 0,
-  log_sigma_rho_xs = 0
+  log_sigma_rho_xs = 0,
+  log_sigma_ancrho_x = 0,
+  log_sigma_ancalpha_x = 0
 )
 
 obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "naomi", silent = TRUE,
                       random = c("us_rho_x", "ui_rho_x",
                                  "us_rho_xs", "ui_rho_xs",
-                                 "u_rho_a", "u_rho_as"))
+                                 "u_rho_a", "u_rho_as",
+                                 "ui_anc_rho_x", "ui_anc_alpha_x"))
 
                  
 obj$control = list(trace = 4, maxit = 1000, REPORT = 1)
@@ -357,11 +511,16 @@ system.time(
 
 ## summary(ftmb)
 
+rep <- obj$report()
+
 df_out <- df_out %>%
   left_join(areas %>% select(area_id, area_level), by = "area_id")
 
-df_out$prev <- ftmb$value[names(ftmb$value) == "rho_out"]
-df_out$artcov <- ftmb$value[names(ftmb$value) == "alpha_out"]
+## df_out$prev <- ftmb$value[names(ftmb$value) == "rho_out"]
+## df_out$artcov <- ftmb$value[names(ftmb$value) == "alpha_out"]
+
+df_out$prev <- rep$rho_out
+df_out$artcov <- rep$alpha_out
 
 #' 15-49 prevalence by district
 df_out %>%
