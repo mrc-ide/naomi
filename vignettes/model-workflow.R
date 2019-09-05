@@ -197,6 +197,7 @@ dat %>%
 #' ### Areas
 #' 
 #' Define areas
+
 sh <- mwi_areas %>%
   filter(iso3 == !!iso3, area_level == level) %>%
   select(-parent_area_id) %>%
@@ -439,14 +440,14 @@ dtmb <- list(
   population = df$population,
   X_rho = model.matrix(~as.integer(sex == "female"), df),
   X_alpha = model.matrix(~as.integer(sex == "female"), df),
-  Z_x = model.matrix(~0 + area_idf, df),
-  Z_a = model.matrix(~0 + age_group_idf, df),
-  Z_xs = model.matrix(~0 + area_idf, df) * (df$sex == "female"),
-  Z_as = model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
-  Z_xa = model.matrix(~0 + area_idf:age_group_idf, df),
+  Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
+  Z_a = Matrix::sparse.model.matrix(~0 + age_group_idf, df),
+  Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
+  Z_as = Matrix::sparse.model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
+  Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
   Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
   Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
-  Q_x = Q_scaled,
+  Q_x = as(Q_scaled, "dgCMatrix"),
   A_out = A_out,
   idx_prev = prev_dat$idx - 1L,
   x_prev = prev_dat$x,
@@ -525,11 +526,18 @@ obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "tmb", silent = TRUE
                  
 obj$control = list(trace = 4, maxit = 1000, REPORT = 1)
 
-nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
+system.time(
+  nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
+)
 
 system.time(
   ftmb <- TMB::sdreport(obj, bias.correct = FALSE,
                         bias.correct.control = list(sd = FALSE))
+)
+
+system.time(
+  ftmb_unbiased <- TMB::sdreport(obj, bias.correct = TRUE,
+                        bias.correct.control = list(sd = TRUE))
 )
 
 

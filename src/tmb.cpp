@@ -26,16 +26,16 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(X_rho);
   DATA_MATRIX(X_alpha);
 
-  DATA_MATRIX(Z_x);
-  DATA_MATRIX(Z_xs);
-  DATA_MATRIX(Z_a);
-  DATA_MATRIX(Z_as);
+  DATA_SPARSE_MATRIX(Z_x);
+  DATA_SPARSE_MATRIX(Z_xs);
+  DATA_SPARSE_MATRIX(Z_a);
+  DATA_SPARSE_MATRIX(Z_as);
 
   DATA_SPARSE_MATRIX(Z_ancrho_x);
   DATA_SPARSE_MATRIX(Z_ancalpha_x);
 
   // Precision matrix for ICAR area model
-  DATA_MATRIX(Q_x);
+  DATA_SPARSE_MATRIX(Q_x);
   
   DATA_IVECTOR(idx_prev);
   DATA_VECTOR(n_prev);
