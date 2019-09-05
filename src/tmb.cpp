@@ -53,6 +53,9 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_anc_artcov);
   DATA_VECTOR(x_anc_artcov);
 
+  DATA_SPARSE_MATRIX(A_artnum);
+  DATA_VECTOR(x_artnum);
+    
   DATA_SPARSE_MATRIX(A_out);
   
   // ** Parameters **
@@ -257,13 +260,22 @@ Type objective_function<Type>::operator() ()
   mu_anc_alpha = logit(mu_anc_alpha) + beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
   val -= sum(dbinom_robust(x_anc_artcov, n_anc_artcov, mu_anc_alpha, true));
 
+  vector<Type> prop_art(rho * alpha);
+  vector<Type> artnum(population * prop_art);
+  vector<Type> A_j(A_artnum * artnum);
+  vector<Type> sd_A_j(A_artnum * vector<Type>(artnum * (1 - prop_art)));
+  for(int i = 0; i < sd_A_j.size(); i++)
+    sd_A_j[i] = sqrt(sd_A_j[i]);
 
-  
+  val -= sum(dnorm(x_artnum, A_j, sd_A_j, true));
+
+  REPORT(A_j);
+  REPORT(sd_A_j);
 		       
   vector<Type> plhiv_out(A_out * vector<Type>(rho * population));
   vector<Type> rho_out(plhiv_out / (A_out * population));
 
-  vector<Type> artnum_out(A_out * vector<Type>(alpha * rho * population));
+  vector<Type> artnum_out(A_out * artnum);
   vector<Type> alpha_out(artnum_out / plhiv_out);
 
   REPORT(mu_rho);

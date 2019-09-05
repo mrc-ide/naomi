@@ -412,21 +412,28 @@ A_anc_artcov <- A_anc_prev
 
 
 
-art_number %>%
+artnum_dat <- art_number %>%
   filter(quarter_id == artnum_quarter_id) %>%
   mutate(artnum_idx = row_number())
 
-
-artnum_dat <- df %>%
-  select(iso3:idx) %>%
+A_artnum <- artnum_dat %>%
   inner_join(
-    artnum %>%
-    filter(iso3 == !!iso3) %>%
-    filter(period_end == period_art) %>%
-    mutate(art15pl = `female 15+` + `male 15+`)
+    df_model %>%
+    transmute(
+      area_id,
+      age_group_id = if_else(age_group_id %in% 1:3, 24L, 20L),  ## HARD CODED
+      sex = "both",                                             ## HARD CODED
+      idx,
+      value = 1
+    )
   ) %>%
-  arrange(idx)
-
+  {
+    Matrix::spMatrix(nrow(artnum_dat),
+                     nrow(df_model),
+                     .$artnum_idx,
+                     .$idx,
+                     .$value)
+  }
 
 
 
@@ -460,7 +467,9 @@ dtmb <- list(
   n_anc_prev = anc_dat$anc_prev_n,
   A_anc_artcov = A_anc_artcov,
   x_anc_artcov = anc_dat$anc_artcov_x,
-  n_anc_artcov = anc_dat$anc_artcov_n
+  n_anc_artcov = anc_dat$anc_artcov_n,
+  A_artnum = A_artnum,
+  x_artnum = artnum_dat$current_art
 )
 
 
@@ -589,9 +598,12 @@ df_out %>%
   filter(area_level == 1,
          sex != "both",
          age_group_id %in% 1:17) %>%
-  ggplot(aes(age_group_id, prev, fill = sex)) +
+  left_join(get_age_groups()) %>%
+  mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
+  ggplot(aes(age_group, prev, fill = sex)) +
   geom_col(position = "dodge") +
-  facet_wrap(~area_id)
+  facet_wrap(~area_id) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 
 #' 15-64 ART coveragte
