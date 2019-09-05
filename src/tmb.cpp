@@ -63,6 +63,7 @@ Type objective_function<Type>::operator() ()
   PARAMETER(beta_anc_rho);
   PARAMETER(beta_anc_alpha);
 
+  // HIV prevalence latent field
   PARAMETER_VECTOR(us_rho_x);
   PARAMETER_VECTOR(ui_rho_x);
 
@@ -72,8 +73,25 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(u_rho_a);
   PARAMETER_VECTOR(u_rho_as);
 
+
+  // ART coverage latent field
+  PARAMETER_VECTOR(us_alpha_x);
+  PARAMETER_VECTOR(ui_alpha_x);
+
+  PARAMETER_VECTOR(us_alpha_xs);
+  PARAMETER_VECTOR(ui_alpha_xs);
+  
+  PARAMETER_VECTOR(u_alpha_a);
+  PARAMETER_VECTOR(u_alpha_as);
+
+
+  // ANC testing latent field
   PARAMETER_VECTOR(ui_anc_rho_x);
   PARAMETER_VECTOR(ui_anc_alpha_x);
+
+  // * Hyperparameters *
+
+  // HIV prevalence
 
   PARAMETER(logit_phi_rho_x);
   PARAMETER(log_sigma_rho_x);
@@ -86,6 +104,24 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER(logit_phi_rho_as);
   PARAMETER(log_sigma_rho_as);
+
+  
+  // ART coverage
+  
+  PARAMETER(logit_phi_alpha_x);
+  PARAMETER(log_sigma_alpha_x);
+
+  PARAMETER(logit_phi_alpha_xs);
+  PARAMETER(log_sigma_alpha_xs);
+
+  PARAMETER(logit_phi_alpha_a);
+  PARAMETER(log_sigma_alpha_a);
+
+  PARAMETER(logit_phi_alpha_as);
+  PARAMETER(log_sigma_alpha_as);
+
+  
+  // Hyperparameters: ANC testing
 
   PARAMETER(log_sigma_ancrho_x);
   PARAMETER(log_sigma_ancalpha_x);
@@ -103,20 +139,38 @@ Type objective_function<Type>::operator() ()
   Type phi_rho_xs(invlogit(logit_phi_rho_xs));
   Type sigma_rho_xs(exp(log_sigma_rho_xs));
 
+
+  Type phi_alpha_a(invlogit(logit_phi_alpha_a));
+  Type sigma_alpha_a(exp(log_sigma_alpha_a));
+
+  Type phi_alpha_as(invlogit(logit_phi_alpha_as));
+  Type sigma_alpha_as(exp(log_sigma_alpha_as));
+
+  Type phi_alpha_x(invlogit(logit_phi_alpha_x));
+  Type sigma_alpha_x(exp(log_sigma_alpha_x));
+
+  Type phi_alpha_xs(invlogit(logit_phi_alpha_xs));
+  Type sigma_alpha_xs(exp(log_sigma_alpha_xs));
+
+  
   Type sigma_ancrho_x(exp(log_sigma_ancrho_x));
   Type sigma_ancalpha_x(exp(log_sigma_ancalpha_x));
 
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
-  vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
-		      
-    
+  vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);      
   vector<Type> mu_rho(X_rho * beta_rho +
 		      Z_x * u_rho_x * sigma_rho_x +
 		      Z_xs * u_rho_xs * sigma_rho_xs +
 		      Z_a * u_rho_a * sigma_rho_a +
 		      Z_as * u_rho_as * sigma_rho_as);
 
-  vector<Type> mu_alpha(X_alpha * beta_alpha);
+  vector<Type> u_alpha_x(sqrt(phi_alpha_x) * us_alpha_x + sqrt(1 - phi_alpha_x) * ui_alpha_x);
+  vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);      
+  vector<Type> mu_alpha(X_alpha * beta_alpha +
+  			Z_x * u_alpha_x * sigma_alpha_x +
+  			Z_xs * u_alpha_xs * sigma_alpha_xs +
+  			Z_a * u_alpha_a * sigma_alpha_a +
+  			Z_as * u_alpha_as * sigma_alpha_as);
 
     
   // initialize nll
@@ -149,6 +203,35 @@ Type objective_function<Type>::operator() ()
   val += AR1(phi_rho_a)(u_rho_a);
   val += AR1(phi_rho_as)(u_rho_as);
 
+  // ART coverage model
+
+  val -= dnorm(exp(log_sigma_alpha_x), Type(0.0), Type(2.5), true) + log_sigma_alpha_x;
+    
+  val -= log(phi_alpha_x) +  log(1 - phi_alpha_x);  // change of variables: logit_phi_x -> phi_x
+  val -= dbeta(phi_alpha_x, Type(0.5), Type(0.5), true);
+
+  val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
+  val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
+
+  val -= sum(dnorm(ui_alpha_x, 0.0, 1.0, true));
+
+
+  val -= dnorm(exp(log_sigma_alpha_xs), Type(0.0), Type(2.5), true) + log_sigma_alpha_xs;
+    
+  val -= log(phi_alpha_xs) +  log(1 - phi_alpha_xs);  // change of variables: logit_phi_xs -> phi_xs
+  val -= dbeta(phi_alpha_xs, Type(0.5), Type(0.5), true);
+
+  val -= Type(-0.5) * (us_alpha_xs * (Q_x * us_alpha_xs)).sum();
+  val -= dnorm(sum(us_alpha_xs), Type(0.0), Type(0.001) * us_alpha_xs.size(), true); // soft sum-to-zero constraint
+
+  val -= sum(dnorm(ui_alpha_xs, 0.0, 1.0, true));
+
+  
+  val += AR1(phi_alpha_a)(u_alpha_a);
+  val += AR1(phi_alpha_as)(u_alpha_as);
+
+  // ANC testing model
+  
   val -= sum(dnorm(ui_anc_rho_x, 0.0, 1.0, true));
   val -= sum(dnorm(ui_anc_alpha_x, 0.0, 1.0, true));
   

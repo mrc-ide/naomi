@@ -476,6 +476,14 @@ ptmb <- list(
   u_rho_as = numeric(ncol(dtmb$Z_a)),
   ui_anc_rho_x = numeric(ncol(dtmb$Z_x)),
   ui_anc_alpha_x = numeric(ncol(dtmb$Z_x)),
+  ##
+  us_alpha_x = numeric(ncol(dtmb$Z_x)),
+  ui_alpha_x = numeric(ncol(dtmb$Z_x)),
+  us_alpha_xs = numeric(ncol(dtmb$Z_xs)),
+  ui_alpha_xs = numeric(ncol(dtmb$Z_xs)),
+  u_alpha_a = numeric(ncol(dtmb$Z_a)),
+  u_alpha_as = numeric(ncol(dtmb$Z_a)),
+  ##
   logit_phi_rho_a = 0,
   log_sigma_rho_a = 0,
   logit_phi_rho_as = 0,
@@ -484,14 +492,34 @@ ptmb <- list(
   log_sigma_rho_x = 0,
   logit_phi_rho_xs = 0,
   log_sigma_rho_xs = 0,
+  ##
+  logit_phi_alpha_a = 0,
+  log_sigma_alpha_a = 0,
+  logit_phi_alpha_as = 0,
+  log_sigma_alpha_as = 0,
+  logit_phi_alpha_x = 0,
+  log_sigma_alpha_x = 0,
+  logit_phi_alpha_xs = 0,
+  log_sigma_alpha_xs = 0,
+  ##
   log_sigma_ancrho_x = 0,
   log_sigma_ancalpha_x = 0
 )
 
-obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "naomi", silent = TRUE,
+
+TMB::compile(here::here("src/tmb.cpp"))
+dyn.load(TMB::dynlib(here::here("src/tmb")))
+        
+
+obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "tmb", silent = TRUE,
                       random = c("us_rho_x", "ui_rho_x",
                                  "us_rho_xs", "ui_rho_xs",
                                  "u_rho_a", "u_rho_as",
+                                 ##
+                                 "us_alpha_x", "ui_alpha_x",
+                                 "us_alpha_xs", "ui_alpha_xs",
+                                 "u_alpha_a", "u_alpha_as",
+                                 ##
                                  "ui_anc_rho_x", "ui_anc_alpha_x"))
 
                  
