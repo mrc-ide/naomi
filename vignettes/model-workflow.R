@@ -1,3 +1,5 @@
+
+
 #' ---
 #' title: "Naomi Model Workflow Example"
 #' output: rmarkdown::html_vignette
@@ -210,7 +212,7 @@ boundaries <- area_geom %>%
 #' Neighbor list
 nb <- sh %>%
   left_join(boundaries) %>%
-  st_as_sf() %>%
+  sf::st_as_sf() %>%
   as("Spatial") %>%
   spdep::poly2nb() %>%
   `names<-`(sh$area_idx)
@@ -232,7 +234,7 @@ Q_scaled  <- as.matrix(INLA::inla.scale.model(Q, constr = list(A = matrix(1, 1, 
 
 area_id_model <- sh$area_id
 sex_model <- c("male", "female")
-age_group_id_model <- 1:17
+age_group_id_model <- 4:17
 
 #' ### NEED TO MOVE area_idf CONSTRUCTION TO sh <-
 #' 
@@ -345,6 +347,42 @@ A_out <- Matrix::spMatrix(nrow(df_out),
                           df_join$idx,
                           df_join$x)
 
+#' # ART attendance model
+
+adj_ij <- (M + diag(nrow(M))) %>%
+  as("dgCMatrix") %>%
+  Matrix::summary() %>%
+    dplyr::mutate(x = NULL,
+                  istar = as.integer(i == j),
+                  jstar = as.integer(i == j)) %>%
+    dplyr::arrange(i, istar, j, jstar) %>%
+    dplyr::mutate(idx_ij = dplyr::row_number(),
+                  idf_ij = as_factor(idx_ij))
+
+n_nb <- colSums(M)
+
+gamma_or_prior <- adj_ij %>%
+  filter(istar == 0) %>%
+  left_join(data.frame(i = seq_along(n_nb), n_nb)) %>%
+  left_join(
+    data.frame(
+      n_nb = 1:9,
+      gamma_or_mu = c(-3.29855798975623, -4.0643930585428, -4.53271592818956, -4.86910480099925, -5.13133396982624, 
+                      -5.34605339546364, -5.52745113789738, -5.68479564118418, -5.8234349424758),
+      gamma_or_sigma = c(0.950818503595947, 1.04135785601697, 1.12665887287997, 1.19273171464978, 1.24570962739274,
+                         1.28959773294666, 1.32675564121864, 1.35902556091841, 1.3873644912272)
+    )
+  )
+    
+
+df_art_attend <- df_model %>%
+  left_join(
+    sh %>% select(area_id, area_idx)
+  ) %>%
+  left_join(adj_ij, by = c("area_idx" = "i"))
+
+Xart_gamma <- Matrix::sparse.model.matrix(~0 + idf_ij, df_art_attend)
+Xart_idx <- Matrix::sparse.model.matrix(~0 + as_factor(idx), df_art_attend)
 
 ##   get_area_collection(areas, level = level, area_scope = areas$area_id) %>%
   
@@ -413,25 +451,30 @@ A_anc_artcov <- A_anc_prev
 
 
 artnum_dat <- art_number %>%
-  filter(quarter_id == artnum_quarter_id) %>%
+  filter(quarter_id == artnum_quarter_id,
+         if(!0 %in% age_group_id_model) age_group_id == 20 else  TRUE) %>%
   mutate(artnum_idx = row_number())
 
 A_artnum <- artnum_dat %>%
+  left_join(
+    sh %>% select(area_id, area_idx)
+  ) %>%
   inner_join(
-    df_model %>%
+    df_art_attend %>%
     transmute(
-      area_id,
+      j,
       age_group_id = if_else(age_group_id %in% 1:3, 24L, 20L),  ## HARD CODED
       sex = "both",                                             ## HARD CODED
-      idx,
+      art_attend_idx = row_number(),
       value = 1
-    )
+    ),
+    by = c("area_idx" = "j", "sex" = "sex", "age_group_id" = "age_group_id")
   ) %>%
   {
     Matrix::spMatrix(nrow(artnum_dat),
-                     nrow(df_model),
+                     nrow(df_art_attend),
                      .$artnum_idx,
-                     .$idx,
+                     .$art_attend_idx,
                      .$value)
   }
 
@@ -451,10 +494,19 @@ dtmb <- list(
   Z_a = Matrix::sparse.model.matrix(~0 + age_group_idf, df),
   Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
   Z_as = Matrix::sparse.model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
-  Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
+  ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
   Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
   Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
+  ##
   Q_x = as(Q_scaled, "dgCMatrix"),
+  n_nb = n_nb,
+  adj_i = adj_ij$i - 1L,
+  adj_j = adj_ij$j - 1L,
+  gamma_or_mu = gamma_or_prior$gamma_or_mu,
+  gamma_or_sigma = gamma_or_prior$gamma_or_sigma,
+  Xart_idx = Xart_idx,
+  Xart_gamma = Xart_gamma,
+  ##
   A_out = A_out,
   idx_prev = prev_dat$idx - 1L,
   x_prev = prev_dat$x,
@@ -468,6 +520,7 @@ dtmb <- list(
   A_anc_artcov = A_anc_artcov,
   x_anc_artcov = anc_dat$anc_artcov_x,
   n_anc_artcov = anc_dat$anc_artcov_n,
+  ##
   A_artnum = A_artnum,
   x_artnum = artnum_dat$current_art
 )
@@ -513,15 +566,15 @@ ptmb <- list(
   log_sigma_alpha_xs = 0,
   ##
   log_sigma_ancrho_x = 0,
-  log_sigma_ancalpha_x = 0
+  log_sigma_ancalpha_x = 0,
+  ##
+  oddsratio_gamma_art = numeric(sum(dtmb$n_nb))
 )
 
+## TMB::compile(here::here("src/tmb.cpp"))
+## dyn.load(TMB::dynlib(here::here("src/tmb")))
 
-TMB::compile(here::here("src/tmb.cpp"))
-dyn.load(TMB::dynlib(here::here("src/tmb")))
-        
-
-obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "tmb", silent = TRUE,
+obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "naomi", silent = TRUE,
                       random = c("us_rho_x", "ui_rho_x",
                                  "us_rho_xs", "ui_rho_xs",
                                  "u_rho_a", "u_rho_as",
@@ -530,13 +583,15 @@ obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "tmb", silent = TRUE
                                  "us_alpha_xs", "ui_alpha_xs",
                                  "u_alpha_a", "u_alpha_as",
                                  ##
-                                 "ui_anc_rho_x", "ui_anc_alpha_x"))
+                                 "ui_anc_rho_x", "ui_anc_alpha_x",
+                                 ## 
+                                 "oddsratio_gamma_art"))
 
                  
 obj$control = list(trace = 4, maxit = 1000, REPORT = 1)
 
 system.time(
-  nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
+  f <- nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
 )
 
 system.time(
@@ -546,11 +601,14 @@ system.time(
 
 system.time(
   ftmb_unbiased <- TMB::sdreport(obj, bias.correct = TRUE,
-                        bias.correct.control = list(sd = TRUE))
+                        bias.correct.control = list(sd = FALSE))
 )
 
 
-
+#' ## TMB stan
+rstan_options(auto_write = TRUE)
+options(mc.cores = 4)
+f_tmbstan <- tmbstan::tmbstan(obj, laplace = FALSE, iter = 500)
 
 #' 6. Plot some model outputs
 
@@ -619,34 +677,12 @@ df_out %>%
   facet_wrap(~sex)
 
 
-
-out %>%
-  filter(sex == "female") %>%
-  left_join(boundaries) %>%
-  st_as_sf() %>%
-  ggplot(aes(fill = prev)) +
-  geom_sf() +
-  viridis::scale_fill_viridis(labels = scales::percent_format()) +
-  th_map() +
-  facet_wrap(~age_group_id, nrow = 1)
-
-out %>%
-  left_join(boundaries) %>%
-  st_as_sf() %>%
-  ggplot(aes(fill = prev)) +
-  geom_sf() +
-  viridis::scale_fill_viridis(labels = scales::percent_format()) +
-  th_map() +
-  facet_grid(sex~age_group_id)
+adj_ij %>%
+  left_join(sh %>% select(area_name_i = area_name, i = area_idx)) %>%
+  left_join(sh %>% select(area_name_j = area_name, j = area_idx)) %>%
+  mutate(gamma = rep$gamma_art)
 
 
-out %>%
-  filter(area_id == "MWI.1.1.1.1") %>%
-  ggplot(aes(age_group_id, prev, fill = sex)) +
-  geom_col(position = "dodge")
-
-
-survey_hiv_indicators %>%
   filter(age_group_id %in% 1:17, sex == "male",
          survey_id %in% surveys,
          indicator == "prev") %>%

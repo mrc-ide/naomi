@@ -55,7 +55,15 @@ Type objective_function<Type>::operator() ()
 
   DATA_SPARSE_MATRIX(A_artnum);
   DATA_VECTOR(x_artnum);
-    
+
+  DATA_IVECTOR(n_nb);
+  DATA_IVECTOR(adj_i);
+  DATA_IVECTOR(adj_j);
+  DATA_VECTOR(gamma_or_mu);
+  DATA_VECTOR(gamma_or_sigma);
+  DATA_SPARSE_MATRIX(Xart_idx);
+  DATA_SPARSE_MATRIX(Xart_gamma);
+  
   DATA_SPARSE_MATRIX(A_out);
   
   // ** Parameters **
@@ -128,6 +136,11 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER(log_sigma_ancrho_x);
   PARAMETER(log_sigma_ancalpha_x);
+
+
+  // ART attendance parameters
+  
+  PARAMETER_VECTOR(oddsratio_gamma_art);
 
 
   Type phi_rho_a(invlogit(logit_phi_rho_a));
@@ -237,6 +250,12 @@ Type objective_function<Type>::operator() ()
   
   val -= sum(dnorm(ui_anc_rho_x, 0.0, 1.0, true));
   val -= sum(dnorm(ui_anc_alpha_x, 0.0, 1.0, true));
+
+
+  // ART attendance model priors
+
+  val -= sum(dnorm(oddsratio_gamma_art, gamma_or_mu, gamma_or_sigma, true));
+
   
   // likelihood    
 
@@ -260,12 +279,30 @@ Type objective_function<Type>::operator() ()
   mu_anc_alpha = logit(mu_anc_alpha) + beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
   val -= sum(dbinom_robust(x_anc_artcov, n_anc_artcov, mu_anc_alpha, true));
 
+
+  // * ART attendance model *
+
+  vector<Type> gamma_art(adj_i.size());
+  int cum_nb = 0; 
+  for(int i = 0; i < n_nb.size(); i++){
+    Type cum_exp_or_gamma_i = 1.0;
+    for(int j = 0; j < n_nb[i]; j++)
+      cum_exp_or_gamma_i += gamma_art[cum_nb + i + j] = exp(oddsratio_gamma_art[cum_nb + j]);
+    for(int j = 0; j < n_nb[i]; j++)
+      gamma_art[cum_nb + i + j] /= cum_exp_or_gamma_i;
+    gamma_art[cum_nb + i + n_nb[i]] = 1.0 / cum_exp_or_gamma_i;
+    cum_nb += n_nb[i];
+  }
+
   vector<Type> prop_art(rho * alpha);
   vector<Type> artnum(population * prop_art);
-  vector<Type> A_j(A_artnum * artnum);
-  vector<Type> sd_A_j(A_artnum * vector<Type>(artnum * (1 - prop_art)));
-  for(int i = 0; i < sd_A_j.size(); i++)
-    sd_A_j[i] = sqrt(sd_A_j[i]);
+
+  vector<Type> prop_art_ij((Xart_idx * prop_art) * (Xart_gamma * gamma_art));
+  vector<Type> population_ij(Xart_idx * population);
+  
+  vector<Type> A_j(A_artnum * vector<Type>(population_ij * prop_art_ij));
+  vector<Type> sd_A_j(A_artnum * vector<Type>(population_ij * prop_art_ij * (1 - prop_art_ij)));
+  sd_A_j = sd_A_j.sqrt();
 
   val -= sum(dnorm(x_artnum, A_j, sd_A_j, true));
 
@@ -279,6 +316,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> alpha_out(artnum_out / plhiv_out);
 
   REPORT(mu_rho);
+  REPORT(mu_alpha);
   REPORT(phi_rho_a);
   REPORT(sigma_rho_a);
   REPORT(rho_out);
@@ -289,6 +327,7 @@ Type objective_function<Type>::operator() ()
 
   REPORT(alpha_out);
   REPORT(artnum_out);
+  REPORT(gamma_art);
 
   ADREPORT(plhiv_out);
   ADREPORT(rho_out);
