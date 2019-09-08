@@ -503,7 +503,7 @@ dtmb <- list(
   adj_i = adj_ij$i - 1L,
   adj_j = adj_ij$j - 1L,
   gamma_or_mu = gamma_or_prior$gamma_or_mu,
-  gamma_or_sigma = 1.2 * gamma_or_prior$gamma_or_sigma,
+  gamma_or_sigma = 2.0 * gamma_or_prior$gamma_or_sigma,
   Xart_idx = Xart_idx,
   Xart_gamma = Xart_gamma,
   ##

@@ -72,13 +72,20 @@ Type objective_function<Type>::operator() ()
   // ** Parameters **
 
   // fixed effects
-  
+  // diffuse N(0.0, 5.0) prior distribution
+
   PARAMETER_VECTOR(beta_rho);
+  val -= dnorm(beta_rho, 0.0, 5.0, true).sum();
+    
   PARAMETER_VECTOR(beta_alpha);
-
+  val -= dnorm(beta_alpha, 0.0, 5.0, true).sum();
+  
   PARAMETER(beta_anc_rho);
+  val -= dnorm(beta_anc_rho, Type(0.0), Type(5.0), true);
+    
   PARAMETER(beta_anc_alpha);
-
+  val -= dnorm(beta_anc_alpha, Type(0.0), Type(5.0), true);
+  
   
   // * HIV prevalence model *
     
@@ -103,17 +110,20 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(sigma_rho_xs, Type(0.0), Type(2.5), true) + log_sigma_rho_xs;
 
   PARAMETER(logit_phi_rho_a);
-  Type phi_rho_a(invlogit(logit_phi_rho_a));
+  val -= dnorm(logit_phi_rho_a, Type(0.0), Type(2.582), true);  // INLA default
+  Type phi_rho_a(2.0 * invlogit(logit_phi_rho_a) - 1.0);
     
   PARAMETER(log_sigma_rho_a);
-  Type sigma_rho_a(exp(log_sigma_rho_a));  
+  Type sigma_rho_a(exp(log_sigma_rho_a));
+  val -= dnorm(sigma_rho_a, Type(0.0), Type(2.5), true) + log_sigma_rho_a;
 
   PARAMETER(logit_phi_rho_as);
-  Type phi_rho_as(invlogit(logit_phi_rho_as));
+  val -= dnorm(logit_phi_rho_as, Type(0.0), Type(2.582), true);  // INLA default
+  Type phi_rho_as(2.0 * invlogit(logit_phi_rho_as) - 1.0);
 
   PARAMETER(log_sigma_rho_as);
   Type sigma_rho_as(exp(log_sigma_rho_as));
-
+  val -= dnorm(sigma_rho_as, Type(0.0), Type(2.5), true) + log_sigma_rho_as;
 
   // latent effects
 
@@ -161,16 +171,20 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(exp(log_sigma_alpha_xs), Type(0.0), Type(2.5), true) + log_sigma_alpha_xs;
 
   PARAMETER(logit_phi_alpha_a);
-  Type phi_alpha_a(invlogit(logit_phi_alpha_a));
-  
+  val -= dnorm(logit_phi_alpha_a, Type(0.0), Type(2.582), true);  // INLA default
+  Type phi_alpha_a(2.0 * invlogit(logit_phi_alpha_a) - 1.0);
+    
   PARAMETER(log_sigma_alpha_a);
   Type sigma_alpha_a(exp(log_sigma_alpha_a));
+  val -= dnorm(sigma_alpha_a, Type(0.0), Type(2.5), true) + log_sigma_alpha_a;
 
   PARAMETER(logit_phi_alpha_as);
-  Type phi_alpha_as(invlogit(logit_phi_alpha_as));
-    
+  val -= dnorm(logit_phi_alpha_as, Type(0.0), Type(2.582), true);  // INLA default
+  Type phi_alpha_as(2.0 * invlogit(logit_phi_alpha_as) - 1.0);
+
   PARAMETER(log_sigma_alpha_as);
   Type sigma_alpha_as(exp(log_sigma_alpha_as));
+  val -= dnorm(sigma_alpha_as, Type(0.0), Type(2.5), true) + log_sigma_alpha_as;
 
   PARAMETER_VECTOR(us_alpha_x);
   val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
@@ -197,9 +211,11 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER(log_sigma_ancrho_x);
   Type sigma_ancrho_x(exp(log_sigma_ancrho_x));
+  val -= dnorm(sigma_ancrho_x, Type(0.0), Type(2.5), true) + log_sigma_ancrho_x;
 
   PARAMETER(log_sigma_ancalpha_x);
   Type sigma_ancalpha_x(exp(log_sigma_ancalpha_x));
+  val -= dnorm(sigma_ancalpha_x, Type(0.0), Type(2.5), true) + log_sigma_ancalpha_x;
   
   PARAMETER_VECTOR(ui_anc_rho_x);
   val -= sum(dnorm(ui_anc_rho_x, 0.0, 1.0, true));
