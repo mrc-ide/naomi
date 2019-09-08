@@ -503,7 +503,7 @@ dtmb <- list(
   adj_i = adj_ij$i - 1L,
   adj_j = adj_ij$j - 1L,
   gamma_or_mu = gamma_or_prior$gamma_or_mu,
-  gamma_or_sigma = gamma_or_prior$gamma_or_sigma,
+  gamma_or_sigma = 1.2 * gamma_or_prior$gamma_or_sigma,
   Xart_idx = Xart_idx,
   Xart_gamma = Xart_gamma,
   ##
@@ -568,7 +568,7 @@ ptmb <- list(
   log_sigma_ancrho_x = 0,
   log_sigma_ancalpha_x = 0,
   ##
-  oddsratio_gamma_art = numeric(sum(dtmb$n_nb))
+  oddsratio_gamma_art_raw = numeric(sum(dtmb$n_nb))
 )
 
 ## TMB::compile(here::here("src/tmb.cpp"))
@@ -585,11 +585,9 @@ obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "naomi", silent = TR
                                  ##
                                  "ui_anc_rho_x", "ui_anc_alpha_x",
                                  ## 
-                                 "oddsratio_gamma_art"))
+                                 "oddsratio_gamma_art_raw"))
 
                  
-obj$control = list(trace = 4, maxit = 1000, REPORT = 1)
-
 system.time(
   f <- nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
 )
@@ -680,12 +678,7 @@ df_out %>%
 adj_ij %>%
   left_join(sh %>% select(area_name_i = area_name, i = area_idx)) %>%
   left_join(sh %>% select(area_name_j = area_name, j = area_idx)) %>%
-  mutate(gamma = rep$gamma_art)
+  mutate(gamma = rep$gamma_art) %>%
+  filter(area_name_i == "Dedza")
 
 
-  filter(age_group_id %in% 1:17, sex == "male",
-         survey_id %in% surveys,
-         indicator == "prev") %>%
-  filter(area_id == "MWI.3") %>%
-  ggplot(aes(age_group_id, est, fill = survey_id)) +
-  geom_col(position = "dodge")
