@@ -63,94 +63,168 @@ check_boundaries(mwi_wide, mwi_simple)
 pryr::object_size(mwi_wide %>% select)
 pryr::object_size(mwi_simple %>% select)
 
+#' Rename area ID if area is the same at multiple levels
+
+mwi_simple <- mwi_simple %>%
+  mutate_if(is.factor, as.character) %>%
+  mutate(id2 = if_else(name2 == name1, id1, id2),
+         id3 = if_else(name3 == name2, id2, id3),
+         id4 = if_else(name4 == name3, id3, id4))
+
+
 mwi <- gather_areas(mwi_simple) %>%
   mutate(area_sort_order = row_number(),
          area_level = as.integer(area_level))
 
-areas <- mwi %>% as.data.frame %>% select(-geometry)
+area_hierarchy <- mwi %>%
+  as.data.frame %>%
+  select(-area_name, -geometry)
 
-area_boundaries <- mwi %>%
-  select(iso3, area_id) %>%
+areas <- mwi %>%
+  select(-area_level, -parent_area_id, -area_sort_order) %>%
+  group_by(iso3, area_id) %>%
+  filter(row_number() == 1) %>%
   left_join(
-    {.} %>% st_point_on_surface() %>%
-      rename(center = geometry) %>%
-      as.data.frame
+    st_point_on_surface(.) %>%
+    rename(center = geometry) %>%
+    as.data.frame()
   ) %>%
-  mutate(center_adj = center)
+  ungroup
 
-area_geom <- area_boundaries %>%
-  rename(boundary = geometry) %>%
-  as_tibble() %>%
-  gather(type, geometry, boundary, center, center_adj) %>%
-  st_as_sf %>%
+area_boundaries <- areas %>%
+  select(iso3, area_id, geometry) %>%
+  st_as_sf() %>%
   `st_crs<-`(4326)
 
-area_meta <- areas %>%
+area_centers <- areas %>%
+  as.data.frame %>%
+  select(iso3, area_id, geometry = center) %>%
+  st_as_sf() %>%
+  `st_crs<-`(4326)
+
+area_names <- areas %>%
+  as.data.frame() %>%
+  select(-geometry, -center)
+
+area_meta <- area_hierarchy %>%
   count(iso3, area_level, name = "n_areas") %>%
   arrange(area_level) %>%
   mutate(area_level_label = area_level %>% recode(`0` = "Country", `1` = "Region", `2` = "Zone", `3` = "District", `4` = "District + Metro"),
          display = TRUE,
-         analysis_level = if_else(area_level == 4, TRUE, FALSE),
          spectrum_level = if_else(area_level == 0, TRUE, FALSE),
          epp_level = if_else(area_level == 1, TRUE, FALSE),
          epp_urban_rural = FALSE,
-         pepfar_psnu_level = if_else(area_level == 2, TRUE, FALSE))
+         naomi_level = if_else(area_level == 4, TRUE, FALSE),
+         pepfar_psnu_level = if_else(area_level == 3, TRUE, FALSE))
 
 #' Plot illustrating joining of area datasets
 
-areas %>%
-  left_join(area_boundaries) %>%
-  st_as_sf %>%
+area_hierarchy %>%
+  left_join(area_names) %>%
   left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
   mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
   ggplot() +
-  geom_sf() +
-  geom_sf_label(aes(label = area_sort_order), data = . %>% st_set_geometry("center_adj")) +
+  geom_sf(data = . %>% left_join(area_boundaries) %>% st_as_sf()) +
+  geom_sf_label(aes(label = area_sort_order),
+                data = . %>% left_join(area_centers) %>% st_as_sf()) +
   facet_wrap(~area_level_label, nrow = 1) +
   th_map()
-
-#' Using areas_geom
-
-areas %>%
-  left_join(area_geom) %>%
-  st_as_sf %>%
-  left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
-  mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
-  ggplot() +
-  geom_sf(data = . %>% filter(type == "boundary")) +
-  geom_sf_label(aes(label = area_sort_order), data = . %>% filter(type == "center_adj")) +
-  facet_wrap(~area_level_label, nrow = 1) +
-  th_map()
-
 
 #' ## Save datasets
 
 mwi_area_meta <- area_meta
-mwi_areas <- areas
-mwi_area_geom <- area_geom
+mwi_area_names <- area_names
+mwi_area_hierarchy <- area_hierarchy
+mwi_area_boundaries <- area_boundaries
+mwi_area_centers <- area_centers
 
-usethis::use_data(mwi_areas, mwi_area_meta, mwi_area_geom)
+usethis::use_data(
+           mwi_area_meta,
+           mwi_area_names,
+           mwi_area_hierarchy,
+           mwi_area_boundaries,
+           mwi_area_centers
+         )
 
 dir.create(here("inst/extdata/areas"))
 
-write_csv(areas, here("inst/extdata/areas/areas.csv"))
-write_csv(area_meta, here("inst/extdata/areas/area_meta.csv"))
+write_csv(area_meta, here("inst/extdata/areas/area_meta.csv"), na = "")
+write_csv(area_names, here("inst/extdata/areas/area_names.csv"), na = "")
+write_csv(area_hierarchy, here("inst/extdata/areas/area_hierarchy.csv"), na = "")
 
-st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"), delete_dsn = TRUE)
-st_write(area_boundaries %>% as_tibble %>% select(-geometry, -center),
-         here("inst/extdata/areas/area_centers.geojson"), delete_dsn = TRUE)
-st_write(area_geom, here("inst/extdata/areas/area_geom.geojson"), delete_dsn = TRUE)
-
-#' Save as zipped ESRI shape
-
-tmp <- file.path(tempdir(), "area_boundaries")
-dir.create(tmp)
-st_write(area_boundaries, file.path(tmp, "area_boundaries.shp"), delete_layer = TRUE)
-withr::with_dir(tmp, zip(here("inst/extdata/areas/area_boundaries.zip"), list.files()))
+st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"))
+st_write(area_centers, here("inst/extdata/areas/area_centers.geojson"))
 
 
-#' Note: ESRI shp doesn't like mixed point/polygon long format
-tmp <- file.path(tempdir(), "area_geom")
-dir.create(tmp)
-st_write(area_geom, file.path(tmp, "area_geom.shp"), delete_layer = TRUE)
-withr::with_dir(tmp, zip(here("inst/extdata/areas/area_geom.zip"), list.files()))
+#' ## Table schema
+
+library(tableschema.r)
+
+schema_area_meta <- system.file("extdata/areas/area_meta.csv", package = "naomi") %>%
+  tableschema.r::infer()
+
+schema_area_hierarchy <- system.file("extdata/areas/area_hierarchy.csv", package = "naomi") %>%
+  tableschema.r::infer() %>%
+  jsonlite::toJSON(pretty = TRUE)
+
+schema_area_names <- system.file("extdata/areas/area_names.csv", package = "naomi") %>%
+  tableschema.r::infer() %>%
+  jsonlite::toJSON(pretty = TRUE)
+
+schema_area_names <- system.file("extdata/areas/area_hierarchy.csv", package = "naomi") %>%
+  tableschema.::infer() %>%
+  jsonlite::toJSON(pretty = TRUE)
+
+#' I cant figure out how to get tableschema.r to parse geojson...
+
+schema_area_booundaries <-
+  '{
+    "fields": [
+      {
+        "name": ["iso3"],
+        "type": ["string"],
+        "format": ["default"]
+      },
+      {
+        "name": ["area_id"],
+        "type": ["string"],
+      "format": ["default"]
+    },
+    {
+      "name": ["geometry"],
+      "type": ["geojson"],
+      "format": ["default"]
+    }
+  ],
+  "missingValues": [
+    [""]
+  ]
+}
+'
+
+schema_area_centers <-
+'{
+    "fields": [
+      {
+        "name": ["iso3"],
+        "type": ["string"],
+        "format": ["default"]
+      },
+      {
+        "name": ["area_id"],
+        "type": ["string"],
+      "format": ["default"]
+    },
+    {
+      "name": ["geometry"],
+      "type": ["geopoint"],
+      "format": ["default"]
+    }
+  ],
+  "missingValues": [
+    [""]
+  ]
+}
+'
+
+#' Still working on this...
