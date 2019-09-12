@@ -26,36 +26,28 @@ library(sf)
 ```{r load_datasets, message = FALSE}
 #' areas
 area_meta <- naomi::mwi_area_meta
-areas <- naomi::mwi_areas
-area_geom <- naomi::mwi_area_geom
-area_boundaries <-
-  left_join(
-    st_read(system.file("extdata/areas/area_boundaries.geojson", package = "naomi")) %>%
-    as.data.frame
-   ,
-    st_read(system.file("extdata/areas/area_centers.geojson", package = "naomi")) %>%
-    as.data.frame %>%
-    rename(center_adj = geometry)
-)
+area_hierarchy <- naomi::mwi_area_hierarchy
+area_names <- naomi::mwi_area_names %>% select(-iso3)
+area_boundaries <- naomi::mwi_area_boundaries %>% select(-iso3)
+area_centers <- naomi::mwi_area_centers %>% select(-iso3)
 
 #' population
 population_agesex <- naomi::mwi_population_agesex
 age_group_meta <- get_age_groups()
 
-fertility <- data.frame(iso3 = character(0),
-                        area_id = character(0),
+fertility <- data.frame(area_id = character(0),
                         time = numeric(0),
                         age_group_id = integer(0),
                         asfr = numeric(0))
 
 #' surveys
-survey_meta <- naomi::mwi_survey_meta
-survey_regions <- naomi::mwi_survey_regions
+survey_meta <- naomi::mwi_survey_meta %>% select(-iso3)
+survey_regions <- naomi::mwi_survey_regions %>% select(-iso3)
 survey_clusters <- naomi::mwi_survey_clusters
 survey_individuals <- naomi::mwi_survey_individuals
 survey_biomarker <- naomi::mwi_survey_biomarker
 
-survey_hiv_indicators <- naomi::mwi_survey_hiv_indicators
+survey_hiv_indicators <- naomi::mwi_survey_hiv_indicators %>% select(-iso3)
 ```
 
 ```{r create_model, include = FALSE}
@@ -76,45 +68,55 @@ dm_add_colors(
   )
 )
 
-dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
+dm <- dm_from_data_frames(area_meta,
+                          area_names,
+                          area_hierarchy, 
+                          area_boundaries,
+                          area_centers,
                           age_group_meta, population_agesex, fertility,
                           survey_meta, survey_regions, survey_clusters,
                           survey_individuals, survey_biomarker,
                           survey_hiv_indicators) %>%
+ dm_set_display(
+    list(
+      areas = c("area_meta", "area_names", "area_hierarchy", "area_boundaries", "area_centers"),
+      population = c("age_group_meta", "population_agesex", "fertility"),
+      accent4 = c("survey_meta", "survey_hiv_indicators"),
+      accent6 = c("age_group_meta")
+    )
+  ) %>%
   dm_set_key("area_meta", c("iso3", "area_level")) %>%
-  dm_set_key("areas", c("iso3", "area_id")) %>%
-  dm_set_key("area_geom", c("iso3", "area_id", "type")) %>%
-  dm_set_key("area_boundaries", c("iso3", "area_id")) %>%
+  dm_set_key("area_hierarchy", c("area_id", "area_level")) %>%
+  dm_set_key("area_names", "area_id") %>%
+  dm_set_key("area_boundaries", "area_id") %>%
+  dm_set_key("area_centers", "area_id") %>%
   dm_set_key("age_group_meta", "age_group_id") %>%
-  dm_set_key("population_agesex", c("iso3", "area_id", "time", "sex", "age_group_id", "source")) %>%
-  dm_set_key("fertility", c("iso3", "area_id", "time", "age_group_id")) %>%
+  dm_set_key("population_agesex", c("area_id", "time", "sex", "age_group_id", "source")) %>%
+  dm_set_key("fertility", c("area_id", "time", "age_group_id")) %>%
   dm_set_key("survey_meta", "survey_id") %>%
   dm_set_key("survey_regions", c("survey_id", "survey_region_id")) %>%
   dm_set_key("survey_clusters", c("survey_id", "cluster_id")) %>%
   dm_set_key("survey_individuals", c("survey_id", "cluster_id", "household", "line")) %>%
   dm_set_key("survey_biomarker", c("survey_id", "cluster_id", "household", "line")) %>%
-  dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "iso3", "area_id", "sex", "age_group_id")) %>%
+  dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "area_id", "sex", "age_group_id")) %>%
   dm_add_references(
-    areas$iso3 == area_meta$iso3,
-    areas$area_level == area_meta$area_level,
-    area_geom$iso3 == areas$iso3,
-    area_geom$area_id == areas$area_id,
-    area_boundaries$iso3 == areas$iso3,
-    area_boundaries$area_id == areas$area_id,
-    population_agesex$iso3 == areas$iso3,
-    population_agesex$area_id == areas$area_id,
+    area_hierarchy$area_level == area_meta$area_level,
+    area_hierarchy$area_id == area_names$area_id,
+    area_hierarchy$parent_area_id == area_names$area_id,
+    area_boundaries$area_id == area_names$area_id,
+    area_centers$area_id == area_names$area_id,
+    population_agesex$area_id == area_names$area_id,
     population_agesex$age_group_id == age_group_meta$age_group_id,
-    fertility$iso3 == population_agesex$iso3,
     fertility$area_id == population_agesex$area_id,
     fertility$time == population_agesex$time,
     fertility$age_group_id == population_agesex$age_group_id,
     population_agesex$age_group_id == age_group_meta$age_group_id,
     survey_regions$survey_id == survey_meta$survey_id,
-    survey_regions$survey_region_area_id == areas$area_id,
+    survey_regions$survey_region_area_id == area_names$area_id,
     survey_clusters$survey_id == survey_meta$survey_id,
     survey_clusters$survey_id == survey_regions$survey_id,
     survey_clusters$survey_region_id == survey_regions$survey_region_id,
-    survey_clusters$geoloc_area_id == areas$area_id,
+    survey_clusters$geoloc_area_id == area_names$area_id,
     survey_individuals$survey_id == survey_clusters$survey_id,
     survey_individuals$cluster_id == survey_clusters$cluster_id,
     survey_biomarker$survey_id == survey_individuals$survey_id,
@@ -122,28 +124,18 @@ dm <- dm_from_data_frames(area_meta, areas, area_geom, area_boundaries,
     survey_biomarker$household == survey_individuals$household,
     survey_biomarker$line == survey_individuals$line,
     survey_hiv_indicators$survey_id == survey_meta$survey_id,
-    survey_hiv_indicators$iso3 == areas$iso3,
-    survey_hiv_indicators$area_id == areas$area_id,
+    survey_hiv_indicators$area_id == area_names$area_id,
     survey_hiv_indicators$age_group_id == age_group_meta$age_group_id
   ) %>%
   dm_set_segment(
     list(
-      "Areas" = c("area_meta", "areas", "area_geom", "area_boundaries"),
+      "Areas" = c("area_meta", "area_names", "area_hierarchy", "area_boundaries", "area_centers"),
       "Population" = c("age_group_meta", "population_agesex", "fertility"),
       "Survey" = c("survey_meta", "survey_regions", "survey_clusters",
                    "survey_individuals", "survey_biomarker",
                    "survey_hiv_indicators")
     )
-  ) %>%
-  dm_set_display(
-    list(
-      areas = c("area_meta", "areas", "area_geom"),
-      population = c("age_group_meta", "population_agesex", "fertility"),
-      accent4 = c("survey_meta", "survey_hiv_indicators"),
-      accent6 = c("area_boundaries", "age_group_meta")
-    )
   )
-
 
 ```
 
@@ -159,44 +151,47 @@ dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type")) %>%
   dm_render_graph()
 ```
 
-## Data model questions
+## Areas data
 
 #### Spatial geometry format
 
-The area dataset may need to retain both area boundaries as polygons and area centroids, or adjusted centroids for plotting area level labels or statistics. Centroids are easily calculated from the polygons, however in some cases, points used for plotting or labelling may need to be manually adjusted to avoid overlap, and desire to save these adjusted point references. For example, Zomba and Zomba City in Malawi. 
+* `area_meta` contains metadata describing the levels in the area hierarchy for the country.
+* `area_names` contains the names for each area ID.
+* `area_hierarchy` contains the nested hierarchy of area IDs at each level described in `area_meta`.
+* `area_boundaries` defines the spatial boundaries for each area in `area_names`.
+* `area_centers` defines a center point for each area in `area_names`. This table is optional.
 
-The data model above shows two approaches for capturing these data, only one of which should be retained:
+Note that areas may appear at multiple levels in the hierarchy.  For example, in Malawi, 'Northern Region' (`r filter(area_names, area_name == "Northern")$area_id`) is both a region (level 1) and a health zone (level 2), 
+while the Central and Southern regions area subdivided into smaller zones.
 
-* The `area_boundaries` table is in 'wide' format with a column for boundary polygons, a column for centroid points, and column for adjusted centroid points. This wide format is accepted (under protest) by R's `sf` class, but GeoJSON and ESRI .shp formats do not admit multiple geometries, so polygon and point would need to be saved as separate layers in those formats.
-* The `area_geom` table is in 'long format' with an additional `type` columns specifying _boundary_, _centroid_, or _adjusted_centroid_. The type is filtered to select the desired geometry for a given plotting purpose. GeoJSON format accepts both polygon and point data in a single collection, however ESRI .shp format does not, requiring each type to be saved as a separate layer.
+```{r}
+area_hierarchy %>%
+  filter(area_level %in% 0:2) %>%
+  left_join(area_names) 
+```
+Similarly level 3 reflects the 28 districts of Malawi while level 4 are the 28 districts with the four cities further stratified. For the 24 districts which do not contain cities, level 3 and level 4 are equivalent and hence have only one `area_id`. Consequently, there are `r nrow(area_hierarchy)` records in the location hierarchy, but only `r nrow(area_names)` distinct areas in the `area_names`, `area_boundaries`, and `area_centers` table.
 
-Our current preference is to favour the `area_geom` 'long' format and save geometry data as GeoJSON format as default. It may also be that there are suitable algorithmic solutions to offsetting points for plotting such that saving adjusted centroid points is not needed.
+The `area_centers` table is optional. The R package will construct these centers from the boundaries if they are not provided.  They might wish to be provided for two reasons: 
 
-The figures below show example code for generating a typical plot with either boundary data format.
+1. Offset centers might be provided to avoid overlapping centroids when creating bubble plots (e.g. Zomba and Zomba City).
+2. In future modelling we might rely on population-weighted centroids to estimate average distances between areas.
+
+From a conceptual perspective, `area_names`, `area_boundaries`, and `area_centers` each have one record per `area_id` and it would make sense for them to be in a single table schema. TableSchema permits fields with type `geojson` and `geopoint` which would enable this, but `geojson` file format would would not accept multiple geometry columns. `area_names` and `area_boundaries` could be collaposed into a single schema stored as GeoJSON with the area name attached as an attribute.
+
+The figures below show example code for generating a typical plot from the Areas schemas:
+
 
 ```{r, fig.width=7, fig.height=4, warning=FALSE}
 #' Using area_geom
-areas %>%
-  left_join(area_boundaries) %>%
-  st_as_sf %>%
+area_hierarchy %>%
+  left_join(area_names) %>%
   left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
   mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
   ggplot() +
-  geom_sf() +
-  geom_sf_label(aes(label = area_sort_order), data = . %>% st_set_geometry("center_adj")) +
+  geom_sf(data = . %>% left_join(area_boundaries) %>% st_as_sf()) +
+  geom_sf_label(aes(label = area_sort_order),
+                data = . %>% left_join(area_centers) %>% st_as_sf(),
+                alpha = 0.3) +
   facet_wrap(~area_level_label, nrow = 1) +
-  th_map() +
-  ggtitle("Using area_boundaries")
-
-#' Using area_geom
-areas %>%
-  left_join(area_geom) %>%
-  st_as_sf %>%
-  left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
-  mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
-  ggplot() +
-  geom_sf(data = . %>% filter(type == "boundary")) +
-  geom_sf_label(aes(label = area_sort_order), data = . %>% filter(type == "center_adj")) +
-  facet_wrap(~area_level_label, nrow = 1) +
-  th_map() +
-  ggtitle("Using area_geom")
+  th_map()
+```

@@ -1,3 +1,99 @@
+#' Create an Areas Object
+#'
+#' Constructs and validates an areas object as an S3 class.
+#'
+#' @param meta Data frame of area metadata.
+#' @param hierarchy Data frame of area metadata.
+#' @param names Data frame of names for each area
+#' @param boundaries an `sf` object with boundary geometry for each area_id
+#' @param centers an `sf` object with desired center for each area_id (optional).
+#' @return An object of class `naomi_areas`
+#'
+#' @examples
+#' data(mwi_area_meta)
+#' data(mwi_area_hierarchy)
+#' data(mwi_area_names)
+#' data(mwi_area_boundaries)
+#'
+#' areas <- create_areas(mwi_area_meta, mwi_area_hierarchy, mwi_area_names, mwi_area_boundaries)
+#' areas
+#'
+#' @export
+create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
+
+  if(is.null(centers))
+    centers <- suppressWarnings(sf::st_point_on_surface(boundaries))
+
+  meta <- meta[order(meta$area_level), ]
+
+  ## Validate areas
+
+  ## - Area levels are unique and sequential
+  stopifnot(!duplicated(meta$area_level))
+  stopifnot(diff(meta$area_level) == 1)
+
+  ## - Number of areas by level is non-decreasing
+  stopifnot(diff(meta$n_areas) >= 0)
+
+  ## - Levels in hierarchy are consistent with metadata
+  stopifnot(meta$area_level %in% hierarchy$area_level)
+  stopifnot(hierarchy$area_level %in% meta$area_level)
+
+  ## - Number of areas at each level matches expected
+  ## - Levels are consistent between metadata and hierarchy
+  stopifnot(
+    hierarchy %>%
+      dplyr::count(area_level) %>%
+      dplyr::full_join(meta, by = "area_level") %>%
+      dplyr::mutate(n_match = n == n_areas) %>%
+      .$n_match
+  )
+
+  ## - Area IDs only appear once in each level of hierarchy
+  stopifnot(
+    hierarchy %>%
+      dplyr::group_by(area_level) %>%
+      dplyr::mutate(unique_area_id = !duplicated(area_id)) %>%
+      .$unique_area_id
+  )
+
+  ## - All areas have a name, boundary, and center
+  stopifnot(hierarchy$area_id %in% names$area_id)
+  stopifnot(hierarchy$area_id %in% boundaries$area_id)
+  stopifnot(hierarchy$area_id %in% centers$area_id)
+
+  stopifnot(!is.na(names$area_name))
+  stopifnot(!is.na(boundaries$geometry))
+  stopifnot(!is.na(centers$geometry))
+
+  ## TO DO: boundary checks
+  ## - Areas are nested
+  ## - Each level covers level above
+  ## - Centroids like within geometry (maybe)
+  ## ** These checks might be time consuming, perhaps make them optional
+
+  tree <- mwi_area_hierarchy %>%
+    dplyr::filter(!is.na(parent_area_id)) %>%
+    dplyr::mutate(from = paste0(parent_area_id, "_", area_level-1L),
+                  to = paste0(area_id, "_", area_level)) %>%
+    dplyr::select(from, to, dplyr::everything()) %>%
+    data.tree::FromDataFrameNetwork()
+
+  v <- list(meta = meta,
+            hierarchy = tree,
+            names = names,
+            boundaries = boundaries,
+            centers = centers)
+  class(v) <- "naomi_areas"
+
+  v
+}
+
+print.naomi_areas <- function(areas) {
+  print(areas$hierarchy)
+}
+
+
 #' Get a collection of areas
 #'
 #' Get a collection of areas defined by a level and nested within a collection
@@ -34,7 +130,7 @@
 #'   left_join(mwi_area_geom %>% filter(type == "boundary")) %>%
 #'   sf::st_as_sf() %>%
 #'   ggplot() + geom_sf()
-#' 
+#'
 #' @export
 get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
 
@@ -42,7 +138,7 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
     level <- max(areas$area_level)
 
   stopifnot(level %in% areas$area_level)
-  
+
   if(is.null(area_scope))
     return(dplyr::filter(areas, area_level == level) %>%
            dplyr::select(area_id, area_level))
