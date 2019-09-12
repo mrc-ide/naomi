@@ -28,7 +28,9 @@ sh2 <- readRDS(tmp)
 mwi_wide <- sh2 %>%
   filter(TYPE_2 != "Water body" | NAME_1 == "Likoma") %>%
   mutate(district = NAME_1,
-         district32 = if_else(TYPE_2 == "City", NAME_2, NAME_1),
+         district32 = case_when(TYPE_2 == "City" ~ NAME_2,
+                                NAME_1 %in% c("Blantyre", "Lilongwe", "Zomba", "Mzimba") ~ paste(NAME_1, "Rural"),
+                                TRUE ~ NAME_1),
          zone = district %>% fct_collapse(
            "Northern" = c("Chitipa", "Karonga", "Likoma", "Mzimba", "Nkhata Bay", "Rumphi"),
            "Central-East" = c("Dowa", "Kasungu", "Nkhotakota", "Ntchisi", "Salima"),
@@ -143,7 +145,8 @@ usethis::use_data(
            mwi_area_names,
            mwi_area_hierarchy,
            mwi_area_boundaries,
-           mwi_area_centers
+           mwi_area_centers,
+           overwrite = TRUE
          )
 
 dir.create(here("inst/extdata/areas"))
@@ -152,8 +155,8 @@ write_csv(area_meta, here("inst/extdata/areas/area_meta.csv"), na = "")
 write_csv(area_names, here("inst/extdata/areas/area_names.csv"), na = "")
 write_csv(area_hierarchy, here("inst/extdata/areas/area_hierarchy.csv"), na = "")
 
-st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"))
-st_write(area_centers, here("inst/extdata/areas/area_centers.geojson"))
+st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"), delete_dsn = TRUE)
+st_write(area_centers, here("inst/extdata/areas/area_centers.geojson"), delete_dsn = TRUE)
 
 
 #' ## Table schema
