@@ -3,9 +3,11 @@ library(here)
 
 devtools::load_all()
 
-data(mwi_areas)
+data(mwi_area_hierarchy)
+data(mwi_area_names)
 
-
+mwi_areas <- left_join(mwi_area_hierarchy, mwi_area_names) %>%
+  mutate(area_name = sub(" Rural", "", area_name))
 
 
 #' ## Data sources
