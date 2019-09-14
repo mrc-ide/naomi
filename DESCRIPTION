@@ -18,7 +18,11 @@ Imports:
     sf,
     zoo,
     dplyr,
-    TMB
+    TMB,
+    data.tree,
+    specio (>= 0.2.0),
+    spdep,
+    INLA
 Suggests: 
     knitr,
     rmarkdown,
@@ -29,3 +33,5 @@ VignetteBuilder: knitr
 LinkingTo: 
     TMB,
     RcppEigen
+Remotes: 
+    mrc-ide/specio
