@@ -16,7 +16,7 @@ gather_areas <- function(x) {
     group_by(iso3 = id0,
              area_id = id0,
              area_name = name0,
-             area_level = 0,
+             layer_id = 0,
              parent_area_id = NA) %>%
     summarise()
 
@@ -26,11 +26,11 @@ gather_areas <- function(x) {
         rbind(
           x %>%
           mutate(iso3 = id0,
-                 area_level = i) %>%
+                 layer_id = i) %>%
           rename(area_id = paste0("id", i),
                  area_name = paste0("name", i),
                  parent_area_id = paste0("id", i-1)) %>%
-          group_by(iso3, area_id, area_name, area_level, parent_area_id) %>%
+          group_by(iso3, area_id, area_name, layer_id, parent_area_id) %>%
           summarise
         )
   val %>%

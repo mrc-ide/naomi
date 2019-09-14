@@ -15,56 +15,72 @@
 #' data(mwi_area_names)
 #' data(mwi_area_boundaries)
 #'
-#' areas <- create_areas(mwi_area_meta, mwi_area_hierarchy, mwi_area_names, mwi_area_boundaries)
+#' areas <- create_areas(mwi_area_meta, mwi_area_hierarchy, mwi_area_layersn)
 #' areas
 #'
 #' @export
-create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
+create_areas <- function(meta, hierarchy, layers) {
 
-  if(is.null(centers))
-    centers <- suppressWarnings(sf::st_point_on_surface(boundaries))
-
-  meta <- meta[order(meta$area_level), ]
-
+  missing_center <- is.na(hierarchy$center_x)
+  if(any(missing_center)) {
+    sf::st_agr(hierarchy) <- "constant"
+    ## !!! Need to update to use `withCallingHandlers()`
+    px <- suppressWarnings(sf::st_point_on_surface(hierarchy[missing_center,]))
+    hierarchy$center_x[missing_center] <- sf::st_coordinates(px)[,1]
+    hierarchy$center_y[missing_center] <- sf::st_coordinates(px)[,2]
+  }
+    
   ## Validate areas
 
-  ## - Area levels are unique and sequential
-  stopifnot(!duplicated(meta$area_level))
-  stopifnot(diff(meta$area_level) == 1)
+  ## - Area levels are unique
+  if(any(duplicated(meta$layer_id))) {
+    stop(
+      paste0("Area layers not unique.\n",
+             "Duplicated layer_id: ",
+             paste(unique(meta$layer_id[duplicated(meta$layer_id)]),
+                   collapse = ","))
+    )
+  }
 
-  ## - Number of areas by level is non-decreasing
-  stopifnot(diff(meta$n_areas) >= 0)
-
-  ## - Levels in hierarchy are consistent with metadata
-  stopifnot(meta$area_level %in% hierarchy$area_level)
-  stopifnot(hierarchy$area_level %in% meta$area_level)
+  ## - Layers are consistent with meta data
+  if(any(!meta$layer_id %in% layers$layer_id)) {
+    stop(
+      paste("Metadata layer_id not found in layers list:",
+            paste(setdiff(meta$layer_id, layers$layer_id), collapse = ","))
+    )
+  }
+  if(any(!layers$layer_id %in% meta$layer_id)) {
+    stop(
+      paste("Layers layer_id not found in layers metadata:",
+            paste(unique(setdiff(layers$layer_id, meta$layer_id),
+                         collapse = ","))
+            )
+    )
+  }
 
   ## - Number of areas at each level matches expected
-  ## - Levels are consistent between metadata and hierarchy
+  ## - Levels are consistent between metadata and layers
   stopifnot(
-    hierarchy %>%
-      dplyr::count(area_level) %>%
-      dplyr::full_join(meta, by = "area_level") %>%
+    layers %>%
+    dplyr::count(layer_id) %>%
+    dplyr::full_join(meta, by = "layer_id") %>%
       dplyr::mutate(n_match = n == n_areas) %>%
       .$n_match
   )
 
-  ## - Area IDs only appear once in each level of hierarchy
+  ## - Area IDs only appear once in each layer
   stopifnot(
-    hierarchy %>%
-      dplyr::group_by(area_level) %>%
+    layers %>%
+      dplyr::group_by(layer_id) %>%
       dplyr::mutate(unique_area_id = !duplicated(area_id)) %>%
       .$unique_area_id
   )
 
   ## - All areas have a name, boundary, and center
-  stopifnot(hierarchy$area_id %in% names$area_id)
-  stopifnot(hierarchy$area_id %in% boundaries$area_id)
-  stopifnot(hierarchy$area_id %in% centers$area_id)
-
-  stopifnot(!is.na(names$area_name))
-  stopifnot(!is.na(boundaries$geometry))
-  stopifnot(!is.na(centers$geometry))
+  assertthat::assert_that(assertthat::noNA(hierarchy$area_name))
+  assertthat::assert_that(assertthat::noNA(hierarchy$geometry))
+  assertthat::assert_that(assertthat::noNA(hierarchy$center_x))
+  assertthat::assert_that(assertthat::noNA(hierarchy$center_y))
 
   ## TO DO: boundary checks
   ## - Areas are nested
@@ -72,25 +88,27 @@ create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
   ## - Centroids like within geometry (maybe)
   ## ** These checks might be time consuming, perhaps make them optional
 
-  tree <- mwi_area_hierarchy %>%
-    dplyr::filter(!is.na(parent_area_id)) %>%
-    dplyr::mutate(from = paste0(parent_area_id, "_", area_level-1L),
-                  to = paste0(area_id, "_", area_level)) %>%
-    dplyr::select(from, to, dplyr::everything()) %>%
-    data.tree::FromDataFrameNetwork()
+  tree <- hierarchy %>%
+    as.data.frame() %>%
+    dplyr::select(-geometry) %>%
+    dplyr::mutate(from = dplyr::if_else(is.na(parent_area_id), "r", parent_area_id)) %>%
+    dplyr::select(from, area_id, dplyr::everything()) %>%
+    data.tree::FromDataFrameNetwork() %>%
+    {.$children[[1]]}
+
+  boundaries <- dplyr::select(hierarchy, area_id, geometry)
 
   v <- list(meta = meta,
             hierarchy = tree,
-            names = names,
-            boundaries = boundaries,
-            centers = centers)
+            layers = layers,
+            boundaries = boundaries)
   class(v) <- "naomi_areas"
 
   v
 }
 
 print.naomi_areas <- function(areas) {
-  print(areas$hierarchy)
+  print(areas$hierarchy, "area_name")
 }
 
 

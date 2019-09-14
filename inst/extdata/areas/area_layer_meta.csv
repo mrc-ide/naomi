@@ -1,0 +1,6 @@
+layer_id,layer_label,n_areas,layer_sort_order,parent_layer_id,display,spectrum_layer,epp_layer,epp_urban_rural,naomi_layer,pepfar_psnu_layer
+MWI_0,Country,1,0,,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE
+MWI_1,Region,3,1,MWI_0,TRUE,FALSE,TRUE,FALSE,FALSE,FALSE
+MWI_2,Zone,5,2,MWI_1,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE
+MWI_3,District,28,3,MWI_2,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE
+MWI_4,District + Metro,32,4,MWI_3,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE

@@ -17,7 +17,8 @@ Imports:
     magrittr,
     sf,
     zoo,
-    dplyr
+    dplyr,
+    assertthat
 Suggests: 
     knitr,
     rmarkdown,
