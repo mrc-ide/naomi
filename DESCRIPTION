@@ -20,7 +20,7 @@ Imports:
     dplyr,
     TMB,
     data.tree,
-    specio (>= 0.2.0),
+    specio (>= 0.1.2),
     spdep,
     INLA
 Suggests: 

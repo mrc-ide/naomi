@@ -216,10 +216,10 @@ population_agesex <- nso %>%
     source = "Census 2018",
     population = population * exp(log(cens18adj) * pmax((year - 2008) / (2018 - 2008), 0.0)),
     cens18adj = NULL,
-    time = year + 0.5,
+    quarter_id = convert_quarter_id(2, year),
     year = NULL
   ) %>%
-  select(iso3, area_id, source, time, sex, age_group_id, population)
+  select(iso3, area_id, source, quarter_id, sex, age_group_id, population)
                   
 
 #' ## Save datasets
