@@ -59,7 +59,11 @@ expand_survey_clusters <- function(survey_clusters,
       survey_region_area_id = NULL
     ) %>%
     left_join(
-      areas %>% select(area_id, area_level, parent_area_id),
+      areas %>%
+      select(area_id, area_level, parent_area_id) %>%
+      arrange(area_id, -area_level) %>%
+      group_by(area_id) %>%
+      filter(row_number() == 1),
       by = "area_id"
     )
 
@@ -70,10 +74,10 @@ expand_survey_clusters <- function(survey_clusters,
 
     clusters <- clusters %>%
       mutate(area_id = parent_area_id,
-             area_level = NULL,
+             area_level = area_level - 1L,
              parent_area_id = NULL) %>%
       inner_join(areas %>% select(area_id, area_level, parent_area_id),
-                 by = "area_id")
+                 by = c("area_id", "area_level"))
 
     val <- bind_rows(
       val,
@@ -145,7 +149,11 @@ calc_survey_hiv_indicators <- function(survey_meta,
   clust_area <- expand_survey_clusters(clust, survey_regions, areas,
                                        area_top_level, area_bottom_level)
 
-
+  clust_area <- clust_area %>%
+    arrange(survey_id, cluster_id, area_id, -area_level) %>%
+    group_by(survey_id, cluster_id, area_id) %>%
+    filter(row_number() == 1)
+  
   ## 3. Expand individuals dataset to repeat for all individiuals within each
   ##    age/sex group for a given survey
 
@@ -209,6 +217,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                   des, survey::svymean)
   }
 
+  options(survey.lonely.psu="adjust")
   est_spl <- parallel::mclapply(datspl, do_svymean,
                                 mc.cores = parallel::detectCores())
 
@@ -239,6 +248,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
     select(
       indicator, iso3, survey_id, survey_year, area_id, sex, age_group_id,
       n_cluster, n_obs, est, se) %>%
+    distinct() %>%
     mutate(
       ci_l = if_else(!est %in% 0:1, plogis(qlogis(est) - qnorm(0.975) * se / (est * (1-est))), NA_real_),
       ci_u = if_else(!est %in% 0:1, plogis(qlogis(est) + qnorm(0.975) * se / (est * (1-est))), NA_real_)

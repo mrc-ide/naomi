@@ -3,7 +3,10 @@ library(tidyverse)
 library(here)
 
 devtools::load_all()
-data(mwi_areas)
+data(mwi_area_hierarchy)
+data(mwi_area_names)
+mwi_areas <- mwi_area_hierarchy %>%
+  left_join(mwi_area_names)
 
 #' ## Malawi HIV Programme data
 #'

@@ -28,13 +28,16 @@ st_read_zip_list <- function(zfile, pattern = "shp$") {
 
 #' ## Load datasets
 
-data(mwi_areas)
-data(mwi_area_geom)
+data(mwi_area_hierarchy)
+data(mwi_area_boundaries)
 
-boundaries <- mwi_area_geom %>% 
-  filter(type == "boundary")
+areas <- mwi_area_hierarchy %>%
+  left_join(mwi_area_names)
 
-areas_wide <- spread_areas(mwi_areas)
+boundaries <- mwi_area_hierarchy %>%
+  left_join(mwi_area_boundaries)
+
+areas_wide <- spread_areas(areas)
 
 data(mwi_population_agesex)
 
@@ -492,7 +495,7 @@ mphia_zone_labels <- c("Northern" = 1L,
 #'       In MPHIA, it is allocated to South-West Zone.
 #' 
 
-mwi_area_survey_region <- mwi_areas %>%
+mwi_area_survey_region <- areas %>%
   spread_areas() %>% 
   mutate(
     survey_id = "MWI2016PHIA",
@@ -584,7 +587,7 @@ phia_clusters <- ge %>%
 #' Check to confirm area_id is in correct zone
 phia_clusters %>%
   left_join(
-    mwi_areas %>%
+    areas %>%
     spread_areas %>%
     select(area_name2, area_id),
     by = c("geoloc_area_id" = "area_id")
@@ -596,7 +599,7 @@ phia_clusters %>%
   count(survey_region_id, geoloc_area_id) %>%
   arrange(n) %>%
   as.data.frame %>%
-  left_join(mwi_areas %>% select(area_id, area_name),
+  left_join(areas %>% select(area_id, area_name),
             by = c("geoloc_area_id" = "area_id"))
 
 
@@ -718,7 +721,7 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_clusters,
   survey_individuals,
   survey_biomarker,
-  mwi_areas)
+  areas)
   
 #' ## Save datasets
 #'
