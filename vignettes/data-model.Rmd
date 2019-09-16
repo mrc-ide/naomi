@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 library(tidyverse)
 library(datamodelr)
 library(sf)
+
+devtools::load_all()
 ```
 
 ## Load datasets
@@ -35,6 +37,7 @@ age_group_meta <- naomi::get_age_groups()
 fertility <- data.frame(area_id = character(0),
                         time = numeric(0),
                         age_group_id = integer(0),
+                        quarter_id = integer(0),
                         asfr = numeric(0))
 
 #' surveys
@@ -45,6 +48,10 @@ survey_individuals <- naomi::mwi_survey_individuals
 survey_biomarker <- naomi::mwi_survey_biomarker
 
 survey_hiv_indicators <- naomi::mwi_survey_hiv_indicators %>% select(-iso3)
+
+#' programme
+art_number <- naomi::mwi_art_number
+anc_testing <- naomi::mwi_anc_testing
 ```
 
 ```{r create_model, include = FALSE}
@@ -65,22 +72,28 @@ dm_add_colors(
   )
 )
 
-dm <- dm_from_data_frames(area_levels,
-                          area_hierarchy, 
-                          area_boundaries,
-                          age_group_meta, 
-                          population_agesex, 
-                          fertility,
-                          survey_meta, 
-                          survey_regions, 
-                          survey_clusters,
-                          survey_individuals, 
-                          survey_biomarker,
-                          survey_hiv_indicators) %>%
- dm_set_display(
+dm <-
+  dm_from_data_frames(
+    area_levels,
+    area_hierarchy, 
+    area_boundaries,
+    age_group_meta, 
+    population_agesex, 
+    fertility,
+    survey_meta, 
+    survey_regions, 
+    survey_clusters,
+    survey_individuals, 
+    survey_biomarker,
+    survey_hiv_indicators,
+    art_number,
+    anc_testing
+  ) %>%
+  dm_set_display(
     list(
       areas = c("area_levels", "area_hierarchy", "area_boundaries"),
       population = c("age_group_meta", "population_agesex", "fertility"),
+      accent1 = c("art_number", "anc_testing"),
       accent4 = c("survey_meta", "survey_hiv_indicators"),
       accent6 = c("age_group_meta")
     )
@@ -97,6 +110,8 @@ dm <- dm_from_data_frames(area_levels,
   dm_set_key("survey_individuals", c("survey_id", "cluster_id", "household", "line")) %>%
   dm_set_key("survey_biomarker", c("survey_id", "cluster_id", "household", "line")) %>%
   dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "area_id", "sex", "age_group_id")) %>%
+  dm_set_key("art_number", c("area_id", "sex", "age_group_id", "quarter_id")) %>%
+  dm_set_key("anc_testing", c("area_id", "age_group_id", "quarter_id")) %>%
   dm_add_references(
     area_hierarchy$area_level == area_levels$area_level,
     area_hierarchy$parent_area_id == area_hierarchy$area_id,
@@ -121,7 +136,11 @@ dm <- dm_from_data_frames(area_levels,
     survey_biomarker$line == survey_individuals$line,
     survey_hiv_indicators$survey_id == survey_meta$survey_id,
     survey_hiv_indicators$area_id == area_hierarchy$area_id,
-    survey_hiv_indicators$age_group_id == age_group_meta$age_group_id
+    survey_hiv_indicators$age_group_id == age_group_meta$age_group_id,
+    art_number$area_id == area_hierarchy$area_id,
+    art_number$age_group_id == age_group_meta$age_group_id,
+    anc_testing$area_id == area_hierarchy$area_id,
+    anc_testing$age_group_id == age_group_meta$age_group_id
   ) %>%
   dm_set_segment(
     list(
@@ -129,7 +148,8 @@ dm <- dm_from_data_frames(area_levels,
       "Population" = c("age_group_meta", "population_agesex", "fertility"),
       "Survey" = c("survey_meta", "survey_regions", "survey_clusters",
                    "survey_individuals", "survey_biomarker",
-                   "survey_hiv_indicators")
+                   "survey_hiv_indicators"),
+      "Programme" = c("art_number", "anc_testing")
     )
   )
 
@@ -148,8 +168,6 @@ dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type")) %>%
 ```
 
 ## Areas data
-
-#### Spatial geometry format
 
 * `area_levels` contains metadata describing the levels in the area hierarchy for the country.
 * `area_hierarchy` contains the nested hierarchy of area IDs at each level described in `area_levels`.
@@ -175,3 +193,42 @@ area_hierarchy %>%
   facet_wrap(~area_level_label, nrow = 1) +
   naomi:::th_map()
 ```
+
+## Population data
+
+* `age_group_meta` contains metadata definining a standardised set of age groups.
+   This is containted in `naomi::get_age_groups()`.
+* `population_agesex` contains population estimates by area, sex, and five-year age
+   group. Estimates are required at the highest level of the area hierarchy for 
+   all age groups from 0-4 through 80+. 
+* `fertility` contains age-specific fertility rate (ASFR) estimates by area.
+   
+Time is identified as `quarter_id` defined as the number of calendar quarters 
+since the year 1900 (inspired by DHS Century Month Code [CMC]):
+	$$ \mathrm{quarter\_id} = (\mathrm{year} - 1900) * 4 + \mathrm{quarter}.$$
+The function `interpolate_population_agesex()` interpolates population estimates
+to specified `quarter_ids`. 
+   
+```{r}
+get_age_groups()
+```
+
+## Survey data 
+
+* `survey_meta` contains meta data about each household survey.
+* `survey_hiv_indicators` is analytical table with area-level indicators. This is the table used as inputs to Naomi. Indicators are calculated for all stratifications of area/age/sex. Typically the most granular stratification would be selected for model input.
+
+The remaining tables are harmonized survey microdatasets used for calculating the indicators dataset.
+
+The table `survey_hiv_indicators` should also contain all survey HIV prevalence inputs required for Spectrum and EPP. It should be further extended to also calculate other indicators required by Spectrum, e.g. HIV testing outcomes for shiny90, proportion ever had sex, breastfeeding duration, and fertlity by HIV status.
+
+## Programme data
+
+* `art_number` reports the number currently receiving ART at the end of each quarter by area.
+* `anc_testing` reports antenatal clinic (ANC) attendees and outcomes during the quarter. 
+
+The model is currently specified to accept ART numbers by age 0-14 (`age_group_id  = `r filter(get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group_id = `r filter(get_age_groups(), age_group_label == "15+")$age_group_id``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
+
+For `art_number` it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area.  Current specification requires a value `current_art = 0` for an area with no ART whereas no entry for a given area will be interpreted as missing data.  This could be revised, for example to require explicit input for all areas with a code for missing data.
+
+The `anc_testing` data is currently input for all ages of pregnant women aggregated, that is `age_group_id = `r filter(get_age_groups(), age_group_label == "15-49")$age_group_id`` for age 15-49.
