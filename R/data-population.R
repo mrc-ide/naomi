@@ -25,16 +25,16 @@ get_age_groups <- function() {
 
 #' Time period indexing
 #'
-#' Time periods are indexed by integers for efficiency and precision. 
+#' Time periods are indexed by integers for efficiency and precision.
 #' Quarters are indexed as the number of quarters since the beginning of
 #' 1900: $quarter_id = (year - 1900) * 4 + quarter$.
-#' 
+#'
 #' @param quarter_id vector of integer quarter IDs.
 #' @param year vector of integer years.
 #' @param quarter vector of integer quarters (1,2,3,4).
 #'
 #' @details
-#' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of 
+#' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of
 #' "Q1", "Q2", "Q3", "Q4" to avoid confusion between calendar quarters and offset
 #' fiscal year quarters.
 #'
@@ -78,10 +78,10 @@ convert_quarter_id <- function(quarter, year) {
 
   as.integer((year - 1900) * 4 + quarter)
 }
-  
-  
 
-                               
+
+
+
 #' Log-linear interpolation of age/sex stratified population
 #'
 #' @param population_agesex a subset of the population_agesex.

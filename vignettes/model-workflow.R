@@ -31,7 +31,6 @@ library(sf)
 #' specifying the area hierarchy. This preprocessing step joins the area tables
 #' into a single long format dataset and saves as a GeoJSON for upload to the
 #' web tool.
-
 ##+ load_area_data, message = FALSE
 
 area_meta <- read_csv(system.file("extdata/areas/area_meta.csv", package = "naomi"))
@@ -80,6 +79,7 @@ pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", p
 survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"))
 
 #' Programme data
+#' 
 
 art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
 anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
@@ -90,7 +90,7 @@ anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package
 
 #' Spectrum PJNZ
 
-pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
+pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
 spec <- extract_pjnz_naomi(pjnz)
 
 
@@ -519,7 +519,7 @@ add_output_labels(outputs) %>%
 
 #' Calculate uncertainty ranges and add to the output object
 #' (This is time consuming and memory intensive.
-system.time(fit <- report_tmb(fit))
+system.time(naomi_fit <- report_tmb(fit))
 
 #' Regenerate outputs with uncertainty ranges.
 outputs <- output_package(naomi_fit, naomi_mf, areas)
@@ -583,7 +583,7 @@ indicators %>%
          indicator_id == 2L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
-  ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
+  ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
   geom_linerange(position = position_dodge(0.8)) +
   facet_wrap(~area_id) +
@@ -607,8 +607,8 @@ indicators %>%
   filter(age_group_id == 19,
          area_level == 4,
          indicator_id %in% 2:3) %>%
-  select(sex, center_x, center_y, indicator_label, mean) %>%
-  spread(indicator_label, mean) %>%
+  select(sex, center_x, center_y, indicator_label, mode) %>%
+  spread(indicator_label, mode) %>%
   ggplot() +
   geom_sf() +
   geom_point(aes(center_x, center_y, colour = `HIV Prevalence`, size = PLHIV)) +

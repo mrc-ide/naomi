@@ -6,6 +6,11 @@
 \usage{
 check_boundaries(sh1, sh2 = NULL)
 }
+\arguments{
+\item{sh1}{Bottom shapefile with red boundaries}
+
+\item{sh2}{Top shapefile with red boundaries}
+}
 \description{
 This function is useful for checking level of coarseness
 of a simplified versus raw shapefile and any slivers

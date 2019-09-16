@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, include = FALSE, message = FALSE}
-devtools::load_all()
 library(tidyverse)
 library(datamodelr)
 library(sf)
@@ -33,7 +32,7 @@ area_centers <- naomi::mwi_area_centers %>% select(-iso3)
 
 #' population
 population_agesex <- naomi::mwi_population_agesex
-age_group_meta <- get_age_groups()
+age_group_meta <- naomi::get_age_groups()
 
 fertility <- data.frame(area_id = character(0),
                         time = numeric(0),
@@ -193,5 +192,5 @@ area_hierarchy %>%
                 data = . %>% left_join(area_centers) %>% st_as_sf(),
                 alpha = 0.3) +
   facet_wrap(~area_level_label, nrow = 1) +
-  th_map()
+  naomi:::th_map()
 ```

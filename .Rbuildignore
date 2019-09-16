@@ -5,3 +5,6 @@
 ^data-raw$
 ^doc$
 ^Meta$
+^docs$
+^scripts$
+^Makefile$

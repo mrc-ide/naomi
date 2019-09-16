@@ -35,14 +35,13 @@ of \code{area_id}s and they do not have to be
 at the same level. If the level of an area in \code{area_scope} is higher than
 area_level \code{level}, nothing is returned. An error is thrown if any \code{area_scope}
 are not recognized.
-}
-\examples{
+
+TODO: Should be an example - where is mwi_areas, mwi_area_geom?
 data(mwi_areas, mwi_area_geom)
 
 areas <- get_area_collection(mwi_areas, level = 3, area_scope = c("MWI.1", "MWI.3.5"))
-areas \%>\%
-  left_join(mwi_area_geom \%>\% filter(type == "boundary")) \%>\%
-  sf::st_as_sf() \%>\%
-  ggplot() + geom_sf()
-
+areas %>%
+left_join(mwi_area_geom %>% filter(type == "boundary")) %>%
+sf::st_as_sf() %>%
+ggplot() + geom_sf()
 }

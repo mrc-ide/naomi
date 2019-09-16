@@ -9,6 +9,27 @@ calc_survey_hiv_indicators(survey_meta, survey_regions, survey_clusters,
   "both"), age_group_id = NULL, area_top_level = min(areas$area_level),
   area_bottom_level = max(areas$area_level))
 }
+\arguments{
+\item{survey_meta}{Survey metadata.}
+
+\item{survey_regions}{Survey regions.}
+
+\item{survey_clusters}{Survey clusters.}
+
+\item{survey_individuals}{Survey individuals.}
+
+\item{survey_biomarker}{Survey biomarkers.}
+
+\item{areas}{Areas.}
+
+\item{sex}{Sex.}
+
+\item{age_group_id}{Age group id.}
+
+\item{area_top_level}{Area top level.}
+
+\item{area_bottom_level}{Area bottom level.}
+}
 \description{
 Calculate age/sex/area stratified survey estimates for biomarker outcomes
 }

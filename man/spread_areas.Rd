@@ -11,12 +11,13 @@ spread_areas(areas, min_level = min(areas$area_level),
 \item{areas}{area hierarchy data.frame}
 
 \item{min_level}{integer specifying the minimum level}
+
+\item{max_level}{integer specifying the maximum level
+
+TODO: Make this an example - where is areas.rds?
+areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
+areas_wide <- spread_areas(areas)}
 }
 \description{
 Spread area hierarchy to wide format
-}
-\examples{
-areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
-areas_wide <- spread_areas(areas)
-
 }

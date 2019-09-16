@@ -6,6 +6,9 @@
 \usage{
 gather_areas(x)
 }
+\arguments{
+\item{x}{Wide format nested hierarchy.}
+}
 \description{
 Convert nested hierarchy from wide to long format
 }

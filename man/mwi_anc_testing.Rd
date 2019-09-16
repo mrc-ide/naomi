@@ -5,18 +5,20 @@
 \alias{mwi_anc_testing}
 \alias{mwi_art_number}
 \title{Programme data: Malawi routine HIV service delivery data}
-\format{\code{mwi_art_number} is a dataset with 2042 observations on the following 5 variables:
+\format{TODO: Link to mwi_areas dataset
+\code{mwi_art_number} is a dataset with 2042 observations on the following 5 variables:
 \describe{
-\item{\code{area_id}}{District area id -- see \link{mwi_areas} dataset.}
+\item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 \item{\code{sex}}{Sex as a character vector -- all values are "both".}
 \item{\code{age_group_id}}{Value 20 is age 15+, 24 is age 0-14.}
 \item{\code{quarter_id}}{Quarter ID (integer).}
 \item{\code{current_art}}{Number currently on ART at the end of the quarter.}
 }
 
+TODO: Link to mwi_areas dataset
 \code{mwi_anc_testing} is a dataset with 923 observations on the following 8 variables:
 \describe{
-\item{\code{area_id}}{District area id -- see \link{mwi_areas} dataset.}
+\item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 \item{\code{quarter_id}}{Quarter ID (integer).}
 \item{\code{anc_clients}}{Number of unique ANC clients during quarter.}
 \item{\code{ancrt_hiv_status}}{Number of ANC clients for whom an HIV status was ascertained.}
@@ -27,7 +29,7 @@
 }}
 \source{
 Department of HIV & AIDS, Minitry of Health, Malawi.
-\link{http://hiv.health.gov.mw/index.php/our-documents}
+\url{http://hiv.health.gov.mw/index.php/our-documents}
 }
 \usage{
 mwi_anc_testing

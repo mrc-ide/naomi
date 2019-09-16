@@ -6,6 +6,12 @@
 \usage{
 st_read_zip(zfile, pattern = "shp$")
 }
+\arguments{
+\item{zfile}{Path to zip file}
+
+\item{pattern}{Pattern to read files for from zip, defaults to files ending
+with 'shp'}
+}
 \description{
 Read shape file from ZIP
 }
