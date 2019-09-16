@@ -25,7 +25,7 @@ Imports:
     TMB,
     specio (>= 0.1.2),
     spdep,
-    INLA
+    INLA,
     tidyr,
     zoo
 Suggests: 
