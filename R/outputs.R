@@ -92,10 +92,9 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
   meta_area <- data.tree::ToDataFrameTree(areas$tree, traversal = "level",
                                           "area_level", "area_level_label",
                                           "area_id", "area_name",
-                                          "area_sort_order") %>%
+                                          "area_sort_order",
+                                          "center_x", "center_y") %>%
     dplyr::mutate(levelName = NULL,
-                  center_x = sf::st_coordinates(areas$centers[area_id])[,1],
-                  center_y = sf::st_coordinates(areas$centers[area_id])[,2],
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
   

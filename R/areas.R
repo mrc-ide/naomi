@@ -84,9 +84,10 @@ create_areas <- function(levels, hierarchy, boundaries) {
 
   ## - All areas have a name, boundary, and center
   assertthat::assert_that(assertthat::noNA(hierarchy$area_name))
-  assertthat::assert_that(assertthat::noNA(hierarchy$geometry))
   assertthat::assert_that(assertthat::noNA(hierarchy$center_x))
   assertthat::assert_that(assertthat::noNA(hierarchy$center_y))
+  assertthat::assert_that(assertthat::noNA(boundaries$geometry))
+  
 
   ## TO DO: boundary checks
   ## - Areas are nested
@@ -118,6 +119,8 @@ create_areas <- function(levels, hierarchy, boundaries) {
            display_level = hierarchy$display,
            area_name = hierarchy$area_name,
            area_sort_order = hierarchy$area_sort_order,
+           center_x = hierarchy$center_x,
+           center_y = hierarchy$center_y,
            traversal = "level")
 
   v <- list(tree = tree,

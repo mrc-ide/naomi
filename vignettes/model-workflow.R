@@ -1,6 +1,3 @@
-
-
-
 #' ---
 #' title: "Naomi Model Workflow Example"
 #' output: rmarkdown::html_vignette
@@ -33,34 +30,17 @@ library(sf)
 #' web tool.
 ##+ load_area_data, message = FALSE
 
-area_meta <- read_csv(system.file("extdata/areas/area_meta.csv", package = "naomi"))
-area_names  <- read_csv(system.file("extdata/areas/area_names.csv", package = "naomi"))
+area_levels <- read_csv(system.file("extdata/areas/area_levels.csv", package = "naomi"))
 area_hierarchy  <- read_csv(system.file("extdata/areas/area_hierarchy.csv", package = "naomi"))
 area_boundaries <- sf::read_sf(system.file("extdata/areas/area_boundaries.geojson", package = "naomi"))
-area_centers <- sf::read_sf(system.file("extdata/areas/area_centers.geojson", package = "naomi"))
 
 area_long <- area_hierarchy %>%
   left_join(
-    area_meta %>% select(iso3, area_level, area_level_label, display, naomi_level)
-  ) %>%
-  left_join(
-    area_names
+    area_levels %>% select(area_level, area_level_label, display, naomi_level)
   ) %>%
   left_join(
     area_boundaries
-  ) %>%
-  left_join(
-    area_centers %>%
-    as.data.frame() %>%
-    rename(centers = geometry)
-  ) %>%
-  mutate(
-    center_x = st_coordinates(centers)[,1],
-    center_y = st_coordinates(centers)[,2],
-    centers = NULL
-  ) %>%
-  select(-geometry, everything(), geometry)
-
+  )
 
 st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE)
 
@@ -110,7 +90,7 @@ anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016)
 artnum_quarter_id_t2 <- convert_quarter_id(3, 2018)
 anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
 
-areas <- create_areas(area_meta, area_hierarchy, area_names, area_boundaries)
+areas <- create_areas(area_levels, area_hierarchy, area_boundaries)
 
 
 
@@ -586,7 +566,7 @@ indicators %>%
   ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
   geom_linerange(position = position_dodge(0.8)) +
-  facet_wrap(~area_id) +
+  facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 
@@ -600,6 +580,20 @@ indicators %>%
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
+
+#' ART coverage by age/sex and region
+indicators %>%
+  filter(area_level == 1,
+         sex != "both",
+         age_group_id %in% 1:17,
+         indicator_id == 4L) %>%
+  left_join(get_age_groups()) %>%
+  mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
+  ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
+  geom_col(position = "dodge") +
+  geom_linerange(position = position_dodge(0.8)) +
+  facet_wrap(~area_name) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 
 #' Bubble plot prevalence and PLHIV
