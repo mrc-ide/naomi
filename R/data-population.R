@@ -14,8 +14,13 @@ get_age_groups <- function() {
     dplyr::mutate(age_group_id = dplyr::row_number(),
                   age_group_label = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
                     sub("-Inf", "+", .) %>%
-                    dplyr::recode("0+" = "all ages")) %>%
-    dplyr::select(age_group_id, age_group_label, age_group_start, age_group_span)
+                    dplyr::recode("0+" = "all ages"),
+                  age_group_sort_order = c(13:29, 1:12)) %>%
+    dplyr::select(age_group_id,
+                  age_group_label,
+                  age_group_start,
+                  age_group_span,
+                  age_group_sort_order)
 }
 
 #' Time period indexing
