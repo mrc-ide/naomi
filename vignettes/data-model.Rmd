@@ -24,11 +24,9 @@ library(sf)
 
 ```{r load_datasets, message = FALSE}
 #' areas
-area_meta <- naomi::mwi_area_meta
+area_levels <- naomi::mwi_area_levels
 area_hierarchy <- naomi::mwi_area_hierarchy
-area_names <- naomi::mwi_area_names %>% select(-iso3)
-area_boundaries <- naomi::mwi_area_boundaries %>% select(-iso3)
-area_centers <- naomi::mwi_area_centers %>% select(-iso3)
+area_boundaries <- naomi::mwi_area_boundaries
 
 #' population
 population_agesex <- naomi::mwi_population_agesex
@@ -67,30 +65,31 @@ dm_add_colors(
   )
 )
 
-dm <- dm_from_data_frames(area_meta,
-                          area_names,
+dm <- dm_from_data_frames(area_levels,
                           area_hierarchy, 
                           area_boundaries,
-                          area_centers,
-                          age_group_meta, population_agesex, fertility,
-                          survey_meta, survey_regions, survey_clusters,
-                          survey_individuals, survey_biomarker,
+                          age_group_meta, 
+                          population_agesex, 
+                          fertility,
+                          survey_meta, 
+                          survey_regions, 
+                          survey_clusters,
+                          survey_individuals, 
+                          survey_biomarker,
                           survey_hiv_indicators) %>%
  dm_set_display(
     list(
-      areas = c("area_meta", "area_names", "area_hierarchy", "area_boundaries", "area_centers"),
+      areas = c("area_levels", "area_hierarchy", "area_boundaries"),
       population = c("age_group_meta", "population_agesex", "fertility"),
       accent4 = c("survey_meta", "survey_hiv_indicators"),
       accent6 = c("age_group_meta")
     )
   ) %>%
-  dm_set_key("area_meta", c("iso3", "area_level")) %>%
-  dm_set_key("area_hierarchy", c("area_id", "area_level")) %>%
-  dm_set_key("area_names", "area_id") %>%
+  dm_set_key("area_levels", "area_level") %>%
+  dm_set_key("area_hierarchy", "area_id") %>%
   dm_set_key("area_boundaries", "area_id") %>%
-  dm_set_key("area_centers", "area_id") %>%
   dm_set_key("age_group_meta", "age_group_id") %>%
-  dm_set_key("population_agesex", c("area_id", "time", "sex", "age_group_id", "source")) %>%
+  dm_set_key("population_agesex", c("area_id", "quarter_id", "sex", "age_group_id", "source")) %>%
   dm_set_key("fertility", c("area_id", "time", "age_group_id")) %>%
   dm_set_key("survey_meta", "survey_id") %>%
   dm_set_key("survey_regions", c("survey_id", "survey_region_id")) %>%
@@ -99,23 +98,21 @@ dm <- dm_from_data_frames(area_meta,
   dm_set_key("survey_biomarker", c("survey_id", "cluster_id", "household", "line")) %>%
   dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "area_id", "sex", "age_group_id")) %>%
   dm_add_references(
-    area_hierarchy$area_level == area_meta$area_level,
-    area_hierarchy$area_id == area_names$area_id,
-    area_hierarchy$parent_area_id == area_names$area_id,
-    area_boundaries$area_id == area_names$area_id,
-    area_centers$area_id == area_names$area_id,
-    population_agesex$area_id == area_names$area_id,
+    area_hierarchy$area_level == area_levels$area_level,
+    area_hierarchy$parent_area_id == area_hierarchy$area_id,
+    area_boundaries$area_id == area_hierarchy$area_id,
+    population_agesex$area_id == area_hierarchy$area_id,
     population_agesex$age_group_id == age_group_meta$age_group_id,
     fertility$area_id == population_agesex$area_id,
     fertility$time == population_agesex$time,
     fertility$age_group_id == population_agesex$age_group_id,
     population_agesex$age_group_id == age_group_meta$age_group_id,
     survey_regions$survey_id == survey_meta$survey_id,
-    survey_regions$survey_region_area_id == area_names$area_id,
+    survey_regions$survey_region_area_id == area_hierarchy$area_id,
     survey_clusters$survey_id == survey_meta$survey_id,
     survey_clusters$survey_id == survey_regions$survey_id,
     survey_clusters$survey_region_id == survey_regions$survey_region_id,
-    survey_clusters$geoloc_area_id == area_names$area_id,
+    survey_clusters$geoloc_area_id == area_hierarchy$area_id,
     survey_individuals$survey_id == survey_clusters$survey_id,
     survey_individuals$cluster_id == survey_clusters$cluster_id,
     survey_biomarker$survey_id == survey_individuals$survey_id,
@@ -123,12 +120,12 @@ dm <- dm_from_data_frames(area_meta,
     survey_biomarker$household == survey_individuals$household,
     survey_biomarker$line == survey_individuals$line,
     survey_hiv_indicators$survey_id == survey_meta$survey_id,
-    survey_hiv_indicators$area_id == area_names$area_id,
+    survey_hiv_indicators$area_id == area_hierarchy$area_id,
     survey_hiv_indicators$age_group_id == age_group_meta$age_group_id
   ) %>%
   dm_set_segment(
     list(
-      "Areas" = c("area_meta", "area_names", "area_hierarchy", "area_boundaries", "area_centers"),
+      "Areas" = c("area_levels", "area_hierarchy", "area_boundaries"),
       "Population" = c("age_group_meta", "population_agesex", "fertility"),
       "Survey" = c("survey_meta", "survey_regions", "survey_clusters",
                    "survey_individuals", "survey_biomarker",
@@ -154,43 +151,27 @@ dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type")) %>%
 
 #### Spatial geometry format
 
-* `area_meta` contains metadata describing the levels in the area hierarchy for the country.
-* `area_names` contains the names for each area ID.
-* `area_hierarchy` contains the nested hierarchy of area IDs at each level described in `area_meta`.
-* `area_boundaries` defines the spatial boundaries for each area in `area_names`.
-* `area_centers` defines a center point for each area in `area_names`. This table is optional.
+* `area_levels` contains metadata describing the levels in the area hierarchy for the country.
+* `area_hierarchy` contains the nested hierarchy of area IDs at each level described in `area_levels`.
+* `area_boundaries` defines the spatial boundaries for each area in `area_hierarchy`.
 
-Note that areas may appear at multiple levels in the hierarchy.  For example, in Malawi, 'Northern Region' (`r filter(area_names, area_name == "Northern")$area_id`) is both a region (level 1) and a health zone (level 2), 
-while the Central and Southern regions area subdivided into smaller zones.
-
-```{r}
-area_hierarchy %>%
-  filter(area_level %in% 0:2) %>%
-  left_join(area_names) 
-```
-Similarly level 3 reflects the 28 districts of Malawi while level 4 are the 28 districts with the four cities further stratified. For the 24 districts which do not contain cities, level 3 and level 4 are equivalent and hence have only one `area_id`. Consequently, there are `r nrow(area_hierarchy)` records in the location hierarchy, but only `r nrow(area_names)` distinct areas in the `area_names`, `area_boundaries`, and `area_centers` table.
-
-The `area_centers` table is optional. The R package will construct these centers from the boundaries if they are not provided.  They might wish to be provided for two reasons: 
+The fields `center_x` and `center_y` define in `area_hierarchy` defines longitude/latitude coordinates within the area. This field is currently optional. The R package will construct these centers from the boundaries if they are not provided.  They might wish to be provided for two reasons: 
 
 1. Offset centers might be provided to avoid overlapping centroids when creating bubble plots (e.g. Zomba and Zomba City).
 2. In future modelling we might rely on population-weighted centroids to estimate average distances between areas.
 
-From a conceptual perspective, `area_names`, `area_boundaries`, and `area_centers` each have one record per `area_id` and it would make sense for them to be in a single table schema. TableSchema permits fields with type `geojson` and `geopoint` which would enable this, but `geojson` file format would would not accept multiple geometry columns. `area_names` and `area_boundaries` could be collaposed into a single schema stored as GeoJSON with the area name attached as an attribute.
+From a conceptual perspective, `area_hierarchy` and `area_boundaries` each have one record per `area_id` and it would make sense for them to be in a single table schema. They are separate schemas for convenience so that `area_hierarchy` can be saved as human-readable CSV file while `area_boundaries` is saved as `.geojson` format by default.
 
 The figures below show example code for generating a typical plot from the Areas schemas:
 
 
 ```{r, fig.width=7, fig.height=4, warning=FALSE}
-#' Using area_geom
 area_hierarchy %>%
-  left_join(area_names) %>%
-  left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
+  left_join(area_levels %>% select(area_level, area_level_label)) %>%
   mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
   ggplot() +
   geom_sf(data = . %>% left_join(area_boundaries) %>% st_as_sf()) +
-  geom_sf_label(aes(label = area_sort_order),
-                data = . %>% left_join(area_centers) %>% st_as_sf(),
-                alpha = 0.3) +
+  geom_label(aes(center_x, center_y, label = area_sort_order), alpha = 0.5) +
   facet_wrap(~area_level_label, nrow = 1) +
   naomi:::th_map()
 ```

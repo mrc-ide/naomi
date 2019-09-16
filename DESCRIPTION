@@ -27,7 +27,8 @@ Imports:
     spdep,
     INLA,
     tidyr,
-    zoo
+    zoo,
+    assertthat
 Suggests: 
     datamodelr,
     knitr,

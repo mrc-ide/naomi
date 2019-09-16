@@ -31,13 +31,7 @@ st_read_zip_list <- function(zfile, pattern = "shp$") {
 data(mwi_area_hierarchy)
 data(mwi_area_boundaries)
 
-areas <- mwi_area_hierarchy %>%
-  left_join(mwi_area_names)
-
-boundaries <- mwi_area_hierarchy %>%
-  left_join(mwi_area_boundaries)
-
-areas_wide <- spread_areas(areas)
+areas_wide <- spread_areas(mwi_area_hierarchy)
 
 data(mwi_population_agesex)
 
@@ -94,8 +88,8 @@ geom <- geom %>%
 
 dhs_areas_wide <- surveys %>%
   select(iso3, survey_id) %>%
-  inner_join(areas_wide) %>%
-  left_join(boundaries) %>%
+  inner_join(areas_wide %>% mutate(iso3 = "MWI")) %>%
+  left_join(mwi_area_boundaries) %>%
   st_as_sf %>%
   rmapshaper::ms_simplify(1.0) %>%
   split(.$survey_id, drop = TRUE)
@@ -104,7 +98,6 @@ geom_spl <- geom %>%
   select(survey_id, REGVAR, REGCODE, REGNAME) %>%
   split(.$survey_id, drop = TRUE) %>%
   lapply(select, -survey_id)
-
 
 areas_survey_region <- Map(st_join,
                            dhs_areas_wide,
@@ -286,7 +279,7 @@ clusters <- clusters %>%
   left_join(
     areas_survey_region %>%
     select(survey_id, regcode_match = REGCODE, area_id) %>%
-    left_join(boundaries) %>%
+    left_join(mwi_area_boundaries) %>%
     rename(geometry_area = geometry)
   ) %>%
   mutate(distance = Map(st_distance, geometry, geometry_area) %>% unlist)
@@ -495,8 +488,7 @@ mphia_zone_labels <- c("Northern" = 1L,
 #'       In MPHIA, it is allocated to South-West Zone.
 #' 
 
-mwi_area_survey_region <- areas %>%
-  spread_areas() %>% 
+mwi_area_survey_region <- areas_wide %>%
   mutate(
     survey_id = "MWI2016PHIA",
     survey_region_name = case_when(
@@ -554,15 +546,15 @@ ge <- bind_rows(
 
 area_sample <- mwi_population_agesex %>%
   filter(source == "Census 2018") %>%
-  interpolate_population_agesex(times = 2016.25) %>%
+  interpolate_population_agesex(quarter_ids = convert_quarter_id(1, 2016)) %>%
   inner_join(
     get_age_groups() %>%
     filter(age_group_start >= 15,
            age_group_start + age_group_span < 65)
   ) %>%
   left_join(mwi_area_survey_region %>%
-            select(iso3, area_id, survey_id, survey_region_id)) %>%
-  count(iso3, area_id, survey_id, survey_region_id, wt = population, name = "pop15to64") %>%
+            select(area_id, survey_id, survey_region_id)) %>%
+  count(area_id, survey_id, survey_region_id, wt = population, name = "pop15to64") %>%
   group_by(survey_id, survey_region_id) %>%
   summarise(area_ids = list(area_id),
             area_pops = list(pop15to64))
@@ -587,8 +579,7 @@ phia_clusters <- ge %>%
 #' Check to confirm area_id is in correct zone
 phia_clusters %>%
   left_join(
-    areas %>%
-    spread_areas %>%
+    areas_wide %>%
     select(area_name2, area_id),
     by = c("geoloc_area_id" = "area_id")
   ) %>%
@@ -599,7 +590,7 @@ phia_clusters %>%
   count(survey_region_id, geoloc_area_id) %>%
   arrange(n) %>%
   as.data.frame %>%
-  left_join(areas %>% select(area_id, area_name),
+  left_join(mwi_area_hierarchy %>% select(area_id, area_name),
             by = c("geoloc_area_id" = "area_id"))
 
 
@@ -721,7 +712,7 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_clusters,
   survey_individuals,
   survey_biomarker,
-  areas)
+  mwi_area_hierarchy)
   
 #' ## Save datasets
 #'

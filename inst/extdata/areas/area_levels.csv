@@ -1,0 +1,6 @@
+area_level,n_areas,area_level_label,display,spectrum_level,epp_level,epp_urban_rural,naomi_level,pepfar_psnu_level
+0,1,Country,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE
+1,3,Region,TRUE,FALSE,TRUE,FALSE,FALSE,FALSE
+2,5,Zone,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE
+3,28,District,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE
+4,32,District + Metro,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE

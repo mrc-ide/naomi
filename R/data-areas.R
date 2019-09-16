@@ -19,8 +19,7 @@ st_read_zip <- function(zfile, pattern = "shp$") {
 gather_areas <- function(x) {
 
   val <- x %>%
-    group_by(iso3 = id0,
-             area_id = id0,
+    group_by(area_id = id0,
              area_name = name0,
              area_level = 0,
              parent_area_id = NA) %>%
@@ -31,12 +30,11 @@ gather_areas <- function(x) {
       val <- val %>%
         rbind(
           x %>%
-          mutate(iso3 = id0,
-                 area_level = i) %>%
+          mutate(area_level = i) %>%
           rename(area_id = paste0("id", i),
                  area_name = paste0("name", i),
                  parent_area_id = paste0("id", i-1)) %>%
-          group_by(iso3, area_id, area_name, area_level, parent_area_id) %>%
+          group_by(area_id, area_name, area_level, parent_area_id) %>%
           summarise
         )
   val %>%
@@ -107,7 +105,6 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
   areas_wide <- areas %>%
     dplyr::filter(area_level == min_level) %>%
     dplyr::select(
-      iso3,
       !!paste0("area_id", min_level) := area_id,
       !!paste0("area_name", min_level) := area_name
     )
@@ -119,12 +116,11 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
         areas %>%
         dplyr::filter(area_level == level) %>%
         dplyr::select(
-          iso3,
           !!paste0("area_id", level) := area_id,
           !!paste0("area_name", level) := area_name,
           parent_area_id)
        ,
-        by = setNames(c("iso3", "parent_area_id"), c("iso3", paste0("area_id", level - 1L)))
+        by = setNames(c("parent_area_id"), c(paste0("area_id", level - 1L)))
       )
 
   }

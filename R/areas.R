@@ -2,65 +2,79 @@
 #'
 #' Constructs and validates an areas object as an S3 class.
 #'
-#' @param meta Data frame of area metadata.
-#' @param hierarchy Data frame of area metadata.
-#' @param names Data frame of names for each area
+#' @param levels Data frame of area level metadata.
+#' @param hierarchy Data frame defining area hierarchy and area-level data.
 #' @param boundaries an `sf` object with boundary geometry for each area_id
-#' @param centers an `sf` object with desired center for each area_id (optional).
 #' @return An object of class `naomi_areas`
 #'
 #' @examples
-#' data(mwi_area_meta)
+#' data(mwi_area_levels)
 #' data(mwi_area_hierarchy)
-#' data(mwi_area_names)
 #' data(mwi_area_boundaries)
 #'
-#' areas <- create_areas(mwi_area_meta, mwi_area_hierarchy, mwi_area_names, mwi_area_boundaries)
+#' areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
 #' areas
 #'
 #' @export
-create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
+create_areas <- function(levels, hierarchy, boundaries) {
 
-
-  if(is.null(centers)) {
-    
-    st_agr(boundaries) <- "constant"
-    
-    centers <- withCallingHandlers(
+  missing_center <- is.na(hierarchy$center_x)
+  if(any(missing_center)) {
+    sf::st_agr(boundaries) <- "constant"
+    px <- withCallingHandlers(
       sf::st_point_on_surface(boundaries),
       warning = function(w) {
         if(grepl("st_point_on_surface may not give correct results for longitude/latitude data", w$message))
           invokeRestart("muffleWarning")
       }
     )
+    hierarchy$center_x[missing_center] <- sf::st_coordinates(px)[,1]
+    hierarchy$center_y[missing_center] <- sf::st_coordinates(px)[,2]
   }
-
-  meta <- meta[order(meta$area_level), ]
-
+    
   ## Validate areas
 
   ## - Area levels are unique and sequential
-  stopifnot(!duplicated(meta$area_level))
-  stopifnot(diff(meta$area_level) == 1)
+  if(any(duplicated(levels$area_level))) {
+    stop(
+      paste0("Area levels not unique.\n",
+             "Duplicated level: ",
+             paste(unique(levels$area_level[duplicated(levels$area_level)]),
+                   collapse = ","))
+    )
+  }
+  stopifnot(diff(levels$area_level) == 1)
 
   ## - Number of areas by level is non-decreasing
-  stopifnot(diff(meta$n_areas) >= 0)
-
-  ## - Levels in hierarchy are consistent with metadata
-  stopifnot(meta$area_level %in% hierarchy$area_level)
-  stopifnot(hierarchy$area_level %in% meta$area_level)
+  stopifnot(diff(levels$n_areas) >= 0)
+  
+  ## - Levels are consistent with meta data
+  if(any(!levels$area_level %in% levels$area_level)) {
+    stop(
+      paste("Metadata area_level not found in levels list:",
+            paste(setdiff(levels$area_level, levels$area_level), collapse = ","))
+    )
+  }
+  if(any(!levels$area_level %in% levels$area_level)) {
+    stop(
+      paste("Levels area_level not found in levels metadata:",
+            paste(unique(setdiff(levels$area_level, levels$area_level),
+                         collapse = ","))
+            )
+    )
+  }
 
   ## - Number of areas at each level matches expected
-  ## - Levels are consistent between metadata and hierarchy
+  ## - Levels are consistent between metadata and levels
   stopifnot(
     hierarchy %>%
-      dplyr::count(area_level) %>%
-      dplyr::full_join(meta, by = "area_level") %>%
-      dplyr::mutate(n_match = n == n_areas) %>%
-      .$n_match
+    dplyr::count(area_level) %>%
+    dplyr::full_join(levels, by = "area_level") %>%
+    dplyr::mutate(n_match = n == n_areas) %>%
+    .$n_match
   )
 
-  ## - Area IDs only appear once in each level of hierarchy
+  ## - Area IDs only appear once in each level
   stopifnot(
     hierarchy %>%
       dplyr::group_by(area_level) %>%
@@ -69,13 +83,10 @@ create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
   )
 
   ## - All areas have a name, boundary, and center
-  stopifnot(hierarchy$area_id %in% names$area_id)
-  stopifnot(hierarchy$area_id %in% boundaries$area_id)
-  stopifnot(hierarchy$area_id %in% centers$area_id)
-
-  stopifnot(!is.na(names$area_name))
-  stopifnot(!is.na(boundaries$geometry))
-  stopifnot(!is.na(centers$geometry))
+  assertthat::assert_that(assertthat::noNA(hierarchy$area_name))
+  assertthat::assert_that(assertthat::noNA(hierarchy$geometry))
+  assertthat::assert_that(assertthat::noNA(hierarchy$center_x))
+  assertthat::assert_that(assertthat::noNA(hierarchy$center_y))
 
   ## TO DO: boundary checks
   ## - Areas are nested
@@ -83,33 +94,23 @@ create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
   ## - Centroids like within geometry (maybe)
   ## ** These checks might be time consuming, perhaps make them optional
 
-  hierarchy <- hierarchy %>%
-    dplyr::mutate(parent_id = paste0(parent_area_id, "_", area_level-1L),
-                  id = paste0(area_id, "_", area_level))
-
+  
   tree <- hierarchy %>%
     dplyr::filter(!is.na(parent_area_id)) %>%
-    dplyr::select(id, parent_id) %>%
+    dplyr::select(area_id, parent_area_id) %>%
     data.tree::FromDataFrameNetwork()
 
   hierarchy <- hierarchy %>%
     dplyr::left_join(
              data.frame(
-               id = tree$Get("name", traversal = "level"),
+               area_id = tree$Get("name", traversal = "level"),
                tree_idx = 1:tree$totalCount,
                stringsAsFactors = FALSE
              ),
-             by = "id"
+             by = "area_id"
            ) %>%
     dplyr::arrange(tree_idx) %>%
-    dplyr::left_join(names, by = "area_id") %>%
-    dplyr::left_join(meta, by = "area_level") %>%
-    dplyr::left_join(
-             centers %>%
-             as.data.frame() %>%
-             dplyr::rename(center = geometry),
-             by = "area_id"
-           )
+    dplyr::left_join(levels, by = "area_level")
 
   tree$Set(area_id = hierarchy$area_id,
            area_level = hierarchy$area_level,
@@ -120,10 +121,7 @@ create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
            traversal = "level")
 
   v <- list(tree = tree,
-            names = setNames(names$area_name, names$area_id),
-            boundaries = setNames(boundaries$geometry, boundaries$area_id),
-            centers = setNames(centers$geometry, boundaries$area_id))
-
+            boundaries = setNames(boundaries$geometry, boundaries$area_id))
   class(v) <- "naomi_areas"
 
   v
