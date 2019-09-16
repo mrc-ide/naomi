@@ -7,21 +7,29 @@ Authors@R:
            role = c("aut", "cre"),
            email = "jeffrey.eaton@imperial.ac.uk",
            comment = c(ORCID = "0000-0001-7728-728X"))
-Description: This package implements the Naomi model for subnational HIV estimates
+Description: This package implements the Naomi model for subnational HIV estimates.
+Depends: R (>= 2.10)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Imports: 
+    data.tree,
+    dplyr,
+    ggplot2,
+    gridExtra,
+    here,
     magrittr,
     sf,
-    zoo,
-    dplyr
+    tidyr,
+    zoo
 Suggests: 
+    datamodelr,
     knitr,
-    rmarkdown,
     rdhs,
+    rmarkdown,
     survey,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    tidyverse
 VignetteBuilder: knitr

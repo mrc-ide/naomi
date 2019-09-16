@@ -120,7 +120,7 @@ print.naomi_areas <- function(areas) {
 #' area_level `level`, nothing is returned. An error is thrown if any `area_scope`
 #' are not recognized.
 #'
-#' @examples
+#' TODO: Should be an example - where is mwi_areas, mwi_area_geom?
 #' data(mwi_areas, mwi_area_geom)
 #'
 #' areas <- get_area_collection(mwi_areas, level = 3, area_scope = c("MWI.1", "MWI.3.5"))
