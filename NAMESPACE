@@ -3,6 +3,7 @@
 export("%>%")
 export(cmc_date)
 export(convert_quarter_id)
+export(create_areas)
 export(get_age_groups)
 export(get_area_collection)
 export(interpolate_population_agesex)

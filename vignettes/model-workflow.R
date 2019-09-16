@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 
 #'
-#' 
+#'
 
 ##+ setup, message = FALSE
 ## library(naomi)
@@ -23,7 +23,7 @@ library(tidyverse)
 
 #'
 #' # 1. (Up)Load data inputs
-#' 
+#'
 #' Area hierarchy and boundaries
 ##+ load_area_data, message = FALSE
 area_meta <- read_csv(system.file("extdata/areas/area_meta.csv", package = "naomi"))
@@ -39,13 +39,13 @@ pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", p
 survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"))
 
 #' Programme data
-#' 
+#'
 
 #' # 2. Choose inputs
 
 #'### Choose data to include
 
-##+ 
+##+
 level <- 4
 surveys <- c("MWI2016PHIA", "MWI2015DHS")
 
@@ -122,7 +122,7 @@ dat %>%
   sf::st_as_sf() %>%
   ggplot() +
   geom_sf(data = areas) +
-  geom_sf(aes(color = est, size = n_obs), show.legend = "point") + 
+  geom_sf(aes(color = est, size = n_obs), show.legend = "point") +
   viridis::scale_color_viridis(labels = scales::percent_format()) +
   scale_size_area() +
   th_map()

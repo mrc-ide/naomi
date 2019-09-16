@@ -9,7 +9,7 @@
 #' @details
 #' CMC date is defined as the number of months since 1900:
 #' \deqn{cmc = (year - 1900) * 12 + momth}
-#' 
+#'
 #' @references
 #' https://dhsprogram.com/Data/Guide-to-DHS-Statistics/Organization_of_DHS_Data.htm?rhtocid=_4_2_0#Structure_of_DHS_Databc-1
 #'
@@ -28,7 +28,7 @@ cmc_date <- function(date) {
 #' This function recursively expands the list of clusters to produce a list
 #' of survey clusters within areas at each level.
 #'
-#' @examples
+#' TODO: These should be examples - where is areas_long.rds now?
 #' areas_long <- readRDS(here::here("data/areas/areas_long.rds"))
 #' survey_clusters <- readRDS(here::here("data/survey/survey_clusters.rds"))
 #' survey_regions <- readRDS(here::here("data/survey/survey_regions.rds"))
@@ -105,6 +105,17 @@ expand_survey_clusters <- function(survey_clusters,
 #'   * Need generic function to calculate
 #'   * Flexibility about age/sex stratifications to calculate.
 #'
+#' @param survey_meta Survey metadata.
+#' @param survey_regions Survey regions.
+#' @param survey_clusters Survey clusters.
+#' @param survey_individuals Survey individuals.
+#' @param survey_biomarker Survey biomarkers.
+#' @param areas Areas.
+#' @param sex Sex.
+#' @param age_group_id Age group id.
+#' @param area_top_level Area top level.
+#' @param area_bottom_level Area bottom level.
+#'
 calc_survey_hiv_indicators <- function(survey_meta,
                                        survey_regions,
                                        survey_clusters,
@@ -153,7 +164,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
     arrange(survey_id, cluster_id, area_id, -area_level) %>%
     group_by(survey_id, cluster_id, area_id) %>%
     filter(row_number() == 1)
-  
+
   ## 3. Expand individuals dataset to repeat for all individiuals within each
   ##    age/sex group for a given survey
 
@@ -253,6 +264,6 @@ calc_survey_hiv_indicators <- function(survey_meta,
       ci_l = if_else(!est %in% 0:1, plogis(qlogis(est) - qnorm(0.975) * se / (est * (1-est))), NA_real_),
       ci_u = if_else(!est %in% 0:1, plogis(qlogis(est) + qnorm(0.975) * se / (est * (1-est))), NA_real_)
     )
-  
+
   val
 }

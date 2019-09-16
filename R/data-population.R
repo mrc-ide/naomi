@@ -20,16 +20,16 @@ get_age_groups <- function() {
 
 #' Time period indexing
 #'
-#' Time periods are indexed by integers for efficiency and precision. 
+#' Time periods are indexed by integers for efficiency and precision.
 #' Quarters are indexed as the number of quarters since the beginning of
 #' 1900: $quarter_id = (year - 1900) * 4 + quarter$.
-#' 
+#'
 #' @param quarter_id vector of integer quarter IDs.
 #' @param year vector of integer years.
 #' @param quarter vector of integer quarters (1,2,3,4).
 #'
 #' @details
-#' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of 
+#' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of
 #' "Q1", "Q2", "Q3", "Q4" to avoid confusion between calendar quarters and offset
 #' fiscal year quarters.
 #'
@@ -73,13 +73,13 @@ convert_quarter_id <- function(quarter, year) {
 
   as.integer((year - 1900) * 4 + quarter)
 }
-  
-  
 
-                               
+
+
+
 #' Log-linear interpolation of age/sex stratified population
 #'
-#' @param pop_agesex a subset of the population_agesex.
+#' @param population_agesex a subset of the population_agesex.
 #' @param times vector of times to return interpolation.
 #'
 #' @return
@@ -89,15 +89,17 @@ convert_quarter_id <- function(quarter, year) {
 #' `zoo::na.approx()` is used to interpolate log(population).
 #'
 #' @examples
-#' ## Interpolate Malawi population at level 2 (Zone) at two time points 
-#' -population_agesex <- readRDS(system.file("extdata/population/population_agesex.rds", package = "naomi"))
+#' ## Interpolate Malawi population at level 2 (Zone) at two time points
+#' population_agesex <- read.csv(
+#'   system.file("extdata/population/population_agesex.csv", package = "naomi"),
+#'   stringsAsFactors = FALSE)
 #' pop_interp <- interpolate_population_agesex(population_agesex, c(2016.25, 2019.75))
 #'
 #' @export
 interpolate_population_agesex <- function(population_agesex, times = seq(2010.5, 2019.5, 0.25)) {
 
   dfall <- dplyr::distinct(dplyr::select(population_agesex, -time, -population))
-  
+
   df <- dplyr::select(population_agesex, time, area_id, source, sex, age_group_id, population)
 
   tidyr::expand(df, time = times,

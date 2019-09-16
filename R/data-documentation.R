@@ -1,24 +1,26 @@
 #' Programme data: Malawi routine HIV service delivery data
 #'
 #' Datasets containing Malawi National HIV programme quarterly reported data
-#' about: 
+#' about:
 #' * Reported number currently on ART.
 #' * Number of women receiving antenatal care and final antenatal HIV testing.
 #'
 #' @format
 #'
+#'  TODO: Link to mwi_areas dataset
 #'  `mwi_art_number` is a dataset with 2042 observations on the following 5 variables:
 #'  \describe{
-#'    \item{\code{area_id}}{District area id -- see [mwi_areas] dataset.}
+#'    \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 #'    \item{\code{sex}}{Sex as a character vector -- all values are "both".}
 #'    \item{\code{age_group_id}}{Value 20 is age 15+, 24 is age 0-14.}
 #'    \item{\code{quarter_id}}{Quarter ID (integer).}
 #'    \item{\code{current_art}}{Number currently on ART at the end of the quarter.}
 #'   }
-#' 
+#'
+#'  TODO: Link to mwi_areas dataset
 #'  `mwi_anc_testing` is a dataset with 923 observations on the following 8 variables:
 #'  \describe{
-#'    \item{\code{area_id}}{District area id -- see [mwi_areas] dataset.}
+#'    \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 #'    \item{\code{quarter_id}}{Quarter ID (integer).}
 #'    \item{\code{anc_clients}}{Number of unique ANC clients during quarter.}
 #'    \item{\code{ancrt_hiv_status}}{Number of ANC clients for whom an HIV status was ascertained.}
@@ -27,17 +29,17 @@
 #'    \item{\code{ancrt_tested}}{Number of ANC clients tested for HIV and received result.}
 #'    \item{\code{ancrt_test_pos}}{Number of ANC clients testing HIV postive.}
 #'  }
-#' 
+#'
 #' @source
 #' Department of HIV & AIDS, Minitry of Health, Malawi.
-#' [http://hiv.health.gov.mw/index.php/our-documents]
+#' \url{http://hiv.health.gov.mw/index.php/our-documents}
 #'
 #' @details
 #'
 #' Data are sourced from quarterly reporting spreadsheets produced via the Quarterly
 #' Integrated HIV Program Reports and publicly available from Malawi Ministry of
 #' Health: Department of HIV & AIDS website.
-#' 
+#'
 #' Data are provided by the Ministry of Health, Malawi with the following disclaimer:
 #'
 #' 1. The data in this file are owned by the Ministry of Health (MOH), Malawi.
@@ -70,10 +72,10 @@
 #' Dataset could contain one observation per district per quarter for all 32 districts
 #' for all quarters between Q3 2011 and Q3 2018, but the number of observations is
 #' fewer than 32 * 29 = 928 due to a few missing observations.
-#' 
+#'
 #'
 #' @seealso \code{\link{quarter_labels}}, \code{\link{get_age_groups}}.
-#' 
+#'
 "mwi_anc_testing"
 
 #' @rdname mwi_anc_testing

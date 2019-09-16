@@ -1,5 +1,9 @@
 #' Read shape file from ZIP
 #'
+#' @param zfile Path to zip file
+#' @param pattern Pattern to read files for from zip, defaults to files ending
+#' with 'shp'
+#'
 #' @export
 st_read_zip <- function(zfile, pattern = "shp$") {
   tmpd <- tempfile()
@@ -9,6 +13,8 @@ st_read_zip <- function(zfile, pattern = "shp$") {
 }
 
 #' Convert nested hierarchy from wide to long format
+#'
+#' @param x Wide format nested hierarchy.
 #'
 gather_areas <- function(x) {
 
@@ -72,6 +78,9 @@ compare_boundaries <- function(sh1, sh2 = NULL, aggregate = FALSE) {
 #' of a simplified versus raw shapefile and any slivers
 #' in a shapefile.
 #'
+#' @param sh1 Bottom shapefile with red boundaries
+#' @param sh2 Top shapefile with red boundaries
+#'
 check_boundaries <- function(sh1, sh2 = NULL){
   gridExtra::grid.arrange(
     compare_boundaries(sh1, sh2, aggregate = TRUE),
@@ -83,8 +92,9 @@ check_boundaries <- function(sh1, sh2 = NULL){
 #'
 #' @param areas area hierarchy data.frame
 #' @param min_level integer specifying the minimum level
-#' 
-#' @examples
+#' @param max_level integer specifying the maximum level
+#'
+#' TODO: Make this an example - where is areas.rds?
 #' areas <- readRDS(system.file("extdata/areas/areas.rds", package = "naomi"))
 #' areas_wide <- spread_areas(areas)
 #'
@@ -103,7 +113,7 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
     )
 
   for(level in (min_level + 1):max_level) {
-    
+
     areas_wide <- areas_wide %>%
       dplyr::left_join(
         areas %>%
