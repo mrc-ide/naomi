@@ -21,8 +21,19 @@
 #' @export
 create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
 
-  if(is.null(centers))
-    centers <- suppressWarnings(sf::st_point_on_surface(boundaries))
+
+  if(is.null(centers)) {
+    
+    st_agr(boundaries) <- "constant"
+    
+    centers <- withCallingHandlers(
+      sf::st_point_on_surface(boundaries),
+      warning = function(w) {
+        if(grepl("st_point_on_surface may not give correct results for longitude/latitude data", w$message))
+          invokeRestart("muffleWarning")
+      }
+    )
+  }
 
   meta <- meta[order(meta$area_level), ]
 
@@ -72,25 +83,54 @@ create_areas <- function(meta, hierarchy, names, boundaries, centers = NULL) {
   ## - Centroids like within geometry (maybe)
   ## ** These checks might be time consuming, perhaps make them optional
 
-  tree <- mwi_area_hierarchy %>%
+  hierarchy <- hierarchy %>%
+    dplyr::mutate(parent_id = paste0(parent_area_id, "_", area_level-1L),
+                  id = paste0(area_id, "_", area_level))
+
+  tree <- hierarchy %>%
     dplyr::filter(!is.na(parent_area_id)) %>%
-    dplyr::mutate(from = paste0(parent_area_id, "_", area_level-1L),
-                  to = paste0(area_id, "_", area_level)) %>%
-    dplyr::select(from, to, dplyr::everything()) %>%
+    dplyr::select(id, parent_id) %>%
     data.tree::FromDataFrameNetwork()
 
-  v <- list(meta = meta,
-            hierarchy = tree,
-            names = names,
-            boundaries = boundaries,
-            centers = centers)
+  hierarchy <- hierarchy %>%
+    dplyr::left_join(
+             data.frame(
+               id = tree$Get("name", traversal = "level"),
+               tree_idx = 1:tree$totalCount,
+               stringsAsFactors = FALSE
+             ),
+             by = "id"
+           ) %>%
+    dplyr::arrange(tree_idx) %>%
+    dplyr::left_join(names, by = "area_id") %>%
+    dplyr::left_join(meta, by = "area_level") %>%
+    dplyr::left_join(
+             centers %>%
+             as.data.frame() %>%
+             dplyr::rename(center = geometry),
+             by = "area_id"
+           )
+
+  tree$Set(area_id = hierarchy$area_id,
+           area_level = hierarchy$area_level,
+           area_level_label = hierarchy$area_level_label,
+           display_level = hierarchy$display,
+           area_name = hierarchy$area_name,
+           area_sort_order = hierarchy$area_sort_order,
+           traversal = "level")
+
+  v <- list(tree = tree,
+            names = setNames(names$area_name, names$area_id),
+            boundaries = setNames(boundaries$geometry, boundaries$area_id),
+            centers = setNames(centers$geometry, boundaries$area_id))
+
   class(v) <- "naomi_areas"
 
   v
 }
 
 print.naomi_areas <- function(areas) {
-  print(areas$hierarchy)
+  print(areas$tree, "area_name")
 }
 
 

@@ -26,6 +26,9 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(X_rho);
   DATA_MATRIX(X_alpha);
 
+  DATA_MATRIX(X_ancrho);
+  DATA_MATRIX(X_ancalpha);
+
   DATA_SPARSE_MATRIX(Z_x);
   DATA_SPARSE_MATRIX(Z_xs);
   DATA_SPARSE_MATRIX(Z_a);
@@ -66,6 +69,11 @@ Type objective_function<Type>::operator() ()
   
   DATA_SPARSE_MATRIX(A_out);
 
+  // Incidence model
+  DATA_SCALAR(omega);
+  DATA_SPARSE_MATRIX(X_15to49);
+  DATA_VECTOR(log_lambda_offset);
+
   // ** Initialize nll **
   Type val(0);
   
@@ -79,12 +87,12 @@ Type objective_function<Type>::operator() ()
     
   PARAMETER_VECTOR(beta_alpha);
   val -= dnorm(beta_alpha, 0.0, 5.0, true).sum();
-  
-  PARAMETER(beta_anc_rho);
-  val -= dnorm(beta_anc_rho, Type(0.0), Type(5.0), true);
+
+  PARAMETER_VECTOR(beta_anc_rho);
+  val -= dnorm(beta_anc_rho, 0.0, 5.0, true).sum();
     
-  PARAMETER(beta_anc_alpha);
-  val -= dnorm(beta_anc_alpha, Type(0.0), Type(5.0), true);
+  PARAMETER_VECTOR(beta_anc_alpha);
+  val -= dnorm(beta_anc_alpha, 0.0, 5.0, true).sum();
   
   
   // * HIV prevalence model *
@@ -207,6 +215,10 @@ Type objective_function<Type>::operator() ()
   val += AR1(phi_alpha_as)(u_alpha_as);
 
 
+  // * HIV incidence model *
+  
+
+
   // * ANC testing model *
 
   PARAMETER(log_sigma_ancrho_x);
@@ -248,6 +260,21 @@ Type objective_function<Type>::operator() ()
   			Z_a * u_alpha_a * sigma_alpha_a +
   			Z_as * u_alpha_as * sigma_alpha_as);
 
+
+  vector<Type> rho(invlogit(mu_rho));
+  vector<Type> alpha(invlogit(mu_alpha));
+
+  vector<Type> plhiv(population * rho);
+  vector<Type> prop_art(rho * alpha);
+  vector<Type> artnum(population * prop_art);
+
+  vector<Type> plhiv_15to49(X_15to49 * plhiv);
+  vector<Type> rho_15to49(plhiv_15to49 / (X_15to49 * population));
+  vector<Type> alpha_15to49((X_15to49 * artnum) / plhiv_15to49);
+
+  vector<Type> mu_lambda(log_lambda_offset + Z_x * vector<Type>(log(rho_15to49) + log(1.0 - omega * alpha_15to49)));
+
+  vector<Type> infections(exp(mu_lambda) * (population - plhiv));
   
   // likelihood    
 
@@ -257,18 +284,15 @@ Type objective_function<Type>::operator() ()
   for(int i = 0; i < idx_artcov.size(); i++)
     val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
 
-  vector<Type> rho(invlogit(mu_rho));
-  vector<Type> alpha(invlogit(mu_alpha));
-
   vector<Type> ones(rho.size());
   ones.fill(1.0);
   
   vector<Type> mu_anc_rho(A_anc_prev * rho / (A_anc_prev * ones));
-  mu_anc_rho = logit(mu_anc_rho) + beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
+  mu_anc_rho = logit(mu_anc_rho) + X_ancrho * beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
   val -= sum(dbinom_robust(x_anc_prev, n_anc_prev, mu_anc_rho, true));
 
   vector<Type> mu_anc_alpha(A_anc_artcov * vector<Type>(rho * alpha) / (A_anc_artcov * rho));
-  mu_anc_alpha = logit(mu_anc_alpha) + beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
+  mu_anc_alpha = logit(mu_anc_alpha) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
   val -= sum(dbinom_robust(x_anc_artcov, n_anc_artcov, mu_anc_alpha, true));
 
 
@@ -286,9 +310,6 @@ Type objective_function<Type>::operator() ()
     cum_nb += n_nb[i];
   }
 
-  vector<Type> prop_art(rho * alpha);
-  vector<Type> artnum(population * prop_art);
-
   vector<Type> prop_art_ij((Xart_idx * prop_art) * (Xart_gamma * gamma_art));
   vector<Type> population_ij(Xart_idx * population);
   
@@ -300,31 +321,43 @@ Type objective_function<Type>::operator() ()
 
   REPORT(A_j);
   REPORT(sd_A_j);
-		       
-  vector<Type> plhiv_out(A_out * vector<Type>(rho * population));
-  vector<Type> rho_out(plhiv_out / (A_out * population));
+
+  // Calculate model outputs
+  
+  vector<Type> population_out(A_out * population);
+  
+  vector<Type> plhiv_out(A_out * plhiv);
+  vector<Type> rho_out(plhiv_out / population_out);
 
   vector<Type> artnum_out(A_out * artnum);
   vector<Type> alpha_out(artnum_out / plhiv_out);
 
+  vector<Type> infections_out(A_out * infections);
+  vector<Type> lambda_out(infections_out / (population_out - plhiv_out));
+
   REPORT(mu_rho);
   REPORT(mu_alpha);
+  REPORT(mu_lambda);
   REPORT(phi_rho_a);
   REPORT(sigma_rho_a);
+  REPORT(gamma_art);
+
   REPORT(rho_out);
   REPORT(plhiv_out);
+  REPORT(alpha_out);
+  REPORT(artnum_out);
+  REPORT(lambda_out);
+  REPORT(infections_out);
 
   REPORT(mu_anc_rho);
   REPORT(mu_anc_alpha)
 
-  REPORT(alpha_out);
-  REPORT(artnum_out);
-  REPORT(gamma_art);
-
-  ADREPORT(plhiv_out);
   ADREPORT(rho_out);
-  ADREPORT(artnum_out);
+  ADREPORT(plhiv_out);
   ADREPORT(alpha_out);
+  ADREPORT(artnum_out);
+  ADREPORT(lambda_out);
+  ADREPORT(infections_out);
 
   return val;
 }
