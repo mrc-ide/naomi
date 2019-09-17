@@ -1,7 +1,7 @@
 
 #' Construct Model Frames and Adjacency Structures
 #'
-#@export 
+#@export
 naomi_model_frame <- function(areas,
                               population_agesex,
                               spec,
@@ -46,7 +46,7 @@ naomi_model_frame <- function(areas,
 
   stopifnot(!is.na(mf_model$population_t1))
   stopifnot(!is.na(mf_model$population_t2))
-  
+
   #' Add Spectrum inputs
 
   mf_model <- mf_model %>%
@@ -64,7 +64,7 @@ naomi_model_frame <- function(areas,
              ),
              by = c("sex", "age_group_id")
            )
-  
+
   #' Adjacency matrix
   M <- mf_areas %>%
     dplyr::mutate(geometry = areas$boundaries[area_id]) %>%
@@ -82,7 +82,7 @@ naomi_model_frame <- function(areas,
 
 
   #' Model output
-  
+
   area_id_out <- areas$tree$Get("area_id",
                                 filterFun = function(x) x$display_level,
                                 traversal = "level")
@@ -96,25 +96,25 @@ naomi_model_frame <- function(areas,
 
   sex_out <- get_sex_out(sexes)
   age_group_id_out <- get_age_group_id_out(age_group_ids)
-  
+
   mf_out <- tidyr::crossing(
                      area_id = area_id_out,
                      sex = sex_out,
                      age_group_id = age_group_id_out
                    )
 
-  area_id_join <- Map(data.frame,    
+  area_id_join <- Map(data.frame,
                       area_id_out = area_id_out,
                       area_id = area_id_out_leaves,
                       stringsAsFactors = FALSE) %>%
     dplyr::bind_rows() %>%
     dplyr::distinct()
-  
+
   sex_join <- data.frame (sex_out = c("male", "female", "both", "both", "both"),
                           sex = c("male", "female", "male", "female", "both"),
                           stringsAsFactors = FALSE) %>%
     dplyr::filter(sex %in% sexes, sex_out %in% !!sex_out)
-  
+
   age_group_join <- get_age_groups() %>%
     dplyr::filter(age_group_id %in% age_group_id_out) %>%
     setNames(paste0(names(.), "_out")) %>%
@@ -122,7 +122,7 @@ naomi_model_frame <- function(areas,
                     dplyr::filter(age_group_id %in% age_group_ids)) %>%
     dplyr::filter(age_group_start_out <= age_group_start,
                   age_group_span_out == Inf |
-                  (age_group_start + age_group_span) <= 
+                  (age_group_start + age_group_span) <=
                   (age_group_start_out + age_group_span_out)) %>%
     dplyr::select(age_group_id_out, age_group_id)
 
@@ -145,7 +145,7 @@ naomi_model_frame <- function(areas,
                             df_join$out_idx,
                             df_join$idx,
                             df_join$x)
-  
+
 
   v <- list(mf_model = mf_model,
             mf_out = mf_out,
@@ -165,7 +165,7 @@ naomi_model_frame <- function(areas,
 #' Ensures that age groups are fully spanned by modelled
 #' ages.
 #'
-#' @internal
+#' @keywords internal
 get_age_group_id_out <- function(age_group_ids) {
 
   agegr <- get_age_groups() %>%
@@ -217,7 +217,7 @@ survey_prevalence_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
     dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
-  
+
   prev_dat
 }
 
