@@ -45,6 +45,3 @@ VignetteBuilder: knitr
 LinkingTo: 
     TMB,
     RcppEigen
-Remotes: 
-    mrc-ide/eppasm,
-    mrc-ide/specio
