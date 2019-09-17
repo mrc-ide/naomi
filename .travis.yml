@@ -2,6 +2,10 @@
 
 language: R
 sudo: false
+addons:
+  apt:
+    packages:
+      - libudunits2-dev
 cache: packages
 repos:
   INLA: https://inla.r-inla-download.org/R/stable
