@@ -5,6 +5,8 @@ sudo: false
 addons:
   apt:
     packages:
+      - libgdal-dev
+      - libproj-dev
       - libudunits2-dev
 cache: packages
 repos:
