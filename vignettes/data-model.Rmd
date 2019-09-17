@@ -15,16 +15,16 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, include = FALSE, message = FALSE}
-library(tidyverse)
+library(dplyr)
+library(forcats)
+library(ggplot2)
 library(datamodelr)
 library(sf)
-
-devtools::load_all()
 ```
 
 ## Load datasets
 
-```{r load_datasets, message = FALSE}
+```{r load_datasets, message = FALSE, include = FALSE}
 #' areas
 area_levels <- naomi::mwi_area_levels
 area_hierarchy <- naomi::mwi_area_hierarchy
@@ -54,7 +54,7 @@ art_number <- naomi::mwi_art_number
 anc_testing <- naomi::mwi_anc_testing
 ```
 
-```{r create_model, include = FALSE}
+```{r create_model, include = FALSE,  message = FALSE}
 dm_add_colors(
   dm_color_scheme(
     population = dm_palette(
@@ -160,11 +160,12 @@ dm <-
 * Coloured tables are required inputs to Naomi model.
 * White backgrond tables are in the ADR only.
 
-```{r create_graph, fig.width = 7, fig.height = 10, fig.align = "center"}
+```{r create_graph, fig.width = 7, fig.height = 10, fig.align = "center", include = FALSE}
 #' Render graph
 dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type")) %>%
                 ## columnArrows = TRUE) %>%
-  dm_render_graph()
+  dm_render_graph() %>%
+  print
 ```
 
 ## Areas data
@@ -210,7 +211,7 @@ The function `interpolate_population_agesex()` interpolates population estimates
 to specified `quarter_ids`. 
    
 ```{r}
-get_age_groups()
+naomi::get_age_groups()
 ```
 
 ## Survey data 
@@ -227,8 +228,8 @@ The table `survey_hiv_indicators` should also contain all survey HIV prevalence 
 * `art_number` reports the number currently receiving ART at the end of each quarter by area.
 * `anc_testing` reports antenatal clinic (ANC) attendees and outcomes during the quarter. 
 
-The model is currently specified to accept ART numbers by age 0-14 (`age_group_id  = `r filter(get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group_id = `r filter(get_age_groups(), age_group_label == "15+")$age_group_id``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
+The model is currently specified to accept ART numbers by age 0-14 (`age_group_id  = `r filter(naomi::get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group_id = `r filter(naomi::get_age_groups(), age_group_label == "15+")$age_group_id``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
 
 For `art_number` it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area.  Current specification requires a value `current_art = 0` for an area with no ART whereas no entry for a given area will be interpreted as missing data.  This could be revised, for example to require explicit input for all areas with a code for missing data.
 
-The `anc_testing` data is currently input for all ages of pregnant women aggregated, that is `age_group_id = `r filter(get_age_groups(), age_group_label == "15-49")$age_group_id`` for age 15-49.
+The `anc_testing` data is currently input for all ages of pregnant women aggregated, that is `age_group_id = `r filter(naomi::get_age_groups(), age_group_label == "15-49")$age_group_id`` for age 15-49.

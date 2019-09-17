@@ -59,7 +59,7 @@ pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", p
 survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"))
 
 #' Programme data
-#' 
+#'
 
 art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
 anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
@@ -201,7 +201,7 @@ naomi_mf <- naomi_model_frame(areas, pop_agesex, spec,
 #' # ART attendance model
 
 adj_ij <- (naomi_mf$M + diag(nrow(naomi_mf$M))) %>%
-  as("dgCMatrix") %>%
+  methods::as("dgCMatrix") %>%
   Matrix::summary() %>%
   dplyr::mutate(x = NULL,
                 istar = as.integer(i == j),
@@ -364,7 +364,7 @@ fit_tmb <- function(mf) {
     Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
     Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
     ##
-    Q_x = as(mf$Q, "dgCMatrix"),
+    Q_x = methods::as(mf$Q, "dgCMatrix"),
     n_nb = n_nb,
     adj_i = adj_ij$i - 1L,
     adj_j = adj_ij$j - 1L,
@@ -484,7 +484,7 @@ outputs$indicators %>%
   filter(
     indicator_id == 2L,  # HIV prevalence
     age_group_id == 18   # Age group 15-49
-  ) %>%  
+  ) %>%
   head()
 
 #' The function `add_output_labels()` returns the indicators table
@@ -493,7 +493,7 @@ add_output_labels(outputs) %>%
   filter(
     indicator_id == 2L,  # HIV prevalence
     age_group_id == 18   # Age group 15-49
-  ) %>%  
+  ) %>%
   head()
 
 
@@ -508,7 +508,7 @@ outputs$indicators %>%
   filter(
     indicator_id == 2L,  # HIV prevalence
     age_group_id == 18   # Age group 15-49
-  ) %>%  
+  ) %>%
   head()
 
 

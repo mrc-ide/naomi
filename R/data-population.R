@@ -85,7 +85,7 @@ convert_quarter_id <- function(quarter, year) {
 #' Log-linear interpolation of age/sex stratified population
 #'
 #' @param population_agesex a subset of the population_agesex.
-#' @param quarter_id vector of quarter_ids to return interpolation.
+#' @param quarter_ids vector of quarter_ids to return interpolation.
 #'
 #' @return
 #' A data.frame with same columns as pop_agesex interpolated to `times`.
@@ -95,9 +95,9 @@ convert_quarter_id <- function(quarter, year) {
 #'
 #' @seealso
 #' [convert_quarter_id()]
-#' 
+#'
 #' @examples
-#' ## Interpolate Malawi population at level 2 (Zone) at two time points 
+#' ## Interpolate Malawi population at level 2 (Zone) at two time points
 #' data(mwi_population_agesex)
 #' quarter_ids <- convert_quarter_id(c(1, 3), c(2016, 2018))
 #' pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
@@ -106,7 +106,7 @@ convert_quarter_id <- function(quarter, year) {
 interpolate_population_agesex <- function(population_agesex, quarter_ids) {
 
   dfall <- dplyr::distinct(dplyr::select(population_agesex, -quarter_id, -population))
-  
+
   df <- dplyr::select(population_agesex, quarter_id, area_id, source, sex, age_group_id, population)
 
   tidyr::expand(df, quarter_id = quarter_ids,

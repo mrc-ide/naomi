@@ -2,9 +2,22 @@
 % Please edit documentation in R/model.R
 \name{survey_prevalence_mf}
 \alias{survey_prevalence_mf}
+\alias{survey_artcov_mf}
+\alias{survey_recent_mf}
 \title{Prepare model frames for survey datasets}
 \usage{
 survey_prevalence_mf(survey_ids, survey_hiv_indicators, naomi_mf)
+
+survey_artcov_mf(survey_ids, survey_hiv_indicators, naomi_mf)
+
+survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf)
+}
+\arguments{
+\item{survey_ids}{Survey IDs}
+
+\item{survey_hiv_indicators}{Survey HIV indicators}
+
+\item{naomi_mf}{Naomi model frame}
 }
 \description{
 Prepare model frames for survey datasets

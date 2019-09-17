@@ -1,7 +1,16 @@
-
 #' Construct Model Frames and Adjacency Structures
 #'
-#@export
+#' @param areas Areas
+#' @param population_agesex Population by age group and sex
+#' @param spec Spec
+#' @param level Admin level
+#' @param quarter_id1 Quarter id1
+#' @param quarter_id2 Quarter id2
+#' @param age_group_ids Age group ids
+#' @param sexes Sexes
+#' @return Naomi model frame
+#'
+#' @export
 naomi_model_frame <- function(areas,
                               population_agesex,
                               spec,
@@ -69,7 +78,7 @@ naomi_model_frame <- function(areas,
   M <- mf_areas %>%
     dplyr::mutate(geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf() %>%
-    as("Spatial") %>%
+    methods::as("Spatial") %>%
     spdep::poly2nb(.$area_id) %>%
     spdep::nb2mat(style = "B", zero.policy = TRUE)
 
@@ -165,6 +174,8 @@ naomi_model_frame <- function(areas,
 #' Ensures that age groups are fully spanned by modelled
 #' ages.
 #'
+#' @param age_group_ids Age group ids.
+#'
 #' @keywords internal
 get_age_group_id_out <- function(age_group_ids) {
 
@@ -195,6 +206,8 @@ get_sex_out <- function(sexes) {
 
 #' Calculate Posterior Mean and Uncertainty Via TMB
 #'
+#' @param naomi_fit Fitted TMB model.
+#'
 #' @export
 report_tmb <- function(naomi_fit) {
   naomi_fit$sdreport <- TMB::sdreport(naomi_fit$obj, naomi_fit$par,
@@ -203,6 +216,10 @@ report_tmb <- function(naomi_fit) {
 }
 
 #' Prepare model frames for survey datasets
+#'
+#' @param survey_ids Survey IDs
+#' @param survey_hiv_indicators Survey HIV indicators
+#' @param naomi_mf Naomi model frame
 #'
 #' @export
 survey_prevalence_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
@@ -221,7 +238,7 @@ survey_prevalence_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
   prev_dat
 }
 
-#' @rdname survey_prevalence_df
+#' @rdname survey_prevalence_mf
 #' @export
 survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
 
@@ -239,7 +256,7 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
   artcov_dat
 }
 
-#' @rdname survey_prevalence_df
+#' @rdname survey_prevalence_mf
 #' @export
 survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
 

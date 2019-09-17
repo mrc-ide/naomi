@@ -4,18 +4,14 @@
 \alias{create_areas}
 \title{Create an Areas Object}
 \usage{
-create_areas(meta, hierarchy, names, boundaries, centers = NULL)
+create_areas(levels, hierarchy, boundaries)
 }
 \arguments{
-\item{meta}{Data frame of area metadata.}
+\item{levels}{Data frame of area level metadata.}
 
-\item{hierarchy}{Data frame of area metadata.}
-
-\item{names}{Data frame of names for each area}
+\item{hierarchy}{Data frame defining area hierarchy and area-level data.}
 
 \item{boundaries}{an \code{sf} object with boundary geometry for each area_id}
-
-\item{centers}{an \code{sf} object with desired center for each area_id (optional).}
 }
 \value{
 An object of class \code{naomi_areas}
@@ -24,12 +20,11 @@ An object of class \code{naomi_areas}
 Constructs and validates an areas object as an S3 class.
 }
 \examples{
-data(mwi_area_meta)
+data(mwi_area_levels)
 data(mwi_area_hierarchy)
-data(mwi_area_names)
 data(mwi_area_boundaries)
 
-areas <- create_areas(mwi_area_meta, mwi_area_hierarchy, mwi_area_names, mwi_area_boundaries)
+areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
 areas
 
 }

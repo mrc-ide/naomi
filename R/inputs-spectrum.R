@@ -5,32 +5,32 @@
 #' @return A `data.frame` with Spectrum indicators.
 #'
 #' @examples
-#' pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
+#' pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
 #' spec <- extract_pjnz_naomi(pjnz)
 #'
 #' @export
 extract_pjnz_naomi <- function(pjnz) {
-  
+
   totpop <- specio::read_total_pop(pjnz, TRUE) %>%
-    mutate(sex = as.character(sex))
+    dplyr::mutate(sex = as.character(sex))
   hivpop <- specio::read_hiv_pop(pjnz, TRUE) %>%
-    mutate(sex = as.character(sex))
+    dplyr::mutate(sex = as.character(sex))
   artpop <- specio::read_art_pop(pjnz, TRUE) %>%
-    mutate(sex = as.character(sex))
-  
+    dplyr::mutate(sex = as.character(sex))
+
   demp <- eppasm::read_specdp_demog_param(pjnz)
   specres <- eppasm::read_hivproj_output(pjnz)
-  
+
   infections <- specres$infections %>%
     as.data.frame.table(responseName = "infections",
                         stringsAsFactors = FALSE) %>%
     type.convert(as.is = TRUE)
-  
+
   asfr <- demp$asfr %>%
     as.data.frame.table(responseName = "asfr",
                         stringsAsFactors = FALSE) %>%
     type.convert(as.is = TRUE)
-  
+
   spec <- totpop %>%
     dplyr::left_join(hivpop, by = c("age", "sex", "year")) %>%
     dplyr::left_join(artpop, by = c("age", "sex", "year")) %>%
@@ -54,7 +54,7 @@ extract_pjnz_naomi <- function(pjnz) {
     dplyr::group_by(year, sex, age_group_label) %>%
     dplyr::summarise_at(
              dplyr::vars(totpop, hivpop, artpop, susc_previous_year, infections, births), sum) %>%
-    ungroup() %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(prevalence = hivpop / totpop,
                   art_coverage = artpop / hivpop,
                   incidence = infections / susc_previous_year,
@@ -64,7 +64,7 @@ extract_pjnz_naomi <- function(pjnz) {
              by = "age_group_label"
            ) %>%
     dplyr::mutate(quarter_id = convert_quarter_id(2L, year)) %>%
-    dplyr::select(year, quarter_id, everything())
+    dplyr::select(year, quarter_id, dplyr::everything())
 
   spec
 }

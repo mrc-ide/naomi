@@ -16,7 +16,7 @@ A \code{data.frame} with Spectrum indicators.
 Extract Model Inputs from Spectrum PJNZ
 }
 \examples{
-pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
+pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
 spec <- extract_pjnz_naomi(pjnz)
 
 }
