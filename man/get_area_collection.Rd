@@ -29,7 +29,9 @@ the recursion is shortcut and simply filters the hierarchy to the desired
 level for efficiency, but it is equivalent to initialising the recursion
 at the highest level of the hierarchy.
 
-\code{area_scope} can accept a vector of \code{area_id}s and they do not have to be
+If \code{area_scope} is not null, a column \code{area_scope} is returned indicating the
+area in which each returned area is nesteed. \code{area_scope} can accept a vector
+of \code{area_id}s and they do not have to be
 at the same level. If the level of an area in \code{area_scope} is higher than
 area_level \code{level}, nothing is returned. An error is thrown if any \code{area_scope}
 are not recognized.

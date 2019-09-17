@@ -2,11 +2,9 @@ context("test-example-data")
 
 test_that("example areas datasets are valid", {
   expect_is(
-    create_areas(mwi_area_meta,
+    create_areas(mwi_area_levels,
                  mwi_area_hierarchy,
-                 mwi_area_names,
-                 mwi_area_boundaries,
-                 mwi_area_centers),
+                 mwi_area_boundaries),
     "naomi_areas")
 })
 

@@ -14,8 +14,13 @@ get_age_groups <- function() {
     dplyr::mutate(age_group_id = dplyr::row_number(),
                   age_group_label = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
                     sub("-Inf", "+", .) %>%
-                    dplyr::recode("0+" = "all ages")) %>%
-    dplyr::select(age_group_id, age_group_label, age_group_start, age_group_span)
+                    dplyr::recode("0+" = "all ages"),
+                  age_group_sort_order = c(13:29, 1:12)) %>%
+    dplyr::select(age_group_id,
+                  age_group_label,
+                  age_group_start,
+                  age_group_span,
+                  age_group_sort_order)
 }
 
 #' Time period indexing
@@ -80,7 +85,7 @@ convert_quarter_id <- function(quarter, year) {
 #' Log-linear interpolation of age/sex stratified population
 #'
 #' @param population_agesex a subset of the population_agesex.
-#' @param times vector of times to return interpolation.
+#' @param quarter_ids vector of quarter_ids to return interpolation.
 #'
 #' @return
 #' A data.frame with same columns as pop_agesex interpolated to `times`.
@@ -88,27 +93,29 @@ convert_quarter_id <- function(quarter, year) {
 #' @details
 #' `zoo::na.approx()` is used to interpolate log(population).
 #'
+#' @seealso
+#' [convert_quarter_id()]
+#'
 #' @examples
 #' ## Interpolate Malawi population at level 2 (Zone) at two time points
-#' population_agesex <- read.csv(
-#'   system.file("extdata/population/population_agesex.csv", package = "naomi"),
-#'   stringsAsFactors = FALSE)
-#' pop_interp <- interpolate_population_agesex(population_agesex, c(2016.25, 2019.75))
+#' data(mwi_population_agesex)
+#' quarter_ids <- convert_quarter_id(c(1, 3), c(2016, 2018))
+#' pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
 #'
 #' @export
-interpolate_population_agesex <- function(population_agesex, times = seq(2010.5, 2019.5, 0.25)) {
+interpolate_population_agesex <- function(population_agesex, quarter_ids) {
 
-  dfall <- dplyr::distinct(dplyr::select(population_agesex, -time, -population))
+  dfall <- dplyr::distinct(dplyr::select(population_agesex, -quarter_id, -population))
 
-  df <- dplyr::select(population_agesex, time, area_id, source, sex, age_group_id, population)
+  df <- dplyr::select(population_agesex, quarter_id, area_id, source, sex, age_group_id, population)
 
-  tidyr::expand(df, time = times,
+  tidyr::expand(df, quarter_id = quarter_ids,
                 tidyr::nesting(area_id, source, sex, age_group_id)) %>%
     dplyr::full_join(df, by = names(.)) %>%
     dplyr::group_by(area_id, source, sex, age_group_id) %>%
-    dplyr::mutate(population = exp(zoo::na.approx(log(population), time, na.rm = FALSE))) %>%
+    dplyr::mutate(population = exp(zoo::na.approx(log(population), quarter_id, na.rm = FALSE))) %>%
     dplyr::ungroup() %>%
-    dplyr::filter(time %in% times) %>%
+    dplyr::filter(quarter_id %in% quarter_ids) %>%
     dplyr::left_join(dfall, by = intersect(names(.), names(dfall))) %>%
     dplyr::select(names(population_agesex))
 

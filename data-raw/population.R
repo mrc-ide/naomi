@@ -4,10 +4,6 @@ library(here)
 devtools::load_all()
 
 data(mwi_area_hierarchy)
-data(mwi_area_names)
-
-mwi_areas <- left_join(mwi_area_hierarchy, mwi_area_names) %>%
-  mutate(area_name = sub(" Rural", "", area_name))
 
 
 #' ## Data sources
@@ -38,7 +34,7 @@ a3 <- readxl::read_excel(here("data-raw/population", "Series A. Population Table
                            TRUE ~ 4),
     area_name = name
   ) %>%
-  left_join(mwi_areas %>% filter(area_level %in% c(0, 1, 4))) %>%
+  left_join(mwi_area_hierarchy %>% filter(area_level %in% c(0, 1, 4))) %>%
   gather(sex, pop_a3, male, female)
 
 a3 %>% count(sex, area_level, wt = pop_a3)
@@ -57,7 +53,7 @@ a5 <- Map(readxl::read_excel,
   Map(mutate, ., area_name = list("Malawi", "Northern", "Central", "Southern")) %>%
   bind_rows %>%
   gather(sex, pop_a5, male, female) %>%
-  left_join(mwi_areas %>% filter(area_level %in% 0:1))
+  left_join(mwi_area_hierarchy %>% filter(area_level %in% 0:1))
 
 a5aggr <- a5 %>%
   filter(age != "Total") %>%
@@ -78,11 +74,11 @@ a6 <- Map(readxl::read_excel,
   bind_rows() %>%
   mutate(area_name = sub(" Total", "", name) %>%
            recode("Nklhotakota" = "Nkhotakota")) %>%
-  left_join(mwi_areas %>% filter(area_level %in% c(1, 4))) 
+  left_join(mwi_area_hierarchy %>% filter(area_level %in% c(1, 4))) 
 
 
 #' Initial population: district by age disaggregated by region sex ratio by age
-cens18 <- spread_areas(mwi_areas) %>%
+cens18 <- spread_areas(mwi_area_hierarchy) %>%
   left_join(
     a6 %>%
     filter(area_level == 4, age_group != "Total") %>%
@@ -132,7 +128,7 @@ cens18 %>%
             a6 = max(abs(log(ratio_a6))))
 
 cens18 <- cens18 %>%
-  select(iso3:area_id, sex, age_group, population)
+  select(area_id, sex, age_group, population)
             
 
 #' Malawi NSO Population Projections 2008-2030
@@ -151,11 +147,11 @@ nso <- here::here("data-raw", "population", "Pop projections  2008-2030 Master f
          sex != "total") %>%
   left_join(get_age_groups() %>% select(age_group_id, age_group_label)) %>%
   left_join(
-    mwi_areas %>%
+    mwi_area_hierarchy %>%
     filter(area_level == 4) %>%
-    select(iso3, area_id, area_name)
+    select(area_id, area_name)
   ) %>%
-  count(iso3, area_id, year, sex, age_group_id, wt = value, name = "population")
+  count(area_id, year, sex, age_group_id, wt = value, name = "population")
 
 
 count(nso, area_id) %>% print(n = Inf)
@@ -179,7 +175,7 @@ cens18adj <- nso %>%
                       "85-89" = "80+",
                       "90+" = "80+")) %>%
       left_join(get_age_groups() %>% select(age_group_label, age_group_id)) %>%
-      count(iso3, area_id,sex, age_group_id, wt = population, name = "cens18adj")
+      count(area_id,sex, age_group_id, wt = population, name = "cens18adj")
   ) %>%
   mutate(cens18adj = cens18adj / population,
          year = NULL,
@@ -191,7 +187,7 @@ cens18adj <- nso %>%
 #' - Age 0-4 population much smaller: probably a combination of lower than
 #'   projected fertility and undercount of U5 population.
 cens18adj %>%  
-  left_join(mwi_areas %>% select(area_id, area_name, area_sort_order)) %>%
+  left_join(mwi_area_hierarchy %>% select(area_id, area_name, area_sort_order)) %>%
   left_join(get_age_groups() %>% select(age_group_id, age_group_label)) %>%
   mutate(area = fct_reorder(area_name, area_sort_order),
          age_group = fct_reorder(age_group_label, age_group_id)) %>%
@@ -216,10 +212,10 @@ population_agesex <- nso %>%
     source = "Census 2018",
     population = population * exp(log(cens18adj) * pmax((year - 2008) / (2018 - 2008), 0.0)),
     cens18adj = NULL,
-    time = year + 0.5,
+    quarter_id = convert_quarter_id(2, year),
     year = NULL
   ) %>%
-  select(iso3, area_id, source, time, sex, age_group_id, population)
+  select(area_id, source, quarter_id, sex, age_group_id, population)
                   
 
 #' ## Save datasets

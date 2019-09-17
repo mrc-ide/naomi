@@ -29,7 +29,6 @@ mwi_wide <- sh2 %>%
   filter(TYPE_2 != "Water body" | NAME_1 == "Likoma") %>%
   mutate(district = NAME_1,
          district32 = case_when(TYPE_2 == "City" ~ NAME_2,
-                                NAME_1 %in% c("Blantyre", "Lilongwe", "Zomba", "Mzimba") ~ paste(NAME_1, "Rural"),
                                 TRUE ~ NAME_1),
          zone = district %>% fct_collapse(
            "Northern" = c("Chitipa", "Karonga", "Likoma", "Mzimba", "Nkhata Bay", "Rumphi"),
@@ -65,26 +64,22 @@ check_boundaries(mwi_wide, mwi_simple)
 pryr::object_size(mwi_wide %>% select)
 pryr::object_size(mwi_simple %>% select)
 
-#' Rename area ID if area is the same at multiple levels
-
-mwi_simple <- mwi_simple %>%
-  mutate_if(is.factor, as.character) %>%
-  mutate(id2 = if_else(name2 == name1, id1, id2),
-         id3 = if_else(name3 == name2, id2, id3),
-         id4 = if_else(name4 == name3, id3, id4))
-
 
 mwi <- gather_areas(mwi_simple) %>%
   mutate(area_sort_order = row_number(),
          area_level = as.integer(area_level))
 
 area_hierarchy <- mwi %>%
+  mutate(center = st_point_on_surface(mwi$geometry),
+         center_x = st_coordinates(center)[,1],
+         center_y = st_coordinates(center)[,2],
+         center = NULL) %>%
   as.data.frame %>%
-  select(-area_name, -geometry)
+  select(-geometry)
 
 areas <- mwi %>%
   select(-area_level, -parent_area_id, -area_sort_order) %>%
-  group_by(iso3, area_id) %>%
+  group_by(area_id) %>%
   filter(row_number() == 1) %>%
   left_join(
     st_point_on_surface(.) %>%
@@ -93,23 +88,12 @@ areas <- mwi %>%
   ) %>%
   ungroup
 
-area_boundaries <- areas %>%
-  select(iso3, area_id, geometry) %>%
-  st_as_sf() %>%
-  `st_crs<-`(4326)
+area_boundaries <- mwi %>%
+  select(area_id, geometry)
 
-area_centers <- areas %>%
-  as.data.frame %>%
-  select(iso3, area_id, geometry = center) %>%
-  st_as_sf() %>%
-  `st_crs<-`(4326)
-
-area_names <- areas %>%
+area_levels <- mwi %>%
   as.data.frame() %>%
-  select(-geometry, -center)
-
-area_meta <- area_hierarchy %>%
-  count(iso3, area_level, name = "n_areas") %>%
+  count(area_level, name = "n_areas") %>%
   arrange(area_level) %>%
   mutate(area_level_label = area_level %>% recode(`0` = "Country", `1` = "Region", `2` = "Zone", `3` = "District", `4` = "District + Metro"),
          display = TRUE,
@@ -122,41 +106,32 @@ area_meta <- area_hierarchy %>%
 #' Plot illustrating joining of area datasets
 
 area_hierarchy %>%
-  left_join(area_names) %>%
-  left_join(area_meta %>% select(iso3, area_level, area_level_label)) %>%
+  left_join(area_levels %>% select(area_level, area_level_label)) %>%
   mutate(area_level_label = area_level_label %>% fct_reorder(area_level)) %>%
   ggplot() +
   geom_sf(data = . %>% left_join(area_boundaries) %>% st_as_sf()) +
-  geom_sf_label(aes(label = area_sort_order),
-                data = . %>% left_join(area_centers) %>% st_as_sf()) +
+  geom_label(aes(center_x, center_y, label = area_sort_order)) +
   facet_wrap(~area_level_label, nrow = 1) +
   th_map()
 
 #' ## Save datasets
 
-mwi_area_meta <- area_meta
-mwi_area_names <- area_names
+mwi_area_levels <- area_levels
 mwi_area_hierarchy <- area_hierarchy
 mwi_area_boundaries <- area_boundaries
-mwi_area_centers <- area_centers
 
 usethis::use_data(
-           mwi_area_meta,
-           mwi_area_names,
+           mwi_area_levels,
            mwi_area_hierarchy,
-           mwi_area_boundaries,
-           mwi_area_centers,
-           overwrite = TRUE
+           mwi_area_boundaries
          )
 
 dir.create(here("inst/extdata/areas"))
 
-write_csv(area_meta, here("inst/extdata/areas/area_meta.csv"), na = "")
-write_csv(area_names, here("inst/extdata/areas/area_names.csv"), na = "")
+write_csv(area_levels, here("inst/extdata/areas/area_levels.csv"), na = "")
 write_csv(area_hierarchy, here("inst/extdata/areas/area_hierarchy.csv"), na = "")
 
 st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"), delete_dsn = TRUE)
-st_write(area_centers, here("inst/extdata/areas/area_centers.geojson"), delete_dsn = TRUE)
 
 
 #' ## Table schema

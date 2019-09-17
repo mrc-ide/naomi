@@ -4,33 +4,17 @@
 #' @source Malawi
 "mwi_area_boundaries"
 
-#' Malawi area centers
+#' Malawi area levels.
 #'
-#' @format sf object representing area centers
+#' @format Data frame
 #' @source Malawi
-"mwi_area_centers"
+"mwi_area_levels"
 
 #' Malawi area hierarchy
 #'
 #' @format Data frame
 #' @source Malawi
 "mwi_area_hierarchy"
-
-#' Malawi area metdata
-#'
-#' Meta information about area hierarchy invluding admin level names
-#'
-#' @format Data frame
-#' @source Malawi
-"mwi_area_meta"
-
-#' Malawi area names
-#'
-#' Names for districts in Malawi
-#'
-#' @format Data frame
-#' @source Malawi
-"mwi_area_names"
 
 #' Malawi age-sex stratified population data
 #'

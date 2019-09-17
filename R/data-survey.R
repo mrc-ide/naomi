@@ -242,8 +242,8 @@ calc_survey_hiv_indicators <- function(survey_meta,
       by = c("survey_id")
     ) %>%
     left_join(
-      areas %>% select(iso3, area_id, area_level, area_sort_order),
-      by = c("iso3", "area_id")
+      areas %>% select(area_id, area_level, area_sort_order),
+      by = c("area_id")
     ) %>%
     arrange(
       iso3,

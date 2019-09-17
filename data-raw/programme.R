@@ -4,9 +4,6 @@ library(here)
 
 devtools::load_all()
 data(mwi_area_hierarchy)
-data(mwi_area_names)
-mwi_areas <- mwi_area_hierarchy %>%
-  left_join(mwi_area_names)
 
 #' ## Malawi HIV Programme data
 #'
@@ -43,20 +40,21 @@ mwi_anc_testing <- read_csv(here("data-raw/programme/mwi_dha_ancrt.csv"))
 
 mwi_anc_testing <- mwi_anc_testing %>%
   left_join(
-    mwi_areas %>% filter(area_level == 4) %>% select(area_name, area_id),
+    mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
-  mutate(quarter_id = convert_quarter_id(quarter, year),
+  mutate(age_group_id = 18L,
+         quarter_id = convert_quarter_id(quarter, year),
          district32 = NULL,
          quarter = NULL,
          year = NULL) %>%
-  select(area_id, quarter_id, everything())
+  select(area_id, age_group_id, quarter_id, everything())
 
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
 mwi_art_number <- mwi_art_number %>%
   left_join(
-    mwi_areas %>% filter(area_level == 4) %>% select(area_name, area_id),
+    mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
   mutate(quarter_id = convert_quarter_id(quarter, year),
