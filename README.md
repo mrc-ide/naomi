@@ -14,6 +14,15 @@ Naomi model for subnational HIV estimates
 * Ensure that the version number has been updated according to [semantic versioning](https://semver.org/) and add a news item describing the change
 * Reviewer should check code and ensure the build passes on [travis](https://travis-ci.org/mrc-ide/naomi) before merging
 
+## Code coverage
+
+To check code coverage from R
+
+```
+cov <- covr::package_coverage()
+covr::report(cov)
+```
+
 
 ### Website
 
