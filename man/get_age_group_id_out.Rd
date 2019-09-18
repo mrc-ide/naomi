@@ -6,7 +6,11 @@
 \usage{
 get_age_group_id_out(age_group_ids)
 }
+\arguments{
+\item{age_group_ids}{Age group ids.}
+}
 \description{
 Ensures that age groups are fully spanned by modelled
 ages.
 }
+\keyword{internal}

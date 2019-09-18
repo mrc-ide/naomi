@@ -15,20 +15,24 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Imports: 
+    assertthat,
     data.tree,
     dplyr,
+    eppasm,
+    forcats,
     ggplot2,
     gridExtra,
     here,
-    magrittr,
-    sf,
-    TMB,
-    specio (>= 0.1.2),
-    spdep,
     INLA,
+    magrittr,
+    Matrix,
+    methods,
+    sf,
+    spdep,
+    specio (>= 0.1.2),
     tidyr,
-    zoo,
-    assertthat
+    TMB,
+    zoo
 Suggests: 
     datamodelr,
     knitr,
@@ -42,4 +46,5 @@ LinkingTo:
     TMB,
     RcppEigen
 Remotes: 
+    mrc-ide/eppasm
     mrc-ide/specio

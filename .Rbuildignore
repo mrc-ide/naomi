@@ -8,3 +8,4 @@
 ^docs$
 ^scripts$
 ^Makefile$
+^.*.tar.gz$

@@ -6,6 +6,9 @@
 \usage{
 report_tmb(naomi_fit)
 }
+\arguments{
+\item{naomi_fit}{Fitted TMB model.}
+}
 \description{
 Calculate Posterior Mean and Uncertainty Via TMB
 }

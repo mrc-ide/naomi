@@ -7,12 +7,26 @@
 naomi_model_frame(areas, population_agesex, spec, level, quarter_id1,
   quarter_id2, age_group_ids = 4:17, sexes = c("male", "female"))
 }
+\arguments{
+\item{areas}{Areas}
+
+\item{population_agesex}{Population by age group and sex}
+
+\item{spec}{Spec}
+
+\item{level}{Admin level}
+
+\item{quarter_id1}{Quarter id1}
+
+\item{quarter_id2}{Quarter id2}
+
+\item{age_group_ids}{Age group ids}
+
+\item{sexes}{Sexes}
+}
+\value{
+Naomi model frame
+}
 \description{
-Prune areas below model level
-Model frame
-Add population estimates
-Add Spectrum inputs
-Adjacency matrix
-Scaled  precision matrix for 'BYM2' model.
-Model output
+Construct Model Frames and Adjacency Structures
 }
