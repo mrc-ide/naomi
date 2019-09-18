@@ -227,15 +227,15 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
 
   artcov_dat <- naomi_mf$mf_model %>%
     dplyr::inner_join(
-      mwi_survey_hiv_indicators %>%
-      filter(survey_id %in% survey_ids,
-             indicator == "artcov"),
-      by = c("area_id", "sex", "age_group_id")
-      ) %>%
+             survey_hiv_indicators %>%
+             filter(survey_id %in% survey_ids,
+                    indicator == "artcov"),
+             by = c("area_id", "sex", "age_group_id")
+           ) %>%
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
     dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
-
+  
   artcov_dat
 }
 
@@ -245,14 +245,14 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
 
   recent_dat <- naomi_mf$mf_model %>%
     dplyr::inner_join(
-      mwi_survey_hiv_indicators %>%
-      filter(survey_id %in% survey_ids,
-             indicator == "recent"),
-      by = c("area_id", "sex", "age_group_id")
-      ) %>%
+             survey_hiv_indicators %>%
+             filter(survey_id %in% survey_ids,
+                    indicator == "recent"),
+             by = c("area_id", "sex", "age_group_id")
+           ) %>%
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
     dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
-
+  
   recent_dat
 }

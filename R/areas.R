@@ -18,6 +18,10 @@
 #' @export
 create_areas <- function(levels, hierarchy, boundaries) {
 
+  if(!rlang::has_name(hierarchy, "center_x"))
+    hierarchy$center_x <- NA
+  if(!rlang::has_name(hierarchy, "center_y"))
+    hierarchy$center_y <- NA
   missing_center <- is.na(hierarchy$center_x)
   if(any(missing_center)) {
     sf::st_agr(boundaries) <- "constant"
