@@ -40,7 +40,8 @@ Suggests:
     rmarkdown,
     survey,
     testthat (>= 2.1.0),
-    tidyverse
+    tidyverse,
+    covr
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,
