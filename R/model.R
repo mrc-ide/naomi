@@ -17,8 +17,9 @@ naomi_model_frame <- function(areas,
                               level,
                               quarter_id1,
                               quarter_id2,
-                              age_group_ids = 4:17,
-                              sexes = c("male", "female")) {
+                              age_group_ids = 1:17,
+                              sexes = c("male", "female"),
+                              omega = 0.7) {
 
   #' Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
@@ -154,16 +155,86 @@ naomi_model_frame <- function(areas,
                             df_join$out_idx,
                             df_join$idx,
                             df_join$x)
+  
+  #' ART attendance model
 
+  mf_areas <- mf_areas %>%
+    dplyr::left_join(
+             data.frame(area_idx = seq_len(nrow(M)),
+                        n_neighbors = colSums(M)),
+             by = "area_idx"
+           )
+  
+  mf_artattend <- (M + diag(nrow(M))) %>%
+    methods::as("dgCMatrix") %>%
+    Matrix::summary() %>%
+    dplyr::rename(reside_area_idx = i,
+                  artattend_area_idx = j) %>%
+    dplyr::mutate(x = NULL,
+                  istar = as.integer(reside_area_idx == artattend_area_idx),
+                  jstar = as.integer(reside_area_idx == artattend_area_idx)) %>%
+    dplyr::arrange(reside_area_idx, istar, artattend_area_idx, jstar) %>%
+    dplyr::mutate(artattend_idx = dplyr::row_number())
+  
+  gamma_or_prior <-   mf_areas %>%
+    mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
+    dplyr::left_join(
+             data.frame(
+               n_nb_lim = 1:9,
+               gamma_or_mu = c(-3.29855798975623, -4.0643930585428, -4.53271592818956, -4.86910480099925, -5.13133396982624,
+                               -5.34605339546364, -5.52745113789738, -5.68479564118418, -5.8234349424758),
+               gamma_or_sigma = c(0.950818503595947, 1.04135785601697, 1.12665887287997, 1.19273171464978, 1.24570962739274,
+                                  1.28959773294666, 1.32675564121864, 1.35902556091841, 1.3873644912272)
+             ),
+             by = "n_nb_lim"
+           )
+  
+  mf_artattend <- mf_artattend %>%
+    dplyr::left_join(
+             gamma_or_prior %>%
+             dplyr::select(area_idx, gamma_or_mu, gamma_or_sigma),
+             by = c("reside_area_idx" = "area_idx")
+           ) %>%
+    dplyr::mutate(gamma_or_mu = if_else(istar == 1, NA_real_, gamma_or_mu),
+                  gamma_or_sigma = if_else(istar == 1, NA_real_, gamma_or_sigma))
 
+  #' Incidence model
+  
+  mf_model <- mf_model %>%
+    dplyr::left_join(
+             get_age_groups() %>%
+             dplyr::filter(age_group_id %in% age_group_ids) %>%
+             mutate(
+               age15to49 = as.integer(age_group_start >= 15 &
+                                      (age_group_start + age_group_span) <= 50)
+             ) %>%
+             dplyr::select(age_group_id, age15to49),
+             by = "age_group_id"
+           ) %>%
+    dplyr::group_by(area_id) %>%
+    dplyr::mutate(
+             spec_prev15to49 = sum(population_t1 * spec_prev) / sum(population_t1),
+             spec_artcov15to49 =
+               sum(population_t1 * spec_prev * spec_artcov) /
+               sum(population_t1 * spec_prev),
+             log_lambda_offset =
+               log(spec_incid) - log(spec_prev15to49) - log(1 - omega * spec_artcov15to49)
+           ) %>%
+  dplyr::ungroup()
+  
   v <- list(mf_model = mf_model,
             mf_out = mf_out,
+            mf_areas = mf_areas,
+            mf_artattend = mf_artattend,
             A_out = A_out,
+            age_group_ids = age_group_ids,
+            sexes = sexes,
             quarter_id1 = quarter_id1,
             quarter_id2 = quarter_id2,
-            mf_areas = mf_areas,
+            omega = omega,
             M = M,
             Q = Q)
+  
   class(v) <- "naomi_mf"
   v
 }
@@ -245,8 +316,8 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
   artcov_dat <- naomi_mf$mf_model %>%
     dplyr::inner_join(
              survey_hiv_indicators %>%
-             filter(survey_id %in% survey_ids,
-                    indicator == "artcov"),
+             dplyr::filter(survey_id %in% survey_ids,
+                           indicator == "artcov"),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::mutate(n = n_obs,
@@ -263,8 +334,8 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
   recent_dat <- naomi_mf$mf_model %>%
     dplyr::inner_join(
              survey_hiv_indicators %>%
-             filter(survey_id %in% survey_ids,
-                    indicator == "recent"),
+             dplyr::filter(survey_id %in% survey_ids,
+                           indicator == "recent"),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::mutate(n = n_obs,
@@ -272,4 +343,106 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
     dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
   
   recent_dat
+}
+
+
+#' Prepare Model Frames for Programme Datasets
+#'
+#' @export
+anc_testing_prev_mf <- function(quarter_ids, anc_testing, naomi_mf) {
+
+  if(is.null(anc_testing)) {
+    ## No ANC prevalence data used
+    anc_prev_dat <- data.frame(
+      area_id = character(0),
+      anc_idx = integer(0),
+      anc_prev_x = integer(0),
+      anc_prev_n = integer(0)
+    )
+  } else {
+    anc_prev_dat <-
+      anc_testing %>%
+      dplyr::filter(
+               quarter_id %in% quarter_ids,
+               area_id %in% naomi_mf$mf_model$area_id
+             ) %>%
+      dplyr::group_by(area_id) %>%
+      dplyr::summarise_at(vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos), sum, na.rm = TRUE) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
+      dplyr::transmute(
+               area_id,
+               anc_idx = dplyr::row_number(),
+               anc_prev_x = ancrt_totpos,
+               anc_prev_n = ancrt_hiv_status
+             ) 
+  }
+
+  anc_prev_dat 
+}
+
+
+#' @rdname anc_testing_prev_mf
+#' @export
+anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
+
+  if(is.null(anc_testing)) {
+    ## No ANC ART coverage data used
+    anc_artcov_dat <- data.frame(
+      area_id = character(0),
+      anc_idx = integer(0),
+      anc_artcov_x = integer(0),
+      anc_artcov_n = integer(0)
+    )
+  } else {
+    anc_artcov_dat <-
+      anc_testing %>%
+      dplyr::filter(
+               quarter_id %in% quarter_ids,
+               area_id %in% naomi_mf$mf_model$area_id
+             ) %>%
+      dplyr::group_by(area_id) %>%
+      dplyr::summarise_at(vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
+      dplyr::transmute(
+               area_id,
+               anc_idx = dplyr::row_number(),
+               anc_artcov_x = ancrt_already_art,
+               anc_artcov_n = ancrt_totpos
+             ) 
+  }
+
+  anc_artcov_dat
+}
+
+
+#' @rdname anc_testing_prev_mf
+#' @export
+artnum_mf <- function(quarter_id, art_number, naomi_mf) {
+
+  if(is.null(art_number)) {
+    ## No number on ART data
+    artnum_dat <- data.frame(
+      area_id = character(0),
+      sex = character(0),
+      age_group_id = integer(0),
+      artnum_idx = integer(0),
+      current_art = integer(0)
+    )
+  } else {
+    ## !!! Note: should add some subsetting for sex and age group.
+    artnum_dat <- art_number %>%
+      dplyr::filter(quarter_id == !!quarter_id,
+                    area_id %in% naomi_mf$mf_areas$area_id) %>%
+      dplyr::transmute(
+               area_id,
+               sex,
+               age_group_id,
+               artnum_idx = dplyr::row_number(),
+               current_art
+             )
+  }
+  
+  artnum_dat
 }

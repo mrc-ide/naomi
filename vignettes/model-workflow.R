@@ -1,3 +1,4 @@
+
 #' ---
 #' title: "Naomi Model Workflow Example"
 #' output: rmarkdown::html_vignette
@@ -50,6 +51,9 @@ st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE
 
 area_long <- read_sf(file.path(tempdir(), "area_long.geojson"))
 
+areas <- create_areas(area_levels, area_hierarchy, area_boundaries)
+
+
 #' Population data
 ##+ load_population_data, message = FALSE
 pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", package = "naomi"))
@@ -79,18 +83,28 @@ spec <- extract_pjnz_naomi(pjnz)
 
 #'### Choose data to include
 
-##+
-iso3 <- "MWI"
+#' Vector of area IDs to restrict model to
+scope <- "MWI"
+
+#' Level in hierarchy to fit the model
 level <- 4
+
+#' Survey IDs to include in fitting
 survey_ids  <- c("MWI2016PHIA", "MWI2015DHS")
 
+#' First time point for model fitting (roughly midpoint of survey fieldwork)
 artnum_quarter_id_t1 <- convert_quarter_id(1, 2016)
+
+#' Range of quarters to use for ANC testing data at time 1
+#' Roughly 2 quarters before nad after time 1
 anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
 
+#' Second time point for model fitting (current quarter desired for estimates)
 artnum_quarter_id_t2 <- convert_quarter_id(3, 2018)
+
+#' Range of quarters to use for ANC testing data at time 1
 anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
 
-areas <- create_areas(area_levels, area_hierarchy, area_boundaries)
 
 
 
@@ -175,170 +189,42 @@ areas <- create_areas(area_levels, area_hierarchy, area_boundaries)
 
 
 #' # 4. Prepare model inputs
-#'
-#' ### Areas
-#'
-#' Define areas
+
+#' Setup the model 
+
+naomi_mf <- naomi_model_frame(areas,
+                              pop_agesex,
+                              spec,
+                              level = level,
+                              artnum_quarter_id_t1,
+                              artnum_quarter_id_t2)
 
 
-#' ### State space
-#'
-#' Data frame for full space stratification
-
-
-sexes <- c("male", "female")
-age_group_ids <- 1:17
-
-quarter_id1 <- naomi::convert_quarter_id(1, 2016)
-quarter_id2 <- naomi::convert_quarter_id(3, 2018)
-
-naomi_mf <- naomi_model_frame(areas, pop_agesex, spec,
-                              level = 4, quarter_id1, quarter_id2,
-                              age_group_ids = age_group_ids,
-                              sexes = sexes)
-
-
-#' # ART attendance model
-
-adj_ij <- (naomi_mf$M + diag(nrow(naomi_mf$M))) %>%
-  methods::as("dgCMatrix") %>%
-  Matrix::summary() %>%
-  dplyr::mutate(x = NULL,
-                istar = as.integer(i == j),
-                jstar = as.integer(i == j)) %>%
-  dplyr::arrange(i, istar, j, jstar) %>%
-  dplyr::mutate(idx_ij = dplyr::row_number(),
-                idf_ij = as_factor(idx_ij))
-
-n_nb <- colSums(naomi_mf$M)
-
-gamma_or_prior <- adj_ij %>%
-  filter(istar == 0) %>%
-  left_join(
-    data.frame(i = seq_along(n_nb),
-               n_nb_lim = pmin(n_nb, 9))
-  ) %>%
-  left_join(
-    data.frame(
-      n_nb_lim = 1:9,
-      gamma_or_mu = c(-3.29855798975623, -4.0643930585428, -4.53271592818956, -4.86910480099925, -5.13133396982624,
-                      -5.34605339546364, -5.52745113789738, -5.68479564118418, -5.8234349424758),
-      gamma_or_sigma = c(0.950818503595947, 1.04135785601697, 1.12665887287997, 1.19273171464978, 1.24570962739274,
-                         1.28959773294666, 1.32675564121864, 1.35902556091841, 1.3873644912272)
-    )
-  )
-
-
-df_art_attend <- naomi_mf$mf_model %>%
-  left_join(adj_ij, by = c("area_idx" = "i"))
-
-Xart_gamma <- Matrix::sparse.model.matrix(~0 + idf_ij, df_art_attend)
-Xart_idx <- Matrix::sparse.model.matrix(~0 + as_factor(idx), df_art_attend)
-
-
-#' # Incidence model
-
-omega <- 0.7
-
-naomi_mf$mf_model <- naomi_mf$mf_model %>%
-  mutate(age15to49 = as.integer(age_group_id %in% 4:10)) %>%
-  group_by(area_id) %>%
-  mutate(
-    spec_prev15to49 = sum(population_t1 * spec_prev) / sum(population_t1),
-    spec_artcov15to49 =
-      sum(population_t1 * spec_prev * spec_artcov) /
-      sum(population_t1 * spec_prev),
-    log_lambda_offset =
-      log(spec_incid) - log(spec_prev15to49) - log(1 - omega * spec_artcov15to49)
-  ) %>%
-  ungroup
-
-X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_mf$mf_model))
-
-## rho <- plogis(obj$report()$mu_rho)
-## alpha <- plogis(obj$report()$mu_alpha)
-
-## pop15to49 <- df$population_t1 %*% X_15to49
-## plhiv15to49 <- (rho * df$population_t1) %*% X_15to49
-## artnum15to49 <- (alpha * rho * df$population_t1) %*% X_15to49
-
-## rho15to49 <- c(plhiv15to49 / pop15to49)
-## alpha15to49 <- c(artnum15to49 / plhiv15to49)
-
-## mf$mf_model$log_lambda_offset + dtmb$Z_x %*% (log(rho15to49) + log(1 - omega * alpha15to49))
-
-#' ### Survey data
-#'
+#' Prepare data inputs
 
 prev_dat <- survey_prevalence_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 artcov_dat <- survey_artcov_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 recent_dat <- survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 
-anc_dat <-
-  anc_testing %>%
-  filter(quarter_id %in% anc_quarter_id_t1) %>%
-  group_by(area_id) %>%
-  summarise_at(vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
-  mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
-  transmute(
-    area_id,
-    anc_idx = row_number(),
-    anc_prev_x = ancrt_totpos,
-    anc_prev_n = ancrt_hiv_status,
-    anc_artcov_x = ancrt_already_art,
-    anc_artcov_n = ancrt_totpos
-  ) %>%
-  left_join(distinct(naomi_mf$mf_model, area_id, area_idf))
+anc_prev_t1_dat <- anc_testing_prev_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
+anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
+
+anc_prev_t2_dat <- anc_testing_prev_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
+anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
+
+artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
+artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
 
 
-A_anc_prev <- anc_dat %>%
-  inner_join(
-    naomi_mf$mf_model %>%
-    transmute(
-      area_id,
-      idx,
-      births = asfr * population_t1
-    ) %>%
-    filter(births > 0)
-  ) %>%
-  {
-    Matrix::spMatrix(nrow(anc_dat),
-                     nrow(naomi_mf$mf_model),
-                     .$anc_idx,
-                     .$idx,
-                     .$births)
-  }
+#' Prepare model inputs and initial parameters
 
-A_anc_artcov <- A_anc_prev
-
-
-artnum_dat <- art_number %>%
-  filter(quarter_id == artnum_quarter_id_t1,
-         if(!1 %in% naomi_mf$mf_model$age_group_id) age_group_id == 20 else  TRUE) %>%
-  mutate(artnum_idx = row_number())
-
-A_artnum <- artnum_dat %>%
-  left_join(
-    naomi_mf$mf_areas %>% dplyr::select(area_id, area_idx)
-  ) %>%
-  inner_join(
-    df_art_attend %>%
-    transmute(
-      j,
-      age_group_id = if_else(age_group_id %in% 1:3, 24L, 20L),  ## HARD CODED
-      sex = "both",                                             ## HARD CODED
-      art_attend_idx = row_number(),
-      value = 1
-    ),
-    by = c("area_idx" = "j", "sex" = "sex", "age_group_id" = "age_group_id")
-  ) %>%
-  {
-    Matrix::spMatrix(nrow(artnum_dat),
-                     nrow(df_art_attend),
-                     .$artnum_idx,
-                     .$art_attend_idx,
-                     .$value)
-  }
+tmb_inputs <- prepare_tmb_inputs(naomi_mf, prev_dat, artcov_dat, recent_dat,
+                                 anc_prev_t1_dat,
+                                 anc_prev_t2_dat,
+                                 anc_artcov_t1_dat,
+                                 anc_artcov_t2_dat,
+                                 artnum_t1_dat,
+                                 artnum_t2_dat)
 
 
 
@@ -346,127 +232,8 @@ A_artnum <- artnum_dat %>%
 #'
 #' Note: useful for how to include multiple TMB models: https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package
 
-fit_tmb <- function(mf) {
-
-  df <- mf$mf_model
-
-  dtmb <- list(
-    population = df$population_t1,
-    X_rho = model.matrix(~as.integer(sex == "female"), df),
-    X_alpha = model.matrix(~as.integer(sex == "female"), df),
-    X_ancrho = model.matrix(~1, anc_dat),
-    X_ancalpha = model.matrix(~1, anc_dat),
-    Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
-    Z_a = Matrix::sparse.model.matrix(~0 + age_group_idf, df),
-    Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
-    Z_as = Matrix::sparse.model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
-    ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
-    Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
-    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_dat),
-    ##
-    Q_x = methods::as(mf$Q, "dgCMatrix"),
-    n_nb = n_nb,
-    adj_i = adj_ij$i - 1L,
-    adj_j = adj_ij$j - 1L,
-    gamma_or_mu = gamma_or_prior$gamma_or_mu,
-    gamma_or_sigma = 2.0 * gamma_or_prior$gamma_or_sigma,
-    Xart_idx = Xart_idx,
-    Xart_gamma = Xart_gamma,
-    ##
-    omega = omega,
-    X_15to49 = X_15to49,
-    log_lambda_offset = mf$mf_model$log_lambda_offset,
-    ##
-    A_out = mf$A_out,
-    idx_prev = prev_dat$idx - 1L,
-    x_prev = prev_dat$x,
-    n_prev = prev_dat$n,
-    idx_artcov = artcov_dat$idx - 1L,
-    x_artcov = artcov_dat$x,
-    n_artcov = artcov_dat$n,
-    A_anc_prev = A_anc_prev,
-    x_anc_prev = anc_dat$anc_prev_x,
-    n_anc_prev = anc_dat$anc_prev_n,
-    A_anc_artcov = A_anc_artcov,
-    x_anc_artcov = anc_dat$anc_artcov_x,
-    n_anc_artcov = anc_dat$anc_artcov_n,
-    ##
-    A_artnum = A_artnum,
-    x_artnum = artnum_dat$current_art
-  )
-
-
-  ptmb <- list(
-    beta_rho = numeric(ncol(dtmb$X_rho)),
-    beta_alpha = numeric(ncol(dtmb$X_alpha)),
-    beta_anc_rho = numeric(1),
-    beta_anc_alpha = numeric(1),
-    us_rho_x = numeric(ncol(dtmb$Z_x)),
-    ui_rho_x = numeric(ncol(dtmb$Z_x)),
-    us_rho_xs = numeric(ncol(dtmb$Z_xs)),
-    ui_rho_xs = numeric(ncol(dtmb$Z_xs)),
-    u_rho_a = numeric(ncol(dtmb$Z_a)),
-    u_rho_as = numeric(ncol(dtmb$Z_a)),
-    ui_anc_rho_x = numeric(ncol(dtmb$Z_x)),
-    ui_anc_alpha_x = numeric(ncol(dtmb$Z_x)),
-    ##
-    us_alpha_x = numeric(ncol(dtmb$Z_x)),
-    ui_alpha_x = numeric(ncol(dtmb$Z_x)),
-    us_alpha_xs = numeric(ncol(dtmb$Z_xs)),
-    ui_alpha_xs = numeric(ncol(dtmb$Z_xs)),
-    u_alpha_a = numeric(ncol(dtmb$Z_a)),
-    u_alpha_as = numeric(ncol(dtmb$Z_a)),
-    ##
-    logit_phi_rho_a = 0,
-    log_sigma_rho_a = 0,
-    logit_phi_rho_as = 0,
-    log_sigma_rho_as = 0,
-    logit_phi_rho_x = 0,
-    log_sigma_rho_x = 0,
-    logit_phi_rho_xs = 0,
-    log_sigma_rho_xs = 0,
-    ##
-    logit_phi_alpha_a = 0,
-    log_sigma_alpha_a = 0,
-    logit_phi_alpha_as = 0,
-    log_sigma_alpha_as = 0,
-    logit_phi_alpha_x = 0,
-    log_sigma_alpha_x = 0,
-    logit_phi_alpha_xs = 0,
-    log_sigma_alpha_xs = 0,
-    ##
-    log_sigma_ancrho_x = 0,
-    log_sigma_ancalpha_x = 0,
-    ##
-    oddsratio_gamma_art_raw = numeric(sum(dtmb$n_nb))
-  )
-
-  obj <- TMB::MakeADFun(data = dtmb, parameters = ptmb, DLL = "naomi", silent = TRUE,
-                        random = c("us_rho_x", "ui_rho_x",
-                                   "us_rho_xs", "ui_rho_xs",
-                                   "u_rho_a", "u_rho_as",
-                                   ##
-                                   "us_alpha_x", "ui_alpha_x",
-                                   "us_alpha_xs", "ui_alpha_xs",
-                                   "u_alpha_a", "u_alpha_as",
-                                   ##
-                                   "ui_anc_rho_x", "ui_anc_alpha_x",
-                                   ##
-                                   "oddsratio_gamma_art_raw"))
-
-  f <- nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
-
-  f$par.fixed <- f$par
-  f$par.full <- obj$env$last.par
-
-  val <- c(f, obj = list(obj))
-  class(val) <- "naomi_fit"
-
-  val
-}
-
 #' Fit the TMB model
-fit <- fit_tmb(naomi_mf)
+fit <- fit_tmb(tmb_inputs)
 
 #' Calculate model outputs. We can calculate outputs based on posterior mode
 #' estimates before running `report_tmb()` to calculate posterior intervals.
@@ -481,7 +248,7 @@ names(outputs)
 #' for `mode`, but not `mean` or `lower` and `upper` 95% uncertainty ranges.
 
 outputs$indicators %>%
-  filter(
+  dplyr::filter(
     indicator_id == 2L,  # HIV prevalence
     age_group_id == 18   # Age group 15-49
   ) %>%
