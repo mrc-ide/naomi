@@ -282,6 +282,7 @@ get_sex_out <- function(sexes) {
 #' @export
 report_tmb <- function(naomi_fit) {
   naomi_fit$sdreport <- TMB::sdreport(naomi_fit$obj, naomi_fit$par,
+                                      getReportCovariance = FALSE,
                                       bias.correct = TRUE)
   naomi_fit
 }
