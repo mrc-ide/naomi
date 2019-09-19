@@ -1,0 +1,21 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
+      - libudunits2-dev
+cache: packages
+repos:
+  INLA: https://inla.r-inla-download.org/R/stable
+r_packages:
+  - covr
+r_github_packages:
+  - bergant/datamodelr
+  - mrc-ide/eppasm
+  - mrc-ide/specio
+after_success:
+  - Rscript -e 'covr::codecov()'

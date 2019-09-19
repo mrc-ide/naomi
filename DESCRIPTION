@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -40,11 +40,9 @@ Suggests:
     rmarkdown,
     survey,
     testthat (>= 2.1.0),
-    tidyverse
+    tidyverse,
+    covr
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,
     RcppEigen
-Remotes: 
-    mrc-ide/eppasm
-    mrc-ide/specio
