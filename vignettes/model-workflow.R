@@ -257,7 +257,7 @@ outputs$indicators %>%
 #' The function `add_output_labels()` returns the indicators table
 #' with labels added as additional columns.
 add_output_labels(outputs) %>%
-  filter(
+  dplyr::filter(
     indicator_id == 2L,  # HIV prevalence
     age_group_id == 18   # Age group 15-49
   ) %>%
@@ -266,13 +266,13 @@ add_output_labels(outputs) %>%
 
 #' Calculate uncertainty ranges and add to the output object
 #' (This is time consuming and memory intensive.
-system.time(naomi_fit <- report_tmb(fit))
+system.time(fit_sdr <- report_tmb(fit))
 
 #' Regenerate outputs with uncertainty ranges.
-outputs <- output_package(naomi_fit, naomi_mf, areas)
+outputs <- output_package(fit_sdr, naomi_mf, areas)
 
 outputs$indicators %>%
-  filter(
+  dplyr::filter(
     indicator_id == 2L,  # HIV prevalence
     age_group_id == 18   # Age group 15-49
   ) %>%
@@ -324,7 +324,7 @@ indicators %>%
   facet_wrap(~sex)
 
 indicators %>%
-  filter(area_level == 1,
+  dplyr::filter(area_level == 0,
          sex != "both",
          age_group_id %in% 1:17,
          indicator_id == 2L) %>%
@@ -332,7 +332,23 @@ indicators %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
-  geom_linerange(position = position_dodge(0.8)) +
+  ## geom_linerange(position = position_dodge(0.8)) +
+  geom_point(aes(age_group, mean), position = position_dodge(0.8)) +
+  facet_wrap(~area_name) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
+
+
+indicators %>%
+  dplyr::filter(area_level == 0,
+         sex != "both",
+         age_group_id %in% 1:17,
+         indicator_id == 4L) %>%
+  left_join(get_age_groups()) %>%
+  mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
+  ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
+  geom_col(position = "dodge") +
+  ## geom_linerange(position = position_dodge(0.8)) +
+  geom_point(aes(age_group, mean), position = position_dodge(0.8)) +
   facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 

@@ -98,7 +98,7 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
   
-  meta_period <- data.frame(quarter_id = c(quarter_id1, quarter_id2)) %>%
+  meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
     mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
 
   meta_age_group <- get_age_groups()
