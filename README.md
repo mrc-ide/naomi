@@ -1,6 +1,7 @@
 ## Naomi
 
 [![Travis build status](https://travis-ci.org/mrc-ide/naomi.svg?branch=master)](https://travis-ci.org/mrc-ide/naomi)
+[![Codecov test coverage](https://codecov.io/gh/mrc-ide/naomi/branch/master/graph/badge.svg)](https://codecov.io/gh/mrc-ide/naomi?branch=master)
 
 Naomi model for subnational HIV estimates
 
@@ -12,6 +13,15 @@ Naomi model for subnational HIV estimates
 * When branch is ready for merging create a PR and add a reviewer
 * Ensure that the version number has been updated according to [semantic versioning](https://semver.org/) and add a news item describing the change
 * Reviewer should check code and ensure the build passes on [travis](https://travis-ci.org/mrc-ide/naomi) before merging
+
+## Code coverage
+
+To check code coverage from R
+
+```
+cov <- covr::package_coverage()
+covr::report(cov)
+```
 
 
 ### Website
