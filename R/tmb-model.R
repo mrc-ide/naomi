@@ -340,11 +340,15 @@ sample_tmb <- function(fit, nsample = 1000, verbose = TRUE) {
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
 
-  if(verbose) print("Calculating joint covariance")
+  if(verbose) print("Calculating joint precision")
   hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
 
+  if(verbose) print("Inverting precision for joint covariance")
+  cov <- solve(hess)
+
   if(verbose) print("Drawing sample")
-  smp <- mvtnorm::rmvnorm(nsample, fit$par.full, solve(hess))
+  ## TODO: write a version of rmvnorm that uses precision instead of covariance
+  smp <- mvtnorm::rmvnorm(nsample, fit$par.full, cov)
 
   if(verbose) print("Simulating outputs")
   sim <- apply(smp, 1, fit$obj$report)
@@ -356,6 +360,6 @@ sample_tmb <- function(fit, nsample = 1000, verbose = TRUE) {
   is_vector <- vapply(fit$sample, class, character(1)) == "numeric"
   fit$sample[is_vector] <- lapply(fit$sample[is_vector], as.matrix, nrow = 1)
   names(fit$sample) <- names(r)
-  
+
   fit
 }

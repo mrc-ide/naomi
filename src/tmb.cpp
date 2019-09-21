@@ -343,6 +343,7 @@ Type objective_function<Type>::operator() ()
   REPORT(sigma_rho_a);
   REPORT(gamma_art);
 
+  REPORT(population_out);
   REPORT(rho_out);
   REPORT(plhiv_out);
   REPORT(alpha_out);

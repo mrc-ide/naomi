@@ -41,14 +41,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "lambda_out" = 6,
                      "infections_out" = 7)
   
-  population_t1_out <- as.matrix(naomi_mf$A_out %*% naomi_mf$mf_model$population_t1)
-  
   report <- naomi_fit$obj$report(naomi_fit$par.full)
-  report[["population_out"]] <- as.vector(population_t1_out)
-  
-  if(!is.null(naomi_fit$sample)) {
-    naomi_fit$sample$population_out <- population_t1_out
-  }
   
   get_est <- function(varname) {
     v <- dplyr::mutate(

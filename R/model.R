@@ -58,6 +58,18 @@ naomi_model_frame <- function(areas,
   stopifnot(!is.na(mf_model$population_t1))
   stopifnot(!is.na(mf_model$population_t2))
 
+  zeropop1 <- mf_model$population_t1 == 0
+  zeropop2 <- mf_model$population_t2 == 0
+
+  if(any(zeropop1) | any(zeropop2)) {
+    warning(paste("Zero population input for", sum(zeropop1) + sum(zeropop2),
+                  "area/age/sex groups.",
+                  "Replaced with population 0.1."))
+    mf_model$population_t1[zeropop1] <- 0.1
+    mf_model$population_t2[zeropop2] <- 0.1
+  }
+  
+
   #' Add Spectrum inputs
 
   mf_model <- mf_model %>%
