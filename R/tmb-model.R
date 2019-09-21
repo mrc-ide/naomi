@@ -184,13 +184,16 @@ prepare_tmb_inputs <- function(naomi_mf,
   ## Construct TMB data and initial parameter vectors
 
   df <- naomi_mf$mf_model
-  
+
+  ## df <- df %>%
+  ##   mutate(age_group_idf = factor(pmin(age_group_id, 12)))
+
   dtmb <- list(
     population = df$population_t1,
-    X_rho = model.matrix(~as.integer(sex == "female"), df),
-    X_alpha = model.matrix(~as.integer(sex == "female"), df),
-    X_ancrho = model.matrix(~1, anc_prev_t1_dat),
-    X_ancalpha = model.matrix(~1, anc_artcov_t1_dat),
+    X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
+    X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
+    X_ancrho = stats::model.matrix(~1, anc_prev_t1_dat),
+    X_ancalpha = stats::model.matrix(~1, anc_artcov_t1_dat),
     Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
     Z_a = Matrix::sparse.model.matrix(~0 + age_group_idf, df),
     Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
@@ -204,7 +207,7 @@ prepare_tmb_inputs <- function(naomi_mf,
     adj_i = naomi_mf$mf_artattend$reside_area_idx - 1L,
     adj_j = naomi_mf$mf_artattend$artattend_area_idx - 1L,
     gamma_or_mu = dplyr::filter(naomi_mf$mf_artattend, !istar == 1)$gamma_or_mu,
-    gamma_or_sigma = 2.0 * dplyr::filter(naomi_mf$mf_artattend, !istar == 1)$gamma_or_sigma,
+    gamma_or_sigma = dplyr::filter(naomi_mf$mf_artattend, !istar == 1)$gamma_or_sigma,
     Xart_idx = Xart_idx,
     Xart_gamma = Xart_gamma,
     ##
@@ -284,14 +287,14 @@ prepare_tmb_inputs <- function(naomi_mf,
 }
 
 
-fit_tmb <- function(tmb_input) {
+fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
   
   obj <- TMB::MakeADFun(data = tmb_input$data_tmb,
                         parameters = tmb_input$parameters_tmb,
                         DLL = "naomi",
-                        silent = TRUE,
+                        silent = !inner_verbose,
                         random = c("us_rho_x", "ui_rho_x",
                                    "us_rho_xs", "ui_rho_xs",
                                    "u_rho_a", "u_rho_as",
@@ -304,7 +307,8 @@ fit_tmb <- function(tmb_input) {
                                    ##
                                    "oddsratio_gamma_art_raw"))
 
-  f <- nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1))
+  trace <- if(outer_verbose) 1 else 0
+  f <- stats::nlminb(obj$par, obj$fn, obj$gr, control = list(trace = trace))
 
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
@@ -313,4 +317,45 @@ fit_tmb <- function(tmb_input) {
   class(val) <- "naomi_fit"
 
   val
+}
+
+#' Calculate Posterior Mean and Uncertainty Via TMB `sdreport()`
+#'
+#' @param naomi_fit Fitted TMB model.
+#'
+#' @export
+report_tmb <- function(naomi_fit) {
+
+  stopifnot(methods::is(fit, "naomi_fit"))
+  naomi_fit$sdreport <- TMB::sdreport(naomi_fit$obj, naomi_fit$par,
+                                      getReportCovariance = FALSE,
+                                      bias.correct = TRUE)
+  naomi_fit
+}
+
+
+#' Sample from Joint Posterior Distribution
+sample_tmb <- function(fit, nsample = 1000, verbose = TRUE) {
+
+  stopifnot(methods::is(fit, "naomi_fit"))
+  stopifnot(nsample > 1)
+
+  if(verbose) print("Calculating joint covariance")
+  hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
+
+  if(verbose) print("Drawing sample")
+  smp <- mvtnorm::rmvnorm(nsample, fit$par.full, solve(hess))
+
+  if(verbose) print("Simulating outputs")
+  sim <- apply(smp, 1, fit$obj$report)
+  
+  r <- fit$obj$report()
+
+  if(verbose) print("Returning sample")
+  fit$sample <- Map(vapply, list(sim), "[[", lapply(lengths(r), numeric), names(r))
+  is_vector <- vapply(fit$sample, class, character(1)) == "numeric"
+  fit$sample[is_vector] <- lapply(fit$sample[is_vector], as.matrix, nrow = 1)
+  names(fit$sample) <- names(r)
+  
+  fit
 }

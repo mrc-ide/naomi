@@ -19,7 +19,8 @@ naomi_model_frame <- function(areas,
                               quarter_id2,
                               age_group_ids = 1:17,
                               sexes = c("male", "female"),
-                              omega = 0.7) {
+                              omega = 0.7,
+                              artattend_prior_sigma_scale = 3.0) {
 
   #' Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
@@ -127,7 +128,7 @@ naomi_model_frame <- function(areas,
 
   age_group_join <- get_age_groups() %>%
     dplyr::filter(age_group_id %in% age_group_id_out) %>%
-    setNames(paste0(names(.), "_out")) %>%
+    stats::setNames(paste0(names(.), "_out")) %>%
     tidyr::crossing(get_age_groups() %>%
                     dplyr::filter(age_group_id %in% age_group_ids)) %>%
     dplyr::filter(age_group_start_out <= age_group_start,
@@ -183,8 +184,9 @@ naomi_model_frame <- function(areas,
                n_nb_lim = 1:9,
                gamma_or_mu = c(-3.29855798975623, -4.0643930585428, -4.53271592818956, -4.86910480099925, -5.13133396982624,
                                -5.34605339546364, -5.52745113789738, -5.68479564118418, -5.8234349424758),
-               gamma_or_sigma = c(0.950818503595947, 1.04135785601697, 1.12665887287997, 1.19273171464978, 1.24570962739274,
-                                  1.28959773294666, 1.32675564121864, 1.35902556091841, 1.3873644912272)
+               gamma_or_sigma = artattend_prior_sigma_scale *
+                 c(0.950818503595947, 1.04135785601697, 1.12665887287997, 1.19273171464978, 1.24570962739274,
+                   1.28959773294666, 1.32675564121864, 1.35902556091841, 1.3873644912272)
              ),
              by = "n_nb_lim"
            )
@@ -275,17 +277,6 @@ get_sex_out <- function(sexes) {
   sex_out
 }
 
-#' Calculate Posterior Mean and Uncertainty Via TMB
-#'
-#' @param naomi_fit Fitted TMB model.
-#'
-#' @export
-report_tmb <- function(naomi_fit) {
-  naomi_fit$sdreport <- TMB::sdreport(naomi_fit$obj, naomi_fit$par,
-                                      getReportCovariance = FALSE,
-                                      bias.correct = TRUE)
-  naomi_fit
-}
 
 #' Prepare model frames for survey datasets
 #'

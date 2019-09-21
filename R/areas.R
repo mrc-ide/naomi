@@ -128,7 +128,7 @@ create_areas <- function(levels, hierarchy, boundaries) {
            traversal = "level")
 
   v <- list(tree = tree,
-            boundaries = setNames(boundaries$geometry, boundaries$area_id))
+            boundaries = stats::setNames(boundaries$geometry, boundaries$area_id))
   class(v) <- "naomi_areas"
 
   v

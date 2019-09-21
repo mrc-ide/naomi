@@ -16,7 +16,7 @@ meta_indicator <-
                     "Number on ART (residents)",
                     "HIV incidence rate per year",
                     "Number of new infections per year"),
-    parameter = c(NA,
+    parameter = c("population_out",
                   "rho_out",
                   "plhiv_out",
                   "alpha_out",
@@ -33,54 +33,47 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
   mf_out <- naomi_mf$mf_out
   
-  if(is.null(naomi_fit$sdreport)) {
-    report <- naomi_fit$obj$report(naomi_fit$par.full)
-    mode <- lapply(c("rho_out", "plhiv_out",
-                     "alpha_out", "artnum_out",
-                     "lambda_out", "infections_out"),
-                   function(s) setNames(report[[s]], rep(s, length(report[[s]])))
-                   ) %>%
-      unlist()
-    mean <- NA
-    lower <- NA
-    upper <- NA
-  } else {
-    mode <- naomi_fit$sdreport$value
-    se <- naomi_fit$sdreport$sd
-    mean <- naomi_fit$sdreport$unbiased$value
-    lower <- mean - qnorm(0.975) * se
-    upper <- mean + qnorm(0.975) * se
-  }
-
-
-  get_est <- function(s, indicator_id, quarter_id) {
-    idx <- which(names(mode) == s)
-    dplyr::mutate(mf_out,
-                  quarter_id,
-                  indicator_id,
-                  mode = mode[idx],
-                  mean = mean[idx],
-                  lower = lower[idx],
-                  upper = upper[idx])
+  indicator_ids <- c("population_out" = 1,
+                     "rho_out" = 2,
+                     "plhiv_out" = 3,
+                     "alpha_out" = 4,
+                     "artnum_out" = 5,
+                     "lambda_out" = 6,
+                     "infections_out" = 7)
+  
+  population_t1_out <- as.matrix(naomi_mf$A_out %*% naomi_mf$mf_model$population_t1)
+  
+  report <- naomi_fit$obj$report(naomi_fit$par.full)
+  report[["population_out"]] <- as.vector(population_t1_out)
+  
+  if(!is.null(naomi_fit$sample)) {
+    naomi_fit$sample$population_out <- population_t1_out
   }
   
-   indicators <-
-     bind_rows(
-       mf_out %>% dplyr::mutate(
-                           quarter_id = naomi_mf$quarter_id1,
-                           indicator_id = 1L,
-                           mode = as.vector(naomi_mf$A_out %*% naomi_mf$mf_model$population_t1),
-                       mean = mode,
-                       lower = mode,
-                       upper = mode
-                       ),
-       get_est("rho_out",        2L, naomi_mf$quarter_id1),
-       get_est("plhiv_out",      3L, naomi_mf$quarter_id1),
-       get_est("alpha_out",      4L, naomi_mf$quarter_id1),
-       get_est("artnum_out",     5L, naomi_mf$quarter_id1),
-       get_est("lambda_out",     6L, naomi_mf$quarter_id1),
-       get_est("infections_out", 7L, naomi_mf$quarter_id1)
-     )
+  get_est <- function(varname) {
+    v <- dplyr::mutate(
+                  mf_out,
+                  quarter_id = naomi_mf$quarter_id1,
+                  indicator_id = indicator_ids[varname],
+                  mode = report[[varname]]
+                )
+    if(!is.null(naomi_fit$sample)) {
+      smp <- naomi_fit$sample[[varname]]
+      qtl <- apply(smp, 1, stats::quantile, c(0.5, 0.025, 0.975))
+      v$mean <- rowMeans(smp)
+      v$se <- sqrt(rowSums((smp - v$mean)^2) / (max(ncol(smp), 2) - 1))
+      v$median <- qtl[1,]
+      v$lower <- qtl[2,]
+      v$upper <- qtl[3,]
+    } else {
+      v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
+    }
+    
+    v
+  }
+  
+  indicators <- lapply(names(indicator_ids), get_est) %>%
+    dplyr::bind_rows()
   
   indicators
 }
@@ -161,6 +154,8 @@ add_output_labels <- function(naomi_output) {
              indicator_label,
              mode,
              mean,
+             se,
+             median,
              lower,
              upper
            )
@@ -199,20 +194,20 @@ save_output_package <- function(naomi_output,
   on.exit(setwd(old))
 
   
-   write.csv(indicators, "indicators.csv", row.names = FALSE, na = "")
+   utils::write.csv(indicators, "indicators.csv", row.names = FALSE, na = "")
   
   
   if(!single_csv) {
-    write.csv(naomi_output$meta_area %>%
-              as.data.frame() %>%
-              dplyr::select(-geometry),
-              "meta_area.csv", row.names = FALSE, na = "")
-    write.csv(naomi_output$meta_age_group,
-              "meta_age_group.csv", row.names = FALSE, na = "")
-    write.csv(naomi_output$meta_period,
-              "meta_period.csv", row.names = FALSE, na = "")
-    write.csv(naomi_output$meta_indicator,
-              "meta_indicator.csv", row.names = FALSE, na = "")
+    utils::write.csv(naomi_output$meta_area %>%
+                     as.data.frame() %>%
+                     dplyr::select(-geometry),
+                     "meta_area.csv", row.names = FALSE, na = "")
+    utils::write.csv(naomi_output$meta_age_group,
+                     "meta_age_group.csv", row.names = FALSE, na = "")
+    utils::write.csv(naomi_output$meta_period,
+                     "meta_period.csv", row.names = FALSE, na = "")
+    utils::write.csv(naomi_output$meta_indicator,
+                     "meta_indicator.csv", row.names = FALSE, na = "")
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         st_write(naomi_output$meta_area, "boundaries.geojson")
@@ -226,7 +221,7 @@ save_output_package <- function(naomi_output,
     }
   } 
 
-  zip(path, list.files())
+  utils::zip(path, list.files())
 
   path
 }

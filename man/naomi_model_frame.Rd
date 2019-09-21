@@ -5,7 +5,8 @@
 \title{Construct Model Frames and Adjacency Structures}
 \usage{
 naomi_model_frame(areas, population_agesex, spec, level, quarter_id1,
-  quarter_id2, age_group_ids = 4:17, sexes = c("male", "female"))
+  quarter_id2, age_group_ids = 1:17, sexes = c("male", "female"),
+  omega = 0.7, artattend_prior_sigma_scale = 3)
 }
 \arguments{
 \item{areas}{Areas}

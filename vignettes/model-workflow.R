@@ -227,7 +227,6 @@ tmb_inputs <- prepare_tmb_inputs(naomi_mf, prev_dat, artcov_dat, recent_dat,
                                  artnum_t2_dat)
 
 
-
 #' 5. Fit model
 #'
 #' Note: useful for how to include multiple TMB models: https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package
@@ -266,10 +265,10 @@ add_output_labels(outputs) %>%
 
 #' Calculate uncertainty ranges and add to the output object
 #' (This is time consuming and memory intensive.
-system.time(fit_sdr <- report_tmb(fit))
+system.time(fit <- sample_tmb(fit))
 
 #' Regenerate outputs with uncertainty ranges.
-outputs <- output_package(fit_sdr, naomi_mf, areas)
+system.time(outputs <- output_package(fit, naomi_mf, areas))
 
 outputs$indicators %>%
   dplyr::filter(
@@ -317,7 +316,7 @@ indicators %>%
          indicator_id == 2L,
          area_level == 3) %>%
   ## semi_join(get_area_collection(areas, level = 3, area_scope = "MWI.3")) %>%
-  ggplot(aes(fill = mode)) +
+  ggplot(aes(fill = mean)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
@@ -330,10 +329,11 @@ indicators %>%
          indicator_id == 2L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
-  ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
+  ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
-  ## geom_linerange(position = position_dodge(0.8)) +
-  geom_point(aes(age_group, mean), position = position_dodge(0.8)) +
+  geom_linerange(position = position_dodge(0.8)) +
+  geom_point(aes(age_group, median), position = position_dodge(0.8)) +
+  geom_point(aes(age_group, mode), position = position_dodge(0.8), shape = 2) +
   facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
@@ -345,9 +345,9 @@ indicators %>%
          indicator_id == 4L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
-  ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
+  ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
-  ## geom_linerange(position = position_dodge(0.8)) +
+  geom_linerange(position = position_dodge(0.8)) +
   geom_point(aes(age_group, mean), position = position_dodge(0.8)) +
   facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
@@ -358,7 +358,7 @@ indicators %>%
   filter(age_group_id == 19,
          area_level == 4,
          indicator_id == 4L) %>%
-  ggplot(aes(fill = mode)) +
+  ggplot(aes(fill = mean)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
@@ -372,7 +372,7 @@ indicators %>%
          indicator_id == 4L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
-  ggplot(aes(age_group, mode, ymin = lower, ymax = upper, fill = sex)) +
+  ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
   geom_linerange(position = position_dodge(0.8)) +
   facet_wrap(~area_name) +
@@ -384,8 +384,8 @@ indicators %>%
   filter(age_group_id == 19,
          area_level == 4,
          indicator_id %in% 2:3) %>%
-  select(sex, center_x, center_y, indicator_label, mode) %>%
-  spread(indicator_label, mode) %>%
+  select(sex, center_x, center_y, indicator_label, mean) %>%
+  spread(indicator_label, mean) %>%
   ggplot() +
   geom_sf() +
   geom_point(aes(center_x, center_y, colour = `HIV Prevalence`, size = PLHIV)) +
