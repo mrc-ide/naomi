@@ -20,6 +20,12 @@ naomi_model_frame <- function(areas,
                               age_group_ids = 1:17,
                               sexes = c("male", "female"),
                               omega = 0.7,
+                              rita_param = list(OmegaT0      = 130 / 365,
+                                                sigma_OmegaT = ((142-118) / 365) / (2*qnorm(0.975)),
+                                                betaT0       = 0.0,
+                                                sigma_betaT  = 0.00001,
+                                                ritaT        = 1.0),
+                              sigma_u_sd   = 1.0,
                               artattend_prior_sigma_scale = 3.0) {
 
   #' Prune areas below model level
@@ -246,6 +252,7 @@ naomi_model_frame <- function(areas,
             quarter_id1 = quarter_id1,
             quarter_id2 = quarter_id2,
             omega = omega,
+            rita_param = rita_param,
             M = M,
             Q = Q)
   
@@ -333,9 +340,13 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
 
 #' @rdname survey_prevalence_mf
 #' @export
-survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
+survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
+                             min_age = 15, max_age = 80) {
 
   recent_dat <- naomi_mf$mf_model %>%
+    dplyr::left_join(get_age_groups()) %>%
+    dplyr::filter(age_group_start >= min_age,
+                  age_group_start + age_group_span <= max_age) %>%
     dplyr::inner_join(
              survey_hiv_indicators %>%
              dplyr::filter(survey_id %in% survey_ids,

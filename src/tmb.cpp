@@ -26,6 +26,7 @@ Type objective_function<Type>::operator() ()
   // Design matrices
   DATA_MATRIX(X_rho);
   DATA_MATRIX(X_alpha);
+  DATA_MATRIX(X_lambda);
 
   DATA_MATRIX(X_ancrho);
   DATA_MATRIX(X_ancalpha);
@@ -49,6 +50,10 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_artcov);
   DATA_VECTOR(x_artcov);
 
+  DATA_IVECTOR(idx_recent);
+  DATA_VECTOR(n_recent);
+  DATA_VECTOR(x_recent);
+  
   DATA_SPARSE_MATRIX(A_anc_prev);
   DATA_VECTOR(n_anc_prev);
   DATA_VECTOR(x_anc_prev);
@@ -72,6 +77,12 @@ Type objective_function<Type>::operator() ()
 
   // Incidence model
   DATA_SCALAR(omega);
+  DATA_SCALAR(OmegaT0);
+  DATA_SCALAR(sigma_OmegaT);
+  DATA_SCALAR(betaT0);
+  DATA_SCALAR(sigma_betaT);
+  DATA_SCALAR(ritaT);
+    
   DATA_SPARSE_MATRIX(X_15to49);
   DATA_VECTOR(log_lambda_offset);
 
@@ -89,6 +100,9 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(beta_alpha);
   val -= dnorm(beta_alpha, 0.0, 5.0, true).sum();
 
+  PARAMETER_VECTOR(beta_lambda);
+  val -= dnorm(beta_lambda, 0.0, 5.0, true).sum();
+
   PARAMETER_VECTOR(beta_anc_rho);
   val -= dnorm(beta_anc_rho, 0.0, 5.0, true).sum();
 
@@ -102,7 +116,7 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER(logit_phi_rho_x);
   Type phi_rho_x(invlogit(logit_phi_rho_x));
-  val -= log(phi_rho_x) +  log(1 - phi_rho_x);  // change of variables: logit_phi_x -> phi_x
+  val -= log(phi_rho_x) +  log(1 - phi_rho_x);  // change of variables: logit_phi_x ->v phi_x
   val -= dbeta(phi_rho_x, Type(0.5), Type(0.5), true);
 
   PARAMETER(log_sigma_rho_x);
@@ -218,7 +232,20 @@ Type objective_function<Type>::operator() ()
 
   // * HIV incidence model *
 
+  PARAMETER(OmegaT_raw);
+  val -= dnorm(OmegaT_raw, Type(0.0), Type(1.0), true);
+  Type OmegaT = OmegaT0 + OmegaT_raw * sigma_OmegaT;
+  
+  PARAMETER(log_betaT);
+  val -= dnorm(exp(log_betaT), Type(0.0), Type(1.0), true) + log_betaT;
+  Type betaT = betaT0 + exp(log_betaT) * sigma_betaT;
 
+  PARAMETER(log_sigma_lambda_x);
+  Type sigma_lambda_x(exp(log_sigma_lambda_x));
+  val -= dnorm(sigma_lambda_x, Type(0.0), Type(1.0), true) + log_sigma_lambda_x;
+
+  PARAMETER_VECTOR(ui_lambda_x);
+  val -= sum(dnorm(ui_lambda_x, 0.0, 1.0, true));
 
   // * ANC testing model *
 
@@ -273,7 +300,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> rho_15to49(plhiv_15to49 / (X_15to49 * population));
   vector<Type> alpha_15to49((X_15to49 * artnum) / plhiv_15to49);
 
-  vector<Type> mu_lambda(log_lambda_offset + Z_x * vector<Type>(log(rho_15to49) + log(1.0 - omega * alpha_15to49)));
+  vector<Type> mu_lambda(X_lambda * beta_lambda + log_lambda_offset + Z_x * vector<Type>(log(rho_15to49) + log(1.0 - omega * alpha_15to49) + ui_lambda_x * sigma_lambda_x));
 
   vector<Type> infections(exp(mu_lambda) * (population - plhiv));
 
@@ -285,6 +312,14 @@ Type objective_function<Type>::operator() ()
   for(int i = 0; i < idx_artcov.size(); i++)
     val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
 
+  vector<Type> pR_i(idx_recent.size());
+  for(int i = 0; i < idx_recent.size(); i++) {
+    int idx = idx_recent[i];
+    Type pR = 1.0 - exp(-(exp(mu_lambda[idx]) * (1 - rho[idx]) / rho[idx] * (OmegaT - betaT * ritaT) + betaT));
+    pR_i[i] = pR;
+    val -= dbinom(x_recent[i], n_recent[i], pR, true);
+  }
+  
   vector<Type> ones(rho.size());
   ones.fill(1.0);
 
@@ -352,7 +387,9 @@ Type objective_function<Type>::operator() ()
   REPORT(infections_out);
 
   REPORT(mu_anc_rho);
-  REPORT(mu_anc_alpha)
+  REPORT(mu_anc_alpha);
+
+  REPORT(pR_i);
 
   ADREPORT(rho_out);
   ADREPORT(plhiv_out);

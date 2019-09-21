@@ -1,4 +1,3 @@
-
 #' ---
 #' title: "Naomi Model Workflow Example"
 #' output: rmarkdown::html_vignette
