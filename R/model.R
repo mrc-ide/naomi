@@ -1,3 +1,99 @@
+#' Model Frame and Linear Transform for Aggregated Model Outputs
+#'
+#' @param drop_partial_areas Drop areas from output if some children are
+#'   missing (default TRUE).
+#' 
+#' @export 
+naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
+
+  stopifnot(methods::is(areas, "naomi_areas"))
+  
+  model_area_ids <- unique(mf_model$area_id)
+  sexes <- unique(mf_model$sex)
+  age_group_ids <- unique(mf_model$age_group_id)
+
+  
+  area_id_out <- areas$tree$Get("area_id",
+                                filterFun = function(x) x$display_level,
+                                traversal = "level")
+  area_id_out_leaves <- areas$tree$Get("leaves",
+                                       filterFun = function(x) x$display_level,
+                                       traversal = "level") %>%
+    lapply(data.tree::Get, "area_id")
+  
+  area_id_out_leaves <- area_id_out_leaves[!duplicated(area_id_out)]
+  area_id_out <- area_id_out[!duplicated(area_id_out)]
+
+  leaf_in_model <- lapply(area_id_out_leaves, `%in%`, model_area_ids)
+  if(drop_partial_areas) {
+    all_leaves_in_model <- vapply(leaf_in_model, all, logical(1))
+    area_id_out <- area_id_out[all_leaves_in_model]
+    area_id_out_leaves <- area_id_out_leaves[all_leaves_in_model]
+  } else {
+    area_id_out_leaves <- Map("[", area_id_out_leaves, leaf_in_model)
+    area_id_out <- area_id_out[lengths(area_id_out_leaves) > 0]
+    area_id_out_leaves <- area_id_out_leaves[lengths(area_id_out_leaves) > 0]
+  }
+  
+  sex_out <- get_sex_out(sexes)
+  age_group_id_out <- get_age_group_id_out(age_group_ids)
+
+  mf_out <- tidyr::crossing(
+                     area_id = area_id_out,
+                     sex = sex_out,
+                     age_group_id = age_group_id_out
+                   )
+
+  area_id_join <- Map(data.frame,
+                      area_id_out = area_id_out,
+                      area_id = area_id_out_leaves,
+                      stringsAsFactors = FALSE) %>%
+    dplyr::bind_rows() %>%
+    dplyr::distinct()
+
+  sex_join <- data.frame (sex_out = c("male", "female", "both", "both", "both"),
+                          sex = c("male", "female", "male", "female", "both"),
+                          stringsAsFactors = FALSE) %>%
+    dplyr::filter(sex %in% sexes, sex_out %in% !!sex_out)
+
+  age_group_join <- get_age_groups() %>%
+    dplyr::filter(age_group_id %in% age_group_id_out) %>%
+    stats::setNames(paste0(names(.), "_out")) %>%
+    tidyr::crossing(get_age_groups() %>%
+                    dplyr::filter(age_group_id %in% age_group_ids)) %>%
+    dplyr::filter(age_group_start_out <= age_group_start,
+                  age_group_span_out == Inf |
+                  (age_group_start + age_group_span) <=
+                  (age_group_start_out + age_group_span_out)) %>%
+    dplyr::select(age_group_id_out, age_group_id)
+
+  stopifnot(age_group_ids %in% age_group_join$age_group_id)
+
+  df_join <- tidyr::crossing(area_id_join, sex_join, age_group_join) %>%
+    dplyr::full_join(
+             mf_model %>%
+             dplyr::select("area_id", "sex", "age_group_id", "idx"),
+             by = c("area_id", "sex", "age_group_id")) %>%
+    dplyr::full_join(
+             mf_out %>%
+             dplyr::mutate(out_idx = dplyr::row_number())
+            ,
+             by = c("area_id_out" = "area_id",
+                    "sex_out" = "sex",
+                    "age_group_id_out" = "age_group_id")
+           ) %>%
+    mutate(x = 1)
+
+  A <- Matrix::spMatrix(nrow(mf_out),
+                        nrow(mf_model),
+                        df_join$out_idx,
+                        df_join$idx,
+                        df_join$x)
+
+  list(mf = mf_out, A = A)
+}
+
+
 #' Construct Model Frames and Adjacency Structures
 #'
 #' @param areas Areas
@@ -112,68 +208,8 @@ naomi_model_frame <- function(areas,
 
   #' Model output
 
-  area_id_out <- areas$tree$Get("area_id",
-                                filterFun = function(x) x$display_level,
-                                traversal = "level")
-  area_id_out_leaves <- areas$tree$Get("leaves",
-                                       filterFun = function(x) x$display_level,
-                                       traversal = "level") %>%
-    lapply(data.tree::Get, "area_id")
-
-  area_id_out_leaves <- area_id_out_leaves[!duplicated(area_id_out)]
-  area_id_out <- area_id_out[!duplicated(area_id_out)]
-
-  sex_out <- get_sex_out(sexes)
-  age_group_id_out <- get_age_group_id_out(age_group_ids)
-
-  mf_out <- tidyr::crossing(
-                     area_id = area_id_out,
-                     sex = sex_out,
-                     age_group_id = age_group_id_out
-                   )
-
-  area_id_join <- Map(data.frame,
-                      area_id_out = area_id_out,
-                      area_id = area_id_out_leaves,
-                      stringsAsFactors = FALSE) %>%
-    dplyr::bind_rows() %>%
-    dplyr::distinct()
-
-  sex_join <- data.frame (sex_out = c("male", "female", "both", "both", "both"),
-                          sex = c("male", "female", "male", "female", "both"),
-                          stringsAsFactors = FALSE) %>%
-    dplyr::filter(sex %in% sexes, sex_out %in% !!sex_out)
-
-  age_group_join <- get_age_groups() %>%
-    dplyr::filter(age_group_id %in% age_group_id_out) %>%
-    stats::setNames(paste0(names(.), "_out")) %>%
-    tidyr::crossing(get_age_groups() %>%
-                    dplyr::filter(age_group_id %in% age_group_ids)) %>%
-    dplyr::filter(age_group_start_out <= age_group_start,
-                  age_group_span_out == Inf |
-                  (age_group_start + age_group_span) <=
-                  (age_group_start_out + age_group_span_out)) %>%
-    dplyr::select(age_group_id_out, age_group_id)
-
-  stopifnot(age_group_ids %in% age_group_join$age_group_id)
-
-  df_join <- tidyr::crossing(area_id_join, sex_join, age_group_join) %>%
-    dplyr::full_join(mf_model, by = c("area_id", "sex", "age_group_id")) %>%
-    dplyr::full_join(
-             mf_out %>%
-             dplyr::mutate(out_idx = dplyr::row_number())
-            ,
-             by = c("area_id_out" = "area_id",
-                    "sex_out" = "sex",
-                    "age_group_id_out" = "age_group_id")
-           ) %>%
-    mutate(x = 1)
-
-  A_out <- Matrix::spMatrix(nrow(mf_out),
-                            nrow(mf_model),
-                            df_join$out_idx,
-                            df_join$idx,
-                            df_join$x)
+  outf <- naomi_output_frame(mf_model, areas)
+  
   
   #' ART attendance model
 
@@ -243,10 +279,10 @@ naomi_model_frame <- function(areas,
   dplyr::ungroup()
   
   v <- list(mf_model = mf_model,
-            mf_out = mf_out,
+            mf_out = outf$mf,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
-            A_out = A_out,
+            A_out = outf$A,
             age_group_ids = age_group_ids,
             sexes = sexes,
             quarter_id1 = quarter_id1,
@@ -266,23 +302,31 @@ naomi_model_frame <- function(areas,
 #' Ensures that age groups are fully spanned by modelled
 #' ages.
 #'
-#' @param age_group_ids Age group ids.
+#' @param age_group_ids Modelled age group ids. Assumed to
+#'   be non-overlapping.
 #'
 #' @keywords internal
 get_age_group_id_out <- function(age_group_ids) {
 
   agegr <- get_age_groups() %>%
-    dplyr::filter(age_group_id %in% age_group_ids)
+    dplyr::filter(age_group_id %in% age_group_ids) %>%
+    dplyr::transmute(mod_agegr_start = age_group_start,
+                     mod_agegr_span = age_group_span)
+                  
 
-  age_min <- min(agegr$age_group_start)
-  age_max <- max(agegr$age_group_start + agegr$age_group_span)
+  #' TODO: Check agegr are non overlapping
 
-  val <- dplyr::filter(get_age_groups(),
-                       age_group_start >= age_min,
-                       is.infinite(age_max) |
-                       age_group_start + age_group_span <= age_max)
+  v <- get_age_groups() %>%
+    tidyr::crossing(agegr) %>%
+    dplyr::filter(age_group_start <= mod_agegr_start,
+                  age_group_start + age_group_span >= mod_agegr_start + mod_agegr_span) %>%
+    dplyr::group_by(age_group_id) %>%
+    dplyr::filter(age_group_start == min(mod_agegr_start)) %>%
+    dplyr::ungroup() %>%
+    dplyr::count(age_group_id, age_group_span, wt = mod_agegr_span) %>%
+    dplyr::filter(age_group_span == n)
 
-  val$age_group_id
+  v$age_group_id
 }
 
 
