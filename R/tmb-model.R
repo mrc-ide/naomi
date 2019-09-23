@@ -312,7 +312,9 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                         parameters = tmb_input$parameters_tmb,
                         DLL = "naomi",
                         silent = !inner_verbose,
-                        random = c("us_rho_x", "ui_rho_x",
+                        random = c("beta_rho", "beta_alpha", "beta_lambda",
+                                   "beta_anc_rho", "beta_anc_alpha",
+                                   "us_rho_x", "ui_rho_x",
                                    "us_rho_xs", "ui_rho_xs",
                                    "u_rho_a", "u_rho_as",
                                    ##
@@ -354,20 +356,37 @@ report_tmb <- function(naomi_fit) {
 
 
 #' Sample from Joint Posterior Distribution
-sample_tmb <- function(fit, nsample = 1000, verbose = TRUE) {
+sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
 
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
 
-  if(verbose) print("Calculating joint precision")
-  hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
+  if(!random_only) {
+    if(verbose) print("Calculating joint precision")
+    hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
+    
+    if(verbose) print("Inverting precision for joint covariance")
+    cov <- solve(hess)
+    
+    if(verbose) print("Drawing sample")
+    ## TODO: write a version of rmvnorm that uses precision instead of covariance
+    smp <- mvtnorm::rmvnorm(nsample, fit$par.full, cov)
 
-  if(verbose) print("Inverting precision for joint covariance")
-  cov <- solve(hess)
+  } else {
+    r <- fit$obj$env$random
+    par_f <- fit$par.full[-r]
 
-  if(verbose) print("Drawing sample")
-  ## TODO: write a version of rmvnorm that uses precision instead of covariance
-  smp <- mvtnorm::rmvnorm(nsample, fit$par.full, cov)
+    par_r <- fit$par.full[r]
+    hess_r <- fit$obj$env$spHess(fit$par.full, random = TRUE)
+    cov_r <- solve(hess_r)
+    smp_r <- mvtnorm::rmvnorm(nsample, par_r, cov_r)
+
+    smp <- matrix(0, nsample, length(fit$par.full))
+    smp[ , r] <- smp_r
+    smp[ ,-r] <- matrix(par_f, nsample, length(par_f), byrow = TRUE)
+    colnames(smp)[r] <- colnames(smp_r)
+    colnames(smp)[-r] <- names(par_f)
+  }
 
   if(verbose) print("Simulating outputs")
   sim <- apply(smp, 1, fit$obj$report)
