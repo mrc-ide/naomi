@@ -355,49 +355,56 @@ report_tmb <- function(naomi_fit) {
 }
 
 
-#' Sample from Joint Posterior Distribution
-sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
+sample_naomi_fit <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
 
   stopifnot(methods::is(fit, "naomi_fit"))
+  fit$sample <- sample_tmb(fit$obj, fit$par.full, nsample, random_only, verbose)
+  fit
+}
+
+#' Sample from Joint Posterior Distribution
+sample_tmb <- function(obj, par = obj$env$last.par.best, nsample = 1000, random_only = TRUE, verbose = TRUE) {
+
   stopifnot(nsample > 1)
+
+  ridx <- obj$env$random
+  par_f <- par[-ridx]
 
   if(!random_only) {
     if(verbose) print("Calculating joint precision")
-    hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
+    hess <- sdreport_joint_precision(obj, par_f)
     
     if(verbose) print("Inverting precision for joint covariance")
-    cov <- solve(hess)
+    cov <- as.matrix(Matrix::solve(hess))
     
     if(verbose) print("Drawing sample")
     ## TODO: write a version of rmvnorm that uses precision instead of covariance
-    smp <- mvtnorm::rmvnorm(nsample, fit$par.full, cov)
+    smp <- mvtnorm::rmvnorm(nsample, par, cov)
 
   } else {
-    r <- fit$obj$env$random
-    par_f <- fit$par.full[-r]
 
-    par_r <- fit$par.full[r]
-    hess_r <- fit$obj$env$spHess(fit$par.full, random = TRUE)
-    cov_r <- solve(hess_r)
+    par_r <- par[ridx]
+    hess_r <- obj$env$spHess(par, random = TRUE)
+    cov_r <- as.matrix(Matrix::solve(hess_r))
     smp_r <- mvtnorm::rmvnorm(nsample, par_r, cov_r)
 
-    smp <- matrix(0, nsample, length(fit$par.full))
-    smp[ , r] <- smp_r
-    smp[ ,-r] <- matrix(par_f, nsample, length(par_f), byrow = TRUE)
-    colnames(smp)[r] <- colnames(smp_r)
-    colnames(smp)[-r] <- names(par_f)
+    smp <- matrix(0, nsample, length(par))
+    smp[ , ridx] <- smp_r
+    smp[ ,-ridx] <- matrix(par_f, nsample, length(par_f), byrow = TRUE)
+    colnames(smp)[ridx] <- colnames(smp_r)
+    colnames(smp)[-ridx] <- names(par_f)
   }
 
   if(verbose) print("Simulating outputs")
-  sim <- apply(smp, 1, fit$obj$report)
+  sim <- apply(smp, 1, obj$report)
   
-  r <- fit$obj$report()
+  r <- obj$report()
 
   if(verbose) print("Returning sample")
-  fit$sample <- Map(vapply, list(sim), "[[", lapply(lengths(r), numeric), names(r))
-  is_vector <- vapply(fit$sample, class, character(1)) == "numeric"
-  fit$sample[is_vector] <- lapply(fit$sample[is_vector], as.matrix, nrow = 1)
-  names(fit$sample) <- names(r)
+  val <- Map(vapply, list(sim), "[[", lapply(lengths(r), numeric), names(r))
+  is_vector <- vapply(val, class, character(1)) == "numeric"
+  val[is_vector] <- lapply(val[is_vector], as.matrix, nrow = 1)
+  names(val) <- names(r)
 
-  fit
+  val
 }

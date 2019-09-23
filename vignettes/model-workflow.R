@@ -264,7 +264,7 @@ add_output_labels(outputs) %>%
 
 #' Calculate uncertainty ranges and add to the output object
 #' (This is time consuming and memory intensive.
-system.time(fit <- sample_tmb(fit))
+system.time(fit <- sample_naomi_fit(fit))
 
 #' Regenerate outputs with uncertainty ranges.
 system.time(outputs <- output_package(fit, naomi_mf, areas))
