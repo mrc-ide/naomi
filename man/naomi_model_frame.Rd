@@ -4,11 +4,13 @@
 \alias{naomi_model_frame}
 \title{Construct Model Frames and Adjacency Structures}
 \usage{
-naomi_model_frame(areas, population_agesex, spec, level, quarter_id1,
-  quarter_id2, age_group_ids = 1:17, sexes = c("male", "female"),
-  omega = 0.7, rita_param = list(OmegaT0 = 130/365, sigma_OmegaT =
-  ((142 - 118)/365)/(2 * qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05,
-  ritaT = 1), sigma_u_sd = 1, artattend_prior_sigma_scale = 3)
+naomi_model_frame(areas, population_agesex, spec,
+  scope = areas$tree$area_id,
+  level = max(areas$tree$Get("area_level")), quarter_id1, quarter_id2,
+  age_group_ids = 1:17, sexes = c("male", "female"), omega = 0.7,
+  rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 -
+  118)/365)/(2 * qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT =
+  1), sigma_u_sd = 1, artattend_prior_sigma_scale = 3)
 }
 \arguments{
 \item{areas}{Areas}

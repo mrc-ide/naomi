@@ -1,6 +1,6 @@
 #' Non Exported Functions from TMB
 #'
-#' @internal
+#' @keywords internal
 updateCholesky <- function (L, H, t = 0)
 {
   .Call("tmb_destructive_CHM_update", L, H, t, PACKAGE = "TMB")
@@ -25,7 +25,7 @@ solveSubset <- function(Q, L = Matrix::Cholesky(Q, super = TRUE, perm = TRUE), d
 #'
 #' This is a copy of `[TMB::sdreport]` that removes all computations of `ADREPORT()`ed variables to only return the joint precision.
 #'
-#' @internal
+#' @keywords internal
 sdreport_joint_precision <- function (obj, par.fixed = NULL, hessian.fixed = NULL,
                                       bias.correct = FALSE, bias.correct.control = list(sd = FALSE,
                                                                                         split = NULL, nsplit = NULL), ignore.parm.uncertainty = FALSE,
