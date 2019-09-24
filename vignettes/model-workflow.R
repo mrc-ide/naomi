@@ -42,6 +42,7 @@ area_long <- area_hierarchy %>%
     area_boundaries
   )
 
+##+ message = FALSE
 st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE)
 
 #' # 1. (Up)Load data inputs
@@ -63,7 +64,7 @@ survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicat
 
 #' Programme data
 #'
-
+##+ message = FALSE
 art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
 anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
 
@@ -78,113 +79,53 @@ spec <- extract_pjnz_naomi(pjnz)
 
 
 
-#' # 2. Choose and validate inputs
+#' # 2. Choose model areas and time points
+#'
+#' The following are required to be provided to define the model state space:
+#' 
+#' * `scope`: A collection of `area_id`s defining the set of areas to be modelled.
+#'    Usually this is simply national level, so the level 0 `area_id`.
+#' * `level`: Area level at which to fit model.
+#' * `quarter_id_t1`: The first time point for the model--approximately the midpoint
+#'   of the household survey data used.
+#' * `quarter_id_t2`: The second time point for the model--the current time for which
+#'    estimates are needed.
 
-#'### Choose data to include
-
-#' Vector of area IDs to restrict model to
 scope <- "MWI"
-
-#' Level in hierarchy to fit the model
 level <- 4
+quarter_id_t1 <- convert_quarter_id(1, 2016)
+quarter_id_t2 <- convert_quarter_id(3, 2018)
+
+#' The following select data inputs to model fitting from the uploaded datasets.
+#' Providing `NULL` for any will exclude that data source from model fitting.
+#'
+#' * Multiple household survey may be used in fitting, but they must be rougly
+#'   contemporaneous around `quarter_id_t1`.
+#' * Only survey ART coverage or survey VLS should be included from a given survey,
+#'   not both. ART coverage is preferred if both are available.
+#' * `artnum_quarter_id_t1` and `artnum_quarter_id_t1` are the time point at
+#'   which current on ART programme data will be used to estimte ART coverage.
+#'   They are typically the same `quarter_id_t1` and `quarter_id_t2` if ART
+#'   programme data are used.
+#' * `anc_quarter_id_t1` and `anc_quarter_id_t2` are typically a range of 3-4 quarters.    Data will be aggregated over these quarters for a larger sample size. They
+#'   will typically be consecutive quarters, though a quarter could be dropped for
+#'   example if there were reporting problems known to affect a given quarter.
 
 #' Survey IDs to include in fitting
-survey_ids  <- c("MWI2016PHIA", "MWI2015DHS")
+prev_survey_ids  <- c("MWI2016PHIA", "MWI2015DHS")
+artcov_survey_ids  <- "MWI2016PHIA"
+vls_survey_ids <- NULL
+recent_survey_ids <- "MWI2016PHIA"
 
-#' First time point for model fitting (roughly midpoint of survey fieldwork)
 artnum_quarter_id_t1 <- convert_quarter_id(1, 2016)
-
-#' Range of quarters to use for ANC testing data at time 1
-#' Roughly 2 quarters before nad after time 1
-anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
-
-#' Second time point for model fitting (current quarter desired for estimates)
 artnum_quarter_id_t2 <- convert_quarter_id(3, 2018)
 
-#' Range of quarters to use for ANC testing data at time 1
+anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
 anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
 
 
-
-
-## #' # 3. Review input data
-## #'
-## #' ### Survey prevalence chlorpleth
-## #'
-## #' PHIA prevalence by Zone (level 2)
-
-
-## ar <- get_area_collection(areas, level = 2)
-
-## dat <- mwi_survey_hiv_indicators %>%
-##   filter(indicator == "prev",
-##          area_id %in% ar$area_id,
-##          sex == "both",
-##          age_group_id == 18,
-##          survey_id == "MWI2016PHIA")
-
-## dat %>%
-##   left_join(
-##     area_geom %>% filter(type == "boundary")
-##   ) %>%
-##   sf::st_as_sf() %>%
-##   ggplot(aes(fill = est)) +
-##   geom_sf() +
-##   viridis::scale_fill_viridis(labels = scales::percent_format()) +
-##   th_map()
-
-
-## #' DHS prevalence by district (level 4) within Northern Region (MWI.1)
-
-## ar <- get_area_collection(areas, level = 4, area_scope = "MWI.1")
-
-## dat <- mwi_survey_hiv_indicators %>%
-##   filter(indicator == "prev",
-##          area_id %in% ar$area_id,
-##          sex == "both",
-##          age_group_id == 18,
-##          survey_id == "MWI2015DHS")
-
-## dat %>%
-##   left_join(
-##     area_geom %>% filter(type == "boundary")
-##   ) %>%
-##   sf::st_as_sf() %>%
-##   ggplot(aes(fill = est)) +
-##   geom_sf() +
-##   viridis::scale_fill_viridis(labels = scales::percent_format()) +
-##   th_map()
-
-
-
-## #' ### Survey prevalence and sample size
-## #'
-
-
-## ar <- get_area_collection(areas, level = 4) %>%
-##   left_join(
-##     mwi_area_geom %>% filter(type == "boundary")
-##   ) %>%
-##   sf::st_as_sf()
-
-## dat <- mwi_survey_hiv_indicators %>%
-##   filter(indicator == "prev",
-##          area_id %in% ar$area_id,
-##          sex == "both",
-##          age_group_id == 18,
-##          survey_id == "MWI2016PHIA")
-
-## dat %>%
-##   left_join(
-##     area_geom %>% filter(type == "center_adj")
-##   ) %>%
-##   sf::st_as_sf() %>%
-##   ggplot() +
-##   geom_sf(data = ar) +
-##   geom_sf(aes(color = est, size = n_obs), show.legend = "point") +
-##   viridis::scale_color_viridis(labels = scales::percent_format()) +
-##   scale_size_area() +
-##   th_map()
+#' # 3. Review input data
+#'
 
 
 #' # 4. Prepare model inputs
@@ -194,16 +135,17 @@ anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
 naomi_mf <- naomi_model_frame(areas,
                               pop_agesex,
                               spec,
+                              scope = scope,
                               level = level,
-                              artnum_quarter_id_t1,
-                              artnum_quarter_id_t2)
+                              quarter_id_t1,
+                              quarter_id_t2)
 
 
 #' Prepare data inputs
 
-prev_dat <- survey_prevalence_mf(survey_ids, survey_hiv_indicators, naomi_mf)
-artcov_dat <- survey_artcov_mf(survey_ids, survey_hiv_indicators, naomi_mf)
-recent_dat <- survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf)
+prev_dat <- survey_prevalence_mf(prev_survey_ids, survey_hiv_indicators, naomi_mf)
+artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)
+recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
 
 anc_prev_t1_dat <- anc_testing_prev_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
 anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
@@ -214,6 +156,9 @@ anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_quarter_id_t2, anc_testing, naomi
 artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
 artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
 
+
+
+#' 5. Fit model
 
 #' Prepare model inputs and initial parameters
 
@@ -226,11 +171,10 @@ tmb_inputs <- prepare_tmb_inputs(naomi_mf, prev_dat, artcov_dat, recent_dat,
                                  artnum_t2_dat)
 
 
-#' 5. Fit model
-#'
-#' Note: useful for how to include multiple TMB models: https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package
 
 #' Fit the TMB model
+
+##+ fit_model, cache = TRUE
 fit <- fit_tmb(tmb_inputs)
 
 #' Calculate model outputs. We can calculate outputs based on posterior mode
@@ -264,9 +208,13 @@ add_output_labels(outputs) %>%
 
 #' Calculate uncertainty ranges and add to the output object
 #' (This is time consuming and memory intensive.
+
+##+ sample_outputs, cache = TRUE
 system.time(fit <- sample_tmb(fit))
 
 #' Regenerate outputs with uncertainty ranges.
+
+##+ make_output_package, cache = TRUE
 system.time(outputs <- output_package(fit, naomi_mf, areas))
 
 outputs$indicators %>%
@@ -279,15 +227,14 @@ outputs$indicators %>%
 
 #' Save model outputs to ZIP
 
+##+ save_outputs, message = FALSE, results = "hide"
 save_output_package(outputs, "mwi_outputs", "~/Downloads", with_labels = FALSE)
 save_output_package(outputs, "mwi_outputs_with_labels", "~/Downloads", with_labels = TRUE)
 save_output_package(outputs, "mwi_outputs_single_csv", "~/Downloads", with_labels = TRUE, single_csv = TRUE)
 save_output_package(outputs, "mwi_outputs_single_csv_unlabelled", "~/Downloads", with_labels = FALSE, single_csv = TRUE)
 
 
-#' 6. Plot some model outputs
-
-## summary(ftmb)
+## #' 6. Plot some model outputs
 
 indicators <- add_output_labels(outputs) %>%
   left_join(outputs$meta_area %>% select(area_level, area_id, center_x, center_y)) %>%
@@ -295,9 +242,10 @@ indicators <- add_output_labels(outputs) %>%
 
 
 #' 15-49 prevalence by district
+
+##+ fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 18,
-         ## sex == "both",
          indicator_id == 2L,
          area_level == 4) %>%
   ggplot(aes(fill = mode)) +
@@ -306,14 +254,15 @@ indicators %>%
   th_map() +
   facet_wrap(~sex)
 
-#' 15-49 prevalence by 28 districts, Southern region
+#' 15-49 prevalence by Zone
 #'
 
+##+ fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 18,
          ## sex == "both",
          indicator_id == 2L,
-         area_level == 3) %>%
+         area_level == 2) %>%
   ## semi_join(get_area_collection(areas, level = 3, area_scope = "MWI.3")) %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
@@ -321,6 +270,9 @@ indicators %>%
   th_map() +
   facet_wrap(~sex)
 
+#' Age-specific prevalence, national
+
+##+ fig.height = 5, fig.width = 7
 indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
@@ -331,28 +283,16 @@ indicators %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
   geom_col(position = "dodge") +
   geom_linerange(position = position_dodge(0.8)) +
-  geom_point(aes(age_group, median), position = position_dodge(0.8)) +
-  geom_point(aes(age_group, mode), position = position_dodge(0.8), shape = 2) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent_format(1)) +
   facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 
-indicators %>%
-  dplyr::filter(area_level == 0,
-         sex != "both",
-         age_group_id %in% 1:17,
-         indicator_id == 4L) %>%
-  left_join(get_age_groups()) %>%
-  mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
-  ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
-  geom_col(position = "dodge") +
-  geom_linerange(position = position_dodge(0.8)) +
-  geom_point(aes(age_group, mean), position = position_dodge(0.8)) +
-  facet_wrap(~area_name) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
+#' 15-64 ART coverage by district
 
-#' 15-64 ART coverage
+##+ fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 19,
          area_level == 4,
@@ -363,7 +303,28 @@ indicators %>%
   th_map() +
   facet_wrap(~sex)
 
+#' Age-specific ART coverage, national
+
+##+ fig.height = 5, fig.width = 7
+indicators %>%
+  dplyr::filter(area_level == 0,
+         sex != "both",
+         age_group_id %in% 1:17,
+         indicator_id == 4L) %>%
+  left_join(get_age_groups()) %>%
+  mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
+  ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
+  geom_col(position = "dodge") +
+  geom_linerange(position = position_dodge(0.8)) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent_format(1)) +
+  facet_wrap(~area_name) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
+
 #' ART coverage by age/sex and region
+#' 
+
+##+ fig.height = 4, fig.width = 7
 indicators %>%
   filter(area_level == 1,
          sex != "both",
@@ -379,6 +340,8 @@ indicators %>%
 
 
 #' Bubble plot prevalence and PLHIV
+#' 
+##+ fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 19,
          area_level == 4,
@@ -391,10 +354,3 @@ indicators %>%
   viridis::scale_color_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
-
-
-adj_ij %>%
-  left_join(sh %>% select(area_name_i = area_name, i = area_idx)) %>%
-  left_join(sh %>% select(area_name_j = area_name, j = area_idx)) %>%
-  mutate(gamma = rep$gamma_art) %>%
-  filter(area_name_i == "Dedza")
