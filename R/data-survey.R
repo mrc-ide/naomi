@@ -69,26 +69,26 @@ expand_survey_clusters <- function(survey_clusters,
 
   val <- clusters %>%
     dplyr::filter(between(area_level, top_level, bottom_level))
-  
+
   #' Recursion
   while(any(clusters$area_level >= top_level)) {
-    
+
     clusters <- clusters %>%
       dplyr::mutate(area_id = parent_area_id,
                     area_level = area_level - 1L,
                     parent_area_id = NULL) %>%
       dplyr::inner_join(areas %>% select(area_id, area_level, parent_area_id),
                         by = c("area_id", "area_level"))
-    
+
     val <- dplyr::bind_rows(
                     val,
                     clusters %>%
                     dplyr::filter(between(area_level, top_level, bottom_level))
                   )
   }
-  
+
   val$parent_area_id <- NULL
-  
+
   return(val)
 }
 
@@ -153,22 +153,22 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                                                 sex == "both" ~ pmin(male_age_max,
                                                                                      female_age_max)) + 1) %>%
     dplyr::select(survey_id, sex, age_group_id, age_group_label, age_group_start, age_group_span)
-  
-  
+
+
   ## 2. Expand clusters to identify all clusters within each area
-  
+
   clust <- dplyr::filter(survey_clusters, survey_id %in% survey_meta$survey_id)
   clust_area <- expand_survey_clusters(clust, survey_regions, areas,
                                        area_top_level, area_bottom_level)
-  
+
   clust_area <- clust_area %>%
     dplyr::arrange(survey_id, cluster_id, area_id, -area_level) %>%
     dplyr::group_by(survey_id, cluster_id, area_id) %>%
     dplyr::filter(row_number() == 1)
-  
+
   ## 3. Expand individuals dataset to repeat for all individiuals within each
   ##    age/sex group for a given survey
-  
+
   ind <- survey_individuals %>%
     dplyr::inner_join(survey_biomarker,
                       by = c("survey_id", "cluster_id", "household", "line")) %>%
@@ -179,15 +179,15 @@ calc_survey_hiv_indicators <- function(survey_meta,
     dplyr::inner_join(sex_age_group, by = c("survey_id", "sex")) %>%
     dplyr::filter(age >= age_group_start,
                   age < age_group_start + age_group_span)
-  
+
   ## 4. Join expanded age/sex and expanded cluster area map
-  
+
   ind <- dplyr::inner_join(ind, clust_area, by = c("survey_id", "cluster_id"))
-  
-  
+
+
   ## 5. Construct ART coverage indicator as either self-report or ART biomarker
   ##    and gather to long dataset for each biomarker
-  
+
   ind <- ind %>%
     dplyr::group_by(survey_id) %>%
     dplyr::mutate(has_artcov = any(!is.na(arv) | !is.na(artself)),
@@ -198,7 +198,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
     dplyr::select(-has_artcov, -artself, -arv) %>%
     dplyr::rename(prev = hivstatus) %>%
     tidyr::gather(indicator, est, prev, artcov, vls, recent) %>%
-    dplry::filter(!is.na(est))
+    dplyr::filter(!is.na(est))
 
   ## 6. Calculate outcomes
   ## Note: using survey region as strata right now. Most DHS use region + restype
@@ -208,14 +208,14 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   cnt <- dat %>%
     dplyr::group_by(indicator, survey_id, area_id, sex, age_group_id) %>%
-    dplyr::summarise(n_cluster = dplry::n_distinct(cluster_id),
+    dplyr::summarise(n_cluster = dplyr::n_distinct(cluster_id),
                      n_obs = dplyr::n()) %>%
     dplyr::ungroup()
 
   datspl <- dat %>%
     dplyr::mutate(spl = paste(indicator, survey_id, area_level, sex, age_group_id)) %>%
     split(.$spl)
-  
+
   do_svymean <- function(df) {
 
     des <- survey::svydesign(~cluster_id,
@@ -232,7 +232,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
   options(survey.lonely.psu="adjust")
   est_spl <- parallel::mclapply(datspl, do_svymean,
                                 mc.cores = parallel::detectCores())
-  
+
   val <- cnt %>%
     dplyr::full_join(
              dplyr::bind_rows(est_spl),
@@ -266,6 +266,6 @@ calc_survey_hiv_indicators <- function(survey_meta,
              ci_l = if_else(!est %in% 0:1, stats::plogis(stats::qlogis(est) - stats::qnorm(0.975) * se / (est * (1-est))), NA_real_),
              ci_u = if_else(!est %in% 0:1, stats::plogis(stats::qlogis(est) + stats::qnorm(0.975) * se / (est * (1-est))), NA_real_)
            )
-  
+
   val
 }
