@@ -29,6 +29,8 @@ Imports:
     magrittr,
     Matrix,
     methods,
+    mvtnorm,
+    rlang,
     sf,
     spdep,
     specio (>= 0.1.2),
