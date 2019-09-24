@@ -4,7 +4,7 @@
 \alias{sample_tmb}
 \title{Sample from Joint Posterior Distribution}
 \usage{
-sample_tmb(fit, nsample = 1000, verbose = TRUE)
+sample_tmb(fit, nsample = 1000, random_only = TRUE, verbose = TRUE)
 }
 \description{
 Sample from Joint Posterior Distribution
