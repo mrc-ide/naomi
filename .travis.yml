@@ -9,8 +9,6 @@ addons:
       - libproj-dev
       - libudunits2-dev
 cache: packages
-repos:
-  INLA: https://inla.r-inla-download.org/R/stable
 r_packages:
   - covr
 r_github_packages:

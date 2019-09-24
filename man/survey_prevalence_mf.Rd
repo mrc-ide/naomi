@@ -10,7 +10,8 @@ survey_prevalence_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 
 survey_artcov_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 
-survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf)
+survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf,
+  min_age = 15, max_age = 80)
 }
 \arguments{
 \item{survey_ids}{Survey IDs}
