@@ -19,6 +19,10 @@ survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf,
 \item{survey_hiv_indicators}{Survey HIV indicators}
 
 \item{naomi_mf}{Naomi model frame}
+
+\item{min_age}{Min age for calculating recent infection}
+
+\item{max_age}{Max age for calculating recent infection}
 }
 \description{
 Prepare model frames for survey datasets

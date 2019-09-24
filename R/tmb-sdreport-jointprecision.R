@@ -1,12 +1,10 @@
-#' Non Exported Functions from TMB
-#'
-#' @keywords internal
+## Non Exported Functions from TMB
 updateCholesky <- function (L, H, t = 0)
 {
   .Call("tmb_destructive_CHM_update", L, H, t, PACKAGE = "TMB")
 }
 
-#' @rdname updateCholesky
+## Non exported function from TMB
 solveSubset <- function(Q, L = Matrix::Cholesky(Q, super = TRUE, perm = TRUE), diag = FALSE)
 {
   stopifnot(methods::is(L, "dCHMsuper"))
@@ -24,6 +22,8 @@ solveSubset <- function(Q, L = Matrix::Cholesky(Q, super = TRUE, perm = TRUE), d
 #' Get Joint Precision of TMB Fixed and Random
 #'
 #' This is a copy of `[TMB::sdreport]` that removes all computations of `ADREPORT()`ed variables to only return the joint precision.
+#'
+#' @inheritParams TMB::sdreport
 #'
 #' @keywords internal
 sdreport_joint_precision <- function (obj, par.fixed = NULL, hessian.fixed = NULL,

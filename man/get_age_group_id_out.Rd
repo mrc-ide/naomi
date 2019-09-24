@@ -14,10 +14,4 @@ be non-overlapping.}
 Ensures that age groups are fully spanned by modelled
 ages.
 }
-\keyword{Check}
-\keyword{TODO:}
-\keyword{agegr}
-\keyword{are}
 \keyword{internal}
-\keyword{non}
-\keyword{overlapping}

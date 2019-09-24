@@ -1,18 +1,20 @@
 #' Model Frame and Linear Transform for Aggregated Model Outputs
 #'
+#' @param mf_model Model frame
+#' @param areas naomi_areas object.
 #' @param drop_partial_areas Drop areas from output if some children are
 #'   missing (default TRUE).
-#' 
-#' @export 
+#'
+#' @export
 naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 
   stopifnot(methods::is(areas, "naomi_areas"))
-  
+
   model_area_ids <- unique(mf_model$area_id)
   sexes <- unique(mf_model$sex)
   age_group_ids <- unique(mf_model$age_group_id)
 
-  
+
   area_id_out <- areas$tree$Get("area_id",
                                 filterFun = function(x) x$display_level,
                                 traversal = "level")
@@ -20,7 +22,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
                                        filterFun = function(x) x$display_level,
                                        traversal = "level") %>%
     lapply(data.tree::Get, "area_id")
-  
+
   area_id_out_leaves <- area_id_out_leaves[!duplicated(area_id_out)]
   area_id_out <- area_id_out[!duplicated(area_id_out)]
 
@@ -34,7 +36,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
     area_id_out <- area_id_out[lengths(area_id_out_leaves) > 0]
     area_id_out_leaves <- area_id_out_leaves[lengths(area_id_out_leaves) > 0]
   }
-  
+
   sex_out <- get_sex_out(sexes)
   age_group_id_out <- get_age_group_id_out(age_group_ids)
 
@@ -99,11 +101,17 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param areas Areas
 #' @param population_agesex Population by age group and sex
 #' @param spec Spec
+#' @param scope The collection of area IDs to be modelled. Defaults to all area
+#' ids.
 #' @param level Admin level
 #' @param quarter_id1 Quarter id1
 #' @param quarter_id2 Quarter id2
 #' @param age_group_ids Age group ids
 #' @param sexes Sexes
+#' @param omega Omega
+#' @param rita_param rita_param
+#' @param sigma_u_sd sigma_u_sd
+#' @param artattend_prior_sigma_scale artattend_propr_sigma_scale
 #' @return Naomi model frame
 #'
 #' @export
@@ -125,7 +133,7 @@ naomi_model_frame <- function(areas,
                               sigma_u_sd   = 1.0,
                               artattend_prior_sigma_scale = 3.0) {
 
-  #' Prune areas below model level
+  ## Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
   area_id <- areas$tree$Get("area_id", filterFun = data.tree::isLeaf)
 
@@ -134,7 +142,7 @@ naomi_model_frame <- function(areas,
                          stringsAsFactors = FALSE) %>%
     dplyr::mutate(area_idf = factor(area_id, area_id))
 
-  #' Model frame
+  ## Model frame
   mf_model <- tidyr::crossing(
                        mf_areas,
                        sex = sexes,
@@ -144,7 +152,7 @@ naomi_model_frame <- function(areas,
     dplyr::mutate(area_idf = forcats::as_factor(area_id),
                   age_group_idf = forcats::as_factor(age_group_id))
 
-  #' Add population estimates
+  ## Add population estimates
 
   mf_model <- mf_model %>%
     dplyr::left_join(
@@ -171,9 +179,9 @@ naomi_model_frame <- function(areas,
     mf_model$population_t1[zeropop1] <- 0.1
     mf_model$population_t2[zeropop2] <- 0.1
   }
-  
 
-  #' Add Spectrum inputs
+
+  ## Add Spectrum inputs
 
   mf_model <- mf_model %>%
     dplyr::left_join(
@@ -191,7 +199,7 @@ naomi_model_frame <- function(areas,
              by = c("sex", "age_group_id")
            )
 
-  #' Adjacency matrix
+  ## Adjacency matrix
   M <- mf_areas %>%
     dplyr::mutate(geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf() %>%
@@ -201,18 +209,18 @@ naomi_model_frame <- function(areas,
 
   colnames(M) <- rownames(M)
 
-  #' Scaled  precision matrix for 'BYM2' model.
+  ## Scaled  precision matrix for 'BYM2' model.
   Q  <- INLA::inla.scale.model(diag(rowSums(M)) - M,
                                constr = list(A = matrix(1, 1, nrow(M)), e = 0))
 
 
 
-  #' Model output
+  ## Model output
 
   outf <- naomi_output_frame(mf_model, areas)
-  
-  
-  #' ART attendance model
+
+
+  ## ART attendance model
 
   mf_areas <- mf_areas %>%
     dplyr::left_join(
@@ -220,7 +228,7 @@ naomi_model_frame <- function(areas,
                         n_neighbors = colSums(M)),
              by = "area_idx"
            )
-  
+
   mf_artattend <- (M + diag(nrow(M))) %>%
     methods::as("dgCMatrix") %>%
     Matrix::summary() %>%
@@ -231,7 +239,7 @@ naomi_model_frame <- function(areas,
                   jstar = as.integer(reside_area_idx == artattend_area_idx)) %>%
     dplyr::arrange(reside_area_idx, istar, artattend_area_idx, jstar) %>%
     dplyr::mutate(artattend_idx = dplyr::row_number())
-  
+
   gamma_or_prior <-   mf_areas %>%
     mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
     dplyr::left_join(
@@ -245,7 +253,7 @@ naomi_model_frame <- function(areas,
              ),
              by = "n_nb_lim"
            )
-  
+
   mf_artattend <- mf_artattend %>%
     dplyr::left_join(
              gamma_or_prior %>%
@@ -255,8 +263,8 @@ naomi_model_frame <- function(areas,
     dplyr::mutate(gamma_or_mu = if_else(istar == 1, NA_real_, gamma_or_mu),
                   gamma_or_sigma = if_else(istar == 1, NA_real_, gamma_or_sigma))
 
-  #' Incidence model
-  
+  ## Incidence model
+
   mf_model <- mf_model %>%
     dplyr::left_join(
              get_age_groups() %>%
@@ -278,7 +286,7 @@ naomi_model_frame <- function(areas,
                log(spec_incid) - log(spec_prev15to49) - log(1 - omega * spec_artcov15to49)
            ) %>%
   dplyr::ungroup()
-  
+
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
             mf_areas = mf_areas,
@@ -292,7 +300,7 @@ naomi_model_frame <- function(areas,
             rita_param = rita_param,
             M = M,
             Q = Q)
-  
+
   class(v) <- "naomi_mf"
   v
 }
@@ -313,9 +321,9 @@ get_age_group_id_out <- function(age_group_ids) {
     dplyr::filter(age_group_id %in% age_group_ids) %>%
     dplyr::transmute(mod_agegr_start = age_group_start,
                      mod_agegr_span = age_group_span)
-                  
 
-  #' TODO: Check agegr are non overlapping
+
+  ## TODO: Check agegr are non overlapping
 
   v <- get_age_groups() %>%
     tidyr::crossing(agegr) %>%
@@ -347,6 +355,8 @@ get_sex_out <- function(sexes) {
 #' @param survey_ids Survey IDs
 #' @param survey_hiv_indicators Survey HIV indicators
 #' @param naomi_mf Naomi model frame
+#' @param min_age Min age for calculating recent infection
+#' @param max_age Max age for calculating recent infection
 #'
 #' @export
 survey_prevalence_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
@@ -379,7 +389,7 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
     dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
-  
+
   artcov_dat
 }
 
@@ -401,12 +411,18 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
     dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
-  
+
   recent_dat
 }
 
 
 #' Prepare Model Frames for Programme Datasets
+#'
+#' @param quarter_ids Quarter IDs
+#' @param anc_testing ART data frame
+#' @param art_number Number on ART
+#' @param naomi_mf Naomi model frame
+#' @return Calculated prevalence
 #'
 #' @export
 anc_testing_prev_mf <- function(quarter_ids, anc_testing, naomi_mf) {
@@ -435,10 +451,10 @@ anc_testing_prev_mf <- function(quarter_ids, anc_testing, naomi_mf) {
                anc_idx = dplyr::row_number(),
                anc_prev_x = ancrt_totpos,
                anc_prev_n = ancrt_hiv_status
-             ) 
+             )
   }
 
-  anc_prev_dat 
+  anc_prev_dat
 }
 
 
@@ -470,7 +486,7 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
                anc_idx = dplyr::row_number(),
                anc_artcov_x = ancrt_already_art,
                anc_artcov_n = ancrt_totpos
-             ) 
+             )
   }
 
   anc_artcov_dat
@@ -479,7 +495,7 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
 
 #' @rdname anc_testing_prev_mf
 #' @export
-artnum_mf <- function(quarter_id, art_number, naomi_mf) {
+artnum_mf <- function(quarter_ids, art_number, naomi_mf) {
 
   if(is.null(art_number)) {
     ## No number on ART data
@@ -493,7 +509,7 @@ artnum_mf <- function(quarter_id, art_number, naomi_mf) {
   } else {
     ## !!! Note: should add some subsetting for sex and age group.
     artnum_dat <- art_number %>%
-      dplyr::filter(quarter_id == !!quarter_id,
+      dplyr::filter(quarter_ids == !!quarter_ids,
                     area_id %in% naomi_mf$mf_areas$area_id) %>%
       dplyr::transmute(
                area_id,
@@ -503,6 +519,6 @@ artnum_mf <- function(quarter_id, art_number, naomi_mf) {
                current_art
              )
   }
-  
+
   artnum_dat
 }

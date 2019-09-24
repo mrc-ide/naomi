@@ -7,6 +7,10 @@
 naomi_output_frame(mf_model, areas, drop_partial_areas = TRUE)
 }
 \arguments{
+\item{mf_model}{Model frame}
+
+\item{areas}{naomi_areas object.}
+
 \item{drop_partial_areas}{Drop areas from output if some children are
 missing (default TRUE).}
 }

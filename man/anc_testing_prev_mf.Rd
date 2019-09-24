@@ -10,7 +10,19 @@ anc_testing_prev_mf(quarter_ids, anc_testing, naomi_mf)
 
 anc_testing_artcov_mf(quarter_ids, anc_testing, naomi_mf)
 
-artnum_mf(quarter_id, art_number, naomi_mf)
+artnum_mf(quarter_ids, art_number, naomi_mf)
+}
+\arguments{
+\item{quarter_ids}{Quarter IDs}
+
+\item{anc_testing}{ART data frame}
+
+\item{naomi_mf}{Naomi model frame}
+
+\item{art_number}{Number on ART}
+}
+\value{
+Calculated prevalence
 }
 \description{
 Prepare Model Frames for Programme Datasets

@@ -7,27 +7,27 @@ prepare_tmb_inputs <- function(naomi_mf,
                                anc_artcov_t1_dat,
                                anc_artcov_t2_dat,
                                artnum_t1_dat,
-                               artnum_t2_dat) {  
-  
-  #' ANC prevalence model matrices
+                               artnum_t2_dat) {
+
+  ## ANC prevalence model matrices
   anc_prev_t1_dat <- anc_prev_t1_dat %>%
     dplyr::left_join(
              naomi_mf$mf_areas,
              by = "area_id"
            )
-  
+
   anc_artcov_t1_dat <- anc_artcov_t1_dat %>%
     dplyr::left_join(
              naomi_mf$mf_areas,
              by = "area_id"
            )
-  
+
   anc_prev_t2_dat <- anc_prev_t2_dat %>%
     dplyr::left_join(
              naomi_mf$mf_areas,
              by = "area_id"
            )
-  
+
   anc_artcov_t2_dat <- anc_artcov_t2_dat %>%
     dplyr::left_join(
              naomi_mf$mf_areas,
@@ -65,13 +65,13 @@ prepare_tmb_inputs <- function(naomi_mf,
 
   X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_mf$mf_model))
 
-  #' ART attendance aggregation
+  ## ART attendance aggregation
 
   df_art_attend <- naomi_mf$mf_model %>%
     dplyr::left_join(naomi_mf$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
     dplyr::mutate(artattend_idf = forcats::as_factor(artattend_idx),
                   idf = forcats::as_factor(idx))
-  
+
   Xart_gamma <- Matrix::sparse.model.matrix(~0 + artattend_idf, df_art_attend)
   Xart_idx <- Matrix::sparse.model.matrix(~0 + idf, df_art_attend)
 
@@ -180,7 +180,7 @@ prepare_tmb_inputs <- function(naomi_mf,
                      .$value)
     }
 
-  
+
   ## Construct TMB data and initial parameter vectors
 
   df <- naomi_mf$mf_model
@@ -218,7 +218,7 @@ prepare_tmb_inputs <- function(naomi_mf,
     betaT0 = naomi_mf$rita_param$betaT0,
     sigma_betaT = naomi_mf$rita_param$sigma_betaT,
     ritaT = naomi_mf$rita_param$ritaT,
-    ## 
+    ##
     X_15to49 = X_15to49,
     log_lambda_offset = naomi_mf$mf_model$log_lambda_offset,
     ##
@@ -307,7 +307,7 @@ prepare_tmb_inputs <- function(naomi_mf,
 fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
-  
+
   obj <- TMB::MakeADFun(data = tmb_input$data_tmb,
                         parameters = tmb_input$parameters_tmb,
                         DLL = "naomi",
@@ -355,7 +355,7 @@ report_tmb <- function(naomi_fit) {
 }
 
 
-#' Sample from Joint Posterior Distribution
+## Sample from Joint Posterior Distribution
 sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
 
   stopifnot(methods::is(fit, "naomi_fit"))
@@ -364,10 +364,10 @@ sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) 
   if(!random_only) {
     if(verbose) print("Calculating joint precision")
     hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
-    
+
     if(verbose) print("Inverting precision for joint covariance")
     cov <- solve(hess)
-    
+
     if(verbose) print("Drawing sample")
     ## TODO: write a version of rmvnorm that uses precision instead of covariance
     smp <- mvtnorm::rmvnorm(nsample, fit$par.full, cov)
@@ -390,7 +390,7 @@ sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) 
 
   if(verbose) print("Simulating outputs")
   sim <- apply(smp, 1, fit$obj$report)
-  
+
   r <- fit$obj$report()
 
   if(verbose) print("Returning sample")

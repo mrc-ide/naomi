@@ -19,6 +19,9 @@ naomi_model_frame(areas, population_agesex, spec,
 
 \item{spec}{Spec}
 
+\item{scope}{The collection of area IDs to be modelled. Defaults to all area
+ids.}
+
 \item{level}{Admin level}
 
 \item{quarter_id1}{Quarter id1}
@@ -28,6 +31,14 @@ naomi_model_frame(areas, population_agesex, spec,
 \item{age_group_ids}{Age group ids}
 
 \item{sexes}{Sexes}
+
+\item{omega}{Omega}
+
+\item{rita_param}{rita_param}
+
+\item{sigma_u_sd}{sigma_u_sd}
+
+\item{artattend_prior_sigma_scale}{artattend_propr_sigma_scale}
 }
 \value{
 Naomi model frame
