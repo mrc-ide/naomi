@@ -78,7 +78,7 @@ sdreport_joint_precision <- function (obj, par.fixed = NULL, hessian.fixed = NUL
   }
   if (!is.null(r)) {
     if (methods::is(L, "dCHMsuper")) {
-      diag.term1 <- TMB:::solveSubset(L = L, diag = TRUE)
+      diag.term1 <- solveSubset(L = L, diag = TRUE)
       if (ignore.parm.uncertainty) {
         diag.term2 <- 0
       }
