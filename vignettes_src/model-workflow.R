@@ -82,7 +82,7 @@ spec <- extract_pjnz_naomi(pjnz)
 #' # 2. Choose model areas and time points
 #'
 #' The following are required to be provided to define the model state space:
-#' 
+#'
 #' * `scope`: A collection of `area_id`s defining the set of areas to be modelled.
 #'    Usually this is simply national level, so the level 0 `area_id`.
 #' * `level`: Area level at which to fit model.
@@ -130,7 +130,7 @@ anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
 
 #' # 4. Prepare model inputs
 
-#' Setup the model 
+#' Setup the model
 
 naomi_mf <- naomi_model_frame(areas,
                               pop_agesex,
@@ -228,10 +228,11 @@ outputs$indicators %>%
 #' Save model outputs to ZIP
 
 ##+ save_outputs, message = FALSE, results = "hide"
-save_output_package(outputs, "mwi_outputs", "~/Downloads", with_labels = FALSE)
-save_output_package(outputs, "mwi_outputs_with_labels", "~/Downloads", with_labels = TRUE)
-save_output_package(outputs, "mwi_outputs_single_csv", "~/Downloads", with_labels = TRUE, single_csv = TRUE)
-save_output_package(outputs, "mwi_outputs_single_csv_unlabelled", "~/Downloads", with_labels = FALSE, single_csv = TRUE)
+dir.create("outputs", showWarnings = FALSE)
+save_output_package(outputs, "mwi_outputs", "outputs", with_labels = FALSE)
+save_output_package(outputs, "mwi_outputs_with_labels", "outputs", with_labels = TRUE)
+save_output_package(outputs, "mwi_outputs_single_csv", "outputs", with_labels = TRUE, single_csv = TRUE)
+save_output_package(outputs, "mwi_outputs_single_csv_unlabelled", "outputs", with_labels = FALSE, single_csv = TRUE)
 
 
 ## #' 6. Plot some model outputs
@@ -322,7 +323,7 @@ indicators %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 #' ART coverage by age/sex and region
-#' 
+#'
 
 ##+ fig.height = 4, fig.width = 7
 indicators %>%
@@ -340,7 +341,7 @@ indicators %>%
 
 
 #' Bubble plot prevalence and PLHIV
-#' 
+#'
 ##+ fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 19,
