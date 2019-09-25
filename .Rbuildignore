@@ -13,3 +13,4 @@
 ^outputs$
 ^vignettes/figure$
 ^vignettes_src$
+^vignettes/model-workflow_cache$
