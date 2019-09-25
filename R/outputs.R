@@ -32,7 +32,7 @@ meta_indicator <-
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
   mf_out <- naomi_mf$mf_out
-  
+
   indicator_ids <- c("population_out" = 1,
                      "rho_out" = 2,
                      "plhiv_out" = 3,
@@ -40,16 +40,16 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "artnum_out" = 5,
                      "lambda_out" = 6,
                      "infections_out" = 7)
-  
+
   report <- naomi_fit$obj$report(naomi_fit$par.full)
-  
+
   get_est <- function(varname) {
     v <- dplyr::mutate(
-                  mf_out,
-                  quarter_id = naomi_mf$quarter_id1,
-                  indicator_id = indicator_ids[varname],
-                  mode = report[[varname]]
-                )
+      mf_out,
+      quarter_id = naomi_mf$quarter_id1,
+      indicator_id = indicator_ids[varname],
+      mode = report[[varname]]
+    )
     if(!is.null(naomi_fit$sample)) {
       smp <- naomi_fit$sample[[varname]]
       qtl <- apply(smp, 1, stats::quantile, c(0.5, 0.025, 0.975))
@@ -61,13 +61,13 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     } else {
       v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
     }
-    
+
     v
   }
-  
+
   indicators <- lapply(names(indicator_ids), get_est) %>%
     dplyr::bind_rows()
-  
+
   indicators
 }
 
@@ -83,12 +83,12 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
     dplyr::mutate(levelName = NULL,
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
-  
+
   meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
     mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
 
   meta_age_group <- get_age_groups()
-  
+
   val <- list(
     indicators = indicators,
     meta_area = meta_area,
@@ -166,15 +166,19 @@ save_output_package <- function(naomi_output,
                                 single_csv = FALSE) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
-  
-  if(!file.access(dir, 2) == 0)
+
+  dir <- normalizePath(dir)
+  if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
-  
+  }
+
   path <- file.path(dir, paste0(filename, ".zip"))
-  if(file.access(path, 0) == 0 && !overwrite)
-    stop(paste("File", path, "already exists. Set overwrite = TRUE to write output."))
-  
-  
+  if(file.access(path, 0) == 0 && !overwrite) {
+    stop(paste(
+      "File", path, "already exists. Set overwrite = TRUE to write output."))
+  }
+
+
   if(with_labels){
     indicators <- add_output_labels(naomi_output)
   } else {
@@ -185,22 +189,16 @@ save_output_package <- function(naomi_output,
   dir.create(tmpd)
   old <- setwd(tmpd)
   on.exit(setwd(old))
+  naomi_write_csv(indicators, "indicators.csv")
 
-  
-   utils::write.csv(indicators, "indicators.csv", row.names = FALSE, na = "")
-  
-  
   if(!single_csv) {
-    utils::write.csv(naomi_output$meta_area %>%
-                     as.data.frame() %>%
-                     dplyr::select(-geometry),
-                     "meta_area.csv", row.names = FALSE, na = "")
-    utils::write.csv(naomi_output$meta_age_group,
-                     "meta_age_group.csv", row.names = FALSE, na = "")
-    utils::write.csv(naomi_output$meta_period,
-                     "meta_period.csv", row.names = FALSE, na = "")
-    utils::write.csv(naomi_output$meta_indicator,
-                     "meta_indicator.csv", row.names = FALSE, na = "")
+    naomi_write_csv(naomi_output$meta_area %>%
+                      as.data.frame() %>%
+                      dplyr::select(-geometry),
+                    "meta_area.csv")
+    naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
+    naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
+    naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         st_write(naomi_output$meta_area, "boundaries.geojson")
@@ -212,9 +210,8 @@ save_output_package <- function(naomi_output,
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
       }
     }
-  } 
+  }
 
   utils::zip(path, list.files())
-
   path
 }
