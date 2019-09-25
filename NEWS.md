@@ -1,4 +1,4 @@
-# naomi 0.0.2
+# naomi 0.0.3
 
 * Ouput uncertainty ranges based on Monte Carlo simulation from joint covariance
   matrix of fixed and random effects.
