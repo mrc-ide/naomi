@@ -5,6 +5,7 @@ sudo: false
 addons:
   apt:
     packages:
+      - libc6
       - libgdal-dev
       - libproj-dev
       - libudunits2-dev
