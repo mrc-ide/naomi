@@ -72,6 +72,14 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 }
 
 
+#' Build output package from fit
+#'
+#' @param naomi_fit Fitted naomi model
+#' @param naomi_mf Naomi model frame
+#' @param areas Area data
+#'
+#' @return List containing output indicators and metadata.
+#' @export
 output_package <- function(naomi_fit, naomi_mf, areas) {
 
   indicators <- extract_indicators(naomi_fit, naomi_mf)
@@ -103,6 +111,12 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
 }
 
 
+#' Add labels to output indicators
+#'
+#' @param naomi_output Naomi output object.
+#'
+#' @return Labelled output indicators
+#' @export
 add_output_labels <- function(naomi_output) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
@@ -156,13 +170,26 @@ add_output_labels <- function(naomi_output) {
   indicators
 }
 
+#' Save outputs to zip file
+#'
+#' @param naomi_output Naomi output object
+#' @param filename Name of file to create
+#' @param dir Directory to create zip in
+#' @param overwrite If TRUE overwrite any existing file
+#' @param with_labels If TRUE save indicator ids with labels
+#' @param boundary_format Either geojson or shp for saving boundary as geojson
+#' or shape format
+#' @param single_csv If TRUE only output the csv of indicators, otherwise save
+#' the metadata too
+#'
+#' @return Path to created zip file
+#' @export
 save_output_package <- function(naomi_output,
                                 filename,
                                 dir,
                                 overwrite = FALSE,
                                 with_labels = FALSE,
                                 boundary_format = "geojson",
-                                with_data = FALSE,
                                 single_csv = FALSE) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))

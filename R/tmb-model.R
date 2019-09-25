@@ -1,3 +1,18 @@
+#' Prepare inputs for TMB model.
+#'
+#' @param naomi_mf  Naomi model frame
+#' @param prev_dat Prevalence data
+#' @param artcov_dat ART coverage data
+#' @param recent_dat Recent infection data
+#' @param anc_prev_t1_dat ANC prevalence at time 1
+#' @param anc_prev_t2_dat ANC prevelance at time 2
+#' @param anc_artcov_t1_dat ANC ART coverage at time 1
+#' @param anc_artcov_t2_dat ANC ART coverage at time 2
+#' @param artnum_t1_dat Number on ART at time 1
+#' @param artnum_t2_dat Number on ART at time 2
+#'
+#' @return Inputs ready for TMB model
+#' @export
 prepare_tmb_inputs <- function(naomi_mf,
                                prev_dat,
                                artcov_dat,
@@ -44,7 +59,7 @@ prepare_tmb_inputs <- function(naomi_mf,
                area_id,
                anc_idx,
                idx,
-               births = !!rlang::sym(asfr_col) * !!rlang::sym(population_col),
+               births = !!rlang::sym(asfr_col) * !!rlang::sym(population_col)
              ) %>%
       dplyr::filter(births > 0) %>%
     {
@@ -304,6 +319,14 @@ prepare_tmb_inputs <- function(naomi_mf,
 }
 
 
+#' Fit TMB model
+#'
+#' @param tmb_input Model input data
+#' @param outer_verbose If TRUE print function and parameters every iteration
+#' @param inner_verbose If TRUE then disable tracing information from TMB
+#'
+#' @return Fit model.
+#' @export
 fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
@@ -355,7 +378,16 @@ report_tmb <- function(naomi_fit) {
 }
 
 
-## Sample from Joint Posterior Distribution
+
+#' Sample TMB fit
+#'
+#' @param fit The TMB fit
+#' @param nsample Number of samples
+#' @param random_only Random only
+#' @param verbose If TRUE prints additional information.
+#'
+#' @return Sampled fit.
+#' @export
 sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
 
   stopifnot(methods::is(fit, "naomi_fit"))

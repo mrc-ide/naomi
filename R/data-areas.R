@@ -43,6 +43,8 @@ gather_areas <- function(x) {
 
 
 #' `ggplot2` theme for plotting maps
+#'
+#' @export
 th_map <- function(){
   ggplot2::theme_minimal() + ggplot2::theme(axis.text = element_blank())
 }

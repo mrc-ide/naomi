@@ -134,7 +134,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
   if(!is.null(age_group_id))
     age_group <- dplyr::filter(age_group, age_group_id %in% !!age_group_id)
 
-  sex_age_group <- dplyr::crossing(sex, age_group)
+  sex_age_group <- tidyr::crossing(sex, age_group)
 
   ## Only keep age groups that are fully contained within survey age range.
   ## For example, if survey sampled age 18-64, don't want to calculate

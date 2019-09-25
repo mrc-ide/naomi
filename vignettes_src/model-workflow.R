@@ -17,8 +17,7 @@ knitr::opts_chunk$set(
 #'
 
 ##+ setup, message = FALSE
-## library(naomi)
-devtools::load_all()
+library(naomi)
 library(tidyverse)
 library(sf)
 

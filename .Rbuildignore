@@ -11,3 +11,5 @@
 ^.*.tar.gz$
 ^\.travis\.yml$
 ^outputs$
+^vignettes/figure$
+^vignettes_src$
