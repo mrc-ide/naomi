@@ -10,3 +10,4 @@
 ^Makefile$
 ^.*.tar.gz$
 ^\.travis\.yml$
+^outputs$
