@@ -25,16 +25,19 @@ pkgdown:
 website: vignettes_rmd pkgdown
 	./scripts/update_web.sh
 
-vignettes/%.Rmd: vignettes_src/%.R
-	mkdir -p vignettes
-	${RSCRIPT} -e 'knitr::spin("$<", knit=FALSE)'
-	mv vignettes_src/$(@F) $@
-
 vignettes_rmd: vignettes/model-workflow.Rmd
 
-vignettes: vignettes/data-model.Rmd vignettes/model-workflow.Rmd
+vignettes/src/model-workflow.Rmd: vignettes/src/model-workflow.R
+	${RSCRIPT} -e 'knitr::spin("$<", knit=FALSE)'
+
+vignettes/%.Rmd: vignettes/src/%.Rmd
+	cp $^ $@
+
+vignettes_install: vignettes/data-model.Rmd vignettes/model-workflow.Rmd
 	${RSCRIPT} -e 'tools::buildVignettes(dir = ".")'
-	mkdir -p inst/doc
-	cp vignettes/*.html vignettes/*.Rmd inst/doc
+
+vignettes:
+	rm -f vignettes/model-workflow.Rmd vignettes/data-model.Rmd
+	make vignettes_install
 
 .PHONY: test roxygen install build check check_all pkgdown website vignettes vignettes_rmd
