@@ -16,5 +16,7 @@ r_github_packages:
   - bergant/datamodelr
   - mrc-ide/eppasm
   - mrc-ide/specio
+before_script:
+  - R < model-workflow.R
 after_success:
   - Rscript -e 'covr::codecov()'
