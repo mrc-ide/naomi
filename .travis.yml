@@ -18,6 +18,6 @@ r_github_packages:
   - mrc-ide/eppasm
   - mrc-ide/specio
 before_script:
-  - R < model-workflow.R
+  - R --no-save < model-workflow.R
 after_success:
   - Rscript -e 'covr::codecov()'
