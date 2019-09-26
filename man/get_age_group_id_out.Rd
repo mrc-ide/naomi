@@ -7,7 +7,8 @@
 get_age_group_id_out(age_group_ids)
 }
 \arguments{
-\item{age_group_ids}{Age group ids.}
+\item{age_group_ids}{Modelled age group ids. Assumed to
+be non-overlapping.}
 }
 \description{
 Ensures that age groups are fully spanned by modelled

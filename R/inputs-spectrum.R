@@ -24,12 +24,12 @@ extract_pjnz_naomi <- function(pjnz) {
   infections <- specres$infections %>%
     as.data.frame.table(responseName = "infections",
                         stringsAsFactors = FALSE) %>%
-    type.convert(as.is = TRUE)
+    utils::type.convert(as.is = TRUE)
 
   asfr <- demp$asfr %>%
     as.data.frame.table(responseName = "asfr",
                         stringsAsFactors = FALSE) %>%
-    type.convert(as.is = TRUE)
+    utils::type.convert(as.is = TRUE)
 
   spec <- totpop %>%
     dplyr::left_join(hivpop, by = c("age", "sex", "year")) %>%

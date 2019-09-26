@@ -9,3 +9,5 @@ Meta
 docs
 package-setup.R
 *.tar.gz
+dev/*
+outputs

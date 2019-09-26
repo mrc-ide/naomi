@@ -1,3 +1,8 @@
+# naomi 0.0.3
+
+* Ouput uncertainty ranges based on Monte Carlo simulation from joint covariance
+  matrix of fixed and random effects.
+
 # naomi 0.0.2
 
 * Add function to calculate prevalence and ART coverage from ANC data

@@ -18,6 +18,10 @@
 #' @export
 create_areas <- function(levels, hierarchy, boundaries) {
 
+  if(!rlang::has_name(hierarchy, "center_x"))
+    hierarchy$center_x <- NA
+  if(!rlang::has_name(hierarchy, "center_y"))
+    hierarchy$center_y <- NA
   missing_center <- is.na(hierarchy$center_x)
   if(any(missing_center)) {
     sf::st_agr(boundaries) <- "constant"
@@ -124,7 +128,7 @@ create_areas <- function(levels, hierarchy, boundaries) {
            traversal = "level")
 
   v <- list(tree = tree,
-            boundaries = setNames(boundaries$geometry, boundaries$area_id))
+            boundaries = stats::setNames(boundaries$geometry, boundaries$area_id))
   class(v) <- "naomi_areas"
 
   v

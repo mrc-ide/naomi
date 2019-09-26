@@ -16,7 +16,7 @@ meta_indicator <-
                     "Number on ART (residents)",
                     "HIV incidence rate per year",
                     "Number of new infections per year"),
-    parameter = c(NA,
+    parameter = c("population_out",
                   "rho_out",
                   "plhiv_out",
                   "alpha_out",
@@ -32,60 +32,54 @@ meta_indicator <-
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
   mf_out <- naomi_mf$mf_out
-  
-  if(is.null(naomi_fit$sdreport)) {
-    report <- naomi_fit$obj$report(naomi_fit$par.full)
-    mode <- lapply(c("rho_out", "plhiv_out",
-                     "alpha_out", "artnum_out",
-                     "lambda_out", "infections_out"),
-                   function(s) setNames(report[[s]], rep(s, length(report[[s]])))
-                   ) %>%
-      unlist()
-    mean <- NA
-    lower <- NA
-    upper <- NA
-  } else {
-    mode <- naomi_fit$sdreport$value
-    se <- naomi_fit$sdreport$sd
-    mean <- naomi_fit$sdreport$unbiased$value
-    lower <- mean - qnorm(0.975) * se
-    upper <- mean + qnorm(0.975) * se
+
+  indicator_ids <- c("population_out" = 1,
+                     "rho_out" = 2,
+                     "plhiv_out" = 3,
+                     "alpha_out" = 4,
+                     "artnum_out" = 5,
+                     "lambda_out" = 6,
+                     "infections_out" = 7)
+
+  report <- naomi_fit$obj$report(naomi_fit$par.full)
+
+  get_est <- function(varname) {
+    v <- dplyr::mutate(
+      mf_out,
+      quarter_id = naomi_mf$quarter_id1,
+      indicator_id = indicator_ids[varname],
+      mode = report[[varname]]
+    )
+    if(!is.null(naomi_fit$sample)) {
+      smp <- naomi_fit$sample[[varname]]
+      qtl <- apply(smp, 1, stats::quantile, c(0.5, 0.025, 0.975))
+      v$mean <- rowMeans(smp)
+      v$se <- sqrt(rowSums((smp - v$mean)^2) / (max(ncol(smp), 2) - 1))
+      v$median <- qtl[1,]
+      v$lower <- qtl[2,]
+      v$upper <- qtl[3,]
+    } else {
+      v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
+    }
+
+    v
   }
 
+  indicators <- lapply(names(indicator_ids), get_est) %>%
+    dplyr::bind_rows()
 
-  get_est <- function(s, indicator_id, quarter_id) {
-    idx <- which(names(mode) == s)
-    dplyr::mutate(mf_out,
-                  quarter_id,
-                  indicator_id,
-                  mode = mode[idx],
-                  mean = mean[idx],
-                  lower = lower[idx],
-                  upper = upper[idx])
-  }
-  
-   indicators <-
-     bind_rows(
-       mf_out %>% dplyr::mutate(
-                           quarter_id = naomi_mf$quarter_id1,
-                           indicator_id = 1L,
-                           mode = as.vector(naomi_mf$A_out %*% naomi_mf$mf_model$population_t1),
-                       mean = mode,
-                       lower = mode,
-                       upper = mode
-                       ),
-       get_est("rho_out",        2L, naomi_mf$quarter_id1),
-       get_est("plhiv_out",      3L, naomi_mf$quarter_id1),
-       get_est("alpha_out",      4L, naomi_mf$quarter_id1),
-       get_est("artnum_out",     5L, naomi_mf$quarter_id1),
-       get_est("lambda_out",     6L, naomi_mf$quarter_id1),
-       get_est("infections_out", 7L, naomi_mf$quarter_id1)
-     )
-  
   indicators
 }
 
 
+#' Build output package from fit
+#'
+#' @param naomi_fit Fitted naomi model
+#' @param naomi_mf Naomi model frame
+#' @param areas Area data
+#'
+#' @return List containing output indicators and metadata.
+#' @export
 output_package <- function(naomi_fit, naomi_mf, areas) {
 
   indicators <- extract_indicators(naomi_fit, naomi_mf)
@@ -97,12 +91,12 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
     dplyr::mutate(levelName = NULL,
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
-  
-  meta_period <- data.frame(quarter_id = c(quarter_id1, quarter_id2)) %>%
+
+  meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
     mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
 
   meta_age_group <- get_age_groups()
-  
+
   val <- list(
     indicators = indicators,
     meta_area = meta_area,
@@ -117,6 +111,12 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
 }
 
 
+#' Add labels to output indicators
+#'
+#' @param naomi_output Naomi output object.
+#'
+#' @return Labelled output indicators
+#' @export
 add_output_labels <- function(naomi_output) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
@@ -161,6 +161,8 @@ add_output_labels <- function(naomi_output) {
              indicator_label,
              mode,
              mean,
+             se,
+             median,
              lower,
              upper
            )
@@ -168,25 +170,42 @@ add_output_labels <- function(naomi_output) {
   indicators
 }
 
+#' Save outputs to zip file
+#'
+#' @param naomi_output Naomi output object
+#' @param filename Name of file to create
+#' @param dir Directory to create zip in
+#' @param overwrite If TRUE overwrite any existing file
+#' @param with_labels If TRUE save indicator ids with labels
+#' @param boundary_format Either geojson or shp for saving boundary as geojson
+#' or shape format
+#' @param single_csv If TRUE only output the csv of indicators, otherwise save
+#' the metadata too
+#'
+#' @return Path to created zip file
+#' @export
 save_output_package <- function(naomi_output,
                                 filename,
                                 dir,
                                 overwrite = FALSE,
                                 with_labels = FALSE,
                                 boundary_format = "geojson",
-                                with_data = FALSE,
                                 single_csv = FALSE) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
-  
-  if(!file.access(dir, 2) == 0)
+
+  dir <- normalizePath(dir)
+  if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
-  
+  }
+
   path <- file.path(dir, paste0(filename, ".zip"))
-  if(file.access(path, 0) == 0 && !overwrite)
-    stop(paste("File", path, "already exists. Set overwrite = TRUE to write output."))
-  
-  
+  if(file.access(path, 0) == 0 && !overwrite) {
+    stop(paste(
+      "File", path, "already exists. Set overwrite = TRUE to write output."))
+  }
+
+
   if(with_labels){
     indicators <- add_output_labels(naomi_output)
   } else {
@@ -197,22 +216,16 @@ save_output_package <- function(naomi_output,
   dir.create(tmpd)
   old <- setwd(tmpd)
   on.exit(setwd(old))
+  naomi_write_csv(indicators, "indicators.csv")
 
-  
-   write.csv(indicators, "indicators.csv", row.names = FALSE, na = "")
-  
-  
   if(!single_csv) {
-    write.csv(naomi_output$meta_area %>%
-              as.data.frame() %>%
-              dplyr::select(-geometry),
-              "meta_area.csv", row.names = FALSE, na = "")
-    write.csv(naomi_output$meta_age_group,
-              "meta_age_group.csv", row.names = FALSE, na = "")
-    write.csv(naomi_output$meta_period,
-              "meta_period.csv", row.names = FALSE, na = "")
-    write.csv(naomi_output$meta_indicator,
-              "meta_indicator.csv", row.names = FALSE, na = "")
+    naomi_write_csv(naomi_output$meta_area %>%
+                      as.data.frame() %>%
+                      dplyr::select(-geometry),
+                    "meta_area.csv")
+    naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
+    naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
+    naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         st_write(naomi_output$meta_area, "boundaries.geojson")
@@ -224,9 +237,8 @@ save_output_package <- function(naomi_output,
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
       }
     }
-  } 
+  }
 
-  zip(path, list.files())
-
+  utils::zip(path, list.files())
   path
 }

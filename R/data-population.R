@@ -113,7 +113,8 @@ interpolate_population_agesex <- function(population_agesex, quarter_ids) {
                 tidyr::nesting(area_id, source, sex, age_group_id)) %>%
     dplyr::full_join(df, by = names(.)) %>%
     dplyr::group_by(area_id, source, sex, age_group_id) %>%
-    dplyr::mutate(population = exp(zoo::na.approx(log(population), quarter_id, na.rm = FALSE))) %>%
+    dplyr::mutate(population = exp(zoo::na.approx(log(population), quarter_id, na.rm = FALSE)),
+                  population = tidyr::replace_na(population, 0)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(quarter_id %in% quarter_ids) %>%
     dplyr::left_join(dfall, by = intersect(names(.), names(dfall))) %>%

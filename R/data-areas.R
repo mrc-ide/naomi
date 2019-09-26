@@ -8,7 +8,7 @@
 st_read_zip <- function(zfile, pattern = "shp$") {
   tmpd <- tempfile()
   on.exit(unlink(tmpd))
-  unzip(zfile, exdir = tmpd)
+  utils::unzip(zfile, exdir = tmpd)
   sf::st_read(list.files(tmpd, pattern, recursive = TRUE, full.names = TRUE))
 }
 
@@ -19,23 +19,23 @@ st_read_zip <- function(zfile, pattern = "shp$") {
 gather_areas <- function(x) {
 
   val <- x %>%
-    group_by(area_id = id0,
+    dplyr::group_by(area_id = id0,
              area_name = name0,
              area_level = 0,
              parent_area_id = NA) %>%
-    summarise()
+    dplyr::summarise()
 
   for(i in 1:6)
     if(exists(paste0("id", i), x) && !is.na(x[[paste0("id", i)]]))
       val <- val %>%
         rbind(
           x %>%
-          mutate(area_level = i) %>%
-          rename(area_id = paste0("id", i),
+          dplyr::mutate(area_level = i) %>%
+          dplyr::rename(area_id = paste0("id", i),
                  area_name = paste0("name", i),
                  parent_area_id = paste0("id", i-1)) %>%
-          group_by(area_id, area_name, area_level, parent_area_id) %>%
-          summarise
+          dplyr::group_by(area_id, area_name, area_level, parent_area_id) %>%
+          dplyr::summarise()
         )
   val %>%
     ungroup
@@ -43,6 +43,8 @@ gather_areas <- function(x) {
 
 
 #' `ggplot2` theme for plotting maps
+#'
+#' @export
 th_map <- function(){
   ggplot2::theme_minimal() + ggplot2::theme(axis.text = element_blank())
 }
@@ -120,7 +122,7 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
           !!paste0("area_name", level) := area_name,
           parent_area_id)
        ,
-        by = setNames(c("parent_area_id"), c(paste0("area_id", level - 1L)))
+        by = stats::setNames(c("parent_area_id"), c(paste0("area_id", level - 1L)))
       )
 
   }

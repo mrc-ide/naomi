@@ -10,3 +10,7 @@
 ^Makefile$
 ^.*.tar.gz$
 ^\.travis\.yml$
+^outputs$
+^vignettes_src$
+^vignettes/model-workflow_cache$
+^vignettes/src/cache$

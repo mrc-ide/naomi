@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -29,6 +29,8 @@ Imports:
     magrittr,
     Matrix,
     methods,
+    mvtnorm,
+    rlang,
     sf,
     spdep,
     specio (>= 0.1.2),
@@ -36,14 +38,16 @@ Imports:
     TMB,
     zoo
 Suggests: 
+    covr,
     datamodelr,
     knitr,
     rdhs,
     rmarkdown,
+    scales,
     survey,
     testthat (>= 2.1.0),
     tidyverse,
-    covr
+    viridis
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,
