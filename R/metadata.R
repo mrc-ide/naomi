@@ -1,3 +1,15 @@
+#' Get plotting metadata for a particualr country
+#'
+#' @param country Country to get metadata for
+#'
+#' @return List of plotting metadata about how to locate data for a specific
+#' indicator, data type and plot type. Also returns metadata about colour
+#' scheme to use for that country and indicator.
+#'
+#' @export
+#'
+#' @examples
+#' get_plotting_metadata("Malawi")
 get_plotting_metadata <- function(country) {
   metadata <- get_metadata()
   colour_scale <- get_colour_scale(country)
