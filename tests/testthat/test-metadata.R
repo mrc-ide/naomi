@@ -22,7 +22,7 @@ test_that("return useful error if scale is misconfigured", {
     country = c("Malawi", "Malawi"),
     indicator = c("prevalence", "prevalence")
   ))
-  with_mock("naomi_read_csv" = mock_naomi_read_csv, {
+  with_mock("naomi:::naomi_read_csv" = mock_naomi_read_csv, {
     expect_error(get_colour_scale("prevalence", "Malawi"),
                  "Found more than one colour scale for country Malawi and indicator prevalence.
 Check configuration, each country and indicator combination should have 1 and only 1 entry.")

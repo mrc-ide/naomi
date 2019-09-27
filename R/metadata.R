@@ -1,3 +1,13 @@
+#' Get colour scale for a particular indicator and country
+#'
+#' @param indicator Indicator to get scale for
+#' @param country Country to get scale for
+#'
+#' @return List of scale information including colour as a d3 scale chromatic
+#' function name, whether to invert the scale and a min and max value for the
+#' scale.
+#' @export
+#'
 get_colour_scale <- function(indicator, country) {
   scales <- naomi_read_csv(system.file("extdata", "meta", "colour_scales.csv",
                            package = "naomi"))
