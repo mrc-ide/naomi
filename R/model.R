@@ -84,7 +84,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
                     "sex_out" = "sex",
                     "age_group_id_out" = "age_group_id")
            ) %>%
-    mutate(x = 1)
+    dplyr::mutate(x = 1)
 
   A <- Matrix::spMatrix(nrow(mf_out),
                         nrow(mf_model),
@@ -241,7 +241,7 @@ naomi_model_frame <- function(areas,
     dplyr::mutate(artattend_idx = dplyr::row_number())
 
   gamma_or_prior <-   mf_areas %>%
-    mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
+    dplyr::mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
     dplyr::left_join(
              data.frame(
                n_nb_lim = 1:9,
@@ -260,8 +260,8 @@ naomi_model_frame <- function(areas,
              dplyr::select(area_idx, gamma_or_mu, gamma_or_sigma),
              by = c("reside_area_idx" = "area_idx")
            ) %>%
-    dplyr::mutate(gamma_or_mu = if_else(istar == 1, NA_real_, gamma_or_mu),
-                  gamma_or_sigma = if_else(istar == 1, NA_real_, gamma_or_sigma))
+    dplyr::mutate(gamma_or_mu = dplyr::if_else(istar == 1, NA_real_, gamma_or_mu),
+                  gamma_or_sigma = dplyr::if_else(istar == 1, NA_real_, gamma_or_sigma))
 
   ## Incidence model
 
@@ -269,7 +269,7 @@ naomi_model_frame <- function(areas,
     dplyr::left_join(
              get_age_groups() %>%
              dplyr::filter(age_group_id %in% age_group_ids) %>%
-             mutate(
+             dplyr::mutate(
                age15to49 = as.integer(age_group_start >= 15 &
                                       (age_group_start + age_group_span) <= 50)
              ) %>%
@@ -495,10 +495,19 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
 
 #' @rdname anc_testing_prev_mf
 #' @export
-artnum_mf <- function(quarter_ids, art_number, naomi_mf) {
+artnum_mf <- function(quarter_id, art_number, naomi_mf) {
 
-  if(is.null(art_number)) {
-    ## No number on ART data
+  stopifnot(length(quarter_id) <= 1)
+  stopifnot(is(naomi_mf, "naomi_mf"))
+
+  if(!is.null(art_number) &&
+     length(quarter_id) &&
+     !quarter_id %in% art_number$quarter_id)
+    stop(paste0("No ART data found for quarter_id ", quarter_id, ".\n",
+                "Set quarter_id = NULL if you intend to include no ART data."))
+  
+  if(is.null(quarter_id) || is.null(art_number)) {
+    ## No number on ART data or no quarter specified
     artnum_dat <- data.frame(
       area_id = character(0),
       sex = character(0),
@@ -509,7 +518,7 @@ artnum_mf <- function(quarter_ids, art_number, naomi_mf) {
   } else {
     ## !!! Note: should add some subsetting for sex and age group.
     artnum_dat <- art_number %>%
-      dplyr::filter(quarter_ids == !!quarter_ids,
+      dplyr::filter(quarter_id == !!quarter_id,
                     area_id %in% naomi_mf$mf_areas$area_id) %>%
       dplyr::transmute(
                area_id,

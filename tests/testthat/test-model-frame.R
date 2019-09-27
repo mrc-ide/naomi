@@ -6,3 +6,33 @@ test_that("get_age_group_id_out() returns expected groups", {
   expect_equal(get_age_group_id_out(1:17), 1:29)
   expect_equal(get_age_group_id_out(4:17), c(4:21, 25:29))
 })
+
+
+areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
+spec <- extract_pjnz_naomi(system.file("extdata/mwi2019.PJNZ", package = "naomi"))
+
+naomi_mf <- naomi_model_frame(areas,
+                              mwi_population_agesex,
+                              spec,
+                              scope = "MWI",
+                              level = 4,
+                              quarter_id1 = convert_quarter_id(1, 2016),
+                              quarter_id2 = convert_quarter_id(3, 2018))
+
+
+test_that("artnum_mf() returns expected number of records", {
+  expect_equal(nrow(artnum_mf(465, NULL, naomi_mf)), 0L)
+  expect_equal(nrow(artnum_mf(NULL, mwi_art_number, naomi_mf)), 0L)
+  expect_equal(nrow(artnum_mf(465, NULL, naomi_mf)), 0L)
+  expect_named(artnum_mf(NULL, mwi_art_number, naomi_mf), 
+               c("area_id", "sex", "age_group_id", "artnum_idx", "current_art"))
+  expect_equal(nrow(artnum_mf(465, mwi_art_number, naomi_mf)), 64L)
+  expect_named(artnum_mf(465, mwi_art_number, naomi_mf), 
+               c("area_id", "sex", "age_group_id", "artnum_idx", "current_art"))
+})
+
+test_that("artnum_mf() throws errors for invalid inputs", {
+  expect_error(artnum_mf(100, mwi_art_number, naomi_mf))
+  expect_error(artnum_mf(465, mwi_art_number, "jibberish"))
+  expect_error(artnum_mf(c(465, 466), mwi_art_number, "jibberish"))
+})
