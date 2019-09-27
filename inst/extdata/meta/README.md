@@ -17,7 +17,7 @@ name - Human readable name for the indicator
 
 country - The country the colour scheme is for
 indicator - The indicator the colour scheme is for
-colour - Colour scheme function name, must match one of the [d3 scale colour schemes](https://github.com/d3/d3-scale-chromatic)
+colour - Colour scheme function name, must match one of the [d3 scale colour schemes](https://github.com/d3/d3-scale-chromatic#api-reference)
 min - The minimum value to scale the scheme to
 max - The maximum value to scale the scheme to
 invert_scale - Whether to invert the colour scale or not TRUE or FALSE
