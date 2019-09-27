@@ -27,21 +27,23 @@ website: vignettes_rmd pkgdown
 
 vignettes_rmd: vignettes/model-workflow.Rmd
 
-vignettes/src/model-workflow.Rmd: vignettes/src/model-workflow.R
+vignettes_src/model-workflow.Rmd: vignettes_src/model-workflow.R
 	${RSCRIPT} -e 'knitr::spin("$<", knit=FALSE)'
 
-vignettes/model-workflow.Rmd: vignettes/src/model-workflow.Rmd
-	cd vignettes/src && ${RSCRIPT} -e 'knitr::knit("model-workflow.Rmd")'
-	mv vignettes/src/model-workflow.md $@
-	mv vignettes/src/figure vignettes/
+vignettes/model-workflow.Rmd: vignettes_src/model-workflow.Rmd
+	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("model-workflow.Rmd")'
+	mv vignettes_src/model-workflow.md $@
+	mv vignettes_src/figure vignettes/
 
-vignettes/data-model.Rmd: vignettes/src/data-model.Rmd
+vignettes/data-model.Rmd: vignettes_src/data-model.Rmd
 	cp $^ $@
 
 vignettes_install: vignettes/model-workflow.Rmd vignettes/data-model.Rmd
 	${RSCRIPT} -e 'tools::buildVignettes(dir = ".")'
 
 vignettes:
+	rm -rf vignettes/figure
+	rm -rf vignettes_src/outputs
 	rm -f vignettes/model-workflow.Rmd vignettes/data-model.Rmd
 	make vignettes_install
 

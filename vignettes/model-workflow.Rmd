@@ -44,8 +44,8 @@ area_long <- area_hierarchy %>%
 
 ```r
 st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE)
-#> Deleting source `/tmp/RtmpwD0bNT/area_long.geojson' failed
-#> Writing layer `area_long' to data source `/tmp/RtmpwD0bNT/area_long.geojson' using driver `GeoJSON'
+#> Deleting source `/tmp/RtmpeqMYnh/area_long.geojson' failed
+#> Writing layer `area_long' to data source `/tmp/RtmpeqMYnh/area_long.geojson' using driver `GeoJSON'
 #> Writing 69 features with 10 fields and geometry type Multi Polygon.
 ```
 
