@@ -11,3 +11,7 @@ package-setup.R
 *.tar.gz
 dev/*
 outputs
+vignettes/*.html
+vignettes_src/*.html
+vignettes_src/cache
+vignettes_src/model-workflow_cache

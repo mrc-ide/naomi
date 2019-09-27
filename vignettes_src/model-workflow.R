@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
                     collapse = TRUE,
                     comment = "#>"
                   )
-
+unlink("outputs", recursive = TRUE)
 #'
 #'
 

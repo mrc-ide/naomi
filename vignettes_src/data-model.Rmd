@@ -160,12 +160,11 @@ dm <-
 * Coloured tables are required inputs to Naomi model.
 * White backgrond tables are in the ADR only.
 
-```{r create_graph, fig.width = 7, fig.height = 10, fig.align = "center", include = FALSE}
+```{r create_graph, fig.width = 7, fig.height = 10, fig.align = "center", echo = FALSE}
 #' Render graph
 dm_create_graph(dm, rankdir = "BT", col_attr = c("column", "type")) %>%
                 ## columnArrows = TRUE) %>%
-  dm_render_graph() %>%
-  print
+  dm_render_graph
 ```
 
 ## Areas data
