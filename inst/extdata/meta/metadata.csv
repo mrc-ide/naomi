@@ -1,0 +1,8 @@
+data_type,plot_type,indicator,value_column,indicator_column,indicator_value,name
+survey,choropleth,prevalence,est,indicator,prev,Prevalence
+survey,choropleth,art_coverage,est,indicator,art,ART coverage
+anc,choropleth,prevalence,prevalence,,,Prevalence
+anc,choropleth,art_coverage,art_coverage,,,ART coverage
+programme,choropleth,current_art,current_art,,,Number on ART
+output,choropleth,prevalence,prevalence,,,Prevalence
+output,choropleth,art_coverage,art_coverage,,,ART coverage

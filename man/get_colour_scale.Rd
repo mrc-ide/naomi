@@ -2,13 +2,11 @@
 % Please edit documentation in R/metadata.R
 \name{get_colour_scale}
 \alias{get_colour_scale}
-\title{Get colour scale for a particular indicator and country}
+\title{Get colour scale and ranges for a particular country}
 \usage{
-get_colour_scale(indicator, country)
+get_colour_scale(country)
 }
 \arguments{
-\item{indicator}{Indicator to get scale for}
-
 \item{country}{Country to get scale for}
 }
 \value{
@@ -17,5 +15,6 @@ function name, whether to invert the scale and a min and max value for the
 scale.
 }
 \description{
-Get colour scale for a particular indicator and country
+Get colour scale and ranges for a particular country
 }
+\keyword{internal}
