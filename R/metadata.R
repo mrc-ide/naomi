@@ -26,8 +26,7 @@ get_plotting_metadata <- function(country) {
 #'
 #' @keywords internal
 get_colour_scale <- function(country) {
-  scales <- naomi_read_csv(system.file("extdata", "meta", "colour_scales.csv",
-                           package = "naomi"))
+  scales <- naomi_read_csv(system_file("extdata", "meta", "colour_scales.csv"))
   data <- scales[tolower(scales$country) == tolower(country), ]
   if (nrow(data) == 0) {
     stop(sprintf(
@@ -38,6 +37,5 @@ get_colour_scale <- function(country) {
 }
 
 get_metadata <- function() {
-  naomi_read_csv(system.file("extdata", "meta", "metadata.csv",
-                                         package = "naomi"))
+  naomi_read_csv(system_file("extdata", "meta", "metadata.csv"))
 }

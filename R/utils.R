@@ -5,3 +5,7 @@ naomi_write_csv <- function(...) {
 naomi_read_csv <- function(...) {
   read.csv(..., stringsAsFactors = FALSE)
 }
+
+system_file <- function(...) {
+  system.file(..., package = "naomi", mustWork = TRUE)
+}
