@@ -149,11 +149,11 @@ naomi_data <- select_naomi_data(naomi_mf,
                                 prev_survey_ids,
                                 artcov_survey_ids,
                                 recent_survey_ids,
-                                vls_survey_ids = NULL,
-                                artnum_quarter_id_t1 = naomi_mf$quarter_id1,
-                                artnum_quarter_id_t2 = naomi_mf$quarter_id2,
-                                anc_quarter_id_t1 = naomi_mf$quarter_id1 + -1:2,
-                                anc_quarter_id_t2 = naomi_mf$quarter_id2 + -1:2)
+                                vls_survey_ids,
+                                artnum_quarter_id_t1,
+                                artnum_quarter_id_t2,
+                                anc_quarter_id_t1,
+                                anc_quarter_id_t2)
 
 
 #' 5. Fit model

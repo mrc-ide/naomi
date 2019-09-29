@@ -112,6 +112,8 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param rita_param rita_param
 #' @param sigma_u_sd sigma_u_sd
 #' @param artattend_prior_sigma_scale artattend_propr_sigma_scale
+#' @param logit_nu_mean mean of logit viral load suppression.
+#' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @return Naomi model frame
 #'
 #' @export
@@ -131,7 +133,9 @@ naomi_model_frame <- function(areas,
                                                 sigma_betaT  = 0.00001,
                                                 ritaT        = 1.0),
                               sigma_u_sd   = 1.0,
-                              artattend_prior_sigma_scale = 3.0) {
+                              artattend_prior_sigma_scale = 3.0,
+                              logit_nu_mean = 2.0,
+                              logit_nu_sd = 0.3) {
 
   ## Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
@@ -298,6 +302,8 @@ naomi_model_frame <- function(areas,
             quarter_id2 = quarter_id2,
             omega = omega,
             rita_param = rita_param,
+            logit_nu_mean = logit_nu_mean,
+            logit_nu_sd = logit_nu_sd,  
             M = M,
             Q = Q)
 
@@ -322,7 +328,8 @@ select_naomi_data <- function(naomi_mf,
   stopifnot(is(naomi_mf, "naomi_mf"))
 
   if(length(intersect(artcov_survey_ids, vls_survey_ids)))
-    stop("Do not use ART coverage and VLS data from the same survey.")
+    stop(paste("Do not use ART coverage and VLS data from the same survey:",
+               intersect(artcov_survey_ids, vls_survey_ids)))
 
   naomi_mf$prev_dat <- survey_prevalence_mf(prev_survey_ids, survey_hiv_indicators, naomi_mf)
   naomi_mf$artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)

@@ -221,6 +221,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     sigma_betaT = naomi_data$rita_param$sigma_betaT,
     ritaT = naomi_data$rita_param$ritaT,
     ##
+    logit_nu_mean = naomi_data$logit_nu_mean,
+    logit_nu_sd = naomi_data$logit_nu_sd,
+    ##
     X_15to49 = X_15to49,
     log_lambda_offset = naomi_data$mf_model$log_lambda_offset,
     ##
@@ -231,6 +234,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     idx_artcov = naomi_data$artcov_dat$idx - 1L,
     x_artcov = naomi_data$artcov_dat$x,
     n_artcov = naomi_data$artcov_dat$n,
+    idx_vls = naomi_data$vls_dat$idx - 1L,
+    x_vls = naomi_data$vls_dat$x,
+    n_vls = naomi_data$vls_dat$n,
     idx_recent = naomi_data$recent_dat$idx - 1L,
     x_recent = naomi_data$recent_dat$x,
     n_recent = naomi_data$recent_dat$n,
@@ -291,6 +297,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     ##
     OmegaT_raw = 0,
     log_betaT = 0,
+    logit_nu_raw = 0,
     ##
     log_sigma_ancrho_x = 0,
     log_sigma_ancalpha_x = 0,
@@ -333,6 +340,7 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                                    "u_alpha_a", "u_alpha_as",
                                    ##
                                    "ui_lambda_x",
+                                   "logit_nu_raw",
                                    ##
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    ##
