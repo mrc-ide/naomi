@@ -142,33 +142,25 @@ naomi_mf <- naomi_model_frame(areas,
 
 #' Prepare data inputs
 
-prev_dat <- survey_prevalence_mf(prev_survey_ids, survey_hiv_indicators, naomi_mf)
-artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)
-recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
-
-anc_prev_t1_dat <- anc_testing_prev_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
-anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
-
-anc_prev_t2_dat <- anc_testing_prev_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
-anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
-
-artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
-artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
-
+naomi_data <- select_naomi_data(naomi_mf,
+                                survey_hiv_indicators,
+                                anc_testing,
+                                art_number,
+                                prev_survey_ids,
+                                artcov_survey_ids,
+                                recent_survey_ids,
+                                vls_survey_ids = NULL,
+                                artnum_quarter_id_t1 = naomi_mf$quarter_id1,
+                                artnum_quarter_id_t2 = naomi_mf$quarter_id2,
+                                anc_quarter_id_t1 = naomi_mf$quarter_id1 + -1:2,
+                                anc_quarter_id_t2 = naomi_mf$quarter_id2 + -1:2)
 
 
 #' 5. Fit model
 
 #' Prepare model inputs and initial parameters
 
-tmb_inputs <- prepare_tmb_inputs(naomi_mf, prev_dat, artcov_dat, recent_dat,
-                                 anc_prev_t1_dat,
-                                 anc_prev_t2_dat,
-                                 anc_artcov_t1_dat,
-                                 anc_artcov_t2_dat,
-                                 artnum_t1_dat,
-                                 artnum_t2_dat)
-
+tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
 
 #' Fit the TMB model
