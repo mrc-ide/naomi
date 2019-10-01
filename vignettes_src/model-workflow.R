@@ -33,7 +33,7 @@ area_levels <- read_csv(system.file("extdata/areas/area_levels.csv", package = "
 area_hierarchy  <- read_csv(system.file("extdata/areas/area_hierarchy.csv", package = "naomi"))
 area_boundaries <- sf::read_sf(system.file("extdata/areas/area_boundaries.geojson", package = "naomi"))
 
-area_long <- area_hierarchy %>%
+area_merged <- area_hierarchy %>%
   left_join(
     area_levels %>% select(area_level, area_level_label, display, naomi_level)
   ) %>%
@@ -42,15 +42,15 @@ area_long <- area_hierarchy %>%
   )
 
 ##+ message = FALSE
-st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE)
+st_write(area_merged, file.path(tempdir(), "area_merged.geojson"), delete_dsn = TRUE)
 
 #' # 1. (Up)Load data inputs
 #'
 #' Area hierarchy and boundaries
 
-area_long <- read_sf(file.path(tempdir(), "area_long.geojson"))
+area_merged <- read_sf(file.path(tempdir(), "area_merged.geojson"))
 
-areas <- create_areas(area_levels, area_hierarchy, area_boundaries)
+areas <- create_areas(area_merged = area_merged)
 
 
 #' Population data

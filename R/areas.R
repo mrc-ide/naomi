@@ -5,6 +5,7 @@
 #' @param levels Data frame of area level metadata.
 #' @param hierarchy Data frame defining area hierarchy and area-level data.
 #' @param boundaries an `sf` object with boundary geometry for each area_id
+#' @param area_merged A merged version of `levels`, `hierarchy`, and `boundaries`.
 #' @return An object of class `naomi_areas`
 #'
 #' @examples
@@ -16,8 +17,33 @@
 #' areas
 #'
 #' @export
-create_areas <- function(levels, hierarchy, boundaries) {
+create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
+                         area_merged = NULL) {
 
+  if(is.null(area_merged) &&
+     (is.null(levels) ||
+      is.null(hierarchy) ||
+      is.null(boundaries))
+     ) {
+    stop("Either supply levels, hierarchy, and boundaries, or area_merged")
+  }
+  
+  if(!is.null(area_merged)) {
+    if(!rlang::has_name(area_merged, "center_x"))
+      area_merged$center_x <- NA
+    if(!rlang::has_name(area_merged, "center_y"))
+      area_merged$center_y <- NA
+
+    levels <- area_merged %>%
+      as.data.frame() %>%
+      dplyr::count(area_level, area_level_label, display, naomi_level, name = "n_areas")
+    hierarchy <- area_merged %>%
+      as.data.frame() %>%
+      dplyr::select(area_id, area_name, area_level, parent_area_id, area_sort_order, center_x, center_y)
+
+    boundaries <- dplyr::select(area_merged, area_id, geometry)
+  }
+      
   if(!rlang::has_name(hierarchy, "center_x"))
     hierarchy$center_x <- NA
   if(!rlang::has_name(hierarchy, "center_y"))
