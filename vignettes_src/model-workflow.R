@@ -67,6 +67,9 @@ survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicat
 art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
 anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
 
+#' Use only adult ART data for now
+art_number <- art_number %>%
+  filter(age_group_id == 20)
 
 #' Programme data
 #'
