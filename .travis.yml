@@ -10,8 +10,6 @@ addons:
       - libproj-dev
       - libudunits2-dev
 cache: packages
-before_script:
-  - Rscript -e 'INLA:::inla.dynload.workaround()'
 r_packages:
   - covr
 r_github_packages:
