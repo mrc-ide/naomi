@@ -14,32 +14,32 @@ prepare_tmb_inputs <- function(naomi_data) {
   ## ANC prevalence model matrices
   anc_prev_t1_dat <- naomi_data$anc_prev_t1_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
   anc_artcov_t1_dat <- naomi_data$anc_artcov_t1_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
   anc_prev_t2_dat <- naomi_data$anc_prev_t2_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
   anc_artcov_t2_dat <- naomi_data$anc_artcov_t2_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
   create_anc_Amat <- function(dat, naomi_mf, asfr_col, population_col) {
     A <- dat %>%
       dplyr::inner_join(
-               naomi_mf$mf_model,
+               naomi_data$mf_model,
                by = "area_id"
              ) %>%
       dplyr::transmute(
@@ -51,7 +51,7 @@ prepare_tmb_inputs <- function(naomi_data) {
       dplyr::filter(births > 0) %>%
     {
       Matrix::spMatrix(nrow(dat),
-                       nrow(naomi_mf$mf_model),
+                       nrow(naomi_data$mf_model),
                        .$anc_idx,
                        .$idx,
                        .$births)
@@ -405,8 +405,7 @@ sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) 
 
     par_r <- fit$par.full[r]
     hess_r <- fit$obj$env$spHess(fit$par.full, random = TRUE)
-    cov_r <- solve(hess_r)
-    smp_r <- mvtnorm::rmvnorm(nsample, par_r, cov_r)
+    smp_r <- rmvnorm_sparseprec(nsample, par_r, hess_r)
 
     smp <- matrix(0, nsample, length(fit$par.full))
     smp[ , r] <- smp_r
@@ -427,4 +426,12 @@ sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) 
   names(fit$sample) <- names(r)
 
   fit
+}
+
+rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(mean))) {
+
+  z = matrix(rnorm(n * length(mean)), ncol = n)
+  L_inv = Matrix::Cholesky(prec)
+  v <- mean + Matrix::solve(as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(as(L_inv, "Matrix")), z))
+  as.matrix(Matrix::t(v))
 }
