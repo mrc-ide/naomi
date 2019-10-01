@@ -172,10 +172,12 @@ Type objective_function<Type>::operator() ()
   val -= sum(dnorm(ui_rho_xs, 0.0, 1.0, true));
 
   PARAMETER_VECTOR(u_rho_a);
-  val += AR1(phi_rho_a)(u_rho_a);
+  if(u_rho_a.size() > 0)
+    val += AR1(phi_rho_a)(u_rho_a);
 
   PARAMETER_VECTOR(u_rho_as);
-  val += AR1(phi_rho_as)(u_rho_as);
+  if(u_rho_as.size() > 0)
+    val += AR1(phi_rho_as)(u_rho_as);
 
 
 
@@ -230,10 +232,12 @@ Type objective_function<Type>::operator() ()
   val -= sum(dnorm(ui_alpha_xs, 0.0, 1.0, true));
 
   PARAMETER_VECTOR(u_alpha_a);
-  val += AR1(phi_alpha_a)(u_alpha_a);
+  if(u_alpha_a.size() > 0)
+    val += AR1(phi_alpha_a)(u_alpha_a);
 
   PARAMETER_VECTOR(u_alpha_as);
-  val += AR1(phi_alpha_as)(u_alpha_as);
+  if(u_alpha_as.size() > 0)
+    val += AR1(phi_alpha_as)(u_alpha_as);
 
 
   // * HIV incidence model *
