@@ -50,6 +50,10 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_artcov);
   DATA_VECTOR(x_artcov);
 
+  DATA_IVECTOR(idx_vls);
+  DATA_VECTOR(n_vls);
+  DATA_VECTOR(x_vls);
+
   DATA_IVECTOR(idx_recent);
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
@@ -82,6 +86,8 @@ Type objective_function<Type>::operator() ()
   DATA_SCALAR(betaT0);
   DATA_SCALAR(sigma_betaT);
   DATA_SCALAR(ritaT);
+  DATA_SCALAR(logit_nu_mean);
+  DATA_SCALAR(logit_nu_sd);
     
   DATA_SPARSE_MATRIX(X_15to49);
   DATA_VECTOR(log_lambda_offset);
@@ -166,10 +172,12 @@ Type objective_function<Type>::operator() ()
   val -= sum(dnorm(ui_rho_xs, 0.0, 1.0, true));
 
   PARAMETER_VECTOR(u_rho_a);
-  val += AR1(phi_rho_a)(u_rho_a);
+  if(u_rho_a.size() > 0)
+    val += AR1(phi_rho_a)(u_rho_a);
 
   PARAMETER_VECTOR(u_rho_as);
-  val += AR1(phi_rho_as)(u_rho_as);
+  if(u_rho_as.size() > 0)
+    val += AR1(phi_rho_as)(u_rho_as);
 
 
 
@@ -224,10 +232,12 @@ Type objective_function<Type>::operator() ()
   val -= sum(dnorm(ui_alpha_xs, 0.0, 1.0, true));
 
   PARAMETER_VECTOR(u_alpha_a);
-  val += AR1(phi_alpha_a)(u_alpha_a);
+  if(u_alpha_a.size() > 0)
+    val += AR1(phi_alpha_a)(u_alpha_a);
 
   PARAMETER_VECTOR(u_alpha_as);
-  val += AR1(phi_alpha_as)(u_alpha_as);
+  if(u_alpha_as.size() > 0)
+    val += AR1(phi_alpha_as)(u_alpha_as);
 
 
   // * HIV incidence model *
@@ -240,6 +250,10 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(exp(log_betaT), Type(0.0), Type(1.0), true) + log_betaT;
   Type betaT = betaT0 + exp(log_betaT) * sigma_betaT;
 
+  PARAMETER(logit_nu_raw);
+  val -= dnorm(logit_nu_raw, Type(0.0), Type(1.0), true);
+  Type nu = invlogit(logit_nu_mean + logit_nu_raw * logit_nu_sd);
+  
   PARAMETER(log_sigma_lambda_x);
   Type sigma_lambda_x(exp(log_sigma_lambda_x));
   val -= dnorm(sigma_lambda_x, Type(0.0), Type(1.0), true) + log_sigma_lambda_x;
@@ -311,6 +325,9 @@ Type objective_function<Type>::operator() ()
 
   for(int i = 0; i < idx_artcov.size(); i++)
     val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
+
+  for(int i = 0; i < idx_vls.size(); i++)
+    val -= dbinom(x_vls[i], n_vls[i], alpha[idx_vls[i]] * nu, true);
 
   vector<Type> pR_i(idx_recent.size());
   for(int i = 0; i < idx_recent.size(); i++) {
@@ -390,6 +407,7 @@ Type objective_function<Type>::operator() ()
   REPORT(mu_anc_alpha);
 
   REPORT(pR_i);
+  REPORT(nu);
 
   ADREPORT(rho_out);
   ADREPORT(plhiv_out);

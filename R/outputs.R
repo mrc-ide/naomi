@@ -242,3 +242,25 @@ save_output_package <- function(naomi_output,
   utils::zip(path, list.files())
   path
 }
+
+#' @rdname save_output_package
+#' @param path Path to output zip file.
+#' @export
+read_output_package <- function(path) {
+
+  tmpd <- tempfile()
+  on.exit(unlink(tmpd))
+
+  utils::unzip(path, exdir = tmpd)
+
+  v <- list(
+    indicators = read_csv(file.path(tmpd, "indicators.csv")),
+    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
+    meta_age_group = read_csv(file.path(tmpd, "meta_age_group.csv")),
+    meta_period = read_csv(file.path(tmpd, "meta_period.csv")),
+    meta_indicator = read_csv(file.path(tmpd, "meta_indicator.csv"))
+  )
+
+  class(v) <- "naomi_output"
+  v
+}

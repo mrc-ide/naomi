@@ -1,58 +1,45 @@
 #' Prepare inputs for TMB model.
 #'
-#' @param naomi_mf  Naomi model frame
-#' @param prev_dat Prevalence data
-#' @param artcov_dat ART coverage data
-#' @param recent_dat Recent infection data
-#' @param anc_prev_t1_dat ANC prevalence at time 1
-#' @param anc_prev_t2_dat ANC prevelance at time 2
-#' @param anc_artcov_t1_dat ANC ART coverage at time 1
-#' @param anc_artcov_t2_dat ANC ART coverage at time 2
-#' @param artnum_t1_dat Number on ART at time 1
-#' @param artnum_t2_dat Number on ART at time 2
+#' @param naomi_data  Naomi data object
 #'
 #' @return Inputs ready for TMB model
+#'
+#' @seealso [select_naomi_data]
 #' @export
-prepare_tmb_inputs <- function(naomi_mf,
-                               prev_dat,
-                               artcov_dat,
-                               recent_dat,
-                               anc_prev_t1_dat,
-                               anc_prev_t2_dat,
-                               anc_artcov_t1_dat,
-                               anc_artcov_t2_dat,
-                               artnum_t1_dat,
-                               artnum_t2_dat) {
+prepare_tmb_inputs <- function(naomi_data) {
+
+  stopifnot(is(naomi_data, "naomi_data"))
+  stopifnot(is(naomi_data, "naomi_mf"))
 
   ## ANC prevalence model matrices
-  anc_prev_t1_dat <- anc_prev_t1_dat %>%
+  anc_prev_t1_dat <- naomi_data$anc_prev_t1_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
-  anc_artcov_t1_dat <- anc_artcov_t1_dat %>%
+  anc_artcov_t1_dat <- naomi_data$anc_artcov_t1_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
-  anc_prev_t2_dat <- anc_prev_t2_dat %>%
+  anc_prev_t2_dat <- naomi_data$anc_prev_t2_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
-  anc_artcov_t2_dat <- anc_artcov_t2_dat %>%
+  anc_artcov_t2_dat <- naomi_data$anc_artcov_t2_dat %>%
     dplyr::left_join(
-             naomi_mf$mf_areas,
+             naomi_data$mf_areas,
              by = "area_id"
            )
 
   create_anc_Amat <- function(dat, naomi_mf, asfr_col, population_col) {
     A <- dat %>%
       dplyr::inner_join(
-               naomi_mf$mf_model,
+               naomi_data$mf_model,
                by = "area_id"
              ) %>%
       dplyr::transmute(
@@ -64,7 +51,7 @@ prepare_tmb_inputs <- function(naomi_mf,
       dplyr::filter(births > 0) %>%
     {
       Matrix::spMatrix(nrow(dat),
-                       nrow(naomi_mf$mf_model),
+                       nrow(naomi_data$mf_model),
                        .$anc_idx,
                        .$idx,
                        .$births)
@@ -73,17 +60,17 @@ prepare_tmb_inputs <- function(naomi_mf,
     A
   }
 
-  A_anc_prev_t1 <- create_anc_Amat(anc_prev_t1_dat, naomi_mf, "asfr", "population_t1")
-  A_anc_prev_t2 <- create_anc_Amat(anc_prev_t2_dat, naomi_mf, "asfr", "population_t2")
-  A_anc_artcov_t1 <- create_anc_Amat(anc_artcov_t1_dat, naomi_mf, "asfr", "population_t1")
-  A_anc_artcov_t2 <- create_anc_Amat(anc_artcov_t2_dat, naomi_mf, "asfr", "population_t2")
+  A_anc_prev_t1 <- create_anc_Amat(anc_prev_t1_dat, naomi_data, "asfr", "population_t1")
+  A_anc_prev_t2 <- create_anc_Amat(anc_prev_t2_dat, naomi_data, "asfr", "population_t2")
+  A_anc_artcov_t1 <- create_anc_Amat(anc_artcov_t1_dat, naomi_data, "asfr", "population_t1")
+  A_anc_artcov_t2 <- create_anc_Amat(anc_artcov_t2_dat, naomi_data, "asfr", "population_t2")
 
-  X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_mf$mf_model))
+  X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
   ## ART attendance aggregation
 
-  df_art_attend <- naomi_mf$mf_model %>%
-    dplyr::left_join(naomi_mf$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
+  df_art_attend <- naomi_data$mf_model %>%
+    dplyr::left_join(naomi_data$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
     dplyr::mutate(artattend_idf = forcats::as_factor(artattend_idx),
                   idf = forcats::as_factor(idx))
 
@@ -92,7 +79,7 @@ prepare_tmb_inputs <- function(naomi_mf,
 
 
   A_artnum_t1 <-
-    artnum_t1_dat %>%
+    naomi_data$artnum_t1_dat %>%
     dplyr::rename(artdat_age_group_id = age_group_id,
                   artdat_sex = sex) %>%
     dplyr::left_join(
@@ -107,7 +94,7 @@ prepare_tmb_inputs <- function(naomi_mf,
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(
              get_age_groups() %>%
-             dplyr::filter(age_group_id %in% naomi_mf$age_group_ids)
+             dplyr::filter(age_group_id %in% naomi_data$age_group_ids)
            ) %>%
     dplyr::filter(
              artdat_age_start <= age_group_start,
@@ -117,11 +104,11 @@ prepare_tmb_inputs <- function(naomi_mf,
              data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
                         sex = c("male", "female", "male", "female", "both"),
                         stringsAsFactors = FALSE) %>%
-             dplyr::filter(sex %in% naomi_mf$sexes),
+             dplyr::filter(sex %in% naomi_data$sexes),
              by = "artdat_sex"
            ) %>%
     dplyr::left_join(
-             naomi_mf$mf_areas %>% dplyr::select(area_id, area_idx),
+             naomi_data$mf_areas %>% dplyr::select(area_id, area_idx),
              by = "area_id"
            ) %>%
     dplyr::left_join(
@@ -136,15 +123,15 @@ prepare_tmb_inputs <- function(naomi_mf,
       by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
       ) %>%
     {
-      Matrix::spMatrix(nrow(artnum_t1_dat),
+      Matrix::spMatrix(nrow(naomi_data$artnum_t1_dat),
                        nrow(df_art_attend),
                      .$artnum_idx,
                      .$Aidx,
                      .$value)
     }
 
-    A_artnum_t2 <-
-    artnum_t2_dat %>%
+  A_artnum_t2 <-
+    naomi_data$artnum_t2_dat %>%
     dplyr::rename(artdat_age_group_id = age_group_id,
                   artdat_sex = sex) %>%
     dplyr::left_join(
@@ -159,7 +146,7 @@ prepare_tmb_inputs <- function(naomi_mf,
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(
              get_age_groups() %>%
-             dplyr::filter(age_group_id %in% naomi_mf$age_group_ids)
+             dplyr::filter(age_group_id %in% naomi_data$age_group_ids)
            ) %>%
     dplyr::filter(
              artdat_age_start <= age_group_start,
@@ -169,11 +156,11 @@ prepare_tmb_inputs <- function(naomi_mf,
              data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
                         sex = c("male", "female", "male", "female", "both"),
                         stringsAsFactors = FALSE) %>%
-             dplyr::filter(sex %in% naomi_mf$sexes),
+             dplyr::filter(sex %in% naomi_data$sexes),
              by = "artdat_sex"
            ) %>%
     dplyr::left_join(
-             naomi_mf$mf_areas %>% dplyr::select(area_id, area_idx),
+             naomi_data$mf_areas %>% dplyr::select(area_id, area_idx),
              by = "area_id"
            ) %>%
     dplyr::left_join(
@@ -188,7 +175,7 @@ prepare_tmb_inputs <- function(naomi_mf,
       by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
       ) %>%
     {
-      Matrix::spMatrix(nrow(artnum_t2_dat),
+      Matrix::spMatrix(nrow(naomi_data$artnum_t2_dat),
                        nrow(df_art_attend),
                      .$artnum_idx,
                      .$Aidx,
@@ -198,7 +185,7 @@ prepare_tmb_inputs <- function(naomi_mf,
 
   ## Construct TMB data and initial parameter vectors
 
-  df <- naomi_mf$mf_model
+  df <- naomi_data$mf_model
 
   ## df <- df %>%
   ##   mutate(age_group_idf = factor(pmin(age_group_id, 12)))
@@ -218,35 +205,41 @@ prepare_tmb_inputs <- function(naomi_mf,
     Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_prev_t1_dat),
     Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_prev_t1_dat),
     ##
-    Q_x = methods::as(naomi_mf$Q, "dgCMatrix"),
-    n_nb = naomi_mf$mf_areas$n_neighbors,
-    adj_i = naomi_mf$mf_artattend$reside_area_idx - 1L,
-    adj_j = naomi_mf$mf_artattend$artattend_area_idx - 1L,
-    gamma_or_mu = dplyr::filter(naomi_mf$mf_artattend, !istar == 1)$gamma_or_mu,
-    gamma_or_sigma = dplyr::filter(naomi_mf$mf_artattend, !istar == 1)$gamma_or_sigma,
+    Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
+    n_nb = naomi_data$mf_areas$n_neighbors,
+    adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,
+    adj_j = naomi_data$mf_artattend$artattend_area_idx - 1L,
+    gamma_or_mu = dplyr::filter(naomi_data$mf_artattend, !istar == 1)$gamma_or_mu,
+    gamma_or_sigma = dplyr::filter(naomi_data$mf_artattend, !istar == 1)$gamma_or_sigma,
     Xart_idx = Xart_idx,
     Xart_gamma = Xart_gamma,
     ##
-    omega = naomi_mf$omega,
-    OmegaT0 = naomi_mf$rita_param$OmegaT0,
-    sigma_OmegaT = naomi_mf$rita_param$sigma_OmegaT,
-    betaT0 = naomi_mf$rita_param$betaT0,
-    sigma_betaT = naomi_mf$rita_param$sigma_betaT,
-    ritaT = naomi_mf$rita_param$ritaT,
+    omega = naomi_data$omega,
+    OmegaT0 = naomi_data$rita_param$OmegaT0,
+    sigma_OmegaT = naomi_data$rita_param$sigma_OmegaT,
+    betaT0 = naomi_data$rita_param$betaT0,
+    sigma_betaT = naomi_data$rita_param$sigma_betaT,
+    ritaT = naomi_data$rita_param$ritaT,
+    ##
+    logit_nu_mean = naomi_data$logit_nu_mean,
+    logit_nu_sd = naomi_data$logit_nu_sd,
     ##
     X_15to49 = X_15to49,
-    log_lambda_offset = naomi_mf$mf_model$log_lambda_offset,
+    log_lambda_offset = naomi_data$mf_model$log_lambda_offset,
     ##
-    A_out = naomi_mf$A_out,
-    idx_prev = prev_dat$idx - 1L,
-    x_prev = prev_dat$x,
-    n_prev = prev_dat$n,
-    idx_artcov = artcov_dat$idx - 1L,
-    x_artcov = artcov_dat$x,
-    n_artcov = artcov_dat$n,
-    idx_recent = recent_dat$idx - 1L,
-    x_recent = recent_dat$x,
-    n_recent = recent_dat$n,
+    A_out = naomi_data$A_out,
+    idx_prev = naomi_data$prev_dat$idx - 1L,
+    x_prev = naomi_data$prev_dat$x,
+    n_prev = naomi_data$prev_dat$n,
+    idx_artcov = naomi_data$artcov_dat$idx - 1L,
+    x_artcov = naomi_data$artcov_dat$x,
+    n_artcov = naomi_data$artcov_dat$n,
+    idx_vls = naomi_data$vls_dat$idx - 1L,
+    x_vls = naomi_data$vls_dat$x,
+    n_vls = naomi_data$vls_dat$n,
+    idx_recent = naomi_data$recent_dat$idx - 1L,
+    x_recent = naomi_data$recent_dat$x,
+    n_recent = naomi_data$recent_dat$n,
     A_anc_prev = A_anc_prev_t1,
     x_anc_prev = anc_prev_t1_dat$anc_prev_x,
     n_anc_prev = anc_prev_t1_dat$anc_prev_n,
@@ -255,7 +248,7 @@ prepare_tmb_inputs <- function(naomi_mf,
     n_anc_artcov = anc_artcov_t1_dat$anc_artcov_n,
     ##
     A_artnum = A_artnum_t1,
-    x_artnum = artnum_t1_dat$current_art
+    x_artnum = naomi_data$artnum_t1_dat$current_art
   )
 
 
@@ -304,6 +297,7 @@ prepare_tmb_inputs <- function(naomi_mf,
     ##
     OmegaT_raw = 0,
     log_betaT = 0,
+    logit_nu_raw = 0,
     ##
     log_sigma_ancrho_x = 0,
     log_sigma_ancalpha_x = 0,
@@ -346,6 +340,7 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                                    "u_alpha_a", "u_alpha_as",
                                    ##
                                    "ui_lambda_x",
+                                   "logit_nu_raw",
                                    ##
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    ##
@@ -410,8 +405,7 @@ sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) 
 
     par_r <- fit$par.full[r]
     hess_r <- fit$obj$env$spHess(fit$par.full, random = TRUE)
-    cov_r <- solve(hess_r)
-    smp_r <- mvtnorm::rmvnorm(nsample, par_r, cov_r)
+    smp_r <- rmvnorm_sparseprec(nsample, par_r, hess_r)
 
     smp <- matrix(0, nsample, length(fit$par.full))
     smp[ , r] <- smp_r
@@ -432,4 +426,12 @@ sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) 
   names(fit$sample) <- names(r)
 
   fit
+}
+
+rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(mean))) {
+
+  z = matrix(rnorm(n * length(mean)), ncol = n)
+  L_inv = Matrix::Cholesky(prec)
+  v <- mean + Matrix::solve(as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(as(L_inv, "Matrix")), z))
+  as.matrix(Matrix::t(v))
 }

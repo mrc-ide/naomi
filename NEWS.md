@@ -1,3 +1,7 @@
+# naomi 0.0.4
+
+* Allow use of survey VLS data.
+
 # naomi 0.0.3
 
 * Ouput uncertainty ranges based on Monte Carlo simulation from joint covariance

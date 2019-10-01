@@ -84,7 +84,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
                     "sex_out" = "sex",
                     "age_group_id_out" = "age_group_id")
            ) %>%
-    mutate(x = 1)
+    dplyr::mutate(x = 1)
 
   A <- Matrix::spMatrix(nrow(mf_out),
                         nrow(mf_model),
@@ -112,6 +112,8 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param rita_param rita_param
 #' @param sigma_u_sd sigma_u_sd
 #' @param artattend_prior_sigma_scale artattend_propr_sigma_scale
+#' @param logit_nu_mean mean of logit viral load suppression.
+#' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @return Naomi model frame
 #'
 #' @export
@@ -131,7 +133,9 @@ naomi_model_frame <- function(areas,
                                                 sigma_betaT  = 0.00001,
                                                 ritaT        = 1.0),
                               sigma_u_sd   = 1.0,
-                              artattend_prior_sigma_scale = 3.0) {
+                              artattend_prior_sigma_scale = 3.0,
+                              logit_nu_mean = 2.0,
+                              logit_nu_sd = 0.3) {
 
   ## Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
@@ -156,12 +160,16 @@ naomi_model_frame <- function(areas,
 
   mf_model <- mf_model %>%
     dplyr::left_join(
-             interpolate_population_agesex(population_agesex, quarter_id1) %>%
+             population_agesex %>%
+             dplyr::filter(area_id %in% mf_areas$area_id) %>%
+             interpolate_population_agesex(quarter_id1) %>%
              dplyr::select(area_id, sex, age_group_id, population_t1 = population),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::left_join(
-             interpolate_population_agesex(population_agesex, quarter_id2) %>%
+             population_agesex %>%
+             dplyr::filter(area_id %in% mf_areas$area_id) %>%
+             interpolate_population_agesex(quarter_id2) %>%
              dplyr::select(area_id, sex, age_group_id, population_t2 = population),
              by = c("area_id", "sex", "age_group_id")
            )
@@ -241,7 +249,7 @@ naomi_model_frame <- function(areas,
     dplyr::mutate(artattend_idx = dplyr::row_number())
 
   gamma_or_prior <-   mf_areas %>%
-    mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
+    dplyr::mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
     dplyr::left_join(
              data.frame(
                n_nb_lim = 1:9,
@@ -260,8 +268,8 @@ naomi_model_frame <- function(areas,
              dplyr::select(area_idx, gamma_or_mu, gamma_or_sigma),
              by = c("reside_area_idx" = "area_idx")
            ) %>%
-    dplyr::mutate(gamma_or_mu = if_else(istar == 1, NA_real_, gamma_or_mu),
-                  gamma_or_sigma = if_else(istar == 1, NA_real_, gamma_or_sigma))
+    dplyr::mutate(gamma_or_mu = dplyr::if_else(istar == 1, NA_real_, gamma_or_mu),
+                  gamma_or_sigma = dplyr::if_else(istar == 1, NA_real_, gamma_or_sigma))
 
   ## Incidence model
 
@@ -269,7 +277,7 @@ naomi_model_frame <- function(areas,
     dplyr::left_join(
              get_age_groups() %>%
              dplyr::filter(age_group_id %in% age_group_ids) %>%
-             mutate(
+             dplyr::mutate(
                age15to49 = as.integer(age_group_start >= 15 &
                                       (age_group_start + age_group_span) <= 50)
              ) %>%
@@ -298,11 +306,76 @@ naomi_model_frame <- function(areas,
             quarter_id2 = quarter_id2,
             omega = omega,
             rita_param = rita_param,
+            logit_nu_mean = logit_nu_mean,
+            logit_nu_sd = logit_nu_sd,  
             M = M,
             Q = Q)
 
   class(v) <- "naomi_mf"
   v
+}
+
+#' Select data for model fitting
+#'
+#' @param naomi_mf A Naomi model frame object.
+#' @param survey_hiv_indicators Data frame of survey estimates, or NULL to exclude any survey data.
+#' @param anc_testing Data frame of ANC routine testing outcomes, or NULL to exclude any ANC data.
+#' @param art_number Data frame of number currently receiving ART, or NULL to exclude any ART data.
+#' @param prev_survey_ids A character vector of `survey_id`s for prevalence data.
+#' @param artcov_survey_ids A character vector of `survey_id`s for ART coverage data.
+#' @param recent_survey_ids A character vector of `survey_id`s for recent HIV infection status.
+#' @param vls_survey_ids A character vector of `survey_id`s for survey VLS among all HIV+ persons.
+#' @param artnum_quarter_id_t1 Quarter ID for first time point for number on ART.
+#' @param artnum_quarter_id_t2 Quarter ID for second time point for number on ART.
+#' @param anc_quarter_id_t1 Quarter IDs (possibly multiple) for first time point for ANC 
+#' @param anc_quarter_id_t2 Quarter IDs (possibly multiple) for second time point for number on ART.
+#' 
+#' @details
+#' See example datasets for examples of required template for data sets. *`_survey_ids` must be reflected
+#' in `survey_hiv_indicators`.
+#'
+#' ART coverage and VLS survey data should not be included from the same survey. This is checked
+#' by the function call and will throw an error.
+#'
+#' @seealso [mwi_survey_hiv_indicators], [mwi_anc_testing], [mwi_art_number], [convert_quarter_id]
+#' 
+#' @export
+select_naomi_data <- function(naomi_mf,
+                              survey_hiv_indicators,
+                              anc_testing,
+                              art_number,
+                              prev_survey_ids,
+                              artcov_survey_ids,
+                              recent_survey_ids,
+                              vls_survey_ids = NULL,
+                              artnum_quarter_id_t1 = naomi_mf$quarter_id1,
+                              artnum_quarter_id_t2 = naomi_mf$quarter_id2,
+                              anc_quarter_id_t1 = naomi_mf$quarter_id1 + -1:2,
+                              anc_quarter_id_t2 = naomi_mf$quarter_id2 + -1:2) {
+
+  stopifnot(is(naomi_mf, "naomi_mf"))
+
+  if(length(intersect(artcov_survey_ids, vls_survey_ids)))
+    stop(paste("Do not use ART coverage and VLS data from the same survey:",
+               intersect(artcov_survey_ids, vls_survey_ids)))
+
+  naomi_mf$prev_dat <- survey_prevalence_mf(prev_survey_ids, survey_hiv_indicators, naomi_mf)
+  naomi_mf$artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)
+  naomi_mf$recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
+  naomi_mf$vls_dat <- survey_vls_mf(vls_survey_ids, survey_hiv_indicators, naomi_mf)
+  
+  naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
+  naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
+  
+  naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
+  naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
+  
+  naomi_mf$artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
+  naomi_mf$artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
+  
+  class(naomi_mf) <- c("naomi_data", class(naomi_mf))
+
+  naomi_mf
 }
 
 
@@ -395,11 +468,29 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
 
 #' @rdname survey_prevalence_mf
 #' @export
+survey_vls_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
+
+  vls_dat <- naomi_mf$mf_model %>%
+    dplyr::inner_join(
+             survey_hiv_indicators %>%
+             dplyr::filter(survey_id %in% survey_ids,
+                           indicator == "vls"),
+             by = c("area_id", "sex", "age_group_id")
+           ) %>%
+    dplyr::mutate(n = n_obs,
+                  x = n * est) %>%
+    dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
+
+  vls_dat
+}
+
+#' @rdname survey_prevalence_mf
+#' @export
 survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
                              min_age = 15, max_age = 80) {
 
   recent_dat <- naomi_mf$mf_model %>%
-    dplyr::left_join(get_age_groups()) %>%
+    dplyr::left_join(get_age_groups(), by = "age_group_id") %>%
     dplyr::filter(age_group_start >= min_age,
                   age_group_start + age_group_span <= max_age) %>%
     dplyr::inner_join(
@@ -418,7 +509,7 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
 
 #' Prepare Model Frames for Programme Datasets
 #'
-#' @param quarter_ids Quarter IDs
+#' @param quarter_ids Quarter IDs (possibly multiple)
 #' @param anc_testing ART data frame
 #' @param art_number Number on ART
 #' @param naomi_mf Naomi model frame
@@ -494,11 +585,22 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
 
 
 #' @rdname anc_testing_prev_mf
+#'
+#' @param quarter_id Quarter ID (single quarter)
 #' @export
-artnum_mf <- function(quarter_ids, art_number, naomi_mf) {
+artnum_mf <- function(quarter_id, art_number, naomi_mf) {
 
-  if(is.null(art_number)) {
-    ## No number on ART data
+  stopifnot(length(quarter_id) <= 1)
+  stopifnot(is(naomi_mf, "naomi_mf"))
+
+  if(!is.null(art_number) &&
+     length(quarter_id) &&
+     !quarter_id %in% art_number$quarter_id)
+    stop(paste0("No ART data found for quarter_id ", quarter_id, ".\n",
+                "Set quarter_id = NULL if you intend to include no ART data."))
+  
+  if(is.null(quarter_id) || is.null(art_number)) {
+    ## No number on ART data or no quarter specified
     artnum_dat <- data.frame(
       area_id = character(0),
       sex = character(0),
@@ -509,7 +611,7 @@ artnum_mf <- function(quarter_ids, art_number, naomi_mf) {
   } else {
     ## !!! Note: should add some subsetting for sex and age group.
     artnum_dat <- art_number %>%
-      dplyr::filter(quarter_ids == !!quarter_ids,
+      dplyr::filter(quarter_id == !!quarter_id,
                     area_id %in% naomi_mf$mf_areas$area_id) %>%
       dplyr::transmute(
                area_id,

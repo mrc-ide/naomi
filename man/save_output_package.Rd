@@ -2,11 +2,14 @@
 % Please edit documentation in R/outputs.R
 \name{save_output_package}
 \alias{save_output_package}
+\alias{read_output_package}
 \title{Save outputs to zip file}
 \usage{
 save_output_package(naomi_output, filename, dir, overwrite = FALSE,
   with_labels = FALSE, boundary_format = "geojson",
   single_csv = FALSE)
+
+read_output_package(path)
 }
 \arguments{
 \item{naomi_output}{Naomi output object}
@@ -24,6 +27,8 @@ or shape format}
 
 \item{single_csv}{If TRUE only output the csv of indicators, otherwise save
 the metadata too}
+
+\item{path}{Path to output zip file.}
 }
 \value{
 Path to created zip file
