@@ -4,34 +4,17 @@
 \alias{prepare_tmb_inputs}
 \title{Prepare inputs for TMB model.}
 \usage{
-prepare_tmb_inputs(naomi_mf, prev_dat, artcov_dat, recent_dat,
-  anc_prev_t1_dat, anc_prev_t2_dat, anc_artcov_t1_dat, anc_artcov_t2_dat,
-  artnum_t1_dat, artnum_t2_dat)
+prepare_tmb_inputs(naomi_data)
 }
 \arguments{
-\item{naomi_mf}{Naomi model frame}
-
-\item{prev_dat}{Prevalence data}
-
-\item{artcov_dat}{ART coverage data}
-
-\item{recent_dat}{Recent infection data}
-
-\item{anc_prev_t1_dat}{ANC prevalence at time 1}
-
-\item{anc_prev_t2_dat}{ANC prevelance at time 2}
-
-\item{anc_artcov_t1_dat}{ANC ART coverage at time 1}
-
-\item{anc_artcov_t2_dat}{ANC ART coverage at time 2}
-
-\item{artnum_t1_dat}{Number on ART at time 1}
-
-\item{artnum_t2_dat}{Number on ART at time 2}
+\item{naomi_data}{Naomi data object}
 }
 \value{
 Inputs ready for TMB model
 }
 \description{
 Prepare inputs for TMB model.
+}
+\seealso{
+\link{select_naomi_data}
 }

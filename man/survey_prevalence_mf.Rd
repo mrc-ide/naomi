@@ -3,12 +3,15 @@
 \name{survey_prevalence_mf}
 \alias{survey_prevalence_mf}
 \alias{survey_artcov_mf}
+\alias{survey_vls_mf}
 \alias{survey_recent_mf}
 \title{Prepare model frames for survey datasets}
 \usage{
 survey_prevalence_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 
 survey_artcov_mf(survey_ids, survey_hiv_indicators, naomi_mf)
+
+survey_vls_mf(survey_ids, survey_hiv_indicators, naomi_mf)
 
 survey_recent_mf(survey_ids, survey_hiv_indicators, naomi_mf,
   min_age = 15, max_age = 80)

@@ -10,7 +10,7 @@ anc_testing_prev_mf(quarter_ids, anc_testing, naomi_mf)
 
 anc_testing_artcov_mf(quarter_ids, anc_testing, naomi_mf)
 
-artnum_mf(quarter_ids, art_number, naomi_mf)
+artnum_mf(quarter_id, art_number, naomi_mf)
 }
 \arguments{
 \item{quarter_ids}{Quarter IDs}
