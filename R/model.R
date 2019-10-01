@@ -161,14 +161,14 @@ naomi_model_frame <- function(areas,
   mf_model <- mf_model %>%
     dplyr::left_join(
              population_agesex %>%
-             filter(area_id %in% mf_areas$area_id) %>%
+             dplyr::filter(area_id %in% mf_areas$area_id) %>%
              interpolate_population_agesex(quarter_id1) %>%
              dplyr::select(area_id, sex, age_group_id, population_t1 = population),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::left_join(
              population_agesex %>%
-             filter(area_id %in% mf_areas$area_id) %>%
+             dplyr::filter(area_id %in% mf_areas$area_id) %>%
              interpolate_population_agesex(quarter_id2) %>%
              dplyr::select(area_id, sex, age_group_id, population_t2 = population),
              by = c("area_id", "sex", "age_group_id")
@@ -315,6 +315,30 @@ naomi_model_frame <- function(areas,
   v
 }
 
+#' Select data for model fitting
+#'
+#' @param naomi_mf A Naomi model frame object.
+#' @param survey_hiv_indicators Data frame of survey estimates, or NULL to exclude any survey data.
+#' @param anc_testing Data frame of ANC routine testing outcomes, or NULL to exclude any ANC data.
+#' @param art_number Data frame of number currently receiving ART, or NULL to exclude any ART data.
+#' @param prev_survey_ids A character vector of `survey_id`s for prevalence data.
+#' @param artcov_survey_ids A character vector of `survey_id`s for ART coverage data.
+#' @param recent_survey_ids A character vector of `survey_id`s for recent HIV infection status.
+#' @param vls_survey_ids A character vector of `survey_id`s for survey VLS among all HIV+ persons.
+#' @param artnum_quarter_id_t1 Quarter ID for first time point for number on ART.
+#' @param artnum_quarter_id_t2 Quarter ID for second time point for number on ART.
+#' @param anc_quarter_id_t1 Quarter IDs (possibly multiple) for first time point for ANC 
+#' @param anc_quarter_id_t2 Quarter IDs (possibly multiple) for second time point for number on ART.
+#' 
+#' @details
+#' See example datasets for examples of required template for data sets. *`_survey_ids` must be reflected
+#' in `survey_hiv_indicators`.
+#'
+#' ART coverage and VLS survey data should not be included from the same survey. This is checked
+#' by the function call and will throw an error.
+#'
+#' @seealso [mwi_survey_hiv_indicators], [mwi_anc_testing], [mwi_art_number], [convert_quarter_id]
+#' 
 #' @export
 select_naomi_data <- function(naomi_mf,
                               survey_hiv_indicators,
@@ -485,7 +509,7 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
 
 #' Prepare Model Frames for Programme Datasets
 #'
-#' @param quarter_ids Quarter IDs
+#' @param quarter_ids Quarter IDs (possibly multiple)
 #' @param anc_testing ART data frame
 #' @param art_number Number on ART
 #' @param naomi_mf Naomi model frame
@@ -561,6 +585,8 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
 
 
 #' @rdname anc_testing_prev_mf
+#'
+#' @param quarter_id Quarter ID (single quarter)
 #' @export
 artnum_mf <- function(quarter_id, art_number, naomi_mf) {
 
