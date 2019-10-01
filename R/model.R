@@ -160,12 +160,16 @@ naomi_model_frame <- function(areas,
 
   mf_model <- mf_model %>%
     dplyr::left_join(
-             interpolate_population_agesex(population_agesex, quarter_id1) %>%
+             population_agesex %>%
+             filter(area_id %in% mf_areas$area_id) %>%
+             interpolate_population_agesex(quarter_id1) %>%
              dplyr::select(area_id, sex, age_group_id, population_t1 = population),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::left_join(
-             interpolate_population_agesex(population_agesex, quarter_id2) %>%
+             population_agesex %>%
+             filter(area_id %in% mf_areas$area_id) %>%
+             interpolate_population_agesex(quarter_id2) %>%
              dplyr::select(area_id, sex, age_group_id, population_t2 = population),
              by = c("area_id", "sex", "age_group_id")
            )
