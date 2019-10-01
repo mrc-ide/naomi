@@ -10,7 +10,8 @@ naomi_model_frame(areas, population_agesex, spec,
   age_group_ids = 1:17, sexes = c("male", "female"), omega = 0.7,
   rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 -
   118)/365)/(2 * qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT =
-  1), sigma_u_sd = 1, artattend_prior_sigma_scale = 3)
+  1), sigma_u_sd = 1, artattend_prior_sigma_scale = 3,
+  logit_nu_mean = 2, logit_nu_sd = 0.3)
 }
 \arguments{
 \item{areas}{Areas}
@@ -39,6 +40,10 @@ ids.}
 \item{sigma_u_sd}{sigma_u_sd}
 
 \item{artattend_prior_sigma_scale}{artattend_propr_sigma_scale}
+
+\item{logit_nu_mean}{mean of logit viral load suppression.}
+
+\item{logit_nu_sd}{standard deviation of logit viral load suppression.}
 }
 \value{
 Naomi model frame
