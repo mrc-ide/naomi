@@ -2,7 +2,7 @@
 
 language: R
 sudo: false
-dist: xenial
+dist: bionic
 addons:
   apt:
     packages:
