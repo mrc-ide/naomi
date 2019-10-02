@@ -4,7 +4,8 @@
 \alias{create_areas}
 \title{Create an Areas Object}
 \usage{
-create_areas(levels, hierarchy, boundaries)
+create_areas(levels = NULL, hierarchy = NULL, boundaries = NULL,
+  area_merged = NULL)
 }
 \arguments{
 \item{levels}{Data frame of area level metadata.}
@@ -12,6 +13,8 @@ create_areas(levels, hierarchy, boundaries)
 \item{hierarchy}{Data frame defining area hierarchy and area-level data.}
 
 \item{boundaries}{an \code{sf} object with boundary geometry for each area_id}
+
+\item{area_merged}{A merged version of \code{levels}, \code{hierarchy}, and \code{boundaries}.}
 }
 \value{
 An object of class \code{naomi_areas}

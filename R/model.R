@@ -191,6 +191,9 @@ naomi_model_frame <- function(areas,
 
   ## Add Spectrum inputs
 
+  if(length(unique(spec$spectrum_region_code)) > 1)
+    stop("Multiple Spectrum files not yet supported")
+  
   mf_model <- mf_model %>%
     dplyr::left_join(
              spec %>%

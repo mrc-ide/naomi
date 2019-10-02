@@ -1,7 +1,5 @@
 INLA:::inla.dynload.workaround()
 
-data(mwi_population_agesex)
-
 areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
 spec <- extract_pjnz_naomi(system.file("extdata/mwi2019.PJNZ", package = "naomi"))
 
