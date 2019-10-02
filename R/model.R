@@ -139,8 +139,20 @@ naomi_model_frame <- function(areas,
 
   ## Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
-  area_id <- areas$tree$Get("area_id", filterFun = data.tree::isLeaf)
 
+  ## Get leaves that are children of scope
+  area_id_leaves <- areas$tree$Get("leaves", traversal = "level")
+  
+  if(length(setdiff(scope, names(area_id_leaves))))
+    stop(paste("Scope areas", setdiff(scope, names(area_id_leaves)), "not found in hierarchy."))
+    
+  area_id <- area_id_leaves[scope] %>%
+    lapply(data.tree::Get, "area_id") %>%
+    unlist() %>%
+    unique()
+
+  ## Keep 
+  
   mf_areas <- data.frame(area_id,
                          area_idx = seq_along(area_id),
                          stringsAsFactors = FALSE) %>%
