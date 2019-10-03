@@ -309,7 +309,10 @@ naomi_model_frame <- function(areas,
                sum(population_t1 * spec_prev * spec_artcov) /
                sum(population_t1 * spec_prev),
              log_lambda_offset =
-               log(spec_incid) - log(spec_prev15to49) - log(1 - omega * spec_artcov15to49)
+               log(spec_incid) - log(spec_prev15to49) - log(1 - omega * spec_artcov15to49),
+             logit_rho_offset = 0,
+             logit_alpha_offset = 0,
+             
            ) %>%
   dplyr::ungroup()
 
