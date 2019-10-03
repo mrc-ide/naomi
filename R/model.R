@@ -133,6 +133,7 @@ naomi_model_frame <- function(areas,
                                                 sigma_betaT  = 0.00001,
                                                 ritaT        = 1.0),
                               sigma_u_sd   = 1.0,
+                              artattend = TRUE,
                               artattend_prior_sigma_scale = 3.0,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3) {
@@ -245,14 +246,16 @@ naomi_model_frame <- function(areas,
 
   ## ART attendance model
 
+  artattendM <- if(artattend) M else matrix(0, nrow(M), ncol(M))
+  
   mf_areas <- mf_areas %>%
     dplyr::left_join(
-             data.frame(area_idx = seq_len(nrow(M)),
-                        n_neighbors = colSums(M)),
+             data.frame(area_idx = seq_len(nrow(artattendM)),
+                        n_neighbors = colSums(artattendM)),
              by = "area_idx"
            )
 
-  mf_artattend <- (M + diag(nrow(M))) %>%
+  mf_artattend <- (artattendM + diag(nrow(artattendM))) %>%
     methods::as("dgCMatrix") %>%
     Matrix::summary() %>%
     dplyr::rename(reside_area_idx = i,
@@ -549,7 +552,7 @@ anc_testing_prev_mf <- function(quarter_ids, anc_testing, naomi_mf) {
                area_id %in% naomi_mf$mf_model$area_id
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos), sum, na.rm = TRUE) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
@@ -584,7 +587,7 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
                area_id %in% naomi_mf$mf_model$area_id
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
