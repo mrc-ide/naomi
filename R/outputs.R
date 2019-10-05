@@ -63,12 +63,14 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     }
 
     v
+    v 
   }
 
   indicators <- lapply(names(indicator_ids), get_est) %>%
     dplyr::bind_rows()
 
-  indicators
+  indicators %>%
+    dplyr::select(names(mf_out), quarter_id, indicator_id, mean, se, median, mode, lower, upper)
 }
 
 
@@ -159,10 +161,10 @@ add_output_labels <- function(naomi_output) {
              quarter_label,
              indicator_id,
              indicator_label,
-             mode,
              mean,
              se,
              median,
+             mode,
              lower,
              upper
            )
@@ -228,10 +230,10 @@ save_output_package <- function(naomi_output,
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
-        st_write(naomi_output$meta_area, "boundaries.geojson")
+        sf::st_write(naomi_output$meta_area, "boundaries.geojson")
       } else if(boundary_format == "shp") {
         dir.create("shp")
-        st_write(naomi_output$meta_area, "shp/boundaries.shp")
+        sf::st_write(naomi_output$meta_area, "shp/boundaries.shp")
       } else {
         stop(paste("Boundary file format", boundary_format, "not recognized.",
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
