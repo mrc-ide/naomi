@@ -393,12 +393,98 @@ select_naomi_data <- function(naomi_mf,
   
   naomi_mf$artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
   naomi_mf$artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
+
+  #' 
+
+  naomi_mf <- update_mf_offsets(naomi_mf,
+                                naomi_mf$prev_dat,
+                                naomi_mf$artcov_dat,
+                                naomi_mf$vls_dat)
   
   class(naomi_mf) <- c("naomi_data", class(naomi_mf))
 
   naomi_mf
 }
 
+update_mf_offsets <- function(naomi_mf,
+                              prev_dat = NULL,
+                              artcov_dat = NULL,
+                              vls_dat = NULL) {
+
+  stopifnot(is(naomi_mf, "naomi_mf"))
+
+  #' TODO: This should handle different age_max by sex...
+  get_idx <- function(mf, df) {
+    
+    age_max <- df %>%
+      dplyr::left_join(get_age_groups(), by = "age_group_id") %>%
+      dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
+      .$age_max
+    
+    mf %>%
+      dplyr::left_join(get_age_groups(), by = "age_group_id") %>%
+      dplyr::transmute(idx,
+                       data_range = as.integer((age_group_start + age_group_span) <= age_max),
+                       offset_range = as.integer((age_group_start + age_group_span) >= age_max),
+                       age_fct = factor(pmin(age_group_start,
+                                             max(age_group_start * data_range))))
+  }
+
+
+  if(is.null(prev_dat) || nrow(prev_dat) == 0) {
+    ## Offset vs. age 15-49 prevalence
+    ## No rho_a_fct 
+    naomi_mf$mf_model <- naomi_mf$mf_model %>%
+      dplyr::mutate(
+               rho_a_fct = NA,
+               logit_rho_offset = qlogis(spec_prev) - qlogis(spec_prev15to49),
+             )
+  } else {
+    d <- get_idx(naomi_mf$mf_model, prev_dat)
+    
+    naomi_mf$mf_model <- naomi_mf$mf_model %>%
+      dplyr::left_join(d, by = "idx") %>%
+      dplyr::group_by(area_id, sex) %>%
+      dplyr::mutate(
+               rho_a_fct = age_fct,
+               age_fct = NULL,
+               logit_rho_offset = dplyr::if_else(offset_range == 1, qlogis(spec_prev) - qlogis(max(spec_prev * data_range * offset_range)), 0),
+               data_range = NULL,
+               offset_range = NULL
+             ) %>%
+      dplyr::ungroup()
+  }  
+  
+  
+  if((is.null(artcov_dat) || nrow(artcov_dat) == 0) && (is.null(vls_dat) || nrow(vls_dat) == 0)) {
+    ## Offset vs. age 15-49 ART coverage
+    ## No alpha_a_fct
+    naomi_mf$mf_model <- naomi_mf$mf_model %>%
+      dplyr::mutate(
+               alpha_a_fct = NA,
+               logit_alpha_offset = qlogis(spec_artcov) - qlogis(spec_artcov15to49),
+             )
+
+  } else {
+    
+    artcov_vls_dat <- dplyr::bind_rows(artcov_dat, vls_dat)
+    d <- get_idx(naomi_mf$mf_model, artcov_vls_dat)
+    
+    naomi_mf$mf_model <- naomi_mf$mf_model %>%
+      dplyr::left_join(d, by = "idx") %>%
+      dplyr::group_by(area_id, sex) %>%
+      dplyr::mutate(
+               alpha_a_fct = age_fct,
+               age_fct = NULL,
+               logit_alpha_offset = dplyr::if_else(offset_range == 1, qlogis(spec_artcov) - qlogis(max(spec_artcov * data_range * offset_range)), 0),
+               data_range = NULL,
+               offset_range = NULL
+             ) %>%
+      dplyr::ungroup()
+  }
+  
+  naomi_mf
+}
 
 #' Get age group ids for output
 #'

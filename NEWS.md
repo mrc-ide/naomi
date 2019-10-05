@@ -1,3 +1,7 @@
+# naomi 0.0.6
+
+* Use odds ratios from Spectrum to model prevalence and ART coverage above age of data availability.
+
 # naomi 0.0.4
 
 * Allow use of survey VLS data.
