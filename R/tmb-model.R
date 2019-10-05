@@ -205,7 +205,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_alpha_as = Matrix::sparse.model.matrix(~0 + age_group_idf, df) * (df$sex == "female"),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
     Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_prev_t1_dat),
-    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_prev_t1_dat),
+    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_artcov_t1_dat),
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,

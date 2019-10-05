@@ -304,10 +304,10 @@ naomi_model_frame <- function(areas,
            ) %>%
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
-             spec_prev15to49 = sum(population_t1 * spec_prev) / sum(population_t1),
+             spec_prev15to49 = sum(population_t1 * spec_prev * age15to49) / sum(population_t1 * age15to49),
              spec_artcov15to49 =
-               sum(population_t1 * spec_prev * spec_artcov) /
-               sum(population_t1 * spec_prev),
+               sum(population_t1 * spec_prev * spec_artcov * age15to49) /
+               sum(population_t1 * spec_prev * age15to49),
              log_lambda_offset =
                log(spec_incid) - log(spec_prev15to49) - log(1 - omega * spec_artcov15to49),
              logit_rho_offset = 0,
@@ -587,10 +587,13 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
       anc_testing %>%
       dplyr::filter(
                quarter_id %in% quarter_ids,
-               area_id %in% naomi_mf$mf_model$area_id
+               area_id %in% naomi_mf$mf_model$area_id,
+               !is.na(ancrt_known_pos),
+               !is.na(ancrt_test_pos),
+               !is.na(ancrt_already_art)
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
