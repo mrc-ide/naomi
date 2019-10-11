@@ -1,3 +1,7 @@
+# naomi 0.0.5
+
+* Iterate metadata to include model outputs
+
 # naomi 0.0.4
 
 * Allow use of survey VLS data.
