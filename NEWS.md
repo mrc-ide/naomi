@@ -1,3 +1,8 @@
+# naomi 0.0.5
+
+* Iterate metadata to include model outputs
+* Expose get_metadata function for hintr use
+
 # naomi 0.0.4
 
 * Allow use of survey VLS data.

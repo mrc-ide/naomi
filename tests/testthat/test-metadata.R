@@ -19,13 +19,16 @@ test_that("can get plot metadata for a country", {
       "indicator_value", "name", "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
   expect_true(all(unique(metadata$indicator) %in%
-                    c("art_coverage", "current_art",  "prevalence")))
+                    c("art_coverage", "current_art",  "prevalence", "art_number",
+                      "incidence", "new_infections", "plhiv", "population",
+                      "recent", "vls")))
 })
 
 test_that("colour scales metadata is well formed", {
   scales <- naomi_read_csv(system_file("extdata", "meta", "colour_scales.csv"))
   expect_true(all(scales$indicator %in%
-    c("art_coverage", "current_art", "prevalence", "vls", "recent", "plhiv", "incidence")))
+    c("art_coverage", "current_art", "prevalence", "vls", "recent",
+      "art_number", "plhiv", "incidence", "population", "new_infections")))
   expect_equal(nrow(unique(scales[, c("country", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -46,12 +49,16 @@ test_that("colour scales metadata is well formed", {
 test_that("metadata is well formed", {
   meta <- get_metadata()
   expect_true(all(meta$indicator %in%
-    c("art_coverage", "current_art", "prevalence", "vls", "recent", "plhiv", "incidence")))
+    c("art_coverage", "current_art", "prevalence", "vls", "recent", "plhiv",
+      "incidence", "art_number", "population", "incidence", "new_infections")))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type == "choropleth"))
   expect_true(all(meta$data_type %in% c("survey", "anc", "programme", "output")))
-  expect_true(all(meta$name %in% c("Prevalence", "ART coverage", "Number on ART")))
+  expect_true(all(meta$name %in%
+                    c("Prevalence", "ART coverage", "Viral load suppression",
+                      "Proportion recently infected", "PLHIV", "Population",
+                      "New Infections", "Incidence", "ART number")))
   ## No NULLs, NAs or empty strings except for indicator_column and
   ## indicator_value columns
   non_empty_columns <- colnames(
