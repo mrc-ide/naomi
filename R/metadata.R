@@ -36,6 +36,16 @@ get_colour_scale <- function(country) {
   data
 }
 
+#' Get indicator metadata as a data frame
+#'
+#'
+#' @return Metadata about indicators as a list
+#'
+#' @export
+#'
+#' @examples
+#' get_metadata()
 get_metadata <- function() {
   naomi_read_csv(system_file("extdata", "meta", "metadata.csv"))
 }
+
