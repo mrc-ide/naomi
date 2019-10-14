@@ -16,5 +16,6 @@ r_github_packages:
   - bergant/datamodelr
   - mrc-ide/eppasm
   - mrc-ide/specio
+  - ropensci/jsonvalidate@i25
 after_success:
   - Rscript -e 'covr::codecov()'

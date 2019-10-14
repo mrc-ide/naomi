@@ -26,6 +26,7 @@ Imports:
     gridExtra,
     here,
     INLA,
+    jsonvalidate,
     magrittr,
     Matrix,
     methods,
