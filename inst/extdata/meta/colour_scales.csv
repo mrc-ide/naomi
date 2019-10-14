@@ -2,7 +2,7 @@ country,indicator,colour,min,max,invert_scale
 Malawi,current_art,interpolateViridis,0,80000,FALSE
 Malawi,prevalence,interpolateMagma,0,0.5,TRUE
 Malawi,art_coverage,interpolateViridis,0,1,FALSE
-Malawi,vls,inerpolateWarm,0,1,FALSE
+Malawi,vls,interpolateWarm,0,1,FALSE
 Malawi,recent,inerpolatePlasma,0,0.6,TRUE
 Malawi,art_number,interpolateViridis,0,70000,FALSE
 Malawi,population,interpolateViridis,0,20000000,FALSE
