@@ -6,8 +6,11 @@ test_that("can get valid model run options", {
 
   ## Basic test that some data has been read
   response <- jsonlite::parse_json(options)
-  expect_equal(names(response), "options")
-  expect_equal(response$options, "Test")
+  expect_equal(names(response), "controlSections")
+  expect_length(response$controlSections, 3)
+  expect_equal(response$controlSections[[1]]$label, "General")
+  expect_equal(response$controlSections[[2]]$label, "ART")
+  expect_equal(response$controlSections[[3]]$label, "Advanced options")
 })
 
 test_that("invalid model run options returns an error", {
