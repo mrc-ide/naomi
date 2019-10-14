@@ -9,6 +9,7 @@ addons:
       - libgdal-dev
       - libproj-dev
       - libudunits2-dev
+      - libv8-dev
 cache: packages
 r_packages:
   - covr
