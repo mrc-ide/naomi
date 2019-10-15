@@ -3,6 +3,7 @@ context("model-options")
 test_that("can get valid model run options template", {
   options <- get_model_options_template()
   expect_type(options, "character")
+  expect_length(options, 1)
 
   ## Basic test that some data has been read
   expect_true(any(grepl("controlSections", options)))
