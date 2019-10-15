@@ -43,12 +43,12 @@ mwi_anc_testing <- mwi_anc_testing %>%
     mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
-  mutate(age_group_id = 18L,
+  mutate(age_group = "15-49",
          quarter_id = convert_quarter_id(quarter, year),
          district32 = NULL,
          quarter = NULL,
          year = NULL) %>%
-  select(area_id, age_group_id, quarter_id, everything())
+  select(area_id, age_group, quarter_id, everything())
 
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
@@ -73,15 +73,16 @@ mwi_art_number <- mwi_art_number %>%
   gather(age_group_label, current_art, `0-14`, `15+`) %>%
   left_join(
     get_age_groups() %>%
-    select(age_group_label, age_group_id)
+    select(age_group_label, age_group)
   ) %>%
   mutate(sex = "both",
          age_group_label = NULL) %>%
-  select(area_id, sex, age_group_id, quarter_id, current_art)
+  select(area_id, sex, age_group, quarter_id, current_art)
 
 usethis::use_data(
            mwi_anc_testing,
-           mwi_art_number
+           mwi_art_number,
+           overwrite = TRUE
          )
 
 dir.create(here("inst/extdata/programme/"))

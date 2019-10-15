@@ -12,11 +12,13 @@ get_age_groups <- function() {
                        35, 50, Inf, Inf, Inf, 65, 15, 10, 10, 15, 15, Inf)
   ) %>%
     dplyr::mutate(age_group_id = dplyr::row_number(),
-                  age_group_label = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
-                    sub("-Inf", "+", .) %>%
+                  age_group = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
+                    sub("-Inf", "+", .),
+                  age_group_label = age_group %>%
                     dplyr::recode("0+" = "all ages"),
                   age_group_sort_order = c(13:29, 1:12)) %>%
     dplyr::select(age_group_id,
+                  age_group,
                   age_group_label,
                   age_group_start,
                   age_group_span,
