@@ -10,7 +10,7 @@
 #' @examples
 #' get_model_options_template()
 get_model_options_template <- function() {
-  read_file(
+  readLines(
     system_file("extdata", "meta", "model_run_options.json"),
     encoding = "UTF-8")
 }
