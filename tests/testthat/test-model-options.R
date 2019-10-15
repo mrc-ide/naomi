@@ -1,22 +1,18 @@
 context("model-options")
 
-test_that("can get valid model run options", {
-  options <- get_model_run_options()
+test_that("can get valid model run options template", {
+  options <- get_model_options_template()
   expect_type(options, "character")
 
   ## Basic test that some data has been read
-  response <- jsonlite::parse_json(options)
-  expect_equal(names(response), "controlSections")
-  expect_length(response$controlSections, 3)
-  expect_equal(response$controlSections[[1]]$label, "General")
-  expect_equal(response$controlSections[[2]]$label, "ART")
-  expect_equal(response$controlSections[[3]]$label, "Advanced options")
-})
-
-test_that("invalid model run options returns an error", {
-  mock_read_schema <- mockery::mock('["invalid_json"]')
-  with_mock("naomi:::read_schema" = mock_read_schema, {
-    expect_error(get_model_run_options(), class = "validation_error")
-  })
+  expect_true(any(grepl("controlSections", options)))
+  expect_true(any(grepl("General", options)))
+  expect_true(any(grepl("ART", options)))
+  expect_true(any(grepl("Advanced options", options)))
+  expect_true(any(grepl("<area_scope_options>", options)))
+  expect_true(any(grepl("<area_scope_default>", options)))
+  expect_true(any(grepl("<area_level_options>", options)))
+  expect_true(any(grepl("<art_t1_options>", options)))
+  expect_true(any(grepl("<art_t2_options>", options)))
 })
 

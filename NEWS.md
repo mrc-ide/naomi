@@ -1,6 +1,6 @@
 # naomi 0.0.7
 
-* Add function to return model run options to build front end declaratively
+* Add function to return model run options template to build front end declaratively
 
 # naomi 0.0.6
 

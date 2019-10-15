@@ -1,25 +1,16 @@
-#' Get JSON representing model run options
+#' Get JSON template representing model run options
 #'
 #' This reads JSON file of model run options which describe how the Naomi
-#' front end should display input options. It validates these against a schema
-#' to ensure it can create a UI.
+#' front end should display input options. Returns template for the API to
+#' enrich with model options.
 #'
-#' @return Validated model run options JSON.
+#' @return Model run options template.
 #' @export
 #'
 #' @examples
-#' get_model_run_options()
-get_model_run_options <- function() {
-  options <- read_schema()
-  schema <- system_file("extdata", "meta", "schema",
-                        "model_run_options.schema.json")
-  jsonvalidate::json_validate(options, schema, engine = "ajv", error = TRUE)
-  options
-}
-
-## As a separate function so we can mock out for testing
-read_schema <- function() {
-  readLines(
+#' get_model_options_template()
+get_model_options_template <- function() {
+  read_file(
     system_file("extdata", "meta", "model_run_options.json"),
     encoding = "UTF-8")
 }
