@@ -170,11 +170,19 @@ naomi_model_frame <- function(areas,
 
   ## Add population estimates
 
+  population_agesex <- population_agesex %>%
+    mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+           calendar_quarter = NULL)
+
   mf_model <- mf_model %>%
     dplyr::left_join(
              population_agesex %>%
              dplyr::filter(area_id %in% mf_areas$area_id) %>%
              interpolate_population_agesex(quarter_id1) %>%
+             dplyr::left_join(
+                      get_age_groups() %>% dplyr::select(age_group, age_group_id),
+                      by = "age_group"
+                    ) %>%
              dplyr::select(area_id, sex, age_group_id, population_t1 = population),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
@@ -182,6 +190,10 @@ naomi_model_frame <- function(areas,
              population_agesex %>%
              dplyr::filter(area_id %in% mf_areas$area_id) %>%
              interpolate_population_agesex(quarter_id2) %>%
+             dplyr::left_join(
+                      get_age_groups() %>% dplyr::select(age_group, age_group_id),
+                      by = "age_group"
+                    ) %>%
              dplyr::select(area_id, sex, age_group_id, population_t2 = population),
              by = c("area_id", "sex", "age_group_id")
            )

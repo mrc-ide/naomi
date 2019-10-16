@@ -35,9 +35,9 @@ population_agesex <- naomi::mwi_population_agesex
 age_group_meta <- naomi::get_age_groups()
 
 fertility <- data.frame(area_id = character(0),
-                        time = numeric(0),
-                        age_group_id = integer(0),
-                        quarter_id = integer(0),
+                        year = integer(0),
+                        age_group = character(0),
+                        calendar_quarter = character(0),
                         asfr = numeric(0))
 
 #' surveys
@@ -101,27 +101,27 @@ dm <-
   dm_set_key("area_levels", "area_level") %>%
   dm_set_key("area_hierarchy", "area_id") %>%
   dm_set_key("area_boundaries", "area_id") %>%
-  dm_set_key("age_group_meta", "age_group_id") %>%
-  dm_set_key("population_agesex", c("area_id", "quarter_id", "sex", "age_group_id", "source")) %>%
-  dm_set_key("fertility", c("area_id", "time", "age_group_id")) %>%
+  dm_set_key("age_group_meta", "age_group") %>%
+  dm_set_key("population_agesex", c("area_id", "calendar_quarter", "sex", "age_group", "source")) %>%
+  dm_set_key("fertility", c("area_id", "year", "age_group")) %>%
   dm_set_key("survey_meta", "survey_id") %>%
   dm_set_key("survey_regions", c("survey_id", "survey_region_id")) %>%
   dm_set_key("survey_clusters", c("survey_id", "cluster_id")) %>%
   dm_set_key("survey_individuals", c("survey_id", "cluster_id", "household", "line")) %>%
   dm_set_key("survey_biomarker", c("survey_id", "cluster_id", "household", "line")) %>%
-  dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "area_id", "sex", "age_group_id")) %>%
-  dm_set_key("art_number", c("area_id", "sex", "age_group_id", "quarter_id")) %>%
-  dm_set_key("anc_testing", c("area_id", "age_group_id", "quarter_id")) %>%
+  dm_set_key("survey_hiv_indicators", c("indicator", "survey_id", "area_id", "sex", "age_group")) %>%
+  dm_set_key("art_number", c("area_id", "sex", "age_group", "year")) %>%
+  dm_set_key("anc_testing", c("area_id", "age_group", "year")) %>%
   dm_add_references(
     area_hierarchy$area_level == area_levels$area_level,
     area_hierarchy$parent_area_id == area_hierarchy$area_id,
     area_boundaries$area_id == area_hierarchy$area_id,
     population_agesex$area_id == area_hierarchy$area_id,
-    population_agesex$age_group_id == age_group_meta$age_group_id,
+    population_agesex$age_group == age_group_meta$age_group,
     fertility$area_id == population_agesex$area_id,
     fertility$time == population_agesex$time,
-    fertility$age_group_id == population_agesex$age_group_id,
-    population_agesex$age_group_id == age_group_meta$age_group_id,
+    fertility$age_group == population_agesex$age_group,
+    population_agesex$age_group == age_group_meta$age_group,
     survey_regions$survey_id == survey_meta$survey_id,
     survey_regions$survey_region_area_id == area_hierarchy$area_id,
     survey_clusters$survey_id == survey_meta$survey_id,
@@ -136,11 +136,11 @@ dm <-
     survey_biomarker$line == survey_individuals$line,
     survey_hiv_indicators$survey_id == survey_meta$survey_id,
     survey_hiv_indicators$area_id == area_hierarchy$area_id,
-    survey_hiv_indicators$age_group_id == age_group_meta$age_group_id,
+    survey_hiv_indicators$age_group == age_group_meta$age_group,
     art_number$area_id == area_hierarchy$area_id,
-    art_number$age_group_id == age_group_meta$age_group_id,
+    art_number$age_group == age_group_meta$age_group,
     anc_testing$area_id == area_hierarchy$area_id,
-    anc_testing$age_group_id == age_group_meta$age_group_id
+    anc_testing$age_group == age_group_meta$age_group
   ) %>%
   dm_set_segment(
     list(
@@ -199,15 +199,12 @@ area_hierarchy %>%
 * `age_group_meta` contains metadata definining a standardised set of age groups.
    This is containted in `naomi::get_age_groups()`.
 * `population_agesex` contains population estimates by area, sex, and five-year age
-   group. Estimates are required at the highest level of the area hierarchy for 
+   group for years spanning the range of time points estimated by the model. 
+   Estimates are required at the highest level of the area hierarchy for 
    all age groups from 0-4 through 80+. 
 * `fertility` contains age-specific fertility rate (ASFR) estimates by area.
    
-Time is identified as `quarter_id` defined as the number of calendar quarters 
-since the year 1900 (inspired by DHS Century Month Code [CMC]):
-	$$ \mathrm{quarter\_id} = (\mathrm{year} - 1900) * 4 + \mathrm{quarter}.$$
-The function `interpolate_population_agesex()` interpolates population estimates
-to specified `quarter_ids`. 
+Time is identified as `calendar_quarter` coded as a string for example "CY2019Q2" referencing mid-year population estimates for 2019.
    
 ```{r}
 naomi::get_age_groups()
@@ -224,8 +221,8 @@ The table `survey_hiv_indicators` should also contain all survey HIV prevalence 
 
 ## Programme data
 
-* `art_number` reports the number currently receiving ART at the end of each quarter by area.
-* `anc_testing` reports antenatal clinic (ANC) attendees and outcomes during the quarter. 
+* `art_number` reports the number currently receiving ART at the end of each year by area.
+* `anc_testing` reports antenatal clinic (ANC) attendees and outcomes during the year. 
 
 The model is currently specified to accept ART numbers by age 0-14 (`age_group_id  = `r filter(naomi::get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group_id = `r filter(naomi::get_age_groups(), age_group_label == "15+")$age_group_id``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
 

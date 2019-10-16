@@ -81,7 +81,7 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
              get_age_groups() %>% dplyr::select(age_group_id, age_group_label),
              by = "age_group_label"
            ) %>%
-    dplyr::mutate(quarter_id = convert_quarter_id(2L, year)) %>%
+    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
     dplyr::select(spectrum_region_code, year, quarter_id, dplyr::everything())
 
   spec

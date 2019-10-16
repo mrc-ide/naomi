@@ -145,18 +145,18 @@ nso <- here::here("data-raw", "population", "Pop projections  2008-2030 Master f
   filter(area_name != "Total",
          age_group_label != "Total",
          sex != "total") %>%
-  left_join(get_age_groups() %>% select(age_group_id, age_group_label)) %>%
+  left_join(get_age_groups() %>% select(age_group, age_group_label)) %>%
   left_join(
     mwi_area_hierarchy %>%
     filter(area_level == 4) %>%
     select(area_id, area_name)
   ) %>%
-  count(area_id, year, sex, age_group_id, wt = value, name = "population")
+  count(area_id, year, sex, age_group, wt = value, name = "population")
 
 
 count(nso, area_id) %>% print(n = Inf)
 count(nso, sex)
-count(nso, age_group_id)
+count(nso, age_group)
 
 
 #' ## Adjust projection to 2018 census population
@@ -173,9 +173,10 @@ cens18adj <- nso %>%
                       "1-4" = "0-4",
                       "80-84" = "80+",
                       "85-89" = "80+",
-                      "90+" = "80+")) %>%
-      left_join(get_age_groups() %>% select(age_group_label, age_group_id)) %>%
-      count(area_id,sex, age_group_id, wt = population, name = "cens18adj")
+                      "90+" = "80+"),
+             age_group = NULL) %>%
+      left_join(get_age_groups() %>% select(age_group_label, age_group)) %>%
+      count(area_id,sex, age_group, wt = population, name = "cens18adj")
   ) %>%
   mutate(cens18adj = cens18adj / population,
          year = NULL,
@@ -188,9 +189,9 @@ cens18adj <- nso %>%
 #'   projected fertility and undercount of U5 population.
 cens18adj %>%  
   left_join(mwi_area_hierarchy %>% select(area_id, area_name, area_sort_order)) %>%
-  left_join(get_age_groups() %>% select(age_group_id, age_group_label)) %>%
+  left_join(get_age_groups() %>% select(age_group, age_group_label, age_group_sort_order)) %>%
   mutate(area = fct_reorder(area_name, area_sort_order),
-         age_group = fct_reorder(age_group_label, age_group_id)) %>%
+         age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, cens18adj, color = sex, group = sex)) +
   geom_hline(yintercept = 1.0, linetype = "dashed") +
   geom_step() +
@@ -212,17 +213,17 @@ population_agesex <- nso %>%
     source = "Census 2018",
     population = population * exp(log(cens18adj) * pmax((year - 2008) / (2018 - 2008), 0.0)),
     cens18adj = NULL,
-    quarter_id = convert_quarter_id(2, year),
+    calendar_quarter = convert_calendar_quarter(year, 2),
     year = NULL
   ) %>%
-  select(area_id, source, quarter_id, sex, age_group_id, population)
-                  
+  select(area_id, source, calendar_quarter, sex, age_group, population)
+
 
 #' ## Save datasets
 
 mwi_population_agesex <- population_agesex
 
-usethis::use_data(mwi_population_agesex)
+usethis::use_data(mwi_population_agesex, overwrite=TRUE)
 
 dir.create(here("inst/extdata/population"))
 write_csv(population_agesex, here("inst/extdata/population/population_agesex.csv"))

@@ -196,7 +196,7 @@ dhs_regions %>%
 
 #' Extract clusters from household recode dataset
 
-hrd <- dhs_datasets(surveyIds = surveys$SurveyId,
+hrd <- dhs_datasets(surveyIds = str, 
                     fileType = "HR", fileFormat = "flat") %>%
   mutate(path = get_datasets(.) %>% unlist) %>%
   left_join(surveys %>% select(SurveyId, survey_id)) %>%
@@ -733,7 +733,8 @@ usethis::use_data(
            mwi_survey_clusters,
            mwi_survey_individuals,
            mwi_survey_biomarker,
-           mwi_survey_hiv_indicators
+           mwi_survey_hiv_indicators,
+           overwrite = TRUE
          )
 
 
