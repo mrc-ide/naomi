@@ -1,7 +1,15 @@
-# naomi 0.0.5
+# naomi 0.0.7
+
+* Add function to return model run options template to build front end declaratively
+
+# naomi 0.0.6
 
 * Iterate metadata to include model outputs
 * Expose get_metadata function for hintr use
+
+# naomi 0.0.5
+
+* Add function to aggregate multiple Spectrum files.
 
 # naomi 0.0.4
 
