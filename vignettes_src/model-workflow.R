@@ -95,8 +95,8 @@ spec <- extract_pjnz_naomi(pjnz)
 
 scope <- "MWI"
 level <- 4
-quarter_id_t1 <- convert_quarter_id(1, 2016)
-quarter_id_t2 <- convert_quarter_id(3, 2018)
+quarter_id_t1 <- convert_quarter_id(2016, 1)
+quarter_id_t2 <- convert_quarter_id(2018, 3)
 
 #' The following select data inputs to model fitting from the uploaded datasets.
 #' Providing `NULL` for any will exclude that data source from model fitting.
@@ -119,11 +119,11 @@ artcov_survey_ids  <- "MWI2016PHIA"
 vls_survey_ids <- NULL
 recent_survey_ids <- "MWI2016PHIA"
 
-artnum_quarter_id_t1 <- convert_quarter_id(1, 2016)
-artnum_quarter_id_t2 <- convert_quarter_id(3, 2018)
+artnum_quarter_id_t1 <- convert_quarter_id(2016, 1)
+artnum_quarter_id_t2 <- convert_quarter_id(2018, 3)
 
-anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
-anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
+anc_year_t1 <- 2016
+anc_year_t2 <- 2018
 
 
 #' # 3. Review input data
@@ -155,8 +155,8 @@ naomi_data <- select_naomi_data(naomi_mf,
                                 vls_survey_ids,
                                 artnum_quarter_id_t1,
                                 artnum_quarter_id_t2,
-                                anc_quarter_id_t1,
-                                anc_quarter_id_t2)
+                                anc_year_t1,
+                                anc_year_t2)
 
 
 #' 5. Fit model
