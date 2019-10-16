@@ -1,0 +1,95 @@
+{
+  "controlSections": [
+    {
+      "label": "General",
+      "description": "Select general model options:",
+      "controlGroups": [
+        {
+          "label": "Area scope",
+          "controls": [
+            {
+              "name": "area_scope",
+              "type": "multiselect",
+              "options": [
+                <area_scope_options>
+              ],
+              "default": <area_scope_default>,
+              "required": true
+            }
+          ]
+        },
+        {
+          "label": "Area level",
+          "controls": [
+            {
+              "name": "area_level",
+              "type": "select",
+              "options": [
+                <area_level_options>
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "ART",
+      "description": "Optionally select which quarter of data to use at time point 1 and 2",
+      "controlGroups": [
+        {
+          "label": "Number on ART",
+          "controls": [
+            {
+              "name": "art_t1",
+              "label": "Time 1",
+              "type": "select",
+              "helpText": "Quarter matching midpoint of survey",
+              "options": [
+                <art_t1_options>
+              ],
+              "required": false
+            },
+            {
+              "name": "art_t2",
+              "label": "Time 2",
+              "type": "select",
+              "helpText": "Quarter matching midpoint of survey",
+              "options": [
+                <art_t2_options>
+              ],
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Advanced options",
+      "controlGroups": [
+        {
+          "label": "Maximum Iterations",
+          "controls": [
+            {
+              "name": "max_it",
+              "type": "number",
+              "required": true,
+              "default": 250
+            }
+          ]
+        },
+        {
+          "label": "Number of simulations",
+          "controls": [
+            {
+              "name": "num_sim",
+              "type": "number",
+              "required": true,
+              "default": 3000
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
