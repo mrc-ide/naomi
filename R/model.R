@@ -171,7 +171,7 @@ naomi_model_frame <- function(areas,
   ## Add population estimates
 
   population_agesex <- population_agesex %>%
-    mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+   dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
            calendar_quarter = NULL)
 
   mf_model <- mf_model %>%
@@ -640,7 +640,11 @@ artnum_mf <- function(quarter_id, art_number, naomi_mf) {
   stopifnot(length(quarter_id) <= 1)
   stopifnot(is(naomi_mf, "naomi_mf"))
 
-  year <- year_labels(quarter_id)
+  if(!is.null(quarter_id)) {
+    year <- year_labels(quarter_id)
+  } else {
+    year <- NULL
+  }
     
   if(!is.null(art_number) &&
      length(year) &&
