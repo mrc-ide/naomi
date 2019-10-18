@@ -11,7 +11,8 @@
 #' @export
 #'
 #' @examples
-#' get_model_options_template()
+#' get_model_options_template(TRUE, TRUE)
+#' get_model_options_template(FALSE, FALSE)
 get_model_options_template <- function(art, anc) {
   templates <- list()
   templates$general <- paste(readLines(
