@@ -7,9 +7,9 @@
       "controls": [
         {
           "name": "art_t1",
-          "label": "Time 1",
+          "label": "Year midpoint of survey",
           "type": "select",
-          "helpText": "Quarter matching midpoint of survey",
+          "helpText": "Select year of input ART data at the midpoint of survey data",
           "options": [
             <art_t1_options>
           ],
@@ -17,9 +17,9 @@
         },
         {
           "name": "art_t2",
-          "label": "Time 2",
+          "label": "Year to generate estimates",
           "type": "select",
-          "helpText": "Quarter matching midpoint of survey",
+          "helpText": "Select year of input ART data at which to generate estimates",
           "options": [
             <art_t2_options>
           ],
