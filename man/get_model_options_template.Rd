@@ -20,5 +20,6 @@ front end should display input options. Returns template for the API to
 enrich with model options.
 }
 \examples{
-get_model_options_template()
+get_model_options_template(TRUE, TRUE)
+get_model_options_template(FALSE, FALSE)
 }
