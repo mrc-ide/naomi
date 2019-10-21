@@ -1,0 +1,56 @@
+{
+  "label": "ANC",
+  "description": "Optionally select which quarter of data to use at time point 1 and 2",
+  "controlGroups": [
+    {
+      "label": "Prevalence",
+      "controls": [
+        {
+          "name": "anc_prevalence_t1",
+          "label": "Time 1",
+          "type": "select",
+          "helpText": "Quarter matching midpoint of survey",
+          "options": [
+            <anc_prevalence_t1_options>
+          ],
+          "required": false
+        },
+        {
+          "name": "anc_prevalence_t2",
+          "label": "Time 2",
+          "type": "select",
+          "helpText": "Quarter matching midpoint of survey",
+          "options": [
+            <anc_prevalence_t2_options>
+          ],
+          "required": false
+        }
+      ]
+    },
+    {
+      "label": "ART Coverage",
+      "controls": [
+        {
+          "name": "anc_art_coverage_t1",
+          "label": "Time 1",
+          "type": "select",
+          "helpText": "Quarter matching midpoint of survey",
+          "options": [
+            <anc_art_coverage_t1_options>
+          ],
+          "required": false
+        },
+        {
+          "name": "anc_art_coverage_t2",
+          "label": "Time 2",
+          "type": "select",
+          "helpText": "Quarter matching midpoint of survey",
+          "options": [
+            <anc_art_coverage_t2_options>
+          ],
+          "required": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,3 +1,7 @@
+# naomi 0.0.8
+
+* Iterate model options endpoint to be able to exclude optional data set options
+
 # naomi 0.0.7
 
 * Add function to return model run options template to build front end declaratively
