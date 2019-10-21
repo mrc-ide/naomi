@@ -11,8 +11,7 @@
 #'
 #' @examples
 #' get_plotting_metadata("MWI")
-#' get_plotting_metadata()
-get_plotting_metadata <- function(iso3 = "default") {
+get_plotting_metadata <- function(iso3) {
   metadata <- get_metadata()
   colour_scale <- get_colour_scale(iso3)
   if (nrow(colour_scale) == 0) {
