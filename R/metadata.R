@@ -11,8 +11,7 @@
 #'
 #' @examples
 #' get_plotting_metadata("Malawi")
-#' get_plotting_metadata()
-get_plotting_metadata <- function(country = "default") {
+get_plotting_metadata <- function(country) {
   metadata <- get_metadata()
   colour_scale <- get_colour_scale(country)
   if (nrow(colour_scale) == 0) {

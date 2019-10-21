@@ -4,7 +4,7 @@
 \alias{get_plotting_metadata}
 \title{Get plotting metadata for a particular country}
 \usage{
-get_plotting_metadata(country = "default")
+get_plotting_metadata(country)
 }
 \arguments{
 \item{country}{Country to get metadata for or blank for default
@@ -20,5 +20,4 @@ Get plotting metadata for a particular country
 }
 \examples{
 get_plotting_metadata("Malawi")
-get_plotting_metadata()
 }
