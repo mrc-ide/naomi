@@ -4,10 +4,11 @@
 \alias{get_colour_scale}
 \title{Get colour scale and ranges for a particular country}
 \usage{
-get_colour_scale(country)
+get_colour_scale(country = "default")
 }
 \arguments{
-\item{country}{Country to get scale for}
+\item{country}{Country to get scale for or return default scale if left
+blank.}
 }
 \value{
 List of scale information including colour as a d3 scale chromatic
