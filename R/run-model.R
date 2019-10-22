@@ -1,3 +1,22 @@
+#' Run the model and save output to file
+#'
+#' This prepares the model inputs from data and options and saves output as
+#' an rds, the spectrum digst and indicators at specified paths.
+#'
+#' @param data List of paths to input data files. Must provide pjnz, shape,
+#' population and survey data. Optionally include anc and art data too.
+#' @param options List of model run options, must specify area_scope,
+#' area_level, t1, t2, survey_prevalence, survey_art_coverage, survey_vls,
+#' survey_recently_infected, survey_art_or_vls, art_t1, art_t2,
+#' anc_prevalence_t1, anc_prevalence_t2, anc_art_coverage_t1,
+#' anc_art_coverage_t2.
+#' @param output_path Path to store output indicators as an RDS at.
+#' @param spectrum_path Path to store spectrum digest file at.
+#' @param indicators_path Path to store indicators download zip file at.
+#'
+#' @return Paths to 3 output files.
+#' @export
+#'
 run_model <- function(data, options, output_path, spectrum_path,
                       indicators_path) {
 
@@ -6,17 +25,16 @@ run_model <- function(data, options, output_path, spectrum_path,
   ## Prepare input data
   ## Question - do we want to pass in already read data instead of paths to data?
   ## That way we can leverage caching but perhaps that isn't a big win?
-  area_merged <- read_sf(data$pjnz)
+  area_merged <- sf::read_sf(data$shape)
+  areas <- create_areas(area_merged = area_merged)
+  population <- readr::read_csv(data$population)
+  survey <- readr::read_csv(data$survey)
+  art_number <- readr::read_csv(data$art)
+  anc <- readr::read_csv(data$anc)
 
-  pop_agesex <- read_csv(data$population)
-
-  survey_hiv_indicators <- read_csv(data$survey)
-
-  art_number <- read_csv(data$art)
-  anc_testing <- read_csv(data$anc)
-
+  ## TODO: Why is this filtered?
   art_number <- art_number %>%
-    filter(age_group_id == 20)
+    dplyr::filter(age_group_id == 20)
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
@@ -45,17 +63,16 @@ run_model <- function(data, options, output_path, spectrum_path,
   anc_art_coverage_t2 <- options$anc_art_coverage_t2
 
   naomi_mf <- naomi_model_frame(areas,
-                                pop_agesex,
+                                population,
                                 spec,
                                 scope = scope,
                                 level = level,
                                 quarter_id_t1,
                                 quarter_id_t2)
 
-
   naomi_data <- select_naomi_data(naomi_mf,
-                                  survey_hiv_indicators,
-                                  anc_testing,
+                                  survey,
+                                  anc,
                                   art_number,
                                   prev_survey_ids,
                                   artcov_survey_ids,
@@ -73,10 +90,10 @@ run_model <- function(data, options, output_path, spectrum_path,
 
   ## Add uncertainty
   fit <- sample_tmb(fit)
-
   ## Prepare output package
   outputs <- output_package(fit, naomi_mf, areas)
-  saveRDS(outputs, file = output_path)
+  indicators <- add_output_labels(outputs)
+  saveRDS(indicators, file = output_path)
   save_output_indicators(indicators_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
 

@@ -142,17 +142,17 @@ naomi_model_frame <- function(areas,
 
   ## Get leaves that are children of scope
   area_id_leaves <- areas$tree$Get("leaves", traversal = "level")
-  
+
   if(length(setdiff(scope, names(area_id_leaves))))
     stop(paste("Scope areas", setdiff(scope, names(area_id_leaves)), "not found in hierarchy."))
-    
+
   area_id <- area_id_leaves[scope] %>%
     lapply(data.tree::Get, "area_id") %>%
     unlist() %>%
     unique()
 
-  ## Keep 
-  
+  ## Keep
+
   mf_areas <- data.frame(area_id,
                          area_idx = seq_along(area_id),
                          stringsAsFactors = FALSE) %>%
@@ -205,7 +205,7 @@ naomi_model_frame <- function(areas,
 
   if(length(unique(spec$spectrum_region_code)) > 1)
     stop("Multiple Spectrum files not yet supported")
-  
+
   mf_model <- mf_model %>%
     dplyr::left_join(
              spec %>%
@@ -322,7 +322,7 @@ naomi_model_frame <- function(areas,
             omega = omega,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,
-            logit_nu_sd = logit_nu_sd,  
+            logit_nu_sd = logit_nu_sd,
             M = M,
             Q = Q)
 
@@ -342,9 +342,9 @@ naomi_model_frame <- function(areas,
 #' @param vls_survey_ids A character vector of `survey_id`s for survey VLS among all HIV+ persons.
 #' @param artnum_quarter_id_t1 Quarter ID for first time point for number on ART.
 #' @param artnum_quarter_id_t2 Quarter ID for second time point for number on ART.
-#' @param anc_quarter_id_t1 Quarter IDs (possibly multiple) for first time point for ANC 
+#' @param anc_quarter_id_t1 Quarter IDs (possibly multiple) for first time point for ANC
 #' @param anc_quarter_id_t2 Quarter IDs (possibly multiple) for second time point for number on ART.
-#' 
+#'
 #' @details
 #' See example datasets for examples of required template for data sets. *`_survey_ids` must be reflected
 #' in `survey_hiv_indicators`.
@@ -353,7 +353,7 @@ naomi_model_frame <- function(areas,
 #' by the function call and will throw an error.
 #'
 #' @seealso [mwi_survey_hiv_indicators], [mwi_anc_testing], [mwi_art_number], [convert_quarter_id]
-#' 
+#'
 #' @export
 select_naomi_data <- function(naomi_mf,
                               survey_hiv_indicators,
@@ -378,16 +378,16 @@ select_naomi_data <- function(naomi_mf,
   naomi_mf$artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)
   naomi_mf$recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
   naomi_mf$vls_dat <- survey_vls_mf(vls_survey_ids, survey_hiv_indicators, naomi_mf)
-  
+
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
-  
+
   naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
-  
+
   naomi_mf$artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
   naomi_mf$artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
-  
+
   class(naomi_mf) <- c("naomi_data", class(naomi_mf))
 
   naomi_mf
@@ -549,7 +549,7 @@ anc_testing_prev_mf <- function(quarter_ids, anc_testing, naomi_mf) {
                area_id %in% naomi_mf$mf_model$area_id
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos), sum, na.rm = TRUE) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
@@ -584,7 +584,7 @@ anc_testing_artcov_mf <- function(quarter_ids, anc_testing, naomi_mf) {
                area_id %in% naomi_mf$mf_model$area_id
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
@@ -613,7 +613,7 @@ artnum_mf <- function(quarter_id, art_number, naomi_mf) {
      !quarter_id %in% art_number$quarter_id)
     stop(paste0("No ART data found for quarter_id ", quarter_id, ".\n",
                 "Set quarter_id = NULL if you intend to include no ART data."))
-  
+
   if(is.null(quarter_id) || is.null(art_number)) {
     ## No number on ART data or no quarter specified
     artnum_dat <- data.frame(

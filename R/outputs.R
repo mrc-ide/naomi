@@ -93,7 +93,7 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
     sf::st_as_sf()
 
   meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
-    mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
+    dplyr::mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
 
   meta_age_group <- get_age_groups()
 
@@ -226,7 +226,7 @@ save_output <- function(path,
   }
 
 
-  if(with_labels){
+  if (with_labels) {
     indicators <- add_output_labels(naomi_output)
   } else {
     indicators <- naomi_output$indicators
@@ -248,10 +248,10 @@ save_output <- function(path,
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
-        st_write(naomi_output$meta_area, "boundaries.geojson")
+        sf::st_write(naomi_output$meta_area, "boundaries.geojson")
       } else if(boundary_format == "shp") {
         dir.create("shp")
-        st_write(naomi_output$meta_area, "shp/boundaries.shp")
+        sf::st_write(naomi_output$meta_area, "shp/boundaries.shp")
       } else {
         stop(paste("Boundary file format", boundary_format, "not recognized.",
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
