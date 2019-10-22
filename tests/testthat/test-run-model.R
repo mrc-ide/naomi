@@ -14,7 +14,6 @@ test_that("model can be run", {
     area_level = 4,
     t1 = 465,
     t2 = 475,
-    ## TODO: UI only gives 1 option for this not a multi select
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
@@ -29,11 +28,11 @@ test_that("model can be run", {
   )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  output_indicators <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
   model_run <- run_model(data, options, output_path, output_spectrum,
-                         output_indicators)
+                         summary_path)
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "indicators_path"))
+               c("output_path", "spectrum_path", "summary_path"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -44,15 +43,15 @@ test_that("model can be run", {
   expect_true(nrow(output) == 42021)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
-  ## TODO: replace with checks for spectrum digest once function to create
-  ## that has been added
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   expect_equal(file_list$Name,
                c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                  "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
 
-  expect_equal(model_run$indicators_path, output_indicators)
-  file_list <- unzip(model_run$indicators_path, list = TRUE)
+  ## TODO: replace with checks for spectrum digest once function to create
+  ## that has been added mrc-636
+  expect_equal(model_run$summary_path, summary_path)
+  file_list <- unzip(model_run$summary_path, list = TRUE)
   expect_equal(file_list$Name,
                c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                  "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
@@ -60,6 +59,7 @@ test_that("model can be run", {
 })
 
 test_that("model can be run without programme data", {
+  testthat::skip("Skipping test as running without programme data not supported see mrc-638")
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
@@ -79,33 +79,32 @@ test_that("model can be run without programme data", {
   )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  output_indicators <- tempfile(fileext = ".zip")
-  ## TODO: Make model run with optional inputs work
+  summary_path <- tempfile(fileext = ".zip")
+  model_run <- run_model(data, options, output_path, output_spectrum,
+                         summary_path)
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "summary_path"))
 
-  ## model_run <- run_model(data, options, output_path, output_spectrum,
-  ##                        output_indicators)
-  ## expect_equal(names(model_run),
-  ##              c("output_path", "spectrum_path", "indicators_path"))
-  ##
-  ## output <- readRDS(model_run$output_path)
-  ## expect_equal(colnames(output),
-  ##              c("area_level", "area_level_label", "area_id", "area_name",
-  ##                "sex", "age_group_id", "age_group_label", "quarter_id",
-  ##                "quarter_label", "indicator_id", "Indicator_label", "mode",
-  ##                "mean", "se", "median", "lower", "upper"))
-  ## expect_true(nrow(output) == 42022)
-  ##
-  ## expect_equal(model_run$spectrum_path, output_spectrum)
-  ## ## TODO: replace with checks for spectrum digest once function to create
-  ## ## that has been added
-  ## file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  ## expect_equal(file_list$Name,
-  ##              c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-  ##                "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
-  ##
-  ## expect_equal(model_run$indicators_path, output_indicators)
-  ## file_list <- unzip(model_run$indicators_path, list = TRUE)
-  ## expect_equal(file_list$Name,
-  ##              c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-  ##                "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  output <- readRDS(model_run$output_path)
+  expect_equal(colnames(output),
+               c("area_level", "area_level_label", "area_id", "area_name",
+                 "sex", "age_group_id", "age_group_label", "quarter_id",
+                 "quarter_label", "indicator_id", "indicator_label", "mode",
+                 "mean", "se", "median", "lower", "upper"))
+  expect_true(nrow(output) == 42021)
+
+  expect_equal(model_run$spectrum_path, output_spectrum)
+  file_list <- unzip(model_run$spectrum_path, list = TRUE)
+  expect_equal(file_list$Name,
+               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+
+  ## TODO: replace with checks for spectrum digest once function to create
+  ## that has been added mrc-636
+  expect_equal(model_run$summary_path, summary_path)
+  file_list <- unzip(model_run$summary_path, list = TRUE)
+  expect_equal(file_list$Name,
+               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+
 })

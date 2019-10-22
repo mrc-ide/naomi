@@ -12,18 +12,15 @@
 #' anc_art_coverage_t2.
 #' @param output_path Path to store output indicators as an RDS at.
 #' @param spectrum_path Path to store spectrum digest file at.
-#' @param indicators_path Path to store indicators download zip file at.
+#' @param summary_path Path to store summary download zip file at.
 #'
 #' @return Paths to 3 output files.
 #' @export
 #'
 run_model <- function(data, options, output_path, spectrum_path,
-                      indicators_path) {
+                      summary_path) {
 
   ## Options will have previously been validated
-
-  ## Question - do we want to pass in already read data instead of paths to data?
-  ## That way we can leverage caching but perhaps that isn't a big win?
   ## TODO: What format do the progress messages have to adhere to?
   progress("Preparing input data")
   area_merged <- sf::read_sf(data$shape)
@@ -33,11 +30,12 @@ run_model <- function(data, options, output_path, spectrum_path,
   art_number <- readr::read_csv(data$art)
   anc <- readr::read_csv(data$anc)
 
-  ## TODO: Why is this filtered?
+  spec <- extract_pjnz_naomi(data$pjnz)
+
+  ## TODO: Remove this filter - it is in temporarily as model does not run
+  ## without it mrc-640
   art_number <- art_number %>%
     dplyr::filter(age_group_id == 20)
-
-  spec <- extract_pjnz_naomi(data$pjnz)
 
   ## Get from the options
   scope <- options$area_scope
@@ -53,9 +51,10 @@ run_model <- function(data, options, output_path, spectrum_path,
   artnum_quarter_id_t1 <- options$art_t1
   artnum_quarter_id_t2 <- options$art_t2
 
-  ## TODO: How are the options for these being used? They are slightly different
-  ## to what is in the vignette
-  ## TODO: What about when these are NULL?
+  ## TODO: make these single values once we have updated to using years instead
+  ## of quarter mrc-577
+  ## TODO: make anc prevalence and anc_art_coverage separate controls of quarter
+  ## in the naomi_model_frame code
   anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
   anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
   anc_prevalence_t1 <- options$anc_prevalence_t1
@@ -96,12 +95,12 @@ run_model <- function(data, options, output_path, spectrum_path,
   outputs <- output_package(fit, naomi_mf, areas)
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
-  save_output_indicators(indicators_path, outputs)
+  save_result_summary(summary_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
 
   list(output_path = output_path,
        spectrum_path = spectrum_path,
-       indicators_path = indicators_path)
+       summary_path = summary_path)
 }
 
 progress <- function(message) {
