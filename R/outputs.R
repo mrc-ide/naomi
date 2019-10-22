@@ -192,14 +192,34 @@ save_output_package <- function(naomi_output,
                                 boundary_format = "geojson",
                                 single_csv = FALSE) {
 
-  stopifnot(inherits(naomi_output, "naomi_output"))
-
   dir <- normalizePath(dir)
   if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
   }
 
   path <- file.path(dir, paste0(filename, ".zip"))
+  save_output(path, naomi_output, overwrite, with_labels, boundary_format,
+              single_csv)
+}
+
+save_output_indicators <- function(path, naomi_output) {
+  save_output(path, naomi_output, overwrite = FALSE, with_labels = TRUE,
+              boundary_format = "geojson", single_csv = FALSE)
+}
+
+save_output_spectrum <- function(path, naomi_output) {
+  save_output(path, naomi_output, overwrite = FALSE, with_labels = TRUE,
+              boundary_format = "geojson", single_csv = FALSE)
+}
+
+
+save_output <- function(path,
+                        naomi_output,
+                        overwrite = FALSE,
+                        with_labels = FALSE,
+                        boundary_format = "geojson",
+                        single_csv = FALSE) {
+  stopifnot(inherits(naomi_output, "naomi_output"))
   if(file.access(path, 0) == 0 && !overwrite) {
     stop(paste(
       "File", path, "already exists. Set overwrite = TRUE to write output."))
@@ -242,6 +262,7 @@ save_output_package <- function(naomi_output,
   utils::zip(path, list.files())
   path
 }
+
 
 #' @rdname save_output_package
 #' @param path Path to output zip file.
