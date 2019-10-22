@@ -1,3 +1,7 @@
+# naomi 0.0.9
+
+* Plotting metadata now returns default if country is missing from config
+
 # naomi 0.0.8
 
 * Iterate model options endpoint to be able to exclude optional data set options
