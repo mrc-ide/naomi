@@ -22,9 +22,10 @@ run_model <- function(data, options, output_path, spectrum_path,
 
   ## Options will have previously been validated
 
-  ## Prepare input data
   ## Question - do we want to pass in already read data instead of paths to data?
   ## That way we can leverage caching but perhaps that isn't a big win?
+  ## TODO: What format do the progress messages have to adhere to?
+  progress("Preparing input data")
   area_merged <- sf::read_sf(data$shape)
   areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
@@ -85,20 +86,25 @@ run_model <- function(data, options, output_path, spectrum_path,
 
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
-  ## Run the model
+  progress("Fitting the model")
   fit <- fit_tmb(tmb_inputs)
 
-  ## Add uncertainty
+  progress("Generating uncertainty")
   fit <- sample_tmb(fit)
-  ## Prepare output package
+
+  progress("Preparing outputs")
   outputs <- output_package(fit, naomi_mf, areas)
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
   save_output_indicators(indicators_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
 
-  ## Return output path spectrum path and indicators path
   list(output_path = output_path,
        spectrum_path = spectrum_path,
        indicators_path = indicators_path)
+}
+
+progress <- function(message) {
+  signalCondition(structure(list(message = message),
+                            class = c("progress", "condition")))
 }
