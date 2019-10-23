@@ -16,3 +16,4 @@ vignettes_src/*.html
 vignettes_src/cache
 vignettes_src/model-workflow_cache
 .~lock*
+tests/testthat/testdata/fit.RDS
