@@ -65,7 +65,7 @@ artnum_quarter_id_t2 <- options$art_t2
 ## TODO: make these single values once we have updated to using years instead
 ## of quarter mrc-577
 ## TODO: make anc prevalence and anc_art_coverage separate controls of quarter
-## in the naomi_model_frame code
+## in the naomi_model_frame code mrc-645
 anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
 anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
 anc_prevalence_t1 <- options$anc_prevalence_t1
