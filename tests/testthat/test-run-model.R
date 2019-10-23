@@ -108,3 +108,40 @@ test_that("model can be run without programme data", {
                  "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
 
 })
+
+test_that_with_mock("progress messages are printed", {
+  data <- list(
+    pjnz = system_file("extdata/mwi2019.PJNZ"),
+    population = system_file("extdata/population/population_agesex.csv"),
+    shape = file.path("testdata/malawi.geojson"),
+    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
+    art = system_file("extdata/programme/art_number.csv"),
+    anc = system_file("extdata/programme/anc_testing.csv")
+  )
+  options <- list(
+    area_scope = "MWI",
+    area_level = 4,
+    t1 = 465,
+    t2 = 475,
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_vls = NULL,
+    survey_recently_infected = "MWI2016PHIA",
+    survey_art_or_vls = "art_coverage",
+    art_t1 = 465,
+    art_t2 = 475,
+    anc_prevalence_t1 = 464,
+    anc_prevalence_t2 = 475,
+    anc_art_coverage_t1 = 464,
+    anc_art_coverage_t2 = 475
+  )
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
+  with_mock("naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
+    model_run <- naomi_evaluate_promise(
+      run_model(data, options, output_path, output_spectrum, summary_path))
+  })
+  expect_equal(model_run$progress, c("Preparing input data", "Fitting the model",
+               "Generating uncertainty", "Preparing outputs"))
+})

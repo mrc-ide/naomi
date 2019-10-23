@@ -104,6 +104,8 @@ run_model <- function(data, options, output_path, spectrum_path,
 }
 
 progress <- function(message) {
-  signalCondition(structure(list(message = message),
+  withRestarts({
+    signalCondition(structure(list(message = message),
                             class = c("progress", "condition")))
+  }, muffleProgress = function(...) NULL)
 }

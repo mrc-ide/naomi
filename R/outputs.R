@@ -202,7 +202,7 @@ save_output_package <- function(naomi_output,
               single_csv)
 }
 
-save_output_indicators <- function(path, naomi_output) {
+save_result_summary <- function(path, naomi_output) {
   save_output(path, naomi_output, overwrite = FALSE, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE)
 }
