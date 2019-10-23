@@ -20,8 +20,6 @@
 run_model <- function(data, options, output_path, spectrum_path,
                       summary_path) {
 
-  ## Options will have previously been validated
-  ## TODO: What format do the progress messages have to adhere to?
   progress <- Progress$new()
   progress$start("Preparing input data")
   progress$print()
