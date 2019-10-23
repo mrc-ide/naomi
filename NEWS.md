@@ -1,3 +1,7 @@
+# naomi 0.0.11
+
+* Wrap model run in single function for use in hintr API
+
 # naomi 0.0.10
 
 * Use iso3 to locate country plotting metadata instead of country name
