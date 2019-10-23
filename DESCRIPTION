@@ -30,6 +30,7 @@ Imports:
     Matrix,
     methods,
     mvtnorm,
+    R6,
     rlang,
     sf,
     spdep,
@@ -48,7 +49,8 @@ Suggests:
     survey,
     testthat (>= 2.1.0),
     tidyverse,
-    viridis
+    viridis,
+    withr
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,

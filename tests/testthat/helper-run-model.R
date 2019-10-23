@@ -42,5 +42,9 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
        output = output,
        warnings = testthat:::get_messages(warnings$as_list()),
        messages = testthat:::get_messages(messages$as_list()),
-       progress = testthat:::get_messages(progress$as_list()))
+       progress = get_progress_messages(progress$as_list()))
+}
+
+get_progress_messages <- function(x) {
+  lapply(x, "[[", "message")
 }

@@ -142,6 +142,25 @@ test_that_with_mock("progress messages are printed", {
     model_run <- naomi_evaluate_promise(
       run_model(data, options, output_path, output_spectrum, summary_path))
   })
-  expect_equal(model_run$progress, c("Preparing input data", "Fitting the model",
-               "Generating uncertainty", "Preparing outputs"))
+  expect_equal(length(model_run$progress), 5)
+  for (step in model_run$progress) {
+    expect_equal(step[[1]]$name, "Preparing input data")
+    expect_equal(step[[2]]$name, "Fitting the model")
+    expect_equal(step[[3]]$name, "Generating uncertainty ranges")
+    expect_equal(step[[4]]$name, "Preparing outputs")
+  }
+  first_message <- model_run$progress[[1]]
+  ## 4 different states
+  expect_equal(length(first_message), 4)
+  expect_true(first_message[[1]]$started)
+  expect_false(first_message[[1]]$completed)
+  expect_false(first_message[[2]]$started)
+  expect_false(first_message[[2]]$completed)
+
+  second_message <- model_run$progress[[2]]
+  expect_equal(length(second_message), 4)
+  expect_true(second_message[[1]]$started)
+  expect_true(second_message[[1]]$completed)
+  expect_true(second_message[[2]]$started)
+  expect_false(second_message[[2]]$completed)
 })

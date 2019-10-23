@@ -22,7 +22,9 @@ run_model <- function(data, options, output_path, spectrum_path,
 
   ## Options will have previously been validated
   ## TODO: What format do the progress messages have to adhere to?
-  progress("Preparing input data")
+  progress <- Progress$new()
+  progress$start("Preparing input data")
+  progress$print()
   area_merged <- sf::read_sf(data$shape)
   areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
@@ -85,27 +87,80 @@ run_model <- function(data, options, output_path, spectrum_path,
 
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
-  progress("Fitting the model")
+  progress$complete("Preparing input data")
+  progress$start("Fitting the model")
+  progress$print()
   fit <- fit_tmb(tmb_inputs)
 
-  progress("Generating uncertainty")
+  progress$complete("Fitting the model")
+  progress$start("Generating uncertainty ranges")
+  progress$print()
   fit <- sample_tmb(fit)
 
-  progress("Preparing outputs")
+  progress$complete("Generating uncertainty ranges")
+  progress$start("Preparing outputs")
+  progress$print()
   outputs <- output_package(fit, naomi_mf, areas)
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
   save_result_summary(summary_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
 
+  progress$complete("Preparing outputs")
+  progress$print()
   list(output_path = output_path,
        spectrum_path = spectrum_path,
        summary_path = summary_path)
 }
 
-progress <- function(message) {
-  withRestarts({
-    signalCondition(structure(list(message = message),
-                            class = c("progress", "condition")))
-  }, muffleProgress = function(...) NULL)
-}
+Progress <- R6::R6Class("Progress", list(
+  progress = NULL,
+  initialize = function() {
+    self$progress <-
+      list(
+        list(
+          started = FALSE,
+          completed = FALSE,
+          name = "Preparing input data"
+        ),
+        list(
+          started = FALSE,
+          completed = FALSE,
+          name = "Fitting the model"
+        ),
+        list(
+          started = FALSE,
+          completed = FALSE,
+          name = "Generating uncertainty ranges"
+        ),
+        list(
+          started = FALSE,
+          completed = FALSE,
+          name = "Preparing outputs"
+        )
+      )
+  },
+  start = function(message) {
+    index <- self$find_step(message)
+    self$progress[[index]]$started <- TRUE
+  },
+  complete = function(message) {
+    index <- self$find_step(message)
+    self$progress[[index]]$completed <- TRUE
+  },
+  find_step = function(message) {
+    steps <- vapply(self$progress, function(step) {
+      step$name == message
+    }, logical(1))
+    if (sum(steps) != 1) {
+      stop(sprintf("Found %s steps matching message %s.", sum(steps), message))
+    }
+    step <- which(steps)
+  },
+  print = function() {
+    withRestarts({
+      signalCondition(structure(list(message = self$progress),
+                                class = c("progress", "condition")))
+    }, muffleProgress = function(...) NULL)
+  }
+))
