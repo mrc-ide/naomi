@@ -1,3 +1,7 @@
+# naomi 0.0.10
+
+* Use iso3 to locate country plotting metadata instead of country name
+
 # naomi 0.0.9
 
 * Plotting metadata now returns default if country is missing from config

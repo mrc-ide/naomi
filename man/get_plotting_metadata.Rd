@@ -4,10 +4,10 @@
 \alias{get_plotting_metadata}
 \title{Get plotting metadata for a particular country}
 \usage{
-get_plotting_metadata(country)
+get_plotting_metadata(iso3)
 }
 \arguments{
-\item{country}{Country to get metadata for or blank for default
+\item{iso3}{iso3 code of country to get metadata for or blank for default
 configuration.}
 }
 \value{
@@ -19,5 +19,5 @@ scheme to use for that country and indicator.
 Get plotting metadata for a particular country
 }
 \examples{
-get_plotting_metadata("Malawi")
+get_plotting_metadata("MWI")
 }
