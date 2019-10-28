@@ -29,7 +29,7 @@ test_that("model can be run", {
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
-  model_run <- run_model(data, options, output_path, output_spectrum,
+  model_run <- hintr_run_model(data, options, output_path, output_spectrum,
                          summary_path)
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "summary_path"))
@@ -80,7 +80,7 @@ test_that("model can be run without programme data", {
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
-  model_run <- run_model(data, options, output_path, output_spectrum,
+  model_run <- hintr_run_model(data, options, output_path, output_spectrum,
                          summary_path)
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "summary_path"))
@@ -141,7 +141,7 @@ test_that("progress messages are printed", {
   summary_path <- tempfile(fileext = ".zip")
   with_mock("naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
     model_run <- naomi_evaluate_promise(
-      run_model(data, options, output_path, output_spectrum, summary_path))
+      hintr_run_model(data, options, output_path, output_spectrum, summary_path))
   })
   expect_equal(length(model_run$progress), 5)
   for (step in model_run$progress) {

@@ -17,7 +17,7 @@
 #' @return Paths to 3 output files.
 #' @export
 #'
-run_model <- function(data, options, output_path, spectrum_path,
+hintr_run_model <- function(data, options, output_path, spectrum_path,
                       summary_path) {
 
   progress <- Progress$new()
