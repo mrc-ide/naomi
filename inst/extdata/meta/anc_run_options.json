@@ -10,9 +10,8 @@
           "label": "Time 1",
           "type": "select",
           "helpText": "Quarter matching midpoint of survey",
-          "options": [
-            <anc_prevalence_t1_options>
-          ],
+          "options":
+            <anc_prevalence_t1_options>,
           "required": false
         },
         {
@@ -20,9 +19,8 @@
           "label": "Time 2",
           "type": "select",
           "helpText": "Quarter matching midpoint of survey",
-          "options": [
-            <anc_prevalence_t2_options>
-          ],
+          "options":
+            <anc_prevalence_t2_options>,
           "required": false
         }
       ]
@@ -35,9 +33,8 @@
           "label": "Time 1",
           "type": "select",
           "helpText": "Quarter matching midpoint of survey",
-          "options": [
-            <anc_art_coverage_t1_options>
-          ],
+          "options":
+            <anc_art_coverage_t1_options>,
           "required": false
         },
         {
@@ -45,9 +42,8 @@
           "label": "Time 2",
           "type": "select",
           "helpText": "Quarter matching midpoint of survey",
-          "options": [
-            <anc_art_coverage_t2_options>
-          ],
+          "options":
+            <anc_art_coverage_t2_options>,
           "required": false
         }
       ]

@@ -8,9 +8,8 @@
         {
           "name": "area_scope",
           "type": "multiselect",
-          "options": [
-            <area_scope_options>
-          ],
+          "options": 
+            <area_scope_options>,
           "value": <area_scope_default>,
           "required": true
         }
@@ -22,9 +21,8 @@
         {
           "name": "area_level",
           "type": "select",
-          "options": [
-            <area_level_options>
-          ],
+          "options": 
+            <area_level_options>,
           "required": true
         }
       ]
@@ -35,9 +33,8 @@
         {
           "name": "t1",
           "type": "select",
-          "options": [
-            <t1_options>
-          ],
+          "options": 
+            <t1_options>,
           "required": true
         }
       ]
@@ -48,9 +45,8 @@
         {
           "name": "t2",
           "type": "select",
-          "options": [
-            <t2_options>
-          ],
+          "options":
+            <t2_options>,
           "required": true
         }
       ]
