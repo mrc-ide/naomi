@@ -110,6 +110,7 @@ test_that("model can be run without programme data", {
 })
 
 test_that("progress messages are printed", {
+  skip_on_covr()
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
