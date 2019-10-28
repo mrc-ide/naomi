@@ -11,7 +11,7 @@
           "options": [
             <area_scope_options>
           ],
-          "default": <area_scope_default>,
+          "value": <area_scope_default>,
           "required": true
         }
       ]
