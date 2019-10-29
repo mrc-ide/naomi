@@ -15,7 +15,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories:
-    https://inla.r-inla-download.org/R/stable
+    https://inla.r-inla-download.org/R/stable,
+    https://mrc-ide.github.io/drat
 Imports: 
     assertthat,
     data.tree,
