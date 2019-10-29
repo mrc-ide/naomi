@@ -27,7 +27,7 @@ hintr_run_model <- function(data, options, output_path, spectrum_path,
   areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
-  art_number <- readr::read_csv(data$art)
+  art_number <- readr::read_csv(data$programme)
   anc <- readr::read_csv(data$anc)
 
   spec <- extract_pjnz_naomi(data$pjnz)

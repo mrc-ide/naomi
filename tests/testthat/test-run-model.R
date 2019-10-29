@@ -6,7 +6,7 @@ test_that("model can be run", {
     population = system_file("extdata/population/population_agesex.csv"),
     shape = file.path("testdata/malawi.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    art = system_file("extdata/programme/art_number.csv"),
+    programme = system_file("extdata/programme/art_number.csv"),
     anc = system_file("extdata/programme/anc_testing.csv")
   )
   options <- list(
@@ -116,7 +116,7 @@ test_that("progress messages are printed", {
     population = system_file("extdata/population/population_agesex.csv"),
     shape = file.path("testdata/malawi.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    art = system_file("extdata/programme/art_number.csv"),
+    programme = system_file("extdata/programme/art_number.csv"),
     anc = system_file("extdata/programme/anc_testing.csv")
   )
   options <- list(
