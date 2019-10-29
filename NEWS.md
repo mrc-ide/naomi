@@ -1,3 +1,7 @@
+# naomi 0.0.11
+
+* Fix issues with naomi model run options schema templates
+
 # naomi 0.0.10
 
 * Use iso3 to locate country plotting metadata instead of country name
