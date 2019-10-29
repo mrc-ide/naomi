@@ -8,9 +8,8 @@
         {
           "name": "survey_prevalence",
           "type": "select",
-          "options": [
-            <survey_prevalence_options>
-          ],
+          "options":
+            <survey_prevalence_options>,
           "required": true
         }
       ]
@@ -21,9 +20,8 @@
         {
           "name": "survey_art_coverage",
           "type": "select",
-          "options": [
-            <survey_art_coverage_options>
-          ],
+          "options":
+            <survey_art_coverage_options>,
           "required": false
         }
       ]
@@ -34,9 +32,8 @@
         {
           "name": "survey_vls",
           "type": "select",
-          "options": [
-            <survey_vls_options>
-          ],
+          "options":
+            <survey_vls_options>,
           "required": false
         }
       ]
@@ -47,9 +44,8 @@
         {
           "name": "survey_recently_infected",
           "type": "select",
-          "options": [
-            <survey_recently_infected_options>
-          ],
+          "options":
+            <survey_recently_infected_options>,
           "required": false
         }
       ]
@@ -60,9 +56,8 @@
         {
           "name": "survey_art_or_vls",
           "type": "select",
-          "options": [
-            <survey_art_or_vls_options>
-          ],
+          "options":
+            <survey_art_or_vls_options>,
           "required": true
         }
       ]

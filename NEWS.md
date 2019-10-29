@@ -1,6 +1,10 @@
-# naomi 0.0.11
+# naomi 0.0.12
 
 * Wrap model run in single function for use in hintr API
+
+# naomi 0.0.11
+
+* Fix issues with naomi model run options schema templates
 
 # naomi 0.0.10
 
