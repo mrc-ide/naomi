@@ -220,9 +220,12 @@ save_output <- function(path,
                         boundary_format = "geojson",
                         single_csv = FALSE) {
   stopifnot(inherits(naomi_output, "naomi_output"))
-  if(file.access(path, 0) == 0 && !overwrite) {
+  if (file.access(path, 0) == 0 && !overwrite) {
     stop(paste(
       "File", path, "already exists. Set overwrite = TRUE to write output."))
+  }
+  if (file.access(path, 0) == -1) {
+    invisible(file.create(path))
   }
 
 
