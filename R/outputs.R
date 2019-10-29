@@ -192,42 +192,42 @@ save_output_package <- function(naomi_output,
                                 boundary_format = "geojson",
                                 single_csv = FALSE) {
 
-  dir <- normalizePath(dir)
-  if(!file.access(dir, 2) == 0) {
-    stop(paste("Directory", dir, "is not writable."))
-  }
-
-  path <- file.path(dir, paste0(filename, ".zip"))
-  save_output(path, naomi_output, overwrite, with_labels, boundary_format,
+  save_output(filename, dir, naomi_output, overwrite, with_labels, boundary_format,
               single_csv)
 }
 
 save_result_summary <- function(path, naomi_output) {
-  save_output(path, naomi_output, overwrite = FALSE, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
 }
 
 save_output_spectrum <- function(path, naomi_output) {
-  save_output(path, naomi_output, overwrite = FALSE, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
 }
 
 
-save_output <- function(path,
+save_output <- function(filename, dir,
                         naomi_output,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
                         single_csv = FALSE) {
+  dir <- normalizePath(dir)
+  if(!file.access(dir, 2) == 0) {
+    stop(paste("Directory", dir, "is not writable."))
+  }
+  if (!grepl(".zip", filename)) {
+    filename <- paste0(filename, ".zip")
+  }
+  path <- file.path(dir, filename)
   stopifnot(inherits(naomi_output, "naomi_output"))
   if (file.access(path, 0) == 0 && !overwrite) {
     stop(paste(
       "File", path, "already exists. Set overwrite = TRUE to write output."))
   }
-  if (file.access(path, 0) == -1) {
-    invisible(file.create(path))
-  }
-
 
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
