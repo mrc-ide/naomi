@@ -17,8 +17,9 @@
 #' @return Paths to 3 output files.
 #' @export
 #'
-hintr_run_model <- function(data, options, output_path, spectrum_path,
-                      summary_path) {
+hintr_run_model <- function(data, options, output_path = tempfile(),
+                            spectrum_path = tempfile(fileext = ".zip"),
+                            summary_path = tempfile(fileext = ".zip")) {
 
   progress <- new_progress()
   progress$start("Preparing input data")
