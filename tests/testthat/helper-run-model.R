@@ -48,3 +48,18 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
 get_progress_messages <- function(x) {
   lapply(x, "[[", "message")
 }
+
+MockProgress <- R6::R6Class(
+  "MockProgress",
+  inherit = Progress,
+  cloneable = FALSE,
+  public = list(
+    ## Wrap print message in a with restarts so we can capture messages for
+    ## testing
+    print = function() {
+      withRestarts({
+        super$print()
+      }, muffleProgress = function(...) NULL)
+    }
+  )
+)

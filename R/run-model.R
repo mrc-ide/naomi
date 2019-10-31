@@ -20,7 +20,7 @@
 hintr_run_model <- function(data, options, output_path, spectrum_path,
                       summary_path) {
 
-  progress <- Progress$new()
+  progress <- new_progress()
   progress$start("Preparing input data")
   progress$print()
   area_merged <- sf::read_sf(data$shape)
@@ -109,6 +109,10 @@ hintr_run_model <- function(data, options, output_path, spectrum_path,
   list(output_path = output_path,
        spectrum_path = spectrum_path,
        summary_path = summary_path)
+}
+
+new_progress <- function() {
+  Progress$new()
 }
 
 Progress <- R6::R6Class("Progress", list(

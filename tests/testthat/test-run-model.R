@@ -111,6 +111,8 @@ test_that("model can be run without programme data", {
 
 test_that("progress messages are printed", {
   skip_on_covr()
+  mock_new_progress <- mockery::mock(MockProgress$new())
+
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
@@ -139,7 +141,8 @@ test_that("progress messages are printed", {
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
-  with_mock("naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
+  with_mock("naomi:::new_progress" = mock_new_progress,
+            "naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
     model_run <- naomi_evaluate_promise(
       hintr_run_model(data, options, output_path, output_spectrum, summary_path))
   })
