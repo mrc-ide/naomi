@@ -117,6 +117,7 @@ expand_survey_clusters <- function(survey_clusters,
 #' @param area_top_level Area top level.
 #' @param area_bottom_level Area bottom level.
 #'
+#' @export
 calc_survey_hiv_indicators <- function(survey_meta,
                                        survey_regions,
                                        survey_clusters,
@@ -239,7 +240,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
              by = c("indicator", "survey_id", "area_id", "sex", "age_group_id")
            ) %>%
     dplyr::left_join(
-             survey_meta %>% select(iso3, survey_id, survey_year),
+             survey_meta %>% select(survey_id, survey_year),
              by = c("survey_id")
     ) %>%
     dplyr::left_join(
@@ -248,7 +249,6 @@ calc_survey_hiv_indicators <- function(survey_meta,
              by = c("area_id")
            ) %>%
     dplyr::arrange(
-             iso3,
              fct_relevel(indicator, "prev", "artcov", "vls", "recent"),
              survey_id,
              survey_year,
@@ -259,7 +259,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
              age_group_id
            ) %>%
     dplyr::select(
-             indicator, iso3, survey_id, survey_year, area_id, sex, age_group_id,
+             indicator, survey_id, survey_year, area_id, sex, age_group_id,
              n_cluster, n_obs, est, se) %>%
     dplyr::distinct() %>%
     dplyr::mutate(
