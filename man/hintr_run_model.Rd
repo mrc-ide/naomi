@@ -4,7 +4,9 @@
 \alias{hintr_run_model}
 \title{Run the model and save output to file}
 \usage{
-hintr_run_model(data, options, output_path, spectrum_path, summary_path)
+hintr_run_model(data, options, output_path = tempfile(),
+  spectrum_path = tempfile(fileext = ".zip"),
+  summary_path = tempfile(fileext = ".zip"))
 }
 \arguments{
 \item{data}{List of paths to input data files. Must provide pjnz, shape,
