@@ -1,3 +1,7 @@
+# naomi 0.0.13
+
+* Set default args for hintr model run function
+
 # naomi 0.0.12
 
 * Wrap model run in single function for use in hintr API
