@@ -231,8 +231,8 @@ calc_survey_hiv_indicators <- function(survey_meta,
   }
 
   options(survey.lonely.psu="adjust")
-  est_spl <- parallel::mclapply(datspl, do_svymean,
-                                mc.cores = parallel::detectCores())
+  mc.cores <- if(.Platform$OS.type == "windows") 1 else parallel::detectCores()
+  est_spl <- parallel::mclapply(datspl, do_svymean, mc.cores = mc.cores)
 
   val <- cnt %>%
     dplyr::full_join(
