@@ -93,7 +93,7 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
     sf::st_as_sf()
 
   meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
-    mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
+    dplyr::mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
 
   meta_age_group <- get_age_groups()
 
@@ -192,21 +192,44 @@ save_output_package <- function(naomi_output,
                                 boundary_format = "geojson",
                                 single_csv = FALSE) {
 
-  stopifnot(inherits(naomi_output, "naomi_output"))
+  save_output(filename, dir, naomi_output, overwrite, with_labels, boundary_format,
+              single_csv)
+}
 
+save_result_summary <- function(path, naomi_output) {
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
+}
+
+save_output_spectrum <- function(path, naomi_output) {
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
+}
+
+
+save_output <- function(filename, dir,
+                        naomi_output,
+                        overwrite = FALSE,
+                        with_labels = FALSE,
+                        boundary_format = "geojson",
+                        single_csv = FALSE) {
   dir <- normalizePath(dir)
   if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
   }
-
-  path <- file.path(dir, paste0(filename, ".zip"))
-  if(file.access(path, 0) == 0 && !overwrite) {
+  if (!grepl(".zip", filename)) {
+    filename <- paste0(filename, ".zip")
+  }
+  path <- file.path(dir, filename)
+  stopifnot(inherits(naomi_output, "naomi_output"))
+  if (file.access(path, 0) == 0 && !overwrite) {
     stop(paste(
       "File", path, "already exists. Set overwrite = TRUE to write output."))
   }
 
-
-  if(with_labels){
+  if (with_labels) {
     indicators <- add_output_labels(naomi_output)
   } else {
     indicators <- naomi_output$indicators
@@ -228,10 +251,10 @@ save_output_package <- function(naomi_output,
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
-        st_write(naomi_output$meta_area, "boundaries.geojson")
+        sf::st_write(naomi_output$meta_area, "boundaries.geojson")
       } else if(boundary_format == "shp") {
         dir.create("shp")
-        st_write(naomi_output$meta_area, "shp/boundaries.shp")
+        sf::st_write(naomi_output$meta_area, "shp/boundaries.shp")
       } else {
         stop(paste("Boundary file format", boundary_format, "not recognized.",
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
@@ -242,6 +265,7 @@ save_output_package <- function(naomi_output,
   utils::zip(path, list.files())
   path
 }
+
 
 #' @rdname save_output_package
 #' @param path Path to output zip file.

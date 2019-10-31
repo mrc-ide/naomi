@@ -27,3 +27,7 @@ covr::report(cov)
 ### Website
 
 A [pkgdown website](https://mrc-ide.github.io/naomi) is available for the package. To update the website using most recent docs and vignettes type `make website` on the command line from the root directory. Note that to see the effects in place immediately you may need to refresh the browser cache by opening developer console and right click refresh button -> Empty Cache and Hard Reload.
+
+### Generating test data
+
+Run `./scripts/build_test_data` to run the model and output the fit data. This will speed up some tests and stop the model fitting and uncertainty calculations being done every time. This data is not on github as it is quite large ~ 220MB for Malawi
