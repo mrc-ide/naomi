@@ -161,9 +161,7 @@ Progress <- R6::R6Class("Progress", list(
     step <- which(steps)
   },
   print = function() {
-    withRestarts({
-      signalCondition(structure(list(message = self$progress),
-                                class = c("progress", "condition")))
-    }, muffleProgress = function(...) NULL)
+    signalCondition(structure(list(message = self$progress),
+                              class = c("progress", "condition")))
   }
 ))
