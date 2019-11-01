@@ -17,8 +17,9 @@
 #' @return Paths to 3 output files.
 #' @export
 #'
-hintr_run_model <- function(data, options, output_path, spectrum_path,
-                      summary_path) {
+hintr_run_model <- function(data, options, output_path = tempfile(),
+                            spectrum_path = tempfile(fileext = ".zip"),
+                            summary_path = tempfile(fileext = ".zip")) {
 
   progress <- new_progress()
   progress$start("Preparing input data")
@@ -160,9 +161,7 @@ Progress <- R6::R6Class("Progress", list(
     step <- which(steps)
   },
   print = function() {
-    withRestarts({
-      signalCondition(structure(list(message = self$progress),
-                                class = c("progress", "condition")))
-    }, muffleProgress = function(...) NULL)
+    signalCondition(structure(list(message = self$progress),
+                              class = c("progress", "condition")))
   }
 ))
