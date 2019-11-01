@@ -123,22 +123,22 @@ Progress <- R6::R6Class("Progress", list(
       list(
         list(
           started = FALSE,
-          completed = FALSE,
+          complete = FALSE,
           name = "Preparing input data"
         ),
         list(
           started = FALSE,
-          completed = FALSE,
+          complete = FALSE,
           name = "Fitting the model"
         ),
         list(
           started = FALSE,
-          completed = FALSE,
+          complete = FALSE,
           name = "Generating uncertainty ranges"
         ),
         list(
           started = FALSE,
-          completed = FALSE,
+          complete = FALSE,
           name = "Preparing outputs"
         )
       )
@@ -149,7 +149,7 @@ Progress <- R6::R6Class("Progress", list(
   },
   complete = function(message) {
     index <- self$find_step(message)
-    self$progress[[index]]$completed <- TRUE
+    self$progress[[index]]$complete <- TRUE
   },
   find_step = function(message) {
     steps <- vapply(self$progress, function(step) {

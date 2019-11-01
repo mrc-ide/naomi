@@ -157,14 +157,14 @@ test_that("progress messages are printed", {
   ## 4 different states
   expect_equal(length(first_message), 4)
   expect_true(first_message[[1]]$started)
-  expect_false(first_message[[1]]$completed)
+  expect_false(first_message[[1]]$complete)
   expect_false(first_message[[2]]$started)
-  expect_false(first_message[[2]]$completed)
+  expect_false(first_message[[2]]$complete)
 
   second_message <- model_run$progress[[2]]
   expect_equal(length(second_message), 4)
   expect_true(second_message[[1]]$started)
-  expect_true(second_message[[1]]$completed)
+  expect_true(second_message[[1]]$complete)
   expect_true(second_message[[2]]$started)
-  expect_false(second_message[[2]]$completed)
+  expect_false(second_message[[2]]$complete)
 })
