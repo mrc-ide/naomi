@@ -1,3 +1,7 @@
+# naomi 0.0.14
+
+* Update progress message
+
 # naomi 0.0.13
 
 * Set default args for hintr model run function
