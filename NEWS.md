@@ -1,3 +1,7 @@
+# naomi 0.0.15
+
+* Allow passing no of samples in model run options
+
 # naomi 0.0.14
 
 * Update progress message
