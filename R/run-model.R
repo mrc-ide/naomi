@@ -20,7 +20,7 @@
 hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
                             summary_path = tempfile(fileext = ".zip")) {
-
+  INLA:::inla.dynload.workaround()
   progress <- new_progress()
   progress$start("Preparing input data")
   progress$print()
