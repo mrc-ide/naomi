@@ -24,7 +24,8 @@ test_that("model can be run", {
     anc_prevalence_t1 = 464,
     anc_prevalence_t2 = 475,
     anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475
+    anc_art_coverage_t2 = 475,
+    no_of_samples = 20
   )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -75,7 +76,8 @@ test_that("model can be run without programme data", {
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage"
+    survey_art_or_vls = "art_coverage",
+    no_of_samples = 20
   )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -136,7 +138,8 @@ test_that("progress messages are printed", {
     anc_prevalence_t1 = 464,
     anc_prevalence_t2 = 475,
     anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475
+    anc_art_coverage_t2 = 475,
+    no_of_samples = 20
   )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
