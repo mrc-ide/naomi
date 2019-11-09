@@ -4,7 +4,12 @@
 \alias{get_model_options_template}
 \title{Get JSON template representing model run options}
 \usage{
-get_model_options_template()
+get_model_options_template(art, anc)
+}
+\arguments{
+\item{art}{If FALSE then don't return template for ART control section.}
+
+\item{anc}{If FALSE then don't return template for ANC control section.}
 }
 \value{
 Model run options template.
@@ -15,5 +20,6 @@ front end should display input options. Returns template for the API to
 enrich with model options.
 }
 \examples{
-get_model_options_template()
+get_model_options_template(TRUE, TRUE)
+get_model_options_template(FALSE, FALSE)
 }

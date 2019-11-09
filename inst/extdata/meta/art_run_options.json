@@ -1,0 +1,29 @@
+{
+  "label": "ART",
+  "description": "Optionally select which quarter of data to use at time point 1 and 2",
+  "controlGroups": [
+    {
+      "label": "Number on ART",
+      "controls": [
+        {
+          "name": "art_t1",
+          "label": "Year midpoint of survey",
+          "type": "select",
+          "helpText": "Select year of input ART data at the midpoint of survey data",
+          "options":
+            <art_t1_options>,
+          "required": false
+        },
+        {
+          "name": "art_t2",
+          "label": "Year to generate estimates",
+          "type": "select",
+          "helpText": "Select year of input ART data at which to generate estimates",
+          "options":
+            <art_t2_options>,
+          "required": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "label": "Survey",
+  "description": "Select which survey to use for each indicator and whether to run the model with survey ART coverage or VLS.",
+  "controlGroups": [
+    {
+      "label": "Prevalence",
+      "controls": [
+        {
+          "name": "survey_prevalence",
+          "type": "select",
+          "options":
+            <survey_prevalence_options>,
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "ART coverage",
+      "controls": [
+        {
+          "name": "survey_art_coverage",
+          "type": "select",
+          "options":
+            <survey_art_coverage_options>,
+          "required": false
+        }
+      ]
+    },
+    {
+      "label": "VLS (viral load suppression)",
+      "controls": [
+        {
+          "name": "survey_vls",
+          "type": "select",
+          "options":
+            <survey_vls_options>,
+          "required": false
+        }
+      ]
+    },
+    {
+      "label": "Proportion recently infected",
+      "controls": [
+        {
+          "name": "survey_recently_infected",
+          "type": "select",
+          "options":
+            <survey_recently_infected_options>,
+          "required": false
+        }
+      ]
+    },
+    {
+      "label": "ART coverage or VLS",
+      "controls": [
+        {
+          "name": "survey_art_or_vls",
+          "type": "select",
+          "options":
+            <survey_art_or_vls_options>,
+          "required": true
+        }
+      ]
+    }
+  ]
+}
+

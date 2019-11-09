@@ -2,12 +2,13 @@
 % Please edit documentation in R/metadata.R
 \name{get_plotting_metadata}
 \alias{get_plotting_metadata}
-\title{Get plotting metadata for a particualr country}
+\title{Get plotting metadata for a particular country}
 \usage{
-get_plotting_metadata(country)
+get_plotting_metadata(iso3)
 }
 \arguments{
-\item{country}{Country to get metadata for}
+\item{iso3}{iso3 code of country to get metadata for or blank for default
+configuration.}
 }
 \value{
 List of plotting metadata about how to locate data for a specific
@@ -15,8 +16,8 @@ indicator, data type and plot type. Also returns metadata about colour
 scheme to use for that country and indicator.
 }
 \description{
-Get plotting metadata for a particualr country
+Get plotting metadata for a particular country
 }
 \examples{
-get_plotting_metadata("Malawi")
+get_plotting_metadata("MWI")
 }

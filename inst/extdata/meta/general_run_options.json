@@ -1,0 +1,55 @@
+{
+  "label": "General",
+  "description": "Select general model options:",
+  "controlGroups": [
+    {
+      "label": "Area scope",
+      "controls": [
+        {
+          "name": "area_scope",
+          "type": "multiselect",
+          "options": 
+            <area_scope_options>,
+          "value": <area_scope_default>,
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "Area level",
+      "controls": [
+        {
+          "name": "area_level",
+          "type": "select",
+          "options": 
+            <area_level_options>,
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "Year midpoint of survey",
+      "controls": [
+        {
+          "name": "t1",
+          "type": "select",
+          "options": 
+            <t1_options>,
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "Year to generate estimates",
+      "controls": [
+        {
+          "name": "t2",
+          "type": "select",
+          "options":
+            <t2_options>,
+          "required": true
+        }
+      ]
+    }
+  ]
+}

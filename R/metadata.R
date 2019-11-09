@@ -1,6 +1,7 @@
-#' Get plotting metadata for a particualr country
+#' Get plotting metadata for a particular country
 #'
-#' @param country Country to get metadata for
+#' @param iso3 iso3 code of country to get metadata for or blank for default
+#' configuration.
 #'
 #' @return List of plotting metadata about how to locate data for a specific
 #' indicator, data type and plot type. Also returns metadata about colour
@@ -9,29 +10,33 @@
 #' @export
 #'
 #' @examples
-#' get_plotting_metadata("Malawi")
-get_plotting_metadata <- function(country) {
+#' get_plotting_metadata("MWI")
+get_plotting_metadata <- function(iso3) {
   metadata <- get_metadata()
-  colour_scale <- get_colour_scale(country)
+  colour_scale <- get_colour_scale(iso3)
+  if (nrow(colour_scale) == 0) {
+    message(sprintf(
+      "Country with iso3 code %s not in metadata - returning default colour scales.", iso3))
+    colour_scale <- get_colour_scale()
+  }
   merge(x = metadata, y = colour_scale, by = "indicator")
 }
 
 #' Get colour scale and ranges for a particular country
 #'
-#' @param country Country to get scale for
+#' @param iso3 iso3 code of country to get metadata for or blank for default
+#' configuration.
 #'
 #' @return List of scale information including colour as a d3 scale chromatic
 #' function name, whether to invert the scale and a min and max value for the
 #' scale.
 #'
 #' @keywords internal
-get_colour_scale <- function(country) {
+get_colour_scale <- function(iso3 = "default") {
   scales <- naomi_read_csv(system_file("extdata", "meta", "colour_scales.csv"))
-  data <- scales[tolower(scales$country) == tolower(country), ]
-  if (nrow(data) == 0) {
-    stop(sprintf(
-      "Can't retrieve colour scale for country %s. Country not found in configuration.",
-      country))
+  data <- scales[tolower(scales$iso3) == tolower(iso3), ]
+  if (nrow(data) == 0 && iso3 == "default") {
+    stop(sprintf("Can't retrieve default colour scale. Check configuration."))
   }
   data
 }

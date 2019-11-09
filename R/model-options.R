@@ -4,13 +4,32 @@
 #' front end should display input options. Returns template for the API to
 #' enrich with model options.
 #'
+#' @param art If FALSE then don't return template for ART control section.
+#' @param anc If FALSE then don't return template for ANC control section.
+#'
 #' @return Model run options template.
 #' @export
 #'
 #' @examples
-#' get_model_options_template()
-get_model_options_template <- function() {
-  paste(readLines(
-    system_file("extdata", "meta", "model_run_options.json"),
+#' get_model_options_template(TRUE, TRUE)
+#' get_model_options_template(FALSE, FALSE)
+get_model_options_template <- function(art, anc) {
+  templates <- list()
+  templates$general <- paste(readLines(
+    system_file("extdata", "meta", "general_run_options.json"),
     encoding = "UTF-8"), collapse = "")
+  templates$survey <- paste(readLines(
+    system_file("extdata", "meta", "survey_run_options.json"),
+    encoding = "UTF-8"), collapse = "")
+  if (art) {
+    templates$art <- paste(readLines(
+      system_file("extdata", "meta", "art_run_options.json"),
+      encoding = "UTF-8"), collapse = "")
+  }
+  if (anc) {
+    templates$anc <- paste(readLines(
+      system_file("extdata", "meta", "anc_run_options.json"),
+      encoding = "UTF-8"), collapse = "")
+  }
+  templates
 }

@@ -1,19 +1,38 @@
 context("metadata")
 
 test_that("can retrieve indicator colour scales for a country", {
-  scale <- get_colour_scale("Malawi")
-  expect_true(all(c("country", "indicator", "colour", "min", "max",
+  scale <- get_colour_scale("MWI")
+  expect_true(all(c("iso3", "indicator", "colour", "min", "max",
                     "invert_scale") %in% names(scale)))
-  expect_true(all(scale$country == "Malawi"))
+  expect_true(all(scale$iso3 == "MWI"))
 })
 
-test_that("getting scale for missing indicator or country returns error", {
-  expect_error(get_colour_scale("missing"),
-    "Can't retrieve colour scale for country missing. Country not found in configuration.")
+test_that("can retrieve default colour scales", {
+  scale <- get_colour_scale()
+  expect_true(all(c("iso3", "indicator", "colour", "min", "max",
+                    "invert_scale") %in% names(scale)))
+  expect_true(all(scale$iso3 == "default"))
+})
+
+test_that("getting scale for missing country returns error empty data", {
+  missing <- get_colour_scale("missing")
+  expect_equal(names(missing),
+               c("iso3", "indicator", "colour", "min", "max","invert_scale"))
+  expect_equal(nrow(missing), 0)
+})
+
+test_that("default configuration missing throws an error", {
+  mock_naomi_read_csv <- mockery::mock(
+    data.frame(iso3 = c("MWI"), indicator = c("Test"),
+               stringsAsFactors = FALSE))
+  with_mock("naomi:::naomi_read_csv" = mock_naomi_read_csv, {
+    expect_error(get_colour_scale(),
+                 "Can't retrieve default colour scale. Check configuration.")
+  })
 })
 
 test_that("can get plot metadata for a country", {
-  metadata <- get_plotting_metadata("Malawi")
+  metadata <- get_plotting_metadata("MWI")
   expect_true(all(
     c("indicator", "data_type", "plot_type", "value_column", "indicator_column",
       "indicator_value", "name", "colour", "min", "max", "invert_scale") %in%
@@ -24,12 +43,26 @@ test_that("can get plot metadata for a country", {
                       "recent", "vls")))
 })
 
+test_that("can get plot metadata for missing country with defaults", {
+  metadata <- testthat::evaluate_promise(get_plotting_metadata("missing"))
+  expect_equal(metadata$messages,
+    "Country with iso3 code missing not in metadata - returning default colour scales.\n")
+  expect_true(all(
+    c("indicator", "data_type", "plot_type", "value_column", "indicator_column",
+      "indicator_value", "name", "colour", "min", "max", "invert_scale") %in%
+      names(metadata$result)))
+  expect_true(all(unique(metadata$result$indicator) %in%
+                    c("art_coverage", "current_art",  "prevalence", "art_number",
+                      "incidence", "new_infections", "plhiv", "population",
+                      "recent", "vls")))
+})
+
 test_that("colour scales metadata is well formed", {
   scales <- naomi_read_csv(system_file("extdata", "meta", "colour_scales.csv"))
   expect_true(all(scales$indicator %in%
     c("art_coverage", "current_art", "prevalence", "vls", "recent",
       "art_number", "plhiv", "incidence", "population", "new_infections")))
-  expect_equal(nrow(unique(scales[, c("country", "indicator")])), nrow(scales))
+  expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
   expect_true(all(scales$min >= 0))
