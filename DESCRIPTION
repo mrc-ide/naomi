@@ -43,6 +43,7 @@ Imports:
 Suggests: 
     covr,
     datamodelr,
+    DiagrammeR,
     knitr,
     mockery,
     rdhs,
