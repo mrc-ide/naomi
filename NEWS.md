@@ -1,3 +1,8 @@
+# naomi 0.0.16
+
+* Move metadata into directory separate from extdata
+* Add error_low and error_high columns to metadata
+
 # naomi 0.0.15
 
 * Allow passing no of samples in model run options
