@@ -34,8 +34,9 @@ test_that("default configuration missing throws an error", {
 test_that("can get plot metadata for a country", {
   metadata <- get_plotting_metadata("MWI")
   expect_true(all(
-    c("indicator", "data_type", "plot_type", "value_column", "indicator_column",
-      "indicator_value", "name", "colour", "min", "max", "invert_scale") %in%
+    c("indicator", "data_type", "plot_type", "value_column", "error_low_column",
+      "error_high_column", "indicator_column", "indicator_value", "name",
+      "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
   expect_true(all(unique(metadata$indicator) %in%
                     c("art_coverage", "current_art",  "prevalence", "art_number",
@@ -48,8 +49,9 @@ test_that("can get plot metadata for missing country with defaults", {
   expect_equal(metadata$messages,
     "Country with iso3 code missing not in metadata - returning default colour scales.\n")
   expect_true(all(
-    c("indicator", "data_type", "plot_type", "value_column", "indicator_column",
-      "indicator_value", "name", "colour", "min", "max", "invert_scale") %in%
+    c("indicator", "data_type", "plot_type", "value_column", "error_low_column",
+      "error_high_column", "indicator_column", "indicator_value", "name",
+      "colour", "min", "max", "invert_scale") %in%
       names(metadata$result)))
   expect_true(all(unique(metadata$result$indicator) %in%
                     c("art_coverage", "current_art",  "prevalence", "art_number",
@@ -58,7 +60,7 @@ test_that("can get plot metadata for missing country with defaults", {
 })
 
 test_that("colour scales metadata is well formed", {
-  scales <- naomi_read_csv(system_file("extdata", "meta", "colour_scales.csv"))
+  scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
   expect_true(all(scales$indicator %in%
     c("art_coverage", "current_art", "prevalence", "vls", "recent",
       "art_number", "plhiv", "incidence", "population", "new_infections")))
@@ -95,7 +97,8 @@ test_that("metadata is well formed", {
   ## No NULLs, NAs or empty strings except for indicator_column and
   ## indicator_value columns
   non_empty_columns <- colnames(
-    meta[, !(colnames(meta) %in% c("indicator_column", "indicator_value"))])
+    meta[, !(colnames(meta) %in% c("error_low_column", "error_high_column",
+                                   "indicator_column", "indicator_value"))])
   non_empty <- function(x) {
     !is.null(x) & !is.na(x) & !(x == "")
   }
