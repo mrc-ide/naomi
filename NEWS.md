@@ -1,3 +1,7 @@
+# naomi 0.0.17
+
+* Use annual programme data input instead of quarterly
+
 # naomi 0.0.16
 
 * Move metadata into directory separate from extdata

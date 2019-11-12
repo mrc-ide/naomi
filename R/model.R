@@ -377,8 +377,10 @@ select_naomi_data <- function(naomi_mf,
                               vls_survey_ids = NULL,
                               artnum_quarter_id_t1 = naomi_mf$quarter_id1,
                               artnum_quarter_id_t2 = naomi_mf$quarter_id2,
-                              anc_year_t1 = naomi_mf$quarter_id1 + -1:2,
-                              anc_year_t2 = naomi_mf$quarter_id2 + -1:2) {
+                              anc_prev_year_t1 = year_labels(naomi_mf$quarter_id1),
+                              anc_prev_year_t2 = year_labels(naomi_mf$quarter_id2),
+                              anc_artcov_year_t1 = anc_prev_year_t1,
+                              anc_artcov_year_t2 = anc_prev_year_t2) {
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
@@ -391,11 +393,11 @@ select_naomi_data <- function(naomi_mf,
   naomi_mf$recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
   naomi_mf$vls_dat <- survey_vls_mf(vls_survey_ids, survey_hiv_indicators, naomi_mf)
   
-  naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_year_t1, anc_testing, naomi_mf)
-  naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_year_t1, anc_testing, naomi_mf)
+  naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
+  naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
   
-  naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_year_t2, anc_testing, naomi_mf)
-  naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_year_t2, anc_testing, naomi_mf)
+  naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_testing, naomi_mf)
+  naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_testing, naomi_mf)
   
   naomi_mf$artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
   naomi_mf$artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)

@@ -20,6 +20,7 @@
 hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
                             summary_path = tempfile(fileext = ".zip")) {
+
   INLA:::inla.dynload.workaround()
   progress <- new_progress()
   progress$start("Preparing input data")
@@ -36,7 +37,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## TODO: Remove this filter - it is in temporarily as model does not run
   ## without it mrc-640
   art_number <- art_number %>%
-    dplyr::filter(age_group_id == 20)
+    dplyr::filter(age_group == "15+")
 
   ## Get from the options
   scope <- options$area_scope
@@ -52,12 +53,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   artnum_quarter_id_t1 <- options$art_t1
   artnum_quarter_id_t2 <- options$art_t2
 
-  ## TODO: make these single values once we have updated to using years instead
-  ## of quarter mrc-577
-  ## TODO: make anc prevalence and anc_art_coverage separate controls of quarter
-  ## in the naomi_model_frame code mrc-645
-  anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
-  anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
   anc_prevalence_t1 <- options$anc_prevalence_t1
   anc_prevalence_t2 <- options$anc_prevalence_t2
   anc_art_coverage_t1 <- options$anc_art_coverage_t1
@@ -81,8 +76,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                   vls_survey_ids,
                                   artnum_quarter_id_t1,
                                   artnum_quarter_id_t2,
-                                  anc_quarter_id_t1,
-                                  anc_quarter_id_t2)
+                                  anc_prevalence_t1,
+                                  anc_prevalence_t2,
+                                  anc_art_coverage_t1,
+                                  anc_art_coverage_t2)
 
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
