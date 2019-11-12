@@ -33,7 +33,7 @@ get_plotting_metadata <- function(iso3) {
 #'
 #' @keywords internal
 get_colour_scale <- function(iso3 = "default") {
-  scales <- naomi_read_csv(system_file("extdata", "meta", "colour_scales.csv"))
+  scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
   data <- scales[tolower(scales$iso3) == tolower(iso3), ]
   if (nrow(data) == 0 && iso3 == "default") {
     stop(sprintf("Can't retrieve default colour scale. Check configuration."))
@@ -51,6 +51,6 @@ get_colour_scale <- function(iso3 = "default") {
 #' @examples
 #' get_metadata()
 get_metadata <- function() {
-  naomi_read_csv(system_file("extdata", "meta", "metadata.csv"))
+  naomi_read_csv(system_file("metadata", "metadata.csv"))
 }
 

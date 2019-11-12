@@ -13,3 +13,4 @@
 ^outputs$
 ^vignettes_src$
 ^vignettes/model-workflow_cache$
+^tests/testthat/testdata/fit.RDS$

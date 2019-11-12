@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 0.0.11
+Version: 0.0.16
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -15,7 +15,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories:
-    https://inla.r-inla-download.org/R/stable
+    https://inla.r-inla-download.org/R/stable,
+    https://mrc-ide.github.io/drat
 Imports: 
     assertthat,
     data.tree,
@@ -30,6 +31,8 @@ Imports:
     Matrix,
     methods,
     mvtnorm,
+    R6,
+    readr,
     rlang,
     sf,
     spdep,
@@ -40,6 +43,7 @@ Imports:
 Suggests: 
     covr,
     datamodelr,
+    DiagrammeR,
     knitr,
     mockery,
     rdhs,
@@ -48,7 +52,8 @@ Suggests:
     survey,
     testthat (>= 2.1.0),
     tidyverse,
-    viridis
+    viridis,
+    withr
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,

@@ -1,3 +1,24 @@
+# naomi 0.0.16
+
+* Move metadata into directory separate from extdata
+* Add error_low and error_high columns to metadata
+
+# naomi 0.0.15
+
+* Allow passing no of samples in model run options
+
+# naomi 0.0.14
+
+* Update progress message
+
+# naomi 0.0.13
+
+* Set default args for hintr model run function
+
+# naomi 0.0.12
+
+* Wrap model run in single function for use in hintr API
+
 # naomi 0.0.11
 
 * Fix issues with naomi model run options schema templates
