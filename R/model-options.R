@@ -16,19 +16,19 @@
 get_model_options_template <- function(art, anc) {
   templates <- list()
   templates$general <- paste(readLines(
-    system_file("extdata", "meta", "general_run_options.json"),
+    system_file("metadata", "general_run_options.json"),
     encoding = "UTF-8"), collapse = "")
   templates$survey <- paste(readLines(
-    system_file("extdata", "meta", "survey_run_options.json"),
+    system_file("metadata", "survey_run_options.json"),
     encoding = "UTF-8"), collapse = "")
   if (art) {
     templates$art <- paste(readLines(
-      system_file("extdata", "meta", "art_run_options.json"),
+      system_file("metadata", "art_run_options.json"),
       encoding = "UTF-8"), collapse = "")
   }
   if (anc) {
     templates$anc <- paste(readLines(
-      system_file("extdata", "meta", "anc_run_options.json"),
+      system_file("metadata", "anc_run_options.json"),
       encoding = "UTF-8"), collapse = "")
   }
   templates
