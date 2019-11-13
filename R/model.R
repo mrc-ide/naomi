@@ -170,10 +170,6 @@ naomi_model_frame <- function(areas,
 
   ## Add population estimates
 
-  population_agesex <- population_agesex %>%
-   dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
-           calendar_quarter = NULL)
-
   mf_model <- mf_model %>%
     dplyr::left_join(
              population_agesex %>%

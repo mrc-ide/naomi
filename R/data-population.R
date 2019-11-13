@@ -120,18 +120,20 @@ calendar_quarter_to_quarter_id <- function(calendar_quarter) {
 #' @examples
 #' ## Interpolate Malawi population at level 2 (Zone) at two time points
 #' data(mwi_population_agesex)
-#' quarter_ids <- convert_quarter_id(c(2016, 2018), c(1, 3))
-#' pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
+#' calendar_quarters <- c("CY2016Q1", "CY2018Q3")
+#' pop_interp <- interpolate_population_agesex(mwi_population_agesex, calendar_quarters)
 #'
 #' @export
 interpolate_population_agesex <- function(population_agesex, calendar_quarters) {
 
   quarter_ids <- calendar_quarter_to_quarter_id(calendar_quarters)
-  dfall <- dplyr::distinct(dplyr::select(population_agesex, -quarter_id, -population))
+  dfall <- dplyr::distinct(dplyr::select(population_agesex, -calendar_quarter, -population))
 
-  df <- dplyr::select(population_agesex, quarter_id, area_id, source, sex, age_group, population)
+  df <- dplyr::select(population_agesex, calendar_quarter, area_id, source, sex, age_group, population) %>%
+    dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter))
 
-  tidyr::expand(df, quarter_id = quarter_ids,
+  tidyr::expand(df,
+                tidyr::nesting(calendar_quarter = calendar_quarters, quarter_id = quarter_ids),
                 tidyr::nesting(area_id, source, sex, age_group)) %>%
     dplyr::full_join(df, by = names(.)) %>%
     dplyr::group_by(area_id, source, sex, age_group) %>%
