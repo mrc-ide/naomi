@@ -2,6 +2,13 @@
 meta_indicator <-
   data.frame(
     indicator_id = 1:7,
+    indicator = c("population",
+                  "prevalence",
+                  "plhiv",
+                  "art_coverage",
+                  "artnum_resid",
+                  "incidence",
+                  "infections"),
     indicator_label = c("Population",
                         "HIV Prevalence",
                         "PLHIV",
@@ -31,15 +38,20 @@ meta_indicator <-
 
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
-  mf_out <- naomi_mf$mf_out
+  mf_out <- naomi_mf$mf_out %>%
+    dplyr::left_join(
+             dplyr::select(get_age_groups(), age_group_id, age_group),
+             by = "age_group_id") %>%
+    dplyr::select(-age_group_id)
+             
 
-  indicator_ids <- c("population_out" = 1,
-                     "rho_out" = 2,
-                     "plhiv_out" = 3,
-                     "alpha_out" = 4,
-                     "artnum_out" = 5,
-                     "lambda_out" = 6,
-                     "infections_out" = 7)
+  indicator_list <- c("population_out" = "population",
+                     "rho_out" = "prevalence",
+                     "plhiv_out" = "plhiv",
+                     "alpha_out" = "art_coverage",
+                     "artnum_out" = "artnum_resid",
+                     "lambda_out" = "incidence",
+                     "infections_out" = "infections")
 
   report <- naomi_fit$obj$report(naomi_fit$par.full)
 
@@ -47,7 +59,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     v <- dplyr::mutate(
       mf_out,
       calendar_quarter = naomi_mf$calendar_quarter1,
-      indicator_id = indicator_ids[varname],
+      indicator = indicator_list[varname],
       mode = report[[varname]]
     )
     if(!is.null(naomi_fit$sample)) {
@@ -65,7 +77,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     v
   }
 
-  indicators <- lapply(names(indicator_ids), get_est) %>%
+  indicators <- lapply(names(indicator_list), get_est) %>%
     dplyr::bind_rows()
 
   indicators
@@ -130,20 +142,20 @@ add_output_labels <- function(naomi_output) {
            ) %>%
     dplyr::left_join(
              naomi_output$meta_age_group %>%
-             dplyr::select(age_group_id, age_group_label, age_group_sort_order),
-             by = "age_group_id"
+             dplyr::select(age_group, age_group_label, age_group_sort_order),
+             by = "age_group"
            ) %>%
     dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
     dplyr::left_join(
              naomi_output$meta_indicator %>%
-             dplyr::select(indicator_id, indicator_label),
-             by = "indicator_id"
+             dplyr::select(indicator, indicator_label),
+             by = "indicator"
            ) %>%
     dplyr::arrange(
              area_level,
              area_sort_order,
              calendar_quarter,
-             indicator_id,
+             indicator,
              sex,
              age_group_sort_order
            ) %>%
@@ -153,11 +165,11 @@ add_output_labels <- function(naomi_output) {
              area_id,
              area_name,
              sex,
-             age_group_id,
+             age_group,
              age_group_label,
              calendar_quarter,
              quarter_label,
-             indicator_id,
+             indicator,
              indicator_label,
              mode,
              mean,
