@@ -10,5 +10,3 @@ naomi_mf <- naomi_model_frame(areas,
                               level = 4,
                               quarter_id1 = convert_quarter_id(2016, 1),
                               quarter_id2 = convert_quarter_id(2018, 3))
-
-
