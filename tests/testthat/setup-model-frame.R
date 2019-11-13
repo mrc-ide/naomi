@@ -8,5 +8,5 @@ naomi_mf <- naomi_model_frame(areas,
                               spec,
                               scope = "MWI",
                               level = 4,
-                              quarter_id1 = convert_quarter_id(2016, 1),
-                              quarter_id2 = convert_quarter_id(2018, 3))
+                              calendar_quarter1 = "CY2016Q1",
+                              calendar_quarter2 = "CY2018Q3")

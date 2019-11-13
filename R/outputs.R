@@ -46,7 +46,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   get_est <- function(varname) {
     v <- dplyr::mutate(
       mf_out,
-      quarter_id = naomi_mf$quarter_id1,
+      calendar_quarter = naomi_mf$calendar_quarter1,
       indicator_id = indicator_ids[varname],
       mode = report[[varname]]
     )
@@ -92,8 +92,8 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
 
-  meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
-    dplyr::mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
+  meta_period <- data.frame(calendar_quarter = c(naomi_mf$calendar_quarter1, naomi_mf$calendar_quarter2)) %>%
+    dplyr::mutate(quarter_label = naomi::quarter_year_labels(calendar_quarter_to_quarter_id(calendar_quarter)))
 
   meta_age_group <- get_age_groups()
 
@@ -133,7 +133,7 @@ add_output_labels <- function(naomi_output) {
              dplyr::select(age_group_id, age_group_label, age_group_sort_order),
              by = "age_group_id"
            ) %>%
-    dplyr::left_join(naomi_output$meta_period, by = "quarter_id") %>%
+    dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
     dplyr::left_join(
              naomi_output$meta_indicator %>%
              dplyr::select(indicator_id, indicator_label),
@@ -142,7 +142,7 @@ add_output_labels <- function(naomi_output) {
     dplyr::arrange(
              area_level,
              area_sort_order,
-             quarter_id,
+             calendar_quarter,
              indicator_id,
              sex,
              age_group_sort_order
@@ -155,7 +155,7 @@ add_output_labels <- function(naomi_output) {
              sex,
              age_group_id,
              age_group_label,
-             quarter_id,
+             calendar_quarter,
              quarter_label,
              indicator_id,
              indicator_label,

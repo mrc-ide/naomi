@@ -105,7 +105,7 @@ calendar_quarter_to_quarter_id <- function(calendar_quarter) {
 #' Log-linear interpolation of age/sex stratified population
 #'
 #' @param population_agesex a subset of the population_agesex.
-#' @param quarter_ids vector of quarter_ids to return interpolation.
+#' @param calendar_quarters vector of calendar quarters to return interpolation.
 #'
 #' @return
 #' A data.frame with same columns as pop_agesex interpolated to `times`.
@@ -123,8 +123,9 @@ calendar_quarter_to_quarter_id <- function(calendar_quarter) {
 #' pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
 #'
 #' @export
-interpolate_population_agesex <- function(population_agesex, quarter_ids) {
-    
+interpolate_population_agesex <- function(population_agesex, calendar_quarters) {
+
+  quarter_ids <- calendar_quarter_to_quarter_id(calendar_quarters)
   dfall <- dplyr::distinct(dplyr::select(population_agesex, -quarter_id, -population))
 
   df <- dplyr::select(population_agesex, quarter_id, area_id, source, sex, age_group, population)

@@ -24,15 +24,15 @@
 #'
 #' * area_scope
 #' * area_level
-#' * t1
-#' * t2
+#' * calendar_quarter_t1
+#' * calendar_quarter_t2
 #' * survey_prevalence
 #' * survey_art_coverage
 #' * survey_vls
 #' * survey_recently_infected
 #' * survey_art_or_vls
-#' * art_t1
-#' * art_t2
+#' * art_calendar_quarter1
+#' * art_calendar_quarter2
 #' * anc_prevalence_year1
 #' * anc_prevalence_year2
 #' * anc_art_coverage_year1
@@ -66,16 +66,16 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## Get from the options
   scope <- options$area_scope
   level <- options$area_level
-  quarter_id_t1 <- options$t1
-  quarter_id_t2 <- options$t2
+  calendar_quarter_t1 <- options$calendar_quarter_t1
+  calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
   artcov_survey_ids  <- options$survey_art_coverage
   vls_survey_ids <- NULL
   recent_survey_ids <- options$survey_recently_infected
   art_or_vls <- options$survey_art_or_vls
 
-  artnum_quarter_id_t1 <- options$art_t1
-  artnum_quarter_id_t2 <- options$art_t2
+  artnum_calendar_quarter1 <- options$art_calendar_quarter1
+  artnum_calendar_quarter2 <- options$art_calendar_quarter2
 
   anc_prevalence_year1 <- options$anc_prevalence_year1
   anc_prevalence_year2 <- options$anc_prevalence_year2
@@ -87,8 +87,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                 spec,
                                 scope = scope,
                                 level = level,
-                                quarter_id_t1,
-                                quarter_id_t2)
+                                calendar_quarter_t1,
+                                calendar_quarter_t2)
 
   naomi_data <- select_naomi_data(naomi_mf,
                                   survey,
@@ -98,8 +98,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                   artcov_survey_ids,
                                   recent_survey_ids,
                                   vls_survey_ids,
-                                  artnum_quarter_id_t1,
-                                  artnum_quarter_id_t2,
+                                  artnum_calendar_quarter1,
+                                  artnum_calendar_quarter2,
                                   anc_prevalence_year1,
                                   anc_prevalence_year2,
                                   anc_art_coverage_year1,

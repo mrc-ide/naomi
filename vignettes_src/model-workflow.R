@@ -95,8 +95,8 @@ spec <- extract_pjnz_naomi(pjnz)
 
 scope <- "MWI"
 level <- 4
-quarter_id_t1 <- convert_quarter_id(2016, 1)
-quarter_id_t2 <- convert_quarter_id(2018, 3)
+calendar_quarter_t1 <- "CY2016Q1"
+calendar_quarter_t2 <- "CY2018Q3"
 
 #' The following select data inputs to model fitting from the uploaded datasets.
 #' Providing `NULL` for any will exclude that data source from model fitting.
@@ -119,8 +119,8 @@ artcov_survey_ids  <- "MWI2016PHIA"
 vls_survey_ids <- NULL
 recent_survey_ids <- "MWI2016PHIA"
 
-artnum_quarter_id_t1 <- convert_quarter_id(2016, 1)
-artnum_quarter_id_t2 <- convert_quarter_id(2018, 3)
+artnum_calendar_quarter_t1 <- "CY2016Q1"
+artnum_calendar_quarter_t2 <- "CY2018Q3"
 
 anc_prevalence_year1 <- 2016
 anc_prevalence_year2 <- 2018
@@ -142,8 +142,8 @@ naomi_mf <- naomi_model_frame(areas,
                               spec,
                               scope = scope,
                               level = level,
-                              quarter_id_t1,
-                              quarter_id_t2)
+                              calendar_quarter_t1,
+                              calendar_quarter_t2)
 
 
 #' Prepare data inputs
@@ -156,8 +156,8 @@ naomi_data <- select_naomi_data(naomi_mf,
                                 artcov_survey_ids,
                                 recent_survey_ids,
                                 vls_survey_ids,
-                                artnum_quarter_id_t1,
-                                artnum_quarter_id_t2,
+                                artnum_calendar_quarter_t1,
+                                artnum_calendar_quarter_t2,
                                 anc_prevalence_year1,
                                 anc_prevalence_year2,
                                 anc_art_coverage_year1,

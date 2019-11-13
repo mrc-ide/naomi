@@ -104,8 +104,8 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param scope The collection of area IDs to be modelled. Defaults to all area
 #' ids.
 #' @param level Admin level
-#' @param quarter_id1 Quarter id1
-#' @param quarter_id2 Quarter id2
+#' @param calendar_quarter1 Calendar quarter at time 1 ("CYyyyyQq")
+#' @param calendar_quarter2 Calendar quarter at time 2 ("CYyyyyQq")
 #' @param age_group_ids Age group ids
 #' @param sexes Sexes
 #' @param omega Omega
@@ -122,8 +122,8 @@ naomi_model_frame <- function(areas,
                               spec,
                               scope = areas$tree$area_id,
                               level = max(areas$tree$Get("area_level")),
-                              quarter_id1,
-                              quarter_id2,
+                              calendar_quarter1,
+                              calendar_quarter2,
                               age_group_ids = 1:17,
                               sexes = c("male", "female"),
                               omega = 0.7,
@@ -178,7 +178,7 @@ naomi_model_frame <- function(areas,
     dplyr::left_join(
              population_agesex %>%
              dplyr::filter(area_id %in% mf_areas$area_id) %>%
-             interpolate_population_agesex(quarter_id1) %>%
+             interpolate_population_agesex(calendar_quarter1) %>%
              dplyr::left_join(
                       get_age_groups() %>% dplyr::select(age_group, age_group_id),
                       by = "age_group"
@@ -189,7 +189,7 @@ naomi_model_frame <- function(areas,
     dplyr::left_join(
              population_agesex %>%
              dplyr::filter(area_id %in% mf_areas$area_id) %>%
-             interpolate_population_agesex(quarter_id2) %>%
+             interpolate_population_agesex(calendar_quarter2) %>%
              dplyr::left_join(
                       get_age_groups() %>% dplyr::select(age_group, age_group_id),
                       by = "age_group"
@@ -329,8 +329,8 @@ naomi_model_frame <- function(areas,
             A_out = outf$A,
             age_group_ids = age_group_ids,
             sexes = sexes,
-            quarter_id1 = quarter_id1,
-            quarter_id2 = quarter_id2,
+            calendar_quarter1 = calendar_quarter1,
+            calendar_quarter2 = calendar_quarter2,
             omega = omega,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,
@@ -352,10 +352,12 @@ naomi_model_frame <- function(areas,
 #' @param artcov_survey_ids A character vector of `survey_id`s for ART coverage data.
 #' @param recent_survey_ids A character vector of `survey_id`s for recent HIV infection status.
 #' @param vls_survey_ids A character vector of `survey_id`s for survey VLS among all HIV+ persons.
-#' @param artnum_quarter_id_t1 Quarter ID for first time point for number on ART.
-#' @param artnum_quarter_id_t2 Quarter ID for second time point for number on ART.
-#' @param anc_quarter_id_t1 Quarter IDs (possibly multiple) for first time point for ANC
-#' @param anc_quarter_id_t2 Quarter IDs (possibly multiple) for second time point for number on ART.
+#' @param artnum_calendar_quarter_t1 Calendar quarter for first time point for number on ART.
+#' @param artnum_calendar_quarter_t2 Calendar quarter for second time point for number on ART.
+#' @param anc_prev_year_t1 Calendar year (possibly multiple) for first time point for ANC prevalence.
+#' @param anc_prev_year_t2 Calendar year (possibly multiple) for second time point for ANC prevalence.
+#' @param anc_artcov_year_t1 Calendar year (possibly multiple) for first time point for ANC ART coverage.
+#' @param anc_artcov_year_t2 Calendar year (possibly multiple) for second time point for ANC ART coverage.
 #'
 #' @details
 #' See example datasets for examples of required template for data sets. *`_survey_ids` must be reflected
@@ -375,10 +377,10 @@ select_naomi_data <- function(naomi_mf,
                               artcov_survey_ids,
                               recent_survey_ids,
                               vls_survey_ids = NULL,
-                              artnum_quarter_id_t1 = naomi_mf$quarter_id1,
-                              artnum_quarter_id_t2 = naomi_mf$quarter_id2,
-                              anc_prev_year_t1 = year_labels(naomi_mf$quarter_id1),
-                              anc_prev_year_t2 = year_labels(naomi_mf$quarter_id2),
+                              artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
+                              artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
+                              anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
+                              anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
                               anc_artcov_year_t1 = anc_prev_year_t1,
                               anc_artcov_year_t2 = anc_prev_year_t2) {
 
@@ -399,8 +401,8 @@ select_naomi_data <- function(naomi_mf,
   naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_testing, naomi_mf)
   
-  naomi_mf$artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
-  naomi_mf$artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
+  naomi_mf$artnum_t1_dat <- artnum_mf(artnum_calendar_quarter_t1, art_number, naomi_mf)
+  naomi_mf$artnum_t2_dat <- artnum_mf(artnum_calendar_quarter_t2, art_number, naomi_mf)
 
   class(naomi_mf) <- c("naomi_data", class(naomi_mf))
 
@@ -635,15 +637,15 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
 
 #' @rdname anc_testing_prev_mf
 #'
-#' @param quarter_id quarter_id
+#' @param calendar_quarter Calendar quarter
 #' @export
-artnum_mf <- function(quarter_id, art_number, naomi_mf) {
+artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
-  stopifnot(length(quarter_id) <= 1)
+  stopifnot(length(calendar_quarter) <= 1)
   stopifnot(is(naomi_mf, "naomi_mf"))
 
-  if(!is.null(quarter_id)) {
-    year <- year_labels(quarter_id)
+  if(!is.null(calendar_quarter)) {
+    year <- year_labels(calendar_quarter_to_quarter_id(calendar_quarter))
   } else {
     year <- NULL
   }
