@@ -1,5 +1,0 @@
-#!/usr/bin/env Rscript
-
-## Return model run options reference data for testing migrations
-
-require(naomi)
