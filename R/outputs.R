@@ -6,7 +6,7 @@ meta_indicator <-
                   "prevalence",
                   "plhiv",
                   "art_coverage",
-                  "artnum_resid",
+                  "art_num_residents",
                   "incidence",
                   "infections"),
     indicator_label = c("Population",
@@ -49,7 +49,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "rho_out" = "prevalence",
                      "plhiv_out" = "plhiv",
                      "alpha_out" = "art_coverage",
-                     "artnum_out" = "artnum_resid",
+                     "artnum_out" = "art_num_residents",
                      "lambda_out" = "incidence",
                      "infections_out" = "infections")
 
