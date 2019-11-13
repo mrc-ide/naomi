@@ -4,12 +4,12 @@
 \alias{interpolate_population_agesex}
 \title{Log-linear interpolation of age/sex stratified population}
 \usage{
-interpolate_population_agesex(population_agesex, quarter_ids)
+interpolate_population_agesex(population_agesex, calendar_quarters)
 }
 \arguments{
 \item{population_agesex}{a subset of the population_agesex.}
 
-\item{quarter_ids}{vector of quarter_ids to return interpolation.}
+\item{calendar_quarters}{vector of calendar quarters to return interpolation.}
 }
 \value{
 A data.frame with same columns as pop_agesex interpolated to \code{times}.

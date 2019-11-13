@@ -30,6 +30,8 @@ calendar_quarter_to_quarter_id(calendar_quarter)
 \item{year}{vector of integer years.}
 
 \item{quarter}{vector of integer quarters (1,2,3,4).}
+
+\item{calendar_quarter}{Vector of calendar quarters to convert to quarter id labels.}
 }
 \description{
 Time periods are indexed by integers for efficiency and precision.

@@ -6,10 +6,11 @@
 \usage{
 select_naomi_data(naomi_mf, survey_hiv_indicators, anc_testing, art_number,
   prev_survey_ids, artcov_survey_ids, recent_survey_ids,
-  vls_survey_ids = NULL, artnum_quarter_id_t1 = naomi_mf$quarter_id1,
-  artnum_quarter_id_t2 = naomi_mf$quarter_id2,
-  anc_prev_year_t1 = year_labels(naomi_mf$quarter_id1),
-  anc_prev_year_t2 = year_labels(naomi_mf$quarter_id2),
+  vls_survey_ids = NULL,
+  artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
+  artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
+  anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
+  anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
   anc_artcov_year_t1 = anc_prev_year_t1,
   anc_artcov_year_t2 = anc_prev_year_t2)
 }
@@ -30,13 +31,17 @@ select_naomi_data(naomi_mf, survey_hiv_indicators, anc_testing, art_number,
 
 \item{vls_survey_ids}{A character vector of \code{survey_id}s for survey VLS among all HIV+ persons.}
 
-\item{artnum_quarter_id_t1}{Quarter ID for first time point for number on ART.}
+\item{artnum_calendar_quarter_t1}{Calendar quarter for first time point for number on ART.}
 
-\item{artnum_quarter_id_t2}{Quarter ID for second time point for number on ART.}
+\item{artnum_calendar_quarter_t2}{Calendar quarter for second time point for number on ART.}
 
-\item{anc_quarter_id_t1}{Quarter IDs (possibly multiple) for first time point for ANC}
+\item{anc_prev_year_t1}{Calendar year (possibly multiple) for first time point for ANC prevalence.}
 
-\item{anc_quarter_id_t2}{Quarter IDs (possibly multiple) for second time point for number on ART.}
+\item{anc_prev_year_t2}{Calendar year (possibly multiple) for second time point for ANC prevalence.}
+
+\item{anc_artcov_year_t1}{Calendar year (possibly multiple) for first time point for ANC ART coverage.}
+
+\item{anc_artcov_year_t2}{Calendar year (possibly multiple) for second time point for ANC ART coverage.}
 }
 \description{
 Select data for model fitting

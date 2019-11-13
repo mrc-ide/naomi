@@ -35,6 +35,7 @@ get_age_groups <- function() {
 #' @param quarter_id vector of integer quarter IDs.
 #' @param year vector of integer years.
 #' @param quarter vector of integer quarters (1,2,3,4).
+#' @param calendar_quarter Vector of calendar quarters to convert to quarter id labels.
 #'
 #' @details
 #' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of
