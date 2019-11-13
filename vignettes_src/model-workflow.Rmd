@@ -37,7 +37,7 @@ area_levels <- read_csv(system.file("extdata/areas/area_levels.csv", package = "
 area_hierarchy  <- read_csv(system.file("extdata/areas/area_hierarchy.csv", package = "naomi"))
 area_boundaries <- sf::read_sf(system.file("extdata/areas/area_boundaries.geojson", package = "naomi"))
 
-area_long <- area_hierarchy %>%
+area_merged <- area_hierarchy %>%
   left_join(
     area_levels %>% select(area_level, area_level_label, display, naomi_level)
   ) %>%
@@ -47,7 +47,7 @@ area_long <- area_hierarchy %>%
 
 ```
 ```{r message = FALSE}
-st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE)
+st_write(area_merged, file.path(tempdir(), "area_merged.geojson"), delete_dsn = TRUE)
 ```
 
 # 1. (Up)Load data inputs
@@ -55,9 +55,9 @@ st_write(area_long, file.path(tempdir(), "area_long.geojson"), delete_dsn = TRUE
 Area hierarchy and boundaries
 
 ```{r }
-area_long <- read_sf(file.path(tempdir(), "area_long.geojson"))
+area_merged <- read_sf(file.path(tempdir(), "area_merged.geojson"))
 
-areas <- create_areas(area_levels, area_hierarchy, area_boundaries)
+areas <- create_areas(area_merged = area_merged)
 ```
 
 Population data
@@ -78,6 +78,13 @@ Programme data
 ```{r message = FALSE}
 art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
 anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
+```
+
+Use only adult ART data for now
+
+```{r }
+art_number <- art_number %>%
+  filter(age_group == "15+")
 ```
 
 Programme data
@@ -104,8 +111,8 @@ The following are required to be provided to define the model state space:
 ```{r }
 scope <- "MWI"
 level <- 4
-quarter_id_t1 <- convert_quarter_id(1, 2016)
-quarter_id_t2 <- convert_quarter_id(3, 2018)
+calendar_quarter_t1 <- "CY2016Q1"
+calendar_quarter_t2 <- "CY2018Q3"
 ```
 
 The following select data inputs to model fitting from the uploaded datasets.
@@ -130,11 +137,14 @@ artcov_survey_ids  <- "MWI2016PHIA"
 vls_survey_ids <- NULL
 recent_survey_ids <- "MWI2016PHIA"
 
-artnum_quarter_id_t1 <- convert_quarter_id(1, 2016)
-artnum_quarter_id_t2 <- convert_quarter_id(3, 2018)
+artnum_calendar_quarter_t1 <- "CY2016Q1"
+artnum_calendar_quarter_t2 <- "CY2018Q3"
 
-anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
-anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
+anc_prevalence_year1 <- 2016
+anc_prevalence_year2 <- 2018
+
+anc_art_coverage_year1 <- 2016
+anc_art_coverage_year2 <- 2018
 ```
 
 # 3. Review input data
@@ -148,38 +158,34 @@ naomi_mf <- naomi_model_frame(areas,
                               spec,
                               scope = scope,
                               level = level,
-                              quarter_id_t1,
-                              quarter_id_t2)
+                              calendar_quarter_t1,
+                              calendar_quarter_t2)
 ```
 
 Prepare data inputs
 
 ```{r }
-prev_dat <- survey_prevalence_mf(prev_survey_ids, survey_hiv_indicators, naomi_mf)
-artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)
-recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
-
-anc_prev_t1_dat <- anc_testing_prev_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
-anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_quarter_id_t1, anc_testing, naomi_mf)
-
-anc_prev_t2_dat <- anc_testing_prev_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
-anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_quarter_id_t2, anc_testing, naomi_mf)
-
-artnum_t1_dat <- artnum_mf(artnum_quarter_id_t1, art_number, naomi_mf)
-artnum_t2_dat <- artnum_mf(artnum_quarter_id_t2, art_number, naomi_mf)
+naomi_data <- select_naomi_data(naomi_mf,
+                                survey_hiv_indicators,
+                                anc_testing,
+                                art_number,
+                                prev_survey_ids,
+                                artcov_survey_ids,
+                                recent_survey_ids,
+                                vls_survey_ids,
+                                artnum_calendar_quarter_t1,
+                                artnum_calendar_quarter_t2,
+                                anc_prevalence_year1,
+                                anc_prevalence_year2,
+                                anc_art_coverage_year1,
+                                anc_art_coverage_year2)
 ```
 
 5. Fit model
 Prepare model inputs and initial parameters
 
 ```{r }
-tmb_inputs <- prepare_tmb_inputs(naomi_mf, prev_dat, artcov_dat, recent_dat,
-                                 anc_prev_t1_dat,
-                                 anc_prev_t2_dat,
-                                 anc_artcov_t1_dat,
-                                 anc_artcov_t2_dat,
-                                 artnum_t1_dat,
-                                 artnum_t2_dat)
+tmb_inputs <- prepare_tmb_inputs(naomi_data)
 ```
 
 Fit the TMB model
@@ -208,8 +214,8 @@ for `mode`, but not `mean` or `lower` and `upper` 95% uncertainty ranges.
 ```{r }
 outputs$indicators %>%
   dplyr::filter(
-    indicator_id == 2L,  # HIV prevalence
-    age_group_id == 18   # Age group 15-49
+    indicator == "prevalence",
+    age_group == "15-49"   # Age group 15-49
   ) %>%
   head()
 ```
@@ -220,8 +226,8 @@ with labels added as additional columns.
 ```{r }
 add_output_labels(outputs) %>%
   dplyr::filter(
-    indicator_id == 2L,  # HIV prevalence
-    age_group_id == 18   # Age group 15-49
+    indicator == "prevalence",  # HIV prevalence
+    age_group == "15-49"   # Age group 15-49
   ) %>%
   head()
 ```
@@ -240,8 +246,8 @@ system.time(outputs <- output_package(fit, naomi_mf, areas))
 
 outputs$indicators %>%
   dplyr::filter(
-    indicator_id == 2L,  # HIV prevalence
-    age_group_id == 18   # Age group 15-49
+    indicator == "prevalence",
+    age_group == "15-49"
   ) %>%
   head()
 ```
@@ -265,10 +271,10 @@ indicators <- add_output_labels(outputs) %>%
 
 15-49 prevalence by district
 
-```{r fig.height = 4, fig.width = 7}
+```{r prev_by_district_15, fig.height = 4, fig.width = 7}
 indicators %>%
-  filter(age_group_id == 18,
-         indicator_id == 2L,
+  filter(age_group == "15-49",
+         indicator == "prevalence",
          area_level == 4) %>%
   ggplot(aes(fill = mode)) +
   geom_sf() +
@@ -280,11 +286,11 @@ indicators %>%
 15-49 prevalence by Zone
 
 
-```{r fig.height = 4, fig.width = 7}
+```{r prev_by_zone_15, fig.height = 4, fig.width = 7}
 indicators %>%
-  filter(age_group_id == 18,
+  filter(age_group == "15-49",
          ## sex == "both",
-         indicator_id == 2L,
+         indicator == "prevalence",
          area_level == 2) %>%
   ## semi_join(get_area_collection(areas, level = 3, area_scope = "MWI.3")) %>%
   ggplot(aes(fill = mean)) +
@@ -296,12 +302,13 @@ indicators %>%
 
 Age-specific prevalence, national
 
-```{r fig.height = 5, fig.width = 7}
+```{r age_specific_prev, fig.height = 5, fig.width = 7}
 indicators %>%
+  left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group_id %in% 1:17,
-         indicator_id == 2L) %>%
+         indicator == "prevalence") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -315,11 +322,11 @@ indicators %>%
 
 15-64 ART coverage by district
 
-```{r fig.height = 4, fig.width = 7}
+```{r art_cov_district, fig.height = 4, fig.width = 7}
 indicators %>%
-  filter(age_group_id == 19,
+  filter(age_group_id == "15-64",
          area_level == 4,
-         indicator_id == 4L) %>%
+         indicator_id == "art_coverage") %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
@@ -329,12 +336,13 @@ indicators %>%
 
 Age-specific ART coverage, national
 
-```{r fig.height = 5, fig.width = 7}
+```{r age_specific_art_cov, fig.height = 5, fig.width = 7}
 indicators %>%
+  left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group_id %in% 1:17,
-         indicator_id == 4L) %>%
+         indicator == "art_coverage") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -349,12 +357,13 @@ indicators %>%
 ART coverage by age/sex and region
 
 
-```{r fig.height = 4, fig.width = 7}
+```{r art_cov_age_sex, fig.height = 4, fig.width = 7}
 indicators %>%
+  left_join(outputs$meta_age_group) %>%
   filter(area_level == 1,
          sex != "both",
          age_group_id %in% 1:17,
-         indicator_id == 4L) %>%
+         indicator == "art_coverage") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -367,11 +376,11 @@ indicators %>%
 Bubble plot prevalence and PLHIV
 
 
-```{r fig.height = 4, fig.width = 7}
+```{r bubble_plot, fig.height = 4, fig.width = 7}
 indicators %>%
-  filter(age_group_id == 19,
+  filter(age_group == "15-64",
          area_level == 4,
-         indicator_id %in% 2:3) %>%
+         indicator %in% c("prevalence", "plhiv")) %>%
   select(sex, center_x, center_y, indicator_label, mean) %>%
   spread(indicator_label, mean) %>%
   ggplot() +

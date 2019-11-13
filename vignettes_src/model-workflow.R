@@ -243,7 +243,7 @@ indicators <- add_output_labels(outputs) %>%
 
 #' 15-49 prevalence by district
 
-##+ fig.height = 4, fig.width = 7
+##+ prev_by_district_15, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group == "15-49",
          indicator == "prevalence",
@@ -257,7 +257,7 @@ indicators %>%
 #' 15-49 prevalence by Zone
 #'
 
-##+ fig.height = 4, fig.width = 7
+##+ prev_by_zone_15, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group == "15-49",
          ## sex == "both",
@@ -272,7 +272,7 @@ indicators %>%
 
 #' Age-specific prevalence, national
 
-##+ fig.height = 5, fig.width = 7
+##+ age_specific_prev, fig.height = 5, fig.width = 7
 indicators %>%
   left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == 0,
@@ -293,7 +293,7 @@ indicators %>%
 
 #' 15-64 ART coverage by district
 
-##+ fig.height = 4, fig.width = 7
+##+ art_cov_district, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == "15-64",
          area_level == 4,
@@ -306,7 +306,7 @@ indicators %>%
 
 #' Age-specific ART coverage, national
 
-##+ fig.height = 5, fig.width = 7
+##+ age_specific_art_cov, fig.height = 5, fig.width = 7
 indicators %>%
   left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == 0,
@@ -326,7 +326,7 @@ indicators %>%
 #' ART coverage by age/sex and region
 #'
 
-##+ fig.height = 4, fig.width = 7
+##+ art_cov_age_sex, fig.height = 4, fig.width = 7
 indicators %>%
   left_join(outputs$meta_age_group) %>%
   filter(area_level == 1,
@@ -344,7 +344,7 @@ indicators %>%
 
 #' Bubble plot prevalence and PLHIV
 #'
-##+ fig.height = 4, fig.width = 7
+##+ bubble_plot, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group == "15-64",
          area_level == 4,
