@@ -1,0 +1,22 @@
+data_type,plot_type,indicator,value_column,error_low_column,error_high_column,indicator_column,indicator_value,name
+survey,choropleth,prevalence,est,,,indicator,prev,Prevalence
+survey,choropleth,art_coverage,est,,,indicator,artcov,ART coverage
+survey,choropleth,vls,est,,,indicator,vls,Viral load suppression
+survey,choropleth,recent,est,,,indicator,recent,Proportion recently infected
+anc,choropleth,prevalence,prevalence,,,,,Prevalence
+anc,choropleth,art_coverage,art_coverage,,,,,ART coverage
+programme,choropleth,current_art,current_art,,,,,ART number
+output,choropleth,prevalence,mean,,,indicator_id,2,Prevalence
+output,choropleth,art_coverage,mean,,,indicator_id,4,ART coverage
+output,choropleth,current_art,mean,,,indicator_id,5,ART number
+output,choropleth,population,mean,,,indicator_id,1,Population
+output,choropleth,plhiv,mean,,,indicator_id,3,PLHIV
+output,choropleth,incidence,mean,,,indicator_id,6,Incidence
+output,choropleth,new_infections,mean,,,indicator_id,7,New Infections
+output,barchart,prevalence,mean,lower,upper,indicator_id,2,Prevalence
+output,barchart,art_coverage,mean,lower,upper,indicator_id,4,ART coverage
+output,barchart,current_art,mean,lower,upper,indicator_id,5,ART number
+output,barchart,population,mean,lower,upper,indicator_id,1,Population
+output,barchart,plhiv,mean,lower,upper,indicator_id,3,PLHIV
+output,barchart,incidence,mean,lower,upper,indicator_id,6,Incidence
+output,barchart,new_infections,mean,lower,upper,indicator_id,7,New Infections

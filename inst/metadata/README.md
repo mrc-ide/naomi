@@ -10,6 +10,8 @@ These csv files contain metadata describing what plots the front end should disp
 | plot_type        | The type of plot the metadata is relevant to, at the moment only choropleth |
 | indicator        | The machine readable identifier for the indicator one of art_coverage, current_art, prevalence, vls, recent, plhiv, incidence |
 | value_column     | The column containing the value to be plotted |
+| error_low_column | The column containing the lower value for the error bars |
+| error_high_column| The column containing the upper value for the error bars |
 | indicator_column | If the file contains data for multiple indicators this is the column which should be used to differentiate between different indicators |
 | indicator_value  | The value within the indicator_column to filter the data frame on |
 | name             | Human readable name for the indicator |
