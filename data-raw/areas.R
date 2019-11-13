@@ -49,13 +49,14 @@ mwi_wide <- sh2 %>%
     name0 = "Malawi",
     id0 = "MWI",
     name1 = region,
-    id1 = paste0(id0, ".", as_factor(name1) %>% as.integer),
+    id1 = paste0("MWI_1_", as.integer(as_factor(name1))),
     name2 = zone,
-    id2 = paste0(id1, ".", as_factor(name2) %>% as.integer),
+    id2 = paste0("MWI_2_", as.integer(as_factor(name2))),
     name3 = district,
-    id3 = paste0(id2, ".", as_factor(name3) %>% as.integer),
+    id3 = paste0("MWI_3_", as.integer(as_factor(name3))),
     name4 = district32,
-    id4 = paste0(id3, ".", as_factor(name4) %>% as.integer)
+    id4 = paste0("MWI_4_", as.integer(as_factor(name4))),
+    spectrum_region_code = 0
   )
 
 mwi_simple <- mwi_wide %>% rmapshaper::ms_simplify(0.1)
@@ -123,7 +124,8 @@ mwi_area_boundaries <- area_boundaries
 usethis::use_data(
            mwi_area_levels,
            mwi_area_hierarchy,
-           mwi_area_boundaries
+           mwi_area_boundaries,
+           overwrite = TRUE
          )
 
 dir.create(here("inst/extdata/areas"))

@@ -69,7 +69,7 @@ anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package
 
 #' Use only adult ART data for now
 art_number <- art_number %>%
-  filter(age_group_id == 20)
+  filter(age_group == "15+")
 
 #' Programme data
 #'
