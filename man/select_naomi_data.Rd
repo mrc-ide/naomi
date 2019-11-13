@@ -8,8 +8,10 @@ select_naomi_data(naomi_mf, survey_hiv_indicators, anc_testing, art_number,
   prev_survey_ids, artcov_survey_ids, recent_survey_ids,
   vls_survey_ids = NULL, artnum_quarter_id_t1 = naomi_mf$quarter_id1,
   artnum_quarter_id_t2 = naomi_mf$quarter_id2,
-  anc_quarter_id_t1 = naomi_mf$quarter_id1 + -1:2,
-  anc_quarter_id_t2 = naomi_mf$quarter_id2 + -1:2)
+  anc_prev_year_t1 = year_labels(naomi_mf$quarter_id1),
+  anc_prev_year_t2 = year_labels(naomi_mf$quarter_id2),
+  anc_artcov_year_t1 = anc_prev_year_t1,
+  anc_artcov_year_t2 = anc_prev_year_t2)
 }
 \arguments{
 \item{naomi_mf}{A Naomi model frame object.}

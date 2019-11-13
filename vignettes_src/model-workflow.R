@@ -122,11 +122,11 @@ recent_survey_ids <- "MWI2016PHIA"
 artnum_quarter_id_t1 <- convert_quarter_id(2016, 1)
 artnum_quarter_id_t2 <- convert_quarter_id(2018, 3)
 
-anc_prevalence_t1 <- 2016
-anc_prevalence_t2 <- 2018
+anc_prevalence_year1 <- 2016
+anc_prevalence_year2 <- 2018
 
-anc_art_coverage_t1 <- 2016
-anc_art_coverage_t2 <- 2018
+anc_art_coverage_year1 <- 2016
+anc_art_coverage_year2 <- 2018
 
 
 #' # 3. Review input data
@@ -158,10 +158,10 @@ naomi_data <- select_naomi_data(naomi_mf,
                                 vls_survey_ids,
                                 artnum_quarter_id_t1,
                                 artnum_quarter_id_t2,
-                                anc_prevalence_t1,
-                                anc_prevalence_t2,
-                                anc_art_coverage_t1,
-                                anc_art_coverage_t2)
+                                anc_prevalence_year1,
+                                anc_prevalence_year2,
+                                anc_art_coverage_year1,
+                                anc_art_coverage_year2)
 
 
 #' 5. Fit model

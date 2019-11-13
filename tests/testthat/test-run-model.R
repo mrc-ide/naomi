@@ -21,10 +21,10 @@ test_that("model can be run", {
     survey_art_or_vls = "art_coverage",
     art_t1 = 465,
     art_t2 = 475,
-    anc_prevalence_t1 = 464,
-    anc_prevalence_t2 = 475,
-    anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475,
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
     no_of_samples = 20
   )
   output_path <- tempfile()
@@ -135,10 +135,10 @@ test_that("progress messages are printed", {
     survey_art_or_vls = "art_coverage",
     art_t1 = 465,
     art_t2 = 475,
-    anc_prevalence_t1 = 464,
-    anc_prevalence_t2 = 475,
-    anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475,
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
     no_of_samples = 20
   )
   output_path <- tempfile()

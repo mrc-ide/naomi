@@ -9,14 +9,9 @@ hintr_run_model(data, options, output_path = tempfile(),
   summary_path = tempfile(fileext = ".zip"))
 }
 \arguments{
-\item{data}{List of paths to input data files. Must provide pjnz, shape,
-population and survey data. Optionally include anc and art data too.}
+\item{data}{List of paths to input data files.}
 
-\item{options}{List of model run options, must specify area_scope,
-area_level, t1, t2, survey_prevalence, survey_art_coverage, survey_vls,
-survey_recently_infected, survey_art_or_vls, art_t1, art_t2,
-anc_prevalence_t1, anc_prevalence_t2, anc_art_coverage_t1,
-anc_art_coverage_t2.}
+\item{options}{List of model run options (see details).}
 
 \item{output_path}{Path to store output indicators as an RDS at.}
 
@@ -30,4 +25,34 @@ Paths to 3 output files.
 \description{
 This prepares the model inputs from data and options and saves output as
 an rds, the spectrum digst and indicators at specified paths.
+}
+\details{
+The \code{data} argument must be a list specifying paths to the following:
+\itemize{
+\item \code{pjnz}
+\item \code{shape}
+\item \code{population}
+\item \code{survey data}
+\item \code{anc} (optional)
+\item \code{art} (optional)
+}
+
+The \code{options} argument must be a list specifying minimally:
+\itemize{
+\item area_scope
+\item area_level
+\item t1
+\item t2
+\item survey_prevalence
+\item survey_art_coverage
+\item survey_vls
+\item survey_recently_infected
+\item survey_art_or_vls
+\item art_t1
+\item art_t2
+\item anc_prevalence_year1
+\item anc_prevalence_year2
+\item anc_art_coverage_year1
+\item anc_art_coverage_year2
+}
 }
