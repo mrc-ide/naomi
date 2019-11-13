@@ -190,8 +190,8 @@ names(outputs)
 
 outputs$indicators %>%
   dplyr::filter(
-    indicator == "prevalence",
-    age_group == "15-49"   # Age group 15-49
+    indicator_id == 2L,  # HIV prevalence
+    age_group_id == 18   # Age group 15-49
   ) %>%
   head()
 
@@ -199,8 +199,8 @@ outputs$indicators %>%
 #' with labels added as additional columns.
 add_output_labels(outputs) %>%
   dplyr::filter(
-    indicator == "prevalence",  # HIV prevalence
-    age_group == "15-49"   # Age group 15-49
+    indicator_id == 2L,  # HIV prevalence
+    age_group_id == 18   # Age group 15-49
   ) %>%
   head()
 
@@ -218,8 +218,8 @@ system.time(outputs <- output_package(fit, naomi_mf, areas))
 
 outputs$indicators %>%
   dplyr::filter(
-    indicator == "prevalence",
-    age_group == "15-49"
+    indicator_id == 2L,  # HIV prevalence
+    age_group_id == 18   # Age group 15-49
   ) %>%
   head()
 
@@ -245,8 +245,8 @@ indicators <- add_output_labels(outputs) %>%
 
 ##+ prev_by_district_15, fig.height = 4, fig.width = 7
 indicators %>%
-  filter(age_group == "15-49",
-         indicator == "prevalence",
+  filter(age_group_id == 18,
+         indicator_id == 2L,
          area_level == 4) %>%
   ggplot(aes(fill = mode)) +
   geom_sf() +
@@ -259,9 +259,9 @@ indicators %>%
 
 ##+ prev_by_zone_15, fig.height = 4, fig.width = 7
 indicators %>%
-  filter(age_group == "15-49",
+  filter(age_group_id == 18,
          ## sex == "both",
-         indicator == "prevalence",
+         indicator_id == 2L,
          area_level == 2) %>%
   ## semi_join(get_area_collection(areas, level = 3, area_scope = "MWI.3")) %>%
   ggplot(aes(fill = mean)) +
@@ -274,11 +274,10 @@ indicators %>%
 
 ##+ age_specific_prev, fig.height = 5, fig.width = 7
 indicators %>%
-  left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group_id %in% 1:17,
-         indicator == "prevalence") %>%
+         indicator_id == 2L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -295,9 +294,9 @@ indicators %>%
 
 ##+ art_cov_district, fig.height = 4, fig.width = 7
 indicators %>%
-  filter(age_group_id == "15-64",
+  filter(age_group_id == 19,
          area_level == 4,
-         indicator_id == "art_coverage") %>%
+         indicator_id == 4L) %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
@@ -308,11 +307,10 @@ indicators %>%
 
 ##+ age_specific_art_cov, fig.height = 5, fig.width = 7
 indicators %>%
-  left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group_id %in% 1:17,
-         indicator == "art_coverage") %>%
+         indicator_id == 4L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -328,11 +326,10 @@ indicators %>%
 
 ##+ art_cov_age_sex, fig.height = 4, fig.width = 7
 indicators %>%
-  left_join(outputs$meta_age_group) %>%
   filter(area_level == 1,
          sex != "both",
          age_group_id %in% 1:17,
-         indicator == "art_coverage") %>%
+         indicator_id == 4L) %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_id)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -346,9 +343,9 @@ indicators %>%
 #'
 ##+ bubble_plot, fig.height = 4, fig.width = 7
 indicators %>%
-  filter(age_group == "15-64",
+  filter(age_group_id == 19,
          area_level == 4,
-         indicator %in% c("prevalence", "plhiv")) %>%
+         indicator_id %in% 2:3) %>%
   select(sex, center_x, center_y, indicator_label, mean) %>%
   spread(indicator_label, mean) %>%
   ggplot() +

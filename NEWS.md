@@ -1,7 +1,6 @@
 # naomi 0.0.17
 
 * Use annual programme data input instead of quarterly.
-* Human readable ID keys in output package.
 * Add spectrum_region_code to area hierarchy.
 
 # naomi 0.0.16

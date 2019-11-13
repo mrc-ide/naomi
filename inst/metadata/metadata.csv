@@ -6,17 +6,17 @@ survey,choropleth,recent,est,,,indicator,recent,Proportion recently infected
 anc,choropleth,prevalence,prevalence,,,,,Prevalence
 anc,choropleth,art_coverage,art_coverage,,,,,ART coverage
 programme,choropleth,current_art,current_art,,,,,ART number
-output,choropleth,prevalence,mean,,,indicator,prevalence,Prevalence
-output,choropleth,art_coverage,mean,,,indicator,art_coverage,ART coverage
-output,choropleth,current_art,mean,,,indicator,art_num_residents,ART number
-output,choropleth,population,mean,,,indicator,population,Population
-output,choropleth,plhiv,mean,,,indicator,plhiv,PLHIV
-output,choropleth,incidence,mean,,,indicator,incidence,Incidence
-output,choropleth,new_infections,mean,,,indicator,infections,New Infections
-output,barchart,prevalence,mean,lower,upper,indicator,prevalence,Prevalence
-output,barchart,art_coverage,mean,lower,upper,indicator,art_coverage,ART coverage
-output,barchart,current_art,mean,lower,upper,indicator,art_num_residents,ART number
-output,barchart,population,mean,lower,upper,indicator,population,Population
-output,barchart,plhiv,mean,lower,upper,indicator,plhiv,PLHIV
-output,barchart,incidence,mean,lower,upper,indicator,incidence,Incidence
-output,barchart,new_infections,mean,lower,upper,indicator,infections,New Infections
+output,choropleth,prevalence,mean,,,indicator_id,2,Prevalence
+output,choropleth,art_coverage,mean,,,indicator_id,4,ART coverage
+output,choropleth,current_art,mean,,,indicator_id,5,ART number
+output,choropleth,population,mean,,,indicator_id,1,Population
+output,choropleth,plhiv,mean,,,indicator_id,3,PLHIV
+output,choropleth,incidence,mean,,,indicator_id,6,Incidence
+output,choropleth,new_infections,mean,,,indicator_id,7,New Infections
+output,barchart,prevalence,mean,lower,upper,indicator_id,2,Prevalence
+output,barchart,art_coverage,mean,lower,upper,indicator_id,4,ART coverage
+output,barchart,current_art,mean,lower,upper,indicator_id,5,ART number
+output,barchart,population,mean,lower,upper,indicator_id,1,Population
+output,barchart,plhiv,mean,lower,upper,indicator_id,3,PLHIV
+output,barchart,incidence,mean,lower,upper,indicator_id,6,Incidence
+output,barchart,new_infections,mean,lower,upper,indicator_id,7,New Infections
