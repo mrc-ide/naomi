@@ -4,7 +4,7 @@ test_that("model can be run", {
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
-    shape = file.path("testdata/malawi.geojson"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
     programme = system_file("extdata/programme/art_number.csv"),
     anc = system_file("extdata/programme/anc_testing.csv")

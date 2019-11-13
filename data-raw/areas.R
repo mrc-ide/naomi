@@ -135,6 +135,22 @@ write_csv(area_hierarchy, here("inst/extdata/areas/area_hierarchy.csv"), na = ""
 
 st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"), delete_dsn = TRUE)
 
+#' # Webtool single GeoJSON input
+#'
+#' The 2019 version of Naomi web tool allows upload of a single GeoJSON file for
+#' specifying the area hierarchy. 
+
+area_merged <- area_hierarchy %>%
+  left_join(
+    area_levels %>% select(area_level, area_level_label, display, naomi_level)
+  ) %>%
+  left_join(
+    area_boundaries
+  )
+
+##+ message = FALSE
+st_write(area_merged, here("inst/extdata/areas/area_merged.geojson"), delete_dsn = TRUE)
+
 
 #' ## Table schema
 
