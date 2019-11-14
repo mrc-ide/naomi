@@ -195,6 +195,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     population_t2 = df$population_t2,
     X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
+    X_alpha_t2 = stats::model.matrix(~1, df),
     X_lambda = stats::model.matrix(~as.integer(sex == "female"), df),
     X_ancrho = stats::model.matrix(~1, anc_prev_t1_dat),
     X_ancalpha = stats::model.matrix(~1, anc_artcov_t1_dat),
@@ -248,8 +249,10 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_anc_artcov = anc_artcov_t1_dat$anc_artcov_x,
     n_anc_artcov = anc_artcov_t1_dat$anc_artcov_n,
     ##
-    A_artnum = A_artnum_t1,
-    x_artnum = naomi_data$artnum_t1_dat$current_art
+    A_artnum_t1 = A_artnum_t1,
+    x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
+    A_artnum_t2 = A_artnum_t2,
+    x_artnum_t2 = naomi_data$artnum_t2_dat$current_art
   )
 
 
@@ -259,6 +262,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     beta_lambda = numeric(ncol(dtmb$X_lambda)),
     beta_anc_rho = numeric(1),
     beta_anc_alpha = numeric(1),
+    beta_alpha_t2 = numeric(ncol(dtmb$X_alpha_t2)),
     us_rho_x = numeric(ncol(dtmb$Z_x)),
     ui_rho_x = numeric(ncol(dtmb$Z_x)),
     us_rho_xs = numeric(ncol(dtmb$Z_xs)),
@@ -274,6 +278,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     ui_alpha_xs = numeric(ncol(dtmb$Z_xs)),
     u_alpha_a = numeric(ncol(dtmb$Z_a)),
     u_alpha_as = numeric(ncol(dtmb$Z_a)),
+    u_alpha_xt = numeric(ncol(dtmb$Z_x)),
     ##
     log_sigma_lambda_x = 0,
     ui_lambda_x = numeric(ncol(dtmb$Z_x)),
@@ -295,6 +300,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_sigma_alpha_x = 0,
     logit_phi_alpha_xs = 0,
     log_sigma_alpha_xs = 0,
+    log_sigma_alpha_xt = 0,
     ##
     OmegaT_raw = 0,
     log_betaT = 0,
@@ -332,6 +338,7 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                         silent = !inner_verbose,
                         random = c("beta_rho", "beta_alpha", "beta_lambda",
                                    "beta_anc_rho", "beta_anc_alpha",
+                                   "beta_alpha_t2",
                                    "us_rho_x", "ui_rho_x",
                                    "us_rho_xs", "ui_rho_xs",
                                    "u_rho_a", "u_rho_as",
@@ -339,6 +346,7 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                                    "us_alpha_x", "ui_alpha_x",
                                    "us_alpha_xs", "ui_alpha_xs",
                                    "u_alpha_a", "u_alpha_as",
+                                   "u_alpha_xt",
                                    ##
                                    "ui_lambda_x",
                                    "logit_nu_raw",

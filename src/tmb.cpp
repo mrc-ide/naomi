@@ -27,6 +27,7 @@ Type objective_function<Type>::operator() ()
   // Design matrices
   DATA_MATRIX(X_rho);
   DATA_MATRIX(X_alpha);
+  DATA_MATRIX(X_alpha_t2);
   DATA_MATRIX(X_lambda);
 
   DATA_MATRIX(X_ancrho);
@@ -67,8 +68,11 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_anc_artcov);
   DATA_VECTOR(x_anc_artcov);
 
-  DATA_SPARSE_MATRIX(A_artnum);
-  DATA_VECTOR(x_artnum);
+  DATA_SPARSE_MATRIX(A_artnum_t1);
+  DATA_VECTOR(x_artnum_t1);
+
+  DATA_SPARSE_MATRIX(A_artnum_t2);
+  DATA_VECTOR(x_artnum_t2);
 
   DATA_IVECTOR(n_nb);
   DATA_IVECTOR(adj_i);
@@ -115,6 +119,10 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(beta_anc_alpha);
   val -= dnorm(beta_anc_alpha, 0.0, 5.0, true).sum();
+
+  PARAMETER_VECTOR(beta_alpha_t2);
+  val -= dnorm(beta_alpha_t2, 0.0, 5.0, true).sum();
+
 
 
   // * HIV prevalence model *
@@ -218,6 +226,10 @@ Type objective_function<Type>::operator() ()
   Type sigma_alpha_as(exp(log_sigma_alpha_as));
   val -= dnorm(sigma_alpha_as, Type(0.0), Type(2.5), true) + log_sigma_alpha_as;
 
+  PARAMETER(log_sigma_alpha_xt);
+  Type sigma_alpha_xt(exp(log_sigma_alpha_xt));
+  val -= dnorm(exp(log_sigma_alpha_xt), Type(0.0), Type(2.5), true) + log_sigma_alpha_xt;
+
   PARAMETER_VECTOR(us_alpha_x);
   val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
   val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
@@ -240,6 +252,8 @@ Type objective_function<Type>::operator() ()
   if(u_alpha_as.size() > 0)
     val += AR1(phi_alpha_as)(u_alpha_as);
 
+  PARAMETER_VECTOR(u_alpha_xt);
+  val -= sum(dnorm(u_alpha_xt, 0.0, 1.0, true));
 
   // * HIV incidence model *
 
@@ -322,7 +336,12 @@ Type objective_function<Type>::operator() ()
 
   // Projection from t1 to t2
 
-  vector<Type> alpha_t2(alpha_t1);
+  vector<Type> ones(rho_t1.size());
+  ones.fill(1.0);
+
+
+  vector<Type> mu_alpha_t2(mu_alpha + X_alpha_t2 * beta_alpha_t2 + Z_x * u_alpha_xt * sigma_alpha_xt);
+  vector<Type> alpha_t2(invlogit(mu_alpha_t2));
   vector<Type> plhiv_t2(plhiv_t1 + infections_t1);
   vector<Type> rho_t2(plhiv_t2 / population_t2);
   vector<Type> prop_art_t2(rho_t2 * alpha_t2);
@@ -356,9 +375,6 @@ Type objective_function<Type>::operator() ()
     val -= dbinom(x_recent[i], n_recent[i], pR, true);
   }
   
-  vector<Type> ones(rho_t1.size());
-  ones.fill(1.0);
-
   vector<Type> mu_anc_rho(A_anc_prev * rho_t1 / (A_anc_prev * ones));
   mu_anc_rho = logit(mu_anc_rho) + X_ancrho * beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
   val -= sum(dbinom_robust(x_anc_prev, n_anc_prev, mu_anc_rho, true));
@@ -382,17 +398,29 @@ Type objective_function<Type>::operator() ()
     cum_nb += n_nb[i];
   }
 
-  vector<Type> prop_art_ij((Xart_idx * prop_art_t1) * (Xart_gamma * gamma_art));
-  vector<Type> population_ij(Xart_idx * population_t1);
+  vector<Type> prop_art_ij_t1((Xart_idx * prop_art_t1) * (Xart_gamma * gamma_art));
+  vector<Type> population_ij_t1(Xart_idx * population_t1);
 
-  vector<Type> A_j(A_artnum * vector<Type>(population_ij * prop_art_ij));
-  vector<Type> sd_A_j(A_artnum * vector<Type>(population_ij * prop_art_ij * (1 - prop_art_ij)));
-  sd_A_j = sd_A_j.sqrt();
+  vector<Type> A_j_t1(A_artnum_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1));
+  vector<Type> sd_A_j_t1(A_artnum_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1)));
+  sd_A_j_t1 = sd_A_j_t1.sqrt();
 
-  val -= sum(dnorm(x_artnum, A_j, sd_A_j, true));
+  val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
 
-  REPORT(A_j);
-  REPORT(sd_A_j);
+  vector<Type> prop_art_ij_t2((Xart_idx * prop_art_t2) * (Xart_gamma * gamma_art));
+  vector<Type> population_ij_t2(Xart_idx * population_t2);
+
+  vector<Type> A_j_t2(A_artnum_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2));
+  vector<Type> sd_A_j_t2(A_artnum_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2)));
+  sd_A_j_t2 = sd_A_j_t2.sqrt();
+
+  val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));
+
+  REPORT(A_j_t1);
+  REPORT(sd_A_j_t1);
+  
+  REPORT(A_j_t2);
+  REPORT(sd_A_j_t2);
 
   // Calculate model outputs
 
