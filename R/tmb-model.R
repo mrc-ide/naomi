@@ -191,7 +191,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   ##   mutate(age_group_idf = factor(pmin(age_group_id, 12)))
 
   dtmb <- list(
-    population = df$population_t1,
+    population_t1 = df$population_t1,
+    population_t2 = df$population_t2,
     X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
     X_lambda = stats::model.matrix(~as.integer(sex == "female"), df),

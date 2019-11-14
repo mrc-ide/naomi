@@ -41,7 +41,7 @@ test_that("model can be run", {
                  "sex", "age_group_id", "age_group_label", "quarter_id", "calendar_quarter",
                  "quarter_label", "indicator_id", "indicator_label", "mode",
                  "mean", "se", "median", "lower", "upper"))
-  expect_true(nrow(output) == 42021)
+  expect_true(nrow(output) == 84042)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)

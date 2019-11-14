@@ -39,22 +39,14 @@ meta_indicator <-
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
   mf_out <- naomi_mf$mf_out
-  
-  indicator_ids <- c("population_out" = 1,
-                     "rho_out" = 2,
-                     "plhiv_out" = 3,
-                     "alpha_out" = 4,
-                     "artnum_out" = 5,
-                     "lambda_out" = 6,
-                     "infections_out" = 7)
-  
+    
   report <- naomi_fit$obj$report(naomi_fit$par.full)
 
-  get_est <- function(varname) {
+  get_est <- function(varname, indicator_id, calendar_quarter) {
     v <- dplyr::mutate(
       mf_out,
-      quarter_id = calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1),
-      indicator_id = indicator_ids[varname],
+      quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+      indicator_id = indicator_id,
       mode = report[[varname]]
     )
     if(!is.null(naomi_fit$sample)) {
@@ -72,10 +64,26 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     v
   }
 
-  indicators <- lapply(names(indicator_ids), get_est) %>%
-    dplyr::bind_rows()
+  indicator_ids_t1 <- c("population_t1_out" = 1,
+                        "rho_t1_out" = 2,
+                        "plhiv_t1_out" = 3,
+                        "alpha_t1_out" = 4,
+                        "artnum_t1_out" = 5,
+                        "lambda_t1_out" = 6,
+                        "infections_t1_out" = 7)
 
-  indicators
+  indicator_ids_t2 <- c("population_t2_out" = 1,
+                        "rho_t2_out" = 2,
+                        "plhiv_t2_out" = 3,
+                        "alpha_t2_out" = 4,
+                        "artnum_t2_out" = 5,
+                        "lambda_t2_out" = 6,
+                        "infections_t2_out" = 7)
+
+  indicators_t1 <- Map(get_est, names(indicator_ids_t1), indicator_ids_t1, naomi_mf$calendar_quarter1)
+  indicators_t2 <- Map(get_est, names(indicator_ids_t2), indicator_ids_t2, naomi_mf$calendar_quarter2)
+  
+  dplyr::bind_rows(indicators_t1, indicators_t2)
 }
 
 
