@@ -23,8 +23,8 @@ Log-linear interpolation of age/sex stratified population
 \examples{
 ## Interpolate Malawi population at level 2 (Zone) at two time points
 data(mwi_population_agesex)
-quarter_ids <- convert_quarter_id(c(2016, 2018), c(1, 3))
-pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
+calendar_quarters <- c("CY2016Q1", "CY2018Q3")
+pop_interp <- interpolate_population_agesex(mwi_population_agesex, calendar_quarters)
 
 }
 \seealso{
