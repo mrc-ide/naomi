@@ -133,7 +133,7 @@ naomi_model_frame <- function(areas,
                                                 sigma_betaT  = 0.00001,
                                                 ritaT        = 1.0),
                               sigma_u_sd   = 1.0,
-                              artattend = TRUE,
+                              artattend = FALSE,
                               artattend_prior_sigma_scale = 3.0,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3) {
@@ -152,10 +152,15 @@ naomi_model_frame <- function(areas,
     unlist() %>%
     unique()
 
+  spectrum_region_code <- area_id_leaves[scope] %>%
+    lapply(data.tree::Get, "spectrum_region_code") %>%
+    unlist() 
+
   ## Keep
 
   mf_areas <- data.frame(area_id,
                          area_idx = seq_along(area_id),
+                         spectrum_region_code = spectrum_region_code,
                          stringsAsFactors = FALSE) %>%
     dplyr::mutate(area_idf = factor(area_id, area_id))
 
@@ -212,25 +217,29 @@ naomi_model_frame <- function(areas,
 
   ## Add Spectrum inputs
 
-  if(length(unique(spec$spectrum_region_code)) > 1)
-    stop("Multiple Spectrum files not yet supported")
-
   mf_model <- mf_model %>%
     dplyr::left_join(
-             spec %>%
+             calc_spec_age_group_aggregate(spec) %>%
              ## !!! NEEDS UPDATE
              dplyr::filter(year == 2016) %>%
              dplyr::select(
-               sex,
-               age_group_id,
-               spec_prev = prevalence,
-               spec_incid = incidence,
-               spec_artcov = art_coverage,
-               asfr
-             ),
-             by = c("sex", "age_group_id")
+                      spectrum_region_code,
+                      sex,
+                      age_group_id,
+                      spec_prev = prevalence,
+                      spec_incid = incidence,
+                      spec_artcov = art_coverage,
+                      asfr
+                    ),
+             by = c("spectrum_region_code", "sex", "age_group_id")
            )
 
+  ## Projection matrix
+
+  quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
+  quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
+  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2)
+    
   ## Adjacency matrix
   M <- mf_areas %>%
     dplyr::mutate(geometry = areas$boundaries[area_id]) %>%
@@ -329,6 +338,7 @@ naomi_model_frame <- function(areas,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
             A_out = outf$A,
+            Lproj = Lproj,
             age_group_ids = age_group_ids,
             sexes = sexes,
             calendar_quarter1 = calendar_quarter1,

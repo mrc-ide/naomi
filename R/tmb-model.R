@@ -193,6 +193,7 @@ prepare_tmb_inputs <- function(naomi_data) {
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
+    Lproj = naomi_data$Lproj,
     X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha_t2 = stats::model.matrix(~1, df),

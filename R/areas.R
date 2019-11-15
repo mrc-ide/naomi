@@ -39,7 +39,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
       dplyr::count(area_level, area_level_label, display, naomi_level, name = "n_areas")
     hierarchy <- area_merged %>%
       as.data.frame() %>%
-      dplyr::select(area_id, area_name, area_level, parent_area_id, area_sort_order, center_x, center_y)
+      dplyr::select(area_id, area_name, area_level, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y)
 
     boundaries <- dplyr::select(area_merged, area_id, geometry)
   }
@@ -147,6 +147,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
            area_level = hierarchy$area_level,
            area_level_label = hierarchy$area_level_label,
            display_level = hierarchy$display,
+           spectrum_region_code = hierarchy$spectrum_region_code,
            area_name = hierarchy$area_name,
            area_sort_order = hierarchy$area_sort_order,
            center_x = hierarchy$center_x,
