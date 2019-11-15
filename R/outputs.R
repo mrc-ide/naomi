@@ -61,7 +61,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
       v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
     }
 
-    v
+    v 
   }
 
   indicator_ids_t1 <- c("population_t1_out" = 1,
@@ -83,7 +83,8 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicators_t1 <- Map(get_est, names(indicator_ids_t1), indicator_ids_t1, naomi_mf$calendar_quarter1)
   indicators_t2 <- Map(get_est, names(indicator_ids_t2), indicator_ids_t2, naomi_mf$calendar_quarter2)
   
-  dplyr::bind_rows(indicators_t1, indicators_t2)
+  dplyr::bind_rows(indicators_t1, indicators_t2) %>%
+    dplyr::select(names(mf_out), quarter_id, indicator_id, mean, se, median, mode, lower, upper)
 }
 
 
@@ -178,10 +179,10 @@ add_output_labels <- function(naomi_output) {
              quarter_label,
              indicator_id,
              indicator_label,
-             mode,
              mean,
              se,
              median,
+             mode,
              lower,
              upper
            )
