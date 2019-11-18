@@ -8,6 +8,7 @@
 \alias{convert_quarter_id}
 \alias{convert_calendar_quarter}
 \alias{calendar_quarter_to_quarter_id}
+\alias{quarter_id_to_calendar_quarter}
 \title{Time period indexing}
 \usage{
 quarter_year_labels(quarter_id)
@@ -23,6 +24,8 @@ convert_quarter_id(year, quarter)
 convert_calendar_quarter(year, quarter)
 
 calendar_quarter_to_quarter_id(calendar_quarter)
+
+quarter_id_to_calendar_quarter(quarter_id)
 }
 \arguments{
 \item{quarter_id}{vector of integer quarter IDs.}
