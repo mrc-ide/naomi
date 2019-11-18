@@ -6,21 +6,21 @@
       "label": "Number on ART",
       "controls": [
         {
-          "name": "art_t1",
-          "label": "Year midpoint of survey",
+          "name": "art_calendar_quarter1",
+          "label": "Calendar quarter midpoint of survey",
           "type": "select",
-          "helpText": "Select year of input ART data at the midpoint of survey data",
+          "helpText": "Select calendar quarter of input ART data at the midpoint of survey data",
           "options":
-            <art_t1_options>,
+            <art_calendar_quarter1_options>,
           "required": false
         },
         {
-          "name": "art_t2",
-          "label": "Year to generate estimates",
+          "name": "art_calendar_quarter2",
+          "label": "Calendar quarter to generate estimates",
           "type": "select",
-          "helpText": "Select year of input ART data at which to generate estimates",
+          "helpText": "Select calendar quarter of input ART data at which to generate estimates",
           "options":
-            <art_t2_options>,
+            <art_calendar_quarter2_options>,
           "required": false
         }
       ]
