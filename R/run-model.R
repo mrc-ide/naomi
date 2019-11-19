@@ -19,7 +19,7 @@
 #' * `survey data`
 #' * `anc` (optional)
 #' * `art` (optional)
-#' 
+#'
 #' The `options` argument must be a list specifying minimally:
 #'
 #' * area_scope
@@ -74,8 +74,12 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   recent_survey_ids <- options$survey_recently_infected
   art_or_vls <- options$survey_art_or_vls
 
-  artnum_calendar_quarter1 <- options$art_calendar_quarter1
-  artnum_calendar_quarter2 <- options$art_calendar_quarter2
+  ## TODO: Use options$include_art returns "true" or "false" as strings to
+  ## instead automatically set
+  ## calendar quarter from the years available in the ART data
+  ## Hardcoded values for now.
+  artnum_calendar_quarter1 <- "CY2016Q1"
+  artnum_calendar_quarter2 <- "CY2018Q3"
 
   anc_prevalence_year1 <- options$anc_prevalence_year1
   anc_prevalence_year2 <- options$anc_prevalence_year2
