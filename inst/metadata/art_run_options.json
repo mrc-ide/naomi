@@ -12,11 +12,11 @@
           "helpText": "Select whether to include ART data or not in model run",
           "options":
             [{
-              "id": true,
+              "id": "true",
               "label": "yes"
             },
             {
-              "id": false,
+              "id": "false",
               "label": "no"
             }],
           "required": true
