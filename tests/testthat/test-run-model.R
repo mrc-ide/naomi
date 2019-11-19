@@ -19,7 +19,7 @@ test_that("model can be run", {
     survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
     survey_art_or_vls = "art_coverage",
-    include_art = TRUE,
+    include_art = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
