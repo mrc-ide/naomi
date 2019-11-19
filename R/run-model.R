@@ -41,16 +41,16 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## Get from the options
   scope <- options$area_scope
   level <- options$area_level
-  quarter_id_t1 <- options$t1
-  quarter_id_t2 <- options$t2
+  quarter_id_t1 <- as.numeric(options$t1)
+  quarter_id_t2 <- as.numeric(options$t2)
   prev_survey_ids  <- options$survey_prevalence
   artcov_survey_ids  <- options$survey_art_coverage
   vls_survey_ids <- NULL
   recent_survey_ids <- options$survey_recently_infected
   art_or_vls <- options$survey_art_or_vls
 
-  artnum_quarter_id_t1 <- options$art_t1
-  artnum_quarter_id_t2 <- options$art_t2
+  artnum_quarter_id_t1 <- as.numeric(options$art_t1)
+  artnum_quarter_id_t2 <- as.numeric(options$art_t2)
 
   ## TODO: make these single values once we have updated to using years instead
   ## of quarter mrc-577
@@ -58,10 +58,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## in the naomi_model_frame code mrc-645
   anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
   anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
-  anc_prevalence_t1 <- options$anc_prevalence_t1
-  anc_prevalence_t2 <- options$anc_prevalence_t2
-  anc_art_coverage_t1 <- options$anc_art_coverage_t1
-  anc_art_coverage_t2 <- options$anc_art_coverage_t2
+  anc_prevalence_t1 <- as.numeric(options$anc_prevalence_t1)
+  anc_prevalence_t2 <- as.numeric(options$anc_prevalence_t2)
+  anc_art_coverage_t1 <- as.numeric(options$anc_art_coverage_t1)
+  anc_art_coverage_t2 <- as.numeric(options$anc_art_coverage_t2)
 
   naomi_mf <- naomi_model_frame(areas,
                                 population,
