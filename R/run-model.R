@@ -74,7 +74,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   recent_survey_ids <- options$survey_recently_infected
   art_or_vls <- options$survey_art_or_vls
 
-  ## TODO: Use options$include_art boolean to instead automatically set
+  ## TODO: Use options$include_art returns "true" or "false" as strings to
+  ## instead automatically set
   ## calendar quarter from the years available in the ART data
   ## Hardcoded values for now.
   artnum_calendar_quarter1 <- "CY2016Q1"
