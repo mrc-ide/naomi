@@ -37,11 +37,11 @@ test_that("model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id", "calendar_quarter",
-                 "quarter_label", "indicator_id", "indicator_label", 
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label",
+                 "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) == 84042)
-
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   expect_equal(file_list$Name,
@@ -89,10 +89,11 @@ test_that("model can be run without programme data", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id",
-                 "quarter_label", "indicator_id", "indicator_label", 
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label",
+                 "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 42021)
+  expect_true(nrow(output) == 84042)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
