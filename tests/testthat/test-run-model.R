@@ -38,8 +38,9 @@ test_that("model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id", "calendar_quarter",
-                 "quarter_label", "indicator_id", "indicator_label", "mode",
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label",
+                 "indicator", "indicator_id", "indicator_label", "mode",
                  "mean", "se", "median", "lower", "upper"))
   expect_true(nrow(output) == 42021)
 
@@ -90,8 +91,9 @@ test_that("model can be run without programme data", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id",
-                 "quarter_label", "indicator_id", "indicator_label", "mode",
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label",
+                 "indicator", "indicator_id", "indicator_label", "mode",
                  "mean", "se", "median", "lower", "upper"))
   expect_true(nrow(output) == 42021)
 
