@@ -50,6 +50,7 @@ get_age_groups <- function() {
 #' quarter_labels(quarter_ids)
 #' year_labels(quarter_ids)
 #' quarter_year_labels(quarter_ids)
+#' calendar_quarter_labels("CY2015Q2")
 #'
 #' @export
 quarter_year_labels <- function(quarter_id) {
@@ -66,6 +67,12 @@ quarter_number <- function(quarter_id) {
 #' @export
 quarter_labels <- function(quarter_id) {
   c("Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec")[quarter_number(quarter_id)]
+}
+
+#' @rdname quarter_year_labels
+#' @export
+calendar_quarter_labels <- function(calendar_quarter) {
+  quarter_year_labels(calendar_quarter_to_quarter_id(calendar_quarter))
 }
 
 #' @rdname quarter_year_labels

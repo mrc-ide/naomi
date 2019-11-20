@@ -4,6 +4,7 @@
 \alias{quarter_year_labels}
 \alias{quarter_number}
 \alias{quarter_labels}
+\alias{calendar_quarter_labels}
 \alias{year_labels}
 \alias{convert_quarter_id}
 \alias{convert_calendar_quarter}
@@ -16,6 +17,8 @@ quarter_year_labels(quarter_id)
 quarter_number(quarter_id)
 
 quarter_labels(quarter_id)
+
+calendar_quarter_labels(calendar_quarter)
 
 year_labels(quarter_id)
 
@@ -30,11 +33,11 @@ quarter_id_to_calendar_quarter(quarter_id)
 \arguments{
 \item{quarter_id}{vector of integer quarter IDs.}
 
+\item{calendar_quarter}{Vector of calendar quarters to convert to quarter id labels.}
+
 \item{year}{vector of integer years.}
 
 \item{quarter}{vector of integer quarters (1,2,3,4).}
-
-\item{calendar_quarter}{Vector of calendar quarters to convert to quarter id labels.}
 }
 \description{
 Time periods are indexed by integers for efficiency and precision.
@@ -54,5 +57,6 @@ quarter_number(quarter_ids)
 quarter_labels(quarter_ids)
 year_labels(quarter_ids)
 quarter_year_labels(quarter_ids)
+calendar_quarter_labels("CY2015Q2")
 
 }
