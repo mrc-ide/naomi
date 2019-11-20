@@ -40,6 +40,8 @@ ids.}
 
 \item{sigma_u_sd}{sigma_u_sd}
 
+\item{artattend}{artattend}
+
 \item{artattend_prior_sigma_scale}{artattend_propr_sigma_scale}
 
 \item{logit_nu_mean}{mean of logit viral load suppression.}
