@@ -218,6 +218,8 @@ population_agesex <- nso %>%
   ) %>%
   select(area_id, source, calendar_quarter, sex, age_group, population)
 
+#' ## Add ASFR column
+population_agesex$asfr <- NA
 
 #' ## Save datasets
 
@@ -226,4 +228,4 @@ mwi_population_agesex <- population_agesex
 usethis::use_data(mwi_population_agesex, overwrite=TRUE)
 
 dir.create(here("inst/extdata/population"))
-write_csv(population_agesex, here("inst/extdata/population/population_agesex.csv"))
+write_csv(population_agesex, here("inst/extdata/population/population_agesex.csv"), na = "")
