@@ -219,7 +219,27 @@ population_agesex <- nso %>%
   select(area_id, source, calendar_quarter, sex, age_group, population)
 
 #' ## Add ASFR column
-population_agesex$asfr <- NA
+
+asfr <- read_csv(here("data-raw/population/mwi-asfr.csv"))
+
+population_agesex  <- population_agesex %>%
+  left_join(
+    mwi_area_hierarchy %>%
+    select(area_id, area_name)
+  ) %>%
+  left_join(
+    asfr %>%
+    filter(area_level == 4) %>%
+    mutate(area_name = recode(area_name, "Nkhatabay" = "Nkhata Bay"),
+           sex = "female",
+           asfr = median,
+           median = NULL,
+           lower = NULL,
+           upper = NULL)
+  ) %>%
+  mutate(area_name = NULL,
+         area_level = NULL)
+
 
 #' ## Save datasets
 
