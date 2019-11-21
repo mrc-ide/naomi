@@ -64,10 +64,20 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
-  artcov_survey_ids  <- options$survey_art_coverage
-  vls_survey_ids <- NULL
   recent_survey_ids <- options$survey_recently_infected
-  art_or_vls <- options$survey_art_or_vls
+
+  ## TODO: Should this throw an error if inconsistent options are selected?
+  ## TODO: Put test against this
+  ## TODO: Longer-term -- change this flow control to allow only one
+  ##       of survey_art_coverage or survey_vls to be specified and
+  ##       remove survey_art_or_vls flow control.
+  if(options$survey_art_or_vls == "art_coverage") {
+    artcov_survey_ids <- options$survey_art_coverage
+    vls_survey_ids <- NULL
+  } else {
+    artcov_survey_ids <- NULL
+    vls_survey_ids <- options$survey_vls
+  }
 
   ## TODO: Use options$include_art returns "true" or "false" as strings to
   ## instead automatically set
