@@ -18,7 +18,7 @@
       "label": "Number of simulations",
       "controls": [
         {
-          "name": "no_of_simulations",
+          "name": "no_of_samples",
           "type": "number",
           "value": 3000,
           "helpText": "Number of simulatons for generating uncertainty ranges",
