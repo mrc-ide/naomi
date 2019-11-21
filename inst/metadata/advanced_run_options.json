@@ -1,0 +1,58 @@
+{
+  "label": "Advanced",
+  "description": "Advanced model run options",
+  "controlGroups": [
+    {
+      "label": "Maximum iterations",
+      "controls": [
+        {
+          "name": "include_art",
+          "type": "number",
+          "value": 250,
+          "helpText": "Maximum number of iteration for model run",
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "Number of simulations",
+      "controls": [
+        {
+          "name": "no_of_simulations",
+          "type": "number",
+          "value": 3000,
+          "helpText": "Number of simulatons for generating uncertainty ranges",
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "Prior ART uncertainty",
+      "controls": [
+        {
+          "name": "prior_art_uncertainty",
+          "type": "number",
+          "value": 0.1,
+          "helpText": "ART uncertainty prior",
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "Prevalence model choice",
+      "controls": [
+        {
+          "name": "prevalence_model_choice",
+          "type": "select",
+          "options":
+            [{
+              "id": "static",
+              "label": "static"
+            }],
+          "value": "static",
+          "required": true
+        }
+      ]
+    }
+  ]
+}
