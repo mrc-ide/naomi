@@ -50,6 +50,26 @@
           "required": true
         }
       ]
+    },
+    {
+      "label": "Include input data in model output download",
+      "controls": [
+        {
+          "name": "download_input",
+          "type": "select",
+          "options":
+            [{
+              "id": "true",
+              "label": "yes"
+            },
+            {
+              "id": "false",
+              "label": "no"
+            }],
+          "value": "false"
+          "required": true
+        }
+      ]
     }
   ]
 }
