@@ -1,12 +1,13 @@
 
 meta_indicator <-
   data.frame(
-    indicator_id = 1:7,
+    indicator_id = 1:8,
     indicator = c("population",
                   "prevalence",
                   "plhiv",
                   "art_coverage",
                   "art_num_residents",
+                  "art_num_attend",
                   "incidence",
                   "infections"),
     indicator_label = c("Population",
@@ -14,6 +15,7 @@ meta_indicator <-
                         "PLHIV",
                         "ART Coverage",
                         "ART Number",
+                        "Receiving ART",
                         "HIV Incidence",
                         "New Infections"),
     description = c("Population size",
@@ -21,6 +23,7 @@ meta_indicator <-
                     "Number of people living with HIV",
                     "Proportion of PLHIV on ART (residents)",
                     "Number on ART (residents)",
+                    "Number receiving ART (attending)",
                     "HIV incidence rate per year",
                     "Number of new infections per year"),
     parameter = c("population_out",
@@ -28,6 +31,7 @@ meta_indicator <-
                   "plhiv_out",
                   "alpha_out",
                   "artnum_out",
+                  "artattend_out",
                   "lambda_out",
                   "infections_out"),
     format = NA,
@@ -69,20 +73,22 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                         "plhiv_t1_out" = 3,
                         "alpha_t1_out" = 4,
                         "artnum_t1_out" = 5,
-                        "lambda_t1_out" = 6,
-                        "infections_t1_out" = 7)
+                        "artattend_t1_out" = 6,
+                        "lambda_t1_out" = 7,
+                        "infections_t1_out" = 8)
 
   indicator_ids_t2 <- c("population_t2_out" = 1,
                         "rho_t2_out" = 2,
                         "plhiv_t2_out" = 3,
                         "alpha_t2_out" = 4,
                         "artnum_t2_out" = 5,
-                        "lambda_t2_out" = 6,
-                        "infections_t2_out" = 7)
+                        "artattend_t2_out" = 6,
+                        "lambda_t2_out" = 7,
+                        "infections_t2_out" = 8)
 
   indicators_t1 <- Map(get_est, names(indicator_ids_t1), indicator_ids_t1, naomi_mf$calendar_quarter1)
   indicators_t2 <- Map(get_est, names(indicator_ids_t2), indicator_ids_t2, naomi_mf$calendar_quarter2)
-  
+
   dplyr::bind_rows(indicators_t1, indicators_t2) %>%
     dplyr::select(names(mf_out), quarter_id, indicator_id, mean, se, median, mode, lower, upper)
 }

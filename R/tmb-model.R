@@ -80,6 +80,9 @@ prepare_tmb_inputs <- function(naomi_data) {
   A_artattend_t1 <- create_artattend_Amat(naomi_data$artnum_t1_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
   A_artattend_t2 <- create_artattend_Amat(naomi_data$artnum_t2_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
 
+  A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, area_id, sex, age_group_id, artnum_idx = idx),
+                                          naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+
   ## Construct TMB data and initial parameter vectors
 
   df <- naomi_data$mf_model
@@ -155,7 +158,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     A_artattend_t1 = A_artattend_t1,
     x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
     A_artattend_t2 = A_artattend_t2,
-    x_artnum_t2 = naomi_data$artnum_t2_dat$current_art
+    x_artnum_t2 = naomi_data$artnum_t2_dat$current_art,
+    A_artattend_mf = A_artattend_mf
   )
 
 

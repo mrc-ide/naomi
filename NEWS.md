@@ -1,3 +1,9 @@
+# naomi 0.0.19
+
+* Add age <1 / 1-4 age stratification to outputs.
+* Add number receiving art in area outputs.
+* Add ASFR inputs.
+
 # naomi 0.0.18
 
 * Use odds ratios from Spectrum to model prevalence and ART coverage above age of data availability.
