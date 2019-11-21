@@ -83,8 +83,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## instead automatically set
   ## calendar quarter from the years available in the ART data
   ## Hardcoded values for now.
-  artnum_calendar_quarter1 <- "CY2016Q1"
-  artnum_calendar_quarter2 <- "CY2018Q3"
+  artnum_calendar_quarter1 <- calendar_quarter_t1
+  artnum_calendar_quarter2 <- calendar_quarter_t2
 
   anc_prevalence_year1 <- options$anc_prevalence_year1
   anc_prevalence_year2 <- options$anc_prevalence_year2
