@@ -74,10 +74,10 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_anc_artcov);
   DATA_VECTOR(x_anc_artcov);
 
-  DATA_SPARSE_MATRIX(A_artnum_t1);
+  DATA_SPARSE_MATRIX(A_artattend_t1);
   DATA_VECTOR(x_artnum_t1);
 
-  DATA_SPARSE_MATRIX(A_artnum_t2);
+  DATA_SPARSE_MATRIX(A_artattend_t2);
   DATA_VECTOR(x_artnum_t2);
 
   DATA_IVECTOR(n_nb);
@@ -409,8 +409,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> prop_art_ij_t1((Xart_idx * prop_art_t1) * (Xart_gamma * gamma_art));
   vector<Type> population_ij_t1(Xart_idx * population_t1);
 
-  vector<Type> A_j_t1(A_artnum_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1));
-  vector<Type> sd_A_j_t1(A_artnum_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1)));
+  vector<Type> A_j_t1(A_artattend_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1));
+  vector<Type> sd_A_j_t1(A_artattend_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1)));
   sd_A_j_t1 = sd_A_j_t1.sqrt();
 
   val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
@@ -418,8 +418,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> prop_art_ij_t2((Xart_idx * prop_art_t2) * (Xart_gamma * gamma_art));
   vector<Type> population_ij_t2(Xart_idx * population_t2);
 
-  vector<Type> A_j_t2(A_artnum_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2));
-  vector<Type> sd_A_j_t2(A_artnum_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2)));
+  vector<Type> A_j_t2(A_artattend_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2));
+  vector<Type> sd_A_j_t2(A_artattend_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2)));
   sd_A_j_t2 = sd_A_j_t2.sqrt();
 
   val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));

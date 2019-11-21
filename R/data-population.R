@@ -144,6 +144,9 @@ quarter_id_to_calendar_quarter <- function(quarter_id) {
 #' @export
 interpolate_population_agesex <- function(population_agesex, calendar_quarters) {
 
+  if("asfr" %in% names(population_agesex))
+    population_agesex$asfr <- NULL
+  
   quarter_ids <- calendar_quarter_to_quarter_id(calendar_quarters)
   dfall <- dplyr::distinct(dplyr::select(population_agesex, -calendar_quarter, -population))
 

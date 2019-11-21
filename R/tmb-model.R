@@ -77,111 +77,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   Xart_gamma <- Matrix::sparse.model.matrix(~0 + artattend_idf, df_art_attend)
   Xart_idx <- Matrix::sparse.model.matrix(~0 + idf, df_art_attend)
 
-
-  A_artnum_t1 <-
-    naomi_data$artnum_t1_dat %>%
-    dplyr::rename(artdat_age_group_id = age_group_id,
-                  artdat_sex = sex) %>%
-    dplyr::left_join(
-             get_age_groups() %>%
-             dplyr::transmute(
-                      artdat_age_group_id = age_group_id,
-                      artdat_age_start = age_group_start,
-                      artdat_age_end = age_group_start + age_group_span
-                    ),
-             by = "artdat_age_group_id"
-           ) %>%
-    ## Note: this would be much faster with tree data structure for age rather than crossing...
-    tidyr::crossing(
-             get_age_groups() %>%
-             dplyr::filter(age_group_id %in% naomi_data$age_group_ids)
-           ) %>%
-    dplyr::filter(
-             artdat_age_start <= age_group_start,
-             age_group_start + age_group_span <= artdat_age_end
-           ) %>%
-    dplyr::left_join(
-             data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
-                        sex = c("male", "female", "male", "female", "both"),
-                        stringsAsFactors = FALSE) %>%
-             dplyr::filter(sex %in% naomi_data$sexes),
-             by = "artdat_sex"
-           ) %>%
-    dplyr::left_join(
-             naomi_data$mf_areas %>% dplyr::select(area_id, area_idx),
-             by = "area_id"
-           ) %>%
-    dplyr::left_join(
-             df_art_attend %>%
-             dplyr::transmute(
-                      artattend_area_idx,
-                      age_group_id,
-                      sex,
-                      Aidx = row_number(),
-                      value = 1
-      ),
-      by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
-      ) %>%
-    {
-      Matrix::spMatrix(nrow(naomi_data$artnum_t1_dat),
-                       nrow(df_art_attend),
-                     .$artnum_idx,
-                     .$Aidx,
-                     .$value)
-    }
-
-  A_artnum_t2 <-
-    naomi_data$artnum_t2_dat %>%
-    dplyr::rename(artdat_age_group_id = age_group_id,
-                  artdat_sex = sex) %>%
-    dplyr::left_join(
-             get_age_groups() %>%
-             dplyr::transmute(
-                      artdat_age_group_id = age_group_id,
-                      artdat_age_start = age_group_start,
-                      artdat_age_end = age_group_start + age_group_span
-                    ),
-             by = "artdat_age_group_id"
-           ) %>%
-    ## Note: this would be much faster with tree data structure for age rather than crossing...
-    tidyr::crossing(
-             get_age_groups() %>%
-             dplyr::filter(age_group_id %in% naomi_data$age_group_ids)
-           ) %>%
-    dplyr::filter(
-             artdat_age_start <= age_group_start,
-             age_group_start + age_group_span <= artdat_age_end
-           ) %>%
-    dplyr::left_join(
-             data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
-                        sex = c("male", "female", "male", "female", "both"),
-                        stringsAsFactors = FALSE) %>%
-             dplyr::filter(sex %in% naomi_data$sexes),
-             by = "artdat_sex"
-           ) %>%
-    dplyr::left_join(
-             naomi_data$mf_areas %>% dplyr::select(area_id, area_idx),
-             by = "area_id"
-           ) %>%
-    dplyr::left_join(
-             df_art_attend %>%
-             dplyr::transmute(
-                      artattend_area_idx,
-                      age_group_id,
-                      sex,
-                      Aidx = row_number(),
-                      value = 1
-      ),
-      by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
-      ) %>%
-    {
-      Matrix::spMatrix(nrow(naomi_data$artnum_t2_dat),
-                       nrow(df_art_attend),
-                     .$artnum_idx,
-                     .$Aidx,
-                     .$value)
-    }
-
+  A_artattend_t1 <- create_artattend_Amat(naomi_data$artnum_t1_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_t2 <- create_artattend_Amat(naomi_data$artnum_t2_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
 
   ## Construct TMB data and initial parameter vectors
 
@@ -255,9 +152,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_anc_artcov = anc_artcov_t1_dat$anc_artcov_x,
     n_anc_artcov = anc_artcov_t1_dat$anc_artcov_n,
     ##
-    A_artnum_t1 = A_artnum_t1,
+    A_artattend_t1 = A_artattend_t1,
     x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
-    A_artnum_t2 = A_artnum_t2,
+    A_artattend_t2 = A_artattend_t2,
     x_artnum_t2 = naomi_data$artnum_t2_dat$current_art
   )
 
@@ -449,4 +346,62 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
   L_inv = Matrix::Cholesky(prec)
   v <- mean + Matrix::solve(as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(as(L_inv, "Matrix")), z))
   as.matrix(Matrix::t(v))
+}
+
+
+create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_art_attend) {
+
+  A_artnum <- artnum_df %>%
+    dplyr::select(area_id, sex, age_group_id, artnum_idx) %>%
+    dplyr::rename(artdat_age_group_id = age_group_id,
+                  artdat_sex = sex) %>%
+    dplyr::left_join(
+             get_age_groups() %>%
+             dplyr::transmute(
+                      artdat_age_group_id = age_group_id,
+                      artdat_age_start = age_group_start,
+                      artdat_age_end = age_group_start + age_group_span
+                    ),
+             by = "artdat_age_group_id"
+           ) %>%
+    ## Note: this would be much faster with tree data structure for age rather than crossing...
+    tidyr::crossing(
+             get_age_groups() %>%
+             dplyr::filter(age_group_id %in% age_group_ids)
+           ) %>%
+    dplyr::filter(
+             artdat_age_start <= age_group_start,
+             age_group_start + age_group_span <= artdat_age_end
+           ) %>%
+    dplyr::left_join(
+             data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
+                        sex = c("male", "female", "male", "female", "both"),
+                        stringsAsFactors = FALSE) %>%
+             dplyr::filter(sex %in% sexes),
+             by = "artdat_sex"
+           ) %>%
+    dplyr::left_join(
+             dplyr::select(mf_areas, area_id, area_idx),
+             by = "area_id"
+           ) %>%
+    dplyr::left_join(
+             df_art_attend %>%
+             dplyr::transmute(
+                      artattend_area_idx,
+                      age_group_id,
+                      sex,
+                      Aidx = row_number(),
+                      value = 1
+      ),
+      by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
+      ) %>%
+    {
+      Matrix::spMatrix(nrow(artnum_df),
+                       nrow(df_art_attend),
+                       .$artnum_idx,
+                       .$Aidx,
+                       .$value)
+    }
+
+  A_artnum
 }
