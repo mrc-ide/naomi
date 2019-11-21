@@ -27,13 +27,21 @@
       ]
     },
     {
-      "label": "Prior ART uncertainty",
+      "label": "Cross-district ART attendance",
       "controls": [
         {
-          "name": "prior_art_uncertainty",
-          "type": "number",
-          "value": 0.1,
-          "helpText": "ART uncertainty prior",
+          "name": "art_attendance",
+          "type": "select",
+          "options":
+            [{
+              "id": "true",
+              "label": "true"
+            },
+            {
+              "id": "false",
+              "label": "false"
+            }],
+          "value": "true",
           "required": true
         }
       ]
