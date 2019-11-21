@@ -58,11 +58,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
-  ## TODO: Remove this filter - it is in temporarily as model does not run
-  ## without it mrc-640
-  art_number <- art_number %>%
-    dplyr::filter(age_group == "15+")
-
   ## Get from the options
   scope <- options$area_scope
   level <- options$area_level
