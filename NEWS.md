@@ -1,3 +1,7 @@
+# naomi 0.0.17
+
+* Add advanced model run options
+
 # naomi 0.0.16
 
 * Move metadata into directory separate from extdata
