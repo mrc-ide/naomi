@@ -1,3 +1,7 @@
+# naomi 0.0.17
+
+* Save metadata alongside model outputs, when run via the hint run entrypoint (mrc-760)
+
 # naomi 0.0.16
 
 * Move metadata into directory separate from extdata
