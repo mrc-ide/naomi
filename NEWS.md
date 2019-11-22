@@ -1,3 +1,7 @@
+# naomi 0.0.17
+
+* Add skeleton of model input validation
+
 # naomi 0.0.16
 
 * Move metadata into directory separate from extdata

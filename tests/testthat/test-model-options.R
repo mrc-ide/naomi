@@ -46,3 +46,11 @@ test_that("art and anc data can be omitted from model run options", {
   expect_true(any(grepl("<survey_art_or_vls_options>", options$survey)))
 })
 
+test_that("validate model options returns true", {
+  options <- list(
+    option = "1",
+    option2 = "2"
+  )
+  expect_true(validate_model_options(options))
+})
+
