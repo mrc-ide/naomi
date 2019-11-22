@@ -45,16 +45,28 @@ test_that("model can be run", {
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
-
+               c("boundaries.geojson", "indicators.csv",
+                 "inputs/", "inputs/options.csv",
+                 "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
+                 "meta_period.csv"))
+  
+  options_dir <- tempfile()
+  unzip(model_run$spectrum_path, "inputs/options.csv", exdir = options_dir)
+  options_df <- read.csv(file.path(options_dir, "inputs/options.csv"),
+                         stringsAsFactors = FALSE)
+  expect_equal(colnames(options_df), c("option", "value"))
+  expect_equal(options_df$value[options_df$option == "calendar_quarter_t1"],
+               "CY2016Q1")
+    
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
   expect_equal(model_run$summary_path, summary_path)
   file_list <- unzip(model_run$summary_path, list = TRUE)
   expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+               c("boundaries.geojson", "indicators.csv",
+                 "inputs/", "inputs/options.csv",
+                 "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
+                 "meta_period.csv"))
 
 })
 
