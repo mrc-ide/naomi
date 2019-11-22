@@ -38,11 +38,12 @@ get_model_options_template <- function(art, anc) {
 #'
 #' This validates that a set of model options can be used to run the model
 #'
+#' @param data The set of input data for the model run
 #' @param options Key-value list of model options
 #'
 #' @return TRUE if valid otherwise throw an error
 #' @export
-validate_model_options <- function(options) {
+validate_model_options <- function(data, options) {
   ## This must return TRUE if valid - otherwise throw an error
   ## TODO: Add real validation
   TRUE
