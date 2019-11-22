@@ -45,18 +45,33 @@ test_that("model can be run", {
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  ## Note that this test is likely quite platform specific
+  info <- naomi_info(data, options)
+  info_names <- paste0("naomi/", names(info))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "naomi/", info_names))
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
   expect_equal(model_run$summary_path, summary_path)
   file_list <- unzip(model_run$summary_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "naomi/", info_names))
 
+  tmp <- tempfile()
+  unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
+  expect_equal(dir(tmp), "naomi")
+  expect_equal(dir(file.path(tmp, "naomi")), names(info))
+  for (p in names(info)) {
+    expect_equal(readLines(file.path(tmp, "naomi", p)),
+                 strsplit(info[[p]], "\n")[[1]])
+  }
 })
 
 test_that("model can be run without programme data", {
