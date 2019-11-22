@@ -282,13 +282,13 @@ save_output <- function(filename, dir,
   naomi_write_csv(indicators, "indicators.csv")
 
   if(!single_csv) {
-    naomi_write_csv(naomi_output$meta_area %>%
-                      as.data.frame() %>%
-                      dplyr::select(-geometry),
+    naomi_write_csv(sf::st_drop_geometry(naomi_output$meta_area),
                     "meta_area.csv")
     naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
     naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
+
+    naomi_output$meta_area$name <- naomi_output$meta_area$area_name
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         sf::st_write(naomi_output$meta_area, "boundaries.geojson")
