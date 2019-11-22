@@ -5,9 +5,9 @@
 \alias{read_output_package}
 \title{Save outputs to zip file}
 \usage{
-save_output_package(naomi_output, filename, dir, overwrite = FALSE,
-  with_labels = FALSE, boundary_format = "geojson",
-  single_csv = FALSE)
+save_output_package(naomi_output, filename, dir, options = NULL,
+  overwrite = FALSE, with_labels = FALSE,
+  boundary_format = "geojson", single_csv = FALSE)
 
 read_output_package(path)
 }
@@ -17,6 +17,8 @@ read_output_package(path)
 \item{filename}{Name of file to create}
 
 \item{dir}{Directory to create zip in}
+
+\item{options}{List of model fit options to be saved as csv}
 
 \item{overwrite}{If TRUE overwrite any existing file}
 

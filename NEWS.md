@@ -3,6 +3,7 @@
 * Add age <1 / 1-4 age stratification to outputs.
 * Add number receiving art in area outputs.
 * Add ASFR inputs.
+* Add inputs/options.csv in zipped output package.
 
 # naomi 0.0.18
 
