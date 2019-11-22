@@ -26,10 +26,6 @@ test_that("can get valid model run options template", {
   expect_true(any(grepl("<anc_prevalence_t2_options>", options$anc)))
   expect_true(any(grepl("<anc_art_coverage_t1_options>", options$anc)))
   expect_true(any(grepl("<anc_art_coverage_t2_options>", options$anc)))
-  expect_true(any(grepl("<anc_prevalence_year1_options>", options$anc)))
-  expect_true(any(grepl("<anc_prevalence_year2_options>", options$anc)))
-  expect_true(any(grepl("<anc_art_coverage_year1_options>", options$anc)))
-  expect_true(any(grepl("<anc_art_coverage_year2_options>", options$anc)))
 
   expect_true(any(grepl("Advanced", options$advanced)))
 })
