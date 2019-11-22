@@ -105,6 +105,15 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 output_package <- function(naomi_fit, naomi_mf, areas) {
 
   indicators <- extract_indicators(naomi_fit, naomi_mf)
+
+  ## !!! Temporary insert <1 / 1-4 results
+  indicators <- indicators %>%
+    dplyr::bind_rows(
+      dplyr::filter(indicators, age_group_id == 1) %>%
+      dplyr::select(-age_group_id) %>%
+      tidyr::crossing(age_group_id = 30:31)
+    )
+  
   meta_area <- data.tree::ToDataFrameTree(areas$tree, traversal = "level",
                                           "area_level", "area_level_label",
                                           "area_id", "area_name",
