@@ -288,7 +288,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
 
-    naomi_output$meta_area$name <- naomi_output$meta_area$area_name
+    naomi_output$meta_area$name <- naomi_output$meta_area$area_id
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         sf::st_write(naomi_output$meta_area, "boundaries.geojson")
