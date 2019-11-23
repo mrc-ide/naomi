@@ -227,32 +227,30 @@ add_output_labels <- function(naomi_output) {
 save_output_package <- function(naomi_output,
                                 filename,
                                 dir,
-                                options = NULL,
                                 overwrite = FALSE,
                                 with_labels = FALSE,
                                 boundary_format = "geojson",
                                 single_csv = FALSE) {
 
-  save_output(filename, dir, naomi_output, options, overwrite, with_labels, boundary_format,
+  save_output(filename, dir, naomi_output, overwrite, with_labels, boundary_format,
               single_csv)
 }
 
-save_result_summary <- function(path, naomi_output, options) {
-  save_output(basename(path), dirname(path), naomi_output, options,
-              overwrite = FALSE, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+save_result_summary <- function(path, naomi_output) {
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
 }
 
-save_output_spectrum <- function(path, naomi_output, options) {
-  save_output(basename(path), dirname(path), naomi_output, options,
-              overwrite = FALSE, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+save_output_spectrum <- function(path, naomi_output) {
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
 }
 
 
 save_output <- function(filename, dir,
                         naomi_output,
-                        options = NULL,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
@@ -302,15 +300,6 @@ save_output <- function(filename, dir,
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
       }
     }
-  }
-
-  if(!is.null(options)) {
-    dir.create("inputs", showWarnings = FALSE)
-    naomi_write_csv(
-      data.frame(option = names(options),
-                 value = vapply(options, paste, character(1), collapse = ",")),
-      file.path("inputs", "options.csv")
-    )
   }
 
   utils::zip(path, list.files())

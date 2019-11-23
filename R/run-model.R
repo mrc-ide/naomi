@@ -132,8 +132,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   outputs <- output_package(fit, naomi_mf, areas)
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
-  save_result_summary(summary_path, outputs, options)
-  save_output_spectrum(spectrum_path, outputs, options)
+  save_result_summary(summary_path, outputs)
+  save_output_spectrum(spectrum_path, outputs)
 
   progress$complete("Preparing outputs")
   progress$print()
