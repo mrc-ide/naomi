@@ -228,32 +228,31 @@ add_output_labels <- function(naomi_output) {
 save_output_package <- function(naomi_output,
                                 filename,
                                 dir,
-                                options = NULL,
                                 overwrite = FALSE,
                                 with_labels = FALSE,
                                 boundary_format = "geojson",
                                 single_csv = FALSE) {
 
-  save_output(filename, dir, naomi_output, options, overwrite, with_labels, boundary_format,
-              single_csv)
+  save_output(filename, dir, naomi_output, overwrite,
+              with_labels, boundary_format, single_csv)
 }
 
-save_result_summary <- function(path, naomi_output, options) {
-  save_output(basename(path), dirname(path), naomi_output, options,
-              overwrite = FALSE, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+save_result_summary <- function(path, naomi_output) {
+  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
 }
 
-save_output_spectrum <- function(path, naomi_output, options) {
-  save_output(basename(path), dirname(path), naomi_output, options,
-              overwrite = FALSE, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+save_output_spectrum <- function(path, naomi_output) {
+  save_output(basename(path), dirname(path), naomi_output,
+              overwrite = FALSE,
+              with_labels = TRUE, boundary_format = "geojson",
+              single_csv = FALSE)
 }
 
 
 save_output <- function(filename, dir,
                         naomi_output,
-                        options = NULL,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
@@ -291,7 +290,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
 
-    naomi_output$meta_area$name <- naomi_output$meta_area$area_name
+    naomi_output$meta_area$name <- naomi_output$meta_area$area_id
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         sf::st_write(naomi_output$meta_area, "boundaries.geojson")
@@ -305,13 +304,12 @@ save_output <- function(filename, dir,
     }
   }
 
-  if(!is.null(options)) {
-    dir.create("inputs", showWarnings = FALSE)
-    naomi_write_csv(
-      data.frame(option = names(options),
-                 value = vapply(options, paste, character(1), collapse = ",")),
-      file.path("inputs", "options.csv")
-    )
+  info <- attr(naomi_output, "info")
+  if (length(info) > 0L) {
+    dir.create("info")
+    for (p in names(info)) {
+      writeLines(trimws(info[[p]]), file.path("info", p))
+    }
   }
 
   utils::zip(path, list.files())

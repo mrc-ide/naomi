@@ -9,3 +9,10 @@ naomi_read_csv <- function(...) {
 system_file <- function(...) {
   system.file(..., package = "naomi", mustWork = TRUE)
 }
+
+write_csv_string <- function(x, ..., row.names = FALSE) {
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  write.csv(x, tmp, ..., row.names = row.names)
+  paste0(readLines(tmp), collapse = "\n")
+}

@@ -44,30 +44,33 @@ test_that("model can be run", {
   expect_true(nrow(output) == 102672)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv",
-                 "inputs/", "inputs/options.csv",
-                 "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-                 "meta_period.csv"))
-  
-  options_dir <- tempfile()
-  unzip(model_run$spectrum_path, "inputs/options.csv", exdir = options_dir)
-  options_df <- read.csv(file.path(options_dir, "inputs/options.csv"),
-                         stringsAsFactors = FALSE)
-  expect_equal(colnames(options_df), c("option", "value"))
-  expect_equal(options_df$value[options_df$option == "calendar_quarter_t1"],
-               "CY2016Q1")
-    
+  ## Note that this test is likely quite platform specific
+  info <- naomi_info(data, options)
+  info_names <- paste0("info/", names(info))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "info/", info_names))
+
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
   expect_equal(model_run$summary_path, summary_path)
   file_list <- unzip(model_run$summary_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv",
-                 "inputs/", "inputs/options.csv",
-                 "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-                 "meta_period.csv"))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "info/", info_names))
 
+  tmp <- tempfile()
+  unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
+  expect_equal(dir(tmp), "info")
+  expect_equal(dir(file.path(tmp, "info")), names(info))
+  for (p in names(info)) {
+    expect_equal(readLines(file.path(tmp, "info", p)),
+                 strsplit(info[[p]], "\n")[[1]])
+  }
 })
 
 test_that("model can be run without programme data", {

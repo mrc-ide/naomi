@@ -129,11 +129,16 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("Generating uncertainty ranges")
   progress$start("Preparing outputs")
   progress$print()
+
+  # TODO: it would be nicer if output_package could get this too, but
+  # that requires that it can see the same inputs.
   outputs <- output_package(fit, naomi_mf, areas)
+  attr(outputs, "info") <- naomi_info(data, options)
+
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
-  save_result_summary(summary_path, outputs, options)
-  save_output_spectrum(spectrum_path, outputs, options)
+  save_result_summary(summary_path, outputs)
+  save_output_spectrum(spectrum_path, outputs)
 
   progress$complete("Preparing outputs")
   progress$print()
@@ -195,3 +200,35 @@ Progress <- R6::R6Class("Progress", list(
                               class = c("progress", "condition")))
   }
 ))
+
+naomi_info_input <- function(data) {
+  files <- vapply(data, identity, character(1))
+  hash <- unname(tools::md5sum(vapply(data, identity, character(1))))
+  data.frame(
+    role = names(data),
+    filename = basename(files),
+    md5sum = unname(tools::md5sum(files)),
+    stringsAsFactors = FALSE)
+}
+
+naomi_info_packages <- function() {
+  info <- sessionInfo()
+
+  versions <- function(x, type) {
+    ret <- t(vapply(x, function(x) c(x$Package, x$Version, type), character(3),
+                    USE.NAMES = FALSE))
+    ret[order(ret[, 1]), , drop = FALSE]
+  }
+
+  as.data.frame(rbind(
+    cbind(name = "R", version = as.character(getRversion()), type = "base"),
+    versions(info$otherPkgs, "other"),
+    versions(info$loadedOnly, "loaded")),
+    stringsAsFactors = FALSE)
+}
+
+naomi_info <- function(data, options) {
+  list("inputs.csv" = write_csv_string(naomi_info_input(data)),
+       "options.yml" = yaml::as.yaml(options),
+       "packages.csv" = write_csv_string(naomi_info_packages()))
+}
