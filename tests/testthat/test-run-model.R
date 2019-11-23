@@ -47,12 +47,12 @@ test_that("model can be run", {
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
   info <- naomi_info(data, options)
-  info_names <- paste0("naomi/", names(info))
+  info_names <- paste0("info/", names(info))
   expect_setequal(
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "naomi/", info_names))
+      "info/", info_names))
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
@@ -62,14 +62,14 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "naomi/", info_names))
+      "info/", info_names))
 
   tmp <- tempfile()
   unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
-  expect_equal(dir(tmp), "naomi")
-  expect_equal(dir(file.path(tmp, "naomi")), names(info))
+  expect_equal(dir(tmp), "info")
+  expect_equal(dir(file.path(tmp, "info")), names(info))
   for (p in names(info)) {
-    expect_equal(readLines(file.path(tmp, "naomi", p)),
+    expect_equal(readLines(file.path(tmp, "info", p)),
                  strsplit(info[[p]], "\n")[[1]])
   }
 })

@@ -265,9 +265,9 @@ save_output <- function(filename, dir,
 
   info <- attr(naomi_output, "info")
   if (length(info) > 0L) {
-    dir.create("naomi")
+    dir.create("info")
     for (p in names(info)) {
-      writeLines(trimws(info[[p]]), file.path("naomi", p))
+      writeLines(trimws(info[[p]]), file.path("info", p))
     }
   }
 
