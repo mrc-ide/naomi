@@ -296,7 +296,7 @@ save_output <- function(filename, dir,
     }
   }
 
-  zip::zip(path, list.files())
+  zip::zipr(path, list.files())
   path
 }
 
