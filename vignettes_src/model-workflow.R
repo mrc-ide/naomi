@@ -318,7 +318,7 @@ indicators %>%
   geom_linerange(position = position_dodge(0.8)) +
   scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(labels = scales::percent_format(1)) +
-  facet_wrap(~area_name) +
+  facet_wrap(~calendar_quarter) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 #' ART coverage by age/sex and region
