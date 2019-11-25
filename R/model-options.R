@@ -45,6 +45,6 @@ get_model_options_template <- function(art, anc) {
 #' @export
 validate_model_options <- function(data, options) {
   ## This must return TRUE if valid - otherwise throw an error
-  ## TODO: Add real validation
+  ## TODO: mrc-795 Add real validation
   TRUE
 }
