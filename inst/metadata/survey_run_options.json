@@ -7,7 +7,7 @@
       "controls": [
         {
           "name": "survey_prevalence",
-          "type": "select",
+          "type": "multiselect",
           "options":
             <survey_prevalence_options>,
           "required": true

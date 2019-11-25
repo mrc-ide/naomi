@@ -124,6 +124,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("Generating uncertainty ranges")
   progress$start("Preparing outputs")
   progress$print()
+  ## TODO: Include input data in output package based on model options
+  ## input download_input
   outputs <- output_package(fit, naomi_mf, areas)
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
