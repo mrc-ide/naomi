@@ -50,3 +50,18 @@ test_that("art and anc data can be omitted from model run options", {
   expect_true(any(grepl("Advanced", options$advanced)))
 })
 
+test_that("validate model options returns true", {
+  data <- list(
+    pjnz = system_file("extdata/mwi2019.PJNZ"),
+    population = system_file("extdata/population/population_agesex.csv"),
+    shape = file.path("testdata/malawi.geojson"),
+    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
+    programme = system_file("extdata/programme/art_number.csv"),
+    anc = system_file("extdata/programme/anc_testing.csv")
+  )
+  options <- list(
+    option1 = "one"
+  )
+  expect_true(validate_model_options(data, options))
+})
+
