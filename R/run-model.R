@@ -3,16 +3,40 @@
 #' This prepares the model inputs from data and options and saves output as
 #' an rds, the spectrum digst and indicators at specified paths.
 #'
-#' @param data List of paths to input data files. Must provide pjnz, shape,
-#' population and survey data. Optionally include anc and art data too.
-#' @param options List of model run options, must specify area_scope,
-#' area_level, t1, t2, survey_prevalence, survey_art_coverage, survey_vls,
-#' survey_recently_infected, survey_art_or_vls, art_t1, art_t2,
-#' anc_prevalence_t1, anc_prevalence_t2, anc_art_coverage_t1,
-#' anc_art_coverage_t2.
+#' @param data List of paths to input data files.
+#' @param options List of model run options (see details).
 #' @param output_path Path to store output indicators as an RDS at.
 #' @param spectrum_path Path to store spectrum digest file at.
 #' @param summary_path Path to store summary download zip file at.
+#'
+#' @details
+#'
+#' The `data` argument must be a list specifying paths to the following:
+#'
+#' * `pjnz`
+#' * `shape`
+#' * `population`
+#' * `survey data`
+#' * `anc` (optional)
+#' * `art` (optional)
+#'
+#' The `options` argument must be a list specifying minimally:
+#'
+#' * area_scope
+#' * area_level
+#' * calendar_quarter_t1
+#' * calendar_quarter_t2
+#' * survey_prevalence
+#' * survey_art_coverage
+#' * survey_vls
+#' * survey_recently_infected
+#' * survey_art_or_vls
+#' * art_calendar_quarter1
+#' * art_calendar_quarter2
+#' * anc_prevalence_year1
+#' * anc_prevalence_year2
+#' * anc_art_coverage_year1
+#' * anc_art_coverage_year2
 #'
 #' @return Paths to 3 output files.
 #' @export
@@ -20,6 +44,7 @@
 hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
                             summary_path = tempfile(fileext = ".zip")) {
+
   INLA:::inla.dynload.workaround()
   progress <- new_progress()
   progress$start("Preparing input data")
@@ -36,40 +61,38 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## TODO: Remove this filter - it is in temporarily as model does not run
   ## without it mrc-640
   art_number <- art_number %>%
-    dplyr::filter(age_group_id == 20)
+    dplyr::filter(age_group == "15+")
 
   ## Get from the options
   scope <- options$area_scope
   level <- options$area_level
-  quarter_id_t1 <- options$t1
-  quarter_id_t2 <- options$t2
+  calendar_quarter_t1 <- options$calendar_quarter_t1
+  calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
   artcov_survey_ids  <- options$survey_art_coverage
   vls_survey_ids <- NULL
   recent_survey_ids <- options$survey_recently_infected
   art_or_vls <- options$survey_art_or_vls
 
-  artnum_quarter_id_t1 <- options$art_t1
-  artnum_quarter_id_t2 <- options$art_t2
+  ## TODO: Use options$include_art returns "true" or "false" as strings to
+  ## instead automatically set
+  ## calendar quarter from the years available in the ART data
+  ## Hardcoded values for now.
+  artnum_calendar_quarter1 <- "CY2016Q1"
+  artnum_calendar_quarter2 <- "CY2018Q3"
 
-  ## TODO: make these single values once we have updated to using years instead
-  ## of quarter mrc-577
-  ## TODO: make anc prevalence and anc_art_coverage separate controls of quarter
-  ## in the naomi_model_frame code mrc-645
-  anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
-  anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
-  anc_prevalence_t1 <- options$anc_prevalence_t1
-  anc_prevalence_t2 <- options$anc_prevalence_t2
-  anc_art_coverage_t1 <- options$anc_art_coverage_t1
-  anc_art_coverage_t2 <- options$anc_art_coverage_t2
+  anc_prevalence_year1 <- options$anc_prevalence_year1
+  anc_prevalence_year2 <- options$anc_prevalence_year2
+  anc_art_coverage_year1 <- options$anc_art_coverage_year1
+  anc_art_coverage_year2 <- options$anc_art_coverage_year2
 
   naomi_mf <- naomi_model_frame(areas,
                                 population,
                                 spec,
                                 scope = scope,
                                 level = level,
-                                quarter_id_t1,
-                                quarter_id_t2)
+                                calendar_quarter_t1,
+                                calendar_quarter_t2)
 
   naomi_data <- select_naomi_data(naomi_mf,
                                   survey,
@@ -79,10 +102,12 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                   artcov_survey_ids,
                                   recent_survey_ids,
                                   vls_survey_ids,
-                                  artnum_quarter_id_t1,
-                                  artnum_quarter_id_t2,
-                                  anc_quarter_id_t1,
-                                  anc_quarter_id_t2)
+                                  artnum_calendar_quarter1,
+                                  artnum_calendar_quarter2,
+                                  anc_prevalence_year1,
+                                  anc_prevalence_year2,
+                                  anc_art_coverage_year1,
+                                  anc_art_coverage_year2)
 
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 

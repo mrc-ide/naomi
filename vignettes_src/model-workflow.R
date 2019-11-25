@@ -69,7 +69,7 @@ anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package
 
 #' Use only adult ART data for now
 art_number <- art_number %>%
-  filter(age_group_id == 20)
+  filter(age_group == "15+")
 
 #' Programme data
 #'
@@ -95,8 +95,8 @@ spec <- extract_pjnz_naomi(pjnz)
 
 scope <- "MWI"
 level <- 4
-quarter_id_t1 <- convert_quarter_id(1, 2016)
-quarter_id_t2 <- convert_quarter_id(3, 2018)
+calendar_quarter_t1 <- "CY2016Q1"
+calendar_quarter_t2 <- "CY2018Q3"
 
 #' The following select data inputs to model fitting from the uploaded datasets.
 #' Providing `NULL` for any will exclude that data source from model fitting.
@@ -119,11 +119,14 @@ artcov_survey_ids  <- "MWI2016PHIA"
 vls_survey_ids <- NULL
 recent_survey_ids <- "MWI2016PHIA"
 
-artnum_quarter_id_t1 <- convert_quarter_id(1, 2016)
-artnum_quarter_id_t2 <- convert_quarter_id(3, 2018)
+artnum_calendar_quarter_t1 <- "CY2016Q1"
+artnum_calendar_quarter_t2 <- "CY2018Q3"
 
-anc_quarter_id_t1 <- convert_quarter_id(c(4, 1, 2, 3), c(2015, 2016, 2016, 2016))
-anc_quarter_id_t2 <- convert_quarter_id(1:4, 2018)
+anc_prevalence_year1 <- 2016
+anc_prevalence_year2 <- 2018
+
+anc_art_coverage_year1 <- 2016
+anc_art_coverage_year2 <- 2018
 
 
 #' # 3. Review input data
@@ -139,8 +142,8 @@ naomi_mf <- naomi_model_frame(areas,
                               spec,
                               scope = scope,
                               level = level,
-                              quarter_id_t1,
-                              quarter_id_t2)
+                              calendar_quarter_t1,
+                              calendar_quarter_t2)
 
 
 #' Prepare data inputs
@@ -153,10 +156,12 @@ naomi_data <- select_naomi_data(naomi_mf,
                                 artcov_survey_ids,
                                 recent_survey_ids,
                                 vls_survey_ids,
-                                artnum_quarter_id_t1,
-                                artnum_quarter_id_t2,
-                                anc_quarter_id_t1,
-                                anc_quarter_id_t2)
+                                artnum_calendar_quarter_t1,
+                                artnum_calendar_quarter_t2,
+                                anc_prevalence_year1,
+                                anc_prevalence_year2,
+                                anc_art_coverage_year1,
+                                anc_art_coverage_year2)
 
 
 #' 5. Fit model
@@ -238,7 +243,7 @@ indicators <- add_output_labels(outputs) %>%
 
 #' 15-49 prevalence by district
 
-##+ fig.height = 4, fig.width = 7
+##+ prev_by_district_15, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 18,
          indicator_id == 2L,
@@ -252,7 +257,7 @@ indicators %>%
 #' 15-49 prevalence by Zone
 #'
 
-##+ fig.height = 4, fig.width = 7
+##+ prev_by_zone_15, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 18,
          ## sex == "both",
@@ -267,7 +272,7 @@ indicators %>%
 
 #' Age-specific prevalence, national
 
-##+ fig.height = 5, fig.width = 7
+##+ age_specific_prev, fig.height = 5, fig.width = 7
 indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
@@ -287,7 +292,7 @@ indicators %>%
 
 #' 15-64 ART coverage by district
 
-##+ fig.height = 4, fig.width = 7
+##+ art_cov_district, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 19,
          area_level == 4,
@@ -300,7 +305,7 @@ indicators %>%
 
 #' Age-specific ART coverage, national
 
-##+ fig.height = 5, fig.width = 7
+##+ age_specific_art_cov, fig.height = 5, fig.width = 7
 indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
@@ -313,13 +318,13 @@ indicators %>%
   geom_linerange(position = position_dodge(0.8)) +
   scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(labels = scales::percent_format(1)) +
-  facet_wrap(~area_name) +
+  facet_wrap(~calendar_quarter) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
 
 #' ART coverage by age/sex and region
 #'
 
-##+ fig.height = 4, fig.width = 7
+##+ art_cov_age_sex, fig.height = 4, fig.width = 7
 indicators %>%
   filter(area_level == 1,
          sex != "both",
@@ -336,7 +341,7 @@ indicators %>%
 
 #' Bubble plot prevalence and PLHIV
 #'
-##+ fig.height = 4, fig.width = 7
+##+ bubble_plot, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group_id == 19,
          area_level == 4,

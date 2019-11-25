@@ -2,6 +2,13 @@
 meta_indicator <-
   data.frame(
     indicator_id = 1:7,
+    indicator = c("population",
+                  "prevalence",
+                  "plhiv",
+                  "art_coverage",
+                  "art_num_residents",
+                  "incidence",
+                  "infections"),
     indicator_label = c("Population",
                         "HIV Prevalence",
                         "PLHIV",
@@ -33,21 +40,13 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
   mf_out <- naomi_mf$mf_out
 
-  indicator_ids <- c("population_out" = 1,
-                     "rho_out" = 2,
-                     "plhiv_out" = 3,
-                     "alpha_out" = 4,
-                     "artnum_out" = 5,
-                     "lambda_out" = 6,
-                     "infections_out" = 7)
-
   report <- naomi_fit$obj$report(naomi_fit$par.full)
 
-  get_est <- function(varname) {
+  get_est <- function(varname, indicator_id, calendar_quarter) {
     v <- dplyr::mutate(
       mf_out,
-      quarter_id = naomi_mf$quarter_id1,
-      indicator_id = indicator_ids[varname],
+      quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+      indicator_id = indicator_id,
       mode = report[[varname]]
     )
     if(!is.null(naomi_fit$sample)) {
@@ -65,10 +64,27 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     v
   }
 
-  indicators <- lapply(names(indicator_ids), get_est) %>%
-    dplyr::bind_rows()
+  indicator_ids_t1 <- c("population_t1_out" = 1,
+                        "rho_t1_out" = 2,
+                        "plhiv_t1_out" = 3,
+                        "alpha_t1_out" = 4,
+                        "artnum_t1_out" = 5,
+                        "lambda_t1_out" = 6,
+                        "infections_t1_out" = 7)
 
-  indicators
+  indicator_ids_t2 <- c("population_t2_out" = 1,
+                        "rho_t2_out" = 2,
+                        "plhiv_t2_out" = 3,
+                        "alpha_t2_out" = 4,
+                        "artnum_t2_out" = 5,
+                        "lambda_t2_out" = 6,
+                        "infections_t2_out" = 7)
+
+  indicators_t1 <- Map(get_est, names(indicator_ids_t1), indicator_ids_t1, naomi_mf$calendar_quarter1)
+  indicators_t2 <- Map(get_est, names(indicator_ids_t2), indicator_ids_t2, naomi_mf$calendar_quarter2)
+
+  dplyr::bind_rows(indicators_t1, indicators_t2) %>%
+    dplyr::select(names(mf_out), quarter_id, indicator_id, mean, se, median, mode, lower, upper)
 }
 
 
@@ -92,8 +108,14 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
 
-  meta_period <- data.frame(quarter_id = c(naomi_mf$quarter_id1, naomi_mf$quarter_id2)) %>%
-    dplyr::mutate(quarter_label = naomi::quarter_year_labels(quarter_id))
+  meta_period <- data.frame(
+    calendar_quarter = c(naomi_mf$calendar_quarter1, naomi_mf$calendar_quarter2),
+    stringsAsFactors = FALSE
+  )%>%
+    dplyr::mutate(
+             quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+             quarter_label = naomi::quarter_year_labels(quarter_id)
+           )
 
   meta_age_group <- get_age_groups()
 
@@ -130,13 +152,13 @@ add_output_labels <- function(naomi_output) {
            ) %>%
     dplyr::left_join(
              naomi_output$meta_age_group %>%
-             dplyr::select(age_group_id, age_group_label, age_group_sort_order),
+             dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
              by = "age_group_id"
            ) %>%
     dplyr::left_join(naomi_output$meta_period, by = "quarter_id") %>%
     dplyr::left_join(
              naomi_output$meta_indicator %>%
-             dplyr::select(indicator_id, indicator_label),
+             dplyr::select(indicator_id, indicator, indicator_label),
              by = "indicator_id"
            ) %>%
     dplyr::arrange(
@@ -153,16 +175,19 @@ add_output_labels <- function(naomi_output) {
              area_id,
              area_name,
              sex,
+             age_group,
              age_group_id,
              age_group_label,
+             calendar_quarter,
              quarter_id,
              quarter_label,
+             indicator,
              indicator_id,
              indicator_label,
-             mode,
              mean,
              se,
              median,
+             mode,
              lower,
              upper
            )
@@ -215,7 +240,7 @@ save_output <- function(filename, dir,
                         with_labels = FALSE,
                         boundary_format = "geojson",
                         single_csv = FALSE) {
-  dir <- normalizePath(dir)
+  dir <- normalizePath(dir, mustWork = TRUE)
   if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
   }
@@ -262,7 +287,7 @@ save_output <- function(filename, dir,
     }
   }
 
-  utils::zip(path, list.files())
+  zip::zip(path, list.files())
   path
 }
 

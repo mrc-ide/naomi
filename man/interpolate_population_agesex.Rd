@@ -4,12 +4,12 @@
 \alias{interpolate_population_agesex}
 \title{Log-linear interpolation of age/sex stratified population}
 \usage{
-interpolate_population_agesex(population_agesex, quarter_ids)
+interpolate_population_agesex(population_agesex, calendar_quarters)
 }
 \arguments{
 \item{population_agesex}{a subset of the population_agesex.}
 
-\item{quarter_ids}{vector of quarter_ids to return interpolation.}
+\item{calendar_quarters}{vector of calendar quarters to return interpolation.}
 }
 \value{
 A data.frame with same columns as pop_agesex interpolated to \code{times}.
@@ -23,8 +23,8 @@ Log-linear interpolation of age/sex stratified population
 \examples{
 ## Interpolate Malawi population at level 2 (Zone) at two time points
 data(mwi_population_agesex)
-quarter_ids <- convert_quarter_id(c(1, 3), c(2016, 2018))
-pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
+calendar_quarters <- c("CY2016Q1", "CY2018Q3")
+pop_interp <- interpolate_population_agesex(mwi_population_agesex, calendar_quarters)
 
 }
 \seealso{

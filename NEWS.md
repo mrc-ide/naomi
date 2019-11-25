@@ -1,3 +1,12 @@
+# naomi 0.0.18
+
+* Use odds ratios from Spectrum to model prevalence and ART coverage above age of data availability.
+
+# naomi 0.0.17
+
+* Use annual programme data input instead of quarterly.
+* Add spectrum_region_code to area hierarchy.
+
 # naomi 0.0.16
 
 * Move metadata into directory separate from extdata

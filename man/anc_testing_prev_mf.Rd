@@ -6,20 +6,20 @@
 \alias{artnum_mf}
 \title{Prepare Model Frames for Programme Datasets}
 \usage{
-anc_testing_prev_mf(quarter_ids, anc_testing, naomi_mf)
+anc_testing_prev_mf(year, anc_testing, naomi_mf)
 
-anc_testing_artcov_mf(quarter_ids, anc_testing, naomi_mf)
+anc_testing_artcov_mf(year, anc_testing, naomi_mf)
 
-artnum_mf(quarter_id, art_number, naomi_mf)
+artnum_mf(calendar_quarter, art_number, naomi_mf)
 }
 \arguments{
-\item{quarter_ids}{Quarter IDs (possibly multiple)}
+\item{year}{Calendar year}
 
 \item{anc_testing}{ART data frame}
 
 \item{naomi_mf}{Naomi model frame}
 
-\item{quarter_id}{Quarter ID (single quarter)}
+\item{calendar_quarter}{Calendar quarter}
 
 \item{art_number}{Number on ART}
 }

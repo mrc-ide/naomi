@@ -6,12 +6,13 @@
 \usage{
 naomi_model_frame(areas, population_agesex, spec,
   scope = areas$tree$area_id,
-  level = max(areas$tree$Get("area_level")), quarter_id1, quarter_id2,
-  age_group_ids = 1:17, sexes = c("male", "female"), omega = 0.7,
-  rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 -
-  118)/365)/(2 * qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT =
-  1), sigma_u_sd = 1, artattend_prior_sigma_scale = 3,
-  logit_nu_mean = 2, logit_nu_sd = 0.3)
+  level = max(areas$tree$Get("area_level")), calendar_quarter1,
+  calendar_quarter2, age_group_ids = 1:17, sexes = c("male", "female"),
+  omega = 0.7, rita_param = list(OmegaT0 = 130/365, sigma_OmegaT =
+  ((142 - 118)/365)/(2 * qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05,
+  ritaT = 1), sigma_u_sd = 1, artattend = FALSE,
+  artattend_prior_sigma_scale = 3, logit_nu_mean = 2,
+  logit_nu_sd = 0.3)
 }
 \arguments{
 \item{areas}{Areas}
@@ -25,9 +26,9 @@ ids.}
 
 \item{level}{Admin level}
 
-\item{quarter_id1}{Quarter id1}
+\item{calendar_quarter1}{Calendar quarter at time 1 ("CYyyyyQq")}
 
-\item{quarter_id2}{Quarter id2}
+\item{calendar_quarter2}{Calendar quarter at time 2 ("CYyyyyQq")}
 
 \item{age_group_ids}{Age group ids}
 
@@ -38,6 +39,8 @@ ids.}
 \item{rita_param}{rita_param}
 
 \item{sigma_u_sd}{sigma_u_sd}
+
+\item{artattend}{artattend}
 
 \item{artattend_prior_sigma_scale}{artattend_propr_sigma_scale}
 

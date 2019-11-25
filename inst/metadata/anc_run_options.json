@@ -6,21 +6,21 @@
       "label": "Prevalence",
       "controls": [
         {
-          "name": "anc_prevalence_t1",
+          "name": "anc_prevalence_year1",
           "label": "Time 1",
           "type": "select",
-          "helpText": "Quarter matching midpoint of survey",
+          "helpText": "Year matching midpoint of survey",
           "options":
-            <anc_prevalence_t1_options>,
+            <anc_prevalence_year1_options>,
           "required": false
         },
         {
-          "name": "anc_prevalence_t2",
+          "name": "anc_prevalence_year2",
           "label": "Time 2",
           "type": "select",
-          "helpText": "Quarter matching midpoint of survey",
+          "helpText": "Year to generate estimates for",
           "options":
-            <anc_prevalence_t2_options>,
+            <anc_prevalence_year2_options>,
           "required": false
         }
       ]
@@ -29,21 +29,21 @@
       "label": "ART Coverage",
       "controls": [
         {
-          "name": "anc_art_coverage_t1",
+          "name": "anc_art_coverage_year1",
           "label": "Time 1",
           "type": "select",
-          "helpText": "Quarter matching midpoint of survey",
+          "helpText": "Year matching midpoint of survey",
           "options":
-            <anc_art_coverage_t1_options>,
+            <anc_art_coverage_year1_options>,
           "required": false
         },
         {
-          "name": "anc_art_coverage_t2",
+          "name": "anc_art_coverage_year2",
           "label": "Time 2",
           "type": "select",
-          "helpText": "Quarter matching midpoint of survey",
+          "helpText": "Year to generate estimates for",
           "options":
-            <anc_art_coverage_t2_options>,
+            <anc_art_coverage_year2_options>,
           "required": false
         }
       ]

@@ -4,7 +4,7 @@
 require(naomi)
 
 if (file.exists("tests/testthat/testdata/fit.RDS")) {
-  stop("tests/testthat/fit.RDS exists already - remove file if you want to regenerate")
+  stop("tests/testthat/testdata/fit.RDS exists already - remove file if you want to regenerate")
 }
 
 data <- list(

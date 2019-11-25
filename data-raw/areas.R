@@ -49,13 +49,14 @@ mwi_wide <- sh2 %>%
     name0 = "Malawi",
     id0 = "MWI",
     name1 = region,
-    id1 = paste0(id0, ".", as_factor(name1) %>% as.integer),
+    id1 = paste0("MWI_1_", as.integer(as_factor(name1))),
     name2 = zone,
-    id2 = paste0(id1, ".", as_factor(name2) %>% as.integer),
+    id2 = paste0("MWI_2_", as.integer(as_factor(name2))),
     name3 = district,
-    id3 = paste0(id2, ".", as_factor(name3) %>% as.integer),
+    id3 = paste0("MWI_3_", as.integer(as_factor(name3))),
     name4 = district32,
-    id4 = paste0(id3, ".", as_factor(name4) %>% as.integer)
+    id4 = paste0("MWI_4_", as.integer(as_factor(name4))),
+    spectrum_region_code = 0
   )
 
 mwi_simple <- mwi_wide %>% rmapshaper::ms_simplify(0.1)
@@ -123,7 +124,8 @@ mwi_area_boundaries <- area_boundaries
 usethis::use_data(
            mwi_area_levels,
            mwi_area_hierarchy,
-           mwi_area_boundaries
+           mwi_area_boundaries,
+           overwrite = TRUE
          )
 
 dir.create(here("inst/extdata/areas"))
@@ -132,6 +134,22 @@ write_csv(area_levels, here("inst/extdata/areas/area_levels.csv"), na = "")
 write_csv(area_hierarchy, here("inst/extdata/areas/area_hierarchy.csv"), na = "")
 
 st_write(area_boundaries, here("inst/extdata/areas/area_boundaries.geojson"), delete_dsn = TRUE)
+
+#' # Webtool single GeoJSON input
+#'
+#' The 2019 version of Naomi web tool allows upload of a single GeoJSON file for
+#' specifying the area hierarchy. 
+
+area_merged <- area_hierarchy %>%
+  left_join(
+    area_levels %>% select(area_level, area_level_label, display, naomi_level)
+  ) %>%
+  left_join(
+    area_boundaries
+  )
+
+##+ message = FALSE
+st_write(area_merged, here("inst/extdata/areas/area_merged.geojson"), delete_dsn = TRUE)
 
 
 #' ## Table schema
