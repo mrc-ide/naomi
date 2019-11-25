@@ -43,7 +43,7 @@ meta_indicator <-
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
   mf_out <- naomi_mf$mf_out
-    
+
   report <- naomi_fit$obj$report(naomi_fit$par.full)
 
   get_est <- function(varname, indicator_id, calendar_quarter) {
@@ -65,7 +65,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
       v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
     }
 
-    v 
+    v
   }
 
   indicator_ids_t1 <- c("population_t1_out" = 1,
@@ -122,7 +122,7 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
     dplyr::mutate(levelName = NULL,
                   geometry = areas$boundaries[area_id]) %>%
     sf::st_as_sf()
-  
+
   meta_period <- data.frame(
     calendar_quarter = c(naomi_mf$calendar_quarter1, naomi_mf$calendar_quarter2),
     stringsAsFactors = FALSE
@@ -131,9 +131,9 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
              quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
              quarter_label = naomi::quarter_year_labels(quarter_id)
            )
-  
+
   meta_age_group <- get_age_groups()
-  
+
   val <- list(
     indicators = indicators,
     meta_area = meta_area,
@@ -141,9 +141,9 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
     meta_period = meta_period,
     meta_indicator = meta_indicator
   )
-  
+
   class(val) <- "naomi_output"
-  
+
   val
 }
 
@@ -257,7 +257,7 @@ save_output <- function(filename, dir,
                         with_labels = FALSE,
                         boundary_format = "geojson",
                         single_csv = FALSE) {
-  dir <- normalizePath(dir)
+  dir <- normalizePath(dir, mustWork = TRUE)
   if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
   }
@@ -312,7 +312,7 @@ save_output <- function(filename, dir,
     }
   }
 
-  utils::zip(path, list.files())
+  zip::zipr(path, list.files())
   path
 }
 
