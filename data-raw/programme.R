@@ -43,25 +43,21 @@ mwi_anc_testing <- mwi_anc_testing %>%
     mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
-  mutate(age_group_id = 18L,
-         quarter_id = convert_quarter_id(quarter, year),
-         district32 = NULL,
-         quarter = NULL,
-         year = NULL) %>%
-  select(area_id, age_group_id, quarter_id, everything())
+  mutate(age_group = "15-49") %>%
+  group_by(area_id, age_group, year) %>%
+  summarise_at(vars(anc_clients, ancrt_hiv_status, ancrt_known_pos, ancrt_already_art, ancrt_tested, ancrt_test_pos), sum)
 
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
 mwi_art_number <- mwi_art_number %>%
+  filter(quarter == 4) %>%
   left_join(
     mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
-  mutate(quarter_id = convert_quarter_id(quarter, year),
-         district32 = NULL,
-         quarter = NULL,
-         year = NULL) %>%
-  select(area_id, quarter_id, everything())
+  mutate(district32 = NULL,
+         quarter = NULL) %>%
+  select(area_id, year, everything())
 
 #' Approximate the number on ART age 15+ as 94% of all
 #' Based on Spectrum file outputs, which were triangulated 
@@ -73,15 +69,16 @@ mwi_art_number <- mwi_art_number %>%
   gather(age_group_label, current_art, `0-14`, `15+`) %>%
   left_join(
     get_age_groups() %>%
-    select(age_group_label, age_group_id)
+    select(age_group_label, age_group)
   ) %>%
   mutate(sex = "both",
          age_group_label = NULL) %>%
-  select(area_id, sex, age_group_id, quarter_id, current_art)
+  select(area_id, sex, age_group, year, current_art)
 
 usethis::use_data(
            mwi_anc_testing,
-           mwi_art_number
+           mwi_art_number,
+           overwrite = TRUE
          )
 
 dir.create(here("inst/extdata/programme/"))

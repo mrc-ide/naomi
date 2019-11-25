@@ -41,13 +41,13 @@ fertility <- data.frame(area_id = character(0),
                         asfr = numeric(0))
 
 #' surveys
-survey_meta <- naomi::mwi_survey_meta %>% select(-iso3)
-survey_regions <- naomi::mwi_survey_regions %>% select(-iso3)
+survey_meta <- naomi::mwi_survey_meta
+survey_regions <- naomi::mwi_survey_regions
 survey_clusters <- naomi::mwi_survey_clusters
 survey_individuals <- naomi::mwi_survey_individuals
 survey_biomarker <- naomi::mwi_survey_biomarker
 
-survey_hiv_indicators <- naomi::mwi_survey_hiv_indicators %>% select(-iso3)
+survey_hiv_indicators <- naomi::mwi_survey_hiv_indicators
 
 #' programme
 art_number <- naomi::mwi_art_number

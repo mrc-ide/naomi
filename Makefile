@@ -31,6 +31,7 @@ vignettes_src/model-workflow.Rmd: vignettes_src/model-workflow.R
 	${RSCRIPT} -e 'knitr::spin("$<", knit=FALSE)'
 
 vignettes/model-workflow.Rmd: vignettes_src/model-workflow.Rmd
+	rm -rf vignettes_src/cache
 	cd vignettes_src && ${RSCRIPT} -e 'knitr::knit("model-workflow.Rmd")'
 	mv vignettes_src/model-workflow.md $@
 	mv vignettes_src/figure vignettes/

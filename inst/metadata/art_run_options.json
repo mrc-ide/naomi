@@ -1,27 +1,25 @@
 {
   "label": "ART",
-  "description": "Optionally select which quarter of data to use at time point 1 and 2",
+  "description": "Select whether to include ART data or not in model run",
   "controlGroups": [
     {
       "label": "Number on ART",
       "controls": [
         {
-          "name": "art_t1",
-          "label": "Year midpoint of survey",
+          "name": "include_art",
+          "label": "Include ART data",
           "type": "select",
-          "helpText": "Select year of input ART data at the midpoint of survey data",
+          "helpText": "Select whether to include ART data or not in model run",
           "options":
-            <art_t1_options>,
-          "required": false
-        },
-        {
-          "name": "art_t2",
-          "label": "Year to generate estimates",
-          "type": "select",
-          "helpText": "Select year of input ART data at which to generate estimates",
-          "options":
-            <art_t2_options>,
-          "required": false
+            [{
+              "id": "true",
+              "label": "yes"
+            },
+            {
+              "id": "false",
+              "label": "no"
+            }],
+          "required": true
         }
       ]
     }

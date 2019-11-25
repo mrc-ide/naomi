@@ -4,7 +4,7 @@ test_that("model can be run", {
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
-    shape = file.path("testdata/malawi.geojson"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
     programme = system_file("extdata/programme/art_number.csv"),
     anc = system_file("extdata/programme/anc_testing.csv")
@@ -12,19 +12,18 @@ test_that("model can be run", {
   options <- list(
     area_scope = "MWI",
     area_level = 4,
-    t1 = 465,
-    t2 = 475,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
     survey_art_or_vls = "art_coverage",
-    art_t1 = 465,
-    art_t2 = 475,
-    anc_prevalence_t1 = 464,
-    anc_prevalence_t2 = 475,
-    anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475,
+    include_art = "true",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
     no_of_samples = 20
   )
   output_path <- tempfile()
@@ -38,11 +37,11 @@ test_that("model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id",
-                 "quarter_label", "indicator_id", "indicator_label", "mode",
-                 "mean", "se", "median", "lower", "upper"))
-  expect_true(nrow(output) == 42021)
-
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label",
+                 "indicator", "indicator_id", "indicator_label",
+                 "mean", "se", "median", "mode", "lower", "upper"))
+  expect_true(nrow(output) == 84042)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -85,8 +84,8 @@ test_that("model can be run without programme data", {
   options <- list(
     area_scope = "MWI",
     area_level = 4,
-    t1 = 465,
-    t2 = 475,
+    t1 = "CY2016Q1",
+    t2 = "CY2018Q3",
     survey_prevalence = "MWI2016PHIA",
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
@@ -105,10 +104,11 @@ test_that("model can be run without programme data", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id",
-                 "quarter_label", "indicator_id", "indicator_label", "mode",
-                 "mean", "se", "median", "lower", "upper"))
-  expect_true(nrow(output) == 42021)
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label",
+                 "indicator", "indicator_id", "indicator_label",
+                 "mean", "se", "median", "mode", "lower", "upper"))
+  expect_true(nrow(output) == 84042)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -133,7 +133,7 @@ test_that("progress messages are printed", {
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
-    shape = file.path("testdata/malawi.geojson"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
     programme = system_file("extdata/programme/art_number.csv"),
     anc = system_file("extdata/programme/anc_testing.csv")
@@ -141,19 +141,19 @@ test_that("progress messages are printed", {
   options <- list(
     area_scope = "MWI",
     area_level = 4,
-    t1 = 465,
-    t2 = 475,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
     survey_art_or_vls = "art_coverage",
-    art_t1 = 465,
-    art_t2 = 475,
-    anc_prevalence_t1 = 464,
-    anc_prevalence_t2 = 475,
-    anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475,
+    art_calendar_quarter1 = "CY2016Q1",
+    art_calendar_quarter2 = "CY2018Q3",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
     no_of_samples = 20
   )
   output_path <- tempfile()

@@ -12,11 +12,14 @@ get_age_groups <- function() {
                        35, 50, Inf, Inf, Inf, 65, 15, 10, 10, 15, 15, Inf)
   ) %>%
     dplyr::mutate(age_group_id = dplyr::row_number(),
+                  age_group = sprintf("%02.0f-%02.0f", age_group_start, age_group_start + age_group_span - 1) %>%
+                    sub("-Inf", "+", .),
                   age_group_label = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
                     sub("-Inf", "+", .) %>%
                     dplyr::recode("0+" = "all ages"),
                   age_group_sort_order = c(13:29, 1:12)) %>%
     dplyr::select(age_group_id,
+                  age_group,
                   age_group_label,
                   age_group_start,
                   age_group_span,
@@ -32,6 +35,7 @@ get_age_groups <- function() {
 #' @param quarter_id vector of integer quarter IDs.
 #' @param year vector of integer years.
 #' @param quarter vector of integer quarters (1,2,3,4).
+#' @param calendar_quarter Vector of calendar quarters to convert to quarter id labels.
 #'
 #' @details
 #' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of
@@ -39,12 +43,14 @@ get_age_groups <- function() {
 #' fiscal year quarters.
 #'
 #' @examples
-#' quarter_ids <- convert_quarter_id(c(3, 1), c(2009, 2017))
+#' quarter_ids <- convert_quarter_id(c(2009, 2017), c(3, 1))
 #' quarter_ids
+#' calender_quarters <- convert_calendar_quarter(c(2009, 2017), c(3, 1))
 #' quarter_number(quarter_ids)
 #' quarter_labels(quarter_ids)
 #' year_labels(quarter_ids)
 #' quarter_year_labels(quarter_ids)
+#' calendar_quarter_labels("CY2015Q2")
 #'
 #' @export
 quarter_year_labels <- function(quarter_id) {
@@ -65,13 +71,19 @@ quarter_labels <- function(quarter_id) {
 
 #' @rdname quarter_year_labels
 #' @export
+calendar_quarter_labels <- function(calendar_quarter) {
+  quarter_year_labels(calendar_quarter_to_quarter_id(calendar_quarter))
+}
+
+#' @rdname quarter_year_labels
+#' @export
 year_labels <- function(quarter_id) {
   1900 + (quarter_id - 1) %/% 4
 }
 
 #' @rdname quarter_year_labels
 #' @export
-convert_quarter_id <- function(quarter, year) {
+convert_quarter_id <- function(year, quarter) {
 
   stopifnot(year %% 1 == 0)
   stopifnot(quarter %in% 1:4)
@@ -79,13 +91,40 @@ convert_quarter_id <- function(quarter, year) {
   as.integer((year - 1900) * 4 + quarter)
 }
 
+#' @rdname quarter_year_labels
+#' @export
+convert_calendar_quarter <- function(year, quarter) {
 
+  stopifnot(year %% 1 == 0)
+  stopifnot(quarter %in% 1:4)
+
+  paste0("CY", year, "Q", quarter)
+}
+
+#' @rdname quarter_year_labels
+#' @export
+calendar_quarter_to_quarter_id <- function(calendar_quarter) {
+
+  convert_quarter_id(as.integer(substr(calendar_quarter, 3, 6)),
+                     as.integer(substr(calendar_quarter, 8, 8)))
+}
+
+#' @rdname quarter_year_labels
+#' @export
+quarter_id_to_calendar_quarter <- function(quarter_id) {
+  quarter <- quarter_id %% 4
+  if (quarter == 0) {
+    quarter <- 4
+  }
+  year <- (quarter_id - quarter) / 4 + 1900
+  convert_calendar_quarter(year, quarter)
+}
 
 
 #' Log-linear interpolation of age/sex stratified population
 #'
 #' @param population_agesex a subset of the population_agesex.
-#' @param quarter_ids vector of quarter_ids to return interpolation.
+#' @param calendar_quarters vector of calendar quarters to return interpolation.
 #'
 #' @return
 #' A data.frame with same columns as pop_agesex interpolated to `times`.
@@ -99,20 +138,23 @@ convert_quarter_id <- function(quarter, year) {
 #' @examples
 #' ## Interpolate Malawi population at level 2 (Zone) at two time points
 #' data(mwi_population_agesex)
-#' quarter_ids <- convert_quarter_id(c(1, 3), c(2016, 2018))
-#' pop_interp <- interpolate_population_agesex(mwi_population_agesex, quarter_ids)
+#' calendar_quarters <- c("CY2016Q1", "CY2018Q3")
+#' pop_interp <- interpolate_population_agesex(mwi_population_agesex, calendar_quarters)
 #'
 #' @export
-interpolate_population_agesex <- function(population_agesex, quarter_ids) {
+interpolate_population_agesex <- function(population_agesex, calendar_quarters) {
 
-  dfall <- dplyr::distinct(dplyr::select(population_agesex, -quarter_id, -population))
+  quarter_ids <- calendar_quarter_to_quarter_id(calendar_quarters)
+  dfall <- dplyr::distinct(dplyr::select(population_agesex, -calendar_quarter, -population))
 
-  df <- dplyr::select(population_agesex, quarter_id, area_id, source, sex, age_group_id, population)
+  df <- dplyr::select(population_agesex, calendar_quarter, area_id, source, sex, age_group, population) %>%
+    dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter))
 
-  tidyr::expand(df, quarter_id = quarter_ids,
-                tidyr::nesting(area_id, source, sex, age_group_id)) %>%
+  tidyr::expand(df,
+                tidyr::nesting(calendar_quarter = calendar_quarters, quarter_id = quarter_ids),
+                tidyr::nesting(area_id, source, sex, age_group)) %>%
     dplyr::full_join(df, by = names(.)) %>%
-    dplyr::group_by(area_id, source, sex, age_group_id) %>%
+    dplyr::group_by(area_id, source, sex, age_group) %>%
     dplyr::mutate(population = exp(zoo::na.approx(log(population), quarter_id, na.rm = FALSE)),
                   population = tidyr::replace_na(population, 0)) %>%
     dplyr::ungroup() %>%

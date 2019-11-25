@@ -21,11 +21,14 @@ Type objective_function<Type>::operator() ()
   // ** Data **
 
   // Population
-  DATA_VECTOR(population);
+  DATA_VECTOR(population_t1);
+  DATA_VECTOR(population_t2);
+  DATA_SPARSE_MATRIX(Lproj);
 
   // Design matrices
   DATA_MATRIX(X_rho);
   DATA_MATRIX(X_alpha);
+  DATA_MATRIX(X_alpha_t2);
   DATA_MATRIX(X_lambda);
 
   DATA_MATRIX(X_ancrho);
@@ -33,8 +36,13 @@ Type objective_function<Type>::operator() ()
 
   DATA_SPARSE_MATRIX(Z_x);
   DATA_SPARSE_MATRIX(Z_xs);
-  DATA_SPARSE_MATRIX(Z_a);
-  DATA_SPARSE_MATRIX(Z_as);
+  DATA_SPARSE_MATRIX(Z_rho_a);
+  DATA_SPARSE_MATRIX(Z_rho_as);
+  DATA_SPARSE_MATRIX(Z_alpha_a);
+  DATA_SPARSE_MATRIX(Z_alpha_as);
+
+  DATA_VECTOR(logit_rho_offset)
+  DATA_VECTOR(logit_alpha_offset)
 
   DATA_SPARSE_MATRIX(Z_ancrho_x);
   DATA_SPARSE_MATRIX(Z_ancalpha_x);
@@ -66,8 +74,11 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_anc_artcov);
   DATA_VECTOR(x_anc_artcov);
 
-  DATA_SPARSE_MATRIX(A_artnum);
-  DATA_VECTOR(x_artnum);
+  DATA_SPARSE_MATRIX(A_artnum_t1);
+  DATA_VECTOR(x_artnum_t1);
+
+  DATA_SPARSE_MATRIX(A_artnum_t2);
+  DATA_VECTOR(x_artnum_t2);
 
   DATA_IVECTOR(n_nb);
   DATA_IVECTOR(adj_i);
@@ -114,6 +125,10 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(beta_anc_alpha);
   val -= dnorm(beta_anc_alpha, 0.0, 5.0, true).sum();
+
+  PARAMETER_VECTOR(beta_alpha_t2);
+  val -= dnorm(beta_alpha_t2, 0.0, 5.0, true).sum();
+
 
 
   // * HIV prevalence model *
@@ -217,6 +232,10 @@ Type objective_function<Type>::operator() ()
   Type sigma_alpha_as(exp(log_sigma_alpha_as));
   val -= dnorm(sigma_alpha_as, Type(0.0), Type(2.5), true) + log_sigma_alpha_as;
 
+  PARAMETER(log_sigma_alpha_xt);
+  Type sigma_alpha_xt(exp(log_sigma_alpha_xt));
+  val -= dnorm(exp(log_sigma_alpha_xt), Type(0.0), Type(2.5), true) + log_sigma_alpha_xt;
+
   PARAMETER_VECTOR(us_alpha_x);
   val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
   val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
@@ -239,6 +258,8 @@ Type objective_function<Type>::operator() ()
   if(u_alpha_as.size() > 0)
     val += AR1(phi_alpha_as)(u_alpha_as);
 
+  PARAMETER_VECTOR(u_alpha_xt);
+  val -= sum(dnorm(u_alpha_xt, 0.0, 1.0, true));
 
   // * HIV incidence model *
 
@@ -289,34 +310,59 @@ Type objective_function<Type>::operator() ()
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
   vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
   vector<Type> mu_rho(X_rho * beta_rho +
+		      logit_rho_offset +
 		      Z_x * u_rho_x * sigma_rho_x +
 		      Z_xs * u_rho_xs * sigma_rho_xs +
-		      Z_a * u_rho_a * sigma_rho_a +
-		      Z_as * u_rho_as * sigma_rho_as);
+		      Z_rho_a * u_rho_a * sigma_rho_a +
+		      Z_rho_as * u_rho_as * sigma_rho_as);
 
   vector<Type> u_alpha_x(sqrt(phi_alpha_x) * us_alpha_x + sqrt(1 - phi_alpha_x) * ui_alpha_x);
   vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);
   vector<Type> mu_alpha(X_alpha * beta_alpha +
+			logit_alpha_offset +
   			Z_x * u_alpha_x * sigma_alpha_x +
   			Z_xs * u_alpha_xs * sigma_alpha_xs +
-  			Z_a * u_alpha_a * sigma_alpha_a +
-  			Z_as * u_alpha_as * sigma_alpha_as);
+  			Z_alpha_a * u_alpha_a * sigma_alpha_a +
+  			Z_alpha_as * u_alpha_as * sigma_alpha_as);
 
 
-  vector<Type> rho(invlogit(mu_rho));
-  vector<Type> alpha(invlogit(mu_alpha));
+  vector<Type> rho_t1(invlogit(mu_rho));
+  vector<Type> alpha_t1(invlogit(mu_alpha));
 
-  vector<Type> plhiv(population * rho);
-  vector<Type> prop_art(rho * alpha);
-  vector<Type> artnum(population * prop_art);
+  vector<Type> plhiv_t1(population_t1 * rho_t1);
+  vector<Type> prop_art_t1(rho_t1 * alpha_t1);
+  vector<Type> artnum_t1(population_t1 * prop_art_t1);
 
-  vector<Type> plhiv_15to49(X_15to49 * plhiv);
-  vector<Type> rho_15to49(plhiv_15to49 / (X_15to49 * population));
-  vector<Type> alpha_15to49((X_15to49 * artnum) / plhiv_15to49);
+  vector<Type> plhiv_15to49_t1(X_15to49 * plhiv_t1);
+  vector<Type> rho_15to49_t1(plhiv_15to49_t1 / (X_15to49 * population_t1));
+  vector<Type> alpha_15to49_t1((X_15to49 * artnum_t1) / plhiv_15to49_t1);
 
-  vector<Type> mu_lambda(X_lambda * beta_lambda + log_lambda_offset + Z_x * vector<Type>(log(rho_15to49) + log(1.0 - omega * alpha_15to49) + ui_lambda_x * sigma_lambda_x));
+  vector<Type> mu_lambda_t1(X_lambda * beta_lambda + log_lambda_offset + Z_x * vector<Type>(log(rho_15to49_t1) + log(1.0 - omega * alpha_15to49_t1) + ui_lambda_x * sigma_lambda_x));
 
-  vector<Type> infections(exp(mu_lambda) * (population - plhiv));
+  vector<Type> infections_t1(exp(mu_lambda_t1) * (population_t1 - plhiv_t1));
+
+
+  // Projection from t1 to t2
+
+  vector<Type> ones(rho_t1.size());
+  ones.fill(1.0);
+
+
+  vector<Type> mu_alpha_t2(mu_alpha + X_alpha_t2 * beta_alpha_t2 + Z_x * u_alpha_xt * sigma_alpha_xt);
+  vector<Type> alpha_t2(invlogit(mu_alpha_t2));
+  vector<Type> plhiv_t2(Lproj * plhiv_t1);
+  vector<Type> rho_t2(plhiv_t2 / population_t2);
+  vector<Type> prop_art_t2(rho_t2 * alpha_t2);
+  vector<Type> artnum_t2(population_t2 * prop_art_t2);
+
+
+  vector<Type> plhiv_15to49_t2(X_15to49 * plhiv_t2);
+  vector<Type> rho_15to49_t2(plhiv_15to49_t2 / (X_15to49 * population_t2));
+  vector<Type> alpha_15to49_t2((X_15to49 * artnum_t2) / plhiv_15to49_t2);
+
+  vector<Type> mu_lambda_t2(X_lambda * beta_lambda + log_lambda_offset + Z_x * vector<Type>(log(rho_15to49_t2) + log(1.0 - omega * alpha_15to49_t2) + ui_lambda_x * sigma_lambda_x));
+
+  vector<Type> infections_t2(exp(mu_lambda_t2) * (population_t2 - plhiv_t2));
 
   // likelihood
 
@@ -327,24 +373,21 @@ Type objective_function<Type>::operator() ()
     val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
 
   for(int i = 0; i < idx_vls.size(); i++)
-    val -= dbinom(x_vls[i], n_vls[i], alpha[idx_vls[i]] * nu, true);
+    val -= dbinom(x_vls[i], n_vls[i], alpha_t1[idx_vls[i]] * nu, true);
 
   vector<Type> pR_i(idx_recent.size());
   for(int i = 0; i < idx_recent.size(); i++) {
     int idx = idx_recent[i];
-    Type pR = 1.0 - exp(-(exp(mu_lambda[idx]) * (1 - rho[idx]) / rho[idx] * (OmegaT - betaT * ritaT) + betaT));
+    Type pR = 1.0 - exp(-(exp(mu_lambda_t1[idx]) * (1 - rho_t1[idx]) / rho_t1[idx] * (OmegaT - betaT * ritaT) + betaT));
     pR_i[i] = pR;
     val -= dbinom(x_recent[i], n_recent[i], pR, true);
   }
   
-  vector<Type> ones(rho.size());
-  ones.fill(1.0);
-
-  vector<Type> mu_anc_rho(A_anc_prev * rho / (A_anc_prev * ones));
+  vector<Type> mu_anc_rho(A_anc_prev * rho_t1 / (A_anc_prev * ones));
   mu_anc_rho = logit(mu_anc_rho) + X_ancrho * beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
   val -= sum(dbinom_robust(x_anc_prev, n_anc_prev, mu_anc_rho, true));
 
-  vector<Type> mu_anc_alpha(A_anc_artcov * vector<Type>(rho * alpha) / (A_anc_artcov * rho));
+  vector<Type> mu_anc_alpha(A_anc_artcov * vector<Type>(rho_t1 * alpha_t1) / (A_anc_artcov * rho_t1));
   mu_anc_alpha = logit(mu_anc_alpha) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
   val -= sum(dbinom_robust(x_anc_artcov, n_anc_artcov, mu_anc_alpha, true));
 
@@ -363,58 +406,96 @@ Type objective_function<Type>::operator() ()
     cum_nb += n_nb[i];
   }
 
-  vector<Type> prop_art_ij((Xart_idx * prop_art) * (Xart_gamma * gamma_art));
-  vector<Type> population_ij(Xart_idx * population);
+  vector<Type> prop_art_ij_t1((Xart_idx * prop_art_t1) * (Xart_gamma * gamma_art));
+  vector<Type> population_ij_t1(Xart_idx * population_t1);
 
-  vector<Type> A_j(A_artnum * vector<Type>(population_ij * prop_art_ij));
-  vector<Type> sd_A_j(A_artnum * vector<Type>(population_ij * prop_art_ij * (1 - prop_art_ij)));
-  sd_A_j = sd_A_j.sqrt();
+  vector<Type> A_j_t1(A_artnum_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1));
+  vector<Type> sd_A_j_t1(A_artnum_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1)));
+  sd_A_j_t1 = sd_A_j_t1.sqrt();
 
-  val -= sum(dnorm(x_artnum, A_j, sd_A_j, true));
+  val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
 
-  REPORT(A_j);
-  REPORT(sd_A_j);
+  vector<Type> prop_art_ij_t2((Xart_idx * prop_art_t2) * (Xart_gamma * gamma_art));
+  vector<Type> population_ij_t2(Xart_idx * population_t2);
+
+  vector<Type> A_j_t2(A_artnum_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2));
+  vector<Type> sd_A_j_t2(A_artnum_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2)));
+  sd_A_j_t2 = sd_A_j_t2.sqrt();
+
+  val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));
+
+  REPORT(A_j_t1);
+  REPORT(sd_A_j_t1);
+  
+  REPORT(A_j_t2);
+  REPORT(sd_A_j_t2);
 
   // Calculate model outputs
 
-  vector<Type> population_out(A_out * population);
+  vector<Type> population_t1_out(A_out * population_t1);
 
-  vector<Type> plhiv_out(A_out * plhiv);
-  vector<Type> rho_out(plhiv_out / population_out);
+  vector<Type> plhiv_t1_out(A_out * plhiv_t1);
+  vector<Type> rho_t1_out(plhiv_t1_out / population_t1_out);
 
-  vector<Type> artnum_out(A_out * artnum);
-  vector<Type> alpha_out(artnum_out / plhiv_out);
+  vector<Type> artnum_t1_out(A_out * artnum_t1);
+  vector<Type> alpha_t1_out(artnum_t1_out / plhiv_t1_out);
 
-  vector<Type> infections_out(A_out * infections);
-  vector<Type> lambda_out(infections_out / (population_out - plhiv_out));
+  vector<Type> infections_t1_out(A_out * infections_t1);
+  vector<Type> lambda_t1_out(infections_t1_out / (population_t1_out - plhiv_t1_out));
 
+
+  vector<Type> population_t2_out(A_out * population_t2);
+    
+  vector<Type> plhiv_t2_out(A_out * plhiv_t2);
+  vector<Type> rho_t2_out(plhiv_t2_out / population_t2_out);
+
+  vector<Type> artnum_t2_out(A_out * artnum_t2);
+  vector<Type> alpha_t2_out(artnum_t2_out / plhiv_t2_out);
+
+  vector<Type> infections_t2_out(A_out * infections_t2);
+  vector<Type> lambda_t2_out(infections_t2_out / (population_t2_out - plhiv_t2_out));
+
+  
+  REPORT(plhiv_t1);
+  REPORT(population_t1);
+  REPORT(artnum_t1);
+  REPORT(infections_t1);
+
+  REPORT(plhiv_t2);
+  REPORT(population_t2);
+  REPORT(artnum_t2);
+  REPORT(infections_t2);
+
+  
   REPORT(mu_rho);
   REPORT(mu_alpha);
-  REPORT(mu_lambda);
+  REPORT(mu_lambda_t1);
   REPORT(phi_rho_a);
   REPORT(sigma_rho_a);
   REPORT(gamma_art);
 
-  REPORT(population_out);
-  REPORT(rho_out);
-  REPORT(plhiv_out);
-  REPORT(alpha_out);
-  REPORT(artnum_out);
-  REPORT(lambda_out);
-  REPORT(infections_out);
+  REPORT(population_t1_out);
+  REPORT(rho_t1_out);
+  REPORT(plhiv_t1_out);
+  REPORT(alpha_t1_out);
+  REPORT(artnum_t1_out);
+  REPORT(lambda_t1_out);
+  REPORT(infections_t1_out);
+
+  REPORT(population_t2_out);
+  REPORT(rho_t2_out);
+  REPORT(plhiv_t2_out);
+  REPORT(alpha_t2_out);
+  REPORT(artnum_t2_out);
+  REPORT(lambda_t2_out);
+  REPORT(infections_t2_out);
+
 
   REPORT(mu_anc_rho);
   REPORT(mu_anc_alpha);
 
   REPORT(pR_i);
   REPORT(nu);
-
-  ADREPORT(rho_out);
-  ADREPORT(plhiv_out);
-  ADREPORT(alpha_out);
-  ADREPORT(artnum_out);
-  ADREPORT(lambda_out);
-  ADREPORT(infections_out);
 
   return val;
 }
