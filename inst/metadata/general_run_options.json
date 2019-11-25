@@ -8,7 +8,7 @@
         {
           "name": "area_scope",
           "type": "multiselect",
-          "options": 
+          "options":
             <area_scope_options>,
           "value": <area_scope_default>,
           "required": true
@@ -21,32 +21,32 @@
         {
           "name": "area_level",
           "type": "select",
-          "options": 
+          "options":
             <area_level_options>,
           "required": true
         }
       ]
     },
     {
-      "label": "Year midpoint of survey",
+      "label": "Calendar quarter at midpoint of survey",
       "controls": [
         {
-          "name": "t1",
+          "name": "calendar_quarter_t1",
           "type": "select",
-          "options": 
-            <t1_options>,
+          "options":
+            <calendar_quarter_t1_options>,
           "required": true
         }
       ]
     },
     {
-      "label": "Year to generate estimates",
+      "label": "Calendar quarter to generate estimates",
       "controls": [
         {
-          "name": "t2",
+          "name": "calendar_quarter_t2",
           "type": "select",
           "options":
-            <t2_options>,
+            <calendar_quarter_t2_options>,
           "required": true
         }
       ]

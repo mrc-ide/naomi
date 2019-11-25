@@ -125,23 +125,23 @@ check %>% filter(is.na(area_id0))
 
 
 #' MW2015DHS HR dataset has four city REGCODES that do not appear in boundaries:
-#' * 107: mzuzu city     [MWI.1.1.5.7]
-#' * 210: lilongwe city  [MWI.2.2.7.12]
-#' * 314: zomba city     [MWI.3.4.18.24]
-#' * 315: blantyre city  [MWI.3.5.23.32]
+#' * 107: mzuzu city     [MWI_4_4]
+#' * 210: lilongwe city  [MWI_4_14]
+#' * 314: zomba city     [MWI_4_21]
+#' * 315: blantyre city  [MWI_4_29]
 
 areas_survey_region <- areas_survey_region %>%
   mutate(REGCODE = case_when(
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.1.1.4.4" ~ 107,
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.2.3.13.14" ~ 210,
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.3.4.19.21" ~ 314,
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.3.5.23.29" ~ 315,
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_4" ~ 107,
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_14" ~ 210,
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_21" ~ 314,
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_29" ~ 315,
            TRUE ~ REGCODE),
          REGNAME = case_when(
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.1.1.4.4" ~ "Mzuzu City",
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.2.3.13.14" ~ "Lilongwe City",
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.3.4.19.21" ~ "Zomba City",
-           survey_id == "MWI2015DHS" & area_id4 == "MWI.3.5.23.29" ~ "Blantyre City",
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_4" ~ "Mzuzu City",
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_14" ~ "Lilongwe City",
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_21" ~ "Zomba City",
+           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_29" ~ "Blantyre City",
            TRUE ~ as.character(REGNAME)))
 
 
@@ -196,7 +196,7 @@ dhs_regions %>%
 
 #' Extract clusters from household recode dataset
 
-hrd <- dhs_datasets(surveyIds = surveys$SurveyId,
+hrd <- dhs_datasets(surveyIds = surveys$SurveyId, 
                     fileType = "HR", fileFormat = "flat") %>%
   mutate(path = get_datasets(.) %>% unlist) %>%
   left_join(surveys %>% select(SurveyId, survey_id)) %>%
@@ -546,7 +546,9 @@ ge <- bind_rows(
 
 area_sample <- mwi_population_agesex %>%
   filter(source == "Census 2018") %>%
-  interpolate_population_agesex(quarter_ids = convert_quarter_id(1, 2016)) %>%
+  mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+         calendar_quarter = NULL) %>%
+  interpolate_population_agesex(quarter_ids = convert_quarter_id(2016, 1)) %>%
   inner_join(
     get_age_groups() %>%
     filter(age_group_start >= 15,
@@ -733,7 +735,8 @@ usethis::use_data(
            mwi_survey_clusters,
            mwi_survey_individuals,
            mwi_survey_biomarker,
-           mwi_survey_hiv_indicators
+           mwi_survey_hiv_indicators,
+           overwrite = TRUE
          )
 
 

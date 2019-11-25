@@ -117,6 +117,7 @@ expand_survey_clusters <- function(survey_clusters,
 #' @param area_top_level Area top level.
 #' @param area_bottom_level Area bottom level.
 #'
+#' @export
 calc_survey_hiv_indicators <- function(survey_meta,
                                        survey_regions,
                                        survey_clusters,
@@ -152,7 +153,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                                                 sex == "female" ~ female_age_max,
                                                                 sex == "both" ~ pmin(male_age_max,
                                                                                      female_age_max)) + 1) %>%
-    dplyr::select(survey_id, sex, age_group_id, age_group_label, age_group_start, age_group_span)
+    dplyr::select(survey_id, sex, age_group, age_group_label, age_group_start, age_group_span)
 
 
   ## 2. Expand clusters to identify all clusters within each area
@@ -207,13 +208,13 @@ calc_survey_hiv_indicators <- function(survey_meta,
     dplyr::filter(!is.na(hivweight), hivweight > 0)
 
   cnt <- dat %>%
-    dplyr::group_by(indicator, survey_id, area_id, sex, age_group_id) %>%
+    dplyr::group_by(indicator, survey_id, area_id, sex, age_group) %>%
     dplyr::summarise(n_cluster = dplyr::n_distinct(cluster_id),
                      n_obs = dplyr::n()) %>%
     dplyr::ungroup()
 
   datspl <- dat %>%
-    dplyr::mutate(spl = paste(indicator, survey_id, area_level, sex, age_group_id)) %>%
+    dplyr::mutate(spl = paste(indicator, survey_id, area_level, sex, age_group)) %>%
     split(.$spl)
 
   do_svymean <- function(df) {
@@ -225,21 +226,21 @@ calc_survey_hiv_indicators <- function(survey_meta,
                              weights = ~hivweight)
 
     survey::svyby(~est,
-                  ~ indicator + survey_id + area_id + sex + age_group_id,
+                  ~ indicator + survey_id + area_id + sex + age_group,
                   des, survey::svymean)
   }
 
   options(survey.lonely.psu="adjust")
-  est_spl <- parallel::mclapply(datspl, do_svymean,
-                                mc.cores = parallel::detectCores())
+  mc.cores <- if(.Platform$OS.type == "windows") 1 else parallel::detectCores()
+  est_spl <- parallel::mclapply(datspl, do_svymean, mc.cores = mc.cores)
 
   val <- cnt %>%
     dplyr::full_join(
              dplyr::bind_rows(est_spl),
-             by = c("indicator", "survey_id", "area_id", "sex", "age_group_id")
+             by = c("indicator", "survey_id", "area_id", "sex", "age_group")
            ) %>%
     dplyr::left_join(
-             survey_meta %>% select(iso3, survey_id, survey_year),
+             survey_meta %>% select(survey_id, survey_year),
              by = c("survey_id")
     ) %>%
     dplyr::left_join(
@@ -248,7 +249,6 @@ calc_survey_hiv_indicators <- function(survey_meta,
              by = c("area_id")
            ) %>%
     dplyr::arrange(
-             iso3,
              fct_relevel(indicator, "prev", "artcov", "vls", "recent"),
              survey_id,
              survey_year,
@@ -256,10 +256,10 @@ calc_survey_hiv_indicators <- function(survey_meta,
              area_sort_order,
              area_id,
              fct_relevel(sex, "both", "male", "female"),
-             age_group_id
+             age_group
            ) %>%
     dplyr::select(
-             indicator, iso3, survey_id, survey_year, area_id, sex, age_group_id,
+             indicator, survey_id, survey_year, area_id, sex, age_group,
              n_cluster, n_obs, est, se) %>%
     dplyr::distinct() %>%
     dplyr::mutate(

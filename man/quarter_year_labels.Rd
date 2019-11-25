@@ -4,8 +4,12 @@
 \alias{quarter_year_labels}
 \alias{quarter_number}
 \alias{quarter_labels}
+\alias{calendar_quarter_labels}
 \alias{year_labels}
 \alias{convert_quarter_id}
+\alias{convert_calendar_quarter}
+\alias{calendar_quarter_to_quarter_id}
+\alias{quarter_id_to_calendar_quarter}
 \title{Time period indexing}
 \usage{
 quarter_year_labels(quarter_id)
@@ -14,16 +18,26 @@ quarter_number(quarter_id)
 
 quarter_labels(quarter_id)
 
+calendar_quarter_labels(calendar_quarter)
+
 year_labels(quarter_id)
 
-convert_quarter_id(quarter, year)
+convert_quarter_id(year, quarter)
+
+convert_calendar_quarter(year, quarter)
+
+calendar_quarter_to_quarter_id(calendar_quarter)
+
+quarter_id_to_calendar_quarter(quarter_id)
 }
 \arguments{
 \item{quarter_id}{vector of integer quarter IDs.}
 
-\item{quarter}{vector of integer quarters (1,2,3,4).}
+\item{calendar_quarter}{Vector of calendar quarters to convert to quarter id labels.}
 
 \item{year}{vector of integer years.}
+
+\item{quarter}{vector of integer quarters (1,2,3,4).}
 }
 \description{
 Time periods are indexed by integers for efficiency and precision.
@@ -36,11 +50,13 @@ Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of
 fiscal year quarters.
 }
 \examples{
-quarter_ids <- convert_quarter_id(c(3, 1), c(2009, 2017))
+quarter_ids <- convert_quarter_id(c(2009, 2017), c(3, 1))
 quarter_ids
+calender_quarters <- convert_calendar_quarter(c(2009, 2017), c(3, 1))
 quarter_number(quarter_ids)
 quarter_labels(quarter_ids)
 year_labels(quarter_ids)
 quarter_year_labels(quarter_ids)
+calendar_quarter_labels("CY2015Q2")
 
 }
