@@ -56,9 +56,7 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
     if(aggregate) {
       spec$spectrum_region_code <- 0L
     } else {
-      pjn <- eppasm::read_pjn(pjnz)
-      region_code <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 3, 4]
-      spec$spectrum_region_code <- as.integer(region_code)
+      spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
     }
 
     spec
@@ -69,6 +67,27 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
 
   spec
 }
+
+#' Read Subnational Region Code from Spectrum PJNZ
+#'
+#' @param pjnz file path to Spectrum PJNZ file.
+#'
+#' @return Spectrum subnational region code as an integer.
+#'
+#' @details
+#' The region code is 0 if a national Spectrum file.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
+#' read_spectrum_region_code(pjnz)
+#' 
+#' @export
+read_spectrum_region_code <- function(pjnz) {
+  pjn <- eppasm::read_pjn(pjnz)
+  region_code <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 3, 4]
+  as.integer(region_code)
+}
+
 
 calc_spec_age_group_aggregate <- function(spec) {
 
