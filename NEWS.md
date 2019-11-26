@@ -14,6 +14,8 @@
 * Use annual programme data input instead of quarterly.
 * Add spectrum_region_code to area hierarchy.
 * Save metadata alongside model outputs, when run via the hint run entrypoint (mrc-760)
+* Add advanced model run options
+* Add skeleton of model input validation
 
 # naomi 0.0.16
 
