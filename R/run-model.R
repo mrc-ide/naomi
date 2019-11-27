@@ -132,6 +132,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## TODO: Include input data in output package based on model options
   ## input download_input
   outputs <- output_package(fit, naomi_mf, area_merged)
+
   attr(outputs, "info") <- naomi_info(data, options)
 
   indicators <- add_output_labels(outputs)
