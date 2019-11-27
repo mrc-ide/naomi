@@ -19,7 +19,7 @@ get_plotting_metadata <- function(iso3) {
       "Country with iso3 code %s not in metadata - returning default colour scales.", iso3))
     colour_scale <- get_colour_scale()
   }
-  merge(x = metadata, y = colour_scale, by = "indicator")
+  merge(x = metadata, y = colour_scale, by = "indicator", sort = FALSE)
 }
 
 #' Get colour scale and ranges for a particular country
