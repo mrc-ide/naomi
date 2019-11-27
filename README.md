@@ -1,4 +1,4 @@
-## Naomi <img src='images/naomi_hex.svg' align="right" height="138.5" />
+## Naomi <img src='images/naomi_hex.png' align="right" height="139" />
 
 [![Travis build status](https://travis-ci.org/mrc-ide/naomi.svg?branch=master)](https://travis-ci.org/mrc-ide/naomi)
 [![Codecov test coverage](https://codecov.io/gh/mrc-ide/naomi/branch/master/graph/badge.svg)](https://codecov.io/gh/mrc-ide/naomi?branch=master)
