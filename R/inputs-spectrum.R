@@ -41,16 +41,9 @@ extract_pjnz_naomi <- function(pjnz_list) {
                hivpop = hiv_pop,
                artpop = art_pop
              ) %>%
-      dplyr::left_join(
-               dplyr::mutate(., susc_previous_year = totpop - hivpop,
-                             year = year + 1) %>%
-               dplyr::select(age:year, susc_previous_year),
-               by = c("age", "sex", "year")
-             ) %>%
       dplyr::left_join(infections, by = c("age", "sex", "year")) %>%
       dplyr::left_join(asfr %>% dplyr::mutate(sex = "female"),
-                       by = c("age", "sex", "year")) %>%
-      dplyr::mutate(births = dplyr::if_else(is.na(asfr), 0, asfr * totpop))
+                       by = c("age", "sex", "year"))
 
     spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
     
@@ -74,8 +67,9 @@ extract_pjnz_naomi <- function(pjnz_list) {
     
   
   spec <- lapply(pjnz_list, extract_pjnz_one) %>%
-    dplyr::bind_rows() 
-
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+  
   spec
 }
 
@@ -123,13 +117,24 @@ cut_naomi_age_group <- function(age) {
 calc_spec_age_group_aggregate <- function(spec, aggregate = TRUE) {
   
   v <- spec %>%
-    dplyr::mutate(age_group = cut_naomi_age_group(age))
+    dplyr::mutate(age_group = cut_naomi_age_group(age),
+                  births = dplyr::if_else(is.na(asfr), 0, asfr * totpop))
 
+  ## Add number susceptible in previous year for Spectrum incidence calculation
+  v <- v %>%
+    dplyr::left_join(
+             dplyr::mutate(v, susc_previous_year = totpop - hivpop,
+                           year = year + 1) %>%
+             dplyr::select(spectrum_region_code, age, sex, year, susc_previous_year),
+             by = c("spectrum_region_code", "age", "sex", "year")
+           ) 
+  
   if(aggregate)
     v <- dplyr::group_by(v, year, sex, age_group)
   else
     v <- dplyr::group_by(v, spectrum_region_code, year, sex, age_group)
-      
+
+
   v <- v %>%
     dplyr::summarise_at(
              dplyr::vars(totpop, hivpop, artpop, susc_previous_year, infections, births), sum) %>%
