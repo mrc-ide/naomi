@@ -8,6 +8,7 @@
 # naomi 0.0.18
 
 * Use odds ratios from Spectrum to model prevalence and ART coverage above age of data availability.
+* Save metadata alongside model outputs, when run via the hint run entrypoint (mrc-760)
 
 # naomi 0.0.17
 

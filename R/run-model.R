@@ -132,6 +132,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   # TODO: it would be nicer if output_package could get this too, but
   # that requires that it can see the same inputs.
+  ## TODO: Include input data in output package based on model options
+  ## input download_input
   outputs <- output_package(fit, naomi_mf, areas)
   attr(outputs, "info") <- naomi_info(data, options)
 
