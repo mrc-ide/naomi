@@ -98,11 +98,11 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 #'
 #' @param naomi_fit Fitted naomi model
 #' @param naomi_mf Naomi model frame
-#' @param areas Area data
+#' @param area_merged Merged area dataset
 #'
 #' @return List containing output indicators and metadata.
 #' @export
-output_package <- function(naomi_fit, naomi_mf, areas) {
+output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   indicators <- extract_indicators(naomi_fit, naomi_mf)
 
@@ -113,14 +113,10 @@ output_package <- function(naomi_fit, naomi_mf, areas) {
       dplyr::select(-age_group_id) %>%
       tidyr::crossing(age_group_id = 30:31)
     )
-  
-  meta_area <- data.tree::ToDataFrameTree(areas$tree, traversal = "level",
-                                          "area_level", "area_level_label",
-                                          "area_id", "area_name",
-                                          "area_sort_order",
-                                          "center_x", "center_y") %>%
-    dplyr::mutate(levelName = NULL,
-                  geometry = areas$boundaries[area_id]) %>%
+
+  meta_area <- area_merged %>%
+    dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
+    dplyr::select(area_level, area_level_label, area_id, area_name, area_sort_order, center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
   meta_period <- data.frame(

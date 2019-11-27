@@ -50,7 +50,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$start("Preparing input data")
   progress$print()
   area_merged <- sf::read_sf(data$shape)
-  areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
   art_number <- readr::read_csv(data$art_number)
@@ -91,7 +90,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   anc_art_coverage_year1 <- options$anc_art_coverage_year1
   anc_art_coverage_year2 <- options$anc_art_coverage_year2
 
-  naomi_mf <- naomi_model_frame(areas,
+  naomi_mf <- naomi_model_frame(area_merged,
                                 population,
                                 spec,
                                 scope = scope,
@@ -132,7 +131,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   ## TODO: Include input data in output package based on model options
   ## input download_input
-  outputs <- output_package(fit, naomi_mf, areas)
+  outputs <- output_package(fit, naomi_mf, area_merged)
   attr(outputs, "info") <- naomi_info(data, options)
 
   indicators <- add_output_labels(outputs)
