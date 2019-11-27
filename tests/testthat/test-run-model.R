@@ -67,10 +67,6 @@ test_that("model can be run", {
   unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
   expect_equal(dir(tmp), "info")
   expect_equal(dir(file.path(tmp, "info")), names(info))
-  for (p in names(info)) {
-    expect_equal(readLines(file.path(tmp, "info", p)),
-                 strsplit(info[[p]], "\n")[[1]])
-  }
 })
 
 test_that("model can be run without programme data", {
