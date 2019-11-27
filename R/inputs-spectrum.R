@@ -62,6 +62,22 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
     spec
   }
 
+  ## If meets conditions, treat as zipped list of PJNZ.
+  ## * Single file
+  ## * Does not contain a .DP or .PJN file
+  if(length(pjnz_list) == 1) {
+    file_names <- unzip(pjnz_list, list = TRUE)$Name
+    exts <- tolower(tools::file_ext(file_names))
+    is_pjnz <- any("dp" %in% exts) || any("pjn" %in% exts)
+
+    if(!is_pjnz) {
+      pjnzdir <- tempfile()
+      unzip(pjnz_list, exdir = pjnzdir)
+      pjnz_list <- list.files(pjnzdir, full.names = TRUE)
+    }
+  }
+    
+  
   spec <- lapply(pjnz_list, extract_pjnz_one, aggregate) %>%
     dplyr::bind_rows() 
 
