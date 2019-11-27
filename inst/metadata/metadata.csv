@@ -1,11 +1,11 @@
 data_type,plot_type,indicator,value_column,error_low_column,error_high_column,indicator_column,indicator_value,name
 survey,choropleth,prevalence,est,,,indicator,prev,Prevalence
 survey,choropleth,art_coverage,est,,,indicator,artcov,ART coverage
+programme,choropleth,current_art,current_art,,,,,ART number
 survey,choropleth,recent,est,,,indicator,recent,Proportion recently infected
 survey,choropleth,vls,est,,,indicator,vls,Viral load suppression
 anc,choropleth,prevalence,prevalence,,,,,Prevalence
 anc,choropleth,art_coverage,art_coverage,,,,,ART coverage
-programme,choropleth,current_art,current_art,,,,,ART number
 output,choropleth,prevalence,mean,,,indicator_id,2,Prevalence
 output,choropleth,art_coverage,mean,,,indicator_id,4,ART coverage
 output,choropleth,current_art,mean,,,indicator_id,5,ART number
