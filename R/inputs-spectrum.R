@@ -88,6 +88,26 @@ read_spectrum_region_code <- function(pjnz) {
   as.integer(region_code)
 }
 
+#' Cut Five Year Age Groups
+#'
+#' Wrapper for `[cut()]` to return five year age groups with 
+#'
+#' @param age a vector of ages.
+#'
+#' @return a vector of strings with five year age groups.
+#'
+#' @seealso
+#' get_age_groups
+#' 
+#' @export
+cut_naomi_age_group <- function(age) {
+  labs <- c(sprintf("%02.0f-%02.0f", 0:15*5, 0:15*5 + 4), "80+")
+  age_group <- cut(x = age, breaks = c(0:16*5, Inf), labels = labs,
+                   include.lowest = TRUE, right = FALSE)
+  as.character(age_group)
+}
+  
+  
 
 calc_spec_age_group_aggregate <- function(spec) {
 
