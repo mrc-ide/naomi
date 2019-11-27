@@ -1,7 +1,6 @@
 #' Extract Model Inputs from Spectrum PJNZ
 #'
 #' @param pjnz_list Vector of filepaths to Spectrum PJNZ file.
-#' @param aggregate TRUE/FALSE whether to aggregate 
 #'
 #' @return A `data.frame` with Spectrum indicators.
 #'
@@ -10,9 +9,9 @@
 #' spec <- extract_pjnz_naomi(pjnz)
 #'
 #' @export
-extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
+extract_pjnz_naomi <- function(pjnz_list) {
 
-  extract_pjnz_one <- function(pjnz, aggregate) {
+  extract_pjnz_one <- function(pjnz) {
     
     totpop <- specio::read_total_pop(pjnz, TRUE) %>%
       dplyr::mutate(sex = as.character(sex))
@@ -53,12 +52,8 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
                        by = c("age", "sex", "year")) %>%
       dplyr::mutate(births = dplyr::if_else(is.na(asfr), 0, asfr * totpop))
 
-    if(aggregate) {
-      spec$spectrum_region_code <- 0L
-    } else {
-      spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
-    }
-
+    spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
+    
     spec
   }
 
@@ -78,7 +73,7 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
   }
     
   
-  spec <- lapply(pjnz_list, extract_pjnz_one, aggregate) %>%
+  spec <- lapply(pjnz_list, extract_pjnz_one) %>%
     dplyr::bind_rows() 
 
   spec
@@ -125,12 +120,17 @@ cut_naomi_age_group <- function(age) {
   
   
 
-calc_spec_age_group_aggregate <- function(spec) {
+calc_spec_age_group_aggregate <- function(spec, aggregate = TRUE) {
+  
+  v <- spec %>%
+    dplyr::mutate(age_group = cut_naomi_age_group(age))
 
-  spec <- spec %>%
-    dplyr::mutate(age_group_label = cut(age, c(0:16*5, Inf), c(paste0(0:15*5, "-", 0:15*5+4), "80+"), TRUE, FALSE),
-                  age_group_label = as.character(age_group_label)) %>%
-    dplyr::group_by(spectrum_region_code, year, sex, age_group_label) %>%
+  if(aggregate)
+    v <- dplyr::group_by(v, year, sex, age_group)
+  else
+    v <- dplyr::group_by(v, spectrum_region_code, year, sex, age_group)
+      
+  v <- v %>%
     dplyr::summarise_at(
              dplyr::vars(totpop, hivpop, artpop, susc_previous_year, infections, births), sum) %>%
     dplyr::ungroup() %>%
@@ -139,12 +139,19 @@ calc_spec_age_group_aggregate <- function(spec) {
                   incidence = infections / susc_previous_year,
                   asfr = births / totpop) %>%
     dplyr::left_join(
-             get_age_groups() %>% dplyr::select(age_group_id, age_group_label),
-             by = "age_group_label"
+             get_age_groups() %>% dplyr::select(age_group_id, age_group),
+             by = "age_group"
            ) %>%
-    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
-    dplyr::select(spectrum_region_code, year, quarter_id, dplyr::everything())
+    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L))
 
+  if(aggregate)
+    v <- dplyr::select(spec, spectrum_region_code) %>%
+      dplyr::distinct() %>%
+      tidyr::crossing(v)
+  
+  v <- dplyr::select(v, spectrum_region_code, year, quarter_id, dplyr::everything())
+
+  v
 }
 
 
