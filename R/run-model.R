@@ -17,8 +17,8 @@
 #' * `shape`
 #' * `population`
 #' * `survey data`
-#' * `anc` (optional)
-#' * `art` (optional)
+#' * `anc_testing` (optional)
+#' * `art_number` (optional)
 #'
 #' The `options` argument must be a list specifying minimally:
 #'
@@ -53,8 +53,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
-  art_number <- readr::read_csv(data$programme)
-  anc <- readr::read_csv(data$anc)
+  art_number <- readr::read_csv(data$art_number)
+  anc_testing <- readr::read_csv(data$anc_testing)
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
@@ -101,7 +101,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   naomi_data <- select_naomi_data(naomi_mf,
                                   survey,
-                                  anc,
+                                  anc_testing,
                                   art_number,
                                   prev_survey_ids,
                                   artcov_survey_ids,
