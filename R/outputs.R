@@ -217,8 +217,8 @@ save_output_package <- function(naomi_output,
                                 boundary_format = "geojson",
                                 single_csv = FALSE) {
 
-  save_output(filename, dir, naomi_output, overwrite, with_labels, boundary_format,
-              single_csv)
+  save_output(filename, dir, naomi_output, overwrite,
+              with_labels, boundary_format, single_csv)
 }
 
 save_result_summary <- function(path, naomi_output) {
@@ -228,7 +228,8 @@ save_result_summary <- function(path, naomi_output) {
 }
 
 save_output_spectrum <- function(path, naomi_output) {
-  save_output(basename(path), dirname(path), naomi_output, overwrite = FALSE,
+  save_output(basename(path), dirname(path), naomi_output,
+              overwrite = FALSE,
               with_labels = TRUE, boundary_format = "geojson",
               single_csv = FALSE)
 }
@@ -284,6 +285,14 @@ save_output <- function(filename, dir,
         stop(paste("Boundary file format", boundary_format, "not recognized.",
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
       }
+    }
+  }
+
+  info <- attr(naomi_output, "info")
+  if (length(info) > 0L) {
+    dir.create("info")
+    for (p in names(info)) {
+      writeLines(trimws(info[[p]]), file.path("info", p))
     }
   }
 

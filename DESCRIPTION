@@ -39,6 +39,7 @@ Imports:
     specio (>= 0.1.2),
     tidyr,
     TMB,
+    yaml,
     zip,
     zoo
 Suggests: 
