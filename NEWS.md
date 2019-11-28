@@ -1,3 +1,10 @@
+# naomi 0.0.19
+
+* Add age <1 / 1-4 age stratification to outputs.
+* Add number receiving art in area outputs.
+* Add ASFR inputs.
+* Add inputs/options.csv in zipped output package.
+
 # naomi 0.0.18
 
 * Use odds ratios from Spectrum to model prevalence and ART coverage above age of data availability.
@@ -7,6 +14,7 @@
 
 * Use annual programme data input instead of quarterly.
 * Add spectrum_region_code to area hierarchy.
+* Save metadata alongside model outputs, when run via the hint run entrypoint (mrc-760)
 * Add advanced model run options
 * Add skeleton of model input validation
 

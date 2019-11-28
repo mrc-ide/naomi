@@ -58,28 +58,33 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
-  ## TODO: Remove this filter - it is in temporarily as model does not run
-  ## without it mrc-640
-  art_number <- art_number %>%
-    dplyr::filter(age_group == "15+")
-
   ## Get from the options
   scope <- options$area_scope
   level <- options$area_level
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
-  artcov_survey_ids  <- options$survey_art_coverage
-  vls_survey_ids <- NULL
   recent_survey_ids <- options$survey_recently_infected
-  art_or_vls <- options$survey_art_or_vls
+
+  ## TODO: Should this throw an error if inconsistent options are selected?
+  ## TODO: Put test against this
+  ## TODO: Longer-term -- change this flow control to allow only one
+  ##       of survey_art_coverage or survey_vls to be specified and
+  ##       remove survey_art_or_vls flow control.
+  if(options$survey_art_or_vls == "art_coverage") {
+    artcov_survey_ids <- options$survey_art_coverage
+    vls_survey_ids <- NULL
+  } else {
+    artcov_survey_ids <- NULL
+    vls_survey_ids <- options$survey_vls
+  }
 
   ## TODO: Use options$include_art returns "true" or "false" as strings to
   ## instead automatically set
   ## calendar quarter from the years available in the ART data
   ## Hardcoded values for now.
-  artnum_calendar_quarter1 <- "CY2016Q1"
-  artnum_calendar_quarter2 <- "CY2018Q3"
+  artnum_calendar_quarter1 <- calendar_quarter_t1
+  artnum_calendar_quarter2 <- calendar_quarter_t2
 
   anc_prevalence_year1 <- options$anc_prevalence_year1
   anc_prevalence_year2 <- options$anc_prevalence_year2
