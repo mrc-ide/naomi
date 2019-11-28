@@ -45,6 +45,11 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   INLA:::inla.dynload.workaround()
   progress <- new_progress()
+
+  progress$start("Validating inputs and options")
+  validate_model_options(data, options)
+  progress$complete("Validating inputs and options")
+
   progress$start("Preparing input data")
   progress$print()
   area_merged <- sf::read_sf(data$shape)
@@ -155,6 +160,11 @@ Progress <- R6::R6Class("Progress", list(
   initialize = function() {
     self$progress <-
       list(
+        list(
+          started = FALSE,
+          complete = FALSE,
+          name = "Validating inputs and options"
+        ),
         list(
           started = FALSE,
           complete = FALSE,

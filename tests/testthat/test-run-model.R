@@ -164,10 +164,11 @@ test_that("progress messages are printed", {
   })
   expect_equal(length(model_run$progress), 5)
   for (step in model_run$progress) {
-    expect_equal(step[[1]]$name, "Preparing input data")
-    expect_equal(step[[2]]$name, "Fitting the model")
-    expect_equal(step[[3]]$name, "Generating uncertainty ranges")
-    expect_equal(step[[4]]$name, "Preparing outputs")
+    expect_equal(step[[1]]$name, "Validating inputs and options")
+    expect_equal(step[[2]]$name, "Preparing input data")
+    expect_equal(step[[3]]$name, "Fitting the model")
+    expect_equal(step[[4]]$name, "Generating uncertainty ranges")
+    expect_equal(step[[5]]$name, "Preparing outputs")
   }
   first_message <- model_run$progress[[1]]
   ## 4 different states
@@ -183,4 +184,35 @@ test_that("progress messages are printed", {
   expect_true(second_message[[1]]$complete)
   expect_true(second_message[[2]]$started)
   expect_false(second_message[[2]]$complete)
+})
+
+test_that("model run throws error for invalid inputs", {
+  data <- list(
+    pjnz = system_file("extdata/mwi2019.PJNZ"),
+    population = system_file("extdata/population/population_agesex.csv"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
+    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
+    programme = system_file("extdata/programme/art_number.csv"),
+    anc = system_file("extdata/programme/anc_testing.csv")
+  )
+  options_bad <- list(
+    area_scope = "MWI",
+    calendar_quarter_t1 = "CY2016Q1",
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    include_art = "true",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
+    no_of_samples = 20
+  )
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
+  expect_error(
+    hintr_run_model(data, options_bad, output_path, output_spectrum,
+                    summary_path)
+  )
 })

@@ -43,7 +43,14 @@ read_options <- function(type) {
 #' @return TRUE if valid otherwise throw an error
 #' @export
 validate_model_options <- function(data, options) {
-  ## This must return TRUE if valid - otherwise throw an error
-  ## TODO: mrc-795 Add real validation
+
+  required_options <- c("area_scope", "area_level",
+                        "calendar_quarter_t1", "calendar_quarter_t2",
+                        "survey_prevalence")
+
+  if(!all(required_options %in% names(options)))
+    stop(paste("Required model options not supplied:",
+               paste(setdiff(required_options, names(options)), collapse = ", ")))
+  
   TRUE
 }

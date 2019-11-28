@@ -1,3 +1,7 @@
+# naomi 0.0.20
+
+* Add model input validation step to hintr_run_model().
+
 # naomi 0.0.19
 
 * Add age <1 / 1-4 age stratification to outputs.
