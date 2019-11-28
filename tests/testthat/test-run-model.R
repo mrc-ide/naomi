@@ -6,8 +6,8 @@ test_that("model can be run", {
     population = system_file("extdata/population/population_agesex.csv"),
     shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    programme = system_file("extdata/programme/art_number.csv"),
-    anc = system_file("extdata/programme/anc_testing.csv")
+    art_number = system_file("extdata/programme/art_number.csv"),
+    anc_testing= system_file("extdata/programme/anc_testing.csv")
   )
   options <- list(
     area_scope = "MWI",
@@ -17,7 +17,8 @@ test_that("model can be run", {
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
-    include_art = "true",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
@@ -134,8 +135,8 @@ test_that("progress messages are printed", {
     population = system_file("extdata/population/population_agesex.csv"),
     shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    programme = system_file("extdata/programme/art_number.csv"),
-    anc = system_file("extdata/programme/anc_testing.csv")
+    art_number = system_file("extdata/programme/art_number.csv"),
+    anc_testing = system_file("extdata/programme/anc_testing.csv")
   )
   options <- list(
     area_scope = "MWI",
@@ -192,8 +193,8 @@ test_that("model run throws error for invalid inputs", {
     population = system_file("extdata/population/population_agesex.csv"),
     shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    programme = system_file("extdata/programme/art_number.csv"),
-    anc = system_file("extdata/programme/anc_testing.csv")
+    art_number = system_file("extdata/programme/art_number.csv"),
+    anc_testing = system_file("extdata/programme/anc_testing.csv")
   )
   options_bad <- list(
     area_scope = "MWI",
@@ -201,7 +202,8 @@ test_that("model run throws error for invalid inputs", {
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
-    include_art = "true",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,

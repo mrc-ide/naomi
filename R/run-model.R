@@ -29,8 +29,8 @@
 #' * survey_prevalence
 #' * survey_art_coverage
 #' * survey_recently_infected
-#' * art_calendar_quarter1
-#' * art_calendar_quarter2
+#' * include_art_t1
+#' * include_art_t2
 #' * anc_prevalence_year1
 #' * anc_prevalence_year2
 #' * anc_art_coverage_year1
@@ -58,13 +58,13 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
 
-  if(!is.null(data$programme))
-    art_number <- readr::read_csv(data$programme)
+  if(!is.null(data$art_number))
+    art_number <- readr::read_csv(data$art_number)
   else
     art_number <- NULL
 
-  if(!is.null(data$anc)) 
-    anc <- readr::read_csv(data$anc)
+  if(!is.null(data$anc_testing)) 
+    anc <- readr::read_csv(data$anc_testing)
   else
     anc <- NULL
 
@@ -82,12 +82,17 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
 
-  ## TODO: Use options$include_art returns "true" or "false" as strings to
-  ## instead automatically set
-  ## calendar quarter from the years available in the ART data
-  ## Hardcoded values for now.
-  artnum_calendar_quarter1 <- calendar_quarter_t1
-  artnum_calendar_quarter2 <- calendar_quarter_t2
+  if(!is.null(options$include_art_t1) &&
+     options$include_art_t1 == "true")
+    artnum_calendar_quarter1 <- calendar_quarter_t1
+  else
+    artnum_calendar_quarter1 <- NULL
+
+  if(!is.null(options$include_art_t2) &&
+     options$include_art_t2 == "true")
+    artnum_calendar_quarter2 <- calendar_quarter_t2
+  else
+    artnum_calendar_quarter2 <- NULL
 
   anc_prevalence_year1 <- options$anc_prevalence_year1
   anc_prevalence_year2 <- options$anc_prevalence_year2

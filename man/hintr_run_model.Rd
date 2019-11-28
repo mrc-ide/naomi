@@ -46,8 +46,8 @@ The \code{options} argument must be a list specifying minimally:
 \item survey_prevalence
 \item survey_art_coverage
 \item survey_recently_infected
-\item art_calendar_quarter1
-\item art_calendar_quarter2
+\item include_art_t1
+\item include_art_t2
 \item anc_prevalence_year1
 \item anc_prevalence_year2
 \item anc_art_coverage_year1

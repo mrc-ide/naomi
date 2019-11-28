@@ -51,6 +51,12 @@ validate_model_options <- function(data, options) {
   if(!all(required_options %in% names(options)))
     stop(paste("Required model options not supplied:",
                paste(setdiff(required_options, names(options)), collapse = ", ")))
+
+  ## TODO: better approach to check file exists and is valid?
+  if(is.null(data$art_number) &&
+     (!is.null(options$include_art_t1) && options$include_art_t1 == "true" ||
+      !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
+    stop("ART dataset not provided. ART data cannot be selected Yes to include.")
   
   TRUE
 }
