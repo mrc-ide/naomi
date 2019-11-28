@@ -13,9 +13,7 @@ test_that("can get valid model run options template", {
   expect_true(any(grepl("Survey", options$survey)))
   expect_true(any(grepl("<survey_prevalence_options>", options$survey)))
   expect_true(any(grepl("<survey_art_coverage_options>", options$survey)))
-  expect_true(any(grepl("<survey_vls_options>", options$survey)))
   expect_true(any(grepl("<survey_recently_infected_options>", options$survey)))
-  expect_true(any(grepl("<survey_art_or_vls_options>", options$survey)))
 
   expect_true(any(grepl("ART", options$art)))
   expect_true(any(grepl("ANC", options$anc)))
@@ -40,9 +38,7 @@ test_that("art and anc data can be omitted from model run options", {
   expect_true(any(grepl("Survey", options$survey)))
   expect_true(any(grepl("<survey_prevalence_options>", options$survey)))
   expect_true(any(grepl("<survey_art_coverage_options>", options$survey)))
-  expect_true(any(grepl("<survey_vls_options>", options$survey)))
   expect_true(any(grepl("<survey_recently_infected_options>", options$survey)))
-  expect_true(any(grepl("<survey_art_or_vls_options>", options$survey)))
 
   expect_false(any(grepl("ART", options$art)))
   expect_false(any(grepl("ANC", options$anc)))

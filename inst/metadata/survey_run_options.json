@@ -27,18 +27,6 @@
       ]
     },
     {
-      "label": "VLS (viral load suppression)",
-      "controls": [
-        {
-          "name": "survey_vls",
-          "type": "select",
-          "options":
-            <survey_vls_options>,
-          "required": false
-        }
-      ]
-    },
-    {
       "label": "Proportion recently infected",
       "controls": [
         {
@@ -50,18 +38,6 @@
         }
       ]
     },
-    {
-      "label": "ART coverage or VLS",
-      "controls": [
-        {
-          "name": "survey_art_or_vls",
-          "type": "select",
-          "options":
-            <survey_art_or_vls_options>,
-          "required": true
-        }
-      ]
-    }
   ]
 }
 

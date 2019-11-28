@@ -3,25 +3,39 @@
   "description": "Select whether to include ART data or not in model run",
   "controlGroups": [
     {
-      "label": "Number on ART",
-      "controls": [
-        {
-          "name": "include_art",
-          "label": "Include ART data",
-          "type": "select",
-          "helpText": "Select whether to include ART data or not in model run",
-          "options":
+	"label": "Include ART data",
+	"controls": [
+	    {
+		"name": "include_art_t1",
+		"label": "Include ART data",
+		"type": "select",
+		"helpText": "Select whether to include ART data or not in model run",
+		"options":
+		[{
+		    "id": "true",
+		    "label": "Yes"
+		},
+            {
+		"id": "false",
+		"label": "No"
+            }],
+		"required": true
+            },
+	    "name": "include_art_t2",
+            "label": "Include ART data",
+            "type": "select",
+            "helpText": "Select whether to include ART data or not in model run",
+            "options":
             [{
               "id": "true",
-              "label": "yes"
+		"label": "Yes"
             },
             {
-              "id": "false",
-              "label": "no"
+		"id": "false",
+		"label": "No"
             }],
-          "required": true
+            "required": true
         }
-      ]
     }
   ]
 }
