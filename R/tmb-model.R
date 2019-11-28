@@ -219,8 +219,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     oddsratio_gamma_art_raw = numeric(sum(dtmb$n_nb))
   )
 
-  v <- list(data_tmb = dtmb,
-            parameters_tmb = ptmb)
+  v <- list(data = dtmb,
+            par_init = ptmb)
   class(v) <- "naomi_tmb_input"
 
   v
@@ -239,8 +239,8 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
 
-  obj <- TMB::MakeADFun(data = tmb_input$data_tmb,
-                        parameters = tmb_input$parameters_tmb,
+  obj <- TMB::MakeADFun(data = tmb_input$data,
+                        parameters = tmb_input$par_init,
                         DLL = "naomi",
                         silent = !inner_verbose,
                         random = c("beta_rho", "beta_alpha", "beta_lambda",
