@@ -29,8 +29,6 @@ or shape format}
 the metadata too}
 
 \item{path}{Path to output zip file.}
-
-\item{options}{List of model fit options to be saved as csv}
 }
 \value{
 Path to created zip file
