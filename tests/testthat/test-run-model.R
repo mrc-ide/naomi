@@ -16,9 +16,7 @@ test_that("model can be run", {
     calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
-    survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
     include_art = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
@@ -70,23 +68,21 @@ test_that("model can be run", {
 })
 
 test_that("model can be run without programme data", {
-  testthat::skip("Skipping test as running without programme data not supported see mrc-638")
+
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
-    shape = file.path("testdata/malawi.geojson"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv")
   )
   options <- list(
     area_scope = "MWI",
     area_level = 4,
-    t1 = "CY2016Q1",
-    t2 = "CY2018Q3",
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = "MWI2016PHIA",
     survey_art_coverage = "MWI2016PHIA",
-    survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
     no_of_samples = 20
   )
   output_path <- tempfile()
@@ -108,17 +104,24 @@ test_that("model can be run without programme data", {
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+
+  info <- naomi_info(data, options)
+  info_names <- paste0("info/", names(info))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "info/", info_names))
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
   expect_equal(model_run$summary_path, summary_path)
   file_list <- unzip(model_run$summary_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "info/", info_names))
 
 })
 
@@ -143,7 +146,6 @@ test_that("progress messages are printed", {
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
     art_calendar_quarter1 = "CY2016Q1",
     art_calendar_quarter2 = "CY2018Q3",
     anc_prevalence_year1 = 2016,

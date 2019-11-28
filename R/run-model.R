@@ -51,8 +51,16 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
-  art_number <- readr::read_csv(data$programme)
-  anc <- readr::read_csv(data$anc)
+
+  if(!is.null(data$programme))
+    art_number <- readr::read_csv(data$programme)
+  else
+    art_number <- NULL
+
+  if(!is.null(data$anc)) 
+    anc <- readr::read_csv(data$anc)
+  else
+    anc <- NULL
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
