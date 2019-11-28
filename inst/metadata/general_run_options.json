@@ -28,18 +28,6 @@
       ]
     },
     {
-      "label": "Calendar quarter at midpoint of survey",
-      "controls": [
-        {
-          "name": "calendar_quarter_t1",
-          "type": "select",
-          "options":
-            <calendar_quarter_t1_options>,
-          "required": true
-        }
-      ]
-    },
-    {
       "label": "Calendar quarter to generate estimates",
       "controls": [
         {

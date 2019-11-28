@@ -7,10 +7,10 @@ test_that("can get valid model run options template", {
   expect_true(any(grepl("General", options$general)))
   expect_true(any(grepl("<area_scope_options>", options$general)))
   expect_true(any(grepl("<area_level_options>", options$general)))
-  expect_true(any(grepl("<calendar_quarter_t1_options>", options$general)))
   expect_true(any(grepl("<calendar_quarter_t2_options>", options$general)))
 
   expect_true(any(grepl("Survey", options$survey)))
+  expect_true(any(grepl("<calendar_quarter_t1_options>", options$survey)))
   expect_true(any(grepl("<survey_prevalence_options>", options$survey)))
   expect_true(any(grepl("<survey_art_coverage_options>", options$survey)))
   expect_true(any(grepl("<survey_recently_infected_options>", options$survey)))
@@ -32,10 +32,10 @@ test_that("art and anc data can be omitted from model run options", {
   expect_true(any(grepl("General", options$general)))
   expect_true(any(grepl("<area_scope_options>", options$general)))
   expect_true(any(grepl("<area_level_options>", options$general)))
-  expect_true(any(grepl("<calendar_quarter_t1_options>", options$general)))
   expect_true(any(grepl("<calendar_quarter_t2_options>", options$general)))
 
   expect_true(any(grepl("Survey", options$survey)))
+  expect_true(any(grepl("<calendar_quarter_t1_options>", options$survey)))
   expect_true(any(grepl("<survey_prevalence_options>", options$survey)))
   expect_true(any(grepl("<survey_art_coverage_options>", options$survey)))
   expect_true(any(grepl("<survey_recently_infected_options>", options$survey)))
