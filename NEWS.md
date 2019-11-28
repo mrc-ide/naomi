@@ -1,3 +1,7 @@
+# naomi 0.0.20
+
+* Add function to return 5 year age groups
+
 # naomi 0.0.19
 
 * Add age <1 / 1-4 age stratification to outputs.

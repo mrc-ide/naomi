@@ -107,3 +107,9 @@ test_that("metadata is well formed", {
       all(non_empty(meta[, column]))
     }, logical(1))))
 })
+
+test_that("can get 5 year age groups", {
+  age_groups <- get_five_year_age_groups()
+  expect_length(age_groups, 17)
+  expect_equal(age_groups[[1]], "00-04")
+})
