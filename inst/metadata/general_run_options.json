@@ -28,18 +28,6 @@
       ]
     },
     {
-      "label": "Calendar quarter at midpoint of survey",
-      "controls": [
-        {
-          "name": "calendar_quarter_t1",
-          "type": "select",
-          "options":
-            <calendar_quarter_t1_options>,
-          "required": true
-        }
-      ]
-    },
-    {
       "label": "Calendar quarter to generate estimates",
       "controls": [
         {
@@ -47,26 +35,6 @@
           "type": "select",
           "options":
             <calendar_quarter_t2_options>,
-          "required": true
-        }
-      ]
-    },
-    {
-      "label": "Include input data in model output download",
-      "controls": [
-        {
-          "name": "download_input",
-          "type": "select",
-          "options":
-            [{
-              "id": "true",
-              "label": "yes"
-            },
-            {
-              "id": "false",
-              "label": "no"
-            }],
-          "value": "false",
           "required": true
         }
       ]

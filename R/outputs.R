@@ -211,7 +211,6 @@ add_output_labels <- function(naomi_output) {
 #' @param naomi_output Naomi output object
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
-#' @param options List of model fit options to be saved as csv
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson

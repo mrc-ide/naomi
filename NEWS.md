@@ -1,6 +1,7 @@
 # naomi 0.0.20
 
 * Support multiple PJNZ extracts in a zip folder.
+* Add model input validation step to hintr_run_model().
 
 # naomi 0.0.19
 
