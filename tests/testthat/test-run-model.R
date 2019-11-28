@@ -162,7 +162,7 @@ test_that("progress messages are printed", {
     model_run <- naomi_evaluate_promise(
       hintr_run_model(data, options, output_path, output_spectrum, summary_path))
   })
-  expect_equal(length(model_run$progress), 5)
+  expect_equal(length(model_run$progress), 6)
   for (step in model_run$progress) {
     expect_equal(step[[1]]$name, "Validating inputs and options")
     expect_equal(step[[2]]$name, "Preparing input data")
@@ -171,15 +171,15 @@ test_that("progress messages are printed", {
     expect_equal(step[[5]]$name, "Preparing outputs")
   }
   first_message <- model_run$progress[[1]]
-  ## 4 different states
-  expect_equal(length(first_message), 4)
+  ## 5 different states
+  expect_equal(length(first_message), 5)
   expect_true(first_message[[1]]$started)
   expect_false(first_message[[1]]$complete)
   expect_false(first_message[[2]]$started)
   expect_false(first_message[[2]]$complete)
 
   second_message <- model_run$progress[[2]]
-  expect_equal(length(second_message), 4)
+  expect_equal(length(second_message), 5)
   expect_true(second_message[[1]]$started)
   expect_true(second_message[[1]]$complete)
   expect_true(second_message[[2]]$started)

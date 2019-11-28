@@ -47,6 +47,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress <- new_progress()
 
   progress$start("Validating inputs and options")
+  progress$print()
   validate_model_options(data, options)
   progress$complete("Validating inputs and options")
 
