@@ -17,8 +17,8 @@
 #' * `shape`
 #' * `population`
 #' * `survey data`
-#' * `anc` (optional)
-#' * `art` (optional)
+#' * `anc_testing` (optional)
+#' * `art_number` (optional)
 #'
 #' The `options` argument must be a list specifying minimally:
 #'
@@ -54,19 +54,20 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$start("Preparing input data")
   progress$print()
   area_merged <- sf::read_sf(data$shape)
-  areas <- create_areas(area_merged = area_merged)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
 
-  if(!is.null(data$art_number))
+  if (!is.null(data$art_number)) {
     art_number <- readr::read_csv(data$art_number)
-  else
+  } else {
     art_number <- NULL
+  }
 
-  if(!is.null(data$anc_testing)) 
-    anc <- readr::read_csv(data$anc_testing)
-  else
-    anc <- NULL
+  if (!is.null(data$anc_testing)) {
+    anc_testing <- readr::read_csv(data$anc_testing)
+  } else {
+    anc_testing <- NULL
+  }
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
@@ -99,7 +100,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   anc_art_coverage_year1 <- options$anc_art_coverage_year1
   anc_art_coverage_year2 <- options$anc_art_coverage_year2
 
-  naomi_mf <- naomi_model_frame(areas,
+  naomi_mf <- naomi_model_frame(area_merged,
                                 population,
                                 spec,
                                 scope = scope,
@@ -109,7 +110,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   naomi_data <- select_naomi_data(naomi_mf,
                                   survey,
-                                  anc,
+                                  anc_testing,
                                   art_number,
                                   prev_survey_ids,
                                   artcov_survey_ids,
@@ -138,11 +139,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$start("Preparing outputs")
   progress$print()
 
-  # TODO: it would be nicer if output_package could get this too, but
-  # that requires that it can see the same inputs.
   ## TODO: Include input data in output package based on model options
   ## input download_input
-  outputs <- output_package(fit, naomi_mf, areas)
+  outputs <- output_package(fit, naomi_mf, area_merged)
+
   attr(outputs, "info") <- naomi_info(data, options)
 
   indicators <- add_output_labels(outputs)

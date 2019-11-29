@@ -4,7 +4,7 @@
 \alias{naomi_model_frame}
 \title{Construct Model Frames and Adjacency Structures}
 \usage{
-naomi_model_frame(areas, population_agesex, spec,
+naomi_model_frame(area_merged, population_agesex, spec,
   scope = areas$tree$area_id,
   level = max(areas$tree$Get("area_level")), calendar_quarter1,
   calendar_quarter2, age_group_ids = 1:17, sexes = c("male", "female"),
@@ -15,7 +15,7 @@ naomi_model_frame(areas, population_agesex, spec,
   logit_nu_sd = 0.3)
 }
 \arguments{
-\item{areas}{Areas}
+\item{area_merged}{Merged version of area hierarchy}
 
 \item{population_agesex}{Population by age group and sex}
 

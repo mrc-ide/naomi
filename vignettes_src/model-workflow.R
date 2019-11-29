@@ -50,9 +50,6 @@ st_write(area_merged, file.path(tempdir(), "area_merged.geojson"), delete_dsn = 
 
 area_merged <- read_sf(file.path(tempdir(), "area_merged.geojson"))
 
-areas <- create_areas(area_merged = area_merged)
-
-
 #' Population data
 ##+ load_population_data, message = FALSE
 pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", package = "naomi"))
@@ -134,7 +131,7 @@ anc_art_coverage_year2 <- 2018
 
 #' Setup the model
 
-naomi_mf <- naomi_model_frame(areas,
+naomi_mf <- naomi_model_frame(area_merged,
                               pop_agesex,
                               spec,
                               scope = scope,
@@ -176,7 +173,7 @@ fit <- fit_tmb(tmb_inputs)
 #' Calculate model outputs. We can calculate outputs based on posterior mode
 #' estimates before running `report_tmb()` to calculate posterior intervals.
 
-outputs <- output_package(fit, naomi_mf, areas)
+outputs <- output_package(fit, naomi_mf, area_merged)
 
 #' The output package consists of a data frame of indicators and metadata
 #' defining the labels for each indicator.
@@ -211,7 +208,7 @@ system.time(fit <- sample_tmb(fit))
 #' Regenerate outputs with uncertainty ranges.
 
 ##+ make_output_package, cache = TRUE
-system.time(outputs <- output_package(fit, naomi_mf, areas))
+system.time(outputs <- output_package(fit, naomi_mf, area_merged))
 
 outputs$indicators %>%
   dplyr::filter(

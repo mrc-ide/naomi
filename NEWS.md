@@ -1,6 +1,11 @@
-# naomi 0.0.20
+# naomi 0.0.21
 
 * Add model input validation step to hintr_run_model().
+
+# naomi 0.0.20
+
+* Add function to return 5 year age groups
+* Support multiple PJNZ extracts in a zip folder.
 
 # naomi 0.0.19
 

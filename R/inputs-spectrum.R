@@ -1,7 +1,6 @@
 #' Extract Model Inputs from Spectrum PJNZ
 #'
 #' @param pjnz_list Vector of filepaths to Spectrum PJNZ file.
-#' @param aggregate TRUE/FALSE whether to aggregate 
 #'
 #' @return A `data.frame` with Spectrum indicators.
 #'
@@ -10,9 +9,9 @@
 #' spec <- extract_pjnz_naomi(pjnz)
 #'
 #' @export
-extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
+extract_pjnz_naomi <- function(pjnz_list) {
 
-  extract_pjnz_one <- function(pjnz, aggregate) {
+  extract_pjnz_one <- function(pjnz) {
     
     totpop <- specio::read_total_pop(pjnz, TRUE) %>%
       dplyr::mutate(sex = as.character(sex))
@@ -42,40 +41,101 @@ extract_pjnz_naomi <- function(pjnz_list, aggregate = TRUE) {
                hivpop = hiv_pop,
                artpop = art_pop
              ) %>%
-      dplyr::left_join(
-               dplyr::mutate(., susc_previous_year = totpop - hivpop,
-                             year = year + 1) %>%
-               dplyr::select(age:year, susc_previous_year),
-               by = c("age", "sex", "year")
-             ) %>%
       dplyr::left_join(infections, by = c("age", "sex", "year")) %>%
       dplyr::left_join(asfr %>% dplyr::mutate(sex = "female"),
-                       by = c("age", "sex", "year")) %>%
-      dplyr::mutate(births = dplyr::if_else(is.na(asfr), 0, asfr * totpop))
+                       by = c("age", "sex", "year"))
 
-    if(aggregate) {
-      spec$spectrum_region_code <- 0L
-    } else {
-      pjn <- eppasm::read_pjn(pjnz)
-      region_code <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 3, 4]
-      spec$spectrum_region_code <- as.integer(region_code)
-    }
-
+    spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
+    
     spec
   }
 
-  spec <- lapply(pjnz_list, extract_pjnz_one, aggregate) %>%
-    dplyr::bind_rows() 
+  ## If meets conditions, treat as zipped list of PJNZ.
+  ## * Single file
+  ## * Does not contain a .DP or .PJN file
+  if(length(pjnz_list) == 1) {
+    file_names <- unzip(pjnz_list, list = TRUE)$Name
+    exts <- tolower(tools::file_ext(file_names))
+    is_pjnz <- any("dp" %in% exts) || any("pjn" %in% exts)
 
+    if(!is_pjnz) {
+      pjnzdir <- tempfile()
+      unzip(pjnz_list, exdir = pjnzdir)
+      pjnz_list <- list.files(pjnzdir, full.names = TRUE)
+    }
+  }
+    
+  
+  spec <- lapply(pjnz_list, extract_pjnz_one) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+  
   spec
 }
 
-calc_spec_age_group_aggregate <- function(spec) {
+#' Read Subnational Region Code from Spectrum PJNZ
+#'
+#' @param pjnz file path to Spectrum PJNZ file.
+#'
+#' @return Spectrum subnational region code as an integer.
+#'
+#' @details
+#' The region code is 0 if a national Spectrum file.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
+#' read_spectrum_region_code(pjnz)
+#' 
+#' @export
+read_spectrum_region_code <- function(pjnz) {
+  pjn <- eppasm::read_pjn(pjnz)
+  region_code <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 3, 4]
+  as.integer(region_code)
+}
 
-  spec <- spec %>%
-    dplyr::mutate(age_group_label = cut(age, c(0:16*5, Inf), c(paste0(0:15*5, "-", 0:15*5+4), "80+"), TRUE, FALSE),
-                  age_group_label = as.character(age_group_label)) %>%
-    dplyr::group_by(spectrum_region_code, year, sex, age_group_label) %>%
+#' Cut Five Year Age Groups
+#'
+#' Wrapper for `[cut()]` to return five year age groups with 
+#'
+#' @param age a vector of ages.
+#'
+#' @return a vector of strings with five year age groups.
+#'
+#' @seealso
+#' get_age_groups
+#' 
+#' @export
+cut_naomi_age_group <- function(age) {
+  labs <- c(sprintf("%02.0f-%02.0f", 0:15*5, 0:15*5 + 4), "80+")
+  age_group <- cut(x = age, breaks = c(0:16*5, Inf), labels = labs,
+                   include.lowest = TRUE, right = FALSE)
+  as.character(age_group)
+}
+  
+  
+
+calc_spec_age_group_aggregate <- function(spec, aggregate = TRUE) {
+  
+  v <- spec %>%
+    dplyr::mutate(age_group = cut_naomi_age_group(age),
+                  births = dplyr::if_else(is.na(asfr), 0, asfr * totpop))
+
+  ## Add number susceptible in previous year for Spectrum incidence calculation
+  v <- v %>%
+    dplyr::left_join(
+             dplyr::mutate(v, susc_previous_year = totpop - hivpop,
+                           year = year + 1) %>%
+             dplyr::select(spectrum_region_code, age, sex, year, susc_previous_year),
+             by = c("spectrum_region_code", "age", "sex", "year")
+           ) 
+  
+  if(aggregate)
+    v <- dplyr::group_by(v, year, sex, age_group)
+  else
+    v <- dplyr::group_by(v, spectrum_region_code, year, sex, age_group)
+
+
+  v <- v %>%
     dplyr::summarise_at(
              dplyr::vars(totpop, hivpop, artpop, susc_previous_year, infections, births), sum) %>%
     dplyr::ungroup() %>%
@@ -84,12 +144,19 @@ calc_spec_age_group_aggregate <- function(spec) {
                   incidence = infections / susc_previous_year,
                   asfr = births / totpop) %>%
     dplyr::left_join(
-             get_age_groups() %>% dplyr::select(age_group_id, age_group_label),
-             by = "age_group_label"
+             get_age_groups() %>% dplyr::select(age_group_id, age_group),
+             by = "age_group"
            ) %>%
-    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
-    dplyr::select(spectrum_region_code, year, quarter_id, dplyr::everything())
+    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L))
 
+  if(aggregate)
+    v <- dplyr::select(spec, spectrum_region_code) %>%
+      dplyr::distinct() %>%
+      tidyr::crossing(v)
+  
+  v <- dplyr::select(v, spectrum_region_code, year, quarter_id, dplyr::everything())
+
+  v
 }
 
 
