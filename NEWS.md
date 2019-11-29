@@ -1,3 +1,7 @@
+# naomi 0.0.21
+
+* Revise ART attendance model to be single district level 'attractiveness' parameter.
+
 # naomi 0.0.20
 
 * Support multiple PJNZ extracts in a zip folder.
