@@ -116,7 +116,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param rita_param rita_param
 #' @param sigma_u_sd sigma_u_sd
 #' @param artattend artattend
-#' @param artattend_prior_sigma_scale artattend_propr_sigma_scale
+#' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @return Naomi model frame
@@ -138,8 +138,8 @@ naomi_model_frame <- function(area_merged,
                                                 sigma_betaT  = 0.00001,
                                                 ritaT        = 1.0),
                               sigma_u_sd   = 1.0,
-                              artattend = FALSE,
-                              artattend_prior_sigma_scale = 3.0,
+                              artattend = TRUE,
+                              artattend_log_gamma_offset = -4,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3) {
 
@@ -290,30 +290,10 @@ naomi_model_frame <- function(area_merged,
                   istar = as.integer(reside_area_idx == artattend_area_idx),
                   jstar = as.integer(reside_area_idx == artattend_area_idx)) %>%
     dplyr::arrange(reside_area_idx, istar, artattend_area_idx, jstar) %>%
-    dplyr::mutate(artattend_idx = dplyr::row_number())
+    dplyr::mutate(artattend_idx = dplyr::row_number(),
+                  attend_area_idf = forcats::as_factor(artattend_area_idx),
+                  log_gamma_offset = dplyr::if_else(jstar == 1, 0, artattend_log_gamma_offset))
 
-  gamma_or_prior <-   mf_areas %>%
-    dplyr::mutate(n_nb_lim = pmin(n_neighbors, 9)) %>%
-    dplyr::left_join(
-             data.frame(
-               n_nb_lim = 1:9,
-               gamma_or_mu = c(-3.29855798975623, -4.0643930585428, -4.53271592818956, -4.86910480099925, -5.13133396982624,
-                               -5.34605339546364, -5.52745113789738, -5.68479564118418, -5.8234349424758),
-               gamma_or_sigma = artattend_prior_sigma_scale *
-                 c(0.950818503595947, 1.04135785601697, 1.12665887287997, 1.19273171464978, 1.24570962739274,
-                   1.28959773294666, 1.32675564121864, 1.35902556091841, 1.3873644912272)
-             ),
-             by = "n_nb_lim"
-           )
-
-  mf_artattend <- mf_artattend %>%
-    dplyr::left_join(
-             gamma_or_prior %>%
-             dplyr::select(area_idx, gamma_or_mu, gamma_or_sigma),
-             by = c("reside_area_idx" = "area_idx")
-           ) %>%
-    dplyr::mutate(gamma_or_mu = dplyr::if_else(istar == 1, NA_real_, gamma_or_mu),
-                  gamma_or_sigma = dplyr::if_else(istar == 1, NA_real_, gamma_or_sigma))
 
   ## Incidence model
 

@@ -63,9 +63,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     art_number <- NULL
 
   if(!is.null(data$anc_testing)) 
-    anc <- readr::read_csv(data$anc_testing)
+    anc_testing <- readr::read_csv(data$anc_testing)
   else
-    anc <- NULL
+    anc_testing <- NULL
 
   spec <- extract_pjnz_naomi(data$pjnz)
 

@@ -69,6 +69,9 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## ART attendance aggregation
 
+  Xgamma <-  Matrix::sparse.model.matrix(~0 + attend_area_idf:as.integer(jstar != 1),
+                                         naomi_data$mf_artattend)
+  
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::left_join(naomi_data$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
     dplyr::mutate(artattend_idf = forcats::as_factor(artattend_idx),
@@ -117,8 +120,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     n_nb = naomi_data$mf_areas$n_neighbors,
     adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,
     adj_j = naomi_data$mf_artattend$artattend_area_idx - 1L,
-    gamma_or_mu = dplyr::filter(naomi_data$mf_artattend, !istar == 1)$gamma_or_mu,
-    gamma_or_sigma = dplyr::filter(naomi_data$mf_artattend, !istar == 1)$gamma_or_sigma,
+    Xgamma = Xgamma,
+    log_gamma_offset = naomi_data$mf_artattend$log_gamma_offset,
     Xart_idx = Xart_idx,
     Xart_gamma = Xart_gamma,
     ##
@@ -216,7 +219,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_sigma_ancrho_x = 0,
     log_sigma_ancalpha_x = 0,
     ##
-    oddsratio_gamma_art_raw = numeric(sum(dtmb$n_nb))
+    log_or_gamma = numeric(ncol(dtmb$Xgamma)),
+    log_sigma_or_gamma = 0
   )
 
   v <- list(data = dtmb,
@@ -260,7 +264,7 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                                    ##
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    ##
-                                   "oddsratio_gamma_art_raw"))
+                                   "log_or_gamma"))
 
   trace <- if(outer_verbose) 1 else 0
   f <- stats::nlminb(obj$par, obj$fn, obj$gr, control = list(trace = trace))

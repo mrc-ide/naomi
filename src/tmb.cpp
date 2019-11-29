@@ -85,8 +85,11 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(n_nb);
   DATA_IVECTOR(adj_i);
   DATA_IVECTOR(adj_j);
-  DATA_VECTOR(gamma_or_mu);
-  DATA_VECTOR(gamma_or_sigma);
+
+  DATA_SPARSE_MATRIX(Xgamma);
+  DATA_VECTOR(log_gamma_offset);
+  
+  
   DATA_SPARSE_MATRIX(Xart_idx);
   DATA_SPARSE_MATRIX(Xart_gamma);
 
@@ -303,10 +306,12 @@ Type objective_function<Type>::operator() ()
 
   // * ART attendance model *
 
-  PARAMETER_VECTOR(oddsratio_gamma_art_raw);
-  val -= dnorm(oddsratio_gamma_art_raw, 0.0, 1.0, true).sum();
-  vector<Type> oddsratio_gamma_art(oddsratio_gamma_art_raw * gamma_or_sigma + gamma_or_mu);
-
+  PARAMETER(log_sigma_or_gamma);
+  Type sigma_or_gamma(exp(log_sigma_or_gamma));
+  val -= dnorm(sigma_or_gamma, Type(0.0), Type(2.5), true) + log_sigma_or_gamma;
+    
+  PARAMETER_VECTOR(log_or_gamma);
+  val -= dnorm(log_or_gamma, 0.0, 1.0, true).sum();
 
 
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
@@ -396,15 +401,14 @@ Type objective_function<Type>::operator() ()
 
   // * ART attendance model *
 
-  vector<Type> gamma_art(adj_i.size());
+  vector<Type> gamma_art(exp(Xgamma * log_or_gamma * sigma_or_gamma + log_gamma_offset));
   int cum_nb = 0;
   for(int i = 0; i < n_nb.size(); i++){
-    Type cum_exp_or_gamma_i = 1.0;
-    for(int j = 0; j < n_nb[i]; j++)
-      cum_exp_or_gamma_i += gamma_art[cum_nb + i + j] = exp(oddsratio_gamma_art[cum_nb + j]);
-    for(int j = 0; j < n_nb[i]; j++)
+    Type cum_exp_or_gamma_i = 0.0;
+    for(int j = 0; j < n_nb[i]+1; j++)
+      cum_exp_or_gamma_i += gamma_art[cum_nb + i + j];
+    for(int j = 0; j < n_nb[i]+1; j++)
       gamma_art[cum_nb + i + j] /= cum_exp_or_gamma_i;
-    gamma_art[cum_nb + i + n_nb[i]] = 1.0 / cum_exp_or_gamma_i;
     cum_nb += n_nb[i];
   }
 
