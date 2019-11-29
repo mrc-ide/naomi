@@ -24,7 +24,7 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "none"
 		    "helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
 		}
 	    ]
@@ -51,7 +51,7 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "none"
 		    "helpText": "Calibrate to Spectrum mean total PLHIV among adults age 15+."
 		}
 	    ]
@@ -78,7 +78,7 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "none"
 		    "helpText": "Calibrate to Spectrum mean total PLHIV among children aged 0-14."
 		}
 	    ]
@@ -105,7 +105,7 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "none"
 		    "helpText": "Calibrate to Spectrum mean total PLHIV among adults age 15+."
 		}
 	    ]
@@ -132,7 +132,7 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "none"
 		    "helpText": "Calibrate to Spectrum mean total on ART among children aged 0-14."
 		}
 	    ]
