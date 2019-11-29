@@ -1,9 +1,6 @@
 {
-
-}
-{
     "label": "Calibration options",
-    "description": "Options for calibrating to Spectrum outputs",
+    "description": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
     "controlGroups": [
 	{
 	    "label": "Adjust to Spectrum population size",
@@ -27,14 +24,124 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "none"
 		    "helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
-		    
 		}
 	    ]
-	    
-	}
-	]
+	},
+	{
+	    "label": "Adjust to Spectrum adult (15+) PLHIV",
+	    "controls": [
+		{
+		    "name": "spectrum_plhiv_15plus_calibration",
+		    "type": "select",
+		    "required": true
+		    "options":
+		    [
+			{
+			    "id": "none",
+			    "label": "None"
+			},
+			{
+			    "id": "national",
+			    "label": "National"
+			},
+			{
+			    "id": "subnational",
+			    "label": "Subnational"
+			}
+		    ],
+		    "value": "none"
+		    "helpText": "Calibrate to Spectrum mean total PLHIV among adults age 15+."
+		}
+	    ]
+	},
+	{
+	    "label": "Adjust to Spectrum child (0-14) PLHIV",
+	    "controls": [
+		{
+		    "name": "spectrum_plhiv_0to14_calibration",
+		    "type": "select",
+		    "required": true
+		    "options":
+		    [
+			{
+			    "id": "none",
+			    "label": "None"
+			},
+			{
+			    "id": "national",
+			    "label": "National"
+			},
+			{
+			    "id": "subnational",
+			    "label": "Subnational"
+			}
+		    ],
+		    "value": "none"
+		    "helpText": "Calibrate to Spectrum mean total PLHIV among children aged 0-14."
+		}
+	    ]
+	},
+		{
+	    "label": "Adjust to Spectrum adult (15+) on ART",
+	    "controls": [
+		{
+		    "name": "spectrum_artnum_15plus_calibration",
+		    "type": "select",
+		    "required": true
+		    "options":
+		    [
+			{
+			    "id": "none",
+			    "label": "None"
+			},
+			{
+			    "id": "national",
+			    "label": "National"
+			},
+			{
+			    "id": "subnational",
+			    "label": "Subnational"
+			}
+		    ],
+		    "value": "none"
+		    "helpText": "Calibrate to Spectrum mean total PLHIV among adults age 15+."
+		}
+	    ]
+	},
+	{
+	    "label": "Adjust to Spectrum child (0-14) on ART",
+	    "controls": [
+		{
+		    "name": "spectrum_artnum_0to14_calibration",
+		    "type": "select",
+		    "required": true
+		    "options":
+		    [
+			{
+			    "id": "none",
+			    "label": "None"
+			},
+			{
+			    "id": "national",
+			    "label": "National"
+			},
+			{
+			    "id": "subnational",
+			    "label": "Subnational"
+			}
+		    ],
+		    "value": "none"
+		    "helpText": "Calibrate to Spectrum mean total on ART among children aged 0-14."
+		}
+	    ]
+	},
+    ]
+}
+{
+    "label": "Output options",
+    "description": "Options for controlling downloaded model results"
 }
 {
   "label": "Advanced",

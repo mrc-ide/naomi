@@ -36,6 +36,41 @@
             }],
             "required": true
         }
-    }
+    },
+      {
+	  "label": "Estimate neighbouring district ART attendance",
+	  "controls": [
+	      {
+		  "name": "artattend",
+		  "type": "select",
+		  "required": true
+		  "options":
+		  [
+		      {
+			  "id": "false",
+			  "label": "No"
+		  },
+		      {
+			  "id": "true",
+			  "label": "yes"
+		      }
+		  ],
+		  "value": "false"
+		  "helpText": "Model proportion of ART residents who seek treatment in neighboring districts."
+	      }
+	  ]
+      },
+      {
+	  "label": "Logit prior mean for neighboring district attraction.",
+	  "controls": [
+	      {
+		  "name": "log_or_gamma_offset",
+		  "type": "number",
+		  "required": false
+		  "value": -4
+		  "helpText": "Logit offset for odds of obtaining ART in district j compared to home district."
+	      }
+	  ]
+      }
   ]
 }
