@@ -1,5 +1,6 @@
 # naomi 0.0.20
 
+* Add function to return 5 year age groups
 * Support multiple PJNZ extracts in a zip folder.
 
 # naomi 0.0.19
