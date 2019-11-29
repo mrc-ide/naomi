@@ -1,3 +1,7 @@
+# naomi 0.0.20
+
+* Support multiple PJNZ extracts in a zip folder.
+
 # naomi 0.0.19
 
 * Add age <1 / 1-4 age stratification to outputs.

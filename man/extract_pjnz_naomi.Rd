@@ -4,12 +4,10 @@
 \alias{extract_pjnz_naomi}
 \title{Extract Model Inputs from Spectrum PJNZ}
 \usage{
-extract_pjnz_naomi(pjnz_list, aggregate = TRUE)
+extract_pjnz_naomi(pjnz_list)
 }
 \arguments{
 \item{pjnz_list}{Vector of filepaths to Spectrum PJNZ file.}
-
-\item{aggregate}{TRUE/FALSE whether to aggregate}
 }
 \value{
 A \code{data.frame} with Spectrum indicators.

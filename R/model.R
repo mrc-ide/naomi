@@ -102,7 +102,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 
 #' Construct Model Frames and Adjacency Structures
 #'
-#' @param areas Areas
+#' @param area_merged Merged version of area hierarchy
 #' @param population_agesex Population by age group and sex
 #' @param spec Spec
 #' @param scope The collection of area IDs to be modelled. Defaults to all area
@@ -122,7 +122,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @return Naomi model frame
 #'
 #' @export
-naomi_model_frame <- function(areas,
+naomi_model_frame <- function(area_merged,
                               population_agesex,
                               spec,
                               scope = areas$tree$area_id,
@@ -143,6 +143,10 @@ naomi_model_frame <- function(areas,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3) {
 
+  ## Create area tree
+  ## TODO: Get rid of reliance on data.tree
+  areas <- create_areas(area_merged = area_merged)
+  
   ## Prune areas below model level
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
 
@@ -180,7 +184,7 @@ naomi_model_frame <- function(areas,
                   age_group_idf = forcats::as_factor(age_group_id))
 
   ## Add population estimates
-
+  
   mf_model <- mf_model %>%
     dplyr::left_join(
              population_agesex %>%
