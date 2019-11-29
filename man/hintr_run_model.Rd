@@ -33,8 +33,8 @@ The \code{data} argument must be a list specifying paths to the following:
 \item \code{shape}
 \item \code{population}
 \item \code{survey data}
-\item \code{anc} (optional)
-\item \code{art} (optional)
+\item \code{anc_testing} (optional)
+\item \code{art_number} (optional)
 }
 
 The \code{options} argument must be a list specifying minimally:

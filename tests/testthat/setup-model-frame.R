@@ -1,9 +1,10 @@
 INLA:::inla.dynload.workaround()
 
-areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
+area_merged <- sf::read_sf(system.file("extdata/areas/area_merged.geojson", package = "naomi"))
 spec <- extract_pjnz_naomi(system.file("extdata/mwi2019.PJNZ", package = "naomi"))
 
-naomi_mf <- naomi_model_frame(areas,
+
+naomi_mf <- naomi_model_frame(area_merged,
                               mwi_population_agesex,
                               spec,
                               scope = "MWI",
