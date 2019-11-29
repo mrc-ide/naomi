@@ -57,6 +57,28 @@ validate_model_options <- function(data, options) {
      (!is.null(options$include_art_t1) && options$include_art_t1 == "true" ||
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
     stop("ART dataset not provided. ART data cannot be selected Yes to include.")
+
+  ## Calibration options
+
+  if(!is.null(options$spectrum_population_calibration) &&
+     options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
+    stop("Spectrum population calibration not yet implemented")
+  
+  if(!is.null(options$spectrum_plhiv_0to14_calibration) &&
+     options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
+    stop("Spectrum PLHIV age 0-14 calibration not yet implemented")
+
+  if(!is.null(options$spectrum_plhiv_15plus_calibration) &&
+     options$spectrum_plhiv_15plus_calibration %in% c("national", "subnational"))
+    stop("Spectrum PLHIV 15+ calibration not yet implemented")
+
+  if(!is.null(options$spectrum_artnum_0to14_calibration) &&
+     options$spectrum_artnum_0to14_calibration %in% c("national", "subnational"))
+    stop("Spectrum ART age 0-14 calibration not yet implemented")
+
+  if(!is.null(options$spectrum_artnum_15plus_calibration) &&
+     options$spectrum_artnum_15plus_calibration %in% c("national", "subnational"))
+    stop("Spectrum ART 15+ calibration not yet implemented")
   
   TRUE
 }
