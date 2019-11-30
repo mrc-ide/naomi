@@ -57,15 +57,17 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
 
-  if(!is.null(data$art_number))
+  if (!is.null(data$art_number)) {
     art_number <- readr::read_csv(data$art_number)
-  else
+  } else {
     art_number <- NULL
+  }
 
-  if(!is.null(data$anc_testing)) 
+  if (!is.null(data$anc_testing)) {
     anc_testing <- readr::read_csv(data$anc_testing)
-  else
+  } else {
     anc_testing <- NULL
+  }
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
