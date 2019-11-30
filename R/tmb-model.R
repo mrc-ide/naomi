@@ -294,13 +294,17 @@ report_tmb <- function(naomi_fit) {
 #'
 #' @param fit The TMB fit
 #' @param nsample Number of samples
+#' @param rng_seed seed passed to set.seed.
 #' @param random_only Random only
 #' @param verbose If TRUE prints additional information.
 #'
 #' @return Sampled fit.
 #' @export
-sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
+sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
+                       random_only = TRUE, verbose = TRUE) {
 
+  set.seed(rng_seed)
+  
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
 

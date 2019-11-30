@@ -133,7 +133,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("Fitting the model")
   progress$start("Generating uncertainty ranges")
   progress$print()
-  fit <- sample_tmb(fit, nsample = options$no_of_samples)
+  fit <- sample_tmb(fit,
+                    nsample = options$no_of_samples,
+                    rng_seed = options$rng_seed)
 
   progress$complete("Generating uncertainty ranges")
   progress$start("Preparing outputs")

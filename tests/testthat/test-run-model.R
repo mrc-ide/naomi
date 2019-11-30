@@ -218,3 +218,71 @@ test_that("model run throws error for invalid inputs", {
                     summary_path)
   )
 })
+
+
+test_that("setting rng_seed returns same output", {
+
+  data <- list(
+    pjnz = system_file("extdata/mwi2019.PJNZ"),
+    population = system_file("extdata/population/population_agesex.csv"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
+    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
+    art_number = system_file("extdata/programme/art_number.csv"),
+    anc_testing = system_file("extdata/programme/anc_testing.csv")
+  )
+  options <- list(
+    area_scope = "MWI_1_1",
+    area_level = 4,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
+    survey_prevalence = "MWI2016PHIA",
+    survey_art_coverage = NULL,
+    survey_recently_infected = NULL,
+    include_art_t1 = "false",
+    include_art_t2 = "false",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
+    artattend = FALSE,
+    rng_seed = 17,
+    no_of_samples = 20
+  )
+
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
+
+  model_run <- hintr_run_model(data, options, output_path, output_spectrum,
+                               summary_path)
+
+  options2 <- options
+  options2$rng_seed <- 17
+
+  output_path2 <- tempfile()
+  output_spectrum2 <- tempfile(fileext = ".zip")
+  summary_path2 <- tempfile(fileext = ".zip")
+
+  model_run2 <- hintr_run_model(data, options2, output_path2,
+                                output_spectrum2, summary_path2)
+
+  options3 <- options
+  options3$rng_seed <- NULL
+
+  output_path3 <- tempfile()
+  output_spectrum3 <- tempfile(fileext = ".zip")
+  summary_path3 <- tempfile(fileext = ".zip")
+
+  model_run3 <- hintr_run_model(data, options3, output_path3,
+                                output_spectrum3, summary_path3)
+
+  output <- readRDS(model_run$output_path)
+  output2 <- readRDS(model_run2$output_path)
+  output3 <- readRDS(model_run3$output_path)
+
+  expect_equal(output, output2)
+
+  expect_equal(nrow(output), nrow(output3))
+  expect_true(output$mean[output$indicator == "prevalence"][1] !=
+              output3$mean[output3$indicator == "prevalence"][1])
+})
