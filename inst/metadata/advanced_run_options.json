@@ -1,7 +1,4 @@
 {
-
-}
-{
     "label": "Calibration options",
     "description": "Options for calibrating to Spectrum outputs",
     "controlGroups": [
@@ -11,7 +8,6 @@
 		{
 		    "name": "spectrum_population_calibration",
 		    "type": "select",
-		    "required": true
 		    "options":
 		    [
 			{
@@ -27,15 +23,14 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "national"
+		    "value": "national",
+		    "required": true,
 		    "helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
-		    
 		}
 	    ]
-	    
 	}
-	]
-}
+    ]
+},
 {
   "label": "Advanced",
   "description": "Advanced model run options",
