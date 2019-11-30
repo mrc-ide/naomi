@@ -22,6 +22,6 @@ a_naomi_data <- select_naomi_data(a_naomi_mf,
 
                                                       
 a_tmb_inputs <- prepare_tmb_inputs(a_naomi_data)
-a_fit <- fit_tmb(a_tmb_inputs)
+a_fit <- fit_tmb(a_tmb_inputs, outer_verbose = FALSE)
 a_fit_sample <- sample_tmb(a_fit, nsample = 30, rng_seed = 28)
 a_output <- output_package(a_fit_sample, a_naomi_mf, area_merged)

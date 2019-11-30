@@ -128,8 +128,11 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("Preparing input data")
   progress$start("Fitting the model")
   progress$print()
-  fit <- fit_tmb(tmb_inputs)
 
+  fit <- fit_tmb(tmb_inputs,
+                 outer_verbose = ifelse(is.null(options$outer_verbose), FALSE, options$outer_verbose),
+                 inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose))
+                 
   progress$complete("Fitting the model")
   progress$start("Generating uncertainty ranges")
   progress$print()

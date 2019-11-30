@@ -301,7 +301,7 @@ report_tmb <- function(naomi_fit) {
 #' @return Sampled fit.
 #' @export
 sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
-                       random_only = TRUE, verbose = TRUE) {
+                       random_only = TRUE, verbose = FALSE) {
 
   set.seed(rng_seed)
   
