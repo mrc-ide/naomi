@@ -183,6 +183,29 @@
 		    "helpText": "Random number generator seed for uncertainty sample"
 		}
 	    ]
+	},
+	{
+	    "label": "Permissive",
+	    "controls": [
+		{
+		    "name": "permissive",
+		    "type": "select",
+		    "required": true,
+		    "options":
+		    [
+			{
+			    "id": "true",
+			    "label": "Yes"
+			},
+			{
+			    "id": "false",
+			    "label": "No"
+			}
+		    ],
+		    "value": "false",
+		    "helpText": "Select 'Yes' to allow fits with convergence or data errors."
+		}
+	    ]
 	}
     ]
 }

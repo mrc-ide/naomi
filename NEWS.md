@@ -5,6 +5,7 @@
 * Silent fitting for hintr_run_model() unless option outer_verbose = TRUE or inner_verbose = TRUE.
 * Specify maximum number of iterations for fit_tmb().
 * Warning if fit_tmb() convergence error.
+* hintr_run_model() throw error if convergence error, unless option$permissive = TRUE.
 
 # naomi 0.0.20
 

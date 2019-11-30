@@ -246,3 +246,32 @@ test_that("setting rng_seed returns same output", {
   expect_true(output$mean[output$indicator == "prevalence"][1] !=
               output3$mean[output3$indicator == "prevalence"][1])
 })
+
+test_that("exceeding max_iterations convergence error or warning", {
+
+  data <- a_hintr_data
+  
+  options <- a_hintr_options
+  options$survey_prevalence = "MWI2016PHIA"
+  options$survey_art_coverage <- NULL
+  options$survey_recently_infected <- NULL
+  options$include_art_t1 = "false"
+  options$include_art_t2 = "false"
+  options$max_iterations <- 5
+
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
+
+  expect_error(hintr_run_model(data, options,
+                               output_path, output_spectrum,
+                               summary_path))
+
+  options$permissive <- TRUE
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
+  expect_warning(hintr_run_model(data, options,
+                                 output_path, output_spectrum,
+                                 summary_path))
+})
