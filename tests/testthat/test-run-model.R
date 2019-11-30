@@ -1,35 +1,48 @@
 context("run-model")
 
+## A single set of valid model options and data, update once instead of copying
+## for every test.
+
+a_hintr_data <- list(
+  pjnz = system_file("extdata/mwi2019.PJNZ"),
+  population = system_file("extdata/population/population_agesex.csv"),
+  shape = system_file("extdata/areas/area_merged.geojson"),
+  survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
+  art_number = system_file("extdata/programme/art_number.csv"),
+  anc_testing = system_file("extdata/programme/anc_testing.csv")
+)
+
+a_hintr_options <- list(
+  area_scope = "MWI_1_1",
+  area_level = 4,
+  calendar_quarter_t1 = "CY2016Q1",
+  calendar_quarter_t2 = "CY2018Q3",
+  survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+  survey_art_coverage = "MWI2016PHIA",
+  survey_recently_infected = "MWI2016PHIA",
+  include_art_t1 = "true",
+  include_art_t2 = "true",
+  anc_prevalence_year1 = 2016,
+  anc_prevalence_year2 = 2018,
+  anc_art_coverage_year1 = 2016,
+  anc_art_coverage_year2 = 2018,
+  artattend = FALSE,
+  rng_seed = 17,
+  no_of_samples = 20,
+  max_iter = 250,
+  permissive = FALSE
+)
+
 test_that("model can be run", {
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    art_number = system_file("extdata/programme/art_number.csv"),
-    anc_testing = system_file("extdata/programme/anc_testing.csv")
-  )
-  options <- list(
-    area_scope = "MWI",
-    area_level = 4,
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    include_art_t1 = "true",
-    include_art_t2 = "true",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
-  )
+
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
-  model_run <- hintr_run_model(data, options, output_path, output_spectrum,
-                         summary_path)
+  model_run <- hintr_run_model(a_hintr_data,
+                               a_hintr_options,
+                               output_path,
+                               output_spectrum,
+                               summary_path)
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "summary_path"))
 
@@ -40,11 +53,11 @@ test_that("model can be run", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 102672)
+  expect_true(nrow(output) == 22320)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
-  info <- naomi_info(data, options)
+  info <- naomi_info(a_hintr_data, a_hintr_options)
   info_names <- paste0("info/", names(info))
   expect_setequal(
     file_list$Name,
@@ -70,22 +83,18 @@ test_that("model can be run", {
 
 test_that("model can be run without programme data", {
 
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv")
-  )
-  options <- list(
-    area_scope = "MWI",
-    area_level = 4,
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = "MWI2016PHIA",
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    no_of_samples = 20
-  )
+  data <- a_hintr_data
+  data$art_number <- NULL
+  data$anc_testing <- NULL
+
+  options <- a_hintr_options
+  options$include_art_t1 <- NULL
+  options$include_art_t2 <- NULL
+  options$anc_prevalence_year1 <- NULL
+  options$anc_prevalence_year2 <- NULL
+  options$anc_art_coverage_year1 <- NULL
+  options$anc_art_coverage_year2 <- NULL
+
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
@@ -101,7 +110,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 102672)
+  expect_true(nrow(output) == 22320)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -130,38 +139,14 @@ test_that("progress messages are printed", {
   skip_on_covr()
   mock_new_progress <- mockery::mock(MockProgress$new())
 
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    art_number = system_file("extdata/programme/art_number.csv"),
-    anc_testing = system_file("extdata/programme/anc_testing.csv")
-  )
-  options <- list(
-    area_scope = "MWI",
-    area_level = 4,
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_vls = NULL,
-    survey_recently_infected = "MWI2016PHIA",
-    art_calendar_quarter1 = "CY2016Q1",
-    art_calendar_quarter2 = "CY2018Q3",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
-  )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
   with_mock("naomi:::new_progress" = mock_new_progress,
             "naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
     model_run <- naomi_evaluate_promise(
-      hintr_run_model(data, options, output_path, output_spectrum, summary_path))
+      hintr_run_model(a_hintr_data, a_hintr_options,
+                      output_path, output_spectrum, summary_path))
   })
   expect_equal(length(model_run$progress), 6)
   for (step in model_run$progress) {
@@ -188,14 +173,6 @@ test_that("progress messages are printed", {
 })
 
 test_that("model run throws error for invalid inputs", {
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    art_number = system_file("extdata/programme/art_number.csv"),
-    anc_testing = system_file("extdata/programme/anc_testing.csv")
-  )
   options_bad <- list(
     area_scope = "MWI",
     calendar_quarter_t1 = "CY2016Q1",
@@ -222,38 +199,21 @@ test_that("model run throws error for invalid inputs", {
 
 test_that("setting rng_seed returns same output", {
 
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    art_number = system_file("extdata/programme/art_number.csv"),
-    anc_testing = system_file("extdata/programme/anc_testing.csv")
-  )
-  options <- list(
-    area_scope = "MWI_1_1",
-    area_level = 4,
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = "MWI2016PHIA",
-    survey_art_coverage = NULL,
-    survey_recently_infected = NULL,
-    include_art_t1 = "false",
-    include_art_t2 = "false",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    artattend = FALSE,
-    rng_seed = 17,
-    no_of_samples = 20
-  )
+  data <- a_hintr_data
+  
+  options <- a_hintr_options
+  options$survey_prevalence = "MWI2016PHIA"
+  options$survey_art_coverage <- NULL
+  options$survey_recently_infected <- NULL
+  options$include_art_t1 = "false"
+  options$include_art_t2 = "false"
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
 
-  model_run <- hintr_run_model(data, options, output_path, output_spectrum,
+  model_run <- hintr_run_model(data, options,
+                               output_path, output_spectrum,
                                summary_path)
 
   options2 <- options
