@@ -145,43 +145,44 @@
     "controlGroups": []
 },
 {
-  "label": "Advanced",
-  "description": "Advanced model run options",
-  "controlGroups": [
-    {
-      "label": "Maximum iterations",
-      "controls": [
-        {
-          "name": "max_iterations",
-          "type": "number",
-          "value": 250,
-          "helpText": "Maximum number of iteration for model run",
-          "required": true
-        }
-      ]
-    },
-    {
-      "label": "Number of simulations",
-      "controls": [
-        {
-          "name": "no_of_samples",
-          "type": "number",
-          "value": 1000,
-          "helpText": "Number of simulatons for generating uncertainty ranges",
-          "required": true
-        }
-      ]
-    },
-    {
-      "label": "Simulation seed",
-      "controls": [
-        {
-            "name": "rng_seed",
-            "type": "number",
-            "value": 28,
-            "required": false,
-	    "helpText": "Random number generator seed for uncertainty sample"
-        }
-      ]
-    }
+    "label": "Advanced",
+    "description": "Advanced model run options",
+    "controlGroups": [
+	{
+	    "label": "Maximum iterations",
+	    "controls": [
+		{
+		    "name": "max_iterations",
+		    "type": "number",
+		    "value": 250,
+		    "helpText": "Maximum number of iteration for model run",
+		    "required": true
+		}
+	    ]
+	},
+	{
+	    "label": "Number of simulations",
+	    "controls": [
+		{
+		    "name": "no_of_samples",
+		    "type": "number",
+		    "value": 1000,
+		    "helpText": "Number of simulatons for generating uncertainty ranges",
+		    "required": true
+		}
+	    ]
+	},
+	{
+	    "label": "Simulation seed",
+	    "controls": [
+		{
+		    "name": "rng_seed",
+		    "type": "number",
+		    "value": 28,
+		    "required": false,
+		    "helpText": "Random number generator seed for uncertainty sample"
+		}
+	    ]
+	}
+    ]
 }
