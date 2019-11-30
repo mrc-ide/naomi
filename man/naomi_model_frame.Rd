@@ -4,15 +4,25 @@
 \alias{naomi_model_frame}
 \title{Construct Model Frames and Adjacency Structures}
 \usage{
-naomi_model_frame(area_merged, population_agesex, spec,
+naomi_model_frame(
+  area_merged,
+  population_agesex,
+  spec,
   scope = areas$tree$area_id,
-  level = max(areas$tree$Get("area_level")), calendar_quarter1,
-  calendar_quarter2, age_group_ids = 1:17, sexes = c("male", "female"),
-  omega = 0.7, rita_param = list(OmegaT0 = 130/365, sigma_OmegaT =
-  ((142 - 118)/365)/(2 * qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05,
-  ritaT = 1), sigma_u_sd = 1, artattend = FALSE,
-  artattend_prior_sigma_scale = 3, logit_nu_mean = 2,
-  logit_nu_sd = 0.3)
+  level = max(areas$tree$Get("area_level")),
+  calendar_quarter1,
+  calendar_quarter2,
+  age_group_ids = 1:17,
+  sexes = c("male", "female"),
+  omega = 0.7,
+  rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 - 118)/365)/(2 *
+    qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT = 1),
+  sigma_u_sd = 1,
+  artattend = FALSE,
+  artattend_prior_sigma_scale = 3,
+  logit_nu_mean = 2,
+  logit_nu_sd = 0.3
+)
 }
 \arguments{
 \item{area_merged}{Merged version of area hierarchy}

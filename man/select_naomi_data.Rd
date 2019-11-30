@@ -4,15 +4,24 @@
 \alias{select_naomi_data}
 \title{Select data for model fitting}
 \usage{
-select_naomi_data(naomi_mf, survey_hiv_indicators, anc_testing, art_number,
-  prev_survey_ids, artcov_survey_ids, recent_survey_ids,
+select_naomi_data(
+  naomi_mf,
+  survey_hiv_indicators,
+  anc_testing,
+  art_number,
+  prev_survey_ids,
+  artcov_survey_ids,
+  recent_survey_ids,
   vls_survey_ids = NULL,
   artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
   artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
-  anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
-  anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+ 
+    anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
+ 
+    anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
   anc_artcov_year_t1 = anc_prev_year_t1,
-  anc_artcov_year_t2 = anc_prev_year_t2)
+  anc_artcov_year_t2 = anc_prev_year_t2
+)
 }
 \arguments{
 \item{naomi_mf}{A Naomi model frame object.}
@@ -47,7 +56,7 @@ select_naomi_data(naomi_mf, survey_hiv_indicators, anc_testing, art_number,
 Select data for model fitting
 }
 \details{
-See example datasets for examples of required template for data sets. *\code{_survey_ids} must be reflected
+See example datasets for examples of required template for data sets. *\verb{_survey_ids} must be reflected
 in \code{survey_hiv_indicators}.
 
 ART coverage and VLS survey data should not be included from the same survey. This is checked

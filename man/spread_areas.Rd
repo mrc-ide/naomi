@@ -4,8 +4,11 @@
 \alias{spread_areas}
 \title{Spread area hierarchy to wide format}
 \usage{
-spread_areas(areas, min_level = min(areas$area_level),
-  max_level = max(areas$area_level))
+spread_areas(
+  areas,
+  min_level = min(areas$area_level),
+  max_level = max(areas$area_level)
+)
 }
 \arguments{
 \item{areas}{area hierarchy data.frame}

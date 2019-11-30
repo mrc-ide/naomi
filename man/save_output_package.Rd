@@ -5,9 +5,15 @@
 \alias{read_output_package}
 \title{Save outputs to zip file}
 \usage{
-save_output_package(naomi_output, filename, dir, overwrite = FALSE,
-  with_labels = FALSE, boundary_format = "geojson",
-  single_csv = FALSE)
+save_output_package(
+  naomi_output,
+  filename,
+  dir,
+  overwrite = FALSE,
+  with_labels = FALSE,
+  boundary_format = "geojson",
+  single_csv = FALSE
+)
 
 read_output_package(path)
 }

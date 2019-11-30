@@ -4,9 +4,13 @@
 \alias{hintr_run_model}
 \title{Run the model and save output to file}
 \usage{
-hintr_run_model(data, options, output_path = tempfile(),
+hintr_run_model(
+  data,
+  options,
+  output_path = tempfile(),
   spectrum_path = tempfile(fileext = ".zip"),
-  summary_path = tempfile(fileext = ".zip"))
+  summary_path = tempfile(fileext = ".zip")
+)
 }
 \arguments{
 \item{data}{List of paths to input data files.}
@@ -32,7 +36,7 @@ The \code{data} argument must be a list specifying paths to the following:
 \item \code{pjnz}
 \item \code{shape}
 \item \code{population}
-\item \code{survey data}
+\item \verb{survey data}
 \item \code{anc_testing} (optional)
 \item \code{art_number} (optional)
 }

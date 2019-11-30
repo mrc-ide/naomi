@@ -4,9 +4,13 @@
 \alias{expand_survey_clusters}
 \title{Expand list of clusters at each area level}
 \usage{
-expand_survey_clusters(survey_clusters, survey_regions, areas,
+expand_survey_clusters(
+  survey_clusters,
+  survey_regions,
+  areas,
   top_level = min(areas$area_level),
-  bottom_level = max(areas$area_level))
+  bottom_level = max(areas$area_level)
+)
 }
 \description{
 This function recursively expands the list of clusters to produce a list
