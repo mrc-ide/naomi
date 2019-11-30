@@ -4,10 +4,15 @@
 \alias{sdreport_joint_precision}
 \title{Get Joint Precision of TMB Fixed and Random}
 \usage{
-sdreport_joint_precision(obj, par.fixed = NULL, hessian.fixed = NULL,
-  bias.correct = FALSE, bias.correct.control = list(sd = FALSE, split =
-  NULL, nsplit = NULL), ignore.parm.uncertainty = FALSE,
-  skip.delta.method = FALSE)
+sdreport_joint_precision(
+  obj,
+  par.fixed = NULL,
+  hessian.fixed = NULL,
+  bias.correct = FALSE,
+  bias.correct.control = list(sd = FALSE, split = NULL, nsplit = NULL),
+  ignore.parm.uncertainty = FALSE,
+  skip.delta.method = FALSE
+)
 }
 \arguments{
 \item{obj}{Object returned by \code{MakeADFun}}
@@ -25,6 +30,6 @@ sdreport_joint_precision(obj, par.fixed = NULL, hessian.fixed = NULL,
 \item{skip.delta.method}{Skip the delta method? (\code{FALSE} by default)}
 }
 \description{
-This is a copy of \code{[TMB::sdreport]} that removes all computations of \code{ADREPORT()}ed variables to only return the joint precision.
+This is a copy of \verb{[TMB::sdreport]} that removes all computations of \code{ADREPORT()}ed variables to only return the joint precision.
 }
 \keyword{internal}
