@@ -39,7 +39,7 @@
       "label": "Maximum iterations",
       "controls": [
         {
-          "name": "include_art",
+          "name": "max_iterations",
           "type": "number",
           "value": 250,
           "helpText": "Maximum number of iteration for model run",
