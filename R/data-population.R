@@ -159,11 +159,21 @@ interpolate_population_agesex <- function(population_agesex, calendar_quarters) 
                 tidyr::nesting(area_id, source, sex, age_group)) %>%
     dplyr::full_join(df, by = names(.)) %>%
     dplyr::group_by(area_id, source, sex, age_group) %>%
-    dplyr::mutate(population = exp(zoo::na.approx(log(population), quarter_id, na.rm = FALSE)),
-                  population = tidyr::replace_na(population, 0)) %>%
+    dplyr::mutate(population = log_linear_interp(population, quarter_id)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(quarter_id %in% quarter_ids) %>%
     dplyr::left_join(dfall, by = intersect(names(.), names(dfall))) %>%
     dplyr::select(names(population_agesex))
 
+}
+
+#' Log-linear interpolation of NA values
+#'
+#' @examples
+#' log_linear_interp(c(100, 105, NA, 110), 1:4)
+#' 
+log_linear_interp <- function(y, x){
+  yout <- exp(zoo::na.approx(log(y), x, na.rm = FALSE))
+  yout <- tidyr::replace_na(yout, 0)
+  yout
 }

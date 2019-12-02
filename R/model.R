@@ -226,9 +226,20 @@ naomi_model_frame <- function(area_merged,
 
   ## Add Spectrum inputs
 
+  quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
+  quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
+  
+  spec_aggr <- spec %>%    
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id2) + 2)) %>%
+    dplyr::mutate(age_group = cut_naomi_age_group(age),
+                  births = dplyr::if_else(is.na(asfr), 0, asfr * totpop)) %>%
+    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, births), sum) %>%
+    dplyr::ungroup()
+
   mf_model <- mf_model %>%
     dplyr::left_join(
-             calc_spec_age_group_aggregate(spec) %>%
+             calc_spec_age_group_aggregate(spec_aggr) %>%
              ## !!! NEEDS UPDATE
              dplyr::filter(year == 2016) %>%
              dplyr::select(

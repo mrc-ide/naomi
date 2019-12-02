@@ -112,33 +112,30 @@ cut_naomi_age_group <- function(age) {
   as.character(age_group)
 }
   
-  
 
-calc_spec_age_group_aggregate <- function(spec, aggregate = TRUE) {
-  
-  v <- spec %>%
-    dplyr::mutate(age_group = cut_naomi_age_group(age),
-                  births = dplyr::if_else(is.na(asfr), 0, asfr * totpop))
+calc_spec_age_group_aggregate <- function(spec_aggr, aggregate = TRUE) {
 
+  v <- spec_aggr
+  
+  if(aggregate) {
+    group_vars <- c("year", "sex", "age_group")
+    v <- dplyr::group_by_at(v, group_vars) %>%
+      dplyr::summarise_at(
+               dplyr::vars(totpop, hivpop, artpop, infections, births), sum) %>%
+      dplyr::ungroup()
+  } else
+    group_vars <- c("spectrum_region_code", "year", "sex", "age_group")
+  
   ## Add number susceptible in previous year for Spectrum incidence calculation
   v <- v %>%
     dplyr::left_join(
              dplyr::mutate(v, susc_previous_year = totpop - hivpop,
                            year = year + 1) %>%
-             dplyr::select(spectrum_region_code, age, sex, year, susc_previous_year),
-             by = c("spectrum_region_code", "age", "sex", "year")
+             dplyr::select(group_vars, susc_previous_year),
+             by = group_vars
            ) 
   
-  if(aggregate)
-    v <- dplyr::group_by(v, year, sex, age_group)
-  else
-    v <- dplyr::group_by(v, spectrum_region_code, year, sex, age_group)
-
-
   v <- v %>%
-    dplyr::summarise_at(
-             dplyr::vars(totpop, hivpop, artpop, susc_previous_year, infections, births), sum) %>%
-    dplyr::ungroup() %>%
     dplyr::mutate(prevalence = hivpop / totpop,
                   art_coverage = artpop / hivpop,
                   incidence = infections / susc_previous_year,
@@ -150,16 +147,14 @@ calc_spec_age_group_aggregate <- function(spec, aggregate = TRUE) {
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L))
 
   if(aggregate)
-    v <- dplyr::select(spec, spectrum_region_code) %>%
+    v <- dplyr::select(spec_aggr, spectrum_region_code) %>%
       dplyr::distinct() %>%
       tidyr::crossing(v)
-  
+
   v <- dplyr::select(v, spectrum_region_code, year, quarter_id, dplyr::everything())
 
   v
 }
-
-
 
 
 age_quarter_to_age_group <- function(age_quarter) {
