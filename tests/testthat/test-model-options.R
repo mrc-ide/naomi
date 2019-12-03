@@ -47,54 +47,10 @@ test_that("art and anc data can be omitted from model run options", {
 })
 
 test_that("validate model options returns true", {
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    programme = system_file("extdata/programme/art_number.csv"),
-    anc = system_file("extdata/programme/anc_testing.csv")
-  )
-  options <- list(
-    area_scope = "MWI",
-    area_level = 4,
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    include_art = "true",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
-  )
-  expect_true(validate_model_options(data, options))
+  expect_true(validate_model_options(a_hintr_data, a_hintr_options))
 })
 
 test_that("validate model options returns error for invalid", {
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    programme = system_file("extdata/programme/art_number.csv"),
-    anc = system_file("extdata/programme/anc_testing.csv")
-  )
-  options_bad <- list(
-    area_level = 4,
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    include_art = "true",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
-  )
-  expect_error(validate_model_options(data, options_bad))
+  expect_error(validate_model_options(a_hintr_data, a_hintr_options_bad))
 })
 
