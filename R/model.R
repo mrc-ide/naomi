@@ -235,8 +235,6 @@ naomi_model_frame <- function(area_merged,
   
   ## Calibrate population to Spectrum populations
 
-  ## !!! TODO: Write tests for this
-
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
   
   spectrum_calibration <- spectrum_calibration %>%
@@ -251,6 +249,8 @@ naomi_model_frame <- function(area_merged,
 
     if(spectrum_population_calibration == "national") {
       aggr_vars <- setdiff(group_vars, "spectrum_region_code")
+    } else {
+      aggr_vars <- group_vars
     }
 
     spectrum_calibration <- spectrum_calibration %>%
@@ -268,9 +268,9 @@ naomi_model_frame <- function(area_merged,
       
   } else if(spectrum_population_calibration == "none") {
     spectrum_calibration$population_calibration <- 1.0
-    spectrum_calibration$population_calibration <- spectrum_calibration$population_raw
+    spectrum_calibration$population <- spectrum_calibration$population_raw
   } else {
-    stop(paste0("spectrum_calibration_option \"", spectrum_calibration_option, "\" not found."))
+    stop(paste0("spectrum_calibration_option \"", spectrum_population_calibration, "\" not found."))
   }
   
   
