@@ -43,7 +43,42 @@ read_options <- function(type) {
 #' @return TRUE if valid otherwise throw an error
 #' @export
 validate_model_options <- function(data, options) {
-  ## This must return TRUE if valid - otherwise throw an error
-  ## TODO: mrc-795 Add real validation
+
+  required_options <- c("area_scope", "area_level",
+                        "calendar_quarter_t1", "calendar_quarter_t2",
+                        "survey_prevalence")
+
+  if(!all(required_options %in% names(options)))
+    stop(paste("Required model options not supplied:",
+               paste(setdiff(required_options, names(options)), collapse = ", ")))
+
+  ## TODO: better approach to check file exists and is valid?
+  if(is.null(data$art_number) &&
+     (!is.null(options$include_art_t1) && options$include_art_t1 == "true" ||
+      !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
+    stop("ART dataset not provided. ART data cannot be selected Yes to include.")
+
+  ## Calibration options
+
+  if(!is.null(options$spectrum_population_calibration) &&
+     options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
+    stop("Spectrum population calibration not yet implemented")
+  
+  if(!is.null(options$spectrum_plhiv_0to14_calibration) &&
+     options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
+    stop("Spectrum PLHIV age 0-14 calibration not yet implemented")
+
+  if(!is.null(options$spectrum_plhiv_15plus_calibration) &&
+     options$spectrum_plhiv_15plus_calibration %in% c("national", "subnational"))
+    stop("Spectrum PLHIV 15+ calibration not yet implemented")
+
+  if(!is.null(options$spectrum_artnum_0to14_calibration) &&
+     options$spectrum_artnum_0to14_calibration %in% c("national", "subnational"))
+    stop("Spectrum ART age 0-14 calibration not yet implemented")
+
+  if(!is.null(options$spectrum_artnum_15plus_calibration) &&
+     options$spectrum_artnum_15plus_calibration %in% c("national", "subnational"))
+    stop("Spectrum ART 15+ calibration not yet implemented")
+  
   TRUE
 }

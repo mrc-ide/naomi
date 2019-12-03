@@ -8,18 +8,18 @@ test_that("get_age_group_id_out() returns expected groups", {
 })
 
 test_that("artnum_mf() returns expected number of records", {
-  expect_equal(nrow(artnum_mf("CY2016Q1", NULL, naomi_mf)), 0L)
-  expect_equal(nrow(artnum_mf(NULL, mwi_art_number, naomi_mf)), 0L)
-  expect_equal(nrow(artnum_mf("CY2016Q1", NULL, naomi_mf)), 0L)
-  expect_named(artnum_mf(NULL, mwi_art_number, naomi_mf), 
+  expect_equal(nrow(artnum_mf("CY2016Q1", NULL, a_naomi_mf)), 0L)
+  expect_equal(nrow(artnum_mf(NULL, mwi_art_number, a_naomi_mf)), 0L)
+  expect_equal(nrow(artnum_mf("CY2016Q1", NULL, a_naomi_mf)), 0L)
+  expect_named(artnum_mf(NULL, mwi_art_number, a_naomi_mf), 
                c("area_id", "sex", "age_group_id", "artnum_idx", "current_art"))
-  expect_equal(nrow(artnum_mf("CY2016Q1", mwi_art_number, naomi_mf)), 64L)
-  expect_named(artnum_mf("CY2016Q1", mwi_art_number, naomi_mf), 
+  expect_equal(nrow(artnum_mf("CY2016Q1", mwi_art_number, a_naomi_mf)), 14L)
+  expect_named(artnum_mf("CY2016Q1", mwi_art_number, a_naomi_mf), 
                c("area_id", "sex", "age_group_id", "artnum_idx", "current_art"))
 })
 
 test_that("artnum_mf() throws errors for invalid inputs", {
-  expect_error(artnum_mf("CY1924Q4", mwi_art_number, naomi_mf))
+  expect_error(artnum_mf("CY1924Q4", mwi_art_number, a_naomi_mf))
   expect_error(artnum_mf("CY2016Q1", mwi_art_number, "jibberish"))
   expect_error(artnum_mf(c("CY2016Q1", "CY2016Q2"), mwi_art_number, "jibberish"))
 })

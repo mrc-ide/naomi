@@ -26,7 +26,7 @@
       ]
     },
     {
-      "label": "ART Coverage",
+      "label": "ART coverage prior to first ANC",
       "controls": [
         {
           "name": "anc_art_coverage_year1",
