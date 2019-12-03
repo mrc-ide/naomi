@@ -116,7 +116,7 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   meta_area <- area_merged %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
-    dplyr::select(area_level, area_level_label, area_id, area_name, area_sort_order, center_x, center_y, geometry) %>%
+    dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
   meta_period <- data.frame(
