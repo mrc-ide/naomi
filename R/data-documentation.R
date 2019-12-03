@@ -23,7 +23,6 @@
 #'    \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 #'    \item{\code{quarter_id}}{Quarter ID (integer).}
 #'    \item{\code{anc_clients}}{Number of unique ANC clients during quarter.}
-#'    \item{\code{ancrt_hiv_status}}{Number of ANC clients for whom an HIV status was ascertained.}
 #'    \item{\code{ancrt_known_pos}}{Number of ANC clients already known to be HIV positive prior to first ANC visit and not tested for HIV.}
 #'    \item{\code{ancrt_already_art}}{Number of ANC clients already on ART prior to first ANC visit.}
 #'    \item{\code{ancrt_tested}}{Number of ANC clients tested for HIV and received result.}

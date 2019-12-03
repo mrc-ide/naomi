@@ -45,7 +45,7 @@ mwi_anc_testing <- mwi_anc_testing %>%
   ) %>%
   mutate(age_group = "15-49") %>%
   group_by(area_id, age_group, year) %>%
-  summarise_at(vars(anc_clients, ancrt_hiv_status, ancrt_known_pos, ancrt_already_art, ancrt_tested, ancrt_test_pos), sum)
+  summarise_at(vars(anc_clients, ancrt_known_pos, ancrt_already_art, ancrt_tested, ancrt_test_pos), sum)
 
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 

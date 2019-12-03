@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 0.0.21
+Version: 0.0.22
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -61,5 +61,5 @@ LinkingTo:
     TMB,
     RcppEigen
 Remotes:
-    mrc-ide/eppasm
-
+    mrc-ide/eppasm,
+    bergant/datamodelr

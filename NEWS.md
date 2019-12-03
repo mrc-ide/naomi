@@ -1,3 +1,7 @@
+# naomi 0.0.22
+
+* Remove ancrt_hiv_status field from ANC testing dataset.
+
 # naomi 0.0.21
 
 * Add model input validation step to hintr_run_model().
