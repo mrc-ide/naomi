@@ -16,10 +16,9 @@ test_that("model can be run", {
     calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
-    survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
-    include_art = "true",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
@@ -70,23 +69,21 @@ test_that("model can be run", {
 })
 
 test_that("model can be run without programme data", {
-  testthat::skip("Skipping test as running without programme data not supported see mrc-638")
+
   data <- list(
     pjnz = system_file("extdata/mwi2019.PJNZ"),
     population = system_file("extdata/population/population_agesex.csv"),
-    shape = file.path("testdata/malawi.geojson"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
     survey = system_file("extdata/survey/survey_hiv_indicators.csv")
   )
   options <- list(
     area_scope = "MWI",
     area_level = 4,
-    t1 = "CY2016Q1",
-    t2 = "CY2018Q3",
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = "MWI2016PHIA",
     survey_art_coverage = "MWI2016PHIA",
-    survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
     no_of_samples = 20
   )
   output_path <- tempfile()
@@ -108,17 +105,24 @@ test_that("model can be run without programme data", {
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+
+  info <- naomi_info(data, options)
+  info_names <- paste0("info/", names(info))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "info/", info_names))
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
   expect_equal(model_run$summary_path, summary_path)
   file_list <- unzip(model_run$summary_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "info/", info_names))
 
 })
 
@@ -143,7 +147,6 @@ test_that("progress messages are printed", {
     survey_art_coverage = "MWI2016PHIA",
     survey_vls = NULL,
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
     art_calendar_quarter1 = "CY2016Q1",
     art_calendar_quarter2 = "CY2018Q3",
     anc_prevalence_year1 = 2016,
@@ -160,25 +163,58 @@ test_that("progress messages are printed", {
     model_run <- naomi_evaluate_promise(
       hintr_run_model(data, options, output_path, output_spectrum, summary_path))
   })
-  expect_equal(length(model_run$progress), 5)
+  expect_equal(length(model_run$progress), 6)
   for (step in model_run$progress) {
-    expect_equal(step[[1]]$name, "Preparing input data")
-    expect_equal(step[[2]]$name, "Fitting the model")
-    expect_equal(step[[3]]$name, "Generating uncertainty ranges")
-    expect_equal(step[[4]]$name, "Preparing outputs")
+    expect_equal(step[[1]]$name, "Validating inputs and options")
+    expect_equal(step[[2]]$name, "Preparing input data")
+    expect_equal(step[[3]]$name, "Fitting the model")
+    expect_equal(step[[4]]$name, "Generating uncertainty ranges")
+    expect_equal(step[[5]]$name, "Preparing outputs")
   }
   first_message <- model_run$progress[[1]]
-  ## 4 different states
-  expect_equal(length(first_message), 4)
+  ## 5 different states
+  expect_equal(length(first_message), 5)
   expect_true(first_message[[1]]$started)
   expect_false(first_message[[1]]$complete)
   expect_false(first_message[[2]]$started)
   expect_false(first_message[[2]]$complete)
 
   second_message <- model_run$progress[[2]]
-  expect_equal(length(second_message), 4)
+  expect_equal(length(second_message), 5)
   expect_true(second_message[[1]]$started)
   expect_true(second_message[[1]]$complete)
   expect_true(second_message[[2]]$started)
   expect_false(second_message[[2]]$complete)
+})
+
+test_that("model run throws error for invalid inputs", {
+  data <- list(
+    pjnz = system_file("extdata/mwi2019.PJNZ"),
+    population = system_file("extdata/population/population_agesex.csv"),
+    shape = system_file("extdata/areas/area_merged.geojson"),
+    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
+    art_number = system_file("extdata/programme/art_number.csv"),
+    anc_testing = system_file("extdata/programme/anc_testing.csv")
+  )
+  options_bad <- list(
+    area_scope = "MWI",
+    calendar_quarter_t1 = "CY2016Q1",
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
+    no_of_samples = 20
+  )
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  summary_path <- tempfile(fileext = ".zip")
+  expect_error(
+    hintr_run_model(data, options_bad, output_path, output_spectrum,
+                    summary_path)
+  )
 })

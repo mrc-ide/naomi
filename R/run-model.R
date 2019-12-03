@@ -28,11 +28,9 @@
 #' * calendar_quarter_t2
 #' * survey_prevalence
 #' * survey_art_coverage
-#' * survey_vls
 #' * survey_recently_infected
-#' * survey_art_or_vls
-#' * art_calendar_quarter1
-#' * art_calendar_quarter2
+#' * include_art_t1
+#' * include_art_t2
 #' * anc_prevalence_year1
 #' * anc_prevalence_year2
 #' * anc_art_coverage_year1
@@ -47,13 +45,29 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   INLA:::inla.dynload.workaround()
   progress <- new_progress()
+
+  progress$start("Validating inputs and options")
+  progress$print()
+  validate_model_options(data, options)
+  progress$complete("Validating inputs and options")
+
   progress$start("Preparing input data")
   progress$print()
   area_merged <- sf::read_sf(data$shape)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
-  art_number <- readr::read_csv(data$art_number)
-  anc_testing <- readr::read_csv(data$anc_testing)
+
+  if (!is.null(data$art_number)) {
+    art_number <- readr::read_csv(data$art_number)
+  } else {
+    art_number <- NULL
+  }
+
+  if (!is.null(data$anc_testing)) {
+    anc_testing <- readr::read_csv(data$anc_testing)
+  } else {
+    anc_testing <- NULL
+  }
 
   spec <- extract_pjnz_naomi(data$pjnz)
 
@@ -64,26 +78,22 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
+  artcov_survey_ids <- options$survey_art_coverage
 
-  ## TODO: Should this throw an error if inconsistent options are selected?
-  ## TODO: Put test against this
-  ## TODO: Longer-term -- change this flow control to allow only one
-  ##       of survey_art_coverage or survey_vls to be specified and
-  ##       remove survey_art_or_vls flow control.
-  if(options$survey_art_or_vls == "art_coverage") {
-    artcov_survey_ids <- options$survey_art_coverage
-    vls_survey_ids <- NULL
-  } else {
-    artcov_survey_ids <- NULL
-    vls_survey_ids <- options$survey_vls
-  }
+  ## VLS survey data not supported by model options
+  vls_survey_ids <- NULL
 
-  ## TODO: Use options$include_art returns "true" or "false" as strings to
-  ## instead automatically set
-  ## calendar quarter from the years available in the ART data
-  ## Hardcoded values for now.
-  artnum_calendar_quarter1 <- calendar_quarter_t1
-  artnum_calendar_quarter2 <- calendar_quarter_t2
+  if(!is.null(options$include_art_t1) &&
+     options$include_art_t1 == "true")
+    artnum_calendar_quarter1 <- calendar_quarter_t1
+  else
+    artnum_calendar_quarter1 <- NULL
+
+  if(!is.null(options$include_art_t2) &&
+     options$include_art_t2 == "true")
+    artnum_calendar_quarter2 <- calendar_quarter_t2
+  else
+    artnum_calendar_quarter2 <- NULL
 
   anc_prevalence_year1 <- options$anc_prevalence_year1
   anc_prevalence_year2 <- options$anc_prevalence_year2
@@ -156,6 +166,11 @@ Progress <- R6::R6Class("Progress", list(
   initialize = function() {
     self$progress <-
       list(
+        list(
+          started = FALSE,
+          complete = FALSE,
+          name = "Validating inputs and options"
+        ),
         list(
           started = FALSE,
           complete = FALSE,

@@ -1,7 +1,19 @@
 {
   "label": "Survey",
   "description": "Select which survey to use for each indicator and whether to run the model with survey ART coverage or VLS.",
-  "controlGroups": [
+    "controlGroups": [
+   {
+      "label": "Calendar quarter at midpoint of survey",
+      "controls": [
+        {
+          "name": "calendar_quarter_t1",
+          "type": "select",
+          "options":
+            <calendar_quarter_t1_options>,
+          "required": true
+        }
+      ]
+    },
     {
       "label": "Prevalence",
       "controls": [
@@ -27,18 +39,6 @@
       ]
     },
     {
-      "label": "VLS (viral load suppression)",
-      "controls": [
-        {
-          "name": "survey_vls",
-          "type": "select",
-          "options":
-            <survey_vls_options>,
-          "required": false
-        }
-      ]
-    },
-    {
       "label": "Proportion recently infected",
       "controls": [
         {
@@ -49,19 +49,6 @@
           "required": false
         }
       ]
-    },
-    {
-      "label": "ART coverage or VLS",
-      "controls": [
-        {
-          "name": "survey_art_or_vls",
-          "type": "select",
-          "options":
-            <survey_art_or_vls_options>,
-          "required": true
-        }
-      ]
     }
   ]
 }
-
