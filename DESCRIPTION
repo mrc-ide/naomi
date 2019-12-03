@@ -60,3 +60,6 @@ VignetteBuilder: knitr
 LinkingTo: 
     TMB,
     RcppEigen
+Remotes:
+    mrc-ide/eppasm
+
