@@ -6,6 +6,11 @@
 \usage{
 get_spec_aggr_interpolation(spec_aggr, calendar_quarter_out)
 }
+\arguments{
+\item{spec_aggr}{a data from of 5-year age group aggregate Spectrum estimates}
+
+\item{calendar_quarter_out}{calendar quarter for desired output time point}
+}
 \description{
 Interpolate Spectrum to quarter_id
 }

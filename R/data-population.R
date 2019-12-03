@@ -169,9 +169,13 @@ interpolate_population_agesex <- function(population_agesex, calendar_quarters) 
 
 #' Log-linear interpolation of NA values
 #'
+#' @param y vector of output values, possibly with NAs
+#' @param x vector of points to interpolate (no NAs)
+#' 
 #' @examples
 #' log_linear_interp(c(100, 105, NA, 110), 1:4)
-#' 
+#'
+#' @export
 log_linear_interp <- function(y, x){
   yout <- exp(zoo::na.approx(log(y), x, na.rm = FALSE))
   yout <- tidyr::replace_na(yout, 0)

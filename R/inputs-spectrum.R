@@ -237,6 +237,10 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
 }
 
 #' Interpolate Spectrum to quarter_id
+#'
+#' @param spec_aggr a data from of 5-year age group aggregate Spectrum estimates
+#' @param calendar_quarter_out calendar quarter for desired output time point
+#' 
 #' 
 get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 
@@ -259,5 +263,5 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 }
 
 log_lin_approx <- function(x, y, xout){
-  exp(approx(x, log(y), xout)$y)
+  exp(stats::approx(x, log(y), xout)$y)
 }

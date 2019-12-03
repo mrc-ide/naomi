@@ -6,6 +6,11 @@
 \usage{
 log_linear_interp(y, x)
 }
+\arguments{
+\item{y}{vector of output values, possibly with NAs}
+
+\item{x}{vector of points to interpolate (no NAs)}
+}
 \description{
 Log-linear interpolation of NA values
 }
