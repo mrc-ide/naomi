@@ -1,3 +1,7 @@
+# naomi 0.0.22
+
+* Remove ancrt_hiv_status field from ANC testing dataset.
+
 # naomi 0.0.20
 
 * Add function to return 5 year age groups

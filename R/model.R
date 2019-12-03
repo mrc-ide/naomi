@@ -690,14 +690,13 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                area_id %in% naomi_mf$mf_model$area_id
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_hiv_status, ancrt_known_pos, ancrt_test_pos), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_tested), sum, na.rm = TRUE) %>%
       dplyr::ungroup() %>%
-      dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
                area_id,
                anc_idx = dplyr::row_number(),
-               anc_prev_x = ancrt_totpos,
-               anc_prev_n = ancrt_hiv_status
+               anc_prev_x = ancrt_known_pos + ancrt_test_pos,
+               anc_prev_n = ancrt_known_pos + ancrt_tested
              )
   }
 
