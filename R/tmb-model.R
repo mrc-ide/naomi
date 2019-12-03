@@ -232,10 +232,15 @@ prepare_tmb_inputs <- function(naomi_data) {
 #' @param tmb_input Model input data
 #' @param outer_verbose If TRUE print function and parameters every iteration
 #' @param inner_verbose If TRUE then disable tracing information from TMB
+#' @param max_iter maximum number of iterations
 #'
 #' @return Fit model.
 #' @export
-fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
+fit_tmb <- function(tmb_input,
+                    outer_verbose = TRUE,
+                    inner_verbose = FALSE,
+                    max_iter = 250
+                    ) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
 
@@ -263,8 +268,13 @@ fit_tmb <- function(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE) {
                                    "oddsratio_gamma_art_raw"))
 
   trace <- if(outer_verbose) 1 else 0
-  f <- stats::nlminb(obj$par, obj$fn, obj$gr, control = list(trace = trace))
+  f <- stats::nlminb(obj$par, obj$fn, obj$gr,
+                     control = list(trace = trace,
+                                    iter.max = max_iter))
 
+  if(f$convergence != 0)
+    warning(paste("convergence error:", f$message))
+  
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
 
@@ -294,13 +304,17 @@ report_tmb <- function(naomi_fit) {
 #'
 #' @param fit The TMB fit
 #' @param nsample Number of samples
+#' @param rng_seed seed passed to set.seed.
 #' @param random_only Random only
 #' @param verbose If TRUE prints additional information.
 #'
 #' @return Sampled fit.
 #' @export
-sample_tmb <- function(fit, nsample = 1000, random_only = TRUE, verbose = TRUE) {
+sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
+                       random_only = TRUE, verbose = FALSE) {
 
+  set.seed(rng_seed)
+  
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
 

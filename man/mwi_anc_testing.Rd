@@ -70,7 +70,7 @@ M&E System.
 }
 
 The number of ART by age 0-14 and age 15+ is not reported in aggregate quarterly
-reporting data. For model illustration purposes, this is approximated as 94% of
+reporting data. For model illustration purposes, this is approximated as 94\% of
 all ART clients are age 15+ based on Spectrum model outputs which were validated
 against age distributions from electronic medical records by the Malawi HIV
 estimates team.

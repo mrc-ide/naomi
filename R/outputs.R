@@ -288,10 +288,10 @@ save_output <- function(filename, dir,
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
-        sf::st_write(naomi_output$meta_area, "boundaries.geojson")
+        sf::st_write(naomi_output$meta_area, "boundaries.geojson", quiet = TRUE)
       } else if(boundary_format == "shp") {
         dir.create("shp")
-        sf::st_write(naomi_output$meta_area, "shp/boundaries.shp")
+        sf::st_write(naomi_output$meta_area, "shp/boundaries.shp", quiet = TRUE)
       } else {
         stop(paste("Boundary file format", boundary_format, "not recognized.",
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))

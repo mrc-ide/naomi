@@ -680,7 +680,8 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       area_id = character(0),
       anc_idx = integer(0),
       anc_prev_x = integer(0),
-      anc_prev_n = integer(0)
+      anc_prev_n = integer(0),
+      stringsAsFactors = FALSE
     )
   } else {
     anc_prev_dat <-
@@ -715,7 +716,8 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       area_id = character(0),
       anc_idx = integer(0),
       anc_artcov_x = integer(0),
-      anc_artcov_n = integer(0)
+      anc_artcov_n = integer(0),
+      stringsAsFactors = FALSE
     )
   } else {
     anc_artcov_dat <-
@@ -773,7 +775,8 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       sex = character(0),
       age_group_id = integer(0),
       artnum_idx = integer(0),
-      current_art = integer(0)
+      current_art = integer(0),
+      stringsAsFactors = FALSE
     )
   } else {
     ## !!! Note: should add some subsetting for sex and age group.

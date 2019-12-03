@@ -40,8 +40,8 @@ TODO: Should be an example - where is mwi_areas, mwi_area_geom?
 data(mwi_areas, mwi_area_geom)
 
 areas <- get_area_collection(mwi_areas, level = 3, area_scope = c("MWI.1", "MWI.3.5"))
-areas %>%
-left_join(mwi_area_geom %>% filter(type == "boundary")) %>%
-sf::st_as_sf() %>%
+areas \%>\%
+left_join(mwi_area_geom \%>\% filter(type == "boundary")) \%>\%
+sf::st_as_sf() \%>\%
 ggplot() + geom_sf()
 }

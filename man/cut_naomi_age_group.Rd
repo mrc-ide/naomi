@@ -13,7 +13,7 @@ cut_naomi_age_group(age)
 a vector of strings with five year age groups.
 }
 \description{
-Wrapper for \code{[cut()]} to return five year age groups with
+Wrapper for \verb{[cut()]} to return five year age groups with
 }
 \seealso{
 get_age_groups

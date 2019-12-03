@@ -4,8 +4,12 @@
 \alias{create_areas}
 \title{Create an Areas Object}
 \usage{
-create_areas(levels = NULL, hierarchy = NULL, boundaries = NULL,
-  area_merged = NULL)
+create_areas(
+  levels = NULL,
+  hierarchy = NULL,
+  boundaries = NULL,
+  area_merged = NULL
+)
 }
 \arguments{
 \item{levels}{Data frame of area level metadata.}

@@ -4,12 +4,20 @@
 \alias{sample_tmb}
 \title{Sample TMB fit}
 \usage{
-sample_tmb(fit, nsample = 1000, random_only = TRUE, verbose = TRUE)
+sample_tmb(
+  fit,
+  nsample = 1000,
+  rng_seed = NULL,
+  random_only = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{fit}{The TMB fit}
 
 \item{nsample}{Number of samples}
+
+\item{rng_seed}{seed passed to set.seed.}
 
 \item{random_only}{Random only}
 
