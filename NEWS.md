@@ -1,5 +1,6 @@
 # naomi 0.0.22
 
+* Add parent_area_id and spectrum_region_code to outputs package.
 * Remove ancrt_hiv_status field from ANC testing dataset.
 
 # naomi 0.0.21
