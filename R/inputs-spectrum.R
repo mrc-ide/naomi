@@ -247,13 +247,15 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
     dplyr::group_by(spectrum_region_code, sex, age_group) %>%
     dplyr::summarise(
              calendar_quarter = calendar_quarter_out,
-             population = log_lin_approx(quarter_id, totpop, quarter_id_out),
-             plhiv = log_lin_approx(quarter_id, hivpop, quarter_id_out),
-             art_num_residents = log_lin_approx(quarter_id, artpop, quarter_id_out)
+             population_spectrum = log_lin_approx(quarter_id, totpop, quarter_id_out),
+             plhiv_spectrum = log_lin_approx(quarter_id, hivpop, quarter_id_out),
+             art_num_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out)
            ) %>%
     dplyr::ungroup() %>%
     dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
-                  population, plhiv, art_num_residents)
+                  population_spectrum,
+                  plhiv_spectrum,
+                  art_num_spectrum)
 }
 
 log_lin_approx <- function(x, y, xout){

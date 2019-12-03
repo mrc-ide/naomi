@@ -30,7 +30,10 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv")
+  )
+      
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
@@ -40,7 +43,9 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv")
+  )
 
   tmp <- tempfile()
   unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
@@ -88,7 +93,9 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv")
+  )
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
@@ -98,7 +105,9 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv")
+  )
 
 })
 

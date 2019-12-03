@@ -130,12 +130,19 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   meta_age_group <- get_age_groups()
 
+  ## # Fitting outputs
+  fit <- list()
+
+  fit$spectrum_calibration <- naomi_mf$spectrum_calibration
+
+  
   val <- list(
     indicators = indicators,
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
-    meta_indicator = meta_indicator
+    meta_indicator = meta_indicator,
+    fit = fit
   )
 
   class(val) <- "naomi_output"
@@ -305,6 +312,12 @@ save_output <- function(filename, dir,
     for (p in names(info)) {
       writeLines(trimws(info[[p]]), file.path("info", p))
     }
+  }
+
+  fit <- naomi_output$fit
+  if(length(fit) > 0L) {
+    dir.create("fit")
+    naomi_write_csv(fit$spectrum_calibration, "fit/spectrum_calibration.csv")
   }
 
   zip::zipr(path, list.files())

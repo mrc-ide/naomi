@@ -232,44 +232,43 @@ naomi_model_frame <- function(area_merged,
              by = "area_id"
            )
 
+  
   ## Calibrate population to Spectrum populations
 
   ## !!! TODO: Write tests for this
 
+  group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
+  
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::left_join(
+             dplyr::count(population_est,
+                          spectrum_region_code, calendar_quarter, sex, age_group,
+                          wt = population, name = "population_raw"),
+             by = group_vars
+           )
+  
   if(spectrum_population_calibration %in% c("national", "subnational")) {
 
-    group_vars <- c("sex", "age_group", "calendar_quarter")
-    
-    if(spectrum_population_calibration == "subnational") {
-      group_vars <- c("spectrum_region_code", group_vars)
+    if(spectrum_population_calibration == "national") {
+      aggr_vars <- setdiff(group_vars, "spectrum_region_code")
     }
-    
-    population_calibration <- population_est %>%
-      dplyr::group_by_at(group_vars) %>%
-      dplyr::summarise(population = sum(population)) %>%
-      dplyr::left_join(
-               spectrum_calibration %>%
-               dplyr::group_by_at(group_vars) %>%
-               dplyr::summarise(spectrum_population = sum(population)),
-               by = group_vars
-             ) %>%
-      dplyr::mutate(population_calibration = spectrum_population / population)
 
     spectrum_calibration <- spectrum_calibration %>%
-      dplyr::left_join(
-               dplyr::select(population_calibration, group_vars, population_calibration),
-               by = group_vars
-             )
+      dplyr::group_by_at(aggr_vars) %>%
+      dplyr::mutate(population_calibration = sum(population_spectrum) / sum(population_raw),
+                    population = population_raw * population_calibration) %>%
+      dplyr::ungroup()
 
     population_est <- population_est %>%
       dplyr::left_join(
-               dplyr::select(population_calibration, group_vars, population_calibration),
+               dplyr::select(spectrum_calibration, group_vars, population_calibration),
                by = group_vars
              ) %>%
       dplyr::mutate(population = population * population_calibration)
-
+      
   } else if(spectrum_population_calibration == "none") {
-    spectrum_calibration$population_calibration <- NA
+    spectrum_calibration$population_calibration <- 1.0
+    spectrum_calibration$population_calibration <- spectrum_calibration$population_raw
   } else {
     stop(paste0("spectrum_calibration_option \"", spectrum_calibration_option, "\" not found."))
   }
