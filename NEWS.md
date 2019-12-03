@@ -1,3 +1,8 @@
+# naomi 0.0.23
+
+* Implement pre-fitting calibration to Spectrum population size by sex and 5-year age group.
+* Save Spectrum calibration in `fit/spectrum_calibration.csv` in the ouput zip download.
+
 # naomi 0.0.21
 
 * Add model input validation step to hintr_run_model().
