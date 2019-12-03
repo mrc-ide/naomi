@@ -235,3 +235,27 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
 
   Lproj
 }
+
+#' Interpolate Spectrum to quarter_id
+#' 
+get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
+
+  quarter_id_out <- calendar_quarter_to_quarter_id(calendar_quarter_out)
+
+  spec_aggr %>%
+    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
+    dplyr::group_by(spectrum_region_code, sex, age_group) %>%
+    dplyr::summarise(
+             calendar_quarter = calendar_quarter_out,
+             population = log_lin_approx(quarter_id, totpop, quarter_id_out),
+             plhiv = log_lin_approx(quarter_id, hivpop, quarter_id_out),
+             art_num_residents = log_lin_approx(quarter_id, artpop, quarter_id_out)
+           ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
+                  population, plhiv, art_num_residents)
+}
+
+log_lin_approx <- function(x, y, xout){
+  exp(approx(x, log(y), xout)$y)
+}

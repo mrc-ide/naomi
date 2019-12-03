@@ -58,11 +58,19 @@ validate_model_options <- function(data, options) {
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
     stop("ART dataset not provided. ART data cannot be selected Yes to include.")
 
+
+  ## # Population inputs
+
+  ## TODO:
+  ## * completeness: contains m/f for all age/sex
+  ## * does not contain "both" sexes
+
   ## Calibration options
 
-  if(!is.null(options$spectrum_population_calibration) &&
-     options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
-    stop("Spectrum population calibration not yet implemented")
+  if(!options$spectrum_population_calibration %in%
+     c("national", "subnational", "none"))
+    stop(paste0("Spectrum population calibration option \"",
+                options$spectrum_population_calibration, "\" not found."))
   
   if(!is.null(options$spectrum_plhiv_0to14_calibration) &&
      options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
