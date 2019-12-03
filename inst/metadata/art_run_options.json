@@ -7,7 +7,7 @@
 	"controls": [
 	    {
 		"name": "include_art_t1",
-		"label": "Include ART data",
+		"label": "Time 1",
 		"type": "select",
 		"helpText": "Select whether to include ART data or not in model run",
 		"options":
@@ -23,7 +23,7 @@
             },
 	    {
 		"name": "include_art_t2",
-		"label": "Include ART data",
+		"label": "Time 2",
 		"type": "select",
 		"helpText": "Select whether to include ART data or not in model run",
 		"options":

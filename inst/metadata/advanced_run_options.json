@@ -171,42 +171,6 @@
           "required": true
         }
       ]
-    },
-    {
-      "label": "Cross-district ART attendance",
-      "controls": [
-        {
-          "name": "art_attendance",
-          "type": "select",
-          "options":
-            [{
-              "id": "true",
-              "label": "true"
-            },
-            {
-              "id": "false",
-              "label": "false"
-            }],
-          "value": "false",
-          "required": true
-        }
-      ]
-    },
-    {
-      "label": "Prevalence model choice",
-      "controls": [
-        {
-          "name": "prevalence_model_choice",
-          "type": "select",
-          "options":
-            [{
-              "id": "static",
-              "label": "static"
-            }],
-          "value": "static",
-          "required": true
-        }
-      ]
     }
   ]
 }
