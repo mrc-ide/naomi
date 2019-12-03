@@ -61,5 +61,5 @@ LinkingTo:
     TMB,
     RcppEigen
 Remotes:
-    mrc-ide/eppasm
-
+    mrc-ide/eppasm,
+    bergant/datamodelr
