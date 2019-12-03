@@ -1,3 +1,7 @@
+# naomi 0.0.22
+
+* Add parent_area_id and spectrum_region_code to outputs package.
+
 # naomi 0.0.21
 
 * Add model input validation step to hintr_run_model().
