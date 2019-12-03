@@ -1,4 +1,3 @@
-
 # naomi 0.0.23
 
 * Implement pre-fitting calibration to Spectrum population size by sex and 5-year age group.
@@ -7,7 +6,7 @@
 # naomi 0.0.22
 
 * Remove ancrt_hiv_status field from ANC testing dataset.
-
+* Add parent_area_id and spectrum_region_code to outputs package.
 
 # naomi 0.0.21
 

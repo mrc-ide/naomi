@@ -51,6 +51,15 @@ test_that("model can be run", {
   unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
   expect_equal(dir(tmp), "info")
   expect_equal(dir(file.path(tmp, "info")), names(info))
+
+  outputs <- read_output_package(model_run$spectrum_path)
+
+  expect_true(
+    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id", 
+          "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
+        names(outputs$meta_area))
+  )
+  
 })
 
 test_that("model can be run without programme data", {

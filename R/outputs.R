@@ -116,7 +116,7 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   meta_area <- area_merged %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
-    dplyr::select(area_level, area_level_label, area_id, area_name, area_sort_order, center_x, center_y, geometry) %>%
+    dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
   meta_period <- data.frame(
@@ -336,11 +336,11 @@ read_output_package <- function(path) {
   utils::unzip(path, exdir = tmpd)
 
   v <- list(
-    indicators = read_csv(file.path(tmpd, "indicators.csv")),
+    indicators = readr::read_csv(file.path(tmpd, "indicators.csv")),
     meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
-    meta_age_group = read_csv(file.path(tmpd, "meta_age_group.csv")),
-    meta_period = read_csv(file.path(tmpd, "meta_period.csv")),
-    meta_indicator = read_csv(file.path(tmpd, "meta_indicator.csv"))
+    meta_age_group = readr::read_csv(file.path(tmpd, "meta_age_group.csv")),
+    meta_period = readr::read_csv(file.path(tmpd, "meta_period.csv")),
+    meta_indicator = readr::read_csv(file.path(tmpd, "meta_indicator.csv"))
   )
 
   class(v) <- "naomi_output"
