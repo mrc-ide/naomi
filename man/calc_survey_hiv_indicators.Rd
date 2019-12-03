@@ -4,10 +4,18 @@
 \alias{calc_survey_hiv_indicators}
 \title{Calculate age/sex/area stratified survey estimates for biomarker outcomes}
 \usage{
-calc_survey_hiv_indicators(survey_meta, survey_regions, survey_clusters,
-  survey_individuals, survey_biomarker, areas, sex = c("male", "female",
-  "both"), age_group_id = NULL, area_top_level = min(areas$area_level),
-  area_bottom_level = max(areas$area_level))
+calc_survey_hiv_indicators(
+  survey_meta,
+  survey_regions,
+  survey_clusters,
+  survey_individuals,
+  survey_biomarker,
+  areas,
+  sex = c("male", "female", "both"),
+  age_group_id = NULL,
+  area_top_level = min(areas$area_level),
+  area_bottom_level = max(areas$area_level)
+)
 }
 \arguments{
 \item{survey_meta}{Survey metadata.}
