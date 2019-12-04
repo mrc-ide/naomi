@@ -18,8 +18,8 @@ naomi_model_frame(
   rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 - 118)/365)/(2 *
     qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT = 1),
   sigma_u_sd = 1,
-  artattend = FALSE,
-  artattend_prior_sigma_scale = 3,
+  artattend = TRUE,
+  artattend_log_gamma_offset = -4,
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
   spectrum_population_calibration = "national"
@@ -53,7 +53,7 @@ ids.}
 
 \item{artattend}{artattend}
 
-\item{artattend_prior_sigma_scale}{artattend_propr_sigma_scale}
+\item{artattend_log_gamma_offset}{logit offset for neigboring district ART attendance}
 
 \item{logit_nu_mean}{mean of logit viral load suppression.}
 
