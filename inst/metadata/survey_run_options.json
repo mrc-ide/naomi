@@ -31,7 +31,7 @@
       "controls": [
         {
           "name": "survey_art_coverage",
-          "type": "select",
+          "type": "multiselect",
           "options":
             <+survey_art_coverage_options+>,
           "required": false
@@ -43,7 +43,7 @@
       "controls": [
         {
           "name": "survey_recently_infected",
-          "type": "select",
+          "type": "multiselect",
           "options":
             <+survey_recently_infected_options+>,
           "required": false
