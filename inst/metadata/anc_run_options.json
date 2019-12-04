@@ -11,7 +11,7 @@
           "type": "select",
           "helpText": "Year matching midpoint of survey",
           "options":
-            <anc_prevalence_year1_options>,
+            <+anc_prevalence_year1_options+>,
           "required": false
         },
         {
@@ -20,7 +20,7 @@
           "type": "select",
           "helpText": "Year to generate estimates for",
           "options":
-            <anc_prevalence_year2_options>,
+            <+anc_prevalence_year2_options+>,
           "required": false
         }
       ]
@@ -34,7 +34,7 @@
           "type": "select",
           "helpText": "Year matching midpoint of survey",
           "options":
-            <anc_art_coverage_year1_options>,
+            <+anc_art_coverage_year1_options+>,
           "required": false
         },
         {
@@ -43,7 +43,7 @@
           "type": "select",
           "helpText": "Year to generate estimates for",
           "options":
-            <anc_art_coverage_year2_options>,
+            <+anc_art_coverage_year2_options+>,
           "required": false
         }
       ]
