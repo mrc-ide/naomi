@@ -80,6 +80,13 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
 
+  if(is.null(options$permissive))
+    permissive <- FALSE
+  else
+    permissive <- as.logical(options$permissive)
+
+  
+
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
 
@@ -139,10 +146,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                  inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose),
                  max_iter = ifelse(is.null(options$max_iterations), 250, options$max_iterations))
 
-  if(is.null(options$permissive))
-    options$permissive <- FALSE
-
-  if(fit$convergence != 0 && options$permissive == FALSE)
+  if(fit$convergence != 0 && !permissive)
     stop(paste("convergence error:", fit$message))
                  
   progress$complete("Fitting the model")
