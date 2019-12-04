@@ -1,3 +1,7 @@
+# naomi 0.0.25
+
+* Remove spectrum calibration option validation -- NULLs not handled appropriately.
+
 # naomi 0.0.24
 
 * Handle case where ANC testing provided but no year selected (valid) or where a year is requested not found in data (error) (mrc-1176)
