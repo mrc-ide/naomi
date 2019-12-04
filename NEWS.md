@@ -1,4 +1,4 @@
-# naomi 0.0.26
+# naomi 0.0.27
 
 * Explicit type conversion of integer and logical model options.
 
