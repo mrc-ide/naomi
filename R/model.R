@@ -735,7 +735,7 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
 #' @export
 anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
 
-  if(is.null(anc_testing)) {
+  if(is.null(anc_testing) || is.null(year)) {
     ## No ANC prevalence data used
     anc_prev_dat <- data.frame(
       area_id = character(0),
@@ -745,10 +745,15 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       stringsAsFactors = FALSE
     )
   } else {
+
+    if(!all(year %in% anc_testing$year))
+      stop(paste("ANC testing data not found for year",
+                 setdiff(year, anc_testing$year)))
+
     anc_prev_dat <-
       anc_testing %>%
       dplyr::filter(
-               year == !!year,
+               year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id
              ) %>%
       dplyr::group_by(area_id) %>%
@@ -769,8 +774,8 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
 #' @rdname anc_testing_prev_mf
 #' @export
 anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
-
-  if(is.null(anc_testing)) {
+  
+  if(is.null(anc_testing) || is.null(year)) {
     ## No ANC ART coverage data used
     anc_artcov_dat <- data.frame(
       area_id = character(0),
@@ -780,10 +785,15 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       stringsAsFactors = FALSE
     )
   } else {
+
+    if(!all(year %in% anc_testing$year))
+      stop(paste("ANC testing data not found for year",
+                 setdiff(year, anc_testing$year)))
+    
     anc_artcov_dat <-
       anc_testing %>%
       dplyr::filter(
-               year == !!year,
+               year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id,
                !is.na(ancrt_known_pos),
                !is.na(ancrt_test_pos),
