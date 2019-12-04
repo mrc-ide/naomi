@@ -132,9 +132,8 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   ## # Fitting outputs
   fit <- list()
-
   fit$spectrum_calibration <- naomi_mf$spectrum_calibration
-
+  fit$calibration_options <- naomi_mf$calibration_options
   
   val <- list(
     indicators = indicators,
@@ -346,3 +345,229 @@ read_output_package <- function(path) {
   class(v) <- "naomi_output"
   v
 }
+
+
+## !!! TODO: Documentation and tests
+
+calibrate_outputs <- function(output,
+                              naomi_mf,
+                              spectrum_plhiv_calibration_level,
+                              spectrum_plhiv_calibration_strat,
+                              spectrum_artnum_calibration_level,
+                              spectrum_artnum_calibration_strat) {
+
+  stopifnot(inherits(output, "naomi_output"))
+  stopifnot(inherits(naomi_mf, "naomi_mf"))
+  
+  group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
+
+  ## !!! TODO: much of this joining will be obolete by replacing _id with
+  ##     the more readable versions.
+
+  mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group_id) %>%
+    dplyr::left_join(
+             sf::st_drop_geometry(output$meta_area) %>%
+             dplyr::select(area_id, spectrum_region_code),
+             by = "area_id"
+           ) %>%
+    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
+                     by = "age_group_id") %>%
+    dplyr::select(-age_group_id)
+  
+  mfout <- dplyr::select(naomi_mf$mf_out, area_id, sex, age_group_id) %>%
+    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
+                     by = "age_group_id")
+
+  indicators <- output$indicators %>%
+    dplyr::select(area_id, sex, age_group_id, quarter_id, indicator_id, 
+                  mean, se, median, mode, lower, upper) %>%
+    dplyr::left_join(dplyr::select(output$meta_indicator, indicator_id, indicator),
+                     by = "indicator_id") %>%
+    dplyr::left_join(dplyr::select(output$meta_period, quarter_id, calendar_quarter),
+                     by = "quarter_id") %>%
+    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
+                     by = "age_group_id")
+             
+  ## Subset to most granular estimates in model frame.
+  ## Add ID columns to merge to spectrum_calibration data frame.
+  val <- indicators %>%
+    dplyr::filter(indicator %in% c("plhiv", "art_num_residents")) %>%
+    dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
+    dplyr::select(area_id, indicator, group_vars, mean)
+
+  val_aggr <- val %>%
+    dplyr::group_by_at(c("indicator", group_vars)) %>%
+    dplyr::summarise(est_raw = sum(mean)) %>%
+    dplyr::ungroup()
+  
+  spectrum_calibration <- naomi_mf$spectrum_calibration %>%
+    dplyr::mutate(age_coarse = dplyr::if_else(
+                                        age_group %in% c("00-04", "05-09", "10-14"),
+                                        "00-14", "15+")) %>%
+    dplyr::left_join(
+             val_aggr %>%
+             dplyr::filter(indicator == "plhiv") %>%
+             dplyr::select(-indicator) %>%
+             dplyr::rename(plhiv_raw = est_raw),
+             by = group_vars
+           ) %>%
+    dplyr::left_join(
+             val_aggr %>%
+             dplyr::filter(indicator == "art_num_residents") %>%
+             dplyr::select(-indicator) %>%
+             dplyr::rename(art_num_raw = est_raw),
+             by = group_vars
+           )
+
+  ## Calculate calibration ratios for PLHIV and ART Number
+  
+  plhiv_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
+                                          spectrum_plhiv_calibration_strat)
+  
+  if(length(plhiv_aggr_var) > 0L) {
+    
+    spectrum_calibration <- spectrum_calibration %>%
+      dplyr::group_by_at(plhiv_aggr_var) %>%
+      dplyr::mutate(plhiv_calibration = sum(plhiv_spectrum) / sum(plhiv_raw)) %>%
+      dplyr::ungroup()
+    
+  } else {
+    spectrum_calibration$plhiv_calibration <- 1.0
+  }
+  
+  artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
+                                           spectrum_artnum_calibration_strat)
+  
+  
+  if(length(artnum_aggr_var) > 0L) {
+    
+    spectrum_calibration <- spectrum_calibration %>%
+      dplyr::group_by_at(artnum_aggr_var) %>%
+      dplyr::mutate(art_num_calibration = sum(art_num_spectrum) / sum(art_num_raw)) %>%
+      dplyr::ungroup()
+    
+  } else {
+    spectrum_calibration$art_num_calibration <- 1.0
+  }
+  
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::mutate(plhiv = plhiv_raw * plhiv_calibration,
+                  art_num = art_num_raw * art_num_calibration) %>%
+    dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
+                  population_spectrum, population_raw, population_calibration, population,
+                  plhiv_spectrum, plhiv_raw, plhiv_calibration, plhiv,
+                  art_num_spectrum, art_num_raw, art_num_calibration, art_num)
+  
+
+  ## Calculate calibrated PLHIV at finest stratification (mf_model)
+  
+  val <- val %>%
+    dplyr::left_join(
+             spectrum_calibration %>%
+             dplyr::select(
+                      group_vars,
+                      plhiv = plhiv_calibration,
+                      art_num_residents = art_num_calibration
+                    ) %>%
+             tidyr::gather(indicator, calibration, plhiv, art_num_residents),
+             by = c("indicator", group_vars)
+           ) %>%
+    dplyr::mutate(adjusted = mean * calibration)
+  
+  
+  .expand <- function(cq, ind) {
+    byv <- c("area_id", "sex", "spectrum_region_code", "age_group")
+    m <- dplyr::filter(val, calendar_quarter == cq, indicator == ind)
+    m <- dplyr::left_join(mf, m, by = byv)
+    dplyr::mutate(mfout,
+                  calendar_quarter = cq,
+                  indicator = ind,
+                  adjusted = as.numeric(naomi_mf$A_out %*% m$adjusted))
+  }
+  
+  adj <- dplyr::bind_rows(
+                  .expand(naomi_mf$calendar_quarter1, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter2, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter1, "art_num_residents"),
+                  .expand(naomi_mf$calendar_quarter2, "art_num_residents")
+                )
+  
+  byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
+  
+  adj <- dplyr::inner_join(
+                  dplyr::select(indicators, byv, mean),
+                  dplyr::select(adj, byv, adjusted),
+                  by = byv
+                ) %>%
+    dplyr::mutate(
+             ratio = adjusted / mean,
+             mean = NULL,
+             adjusted = NULL
+           ) %>%
+    tidyr::spread(indicator, ratio) %>%
+    dplyr::rename(plhiv_calib = plhiv, artnum_calib = art_num_residents)
+  
+  out <- indicators %>%
+    dplyr::left_join(adj, by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
+    dplyr::mutate(
+             calibration = dplyr::case_when(
+                                    indicator == "plhiv" ~ plhiv_calib,
+                                    indicator == "prevalence" ~ plhiv_calib,
+                                    indicator == "art_coverage" ~ artnum_calib / plhiv_calib,
+                                    indicator == "art_num_residents" ~ artnum_calib,
+                                    indicator == "art_num_attend" ~ artnum_calib,
+                                    TRUE ~ 1.0),
+             mean = mean * calibration,
+             se = se * calibration,
+             median = median * calibration,
+             mode = mode * calibration,
+             lower = lower * calibration,
+             upper = upper * calibration
+           ) %>%
+    dplyr::select(names(output$indicators))
+  
+  
+  ## Save calibration options
+  
+  calibration_options <- c(output$fit$calibration_options,
+                           list(spectrum_plhiv_calibration_level  = spectrum_plhiv_calibration_level,
+                                spectrum_plhiv_calibration_strat  = spectrum_plhiv_calibration_strat,
+                                spectrum_artnum_calibration_level = spectrum_artnum_calibration_level,
+                                spectrum_artnum_calibration_strat = spectrum_artnum_calibration_strat)
+                           )
+
+  output$indicators <- out
+  output$fit$spectrum_calibration <- spectrum_calibration
+  output$fit$calibration_options <- calibration_options
+  
+  output
+}
+                
+get_spectrum_aggr_var <- function(level, strat) {
+
+  if(!level %in% c("national", "subnational", "none"))
+    stop(paste0("Calibration level \"", level, "\" not found."))
+
+  if(level == "none")
+    return(character(0))
+
+  
+  aggr_vars <- "calendar_quarter"
+  
+  if(level == "subnational")
+    aggr_vars <- c(aggr_vars, "spectrum_region_code")
+  
+  stratvar <- switch(strat,
+                   "age_coarse" = "age_coarse",
+                   "sex_age_coarse" = c("sex", "age_coarse"),
+                   "age_group" = "age_group",
+                   "sex_age_group" = c("sex", "age_group"))
+
+  if(is.null(stratvar))
+    stop(paste0("Calibration stratification \"", strat, "\" not found."))
+  
+  aggr_vars <- c(aggr_vars, stratvar)
+
+  aggr_vars
+}
+ 
