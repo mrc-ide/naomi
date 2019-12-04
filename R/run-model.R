@@ -100,13 +100,16 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   anc_art_coverage_year1 <- options$anc_art_coverage_year1
   anc_art_coverage_year2 <- options$anc_art_coverage_year2
 
-  naomi_mf <- naomi_model_frame(area_merged,
-                                population,
-                                spec,
-                                scope = scope,
-                                level = level,
-                                calendar_quarter_t1,
-                                calendar_quarter_t2)
+  naomi_mf <- naomi_model_frame(
+    area_merged,
+    population,
+    spec,
+    scope = scope,
+    level = level,
+    calendar_quarter_t1,
+    calendar_quarter_t2,
+    spectrum_population_calibration = options$spectrum_population_calibration
+  )
 
   naomi_data <- select_naomi_data(naomi_mf,
                                   survey,
@@ -155,6 +158,11 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## input download_input
   outputs <- output_package(fit, naomi_mf, area_merged)
 
+  outputs <- calibrate_outputs(outputs, naomi_mf,
+                               options$spectrum_plhiv_calibration_level,
+                               options$spectrum_plhiv_calibration_strat,
+                               options$spectrum_artnum_calibration_level,
+                               options$spectrum_artnum_calibration_strat)
   attr(outputs, "info") <- naomi_info(data, options)
 
   indicators <- add_output_labels(outputs)

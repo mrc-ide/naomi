@@ -9,8 +9,8 @@
           "name": "area_scope",
           "type": "multiselect",
           "options":
-            <area_scope_options>,
-          "value": <area_scope_default>,
+            <+area_scope_options+>,
+          "value": <+area_scope_default+>,
           "required": true
         }
       ]
@@ -22,7 +22,7 @@
           "name": "area_level",
           "type": "select",
           "options":
-            <area_level_options>,
+            <+area_level_options+>,
           "required": true
         }
       ]
@@ -34,7 +34,7 @@
           "name": "calendar_quarter_t2",
           "type": "select",
           "options":
-            <calendar_quarter_t2_options>,
+            <+calendar_quarter_t2_options+>,
           "required": true
         }
       ]
