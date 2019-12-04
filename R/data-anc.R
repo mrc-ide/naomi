@@ -11,7 +11,7 @@ calculate_prevalence_art_coverage <- function(data) {
 }
 
 calculate_anc_prevalence <- function(data) {
-  (data$ancrt_known_pos + data$ancrt_test_pos) / data$ancrt_hiv_status
+  (data$ancrt_known_pos + data$ancrt_test_pos) / (data$ancrt_known_pos + data$ancrt_tested)
 }
 
 calculate_anc_art_coverage <- function(data) {
