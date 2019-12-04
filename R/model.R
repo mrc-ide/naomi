@@ -119,7 +119,16 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
+#' @param spectrum_population_calibration character string values "national", "subnational", "none"
+#' 
 #' @return Naomi model frame
+#'
+#' @details
+#'
+#' Argument `spectrum_population_calibration` determines whether to calibrate population
+#' inputs to match Spectrum population by age and sex. If the Spectrum file is a single
+#' national Spectrum file, then options "national" and "subnational" return the same results.
+#' 
 #'
 #' @export
 naomi_model_frame <- function(area_merged,
@@ -141,8 +150,9 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_log_gamma_offset = -4,
                               logit_nu_mean = 2.0,
-                              logit_nu_sd = 0.3) {
-
+                              logit_nu_sd = 0.3,
+                              spectrum_population_calibration = "national") {
+  
   ## Create area tree
   ## TODO: Get rid of reliance on data.tree
   areas <- create_areas(area_merged = area_merged)
@@ -183,28 +193,97 @@ naomi_model_frame <- function(area_merged,
     dplyr::mutate(area_idf = forcats::as_factor(area_id),
                   age_group_idf = forcats::as_factor(age_group_id))
 
-  ## Add population estimates
+  ## Spectrum aggregation and calibration population
+  
+  quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
+  quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
+  
+  spec_aggr <- spec %>%    
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id2) + 2)) %>%
+    dplyr::mutate(age_group = cut_naomi_age_group(age),
+                  births = dplyr::if_else(is.na(asfr), 0, asfr * totpop)) %>%
+    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, births), sum) %>%
+    dplyr::ungroup()
+
+  spectrum_calibration <- dplyr::bind_rows(
+                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter1),
+                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter2)
+                                 )
+
+  ## # Add population estimates
+
+  ## !!! TODO: There's an opportunity for real mess here if areas are subset to part
+  ##           of a Spectrum file and then calibrated. Currently no way to know if areas
+  ##           comparise only part of a Spectrum file, so can't address.
+
+  pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas$area_id)
+  pop_t1 <- interpolate_population_agesex(pop_subset, calendar_quarter1)
+  pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
+  population_est <- dplyr::bind_rows(pop_t1, pop_t2)
+
+  population_est <- population_est %>%
+    dplyr::left_join(
+             dplyr::select(get_age_groups(), age_group, age_group_id),
+             by = "age_group"
+           ) %>%
+    dplyr::left_join(
+             dplyr::select(mf_areas, area_id, spectrum_region_code),
+             by = "area_id"
+           )
+
+  
+  ## Calibrate population to Spectrum populations
+
+  group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
+  
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::left_join(
+             dplyr::count(population_est,
+                          spectrum_region_code, calendar_quarter, sex, age_group,
+                          wt = population, name = "population_raw"),
+             by = group_vars
+           )
+  
+  if(spectrum_population_calibration %in% c("national", "subnational")) {
+
+    if(spectrum_population_calibration == "national") {
+      aggr_vars <- setdiff(group_vars, "spectrum_region_code")
+    } else {
+      aggr_vars <- group_vars
+    }
+
+    spectrum_calibration <- spectrum_calibration %>%
+      dplyr::group_by_at(aggr_vars) %>%
+      dplyr::mutate(population_calibration = sum(population_spectrum) / sum(population_raw),
+                    population = population_raw * population_calibration) %>%
+      dplyr::ungroup()
+
+    population_est <- population_est %>%
+      dplyr::left_join(
+               dplyr::select(spectrum_calibration, group_vars, population_calibration),
+               by = group_vars
+             ) %>%
+      dplyr::mutate(population = population * population_calibration)
+      
+  } else if(spectrum_population_calibration == "none") {
+    spectrum_calibration$population_calibration <- 1.0
+    spectrum_calibration$population <- spectrum_calibration$population_raw
+  } else {
+    stop(paste0("spectrum_calibration_option \"", spectrum_population_calibration, "\" not found."))
+  }
+  
   
   mf_model <- mf_model %>%
     dplyr::left_join(
-             population_agesex %>%
-             dplyr::filter(area_id %in% mf_areas$area_id) %>%
-             interpolate_population_agesex(calendar_quarter1) %>%
-             dplyr::left_join(
-                      get_age_groups() %>% dplyr::select(age_group, age_group_id),
-                      by = "age_group"
-                    ) %>%
+             population_est %>%
+             dplyr::filter(calendar_quarter == calendar_quarter1) %>%
              dplyr::select(area_id, sex, age_group_id, population_t1 = population),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::left_join(
-             population_agesex %>%
-             dplyr::filter(area_id %in% mf_areas$area_id) %>%
-             interpolate_population_agesex(calendar_quarter2) %>%
-             dplyr::left_join(
-                      get_age_groups() %>% dplyr::select(age_group, age_group_id),
-                      by = "age_group"
-                    ) %>%
+             population_est %>%
+             dplyr::filter(calendar_quarter == calendar_quarter2) %>%
              dplyr::select(area_id, sex, age_group_id, population_t2 = population),
              by = c("area_id", "sex", "age_group_id")
            )
@@ -225,10 +304,10 @@ naomi_model_frame <- function(area_merged,
 
 
   ## Add Spectrum inputs
-
+  
   mf_model <- mf_model %>%
     dplyr::left_join(
-             calc_spec_age_group_aggregate(spec) %>%
+             calc_spec_age_group_aggregate(spec_aggr) %>%
              ## !!! NEEDS UPDATE
              dplyr::filter(year == 2016) %>%
              dplyr::select(
@@ -332,6 +411,8 @@ naomi_model_frame <- function(area_merged,
             sexes = sexes,
             calendar_quarter1 = calendar_quarter1,
             calendar_quarter2 = calendar_quarter2,
+            spectrum_calibration = spectrum_calibration,
+            calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
             omega = omega,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,
