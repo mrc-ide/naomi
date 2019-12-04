@@ -158,6 +158,11 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## input download_input
   outputs <- output_package(fit, naomi_mf, area_merged)
 
+  outputs <- calibrate_outputs(outputs, naomi_mf,
+                               options$spectrum_plhiv_calibration_level,
+                               options$spectrum_plhiv_calibration_strat,
+                               options$spectrum_artnum_calibration_level,
+                               options$spectrum_artnum_calibration_strat)
   attr(outputs, "info") <- naomi_info(data, options)
 
   indicators <- add_output_labels(outputs)

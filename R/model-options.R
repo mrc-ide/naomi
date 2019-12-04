@@ -66,27 +66,28 @@ validate_model_options <- function(data, options) {
   ## * does not contain "both" sexes
 
   ## Calibration options
-
-  if(!options$spectrum_population_calibration %in%
-     c("national", "subnational", "none"))
+  calib_level_options <- c("national", "subnational", "none")
+  calib_strat_options <- c("age_coarse", "sex_age_coarse", "age_group", "sex_age_group")
+  
+  if(!options$spectrum_population_calibration %in% calib_level_options)
     stop(paste0("Spectrum population calibration option \"",
                 options$spectrum_population_calibration, "\" not found."))
+
+  if(!options$spectrum_plhiv_calibration_level %in% calib_level_options)
+    stop(paste0("Spectrum PLHIV calibration level \"",
+                options$spectrum_plhiv_calibration_level, "\" not found."))
   
-  if(!is.null(options$spectrum_plhiv_0to14_calibration) &&
-     options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
-    stop("Spectrum PLHIV age 0-14 calibration not yet implemented")
+  if(!options$spectrum_artnum_calibration_level %in% calib_level_options)
+    stop(paste0("Spectrum ART number calibration level \"",
+                options$spectrum_artnum_calibration_level, "\" not found."))
 
-  if(!is.null(options$spectrum_plhiv_15plus_calibration) &&
-     options$spectrum_plhiv_15plus_calibration %in% c("national", "subnational"))
-    stop("Spectrum PLHIV 15+ calibration not yet implemented")
-
-  if(!is.null(options$spectrum_artnum_0to14_calibration) &&
-     options$spectrum_artnum_0to14_calibration %in% c("national", "subnational"))
-    stop("Spectrum ART age 0-14 calibration not yet implemented")
-
-  if(!is.null(options$spectrum_artnum_15plus_calibration) &&
-     options$spectrum_artnum_15plus_calibration %in% c("national", "subnational"))
-    stop("Spectrum ART 15+ calibration not yet implemented")
+  if(!options$spectrum_plhiv_calibration_strat %in% calib_strat_options)
+    stop(paste0("Spectrum PLHIV calibration stratification \"",
+                options$spectrum_plhiv_calibration_strat, "\" not found."))
+  
+  if(!options$spectrum_artnum_calibration_strat %in% calib_strat_options)
+    stop(paste0("Spectrum ART number calibration stratification \"",
+                options$spectrum_artnum_calibration_strat, "\" not found."))
   
   TRUE
 }
