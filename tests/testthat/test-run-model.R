@@ -75,6 +75,7 @@ test_that("model can be run without programme data", {
   options$anc_prevalence_year2 <- NULL
   options$anc_art_coverage_year1 <- NULL
   options$anc_art_coverage_year2 <- NULL
+  options$artattend <- "false"
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -209,7 +210,7 @@ test_that("setting rng_seed returns same output", {
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
-  options$artattend <- FALSE
+  options$artattend <- "false"
   options$spectrum_plhiv_calibration_level <- "none"
   options$spectrum_artnum_calibration_level <- "none"
   
@@ -262,6 +263,7 @@ test_that("exceeding max_iterations convergence error or warning", {
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
+  options$artattend <- "false"
   options$max_iterations <- 5
 
   output_path <- tempfile()
