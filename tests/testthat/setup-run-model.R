@@ -12,7 +12,7 @@ a_hintr_data <- list(
 )
 
 a_hintr_options <- list(
-  area_scope = "MWI_1_1",
+  area_scope = "MWI_1_2",
   area_level = 4,
   calendar_quarter_t1 = "CY2016Q1",
   calendar_quarter_t2 = "CY2018Q3",
@@ -30,7 +30,8 @@ a_hintr_options <- list(
   spectrum_plhiv_calibration_strat = "sex_age_group",
   spectrum_artnum_calibration_level = "national",
   spectrum_artnum_calibration_strat = "age_coarse",
-  artattend = FALSE,
+  artattend = TRUE,
+  artattend_log_gamma_offset = -4,
   rng_seed = 17,
   no_of_samples = 20,
   max_iter = 250,

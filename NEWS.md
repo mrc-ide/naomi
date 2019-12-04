@@ -20,6 +20,7 @@
 
 # naomi 0.0.21
 
+* Revise ART attendance model to be single district level 'attractiveness' parameter.
 * Add model input validation step to hintr_run_model().
 * Implement random number seed argument to sample_tmb() to return exact same results.
 * Silent fitting for hintr_run_model() unless option outer_verbose = TRUE or inner_verbose = TRUE.

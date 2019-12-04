@@ -77,7 +77,7 @@ validate_model_options <- function(data, options) {
   ## if(!options$spectrum_plhiv_calibration_level %in% calib_level_options)
   ##   stop(paste0("Spectrum PLHIV calibration level \"",
   ##               options$spectrum_plhiv_calibration_level, "\" not found."))
-  
+
   ## if(!options$spectrum_artnum_calibration_level %in% calib_level_options)
   ##   stop(paste0("Spectrum ART number calibration level \"",
   ##               options$spectrum_artnum_calibration_level, "\" not found."))
@@ -85,10 +85,16 @@ validate_model_options <- function(data, options) {
   ## if(!options$spectrum_plhiv_calibration_strat %in% calib_strat_options)
   ##   stop(paste0("Spectrum PLHIV calibration stratification \"",
   ##               options$spectrum_plhiv_calibration_strat, "\" not found."))
-  
+
   ## if(!options$spectrum_artnum_calibration_strat %in% calib_strat_options)
   ##   stop(paste0("Spectrum ART number calibration stratification \"",
   ##               options$spectrum_artnum_calibration_strat, "\" not found."))
-  
+
+  ## ART attendance model options
+  if(as.logical(options$artattend) &&
+     (options$include_art_t1 == "false" && options$include_art_t1 == "false" ||
+      is.null(data$art_number)))
+    stop("ART attendance model can only be estimated if ART programme data are used.")
+
   TRUE
 }

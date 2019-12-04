@@ -20,7 +20,7 @@ test_that("model can be run", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 20880)
+  expect_true(nrow(output) == 30624)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -75,6 +75,7 @@ test_that("model can be run without programme data", {
   options$anc_prevalence_year2 <- NULL
   options$anc_art_coverage_year1 <- NULL
   options$anc_art_coverage_year2 <- NULL
+  options$artattend <- "false"
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -91,7 +92,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 20880)
+  expect_true(nrow(output) == 30624)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -119,6 +120,36 @@ test_that("model can be run without programme data", {
   )
 
 })
+
+test_that("model fit without survey ART and survey recency data", {
+
+  ## !!! TODO: need to get this working or validation flags
+  skip("Need to return to either get working or set validation flags")
+  
+  options <- a_hintr_options
+  options$survey_art_coverage <- NULL
+  expect_error(
+    hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
+    NA)
+
+  options <- a_hintr_options
+  options$survey_recently_infected <- NULL
+  expect_error(
+    hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
+    NA)
+
+  ## No survey ART coverage or ART programme data
+  ## !!! TODO: This is a situation that **should** be supported, needs attention
+  options <- a_hintr_options
+  options$survey_art_coverage <- NULL
+  options$include_art_t1 = "false"
+  options$include_art_t2 = "false"
+  expect_error(
+    hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
+    "false convergence \\(8\\)")
+  
+}
+)
 
 test_that("progress messages are printed", {
   skip_on_covr()
@@ -175,11 +206,14 @@ test_that("setting rng_seed returns same output", {
   
   options <- a_hintr_options
   options$survey_prevalence = "MWI2016PHIA"
-  options$survey_art_coverage <- NULL
+  options$survey_art_coverage <- "MWI2016PHIA"
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
-
+  options$artattend <- "false"
+  options$spectrum_plhiv_calibration_level <- "none"
+  options$spectrum_artnum_calibration_level <- "none"
+  
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
@@ -229,6 +263,7 @@ test_that("exceeding max_iterations convergence error or warning", {
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
+  options$artattend <- "false"
   options$max_iterations <- 5
 
   output_path <- tempfile()
