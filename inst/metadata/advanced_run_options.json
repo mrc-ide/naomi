@@ -79,7 +79,7 @@
 			    "label": "Sex and 5-year age group"
 			}
 		    ],
-		    "value": "none",
+		    "value": "sex_age_coarse",
 		    "helpText": "Calibrate to Spectrum mean total PLHIV."
 		}
 	    ]
