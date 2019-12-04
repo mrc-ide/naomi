@@ -108,7 +108,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     level = level,
     calendar_quarter_t1,
     calendar_quarter_t2,
-    spectrum_population_calibration = options$spectrum_population_calibration
+    spectrum_population_calibration = options$spectrum_population_calibration,
+    artattend = as.logical(options$artattend),
+    artattend_log_gamma_offset = options$artattend_log_gamma_offset
   )
 
   naomi_data <- select_naomi_data(naomi_mf,
