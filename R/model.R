@@ -371,7 +371,7 @@ naomi_model_frame <- function(area_merged,
     dplyr::arrange(reside_area_idx, istar, artattend_area_idx, jstar) %>%
     dplyr::mutate(artattend_idx = dplyr::row_number(),
                   attend_area_idf = forcats::as_factor(artattend_area_idx),
-                  log_gamma_offset = dplyr::if_else(jstar == 1, 0, artattend_log_gamma_offset))
+                  log_gamma_offset = dplyr::if_else(jstar == 1, 0, as.numeric(artattend_log_gamma_offset)))
 
 
   ## Incidence model
