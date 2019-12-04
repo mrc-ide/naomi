@@ -23,7 +23,7 @@
 			    "label": "Subnational"
 			}
 		    ],
-		    "value": "none",
+		    "value": "national",
 		    "required": true,
 		    "helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
 		}
@@ -134,7 +134,7 @@
 			    "label": "Sex and 5-year age group"
 			}
 		    ],
-		    "value": "none",
+		    "value": "sex_age_coarse",
 		    "helpText": "Calibrate to Spectrum mean total number on ART."
 		}
 	    ]
