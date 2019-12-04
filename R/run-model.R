@@ -73,7 +73,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   ## Get from the options
   scope <- options$area_scope
-  level <- options$area_level
+  level <- as.integer(options$area_level)
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
@@ -91,13 +91,13 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   vls_survey_ids <- NULL
 
   if(!is.null(options$include_art_t1) &&
-     options$include_art_t1 == "true")
+     as.logical(options$include_art_t1))
     artnum_calendar_quarter1 <- calendar_quarter_t1
   else
     artnum_calendar_quarter1 <- NULL
 
   if(!is.null(options$include_art_t2) &&
-     options$include_art_t2 == "true")
+     as.logical(options$include_art_t2))
     artnum_calendar_quarter2 <- calendar_quarter_t2
   else
     artnum_calendar_quarter2 <- NULL
@@ -117,7 +117,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     calendar_quarter_t2,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
-    artattend_log_gamma_offset = options$artattend_log_gamma_offset
+    artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
   )
 
   naomi_data <- select_naomi_data(naomi_mf,
