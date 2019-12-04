@@ -1,3 +1,7 @@
+# naomi 0.0.25
+
+* Remove spectrum calibration option validation -- NULLs not handled appropriately.
+
 # naomi 0.0.24
 
 * Hide placeholder <1 / 1-4 outputs which are not implemented yet.
