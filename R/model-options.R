@@ -62,7 +62,7 @@ validate_model_options <- function(data, options) {
 
   if(!is.null(options$spectrum_population_calibration) &&
      options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
-    stop("Spectrum population calibration not yet implemented")
+    stop(t_("validatation_no_calibration"))
   
   if(!is.null(options$spectrum_plhiv_0to14_calibration) &&
      options$spectrum_plhiv_0to14_calibration %in% c("national", "subnational"))
