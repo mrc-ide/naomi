@@ -30,12 +30,12 @@ a_hintr_options <- list(
   spectrum_plhiv_calibration_strat = "sex_age_group",
   spectrum_artnum_calibration_level = "national",
   spectrum_artnum_calibration_strat = "age_coarse",
-  artattend = TRUE,
+  artattend = "true",
   artattend_log_gamma_offset = -4,
   rng_seed = 17,
   no_of_samples = 20,
   max_iter = 250,
-  permissive = FALSE
+  permissive = "false"
 )
 
 a_hintr_options_bad <- a_hintr_options

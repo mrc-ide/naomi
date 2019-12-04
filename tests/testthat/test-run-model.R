@@ -274,7 +274,7 @@ test_that("exceeding max_iterations convergence error or warning", {
                                output_path, output_spectrum,
                                summary_path))
 
-  options$permissive <- TRUE
+  options$permissive <- "true"
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
