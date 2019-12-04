@@ -10,7 +10,8 @@ a_naomi_mf <- naomi_model_frame(a_area_merged,
                                 scope = "MWI_1_1",
                                 level = 4,
                                 calendar_quarter1 = "CY2016Q1",
-                                calendar_quarter2 = "CY2018Q3")
+                                calendar_quarter2 = "CY2018Q3",
+                                artattend = FALSE)
 
 a_naomi_data <- select_naomi_data(a_naomi_mf,
                                   mwi_survey_hiv_indicators,
