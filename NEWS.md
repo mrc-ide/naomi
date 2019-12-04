@@ -1,5 +1,9 @@
 # naomi 0.0.25
 
+* Carry forward / backward interpolated population if uploaded population does not span years required.
+
+# naomi 0.0.25
+
 * Remove spectrum calibration option validation -- NULLs not handled appropriately.
 
 # naomi 0.0.24
