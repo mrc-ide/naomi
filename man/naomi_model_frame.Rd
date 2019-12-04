@@ -21,7 +21,8 @@ naomi_model_frame(
   artattend = FALSE,
   artattend_prior_sigma_scale = 3,
   logit_nu_mean = 2,
-  logit_nu_sd = 0.3
+  logit_nu_sd = 0.3,
+  spectrum_population_calibration = "national"
 )
 }
 \arguments{
@@ -57,10 +58,17 @@ ids.}
 \item{logit_nu_mean}{mean of logit viral load suppression.}
 
 \item{logit_nu_sd}{standard deviation of logit viral load suppression.}
+
+\item{spectrum_population_calibration}{character string values "national", "subnational", "none"}
 }
 \value{
 Naomi model frame
 }
 \description{
 Construct Model Frames and Adjacency Structures
+}
+\details{
+Argument \code{spectrum_population_calibration} determines whether to calibrate population
+inputs to match Spectrum population by age and sex. If the Spectrum file is a single
+national Spectrum file, then options "national" and "subnational" return the same results.
 }

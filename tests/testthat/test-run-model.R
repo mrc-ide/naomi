@@ -1,38 +1,5 @@
 context("run-model")
 
-## A single set of valid model options and data, update once instead of copying
-## for every test.
-
-a_hintr_data <- list(
-  pjnz = system_file("extdata/mwi2019.PJNZ"),
-  population = system_file("extdata/population/population_agesex.csv"),
-  shape = system_file("extdata/areas/area_merged.geojson"),
-  survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-  art_number = system_file("extdata/programme/art_number.csv"),
-  anc_testing = system_file("extdata/programme/anc_testing.csv")
-)
-
-a_hintr_options <- list(
-  area_scope = "MWI_1_1",
-  area_level = 4,
-  calendar_quarter_t1 = "CY2016Q1",
-  calendar_quarter_t2 = "CY2018Q3",
-  survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-  survey_art_coverage = "MWI2016PHIA",
-  survey_recently_infected = "MWI2016PHIA",
-  include_art_t1 = "true",
-  include_art_t2 = "true",
-  anc_prevalence_year1 = 2016,
-  anc_prevalence_year2 = 2018,
-  anc_art_coverage_year1 = 2016,
-  anc_art_coverage_year2 = 2018,
-  artattend = FALSE,
-  rng_seed = 17,
-  no_of_samples = 20,
-  max_iter = 250,
-  permissive = FALSE
-)
-
 test_that("model can be run", {
 
   output_path <- tempfile()
@@ -63,7 +30,10 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
+      
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
@@ -73,7 +43,9 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
 
   tmp <- tempfile()
   unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
@@ -130,7 +102,9 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
@@ -140,7 +114,9 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "info/", info_names))
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
 
 })
 
@@ -182,26 +158,13 @@ test_that("progress messages are printed", {
 })
 
 test_that("model run throws error for invalid inputs", {
-  options_bad <- list(
-    area_scope = "MWI",
-    calendar_quarter_t1 = "CY2016Q1",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    include_art_t1 = "true",
-    include_art_t2 = "true",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
-  )
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
   expect_error(
-    hintr_run_model(data, options_bad, output_path, output_spectrum,
-                    summary_path)
+    hintr_run_model(data, a_hintr_options_bad,
+                    output_path, output_spectrum, summary_path)
+                    
   )
 })
 
