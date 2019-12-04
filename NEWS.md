@@ -1,3 +1,7 @@
+# naomi 0.0.24
+
+* Handle case where ANC testing provided but no year selected (valid) or where a year is requested not found in data (error) (mrc-1176)
+
 # naomi 0.0.23
 
 * Implement pre-fitting calibration to Spectrum population size by sex and 5-year age group.
