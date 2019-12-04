@@ -106,13 +106,13 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   indicators <- extract_indicators(naomi_fit, naomi_mf)
 
-  ## !!! Temporary insert <1 / 1-4 results
-  indicators <- indicators %>%
-    dplyr::bind_rows(
-      dplyr::filter(indicators, age_group_id == 1) %>%
-      dplyr::select(-age_group_id) %>%
-      tidyr::crossing(age_group_id = 30:31)
-    )
+  ## ## !!! Temporary insert <1 / 1-4 results
+  ## indicators <- indicators %>%
+  ##   dplyr::bind_rows(
+  ##     dplyr::filter(indicators, age_group_id == 1) %>%
+  ##     dplyr::select(-age_group_id) %>%
+  ##     tidyr::crossing(age_group_id = 30:31)
+  ##   )
 
   meta_area <- area_merged %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%

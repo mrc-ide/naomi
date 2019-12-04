@@ -1,3 +1,7 @@
+# naomi 0.0.24
+
+* Hide placeholder <1 / 1-4 outputs which are not implemented yet.
+
 # naomi 0.0.22
 
 * Add parent_area_id and spectrum_region_code to outputs package.
