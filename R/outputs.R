@@ -320,7 +320,7 @@ save_output <- function(filename, dir,
 
     naomi_write_csv(
       data.frame(option = names(fit$calibration_options),
-                 value  = fit$calibration_options),
+                 value  = unlist(fit$calibration_options)),
       "fit/calibration_options.csv")
   }
 
