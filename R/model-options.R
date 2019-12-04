@@ -68,34 +68,33 @@ validate_model_options <- function(data, options) {
   ## Calibration options
   calib_level_options <- c("national", "subnational", "none")
   calib_strat_options <- c("age_coarse", "sex_age_coarse", "age_group", "sex_age_group")
-  
-  if(!options$spectrum_population_calibration %in% calib_level_options)
-    stop(paste0("Spectrum population calibration option \"",
-                options$spectrum_population_calibration, "\" not found."))
 
-  if(!options$spectrum_plhiv_calibration_level %in% calib_level_options)
-    stop(paste0("Spectrum PLHIV calibration level \"",
-                options$spectrum_plhiv_calibration_level, "\" not found."))
-  
-  if(!options$spectrum_artnum_calibration_level %in% calib_level_options)
-    stop(paste0("Spectrum ART number calibration level \"",
-                options$spectrum_artnum_calibration_level, "\" not found."))
+  ## !! TODO: Makes sure NULLs are handled in a way that doesn't break anything!!
+  ## if(!options$spectrum_population_calibration %in% calib_level_options)
+  ##   stop(paste0("Spectrum population calibration option \"",
+  ##               options$spectrum_population_calibration, "\" not found."))
 
-  if(!options$spectrum_plhiv_calibration_strat %in% calib_strat_options)
-    stop(paste0("Spectrum PLHIV calibration stratification \"",
-                options$spectrum_plhiv_calibration_strat, "\" not found."))
-  
-  if(!options$spectrum_artnum_calibration_strat %in% calib_strat_options)
-    stop(paste0("Spectrum ART number calibration stratification \"",
-                options$spectrum_artnum_calibration_strat, "\" not found."))
+  ## if(!options$spectrum_plhiv_calibration_level %in% calib_level_options)
+  ##   stop(paste0("Spectrum PLHIV calibration level \"",
+  ##               options$spectrum_plhiv_calibration_level, "\" not found."))
 
+  ## if(!options$spectrum_artnum_calibration_level %in% calib_level_options)
+  ##   stop(paste0("Spectrum ART number calibration level \"",
+  ##               options$spectrum_artnum_calibration_level, "\" not found."))
+
+  ## if(!options$spectrum_plhiv_calibration_strat %in% calib_strat_options)
+  ##   stop(paste0("Spectrum PLHIV calibration stratification \"",
+  ##               options$spectrum_plhiv_calibration_strat, "\" not found."))
+
+  ## if(!options$spectrum_artnum_calibration_strat %in% calib_strat_options)
+  ##   stop(paste0("Spectrum ART number calibration stratification \"",
+  ##               options$spectrum_artnum_calibration_strat, "\" not found."))
 
   ## ART attendance model options
   if(as.logical(options$artattend) &&
      (options$include_art_t1 == "false" && options$include_art_t1 == "false" ||
       is.null(data$art_number)))
     stop("ART attendance model can only be estimated if ART programme data are used.")
-                                                         
-  
+
   TRUE
 }
