@@ -1,3 +1,7 @@
+# naomi 0.0.27
+
+* Explicit type conversion of integer and logical model options.
+
 # naomi 0.0.25
 
 * Carry forward / backward interpolated population if uploaded population does not span years required.
