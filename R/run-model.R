@@ -237,6 +237,9 @@ Progress <- R6::R6Class("Progress", list(
 ))
 
 naomi_info_input <- function(data) {
+
+  data[vapply(data, is.null, logical(1))] <- "<NULL>"
+  
   files <- vapply(data, identity, character(1))
   hash <- unname(tools::md5sum(vapply(data, identity, character(1))))
   data.frame(

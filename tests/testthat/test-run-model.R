@@ -247,3 +247,13 @@ test_that("exceeding max_iterations convergence error or warning", {
                                  output_path, output_spectrum,
                                  summary_path))
 })
+
+
+test_that("naomi_info_input(data) handles NULL string", {
+
+  data <- list(file1 = "file1.ext",
+               file2 = "file2.ext",
+               file3 = NULL)
+  
+  expect_equal(nrow(naomi_info_input(data)), 3)
+})
