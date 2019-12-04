@@ -31,7 +31,7 @@ test_that("model can be run", {
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
-      "fit/", "fit/spectrum_calibration.csv")
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
       
 
@@ -44,7 +44,7 @@ test_that("model can be run", {
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
-      "fit/", "fit/spectrum_calibration.csv")
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
   tmp <- tempfile()
@@ -103,7 +103,7 @@ test_that("model can be run without programme data", {
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
-      "fit/", "fit/spectrum_calibration.csv")
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
   ## TODO: replace with checks for spectrum digest once function to create
@@ -115,7 +115,7 @@ test_that("model can be run without programme data", {
     c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
       "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
-      "fit/", "fit/spectrum_calibration.csv")
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
 })

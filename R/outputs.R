@@ -317,6 +317,11 @@ save_output <- function(filename, dir,
   if(length(fit) > 0L) {
     dir.create("fit")
     naomi_write_csv(fit$spectrum_calibration, "fit/spectrum_calibration.csv")
+
+    naomi_write_csv(
+      data.frame(option = names(fit$calibration_options),
+                 value  = fit$calibration_options),
+      "fit/calibration_options.csv")
   }
 
   zip::zipr(path, list.files())
