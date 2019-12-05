@@ -1,3 +1,7 @@
+# naomi 0.0.28
+
+* Model for ANC prevalence and ART coverage at time 2.
+
 # naomi 0.0.27
 
 * Explicit type conversion of integer and logical model options.
