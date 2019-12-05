@@ -65,7 +65,6 @@ test_that("validate model options returns error for invalid", {
 test_that("validate_model_options() handles NULL include_art_tX", {
 
   data <- a_hintr_data
-  data$art_number <- NULL
   
   options <- a_hintr_options
   options$include_art_t1 <- NULL
