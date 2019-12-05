@@ -48,6 +48,20 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   progress$start("Validating inputs and options")
   progress$print()
+  if (!is.null(data$art_number)) {
+    art_number <- readr::read_csv(data$art_number)
+  } else {
+    art_number <- NULL
+  }
+  if (!is.null(data$anc_testing)) {
+    anc_testing <- readr::read_csv(data$anc_testing)
+  } else {
+    anc_testing <- NULL
+  }
+  if (is.null(options$artattend)) {
+    options$artattend <- FALSE
+  }
+
   validate_model_options(data, options)
   progress$complete("Validating inputs and options")
 
@@ -56,19 +70,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   area_merged <- sf::read_sf(data$shape)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
-
-  if (!is.null(data$art_number)) {
-    art_number <- readr::read_csv(data$art_number)
-  } else {
-    art_number <- NULL
-  }
-
-  if (!is.null(data$anc_testing)) {
-    anc_testing <- readr::read_csv(data$anc_testing)
-  } else {
-    anc_testing <- NULL
-  }
-
   spec <- extract_pjnz_naomi(data$pjnz)
 
   ## Get from the options
@@ -85,7 +86,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   else
     permissive <- as.logical(options$permissive)
 
-  
+
 
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
@@ -148,7 +149,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   if(fit$convergence != 0 && !permissive)
     stop(paste("convergence error:", fit$message))
-                 
+
   progress$complete("Fitting the model")
   progress$start("Generating uncertainty ranges")
   progress$print()
@@ -245,7 +246,7 @@ Progress <- R6::R6Class("Progress", list(
 naomi_info_input <- function(data) {
 
   data[vapply(data, is.null, logical(1))] <- "<NULL>"
-  
+
   files <- vapply(data, identity, character(1))
   hash <- unname(tools::md5sum(vapply(data, identity, character(1))))
   data.frame(
