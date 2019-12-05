@@ -1,3 +1,7 @@
+# naomi 0.0.29
+
+* Patch model validation for options$include_art_t1 = NULL.
+
 # naomi 0.0.28
 
 * Model for ANC prevalence and ART coverage at time 2.

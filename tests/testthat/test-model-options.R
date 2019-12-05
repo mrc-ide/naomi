@@ -62,3 +62,18 @@ test_that("validate model options returns error for invalid", {
   
 })
 
+test_that("validate_model_options() handles NULL include_art_tX", {
+
+  data <- a_hintr_data
+  
+  options <- a_hintr_options
+  options$include_art_t1 <- NULL
+  options$include_art_t2 <- NULL
+  
+  expect_error(validate_model_options(data, options),
+               "ART attendance model can only be estimated if ART programme data are used")
+
+  options$artattend <- "false"
+  expect_true(validate_model_options(data, options))
+
+})
