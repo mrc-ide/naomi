@@ -113,3 +113,22 @@ test_that("can get 5 year age groups", {
   expect_length(age_groups, 17)
   expect_equal(age_groups[1], "00-04")
 })
+
+## !!!! TODO: metadata.csv and the meta_indicator data.frame  should not
+##            exist separately. Long-term refactor to consolidate.
+test_that("metadata synced with meta_indicator", {
+
+  metadata <- naomi_read_csv(system_file("metadata", "metadata.csv"))
+
+  check <- metadata %>%
+    dplyr::filter(indicator_column == "indicator_id") %>%
+    dplyr::distinct(name, indicator_value) %>%
+    dplyr::mutate(indicator_value = as.integer(indicator_value)) %>%
+    dplyr::full_join(
+             meta_indicator %>%
+             dplyr::select(indicator_id, indicator_label),
+             by = c("indicator_value" = "indicator_id")
+           )
+
+    expect_equal(tolower(check$name), tolower(check$indicator_label))
+})
