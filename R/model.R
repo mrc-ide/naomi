@@ -750,14 +750,17 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       stop(paste("ANC testing data not found for year",
                  setdiff(year, anc_testing$year)))
 
-    anc_prev_dat <-
-      anc_testing %>%
+    ## Drop any observations with NA in required columns
+    anc_prev_dat <- anc_testing %>%
       dplyr::filter(
                year %in% !!year,
-               area_id %in% naomi_mf$mf_model$area_id
+               area_id %in% naomi_mf$mf_model$area_id,
+               !is.na(ancrt_known_pos),
+               !is.na(ancrt_test_pos),
+               !is.na(ancrt_tested)
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_tested), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_tested), sum) %>%
       dplyr::ungroup() %>%
       dplyr::transmute(
                area_id,
@@ -765,6 +768,10 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                anc_prev_x = ancrt_known_pos + ancrt_test_pos,
                anc_prev_n = ancrt_known_pos + ancrt_tested
              )
+
+    if(any(anc_prev_dat$anc_prev_x > anc_prev_dat$anc_prev_n))
+      stop("ANC testing positive greater than anc testing total known status")
+    
   }
 
   anc_prev_dat
@@ -790,17 +797,17 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       stop(paste("ANC testing data not found for year",
                  setdiff(year, anc_testing$year)))
     
-    anc_artcov_dat <-
-      anc_testing %>%
+    ## Drop any observations with NA in required columns
+    anc_artcov_dat <- anc_testing %>%
       dplyr::filter(
                year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id,
                !is.na(ancrt_known_pos),
                !is.na(ancrt_test_pos),
                !is.na(ancrt_already_art)
-             ) %>%
+             )  %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum, na.rm = TRUE) %>%
+      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
@@ -809,6 +816,10 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
                anc_artcov_x = ancrt_already_art,
                anc_artcov_n = ancrt_totpos
              )
+
+    if(any(anc_artcov_dat$anc_artcov_x > anc_artcov_dat$anc_artcov_n))
+      stop("ANC testing on ART greater than anc testing total positive.")
+
   }
 
   anc_artcov_dat
