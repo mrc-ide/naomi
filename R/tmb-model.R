@@ -69,6 +69,9 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## ART attendance aggregation
 
+  Xgamma <-  Matrix::sparse.model.matrix(~0 + attend_area_idf:as.integer(jstar != 1),
+                                         naomi_data$mf_artattend)
+  
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::left_join(naomi_data$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
     dplyr::mutate(artattend_idf = forcats::as_factor(artattend_idx),
@@ -117,8 +120,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     n_nb = naomi_data$mf_areas$n_neighbors,
     adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,
     adj_j = naomi_data$mf_artattend$artattend_area_idx - 1L,
-    gamma_or_mu = dplyr::filter(naomi_data$mf_artattend, !istar == 1)$gamma_or_mu,
-    gamma_or_sigma = dplyr::filter(naomi_data$mf_artattend, !istar == 1)$gamma_or_sigma,
+    Xgamma = Xgamma,
+    log_gamma_offset = naomi_data$mf_artattend$log_gamma_offset,
     Xart_idx = Xart_idx,
     Xart_gamma = Xart_gamma,
     ##
@@ -148,12 +151,19 @@ prepare_tmb_inputs <- function(naomi_data) {
     idx_recent = naomi_data$recent_dat$idx - 1L,
     x_recent = naomi_data$recent_dat$x,
     n_recent = naomi_data$recent_dat$n,
-    A_anc_prev = A_anc_prev_t1,
-    x_anc_prev = anc_prev_t1_dat$anc_prev_x,
-    n_anc_prev = anc_prev_t1_dat$anc_prev_n,
-    A_anc_artcov = A_anc_artcov_t1,
-    x_anc_artcov = anc_artcov_t1_dat$anc_artcov_x,
-    n_anc_artcov = anc_artcov_t1_dat$anc_artcov_n,
+    ##
+    A_anc_prev_t1 = A_anc_prev_t1,
+    x_anc_prev_t1 = anc_prev_t1_dat$anc_prev_x,
+    n_anc_prev_t1 = anc_prev_t1_dat$anc_prev_n,
+    A_anc_artcov_t1 = A_anc_artcov_t1,
+    x_anc_artcov_t1 = anc_artcov_t1_dat$anc_artcov_x,
+    n_anc_artcov_t1 = anc_artcov_t1_dat$anc_artcov_n,
+    A_anc_prev_t2 = A_anc_prev_t2,
+    x_anc_prev_t2 = anc_prev_t2_dat$anc_prev_x,
+    n_anc_prev_t2 = anc_prev_t2_dat$anc_prev_n,
+    A_anc_artcov_t2 = A_anc_artcov_t2,
+    x_anc_artcov_t2 = anc_artcov_t2_dat$anc_artcov_x,
+    n_anc_artcov_t2 = anc_artcov_t2_dat$anc_artcov_n,
     ##
     A_artattend_t1 = A_artattend_t1,
     x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
@@ -166,10 +176,12 @@ prepare_tmb_inputs <- function(naomi_data) {
   ptmb <- list(
     beta_rho = numeric(ncol(dtmb$X_rho)),
     beta_alpha = numeric(ncol(dtmb$X_alpha)),
+    beta_alpha_t2 = numeric(ncol(dtmb$X_alpha_t2)),
     beta_lambda = numeric(ncol(dtmb$X_lambda)),
     beta_anc_rho = numeric(1),
     beta_anc_alpha = numeric(1),
-    beta_alpha_t2 = numeric(ncol(dtmb$X_alpha_t2)),
+    beta_anc_rho_t2 = numeric(1),
+    beta_anc_alpha_t2 = numeric(1),
     us_rho_x = numeric(ncol(dtmb$Z_x)),
     ui_rho_x = numeric(ncol(dtmb$Z_x)),
     us_rho_xs = numeric(ncol(dtmb$Z_xs)),
@@ -178,6 +190,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     u_rho_as = numeric(ncol(dtmb$Z_rho_as)),
     ui_anc_rho_x = numeric(ncol(dtmb$Z_x)),
     ui_anc_alpha_x = numeric(ncol(dtmb$Z_x)),
+    ui_anc_rho_xt = numeric(ncol(dtmb$Z_x)),
+    ui_anc_alpha_xt = numeric(ncol(dtmb$Z_x)),
     ##
     us_alpha_x = numeric(ncol(dtmb$Z_x)),
     ui_alpha_x = numeric(ncol(dtmb$Z_x)),
@@ -215,8 +229,11 @@ prepare_tmb_inputs <- function(naomi_data) {
     ##
     log_sigma_ancrho_x = 0,
     log_sigma_ancalpha_x = 0,
+    log_sigma_ancrho_xt = 0,
+    log_sigma_ancalpha_xt = 0,
     ##
-    oddsratio_gamma_art_raw = numeric(sum(dtmb$n_nb))
+    log_or_gamma = numeric(ncol(dtmb$Xgamma)),
+    log_sigma_or_gamma = 0
   )
 
   v <- list(data = dtmb,
@@ -248,9 +265,11 @@ fit_tmb <- function(tmb_input,
                         parameters = tmb_input$par_init,
                         DLL = "naomi",
                         silent = !inner_verbose,
-                        random = c("beta_rho", "beta_alpha", "beta_lambda",
+                        random = c("beta_rho",
+                                   "beta_alpha", "beta_alpha_t2",
+                                   "beta_lambda",
                                    "beta_anc_rho", "beta_anc_alpha",
-                                   "beta_alpha_t2",
+                                   "beta_anc_rho_t2", "beta_anc_alpha_t2",
                                    "us_rho_x", "ui_rho_x",
                                    "us_rho_xs", "ui_rho_xs",
                                    "u_rho_a", "u_rho_as",
@@ -264,13 +283,20 @@ fit_tmb <- function(tmb_input,
                                    "logit_nu_raw",
                                    ##
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
+                                   "ui_anc_rho_xt", "ui_anc_alpha_xt",
                                    ##
-                                   "oddsratio_gamma_art_raw"))
+                                   "log_or_gamma"))
 
   trace <- if(outer_verbose) 1 else 0
-  f <- stats::nlminb(obj$par, obj$fn, obj$gr,
-                     control = list(trace = trace,
-                                    iter.max = max_iter))
+  f <- withCallingHandlers(
+    stats::nlminb(obj$par, obj$fn, obj$gr,
+                  control = list(trace = trace,
+                                 iter.max = max_iter)),
+    warning = function(w) {
+        if(grepl("NA/NaN function evaluation", w$message))
+          invokeRestart("muffleWarning")
+      }
+    )
 
   if(f$convergence != 0)
     warning(paste("convergence error:", f$message))

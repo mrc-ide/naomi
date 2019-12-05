@@ -144,26 +144,58 @@ quarter_id_to_calendar_quarter <- function(quarter_id) {
 #' @export
 interpolate_population_agesex <- function(population_agesex, calendar_quarters) {
 
-  if ("asfr" %in% names(population_agesex)) {
-    population_agesex$asfr <- NULL
-  }
+  raw <- dplyr::select(population_agesex, area_id, source,
+                       calendar_quarter, sex, age_group, population)
+
+  check <- dplyr::count(raw, area_id, source, calendar_quarter, sex, age_group)
+
+  if(any(check$n > 1))
+    stop(paste0("Duplicated population counts for ", sum(check$n > 1),
+                " area/source/quarter/sex/age combinatons"))
 
   quarter_ids <- calendar_quarter_to_quarter_id(calendar_quarters)
-  dfall <- dplyr::distinct(dplyr::select(population_agesex, -calendar_quarter, -population))
+  dfall <- dplyr::distinct(dplyr::select(raw, -calendar_quarter, -population))
 
-  df <- dplyr::select(population_agesex, calendar_quarter, area_id, source, sex, age_group, population) %>%
+  df <- dplyr::select(raw, calendar_quarter, area_id, source, sex, age_group, population) %>%
     dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter))
-
-  tidyr::expand(df,
-                tidyr::nesting(calendar_quarter = calendar_quarters, quarter_id = quarter_ids),
-                tidyr::nesting(area_id, source, sex, age_group)) %>%
+  
+  val <- tidyr::expand(
+                  df,
+                  tidyr::nesting(calendar_quarter = calendar_quarters,
+                                 quarter_id = quarter_ids),
+                  tidyr::nesting(area_id, source, sex, age_group)
+                ) %>%
     dplyr::full_join(df, by = names(.)) %>%
     dplyr::group_by(area_id, source, sex, age_group) %>%
-    dplyr::mutate(population = exp(zoo::na.approx(log(population), quarter_id, na.rm = FALSE)),
-                  population = tidyr::replace_na(population, 0)) %>%
+    dplyr::mutate(population = log_linear_interp(population, quarter_id, rule = 2)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(quarter_id %in% quarter_ids) %>%
     dplyr::left_join(dfall, by = intersect(names(.), names(dfall))) %>%
-    dplyr::select(names(population_agesex))
+    dplyr::select(names(raw))
 
+  val
+}
+
+#' Log-linear interpolation of NA values
+#'
+#' @param y vector of output values, possibly with NAs
+#' @param x vector of points to interpolate (no NAs)
+#' @param rule rule for extrapolating outside range (see [approx()])
+#' @param replace_na value to replace if interpolation evaluates to NA
+#' 
+#' @examples
+#' log_linear_interp(c(100, 105, NA, 110), 1:4)
+#' log_linear_interp(c(NA, 105, NA, 110), 1:4)
+#' log_linear_interp(c(NA, 105, NA, 110, NA), 1:5, rule = 1)
+#' log_linear_interp(c(NA, 105, NA, 110, NA), 1:5, rule = 2)
+#' log_linear_interp(c(NA, NA, 37), 1:3, rule = 2)
+#'
+#' @export
+log_linear_interp <- function(y, x, rule = 2, replace_na = 0){
+  if(sum(!is.na(y)) == 1 && rule == 2)
+    yout <- tidyr::replace_na(y, y[!is.na(y)])
+  else
+    yout <- exp(zoo::na.approx(log(y), x, na.rm = FALSE, rule = rule))
+  yout <- tidyr::replace_na(yout, replace_na)
+  yout
 }

@@ -73,24 +73,31 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   ## Get from the options
   scope <- options$area_scope
-  level <- options$area_level
+  level <- as.integer(options$area_level)
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
 
+  if(is.null(options$permissive))
+    permissive <- FALSE
+  else
+    permissive <- as.logical(options$permissive)
+
+  
+
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
 
   if(!is.null(options$include_art_t1) &&
-     options$include_art_t1 == "true")
+     as.logical(options$include_art_t1))
     artnum_calendar_quarter1 <- calendar_quarter_t1
   else
     artnum_calendar_quarter1 <- NULL
 
   if(!is.null(options$include_art_t2) &&
-     options$include_art_t2 == "true")
+     as.logical(options$include_art_t2))
     artnum_calendar_quarter2 <- calendar_quarter_t2
   else
     artnum_calendar_quarter2 <- NULL
@@ -100,13 +107,18 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   anc_art_coverage_year1 <- options$anc_art_coverage_year1
   anc_art_coverage_year2 <- options$anc_art_coverage_year2
 
-  naomi_mf <- naomi_model_frame(area_merged,
-                                population,
-                                spec,
-                                scope = scope,
-                                level = level,
-                                calendar_quarter_t1,
-                                calendar_quarter_t2)
+  naomi_mf <- naomi_model_frame(
+    area_merged,
+    population,
+    spec,
+    scope = scope,
+    level = level,
+    calendar_quarter_t1,
+    calendar_quarter_t2,
+    spectrum_population_calibration = options$spectrum_population_calibration,
+    artattend = as.logical(options$artattend),
+    artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
+  )
 
   naomi_data <- select_naomi_data(naomi_mf,
                                   survey,
@@ -134,10 +146,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                  inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose),
                  max_iter = ifelse(is.null(options$max_iterations), 250, options$max_iterations))
 
-  if(is.null(options$permissive))
-    options$permissive <- FALSE
-
-  if(fit$convergence != 0 && options$permissive == FALSE)
+  if(fit$convergence != 0 && !permissive)
     stop(paste("convergence error:", fit$message))
                  
   progress$complete("Fitting the model")
@@ -155,6 +164,11 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## input download_input
   outputs <- output_package(fit, naomi_mf, area_merged)
 
+  outputs <- calibrate_outputs(outputs, naomi_mf,
+                               options$spectrum_plhiv_calibration_level,
+                               options$spectrum_plhiv_calibration_strat,
+                               options$spectrum_artnum_calibration_level,
+                               options$spectrum_artnum_calibration_strat)
   attr(outputs, "info") <- naomi_info(data, options)
 
   indicators <- add_output_labels(outputs)
@@ -229,6 +243,9 @@ Progress <- R6::R6Class("Progress", list(
 ))
 
 naomi_info_input <- function(data) {
+
+  data[vapply(data, is.null, logical(1))] <- "<NULL>"
+  
   files <- vapply(data, identity, character(1))
   hash <- unname(tools::md5sum(vapply(data, identity, character(1))))
   data.frame(

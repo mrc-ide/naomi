@@ -66,14 +66,22 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
   
-  DATA_SPARSE_MATRIX(A_anc_prev);
-  DATA_VECTOR(n_anc_prev);
-  DATA_VECTOR(x_anc_prev);
+  DATA_SPARSE_MATRIX(A_anc_prev_t1);
+  DATA_VECTOR(n_anc_prev_t1);
+  DATA_VECTOR(x_anc_prev_t1);
 
-  DATA_SPARSE_MATRIX(A_anc_artcov);
-  DATA_VECTOR(n_anc_artcov);
-  DATA_VECTOR(x_anc_artcov);
+  DATA_SPARSE_MATRIX(A_anc_artcov_t1);
+  DATA_VECTOR(n_anc_artcov_t1);
+  DATA_VECTOR(x_anc_artcov_t1);
 
+  DATA_SPARSE_MATRIX(A_anc_prev_t2);
+  DATA_VECTOR(n_anc_prev_t2);
+  DATA_VECTOR(x_anc_prev_t2);
+
+  DATA_SPARSE_MATRIX(A_anc_artcov_t2);
+  DATA_VECTOR(n_anc_artcov_t2);
+  DATA_VECTOR(x_anc_artcov_t2);
+  
   DATA_SPARSE_MATRIX(A_artattend_t1);
   DATA_VECTOR(x_artnum_t1);
 
@@ -85,8 +93,11 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(n_nb);
   DATA_IVECTOR(adj_i);
   DATA_IVECTOR(adj_j);
-  DATA_VECTOR(gamma_or_mu);
-  DATA_VECTOR(gamma_or_sigma);
+
+  DATA_SPARSE_MATRIX(Xgamma);
+  DATA_VECTOR(log_gamma_offset);
+  
+  
   DATA_SPARSE_MATRIX(Xart_idx);
   DATA_SPARSE_MATRIX(Xart_gamma);
 
@@ -119,6 +130,9 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(beta_alpha);
   val -= dnorm(beta_alpha, 0.0, 5.0, true).sum();
 
+  PARAMETER_VECTOR(beta_alpha_t2);
+  val -= dnorm(beta_alpha_t2, 0.0, 5.0, true).sum();
+
   PARAMETER_VECTOR(beta_lambda);
   val -= dnorm(beta_lambda, 0.0, 5.0, true).sum();
 
@@ -128,8 +142,11 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(beta_anc_alpha);
   val -= dnorm(beta_anc_alpha, 0.0, 5.0, true).sum();
 
-  PARAMETER_VECTOR(beta_alpha_t2);
-  val -= dnorm(beta_alpha_t2, 0.0, 5.0, true).sum();
+  PARAMETER_VECTOR(beta_anc_rho_t2);
+  val -= dnorm(beta_anc_rho_t2, 0.0, 5.0, true).sum();
+
+  PARAMETER_VECTOR(beta_anc_alpha_t2);
+  val -= dnorm(beta_anc_alpha_t2, 0.0, 5.0, true).sum();
 
 
 
@@ -300,13 +317,29 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(ui_anc_alpha_x);
   val -= sum(dnorm(ui_anc_alpha_x, 0.0, 1.0, true));
 
+  PARAMETER(log_sigma_ancrho_xt);
+  Type sigma_ancrho_xt(exp(log_sigma_ancrho_xt));
+  val -= dnorm(sigma_ancrho_xt, Type(0.0), Type(2.5), true) + log_sigma_ancrho_xt;
+
+  PARAMETER(log_sigma_ancalpha_xt);
+  Type sigma_ancalpha_xt(exp(log_sigma_ancalpha_xt));
+  val -= dnorm(sigma_ancalpha_xt, Type(0.0), Type(2.5), true) + log_sigma_ancalpha_xt;
+
+  PARAMETER_VECTOR(ui_anc_rho_xt);
+  val -= sum(dnorm(ui_anc_rho_xt, 0.0, 1.0, true));
+
+  PARAMETER_VECTOR(ui_anc_alpha_xt);
+  val -= sum(dnorm(ui_anc_alpha_xt, 0.0, 1.0, true));
+
 
   // * ART attendance model *
 
-  PARAMETER_VECTOR(oddsratio_gamma_art_raw);
-  val -= dnorm(oddsratio_gamma_art_raw, 0.0, 1.0, true).sum();
-  vector<Type> oddsratio_gamma_art(oddsratio_gamma_art_raw * gamma_or_sigma + gamma_or_mu);
-
+  PARAMETER(log_sigma_or_gamma);
+  Type sigma_or_gamma(exp(log_sigma_or_gamma));
+  val -= dnorm(sigma_or_gamma, Type(0.0), Type(2.5), true) + log_sigma_or_gamma;
+    
+  PARAMETER_VECTOR(log_or_gamma);
+  val -= dnorm(log_or_gamma, 0.0, 1.0, true).sum();
 
 
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
@@ -385,26 +418,37 @@ Type objective_function<Type>::operator() ()
     val -= dbinom(x_recent[i], n_recent[i], pR, true);
   }
   
-  vector<Type> mu_anc_rho(A_anc_prev * rho_t1 / (A_anc_prev * ones));
-  mu_anc_rho = logit(mu_anc_rho) + X_ancrho * beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
-  val -= sum(dbinom_robust(x_anc_prev, n_anc_prev, mu_anc_rho, true));
+  vector<Type> mu_anc_rho_t1(A_anc_prev_t1 * rho_t1 / (A_anc_prev_t1 * ones));
+  mu_anc_rho_t1 = logit(mu_anc_rho_t1) + X_ancrho * beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
+  val -= sum(dbinom_robust(x_anc_prev_t1, n_anc_prev_t1, mu_anc_rho_t1, true));
 
-  vector<Type> mu_anc_alpha(A_anc_artcov * vector<Type>(rho_t1 * alpha_t1) / (A_anc_artcov * rho_t1));
-  mu_anc_alpha = logit(mu_anc_alpha) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
-  val -= sum(dbinom_robust(x_anc_artcov, n_anc_artcov, mu_anc_alpha, true));
+  vector<Type> mu_anc_alpha_t1(A_anc_artcov_t1 * vector<Type>(rho_t1 * alpha_t1) / (A_anc_artcov_t1 * rho_t1));
+  mu_anc_alpha_t1 = logit(mu_anc_alpha_t1) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
+  val -= sum(dbinom_robust(x_anc_artcov_t1, n_anc_artcov_t1, mu_anc_alpha_t1, true));
+
+  vector<Type> mu_anc_rho_t2(A_anc_prev_t2 * rho_t2 / (A_anc_prev_t2 * ones));
+  mu_anc_rho_t2 = logit(mu_anc_rho_t2) +
+    X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
+    Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt);
+  val -= sum(dbinom_robust(x_anc_prev_t2, n_anc_prev_t2, mu_anc_rho_t2, true));
+
+  vector<Type> mu_anc_alpha_t2(A_anc_artcov_t2 * vector<Type>(rho_t2 * alpha_t2) / (A_anc_artcov_t2 * rho_t2));
+  mu_anc_alpha_t2 = logit(mu_anc_alpha_t2) +
+    X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
+    Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt);
+  val -= sum(dbinom_robust(x_anc_artcov_t2, n_anc_artcov_t2, mu_anc_alpha_t2, true));
 
 
   // * ART attendance model *
 
-  vector<Type> gamma_art(adj_i.size());
+  vector<Type> gamma_art(exp(Xgamma * log_or_gamma * sigma_or_gamma + log_gamma_offset));
   int cum_nb = 0;
   for(int i = 0; i < n_nb.size(); i++){
-    Type cum_exp_or_gamma_i = 1.0;
-    for(int j = 0; j < n_nb[i]; j++)
-      cum_exp_or_gamma_i += gamma_art[cum_nb + i + j] = exp(oddsratio_gamma_art[cum_nb + j]);
-    for(int j = 0; j < n_nb[i]; j++)
+    Type cum_exp_or_gamma_i = 0.0;
+    for(int j = 0; j < n_nb[i]+1; j++)
+      cum_exp_or_gamma_i += gamma_art[cum_nb + i + j];
+    for(int j = 0; j < n_nb[i]+1; j++)
       gamma_art[cum_nb + i + j] /= cum_exp_or_gamma_i;
-    gamma_art[cum_nb + i + n_nb[i]] = 1.0 / cum_exp_or_gamma_i;
     cum_nb += n_nb[i];
   }
 
@@ -497,8 +541,11 @@ Type objective_function<Type>::operator() ()
   REPORT(infections_t2_out);
 
 
-  REPORT(mu_anc_rho);
-  REPORT(mu_anc_alpha);
+  REPORT(mu_anc_rho_t1);
+  REPORT(mu_anc_alpha_t1);
+
+  REPORT(mu_anc_rho_t2);
+  REPORT(mu_anc_alpha_t2);
 
   REPORT(pR_i);
   REPORT(nu);

@@ -1,10 +1,39 @@
+# naomi 0.0.28
+
+* Model for ANC prevalence and ART coverage at time 2.
+* Drop ANC observations that have NA for any required inputs.
+
+# naomi 0.0.27
+
+* Explicit type conversion of integer and logical model options.
+
+# naomi 0.0.25
+
+* Carry forward / backward interpolated population if uploaded population does not span years required.
+
+# naomi 0.0.25
+
+* Remove spectrum calibration option validation -- NULLs not handled appropriately.
+
+# naomi 0.0.24
+
+* Hide placeholder <1 / 1-4 outputs which are not implemented yet.
+* Handle case where ANC testing provided but no year selected (valid) or where a year is requested not found in data (error) (mrc-1176)
+
+# naomi 0.0.23
+
+* Implement pre-fitting calibration to Spectrum population size by sex and 5-year age group.
+* Implement post-fitting calibration to Spectrum PLHIV and number on ART.
+* Save Spectrum calibration in `fit/spectrum_calibration.csv` in the ouput zip download.
+
 # naomi 0.0.22
 
-* Add parent_area_id and spectrum_region_code to outputs package.
 * Remove ancrt_hiv_status field from ANC testing dataset.
+* Add parent_area_id and spectrum_region_code to outputs package.
 
 # naomi 0.0.21
 
+* Revise ART attendance model to be single district level 'attractiveness' parameter.
 * Add model input validation step to hintr_run_model().
 * Implement random number seed argument to sample_tmb() to return exact same results.
 * Silent fitting for hintr_run_model() unless option outer_verbose = TRUE or inner_verbose = TRUE.

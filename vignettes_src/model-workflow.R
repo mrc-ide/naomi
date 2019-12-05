@@ -210,6 +210,13 @@ system.time(fit <- sample_tmb(fit))
 ##+ make_output_package, cache = TRUE
 system.time(outputs <- output_package(fit, naomi_mf, area_merged))
 
+outputs_calib <- calibrate_outputs(outputs, naomi_mf,
+                                   spectrum_plhiv_calibration_level = "national",
+                                   spectrum_plhiv_calibration_strat = "sex_age_coarse",
+                                   spectrum_artnum_calibration_level = "national", 
+                                   spectrum_artnum_calibration_strat = "sex_age_coarse")
+
+
 outputs$indicators %>%
   dplyr::filter(
     indicator_id == 2L,  # HIV prevalence

@@ -66,9 +66,9 @@
 	  "label": "Logit prior mean for neighboring district attraction.",
 	  "controls": [
 	      {
-		  "name": "log_or_gamma_offset",
+		  "name": "artattend_log_gamma_offset",
 		  "type": "number",
-		  "required": false,
+		  "required": true,
 		  "value": -4,
 		  "helpText": "Logit offset for odds of obtaining ART in district j compared to home district."
 	      }
