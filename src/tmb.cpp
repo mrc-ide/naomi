@@ -426,17 +426,17 @@ Type objective_function<Type>::operator() ()
   mu_anc_alpha_t1 = logit(mu_anc_alpha_t1) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
   val -= sum(dbinom_robust(x_anc_artcov_t1, n_anc_artcov_t1, mu_anc_alpha_t1, true));
 
-  vector<Type> mu_anc_rho_t2(A_anc_prev_t2 * rho_t2 / (A_anc_prev_t2 * ones));
-  mu_anc_rho_t2 = logit(mu_anc_rho_t2) +
-    X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-    Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt);
-  val -= sum(dbinom_robust(x_anc_prev_t2, n_anc_prev_t2, mu_anc_rho_t2, true));
+  // vector<Type> mu_anc_rho_t2(A_anc_prev_t2 * rho_t2 / (A_anc_prev_t2 * ones));
+  // mu_anc_rho_t2 = logit(mu_anc_rho_t2) +
+  //   X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
+  //   Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt);
+  // val -= sum(dbinom_robust(x_anc_prev_t2, n_anc_prev_t2, mu_anc_rho_t2, true));
 
-  vector<Type> mu_anc_alpha_t2(A_anc_artcov_t2 * vector<Type>(rho_t2 * alpha_t2) / (A_anc_artcov_t2 * rho_t2));
-  mu_anc_alpha_t2 = logit(mu_anc_alpha_t2) +
-    X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-    Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt);
-  val -= sum(dbinom_robust(x_anc_artcov_t2, n_anc_artcov_t2, mu_anc_alpha_t2, true));
+  // vector<Type> mu_anc_alpha_t2(A_anc_artcov_t2 * vector<Type>(rho_t2 * alpha_t2) / (A_anc_artcov_t2 * rho_t2));
+  // mu_anc_alpha_t2 = logit(mu_anc_alpha_t2) +
+  //   X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
+  //   Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt);
+  // val -= sum(dbinom_robust(x_anc_artcov_t2, n_anc_artcov_t2, mu_anc_alpha_t2, true));
 
 
   // * ART attendance model *
@@ -544,8 +544,8 @@ Type objective_function<Type>::operator() ()
   REPORT(mu_anc_rho_t1);
   REPORT(mu_anc_alpha_t1);
 
-  REPORT(mu_anc_rho_t2);
-  REPORT(mu_anc_alpha_t2);
+  // REPORT(mu_anc_rho_t2);
+  // REPORT(mu_anc_alpha_t2);
 
   REPORT(pR_i);
   REPORT(nu);
