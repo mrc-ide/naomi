@@ -61,6 +61,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   if (is.null(options$artattend)) {
     options$artattend <- FALSE
   }
+  if (is.null(options$artattend_log_gamma_offset)) {
+    options$artattend_log_gamma_offset <- -4
+  }
 
   validate_model_options(data, options)
   progress$complete("Validating inputs and options")
