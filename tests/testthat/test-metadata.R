@@ -85,15 +85,17 @@ test_that("metadata is well formed", {
   meta <- get_metadata()
   expect_true(all(meta$indicator %in%
     c("art_coverage", "current_art", "prevalence", "vls", "recent", "plhiv",
-      "incidence", "art_number", "population", "incidence", "new_infections")))
+      "incidence", "art_number", "population", "incidence", "new_infections",
+      "receiving_art")))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
   expect_true(all(meta$data_type %in% c("survey", "anc", "programme", "output")))
   expect_true(all(meta$name %in%
-                    c("Prevalence", "ART coverage", "Viral load suppression",
+                    c("HIV prevalence", "ART coverage", "Viral load suppression",
                       "Proportion recently infected", "PLHIV", "Population",
-                      "New Infections", "Incidence", "ART number")))
+                      "New infections", "HIV incidence", "ART number",
+                      "Receiving ART")))
   ## No NULLs, NAs or empty strings except for indicator_column and
   ## indicator_value columns
   non_empty_columns <- colnames(
