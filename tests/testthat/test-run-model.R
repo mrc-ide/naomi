@@ -33,7 +33,7 @@ test_that("model can be run", {
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
-      
+
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
@@ -55,27 +55,36 @@ test_that("model can be run", {
   outputs <- read_output_package(model_run$spectrum_path)
 
   expect_true(
-    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id", 
+    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
           "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
         names(outputs$meta_area))
   )
-  
+
 })
 
 test_that("model can be run without programme data", {
-
   data <- a_hintr_data
   data$art_number <- NULL
   data$anc_testing <- NULL
 
-  options <- a_hintr_options
-  options$include_art_t1 <- NULL
-  options$include_art_t2 <- NULL
-  options$anc_prevalence_year1 <- NULL
-  options$anc_prevalence_year2 <- NULL
-  options$anc_art_coverage_year1 <- NULL
-  options$anc_art_coverage_year2 <- NULL
-  options$artattend <- "false"
+  options <- list(
+    area_scope = "MWI_1_2",
+    area_level = "4",
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    spectrum_population_calibration = "national",
+    spectrum_plhiv_calibration_level = "subnational",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "national",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = "false"
+  )
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -125,7 +134,7 @@ test_that("model fit without survey ART and survey recency data", {
 
   ## !!! TODO: need to get this working or validation flags
   skip("Need to return to either get working or set validation flags")
-  
+
   options <- a_hintr_options
   options$survey_art_coverage <- NULL
   expect_error(
@@ -147,7 +156,7 @@ test_that("model fit without survey ART and survey recency data", {
   expect_error(
     hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
     "false convergence \\(8\\)")
-  
+
 }
 )
 
@@ -195,7 +204,7 @@ test_that("model run throws error for invalid inputs", {
   expect_error(
     hintr_run_model(data, a_hintr_options_bad,
                     output_path, output_spectrum, summary_path)
-                    
+
   )
 })
 
@@ -203,7 +212,7 @@ test_that("model run throws error for invalid inputs", {
 test_that("setting rng_seed returns same output", {
 
   data <- a_hintr_data
-  
+
   options <- a_hintr_options
   options$survey_prevalence = "MWI2016PHIA"
   options$survey_art_coverage <- "MWI2016PHIA"
@@ -213,7 +222,7 @@ test_that("setting rng_seed returns same output", {
   options$artattend <- "false"
   options$spectrum_plhiv_calibration_level <- "none"
   options$spectrum_artnum_calibration_level <- "none"
-  
+
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   summary_path <- tempfile(fileext = ".zip")
@@ -256,7 +265,7 @@ test_that("setting rng_seed returns same output", {
 test_that("exceeding max_iterations convergence error or warning", {
 
   data <- a_hintr_data
-  
+
   options <- a_hintr_options
   options$survey_prevalence = "MWI2016PHIA"
   options$survey_art_coverage <- NULL
@@ -289,6 +298,7 @@ test_that("naomi_info_input(data) handles NULL string", {
   data <- list(file1 = "file1.ext",
                file2 = "file2.ext",
                file3 = NULL)
-  
+
   expect_equal(nrow(naomi_info_input(data)), 3)
 })
+

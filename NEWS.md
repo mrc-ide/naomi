@@ -1,3 +1,20 @@
+# naomi 0.0.31
+
+* Fix validation bug caused by missing programme options
+
+# naomi 0.0.30
+
+* Undo ANC prevalence and ART coverage at time 2 which errors for different areas at two time points. Fix coming later.
+
+# naomi 0.0.29
+
+* Patch model validation for options$include_art_t1 = NULL.
+
+# naomi 0.0.28
+
+* Model for ANC prevalence and ART coverage at time 2.
+* Drop ANC observations that have NA for any required inputs.
+
 # naomi 0.0.27
 
 * Explicit type conversion of integer and logical model options.
