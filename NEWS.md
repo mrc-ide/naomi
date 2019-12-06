@@ -1,3 +1,7 @@
+# naomi 0.0.30
+
+* Undo ANC prevalence and ART coverage at time 2 which errors for different areas at two time points. Fix coming later.
+
 # naomi 0.0.29
 
 * Patch model validation for options$include_art_t1 = NULL.
