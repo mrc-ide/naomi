@@ -1,3 +1,7 @@
+# naomi 0.0.31
+
+* Fix validation bug caused by missing programme options
+
 # naomi 0.0.30
 
 * Undo ANC prevalence and ART coverage at time 2 which errors for different areas at two time points. Fix coming later.
