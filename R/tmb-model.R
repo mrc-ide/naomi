@@ -31,10 +31,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     A
   }
 
-  A_anc_prev_t1 <- create_anc_Amat(naomi_data, "asfr", "population_t1")
-  A_anc_prev_t2 <- create_anc_Amat(naomi_data, "asfr", "population_t2")
-  A_anc_artcov_t1 <- create_anc_Amat(naomi_data, "asfr", "population_t1")
-  A_anc_artcov_t2 <- create_anc_Amat(naomi_data, "asfr", "population_t2")
+  A_anc_t1 <- create_anc_Amat(naomi_data, "asfr", "population_t1")
+  A_anc_t2 <- create_anc_Amat(naomi_data, "asfr", "population_t2")
 
   X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
@@ -83,6 +81,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
     Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
     Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
+    A_anc_t1 = A_anc_t1,
+    A_anc_t2 = A_anc_t2,
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
@@ -123,19 +123,15 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_recent = naomi_data$recent_dat$x,
     n_recent = naomi_data$recent_dat$n,
     ##
-    A_anc_prev_t1 = A_anc_prev_t1,
     idx_anc_prev_t1 = naomi_data$anc_prev_t1_dat$area_idx - 1L,
     x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_x,
     n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_n,
-    A_anc_artcov_t1 = A_anc_artcov_t1,
     idx_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$area_idx - 1L,
     x_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_x,
     n_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_n,
-    A_anc_prev_t2 = A_anc_prev_t2,
     idx_anc_prev_t2 = naomi_data$anc_prev_t2_dat$area_idx - 1L,
     x_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_x,
     n_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_n,
-    A_anc_artcov_t2 = A_anc_artcov_t2,
     idx_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$area_idx - 1L,
     x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_x,
     n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
