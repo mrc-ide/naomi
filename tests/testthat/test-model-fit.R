@@ -32,7 +32,7 @@ test_that("exceeding maximum iterations throws a warning", {
 test_that("model fits with differing number of ANC observations T1 and T2", {
 
   ancdat <- mwi_anc_testing %>%
-    filter(area_id %in% a_naomi_mf$mf_areas$area_id) %>%
+    dplyr::filter(area_id %in% a_naomi_mf$mf_areas$area_id) %>%
     dplyr::group_by(year) %>%
     dplyr::filter(year == 2016 |
                   year == 2018 & dplyr::row_number() == 3) %>%
