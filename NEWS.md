@@ -1,5 +1,9 @@
 # naomi 0.0.31
 
+* Implement ANC prevalence and ART coverage for all areas.
+
+# naomi 0.0.31
+
 * Fix validation bug caused by missing programme options
 
 # naomi 0.0.30

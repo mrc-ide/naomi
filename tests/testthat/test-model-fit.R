@@ -32,9 +32,10 @@ test_that("exceeding maximum iterations throws a warning", {
 test_that("model fits with differing number of ANC observations T1 and T2", {
 
   ancdat <- mwi_anc_testing %>%
+    filter(area_id %in% a_naomi_mf$mf_areas$area_id) %>%
     dplyr::group_by(year) %>%
     dplyr::filter(year == 2016 |
-                  year == 2018 & dplyr::row_number() == 1) %>%
+                  year == 2018 & dplyr::row_number() == 3) %>%
     dplyr::ungroup()
   
   naomi_data <- select_naomi_data(a_naomi_mf,
@@ -50,8 +51,8 @@ test_that("model fits with differing number of ANC observations T1 and T2", {
                                   anc_artcov_year_t2 = 2018)
 
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
-  a_fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+  fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 
-  expect_equal(a_fit$convergence, 0)
+  expect_equal(fit$convergence, 0)
   
 })
