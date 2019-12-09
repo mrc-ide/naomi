@@ -1,3 +1,7 @@
+# naomi 0.0.32
+
+* Add receiving ART output indicator
+
 # naomi 0.0.31
 
 * Implement ANC prevalence and ART coverage for all areas.
