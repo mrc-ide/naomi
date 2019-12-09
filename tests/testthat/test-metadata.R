@@ -39,9 +39,10 @@ test_that("can get plot metadata for a country", {
       "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
   expect_true(all(unique(metadata$indicator) %in%
-                    c("art_coverage", "current_art",  "prevalence", "art_number",
-                      "incidence", "new_infections", "plhiv", "population",
-                      "recent", "vls")))
+                  c("art_coverage", "current_art", "receiving_art",
+                    "prevalence", "art_number",
+                    "incidence", "new_infections", "plhiv", "population",
+                    "recent", "vls")))
 })
 
 test_that("can get plot metadata for missing country with defaults", {
@@ -54,15 +55,16 @@ test_that("can get plot metadata for missing country with defaults", {
       "colour", "min", "max", "invert_scale") %in%
       names(metadata$result)))
   expect_true(all(unique(metadata$result$indicator) %in%
-                    c("art_coverage", "current_art",  "prevalence", "art_number",
-                      "incidence", "new_infections", "plhiv", "population",
-                      "recent", "vls")))
+                  c("art_coverage", "current_art", "receiving_art",
+                    "prevalence", "art_number",
+                    "incidence", "new_infections", "plhiv", "population",
+                    "recent", "vls")))
 })
 
 test_that("colour scales metadata is well formed", {
   scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
   expect_true(all(scales$indicator %in%
-    c("art_coverage", "current_art", "prevalence", "vls", "recent",
+    c("art_coverage", "current_art", "receiving_art", "prevalence", "vls", "recent",
       "art_number", "plhiv", "incidence", "population", "new_infections")))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
