@@ -432,7 +432,7 @@ Type objective_function<Type>::operator() ()
   mu_anc_alpha_t1 = logit(mu_anc_alpha_t1) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
   for(int i = 0; i < idx_anc_artcov_t1.size(); i++)
     val -= dbinom_robust(x_anc_artcov_t1[i], n_anc_artcov_t1[i],
-			 mu_anc_rho_t1[idx_anc_artcov_t1[i]], true);
+			 mu_anc_alpha_t1[idx_anc_artcov_t1[i]], true);
 
 
   vector<Type> mu_anc_rho_t2(A_anc_t2 * rho_t2 / (A_anc_t2 * ones));
@@ -449,7 +449,7 @@ Type objective_function<Type>::operator() ()
     Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt);
   for(int i = 0; i < idx_anc_artcov_t2.size(); i++)
     val -= dbinom_robust(x_anc_artcov_t2[i], n_anc_artcov_t2[i],
-			 mu_anc_rho_t2[idx_anc_artcov_t2[i]], true);
+			 mu_anc_alpha_t2[idx_anc_artcov_t2[i]], true);
 
 
   // * ART attendance model *
