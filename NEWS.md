@@ -1,11 +1,15 @@
-# naomi 0.0.32
+# naomi 0.0.34
 
 * If there is no ART data at time 2, use logit change in ART coverage between time 1 and time 2 to approximate change in ART coverage. Do not estimate non-identifiable parameters.
 
-# naomi 0.0.31
+# naomi 0.0.33
 
 * Implement ANC prevalence and ART coverage for all areas.
 * Add ANC prevalence and ART coverage to indicators outputs.  Note: currently this si implemented only for age 15-49 at the level of model fitting. This should enable comparisons with input data. Later this can be extended for higher level aggregations.
+
+# naomi 0.0.32
+
+* Add receiving ART output indicator
 
 # naomi 0.0.31
 
