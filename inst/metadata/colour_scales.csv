@@ -9,6 +9,7 @@ default,population,interpolateViridis,0,20000000,FALSE
 default,plhiv,interpolateMagma,0,10000000,TRUE
 default,incidence,interpolateMagma,0,0.01,TRUE
 default,new_infections,interpolateMagma,0,40000,TRUE
+default,receiving_art,interpolateViridis,0,80000,FALSE
 MWI,current_art,interpolateViridis,0,80000,FALSE
 MWI,prevalence,interpolateMagma,0,0.5,TRUE
 MWI,art_coverage,interpolateViridis,0,1,FALSE
@@ -19,3 +20,4 @@ MWI,population,interpolateViridis,0,20000000,FALSE
 MWI,plhiv,interpolateMagma,0,10000000,TRUE
 MWI,incidence,interpolateMagma,0,0.01,TRUE
 MWI,new_infections,interpolateMagma,0,40000,TRUE
+MWI,receiving_art,interpolateViridis,0,1,FALSE
