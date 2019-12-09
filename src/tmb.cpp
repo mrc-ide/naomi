@@ -40,6 +40,7 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Z_rho_as);
   DATA_SPARSE_MATRIX(Z_alpha_a);
   DATA_SPARSE_MATRIX(Z_alpha_as);
+  DATA_SPARSE_MATRIX(Z_alpha_xt);
 
   DATA_VECTOR(logit_rho_offset);
   DATA_VECTOR(logit_alpha_offset);
@@ -387,7 +388,7 @@ Type objective_function<Type>::operator() ()
   ones.fill(1.0);
 
 
-  vector<Type> mu_alpha_t2(mu_alpha + X_alpha_t2 * beta_alpha_t2 + Z_x * u_alpha_xt * sigma_alpha_xt);
+  vector<Type> mu_alpha_t2(mu_alpha + X_alpha_t2 * beta_alpha_t2 + Z_alpha_xt * u_alpha_xt * sigma_alpha_xt);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
   vector<Type> plhiv_t2(Lproj * plhiv_t1);
   vector<Type> rho_t2(plhiv_t2 / population_t2);

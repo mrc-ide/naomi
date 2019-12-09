@@ -56,3 +56,109 @@ test_that("model fits with differing number of ANC observations T1 and T2", {
   expect_equal(fit$convergence, 0)
   
 })
+
+test_that("model fit with no ART data at T2", {
+
+    naomi_data <- select_naomi_data(a_naomi_mf,
+                                    mwi_survey_hiv_indicators,
+                                    anc_testing = mwi_anc_testing,
+                                    mwi_art_number,
+                                    prev_survey_ids = c("MWI2016PHIA", "MWI2015DHS"),
+                                    artcov_survey_ids = "MWI2016PHIA",
+                                    recent_survey_ids = "MWI2016PHIA",
+                                    anc_prev_year_t1 = 2016,
+                                    anc_prev_year_t2 = 2018,
+                                    anc_artcov_year_t1 = 2016,
+                                    anc_artcov_year_t2 = 2018,
+                                    artnum_calendar_quarter_t2 = NULL)
+
+    tmb_inputs <- prepare_tmb_inputs(naomi_data)
+    fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+    expect_equal(nrow(naomi_data$artnum_t2_dat), 0)
+    expect_equal(tmb_inputs$par_init$beta_alpha_t2, numeric(0))
+    expect_equal(tmb_inputs$par_init$u_alpha_xt, numeric(0))
+    expect_equal(ncol(tmb_inputs$data$Z_alpha_xt), 0)
+    expect_equal(ncol(tmb_inputs$data$X_alpha_t2), 0)
+    expect_equal(tmb_inputs$data$x_artnum_t2, integer(0))
+
+    expect_true(!"beta_alpha_t2" %in% names(fit$par.full))
+    expect_true(!"u_alpha_xt" %in% names(fit$par.full))
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+, integer(0))
+
+  
+}

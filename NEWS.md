@@ -1,3 +1,7 @@
+# naomi 0.0.32
+
+* If there is no ART data at time 2, use logit change in ART coverage between time 1 and time 2 to approximate change in ART coverage. Do not estimate non-identifiable parameters.
+
 # naomi 0.0.31
 
 * Implement ANC prevalence and ART coverage for all areas.

@@ -62,13 +62,22 @@ prepare_tmb_inputs <- function(naomi_data) {
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
 
+  ## If no t2 ART data, do not fit a change
+  if(nrow(naomi_data$artnum_t2_dat) == 0) {
+    f_alpha_t2 <- ~0
+    f_alpha_xt <- ~0
+  } else {
+    f_alpha_t2 <- ~1
+    f_alpha_xt <- ~0 + area_idf
+  }
+
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
     Lproj = naomi_data$Lproj,
     X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
-    X_alpha_t2 = stats::model.matrix(~1, df),
+    X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
     X_lambda = stats::model.matrix(~as.integer(sex == "female"), df),
     X_ancrho = stats::model.matrix(~1, naomi_data$mf_areas),
     X_ancalpha = stats::model.matrix(~1, naomi_data$mf_areas),
@@ -78,6 +87,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_rho_as = Matrix::sparse.model.matrix(f_rho_a, df) * (df$sex == "female"),
     Z_alpha_a = Matrix::sparse.model.matrix(f_alpha_a, df),
     Z_alpha_as = Matrix::sparse.model.matrix(f_alpha_a, df) * (df$sex == "female"),
+    Z_alpha_xt = Matrix::sparse.model.matrix(f_alpha_xt, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
     Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
     Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
@@ -170,7 +180,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     ui_alpha_xs = numeric(ncol(dtmb$Z_xs)),
     u_alpha_a = numeric(ncol(dtmb$Z_alpha_a)),
     u_alpha_as = numeric(ncol(dtmb$Z_alpha_as)),
-    u_alpha_xt = numeric(ncol(dtmb$Z_x)),
+    u_alpha_xt = numeric(ncol(dtmb$Z_alpha_xt)),
     ##
     log_sigma_lambda_x = 0,
     ui_lambda_x = numeric(ncol(dtmb$Z_x)),
