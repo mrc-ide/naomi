@@ -516,6 +516,11 @@ Type objective_function<Type>::operator() ()
   vector<Type> infections_t2_out(A_out * infections_t2);
   vector<Type> lambda_t2_out(infections_t2_out / (population_t2_out - plhiv_t2_out));
 
+  vector<Type> anc_rho_t1_out(invlogit(mu_anc_rho_t1));
+  vector<Type> anc_rho_t2_out(invlogit(mu_anc_rho_t2));
+
+  vector<Type> anc_alpha_t1_out(invlogit(mu_anc_alpha_t1));
+  vector<Type> anc_alpha_t2_out(invlogit(mu_anc_alpha_t2));
   
   REPORT(plhiv_t1);
   REPORT(population_t1);
@@ -554,11 +559,10 @@ Type objective_function<Type>::operator() ()
   REPORT(infections_t2_out);
 
 
-  REPORT(mu_anc_rho_t1);
-  REPORT(mu_anc_alpha_t1);
-
-  // REPORT(mu_anc_rho_t2);
-  // REPORT(mu_anc_alpha_t2);
+  REPORT(anc_rho_t1_out);
+  REPORT(anc_alpha_t1_out);
+  REPORT(anc_rho_t2_out);
+  REPORT(anc_alpha_t2_out);
 
   REPORT(pR_i);
   REPORT(nu);
