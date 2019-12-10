@@ -11,12 +11,3 @@ test_that("translation initialisation calls traduire_register", {
   expect_error(traduire::translator("package:naomi"), NA)
   expect_true("package:naomi" %in% traduire::translator_list())
 })
-
-test_that("set language", {
-  obj <- traduire::translator("package:naomi")
-  expect_equal(obj$language(), "en")
-  reset <- naomi_set_language("fr")
-  expect_equal(obj$language(), "fr")
-  reset()
-  expect_equal(obj$language(), "en")
-})
