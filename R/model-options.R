@@ -58,6 +58,17 @@ validate_model_options <- function(data, options) {
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
     stop("ART dataset not provided. ART data cannot be selected Yes to include.")
 
+  ##   
+  area_merged <- sf::read_sf(data$shape)
+  population <- readr::read_csv(data$population)
+  survey <- readr::read_csv(data$survey)
+
+  ## # Area selection
+  ## !!! TODO: temporary check. More comprehensive validation should be done
+  ##     with overhauling the data.tree stuff.
+  if(options$area_level == 0)
+    stop("Cannot fit model at country level. Choose a different level.")
+  
 
   ## # Population inputs
 
