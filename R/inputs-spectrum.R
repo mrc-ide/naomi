@@ -219,11 +219,11 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
     dplyr::mutate(L = hivpop2 / hivpop1,
                   hivpop1 = NULL,
                   hivpop2 = NULL) %>%
-    dplyr::left_join(
+    dplyr::inner_join(
              dplyr::select(mf_model, spectrum_region_code, sex, age_group_id1 = age_group_id, area_id, idx1 = idx),
              by = c("spectrum_region_code", "sex", "age_group_id1")
            ) %>%
-    dplyr::left_join(
+    dplyr::inner_join(
              dplyr::select(mf_model, spectrum_region_code, sex, age_group_id2 = age_group_id, area_id, idx2 = idx),
              by = c("spectrum_region_code", "sex", "age_group_id2", "area_id")
            )
