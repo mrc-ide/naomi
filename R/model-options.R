@@ -95,7 +95,7 @@ validate_model_options <- function(data, options) {
     if (as.logical(options$artattend) &&
        ((is.null(options$include_art_t1) || options$include_art_t1 == "false") &&
        (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
-      stop("ART attendance model can only be estimated if ART programme data are used.")
+      stop(t_("art_attendance_impossible"))
     }
   }
 

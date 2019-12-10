@@ -9,6 +9,7 @@ addons:
       - libgdal-dev
       - libproj-dev
       - libudunits2-dev
+      - libv8-dev
 cache: packages
 r_packages:
   - covr
@@ -16,5 +17,6 @@ r_github_packages:
   - bergant/datamodelr
   - mrc-ide/eppasm
   - mrc-ide/specio
+  - reside-ic/traduire
 after_success:
   - Rscript -e 'covr::codecov()'

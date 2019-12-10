@@ -75,6 +75,25 @@ test_that("validate_model_options() handles NULL include_art_tX", {
 
   options$artattend <- "false"
   expect_true(validate_model_options(data, options))
-
 })
 
+
+test_that("error message translation", {
+  options <- a_hintr_options
+  options$artattend <- "true"
+  options$include_art_t1 <- "false"
+  options$include_art_t2 <- "false"
+
+  err_en <- "ART attendance model can only be estimated if ART programme data are used."
+  err_fr <- "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées"
+
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_en)
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_fr)
+  reset()
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_en)
+})
