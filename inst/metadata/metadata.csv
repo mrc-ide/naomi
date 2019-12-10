@@ -14,6 +14,8 @@ output,choropleth,population,mean,,,indicator_id,1,Population
 output,choropleth,plhiv,mean,,,indicator_id,3,PLHIV
 output,choropleth,incidence,mean,,,indicator_id,7,HIV incidence
 output,choropleth,new_infections,mean,,,indicator_id,8,New infections
+output,choropleth,anc_prevalence,mean,lower,upper,indicator_id,9,ANC HIV prevalence
+output,choropleth,anc_art_coverage,mean,lower,upper,indicator_id,10,ANC prior ART coverage
 output,barchart,prevalence,mean,lower,upper,indicator_id,2,HIV prevalence
 output,barchart,art_coverage,mean,lower,upper,indicator_id,4,ART coverage
 output,barchart,current_art,mean,lower,upper,indicator_id,5,ART number
@@ -22,3 +24,5 @@ output,barchart,population,mean,lower,upper,indicator_id,1,Population
 output,barchart,plhiv,mean,lower,upper,indicator_id,3,PLHIV
 output,barchart,incidence,mean,lower,upper,indicator_id,7,HIV incidence
 output,barchart,new_infections,mean,lower,upper,indicator_id,8,New infections
+output,barchart,anc_prevalence,mean,lower,upper,indicator_id,9,ANC HIV prevalence
+output,barchart,anc_art_coverage,mean,lower,upper,indicator_id,10,ANC prior ART coverage

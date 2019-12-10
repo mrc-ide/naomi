@@ -11,48 +11,19 @@ prepare_tmb_inputs <- function(naomi_data) {
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
 
-  ## ANC prevalence model matrices
-  anc_prev_t1_dat <- naomi_data$anc_prev_t1_dat %>%
-    dplyr::left_join(
-             naomi_data$mf_areas,
-             by = "area_id"
-           )
+  create_anc_Amat <- function(naomi_mf, asfr_col, population_col) {
 
-  anc_artcov_t1_dat <- naomi_data$anc_artcov_t1_dat %>%
-    dplyr::left_join(
-             naomi_data$mf_areas,
-             by = "area_id"
-           )
-
-  anc_prev_t2_dat <- naomi_data$anc_prev_t2_dat %>%
-    dplyr::left_join(
-             naomi_data$mf_areas,
-             by = "area_id"
-           )
-
-  anc_artcov_t2_dat <- naomi_data$anc_artcov_t2_dat %>%
-    dplyr::left_join(
-             naomi_data$mf_areas,
-             by = "area_id"
-           )
-
-  create_anc_Amat <- function(dat, naomi_mf, asfr_col, population_col) {
-    A <- dat %>%
-      dplyr::inner_join(
-               naomi_data$mf_model,
-               by = "area_id"
-             ) %>%
+    A <- naomi_data$mf_model %>%
       dplyr::transmute(
                area_id,
-               anc_idx,
+               area_idx,
                idx,
                births = !!rlang::sym(asfr_col) * !!rlang::sym(population_col)
              ) %>%
-      dplyr::filter(births > 0) %>%
-    {
-      Matrix::spMatrix(nrow(dat),
+      {
+      Matrix::spMatrix(nrow(naomi_data$mf_areas),
                        nrow(naomi_data$mf_model),
-                       .$anc_idx,
+                       .$area_idx,
                        .$idx,
                        .$births)
     }
@@ -60,10 +31,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     A
   }
 
-  A_anc_prev_t1 <- create_anc_Amat(anc_prev_t1_dat, naomi_data, "asfr", "population_t1")
-  A_anc_prev_t2 <- create_anc_Amat(anc_prev_t2_dat, naomi_data, "asfr", "population_t2")
-  A_anc_artcov_t1 <- create_anc_Amat(anc_artcov_t1_dat, naomi_data, "asfr", "population_t1")
-  A_anc_artcov_t2 <- create_anc_Amat(anc_artcov_t2_dat, naomi_data, "asfr", "population_t2")
+  A_anc_t1 <- create_anc_Amat(naomi_data, "asfr", "population_t1")
+  A_anc_t2 <- create_anc_Amat(naomi_data, "asfr", "population_t2")
 
   X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
@@ -101,8 +70,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha_t2 = stats::model.matrix(~1, df),
     X_lambda = stats::model.matrix(~as.integer(sex == "female"), df),
-    X_ancrho = stats::model.matrix(~1, anc_prev_t1_dat),
-    X_ancalpha = stats::model.matrix(~1, anc_artcov_t1_dat),
+    X_ancrho = stats::model.matrix(~1, naomi_data$mf_areas),
+    X_ancalpha = stats::model.matrix(~1, naomi_data$mf_areas),
     Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
     Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
     Z_rho_a = Matrix::sparse.model.matrix(f_rho_a, df),
@@ -110,8 +79,10 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_alpha_a = Matrix::sparse.model.matrix(f_alpha_a, df),
     Z_alpha_as = Matrix::sparse.model.matrix(f_alpha_a, df) * (df$sex == "female"),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
-    Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_prev_t1_dat),
-    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, anc_artcov_t1_dat),
+    Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
+    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
+    A_anc_t1 = A_anc_t1,
+    A_anc_t2 = A_anc_t2,
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
@@ -152,18 +123,18 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_recent = naomi_data$recent_dat$x,
     n_recent = naomi_data$recent_dat$n,
     ##
-    A_anc_prev_t1 = A_anc_prev_t1,
-    x_anc_prev_t1 = anc_prev_t1_dat$anc_prev_x,
-    n_anc_prev_t1 = anc_prev_t1_dat$anc_prev_n,
-    A_anc_artcov_t1 = A_anc_artcov_t1,
-    x_anc_artcov_t1 = anc_artcov_t1_dat$anc_artcov_x,
-    n_anc_artcov_t1 = anc_artcov_t1_dat$anc_artcov_n,
-    A_anc_prev_t2 = A_anc_prev_t2,
-    x_anc_prev_t2 = anc_prev_t2_dat$anc_prev_x,
-    n_anc_prev_t2 = anc_prev_t2_dat$anc_prev_n,
-    A_anc_artcov_t2 = A_anc_artcov_t2,
-    x_anc_artcov_t2 = anc_artcov_t2_dat$anc_artcov_x,
-    n_anc_artcov_t2 = anc_artcov_t2_dat$anc_artcov_n,
+    idx_anc_prev_t1 = naomi_data$anc_prev_t1_dat$area_idx - 1L,
+    x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_x,
+    n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_n,
+    idx_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$area_idx - 1L,
+    x_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_x,
+    n_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_n,
+    idx_anc_prev_t2 = naomi_data$anc_prev_t2_dat$area_idx - 1L,
+    x_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_x,
+    n_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_n,
+    idx_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$area_idx - 1L,
+    x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_x,
+    n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
     ##
     A_artattend_t1 = A_artattend_t1,
     x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,

@@ -739,7 +739,6 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
     ## No ANC prevalence data used
     anc_prev_dat <- data.frame(
       area_id = character(0),
-      anc_idx = integer(0),
       anc_prev_x = integer(0),
       anc_prev_n = integer(0),
       stringsAsFactors = FALSE
@@ -764,7 +763,6 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       dplyr::ungroup() %>%
       dplyr::transmute(
                area_id,
-               anc_idx = dplyr::row_number(),
                anc_prev_x = ancrt_known_pos + ancrt_test_pos,
                anc_prev_n = ancrt_known_pos + ancrt_tested
              )
@@ -773,7 +771,15 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       stop("ANC testing positive greater than anc testing total known status")
     
   }
-
+  
+  ## Add area index
+  anc_prev_dat <- anc_prev_dat %>%
+    dplyr::left_join(
+             dplyr::select(naomi_mf$mf_areas, area_id, area_idx),
+             by = "area_id"
+           ) %>%
+    dplyr::select(area_id, area_idx, anc_prev_x, anc_prev_n)
+  
   anc_prev_dat
 }
 
@@ -786,7 +792,6 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
     ## No ANC ART coverage data used
     anc_artcov_dat <- data.frame(
       area_id = character(0),
-      anc_idx = integer(0),
       anc_artcov_x = integer(0),
       anc_artcov_n = integer(0),
       stringsAsFactors = FALSE
@@ -812,7 +817,6 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
       dplyr::transmute(
                area_id,
-               anc_idx = dplyr::row_number(),
                anc_artcov_x = ancrt_already_art,
                anc_artcov_n = ancrt_totpos
              )
@@ -821,6 +825,15 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       stop("ANC testing on ART greater than anc testing total positive.")
 
   }
+
+  ## Add area index
+  anc_artcov_dat <- anc_artcov_dat %>%
+    dplyr::left_join(
+             dplyr::select(naomi_mf$mf_areas, area_id, area_idx),
+             by = "area_id"
+           ) %>%
+    dplyr::select(area_id, area_idx, anc_artcov_x, anc_artcov_n)
+
 
   anc_artcov_dat
 }
