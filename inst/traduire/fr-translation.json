@@ -1,3 +1,3 @@
 {
-    "validatation_no_calibration": "Calibration de population Spectrum n'est pas encore implémenté"
+    "art_attendance_impossible": "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées"
 }

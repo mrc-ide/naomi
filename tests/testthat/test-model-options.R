@@ -62,48 +62,6 @@ test_that("validate model options returns error for invalid", {
 
 })
 
-test_that("validation of model options is translated", {
-  data <- list(
-    pjnz = system_file("extdata/mwi2019.PJNZ"),
-    population = system_file("extdata/population/population_agesex.csv"),
-    shape = system_file("extdata/areas/area_merged.geojson"),
-    survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-    programme = system_file("extdata/programme/art_number.csv"),
-    anc = system_file("extdata/programme/anc_testing.csv")
-  )
-  options <- list(
-    area_scope = "MWI",
-    area_level = 4,
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    include_art = "true",
-    anc_prevalence_year1 = 2016,
-    anc_prevalence_year2 = 2018,
-    anc_art_coverage_year1 = 2016,
-    anc_art_coverage_year2 = 2018,
-    no_of_samples = 20,
-    # These are the bad options
-    spectrum_population_calibration = TRUE,
-    spectrum_plhiv_0to14_calibration = "national"
-  )
-
-  expect_error(
-    validate_model_options(data, options),
-    "Spectrum population calibration not yet implemented")
-  reset <- naomi_set_language("fr")
-  on.exit(reset())
-  expect_error(
-    validate_model_options(data, options),
-    "Calibration de population Spectrum n'est pas encore implémenté")
-  reset()
-  expect_error(
-    validate_model_options(data, options),
-    "Spectrum population calibration not yet implemented")
-})
-
 test_that("validate_model_options() handles NULL include_art_tX", {
 
   data <- a_hintr_data
@@ -119,3 +77,23 @@ test_that("validate_model_options() handles NULL include_art_tX", {
   expect_true(validate_model_options(data, options))
 })
 
+
+test_that("error message translation", {
+  options <- a_hintr_options
+  options$artattend <- "true"
+  options$include_art_t1 <- "false"
+  options$include_art_t2 <- "false"
+
+  err_en <- "ART attendance model can only be estimated if ART programme data are used."
+  err_fr <- "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées"
+
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_en)
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_fr)
+  reset()
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_en)
+})
