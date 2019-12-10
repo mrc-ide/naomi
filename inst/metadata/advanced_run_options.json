@@ -1,213 +1,207 @@
 {
-    "label": "Calibration options",
-    "description": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
-    "controlGroups": [
-	{
-	    "label": "Adjust to Spectrum population size",
-	    "controls": [
+	"label": "Calibration options",
+	"description": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
+	"controlGroups": [
 		{
-		    "name": "spectrum_population_calibration",
-		    "type": "select",
-		    "options":
-		    [
-			{
-			    "id": "none",
-			    "label": "None"
-			},
-			{
-			    "id": "national",
-			    "label": "National"
-			},
-			{
-			    "id": "subnational",
-			    "label": "Subnational"
-			}
-		    ],
-		    "value": "national",
-		    "required": true,
-		    "helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
-		}
-	    ]
-	},
-	{
-	    "label": "Adjust to Spectrum PLHIV",
-	    "controls": [
-		{
-		    "name": "spectrum_plhiv_calibration_level",
-		    "label": "Level",
-		    "type": "select",
-		    "required": true,
-		    "options":
-		    [
-			{
-			    "id": "none",
-			    "label": "None"
-			},
-			{
-			    "id": "national",
-			    "label": "National"
-			},
-			{
-			    "id": "subnational",
-			    "label": "Subnational"
-			}
-		    ],
-		    "value": "none",
-		    "helpText": "Calibrate to Spectrum mean total PLHIV."
+			"label": "Adjust to Spectrum population size",
+			"controls": [
+				{
+					"name": "spectrum_population_calibration",
+					"type": "select",
+					"options": [
+						{
+							"id": "none",
+							"label": "None"
+						},
+						{
+							"id": "national",
+							"label": "National"
+						},
+						{
+							"id": "subnational",
+							"label": "Subnational"
+						}
+					],
+					"value": "national",
+					"required": true,
+					"helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
+				}
+			]
 		},
 		{
-		    "name": "spectrum_plhiv_calibration_strat",
-		    "label": "Stratification",
-		    "type": "select",
-		    "required": true,
-		    "options":
-		    [
-			{
-			    "id": "age_coarse",
-			    "label": "Age <15 / 15+"
-			},
-			{
-			    "id": "sex_age_coarse",
-			    "label": "Sex and age <15 / 15+"
-			},
-			{
-			    "id": "age_group",
-			    "label": "5-year age group"
-			},
-			{
-			    "id": "sex_age_group",
-			    "label": "Sex and 5-year age group"
-			}
-		    ],
-		    "value": "sex_age_coarse",
-		    "helpText": "Calibrate to Spectrum mean total PLHIV."
-		}
-	    ]
-	},
-	{
-	    "label": "Adjust to Spectrum number on ART",
-	    "controls": [
-		{
-		    "name": "spectrum_artnum_calibration_level",
-		    "label": "Level",
-		    "type": "select",
-		    "required": true,
-		    "options":
-		    [
-			{
-			    "id": "none",
-			    "label": "None"
-			},
-			{
-			    "id": "national",
-			    "label": "National"
-			},
-			{
-			    "id": "subnational",
-			    "label": "Subnational"
-			}
-		    ],
-		    "value": "none",
-		    "helpText": "Calibrate to Spectrum mean total on ART."
+			"label": "Adjust to Spectrum PLHIV",
+			"controls": [
+				{
+					"name": "spectrum_plhiv_calibration_level",
+					"label": "Level",
+					"type": "select",
+					"required": true,
+					"options": [
+						{
+							"id": "none",
+							"label": "None"
+						},
+						{
+							"id": "national",
+							"label": "National"
+						},
+						{
+							"id": "subnational",
+							"label": "Subnational"
+						}
+					],
+					"value": "none",
+					"helpText": "Calibrate to Spectrum mean total PLHIV."
+				},
+				{
+					"name": "spectrum_plhiv_calibration_strat",
+					"label": "Stratification",
+					"type": "select",
+					"required": true,
+					"options": [
+						{
+							"id": "age_coarse",
+							"label": "Age <15 / 15+"
+						},
+						{
+							"id": "sex_age_coarse",
+							"label": "Sex and age <15 / 15+"
+						},
+						{
+							"id": "age_group",
+							"label": "5-year age group"
+						},
+						{
+							"id": "sex_age_group",
+							"label": "Sex and 5-year age group"
+						}
+					],
+					"value": "sex_age_coarse",
+					"helpText": "Calibrate to Spectrum mean total PLHIV."
+				}
+			]
 		},
 		{
-		    "name": "spectrum_artnum_calibration_strat",
-		    "label": "Stratification",
-		    "type": "select",
-		    "required": true,
-		    "options":
-		    [
-			{
-			    "id": "age_coarse",
-			    "label": "Age <15 / 15+"
-			},
-			{
-			    "id": "sex_age_coarse",
-			    "label": "Sex and age <15 / 15+"
-			},
-			{
-			    "id": "age_group",
-			    "label": "5-year age group"
-			},
-			{
-			    "id": "sex_age_group",
-			    "label": "Sex and 5-year age group"
-			}
-		    ],
-		    "value": "sex_age_coarse",
-		    "helpText": "Calibrate to Spectrum mean total number on ART."
+			"label": "Adjust to Spectrum number on ART",
+			"controls": [
+				{
+					"name": "spectrum_artnum_calibration_level",
+					"label": "Level",
+					"type": "select",
+					"required": true,
+					"options": [
+						{
+							"id": "none",
+							"label": "None"
+						},
+						{
+							"id": "national",
+							"label": "National"
+						},
+						{
+							"id": "subnational",
+							"label": "Subnational"
+						}
+					],
+					"value": "none",
+					"helpText": "Calibrate to Spectrum mean total on ART."
+				},
+				{
+					"name": "spectrum_artnum_calibration_strat",
+					"label": "Stratification",
+					"type": "select",
+					"required": true,
+					"options": [
+						{
+							"id": "age_coarse",
+							"label": "Age <15 / 15+"
+						},
+						{
+							"id": "sex_age_coarse",
+							"label": "Sex and age <15 / 15+"
+						},
+						{
+							"id": "age_group",
+							"label": "5-year age group"
+						},
+						{
+							"id": "sex_age_group",
+							"label": "Sex and 5-year age group"
+						}
+					],
+					"value": "sex_age_coarse",
+					"helpText": "Calibrate to Spectrum mean total number on ART."
+				}
+			]
 		}
-	    ]
-	}
-    ]
+	]
 },
 {
-    "label": "Output options",
-    "description": "Options for controlling downloaded model results",
-    "controlGroups": []
+	"label": "Output options",
+	"description": "Options for controlling downloaded model results",
+	"controlGroups": []
 },
 {
-    "label": "Advanced",
-    "description": "Advanced model run options",
-    "controlGroups": [
-	{
-	    "label": "Maximum iterations",
-	    "controls": [
+	"label": "Advanced",
+	"description": "Advanced model run options",
+	"controlGroups": [
 		{
-		    "name": "max_iterations",
-		    "type": "number",
-		    "value": 250,
-		    "helpText": "Maximum number of iteration for model run",
-		    "required": true
-		}
-	    ]
-	},
-	{
-	    "label": "Number of simulations",
-	    "controls": [
+			"label": "Maximum iterations",
+			"controls": [
+				{
+					"name": "max_iterations",
+					"type": "number",
+					"value": 250,
+					"helpText": "Maximum number of iteration for model run",
+					"required": true
+				}
+			]
+		},
 		{
-		    "name": "no_of_samples",
-		    "type": "number",
-		    "value": 1000,
-		    "helpText": "Number of simulatons for generating uncertainty ranges",
-		    "required": true
-		}
-	    ]
-	},
-	{
-	    "label": "Simulation seed",
-	    "controls": [
+			"label": "Number of simulations",
+			"controls": [
+				{
+					"name": "no_of_samples",
+					"type": "number",
+					"value": 1000,
+					"helpText": "Number of simulatons for generating uncertainty ranges",
+					"required": true
+				}
+			]
+		},
 		{
-		    "name": "rng_seed",
-		    "type": "number",
-		    "value": 28,
-		    "required": false,
-		    "helpText": "Random number generator seed for uncertainty sample"
-		}
-	    ]
-	},
-	{
-	    "label": "Permissive",
-	    "controls": [
+			"label": "Simulation seed",
+			"controls": [
+				{
+					"name": "rng_seed",
+					"type": "number",
+					"value": 28,
+					"required": false,
+					"helpText": "Random number generator seed for uncertainty sample"
+				}
+			]
+		},
 		{
-		    "name": "permissive",
-		    "type": "select",
-		    "required": true,
-		    "options":
-		    [
-			{
-			    "id": "true",
-			    "label": "Yes"
-			},
-			{
-			    "id": "false",
-			    "label": "No"
-			}
-		    ],
-		    "value": "false",
-		    "helpText": "Select 'Yes' to allow fits with convergence or data errors."
+			"label": "Permissive",
+			"controls": [
+				{
+					"name": "permissive",
+					"type": "select",
+					"required": true,
+					"options": [
+						{
+							"id": "true",
+							"label": "Yes"
+						},
+						{
+							"id": "false",
+							"label": "No"
+						}
+					],
+					"value": "false",
+					"helpText": "Select 'Yes' to allow fits with convergence or data errors."
+				}
+			]
 		}
-	    ]
-	}
-    ]
+	]
 }
