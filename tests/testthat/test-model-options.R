@@ -117,3 +117,4 @@ test_that("validate_model_options() handles NULL include_art_tX", {
   options$artattend <- "false"
   expect_true(validate_model_options(data, options))
 })
+

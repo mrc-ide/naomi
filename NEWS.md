@@ -1,3 +1,20 @@
+# naomi 0.0.33
+
+* Implement ANC prevalence and ART coverage for all areas.
+* Add ANC prevalence and ART coverage to indicators outputs.  Note: currently this si implemented only for age 15-49 at the level of model fitting. This should enable comparisons with input data. Later this can be extended for higher level aggregations.
+
+# naomi 0.0.32
+
+* Add receiving ART output indicator
+
+# naomi 0.0.31
+
+* Fix validation bug caused by missing programme options
+
+# naomi 0.0.30
+
+* Undo ANC prevalence and ART coverage at time 2 which errors for different areas at two time points. Fix coming later.
+
 # naomi 0.0.29
 
 * Patch model validation for options$include_art_t1 = NULL.

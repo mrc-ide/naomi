@@ -1,22 +1,28 @@
 data_type,plot_type,indicator,value_column,error_low_column,error_high_column,indicator_column,indicator_value,name
-survey,choropleth,prevalence,est,,,indicator,prev,Prevalence
+survey,choropleth,prevalence,est,,,indicator,prev,HIV prevalence
 survey,choropleth,art_coverage,est,,,indicator,artcov,ART coverage
 programme,choropleth,current_art,current_art,,,,,ART number
 survey,choropleth,recent,est,,,indicator,recent,Proportion recently infected
 survey,choropleth,vls,est,,,indicator,vls,Viral load suppression
-anc,choropleth,prevalence,prevalence,,,,,Prevalence
+anc,choropleth,prevalence,prevalence,,,,,HIV prevalence
 anc,choropleth,art_coverage,art_coverage,,,,,ART coverage
-output,choropleth,prevalence,mean,,,indicator_id,2,Prevalence
+output,choropleth,prevalence,mean,,,indicator_id,2,HIV prevalence
 output,choropleth,art_coverage,mean,,,indicator_id,4,ART coverage
 output,choropleth,current_art,mean,,,indicator_id,5,ART number
+output,choropleth,receiving_art,mean,,,indicator_id,6,Receiving ART
 output,choropleth,population,mean,,,indicator_id,1,Population
 output,choropleth,plhiv,mean,,,indicator_id,3,PLHIV
-output,choropleth,incidence,mean,,,indicator_id,6,Incidence
-output,choropleth,new_infections,mean,,,indicator_id,7,New Infections
-output,barchart,prevalence,mean,lower,upper,indicator_id,2,Prevalence
+output,choropleth,incidence,mean,,,indicator_id,7,HIV incidence
+output,choropleth,new_infections,mean,,,indicator_id,8,New infections
+output,choropleth,anc_prevalence,mean,lower,upper,indicator_id,9,ANC HIV prevalence
+output,choropleth,anc_art_coverage,mean,lower,upper,indicator_id,10,ANC prior ART coverage
+output,barchart,prevalence,mean,lower,upper,indicator_id,2,HIV prevalence
 output,barchart,art_coverage,mean,lower,upper,indicator_id,4,ART coverage
 output,barchart,current_art,mean,lower,upper,indicator_id,5,ART number
+output,barchart,receiving_art,mean,lower,upper,indicator_id,6,Receiving ART
 output,barchart,population,mean,lower,upper,indicator_id,1,Population
 output,barchart,plhiv,mean,lower,upper,indicator_id,3,PLHIV
-output,barchart,incidence,mean,lower,upper,indicator_id,6,Incidence
-output,barchart,new_infections,mean,lower,upper,indicator_id,7,New Infections
+output,barchart,incidence,mean,lower,upper,indicator_id,7,HIV incidence
+output,barchart,new_infections,mean,lower,upper,indicator_id,8,New infections
+output,barchart,anc_prevalence,mean,lower,upper,indicator_id,9,ANC HIV prevalence
+output,barchart,anc_art_coverage,mean,lower,upper,indicator_id,10,ANC prior ART coverage

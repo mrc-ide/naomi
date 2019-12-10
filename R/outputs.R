@@ -1,7 +1,7 @@
 
 meta_indicator <-
   data.frame(
-    indicator_id = 1:8,
+    indicator_id = 1:10,
     indicator = c("population",
                   "prevalence",
                   "plhiv",
@@ -9,7 +9,9 @@ meta_indicator <-
                   "art_num_residents",
                   "art_num_attend",
                   "incidence",
-                  "infections"),
+                  "infections",
+                  "anc_prevalence",
+                  "anc_art_coverage"),
     indicator_label = c("Population",
                         "HIV Prevalence",
                         "PLHIV",
@@ -17,7 +19,9 @@ meta_indicator <-
                         "ART Number",
                         "Receiving ART",
                         "HIV Incidence",
-                        "New Infections"),
+                        "New Infections",
+                        "ANC HIV Prevalence",
+                        "ANC Prior ART Coverage"),
     description = c("Population size",
                     "Proportion of total population HIV positive",
                     "Number of people living with HIV",
@@ -25,7 +29,9 @@ meta_indicator <-
                     "Number on ART (residents)",
                     "Number receiving ART (attending)",
                     "HIV incidence rate per year",
-                    "Number of new infections per year"),
+                    "Number of new infections per year",
+                    "HIV prevalence among ANC attendees",
+                    "ART coverage among ANC attendees prior to first ANC"),
     parameter = c("population_out",
                   "rho_out",
                   "plhiv_out",
@@ -33,22 +39,26 @@ meta_indicator <-
                   "artnum_out",
                   "artattend_out",
                   "lambda_out",
-                  "infections_out"),
+                  "infections_out",
+                  "anc_rho",
+                  "anc_alpha"),
     format = NA,
     scale = NA,
     stringsAsFactors = FALSE
   )
 
 
-extract_indicators <- function(naomi_fit, naomi_mf) {
 
-  mf_out <- naomi_mf$mf_out
+extract_indicators <- function(naomi_fit, naomi_mf) {
 
   report <- naomi_fit$obj$report(naomi_fit$par.full)
 
-  get_est <- function(varname, indicator_id, calendar_quarter) {
+  get_est <- function(varname,
+                      indicator_id,
+                      calendar_quarter,
+                      mf = naomi_mf$mf_out) {
     v <- dplyr::mutate(
-      mf_out,
+      mf,
       quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
       indicator_id = indicator_id,
       mode = report[[varname]]
@@ -89,8 +99,21 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicators_t1 <- Map(get_est, names(indicator_ids_t1), indicator_ids_t1, naomi_mf$calendar_quarter1)
   indicators_t2 <- Map(get_est, names(indicator_ids_t2), indicator_ids_t2, naomi_mf$calendar_quarter2)
 
-  dplyr::bind_rows(indicators_t1, indicators_t2) %>%
-    dplyr::select(names(mf_out), quarter_id, indicator_id, mean, se, median, mode, lower, upper)
+  mf_anc_out <- naomi_mf$mf_areas %>%
+    dplyr::transmute(area_id,
+                     sex = "female",
+                     age_group_id = 18)
+
+  out <- dplyr::bind_rows(
+                  indicators_t1,
+                  get_est("anc_rho_t1_out", 9, naomi_mf$calendar_quarter1, mf_anc_out),
+                  get_est("anc_alpha_t1_out", 10, naomi_mf$calendar_quarter1, mf_anc_out),
+                  indicators_t2,
+                  get_est("anc_rho_t2_out", 9, naomi_mf$calendar_quarter2, mf_anc_out),
+                  get_est("anc_alpha_t2_out", 10, naomi_mf$calendar_quarter2, mf_anc_out))
+  
+  dplyr::select(out, names(naomi_mf$mf_out),
+                quarter_id, indicator_id, mean, se, median, mode, lower, upper)
 }
 
 
