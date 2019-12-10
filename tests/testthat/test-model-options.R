@@ -77,6 +77,14 @@ test_that("validate_model_options() handles NULL include_art_tX", {
   expect_true(validate_model_options(data, options))
 })
 
+test_that("validation error for invalid area selection", {
+  options <- a_hintr_options
+  options$area_scope <- "MWI"
+  options$area_level <- 0
+
+  expect_error(hintr_run_model(a_hintr_data, options),
+               "Cannot fit model at country level. Choose a different level.")
+})
 
 test_that("error message translation", {
   options <- a_hintr_options
