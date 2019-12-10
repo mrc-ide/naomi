@@ -102,6 +102,7 @@ test_that("validation of model options is translated", {
   expect_error(
     validate_model_options(data, options),
     "Spectrum population calibration not yet implemented")
+})
 
 test_that("validate_model_options() handles NULL include_art_tX", {
 
