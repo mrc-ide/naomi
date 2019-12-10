@@ -9,8 +9,6 @@
 naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 
   stopifnot(methods::is(areas, "naomi_areas"))
-
-
   
   age_group_ids <- unique(mf_model$age_group_id)
 
