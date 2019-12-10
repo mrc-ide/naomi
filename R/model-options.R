@@ -17,11 +17,11 @@ get_model_options_template <- function(art, anc) {
   templates <- list()
   templates$general <- read_options("general")
   templates$survey <- read_options("survey")
-  if (art) {
-    templates$art <- read_options("art")
-  }
   if (anc) {
     templates$anc <-  read_options("anc")
+  }
+  if (art) {
+    templates$art <- read_options("art")
   }
   templates$advanced <- read_options("advanced")
   templates
