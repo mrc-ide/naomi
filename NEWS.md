@@ -1,3 +1,8 @@
+# naomi 0.0.36
+
+* Reverse order of ANC and ART sections
+* Move artattend_log_gamma_offset into the advanced section
+
 # naomi 0.0.35
 
 * Throw error if trying to fit model at country level (mrc-1233).
