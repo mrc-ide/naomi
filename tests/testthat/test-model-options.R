@@ -3,7 +3,7 @@ context("model-options")
 test_that("can get valid model run options template", {
   options <- get_model_options_template(TRUE, TRUE)
   expect_length(options, 5)
-  expect_equal(names(options), c("general", "survey", "art", "anc", "advanced"))
+  expect_equal(names(options), c("general", "survey", "anc", "art", "advanced"))
   expect_true(any(grepl("General", options$general)))
   expect_true(any(grepl("<\\+area_scope_options\\+>", options$general)))
   expect_true(any(grepl("<\\+area_level_options\\+>", options$general)))

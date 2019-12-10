@@ -1,78 +1,67 @@
 {
-  "label": "ART",
-  "description": "Select whether to include ART data or not in model run",
-  "controlGroups": [
-    {
-	"label": "Include ART data",
-	"controls": [
-	    {
-		"name": "include_art_t1",
-		"label": "Time 1",
-		"type": "select",
-		"helpText": "Select whether to include ART data or not in model run",
-		"options":
-		[{
-		    "id": "true",
-		    "label": "Yes"
+	"label": "ART",
+	"description": "Select whether to include ART data or not in model run",
+	"controlGroups": [
+		{
+			"label": "Include ART data",
+			"controls": [
+				{
+					"name": "include_art_t1",
+					"label": "Time 1",
+					"type": "select",
+					"helpText": "Select whether to include ART data or not in model run",
+					"options": [
+						{
+							"id": "true",
+							"label": "Yes"
+						},
+						{
+							"id": "false",
+							"label": "No"
+						}
+					],
+					"required": true
+				},
+				{
+					"name": "include_art_t2",
+					"label": "Time 2",
+					"type": "select",
+					"helpText": "Select whether to include ART data or not in model run",
+					"options": [
+						{
+							"id": "true",
+							"label": "Yes"
+						},
+						{
+							"id": "false",
+							"label": "No"
+						}
+					],
+					"required": true
+				}
+			]
 		},
-		 {
-		     "id": "false",
-		     "label": "No"
-		 }],
-		"required": true
-            },
-	    {
-		"name": "include_art_t2",
-		"label": "Time 2",
-		"type": "select",
-		"helpText": "Select whether to include ART data or not in model run",
-		"options":
-		[{
-		    "id": "true",
-		    "label": "Yes"
-		},
-		 {
-		     "id": "false",
-		     "label": "No"
-		 }],
-		"required": true
-            }
+		{
+			"label": "Estimate neighbouring district ART attendance",
+			"controls": [
+				{
+					"name": "artattend",
+					"type": "select",
+					"required": true,
+					"options": [
+						{
+							"id": "false",
+							"label": "No"
+						},
+						{
+							"id": "true",
+							"label": "Yes"
+						}
+					],
+					"value": "false",
+					"helpText": "Model proportion of ART residents who seek treatment in neighboring districts."
+				}
+			]
+		}
 	]
-    },
-      {
-	  "label": "Estimate neighbouring district ART attendance",
-	  "controls": [
-	      {
-		  "name": "artattend",
-		  "type": "select",
-		  "required": true,
-		  "options":
-		  [
-		      {
-			  "id": "false",
-			  "label": "No"
-		      },
-		      {
-			  "id": "true",
-			  "label": "Yes"
-		      }
-		  ],
-		  "value": "false",
-		  "helpText": "Model proportion of ART residents who seek treatment in neighboring districts."
-	      }
-	  ]
-      },
-      {
-	  "label": "Logit prior mean for neighboring district attraction.",
-	  "controls": [
-	      {
-		  "name": "artattend_log_gamma_offset",
-		  "type": "number",
-		  "required": true,
-		  "value": -4,
-		  "helpText": "Logit offset for odds of obtaining ART in district j compared to home district."
-	      }
-	  ]
-      }
-  ]
 }
