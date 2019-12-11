@@ -203,6 +203,17 @@ naomi_model_frame <- function(area_merged,
     dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
     dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, births), sum) %>%
     dplyr::ungroup()
+  
+  ## Add number susceptible in previous year for Spectrum incidence calculation
+  group_vars <- c("spectrum_region_code", "year", "sex", "age_group")
+  
+  spec_aggr <- spec_aggr %>%
+    dplyr::left_join(
+             dplyr::mutate(spec_aggr, susc_previous_year = totpop - hivpop,
+                           year = year + 1) %>%
+             dplyr::select(group_vars, susc_previous_year),
+             by = group_vars
+           ) 
 
   spectrum_calibration <- dplyr::bind_rows(
                                    get_spec_aggr_interpolation(spec_aggr, calendar_quarter1),
@@ -302,12 +313,28 @@ naomi_model_frame <- function(area_merged,
 
 
   ## Add Spectrum inputs
+
+  ## TODO::insert flag to aggregate national or regional
+  spec_indicators <- spectrum_calibration %>%
+    dplyr::transmute(
+             spectrum_region_code,
+             sex,
+             age_group,
+             calendar_quarter,
+             prevalence = plhiv_spectrum / population_spectrum,
+             art_coverage = art_num_spectrum / plhiv_spectrum,
+             incidence = infections_spectrum / susc_previous_year_spectrum,
+             asfr = births_spectrum / population_spectrum
+           )
   
   mf_model <- mf_model %>%
     dplyr::left_join(
-             calc_spec_age_group_aggregate(spec_aggr) %>%
-             ## !!! NEEDS UPDATE
-             dplyr::filter(year == 2016) %>%
+             spec_indicators %>%
+             dplyr::filter(calendar_quarter == calendar_quarter1) %>%
+             dplyr::left_join(
+                      dplyr::select(get_age_groups(), age_group, age_group_id),
+                      by = "age_group"
+                    ) %>%
              dplyr::select(
                       spectrum_region_code,
                       sex,
@@ -372,8 +399,8 @@ naomi_model_frame <- function(area_merged,
                   log_gamma_offset = dplyr::if_else(jstar == 1, 0, as.numeric(artattend_log_gamma_offset)))
 
 
-  ## Incidence model
-
+  ## Incidence model  
+    
   mf_model <- mf_model %>%
     dplyr::left_join(
              get_age_groups() %>%
@@ -397,8 +424,12 @@ naomi_model_frame <- function(area_merged,
              logit_alpha_offset = 0,
 
            ) %>%
-  dplyr::ungroup()
+dplyr::ungroup()
 
+  ## Remove unneeded columns from spectrum_calibration
+  spectrum_calibration$susc_previous_year_spectrum <- NULL
+  spectrum_calibration$births_spectrum <- NULL
+  
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
             mf_areas = mf_areas,
