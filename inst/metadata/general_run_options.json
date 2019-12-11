@@ -1,6 +1,6 @@
 {
-  "label": "General",
-  "description": "Select general model options:",
+  "label": "t_(options_section_general)",
+  "description": "t_(options_section_general_description)",
   "controlGroups": [
     {
       "label": "Area scope",

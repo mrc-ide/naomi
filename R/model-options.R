@@ -28,9 +28,10 @@ get_model_options_template <- function(art, anc) {
 }
 
 read_options <- function(type) {
-  paste(readLines(
+  options <- paste(readLines(
     system_file("metadata", sprintf("%s_run_options.json", type)),
     encoding = "UTF-8"), collapse = "")
+  traduire::translator()$replace(options)
 }
 
 #' Validate a set of model options

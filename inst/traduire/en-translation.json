@@ -14,5 +14,7 @@
     "incidence": "HIV incidence",
     "new_infections": "New infections",
     "anc_hiv_prevalence": "ANC HIV prevalence",
-    "anc_prior_art_coverage": "ANC prior ART coverage"
+    "anc_prior_art_coverage": "ANC prior ART coverage",
+    "options_section_general": "General",
+    "options_section_general_description": "Select general model options:"
 }
