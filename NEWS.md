@@ -1,7 +1,10 @@
-
 # naomi 0.0.38
 
 * If there is no ART data at time 2, use logit change in ART coverage between time 1 and time 2 to approximate change in ART coverage. Do not estimate non-identifiable parameters.
+
+# naomi 0.0.37
+
+* Use Spectrum estimates at time 1 for transmission rate defaults (mrc-1236).
 
 # naomi 0.0.36
 
