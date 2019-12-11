@@ -1,6 +1,6 @@
 {
-    "art_attendance_impossible": "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées",
-    "hiv_prevalence": "Prévalence du VIH",
-    "options_section_general": "Générales",
-    "options_section_general_description": "Sélectionnez les options générales du modèle:"
+    "ART_ATTENDANCE_IMPOSSIBLE": "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées",
+    "HIV_PREVALENCE": "Prévalence du VIH",
+    "OPTIONS_GENERAL_LABEL": "Générales",
+    "OPTIONS_GENERAL_DESCRIPTION": "Sélectionnez les options générales du modèle:"
 }

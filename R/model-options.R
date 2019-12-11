@@ -50,14 +50,14 @@ validate_model_options <- function(data, options) {
                         "survey_prevalence")
 
   if(!all(required_options %in% names(options)))
-    stop(t_("missing_options", list(missing_options =
+    stop(t_("MISSING_OPTIONS", list(missing_options =
       paste(setdiff(required_options, names(options)), collapse = ", "))))
 
   ## TODO: better approach to check file exists and is valid?
   if(is.null(data$art_number) &&
      (!is.null(options$include_art_t1) && options$include_art_t1 == "true" ||
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
-    stop(t_("missing_art_data"))
+    stop(t_("MISSING_ART_DATA"))
 
   ##
   area_merged <- sf::read_sf(data$shape)
@@ -68,7 +68,7 @@ validate_model_options <- function(data, options) {
   ## !!! TODO: temporary check. More comprehensive validation should be done
   ##     with overhauling the data.tree stuff.
   if(options$area_level == 0)
-    stop(t_("no_country_level_fit"))
+    stop(t_("NO_COUNTRY_LEVEL_FIT"))
 
 
   ## # Population inputs
@@ -107,7 +107,7 @@ validate_model_options <- function(data, options) {
     if (as.logical(options$artattend) &&
        ((is.null(options$include_art_t1) || options$include_art_t1 == "false") &&
        (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
-      stop(t_("art_attendance_impossible"))
+      stop(t_("ART_ATTENDANCE_IMPOSSIBLE"))
     }
   }
 
