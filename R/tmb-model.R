@@ -31,8 +31,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     A
   }
 
-  A_anc_t1 <- create_anc_Amat(naomi_data, "asfr", "population_t1")
-  A_anc_t2 <- create_anc_Amat(naomi_data, "asfr", "population_t2")
+  A_anc_t1 <- create_anc_Amat(naomi_data, "asfr_t1", "population_t1")
+  A_anc_t2 <- create_anc_Amat(naomi_data, "asfr_t2", "population_t2")
 
   X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
@@ -62,13 +62,15 @@ prepare_tmb_inputs <- function(naomi_data) {
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
 
-  ## If no t2 ART data, do not fit a change
+  ## If no t2 ART data, do not fit a change, use logit difference from Spectrum
   if(nrow(naomi_data$artnum_t2_dat) == 0) {
     f_alpha_t2 <- ~0
     f_alpha_xt <- ~0
+    logit_alpha_t1t2_offset <- naomi_data$mf_model$logit_alpha_t1t2_offset
   } else {
     f_alpha_t2 <- ~1
     f_alpha_xt <- ~0 + area_idf
+    logit_alpha_t1t2_offset <- numeric(nrow(naomi_data$mf_model))
   }
 
   dtmb <- list(
@@ -96,6 +98,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
+    logit_alpha_t1t2_offset = logit_alpha_t1t2_offset,
     ##
     Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
     n_nb = naomi_data$mf_areas$n_neighbors,
@@ -117,7 +120,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_nu_sd = naomi_data$logit_nu_sd,
     ##
     X_15to49 = X_15to49,
-    log_lambda_offset = naomi_data$mf_model$log_lambda_offset,
+    log_lambda_t1_offset = naomi_data$mf_model$log_lambda_t1_offset,
+    log_lambda_t2_offset = naomi_data$mf_model$log_lambda_t2_offset,
     ##
     A_out = naomi_data$A_out,
     idx_prev = naomi_data$prev_dat$idx - 1L,

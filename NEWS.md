@@ -1,6 +1,6 @@
 # naomi 0.0.38
 
-* If there is no ART data at time 2, use logit change in ART coverage between time 1 and time 2 to approximate change in ART coverage. Do not estimate non-identifiable parameters.
+* If there is no ART data at time 2, use logit change in ART coverage between time 1 and time 2 from Spectrum to approximate change in ART coverage. Do not estimate non-identifiable parameters.
 
 # naomi 0.0.37
 
