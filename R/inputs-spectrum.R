@@ -223,6 +223,8 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
                   births_spectrum)
 }
 
-log_lin_approx <- function(x, y, xout){
-  exp(stats::approx(x, log(y), xout)$y)
+log_lin_approx <- function(x, y, xout, replace_na_value = 0){
+  v <- exp(stats::approx(x, log(y), xout)$y)
+  v <- tidyr::replace_na(v, replace_na_value)
+  v
 }
