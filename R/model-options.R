@@ -114,10 +114,10 @@ validate_model_options <- function(data, options) {
 }
 
 options_keys_to_text <- function(keys) {
-  options_template <- get_model_options_template(TRUE, TRUE)
-  option_key_to_text <- function(key) {
-
-  }
-  vapply(keys, option_key_to_text, character(1))
+  ## TODO: Implement a mapping from the key to the value text for returning
+  ## in error messages
+  ## Do we need this check though? The form itself validates missing options
+  ## mrc-1242
+  keys
 }
 
