@@ -1,3 +1,7 @@
+# naomi 0.0.37
+
+* Use Spectrum estimates at time 1 for transmission rate defaults (mrc-1236).
+
 # naomi 0.0.36
 
 * Reverse order of ANC and ART sections
