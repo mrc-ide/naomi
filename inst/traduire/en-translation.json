@@ -1,3 +1,6 @@
 {
-    "art_attendance_impossible": "ART attendance model can only be estimated if ART programme data are used."
+    "art_attendance_impossible": "ART attendance model can only be estimated if ART programme data are used.",
+    "no_country_level_fit": "Cannot fit model at country level. Choose a different level.",
+    "missing_art_data": "ART dataset not provided. ART data cannot be selected Yes to include.",
+    "missing_options": "Required model options not supplied: {{missing_options}}"
 }

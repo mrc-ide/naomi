@@ -49,16 +49,16 @@ validate_model_options <- function(data, options) {
                         "survey_prevalence")
 
   if(!all(required_options %in% names(options)))
-    stop(paste("Required model options not supplied:",
-               paste(setdiff(required_options, names(options)), collapse = ", ")))
+    stop(t_("missing_options", list(missing_options =
+      paste(setdiff(required_options, names(options)), collapse = ", "))))
 
   ## TODO: better approach to check file exists and is valid?
   if(is.null(data$art_number) &&
      (!is.null(options$include_art_t1) && options$include_art_t1 == "true" ||
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
-    stop("ART dataset not provided. ART data cannot be selected Yes to include.")
+    stop(t_("missing_art_data"))
 
-  ##   
+  ##
   area_merged <- sf::read_sf(data$shape)
   population <- readr::read_csv(data$population)
   survey <- readr::read_csv(data$survey)
@@ -67,8 +67,8 @@ validate_model_options <- function(data, options) {
   ## !!! TODO: temporary check. More comprehensive validation should be done
   ##     with overhauling the data.tree stuff.
   if(options$area_level == 0)
-    stop("Cannot fit model at country level. Choose a different level.")
-  
+    stop(t_("no_country_level_fit"))
+
 
   ## # Population inputs
 
@@ -112,3 +112,12 @@ validate_model_options <- function(data, options) {
 
   TRUE
 }
+
+options_keys_to_text <- function(keys) {
+  options_template <- get_model_options_template(TRUE, TRUE)
+  option_key_to_text <- function(key) {
+
+  }
+  vapply(keys, option_key_to_text, character(1))
+}
+
