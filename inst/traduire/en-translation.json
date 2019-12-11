@@ -2,5 +2,17 @@
     "art_attendance_impossible": "ART attendance model can only be estimated if ART programme data are used.",
     "no_country_level_fit": "Cannot fit model at country level. Choose a different level.",
     "missing_art_data": "ART dataset not provided. ART data cannot be selected Yes to include.",
-    "missing_options": "Required model options not supplied: {{missing_options}}"
+    "missing_options": "Required model options not supplied: {{missing_options}}",
+    "hiv_prevalence": "HIV prevalence",
+    "art_coverage": "ART coverage",
+    "art_number": "ART number",
+    "proportion_recently_infected": "Proportion recently infected",
+    "vls": "Viral load suppression",
+    "receiving_art": "Receiving ART",
+    "population": "Population",
+    "plhiv": "PLHIV",
+    "incidence": "HIV incidence",
+    "new_infections": "New infections",
+    "anc_hiv_prevalence": "ANC HIV prevalence",
+    "anc_prior_art_coverage": "ANC prior ART coverage"
 }

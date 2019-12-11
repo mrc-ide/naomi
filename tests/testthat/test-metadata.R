@@ -140,3 +140,15 @@ test_that("metadata synced with meta_indicator", {
 
     expect_equal(tolower(check$name), tolower(check$indicator_label))
 })
+
+test_that("metadata can be translated", {
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  metadata <- get_metadata()
+
+  expect_equal(metadata[1, "name"], "Prévalence du VIH")
+
+  reset()
+  metadata <- get_metadata()
+  expect_equal(metadata[1, "name"], "HIV prevalence")
+})
