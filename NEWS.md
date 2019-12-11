@@ -1,6 +1,20 @@
-# naomi 0.0.34
+
+# naomi 0.0.38
 
 * If there is no ART data at time 2, use logit change in ART coverage between time 1 and time 2 to approximate change in ART coverage. Do not estimate non-identifiable parameters.
+
+# naomi 0.0.36
+
+* Reverse order of ANC and ART sections
+* Move artattend_log_gamma_offset into the advanced section
+
+# naomi 0.0.35
+
+* Throw error if trying to fit model at country level (mrc-1233).
+
+# naomi 0.0.34
+
+* Change quarter labels from range to end quarter ("Jan - Mar 2019" -> "March 2019").
 
 # naomi 0.0.33
 

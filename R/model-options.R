@@ -17,11 +17,11 @@ get_model_options_template <- function(art, anc) {
   templates <- list()
   templates$general <- read_options("general")
   templates$survey <- read_options("survey")
-  if (art) {
-    templates$art <- read_options("art")
-  }
   if (anc) {
     templates$anc <-  read_options("anc")
+  }
+  if (art) {
+    templates$art <- read_options("art")
   }
   templates$advanced <- read_options("advanced")
   templates
@@ -58,6 +58,17 @@ validate_model_options <- function(data, options) {
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
     stop("ART dataset not provided. ART data cannot be selected Yes to include.")
 
+  ##   
+  area_merged <- sf::read_sf(data$shape)
+  population <- readr::read_csv(data$population)
+  survey <- readr::read_csv(data$survey)
+
+  ## # Area selection
+  ## !!! TODO: temporary check. More comprehensive validation should be done
+  ##     with overhauling the data.tree stuff.
+  if(options$area_level == 0)
+    stop("Cannot fit model at country level. Choose a different level.")
+  
 
   ## # Population inputs
 
@@ -95,7 +106,7 @@ validate_model_options <- function(data, options) {
     if (as.logical(options$artattend) &&
        ((is.null(options$include_art_t1) || options$include_art_t1 == "false") &&
        (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
-      stop("ART attendance model can only be estimated if ART programme data are used.")
+      stop(t_("art_attendance_impossible"))
     }
   }
 

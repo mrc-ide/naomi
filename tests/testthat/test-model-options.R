@@ -3,7 +3,7 @@ context("model-options")
 test_that("can get valid model run options template", {
   options <- get_model_options_template(TRUE, TRUE)
   expect_length(options, 5)
-  expect_equal(names(options), c("general", "survey", "art", "anc", "advanced"))
+  expect_equal(names(options), c("general", "survey", "anc", "art", "advanced"))
   expect_true(any(grepl("General", options$general)))
   expect_true(any(grepl("<\\+area_scope_options\\+>", options$general)))
   expect_true(any(grepl("<\\+area_level_options\\+>", options$general)))
@@ -75,6 +75,33 @@ test_that("validate_model_options() handles NULL include_art_tX", {
 
   options$artattend <- "false"
   expect_true(validate_model_options(data, options))
-
 })
 
+test_that("validation error for invalid area selection", {
+  options <- a_hintr_options
+  options$area_scope <- "MWI"
+  options$area_level <- 0
+
+  expect_error(hintr_run_model(a_hintr_data, options),
+               "Cannot fit model at country level. Choose a different level.")
+})
+
+test_that("error message translation", {
+  options <- a_hintr_options
+  options$artattend <- "true"
+  options$include_art_t1 <- "false"
+  options$include_art_t2 <- "false"
+
+  err_en <- "ART attendance model can only be estimated if ART programme data are used."
+  err_fr <- "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées"
+
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_en)
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_fr)
+  reset()
+  expect_error(validate_model_options(a_hintr_data, options),
+               err_en)
+})

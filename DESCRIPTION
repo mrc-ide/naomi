@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 0.0.34
+Version: 0.0.38
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -38,6 +38,7 @@ Imports:
     spdep,
     specio (>= 0.1.2),
     tidyr,
+    traduire,
     TMB,
     yaml,
     zip,
