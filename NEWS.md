@@ -1,3 +1,7 @@
+# naomi 0.0.40
+
+* Cap ART coverage by age/sex from Spectrum between 0.1% and 99.9% to avoid logit difference evaluating to +/-Inf.
+
 # naomi 0.0.39
 
 * Set Mozambique colour scales
