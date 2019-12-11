@@ -40,9 +40,11 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Z_rho_as);
   DATA_SPARSE_MATRIX(Z_alpha_a);
   DATA_SPARSE_MATRIX(Z_alpha_as);
+  DATA_SPARSE_MATRIX(Z_alpha_xt);
 
   DATA_VECTOR(logit_rho_offset);
   DATA_VECTOR(logit_alpha_offset);
+  DATA_VECTOR(logit_alpha_t1t2_offset);
 
   DATA_SPARSE_MATRIX(A_anc_t1);
   DATA_SPARSE_MATRIX(A_anc_t2);
@@ -118,7 +120,8 @@ Type objective_function<Type>::operator() ()
   DATA_SCALAR(logit_nu_sd);
     
   DATA_SPARSE_MATRIX(X_15to49);
-  DATA_VECTOR(log_lambda_offset);
+  DATA_VECTOR(log_lambda_t1_offset);
+  DATA_VECTOR(log_lambda_t2_offset);
 
   // ** Initialize nll **
   Type val(0);
@@ -376,7 +379,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> rho_15to49_t1(plhiv_15to49_t1 / (X_15to49 * population_t1));
   vector<Type> alpha_15to49_t1((X_15to49 * artnum_t1) / plhiv_15to49_t1);
 
-  vector<Type> mu_lambda_t1(X_lambda * beta_lambda + log_lambda_offset + Z_x * vector<Type>(log(rho_15to49_t1) + log(1.0 - omega * alpha_15to49_t1) + ui_lambda_x * sigma_lambda_x));
+  vector<Type> mu_lambda_t1(X_lambda * beta_lambda + log_lambda_t1_offset + Z_x * vector<Type>(log(rho_15to49_t1) + log(1.0 - omega * alpha_15to49_t1) + ui_lambda_x * sigma_lambda_x));
 
   vector<Type> infections_t1(exp(mu_lambda_t1) * (population_t1 - plhiv_t1));
 
@@ -387,7 +390,9 @@ Type objective_function<Type>::operator() ()
   ones.fill(1.0);
 
 
-  vector<Type> mu_alpha_t2(mu_alpha + X_alpha_t2 * beta_alpha_t2 + Z_x * u_alpha_xt * sigma_alpha_xt);
+  vector<Type> mu_alpha_t2(mu_alpha + logit_alpha_t1t2_offset +
+			   X_alpha_t2 * beta_alpha_t2 +
+			   Z_alpha_xt * u_alpha_xt * sigma_alpha_xt);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
   vector<Type> plhiv_t2(Lproj * plhiv_t1);
   vector<Type> rho_t2(plhiv_t2 / population_t2);
@@ -399,7 +404,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> rho_15to49_t2(plhiv_15to49_t2 / (X_15to49 * population_t2));
   vector<Type> alpha_15to49_t2((X_15to49 * artnum_t2) / plhiv_15to49_t2);
 
-  vector<Type> mu_lambda_t2(X_lambda * beta_lambda + log_lambda_offset + Z_x * vector<Type>(log(rho_15to49_t2) + log(1.0 - omega * alpha_15to49_t2) + ui_lambda_x * sigma_lambda_x));
+  vector<Type> mu_lambda_t2(X_lambda * beta_lambda + log_lambda_t2_offset + Z_x * vector<Type>(log(rho_15to49_t2) + log(1.0 - omega * alpha_15to49_t2) + ui_lambda_x * sigma_lambda_x));
 
   vector<Type> infections_t2(exp(mu_lambda_t2) * (population_t2 - plhiv_t2));
 
