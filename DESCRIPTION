@@ -63,4 +63,6 @@ LinkingTo:
     RcppEigen
 Remotes:
     mrc-ide/eppasm,
-    bergant/datamodelr
+    bergant/datamodelr,
+    reside-ic/traduire
+    
