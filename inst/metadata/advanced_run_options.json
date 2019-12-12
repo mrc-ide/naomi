@@ -137,52 +137,52 @@
 	]
 },
 {
-	"label": "Output options",
-	"description": "Options for controlling downloaded model results",
+	"label": "t_(OPTIONS_OUTPUT_LABEL)",
+	"description": "t_(OPTIONS_OUTPUT_DESCRIPTION)",
 	"controlGroups": []
 },
 {
-	"label": "Advanced",
-	"description": "Advanced model run options",
+	"label": "t_(OPTIONS_ADVANCED_LABEL)",
+	"description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
 	"controlGroups": [
 		{
-			"label": "Maximum iterations",
+			"label": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_LABEL)",
 			"controls": [
 				{
 					"name": "max_iterations",
 					"type": "number",
 					"value": 250,
-					"helpText": "Maximum number of iteration for model run",
+					"helpText": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_HELP)",
 					"required": true
 				}
 			]
 		},
 		{
-			"label": "Number of simulations",
+			"label": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_LABEL)",
 			"controls": [
 				{
 					"name": "no_of_samples",
 					"type": "number",
 					"value": 1000,
-					"helpText": "Number of simulatons for generating uncertainty ranges",
+					"helpText": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP)",
 					"required": true
 				}
 			]
 		},
 		{
-			"label": "Simulation seed",
+			"label": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_LABEL)",
 			"controls": [
 				{
 					"name": "rng_seed",
 					"type": "number",
 					"value": 28,
 					"required": false,
-					"helpText": "Random number generator seed for uncertainty sample"
+					"helpText": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_HELP)"
 				}
 			]
 		},
 		{
-			"label": "Permissive",
+			"label": "t_(OPTIONS_ADVANCED_PERMISSIVE_LABEL)",
 			"controls": [
 				{
 					"name": "permissive",
@@ -191,27 +191,27 @@
 					"options": [
 						{
 							"id": "true",
-							"label": "Yes"
+							"label": "t_(OPTIONS_YES_LABEL)"
 						},
 						{
 							"id": "false",
-							"label": "No"
+							"label": "t_(OPTIONS_NO_LABEL)"
 						}
 					],
 					"value": "false",
-					"helpText": "Select 'Yes' to allow fits with convergence or data errors."
+					"helpText": "t_(OPTIONS_ADVANCED_PERMISSIVE_HELP)"
 				}
 			]
 		},
 		{
-			"label": "Logit prior mean for neighboring district attraction.",
+			"label": "t_(OPTIONS_ADVANCED_LOGIT_MEAN_LABEL)",
 			"controls": [
 				{
 					"name": "artattend_log_gamma_offset",
 					"type": "number",
 					"required": true,
 					"value": -4,
-					"helpText": "Logit offset for odds of obtaining ART in district j compared to home district."
+					"helpText": "t_(OPTIONS_ADVANCED_LOGIT_HELP)"
 				}
 			]
 		}

@@ -57,6 +57,19 @@
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL": "5-year age group",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL": "Sex and 5-year age group",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL": "Adjust to Spectrum number on ART",
-    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP": "Calibrate to Spectrum mean total on ART"
-
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP": "Calibrate to Spectrum mean total on ART",
+    "OPTIONS_OUTPUT_LABEL": "Output options",
+    "OPTIONS_OUTPUT_DESCRIPTION": "Options for controlling downloaded model results",
+    "OPTIONS_ADVANCED_LABEL": "Advanced",
+    "OPTIONS_ADVANCED_DESCRIPTION": "Advanced model run options",
+    "OPTIONS_ADVANCED_MAX_ITERATIONS_LABEL": "Maximum iterations",
+    "OPTIONS_ADVANCED_MAX_ITERATIONS_HELP": "Maximum number of iteration for model run",
+    "OPTIONS_ADVANCED_NO_OF_SIMULATIONS_LABEL": "Number of simulations",
+    "OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP": "Number of simulatons for generating uncertainty ranges",
+    "OPTIONS_ADVANCED_SIMULATION_SEED_LABEL": "Simulation seed",
+    "OPTIONS_ADVANCED_SIMULATION_SEED_HELP": "Random number generator seed for uncertainty sample",
+    "OPTIONS_ADVANCED_PERMISSIVE_LABEL": "Permissive",
+    "OPTIONS_ADVANCED_PERMISSIVE_HELP": "Select 'Yes' to allow fits with convergence or data errors",
+    "OPTIONS_ADVANCED_LOGIT_MEAN_LABEL": "Logit prior mean for neighboring district attraction",
+    "OPTIONS_ADVANCED_LOGIT_HELP": "Logit offset for odds of obtaining ART in district j compared to home district"
 }
