@@ -71,5 +71,8 @@
     "OPTIONS_ADVANCED_PERMISSIVE_LABEL": "Permissive",
     "OPTIONS_ADVANCED_PERMISSIVE_HELP": "Select 'Yes' to allow fits with convergence or data errors",
     "OPTIONS_ADVANCED_LOGIT_MEAN_LABEL": "Logit prior mean for neighboring district attraction",
-    "OPTIONS_ADVANCED_LOGIT_HELP": "Logit offset for odds of obtaining ART in district j compared to home district"
+    "OPTIONS_ADVANCED_LOGIT_HELP": "Logit offset for odds of obtaining ART in district j compared to home district",
+    "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Either supply levels, hierarchy, and boundaries, or area_merged",
+    "AREAS_LEVEL_NOT_UNIQUE": "Area levels not unique.\nDuplicated level: {{missing_levels}}"
+
 }
