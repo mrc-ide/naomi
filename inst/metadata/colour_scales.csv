@@ -1,10 +1,10 @@
 iso3,indicator,colour,min,max,invert_scale
-default,current_art,interpolateViridis,0,80000,FALSE
+default,current_art,interpolateViridis,0,80000,TRUE
 default,prevalence,interpolateMagma,0,0.5,TRUE
 default,art_coverage,interpolateViridis,0,1,FALSE
 default,vls,interpolateWarm,0,1,FALSE
 default,recent,interpolatePlasma,0,0.6,TRUE
-default,art_number,interpolateViridis,0,70000,FALSE
+default,art_number,interpolateViridis,0,70000,TRUE
 default,population,interpolateViridis,0,20000000,FALSE
 default,plhiv,interpolateMagma,0,10000000,TRUE
 default,incidence,interpolateMagma,0,0.01,TRUE

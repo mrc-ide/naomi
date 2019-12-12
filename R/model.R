@@ -371,6 +371,7 @@ naomi_model_frame <- function(area_merged,
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2)
+  projection_duration <- (quarter_id2 - quarter_id1) / 4
 
   ## Adjacency matrix
   M <- mf_areas %>%
@@ -459,6 +460,7 @@ naomi_model_frame <- function(area_merged,
             mf_artattend = mf_artattend,
             A_out = outf$A,
             Lproj = Lproj,
+            projection_duration = projection_duration,
             age_group_ids = age_group_ids,
             sexes = sexes,
             calendar_quarter1 = calendar_quarter1,
