@@ -41,4 +41,22 @@
     "OPTIONS_SURVEY_PREVALENCE_LABEL": "Prevalence",
     "OPTIONS_SURVEY_ART_COVERAGE_LABEL": "ART coverage",
     "OPTIONS_RECENTLY_INFECTED_LABEL": "Proportion recently infected",
+    "OPTIONS_CALIBRATION_LABEL": "Calibration options",
+    "OPTIONS_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL": "Adjust to Spectrum population size",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP" : "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result.",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE": "None",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL": "National",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL": "Subnational",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_LABEL": "Adjust to Spectrum PLHIV",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP": "Calibrate to Spectrum mean total PLHIV.",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL": "Level",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL": "Stratification",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL": "Age <15 / 15+",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL": "Sex and age <15 / 15+",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL": "5-year age group",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL": "Sex and 5-year age group",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL": "Adjust to Spectrum number on ART",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP": "Calibrate to Spectrum mean total on ART"
+
 }

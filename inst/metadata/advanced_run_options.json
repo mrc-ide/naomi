@@ -1,9 +1,9 @@
 {
-	"label": "Calibration options",
-	"description": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
+	"label": "t_(OPTIONS_CALIBRATION_LABEL)",
+	"description": "t_(OPTIONS_CALIBRATION_DESCRIPTION)",
 	"controlGroups": [
 		{
-			"label": "Adjust to Spectrum population size",
+			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL)",
 			"controls": [
 				{
 					"name": "spectrum_population_calibration",
@@ -11,126 +11,126 @@
 					"options": [
 						{
 							"id": "none",
-							"label": "None"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
 						},
 						{
 							"id": "national",
-							"label": "National"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
 						},
 						{
 							"id": "subnational",
-							"label": "Subnational"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
 						}
 					],
 					"value": "national",
 					"required": true,
-					"helpText": "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result."
+					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP)"
 				}
 			]
 		},
 		{
-			"label": "Adjust to Spectrum PLHIV",
+			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_LABEL)",
 			"controls": [
 				{
 					"name": "spectrum_plhiv_calibration_level",
-					"label": "Level",
+					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
 					"type": "select",
 					"required": true,
 					"options": [
 						{
 							"id": "none",
-							"label": "None"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
 						},
 						{
 							"id": "national",
-							"label": "National"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
 						},
 						{
 							"id": "subnational",
-							"label": "Subnational"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
 						}
 					],
 					"value": "none",
-					"helpText": "Calibrate to Spectrum mean total PLHIV."
+					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
 				},
 				{
 					"name": "spectrum_plhiv_calibration_strat",
-					"label": "Stratification",
+					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
 					"type": "select",
 					"required": true,
 					"options": [
 						{
 							"id": "age_coarse",
-							"label": "Age <15 / 15+"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
 						},
 						{
 							"id": "sex_age_coarse",
-							"label": "Sex and age <15 / 15+"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
 						},
 						{
 							"id": "age_group",
-							"label": "5-year age group"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
 						},
 						{
 							"id": "sex_age_group",
-							"label": "Sex and 5-year age group"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
 						}
 					],
 					"value": "sex_age_coarse",
-					"helpText": "Calibrate to Spectrum mean total PLHIV."
+					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
 				}
 			]
 		},
 		{
-			"label": "Adjust to Spectrum number on ART",
+			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL_",
 			"controls": [
 				{
 					"name": "spectrum_artnum_calibration_level",
-					"label": "Level",
+					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
 					"type": "select",
 					"required": true,
 					"options": [
 						{
 							"id": "none",
-							"label": "None"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
 						},
 						{
 							"id": "national",
-							"label": "National"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
 						},
 						{
 							"id": "subnational",
-							"label": "Subnational"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
 						}
 					],
 					"value": "none",
-					"helpText": "Calibrate to Spectrum mean total on ART."
+					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
 				},
 				{
 					"name": "spectrum_artnum_calibration_strat",
-					"label": "Stratification",
+					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
 					"type": "select",
 					"required": true,
 					"options": [
 						{
 							"id": "age_coarse",
-							"label": "Age <15 / 15+"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
 						},
 						{
 							"id": "sex_age_coarse",
-							"label": "Sex and age <15 / 15+"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
 						},
 						{
 							"id": "age_group",
-							"label": "5-year age group"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
 						},
 						{
 							"id": "sex_age_group",
-							"label": "Sex and 5-year age group"
+							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
 						}
 					],
 					"value": "sex_age_coarse",
-					"helpText": "Calibrate to Spectrum mean total number on ART."
+					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
 				}
 			]
 		}
