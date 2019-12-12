@@ -73,14 +73,26 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_alpha_t1t2_offset <- numeric(nrow(naomi_data$mf_model))
   }
 
+  ## If no recent infeciton data, do not estimate incidence sex ratio or
+  ## district random effects
+  if(nrow(naomi_data$recent_dat) == 0) {
+    f_lambda <- ~0
+    f_lambda_x <- ~0
+  } else {
+    f_lambda <- ~as.integer(sex == "female")
+    f_lambda_x <- ~0 + area_idf
+  }
+    
+
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
     Lproj = naomi_data$Lproj,
+    projection_duration = naomi_data$projection_duration,
     X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
-    X_lambda = stats::model.matrix(~as.integer(sex == "female"), df),
+    X_lambda = stats::model.matrix(f_lambda, df),
     X_ancrho = stats::model.matrix(~1, naomi_data$mf_areas),
     X_ancalpha = stats::model.matrix(~1, naomi_data$mf_areas),
     Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
@@ -90,6 +102,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_alpha_a = Matrix::sparse.model.matrix(f_alpha_a, df),
     Z_alpha_as = Matrix::sparse.model.matrix(f_alpha_a, df) * (df$sex == "female"),
     Z_alpha_xt = Matrix::sparse.model.matrix(f_alpha_xt, df),
+    Z_lambda_x = Matrix::sparse.model.matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
     Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
     Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),

@@ -1,3 +1,7 @@
+# naomi 0.0.41
+
+* Separate PLHIV projection and incidence calculation.
+
 # naomi 0.0.40
 
 * Cap ART coverage by age/sex from Spectrum between 0.1% and 99.9% to avoid logit difference evaluating to +/-Inf.
