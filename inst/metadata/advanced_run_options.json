@@ -82,7 +82,7 @@
 			]
 		},
 		{
-			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL_",
+			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL)",
 			"controls": [
 				{
 					"name": "spectrum_artnum_calibration_level",
