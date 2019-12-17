@@ -1,6 +1,6 @@
 {
 	"label": "t_(OPTIONS_ART_LABEL)",
-	"description": "t_(OPTIONS_ART_DESCRIPTION",
+	"description": "t_(OPTIONS_ART_DESCRIPTION)",
 	"controlGroups": [
 		{
 			"label": "t_(OPTIONS_ART_INCLUDE_ART_LABEL)",
