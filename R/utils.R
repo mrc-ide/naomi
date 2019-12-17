@@ -6,6 +6,10 @@ naomi_read_csv <- function(...) {
   read.csv(..., stringsAsFactors = FALSE)
 }
 
+readr_read_csv <- function(..., cols = readr::cols()) {
+  readr::read_csv(..., cols = cols)
+}
+
 system_file <- function(...) {
   system.file(..., package = "naomi", mustWork = TRUE)
 }

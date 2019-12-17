@@ -60,8 +60,8 @@ validate_model_options <- function(data, options) {
 
   ##   
   area_merged <- sf::read_sf(data$shape)
-  population <- readr::read_csv(data$population)
-  survey <- readr::read_csv(data$survey)
+  population <- readr_read_csv(data$population)
+  survey <- readr_read_csv(data$survey)
 
   ## # Area selection
   ## !!! TODO: temporary check. More comprehensive validation should be done
