@@ -6,8 +6,8 @@ naomi_read_csv <- function(...) {
   read.csv(..., stringsAsFactors = FALSE)
 }
 
-readr_read_csv <- function(..., cols = readr::cols()) {
-  readr::read_csv(..., cols = cols)
+readr_read_csv <- function(..., col_types = readr::cols()) {
+  readr::read_csv(..., col_types = cols)
 }
 
 system_file <- function(...) {
