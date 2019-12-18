@@ -302,3 +302,11 @@ test_that("naomi_info_input(data) handles NULL string", {
   expect_equal(nrow(naomi_info_input(data)), 3)
 })
 
+test_that("invalid time sequencing returns an error", {
+
+  options <- a_hintr_options
+  options$calendar_quarter_t2 <- a_hintr_options$calendar_quarter_t1
+  expect_error(hintr_run_model(a_hintr_data, options),
+               "Estimates quarter (time 2) must be after survey quarter (time 1)")
+
+})
