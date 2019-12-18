@@ -394,10 +394,17 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
 }
 
 
-create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_art_attend) {
-
+create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas,
+                                  df_art_attend, by_residence = FALSE) {
+  
+  ## If by_residence = TRUE, merge by reside_area_id, else aggregate over all
+  ## reside_area_id
+  by_vars <- c("attend_area_id", "sex", "age_group_id")
+  if(by_residence)
+    by_vars <- c(by_vars, "reside_area_idx")
+  
   A_artnum <- artnum_df %>%
-    dplyr::select(attend_area_id, sex, age_group_id, artnum_idx) %>%
+    dplyr::select(by_vars, artnum_idx) %>%
     dplyr::rename(artdat_age_group_id = age_group_id,
                   artdat_sex = sex) %>%
     dplyr::left_join(
@@ -424,18 +431,18 @@ create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
              by = "artdat_sex"
-           ) %>%
-    dplyr::left_join(
-             df_art_attend %>%
-             dplyr::transmute(
-                      attend_area_id,
-                      age_group_id,
-                      sex,
-                      Aidx = row_number(),
-                      value = 1
-                    ),
-             by = c("attend_area_id", "sex", "age_group_id")
-           ) %>%
+           )
+
+  ## Merge to ART attendance data frame
+  A_artnum <- dplyr::left_join(A_artnum,
+                               df_art_attend %>%
+                               dplyr::select(by_vars) %>%
+                               dplyr::mutate(
+                                        Aidx = row_number(),
+                                        value = 1),
+                               by = by_vars)
+  
+  A_artnum <- A_artnum %>%
     {
       Matrix::spMatrix(nrow(artnum_df),
                        nrow(df_art_attend),
@@ -443,6 +450,6 @@ create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_
                        .$Aidx,
                        .$value)
     }
-
+  
   A_artnum
 }
