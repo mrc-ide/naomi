@@ -1,3 +1,7 @@
+# naomi 0.0.42
+
+* Check that esimates quarter (time 2) is greater than survey quarter (time 1).
+
 # naomi 0.0.41
 
 * Separate PLHIV projection and incidence calculation.
