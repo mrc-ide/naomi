@@ -102,7 +102,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
-                     age_group_id = 18)
+                     age_group = "15-49")
 
   out <- dplyr::bind_rows(
                   indicators_t1,
@@ -193,7 +193,7 @@ add_output_labels <- function(naomi_output) {
     dplyr::left_join(
              naomi_output$meta_age_group %>%
              dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
-             by = "age_group_id"
+             by = "age_group"
            ) %>%
     dplyr::left_join(naomi_output$meta_period, by = "quarter_id") %>%
     dplyr::left_join(
@@ -392,29 +392,22 @@ calibrate_outputs <- function(output,
   ## !!! TODO: much of this joining will be obolete by replacing _id with
   ##     the more readable versions.
 
-  mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group_id) %>%
+  mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
     dplyr::left_join(
              sf::st_drop_geometry(output$meta_area) %>%
              dplyr::select(area_id, spectrum_region_code),
              by = "area_id"
-           ) %>%
-    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
-                     by = "age_group_id") %>%
-    dplyr::select(-age_group_id)
+           )
   
-  mfout <- dplyr::select(naomi_mf$mf_out, area_id, sex, age_group_id) %>%
-    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
-                     by = "age_group_id")
+  mfout <- dplyr::select(naomi_mf$mf_out, area_id, sex, age_group)
 
   indicators <- output$indicators %>%
-    dplyr::select(area_id, sex, age_group_id, quarter_id, indicator_id, 
+    dplyr::select(area_id, sex, age_group, quarter_id, indicator_id, 
                   mean, se, median, mode, lower, upper) %>%
     dplyr::left_join(dplyr::select(output$meta_indicator, indicator_id, indicator),
                      by = "indicator_id") %>%
     dplyr::left_join(dplyr::select(output$meta_period, quarter_id, calendar_quarter),
-                     by = "quarter_id") %>%
-    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
-                     by = "age_group_id")
+                     by = "quarter_id")
              
   ## Subset to most granular estimates in model frame.
   ## Add ID columns to merge to spectrum_calibration data frame.

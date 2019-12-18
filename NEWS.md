@@ -1,3 +1,9 @@
+# naomi 0.0.43
+
+* Remove age_group_id from model frames; use human readable age_group everywhere.
+* Output number of ART attendees between every district pair. Currently output at 
+  estimation level only.
+
 # naomi 0.0.42
 
 * Check that esimates quarter (time 2) is greater than survey quarter (time 1).

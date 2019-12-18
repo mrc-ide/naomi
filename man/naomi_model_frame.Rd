@@ -12,7 +12,7 @@ naomi_model_frame(
   level = max(areas$tree$Get("area_level")),
   calendar_quarter1,
   calendar_quarter2,
-  age_group_ids = 1:17,
+  age_groups = get_five_year_age_groups(),
   sexes = c("male", "female"),
   omega = 0.7,
   rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 - 118)/365)/(2 *
@@ -41,7 +41,7 @@ ids.}
 
 \item{calendar_quarter2}{Calendar quarter at time 2 ("CYyyyyQq")}
 
-\item{age_group_ids}{Age group ids}
+\item{age_groups}{Age groups to include in model frame}
 
 \item{sexes}{Sexes}
 

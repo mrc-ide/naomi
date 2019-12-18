@@ -1,10 +1,26 @@
 context("test-model-frames")
 
-test_that("get_age_group_id_out() returns expected groups", {
-  expect_equal(get_age_group_id_out(18), 18)
-  expect_equal(get_age_group_id_out(c(18, 28, 29)), c(18:21, 28:29))
-  expect_equal(get_age_group_id_out(1:17), 1:29)
-  expect_equal(get_age_group_id_out(4:17), c(4:21, 25:29))
+test_that("get_age_group_out() returns expected groups", {
+  expect_setequal(get_age_group_out("15-49"), "15-49")
+  expect_setequal(get_age_group_out(c("15-49", "50-64", "65+")),
+               c("15-49", "15-64", "15+", "50+", "50-64", "65+"))
+  expect_setequal(
+    get_age_group_out(c("00-04", "05-09", "10-14", "15-19", "20-24", "25-29",
+                        "30-34", "35-39", "40-44", "45-49", "50-54", "55-59",
+                        "60-64", "65-69", "70-74", "75-79", "80+")),
+    c("00-04", "05-09", "10-14", "15-19", "20-24", "25-29", "30-34", 
+      "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", 
+      "70-74", "75-79", "80+", "15-49", "15-64", "15+", "50+", "00+", 
+      "00-64", "00-14", "15-24", "25-34", "35-49", "50-64", "65+")
+  )
+  expect_setequal(
+    get_age_group_out(c("15-19", "20-24", "25-29",
+                        "30-34", "35-39", "40-44", "45-49", "50-54", "55-59",
+                        "60-64", "65-69", "70-74", "75-79", "80+")),
+    c("15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", 
+      "55-59", "60-64", "65-69", "70-74", "75-79", "80+", "15-49", "15-64", "15+", 
+      "50+", "15-24", "25-34", "35-49", "50-64", "65+")
+  )
 })
 
 test_that("artnum_mf() returns expected number of records", {
@@ -12,10 +28,10 @@ test_that("artnum_mf() returns expected number of records", {
   expect_equal(nrow(artnum_mf(NULL, mwi_art_number, a_naomi_mf)), 0L)
   expect_equal(nrow(artnum_mf("CY2016Q1", NULL, a_naomi_mf)), 0L)
   expect_named(artnum_mf(NULL, mwi_art_number, a_naomi_mf), 
-               c("area_id", "sex", "age_group_id", "artnum_idx", "current_art"))
+               c("area_id", "sex", "age_group", "artnum_idx", "current_art"))
   expect_equal(nrow(artnum_mf("CY2016Q1", mwi_art_number, a_naomi_mf)), 14L)
   expect_named(artnum_mf("CY2016Q1", mwi_art_number, a_naomi_mf), 
-               c("area_id", "sex", "age_group_id", "artnum_idx", "current_art"))
+               c("area_id", "sex", "age_group", "artnum_idx", "current_art"))
 })
 
 test_that("artnum_mf() throws errors for invalid inputs", {

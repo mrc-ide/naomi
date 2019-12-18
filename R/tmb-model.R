@@ -51,22 +51,22 @@ prepare_tmb_inputs <- function(naomi_data) {
   Xart_idx <- Matrix::sparse.model.matrix(~0 + idf, df_art_attend)
 
   A_artattend_t1 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t1_dat, attend_area_id = area_id),
-                                          naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
   A_artattend_t2 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t2_dat, attend_area_id = area_id),
-                                          naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
 
-  A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group_id, artnum_idx = idx),
-                                          naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group, artnum_idx = idx),
+                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
 
   A_art_reside_attend <- naomi_data$mf_artattend %>%
     dplyr::transmute(
              reside_area_id,
              attend_area_id,
              sex = "both",
-             age_group_id = dplyr::filter(get_age_groups(), age_group == "00+")$age_group_id,
+             age_group = "00+",
              artnum_idx = dplyr::row_number()
            ) %>%
-    create_artattend_Amat(naomi_data$age_group_ids,
+    create_artattend_Amat(naomi_data$age_groups,
                           naomi_data$sexes,
                           naomi_data$mf_areas,
                           df_art_attend,
@@ -410,32 +410,32 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
 }
 
 
-create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas,
+create_artattend_Amat <- function(artnum_df, age_groups, sexes, mf_areas,
                                   df_art_attend, by_residence = FALSE) {
   
   ## If by_residence = TRUE, merge by reside_area_id, else aggregate over all
   ## reside_area_id
-  by_vars <- c("attend_area_id", "sex", "age_group_id")
+  by_vars <- c("attend_area_id", "sex", "age_group")
   if(by_residence)
     by_vars <- c(by_vars, "reside_area_id")
   
   A_artnum <- artnum_df %>%
     dplyr::select(by_vars, artnum_idx) %>%
-    dplyr::rename(artdat_age_group_id = age_group_id,
+    dplyr::rename(artdat_age_group = age_group,
                   artdat_sex = sex) %>%
     dplyr::left_join(
              get_age_groups() %>%
              dplyr::transmute(
-                      artdat_age_group_id = age_group_id,
+                      artdat_age_group = age_group,
                       artdat_age_start = age_group_start,
                       artdat_age_end = age_group_start + age_group_span
                     ),
-             by = "artdat_age_group_id"
+             by = "artdat_age_group"
            ) %>%
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(
              get_age_groups() %>%
-             dplyr::filter(age_group_id %in% age_group_ids)
+             dplyr::filter(age_group %in% age_groups)
            ) %>%
     dplyr::filter(
              artdat_age_start <= age_group_start,
