@@ -105,3 +105,30 @@ test_that("error message translation", {
   expect_error(validate_model_options(a_hintr_data, options),
                err_en)
 })
+
+test_that("check for required model options", {
+  options <- list(
+    area_scope = "MWI",
+    area_level = "4"
+  )
+  expect_error(validate_model_options(a_hintr_data, options),
+               "Required model options not supplied: calendar_quarter_t1, calendar_quarter_t2, survey_prevalence")
+})
+
+test_that("model options template can be translated", {
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+
+  options <- get_model_options_template(TRUE, TRUE)
+  expect_true(any(grepl("Générales", options$general)))
+  expect_false(any(grepl("General", options$general)))
+  expect_true(any(grepl("Sélectionnez les options générales du modèle:", options$general)))
+  expect_false(any(grepl("Select general model options:", options$general)))
+
+  reset()
+  options <- get_model_options_template(TRUE, TRUE)
+  expect_false(any(grepl("Générales", options$general)))
+  expect_true(any(grepl("General", options$general)))
+  expect_false(any(grepl("Sélectionnez les options générales du modèle:", options$general)))
+  expect_true(any(grepl("Select general model options:", options$general)))
+})

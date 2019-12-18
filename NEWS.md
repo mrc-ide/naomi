@@ -1,3 +1,7 @@
+# naomi 0.0.42
+
+* Add more translations
+
 # naomi 0.0.41
 
 * Separate PLHIV projection and incidence calculation.
