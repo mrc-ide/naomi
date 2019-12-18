@@ -415,13 +415,24 @@ naomi_model_frame <- function(area_merged,
     methods::as("dgCMatrix") %>%
     Matrix::summary() %>%
     dplyr::rename(reside_area_idx = i,
-                  artattend_area_idx = j) %>%
-    dplyr::mutate(x = NULL,
-                  istar = as.integer(reside_area_idx == artattend_area_idx),
-                  jstar = as.integer(reside_area_idx == artattend_area_idx)) %>%
-    dplyr::arrange(reside_area_idx, istar, artattend_area_idx, jstar) %>%
-    dplyr::mutate(artattend_idx = dplyr::row_number(),
-                  attend_area_idf = forcats::as_factor(artattend_area_idx),
+                  attend_area_idx = j,) %>%
+    dplyr::left_join(
+             dplyr::select(mf_areas, reside_area_id = area_id, reside_area_idx = area_idx),
+             by = "reside_area_idx"
+           ) %>%
+    dplyr::left_join(
+             dplyr::select(mf_areas, attend_area_id = area_id, attend_area_idx = area_idx),
+             by = "attend_area_idx"
+           ) %>%
+    dplyr::transmute(reside_area_id,
+                   attend_area_id,
+                   reside_area_idx,
+                   attend_area_idx,
+                   istar = as.integer(reside_area_idx == attend_area_idx),
+                   jstar = as.integer(reside_area_idx == attend_area_idx)) %>%
+    dplyr::arrange(reside_area_idx, istar, attend_area_idx, jstar) %>%
+    dplyr::mutate(attend_idx = dplyr::row_number(),
+                  attend_area_idf = forcats::as_factor(attend_area_idx),
                   log_gamma_offset = dplyr::if_else(jstar == 1, 0, as.numeric(artattend_log_gamma_offset)))
 
 

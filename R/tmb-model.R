@@ -43,10 +43,10 @@ prepare_tmb_inputs <- function(naomi_data) {
   
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::left_join(naomi_data$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
-    dplyr::mutate(artattend_idf = forcats::as_factor(artattend_idx),
+    dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
-  Xart_gamma <- Matrix::sparse.model.matrix(~0 + artattend_idf, df_art_attend)
+  Xart_gamma <- Matrix::sparse.model.matrix(~0 + attend_idf, df_art_attend)
   Xart_idx <- Matrix::sparse.model.matrix(~0 + idf, df_art_attend)
 
   A_artattend_t1 <- create_artattend_Amat(naomi_data$artnum_t1_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
@@ -116,7 +116,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
     n_nb = naomi_data$mf_areas$n_neighbors,
     adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,
-    adj_j = naomi_data$mf_artattend$artattend_area_idx - 1L,
+    adj_j = naomi_data$mf_artattend$attend_area_idx - 1L,
     Xgamma = Xgamma,
     log_gamma_offset = naomi_data$mf_artattend$log_gamma_offset,
     Xart_idx = Xart_idx,
@@ -429,13 +429,13 @@ create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_
     dplyr::left_join(
              df_art_attend %>%
              dplyr::transmute(
-                      artattend_area_idx,
+                      attend_area_idx,
                       age_group_id,
                       sex,
                       Aidx = row_number(),
                       value = 1
       ),
-      by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
+      by = c("area_idx" = "attend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
       ) %>%
     {
       Matrix::spMatrix(nrow(artnum_df),
