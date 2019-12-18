@@ -425,11 +425,11 @@ naomi_model_frame <- function(area_merged,
              by = "attend_area_idx"
            ) %>%
     dplyr::transmute(reside_area_id,
-                   attend_area_id,
-                   reside_area_idx,
-                   attend_area_idx,
-                   istar = as.integer(reside_area_idx == attend_area_idx),
-                   jstar = as.integer(reside_area_idx == attend_area_idx)) %>%
+                     attend_area_id,
+                     reside_area_idx,
+                     attend_area_idx,
+                     istar = as.integer(reside_area_idx == attend_area_idx),
+                     jstar = as.integer(reside_area_idx == attend_area_idx)) %>%
     dplyr::arrange(reside_area_idx, istar, attend_area_idx, jstar) %>%
     dplyr::mutate(attend_idx = dplyr::row_number(),
                   attend_area_idf = forcats::as_factor(attend_area_idx),

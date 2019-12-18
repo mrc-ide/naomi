@@ -58,6 +58,21 @@ prepare_tmb_inputs <- function(naomi_data) {
   A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group_id, artnum_idx = idx),
                                           naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
 
+  A_art_reside_attend <- naomi_data$mf_artattend %>%
+    dplyr::transmute(
+             reside_area_id,
+             attend_area_id,
+             sex = "both",
+             age_group_id = dplyr::filter(get_age_groups(), age_group == "00+")$age_group_id,
+             artnum_idx = dplyr::row_number()
+           ) %>%
+    create_artattend_Amat(naomi_data$age_group_ids,
+                          naomi_data$sexes,
+                          naomi_data$mf_areas,
+                          df_art_attend,
+                          by_residence = TRUE)
+                                          
+
   ## Construct TMB data and initial parameter vectors
 
   df <- naomi_data$mf_model
@@ -170,7 +185,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
     A_artattend_t2 = A_artattend_t2,
     x_artnum_t2 = naomi_data$artnum_t2_dat$current_art,
-    A_artattend_mf = A_artattend_mf
+    A_artattend_mf = A_artattend_mf,
+    A_art_reside_attend = A_art_reside_attend
   )
 
 
@@ -401,7 +417,7 @@ create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas,
   ## reside_area_id
   by_vars <- c("attend_area_id", "sex", "age_group_id")
   if(by_residence)
-    by_vars <- c(by_vars, "reside_area_idx")
+    by_vars <- c(by_vars, "reside_area_id")
   
   A_artnum <- artnum_df %>%
     dplyr::select(by_vars, artnum_idx) %>%

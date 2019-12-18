@@ -97,6 +97,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(x_artnum_t2);
 
   DATA_SPARSE_MATRIX(A_artattend_mf);
+  DATA_SPARSE_MATRIX(A_art_reside_attend);
 
   DATA_IVECTOR(n_nb);
   DATA_IVECTOR(adj_i);
@@ -515,7 +516,8 @@ Type objective_function<Type>::operator() ()
 
   vector<Type> artnum_t1_out(A_out * artnum_t1);
   vector<Type> alpha_t1_out(artnum_t1_out / plhiv_t1_out);
-  vector<Type> artattend_t1_out(A_out * (A_artattend_mf * artnum_t1_out));
+  vector<Type> artattend_t1_out(A_out * (A_artattend_mf * artnum_ij_t1));
+  vector<Type> artattend_ij_t1_out(A_art_reside_attend * artnum_ij_t1);
    
   vector<Type> infections_t1_out(A_out * infections_t1);
   vector<Type> lambda_t1_out(infections_t1_out / (population_t1_out - plhiv_t1_out));
@@ -529,6 +531,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> artnum_t2_out(A_out * artnum_t2);
   vector<Type> alpha_t2_out(artnum_t2_out / plhiv_t2_out);
   vector<Type> artattend_t2_out(A_out * (A_artattend_mf * artnum_ij_t2));
+  vector<Type> artattend_ij_t2_out(A_art_reside_attend * artnum_ij_t2);
 
   vector<Type> infections_t2_out(A_out * infections_t2);
   vector<Type> lambda_t2_out(infections_t2_out / (population_t2_out - plhiv_t2_out));
@@ -563,6 +566,7 @@ Type objective_function<Type>::operator() ()
   REPORT(alpha_t1_out);
   REPORT(artnum_t1_out);
   REPORT(artattend_t1_out);
+  REPORT(artattend_ij_t1_out);
   REPORT(lambda_t1_out);
   REPORT(infections_t1_out);
 
@@ -572,6 +576,7 @@ Type objective_function<Type>::operator() ()
   REPORT(alpha_t2_out);
   REPORT(artnum_t2_out);
   REPORT(artattend_t2_out);
+  REPORT(artattend_ij_t2_out);
   REPORT(lambda_t2_out);
   REPORT(infections_t2_out);
 
