@@ -71,7 +71,7 @@ validate_model_options <- function(data, options) {
 
   ## Check time T2 is after T1
   if(calendar_quarter_to_quarter_id(options$calendar_quarter_t1) >=
-     calendar_quarter_to_quarter_id(options$calendar_quarter_t1))
+     calendar_quarter_to_quarter_id(options$calendar_quarter_t2))
     stop("Estimates quarter (time 2) must be after survey quarter (time 1)")
   
 
