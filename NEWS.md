@@ -1,3 +1,7 @@
+# naomi 0.0.43
+
+* Check that esimates quarter (time 2) is greater than survey quarter (time 1).
+
 # naomi 0.0.42
 
 * Add more translations
