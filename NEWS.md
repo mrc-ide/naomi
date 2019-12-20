@@ -1,6 +1,5 @@
 # naomi 0.0.44
 
-
 * Remove age_group_id from model frames; use human readable age_group everywhere.
 * Output number of ART attendees between every district pair. Currently output at 
   estimation level only.
