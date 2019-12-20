@@ -38,10 +38,10 @@ options <- list(
 message("Preparing inputs")
 area_merged <- sf::read_sf(data$shape)
 areas <- create_areas(area_merged = area_merged)
-population <- readr::read_csv(data$population)
-survey <- readr::read_csv(data$survey)
-art_number <- readr::read_csv(data$art)
-anc <- readr::read_csv(data$anc)
+population <- readr_read_csv(data$population)
+survey <- readr_read_csv(data$survey)
+art_number <- readr_read_csv(data$art)
+anc <- readr_read_csv(data$anc)
 
 spec <- extract_pjnz_naomi(data$pjnz)
 

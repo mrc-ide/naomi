@@ -503,12 +503,12 @@ read_output_package <- function(path) {
   utils::unzip(path, exdir = tmpd)
 
   v <- list(
-    indicators = readr::read_csv(file.path(tmpd, "indicators.csv")),
-    art_attendance = readr::read_csv(file.path(tmpd, "art_attendance.csv")),
+    indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
+    art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
     meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
-    meta_age_group = readr::read_csv(file.path(tmpd, "meta_age_group.csv")),
-    meta_period = readr::read_csv(file.path(tmpd, "meta_period.csv")),
-    meta_indicator = readr::read_csv(file.path(tmpd, "meta_indicator.csv"))
+    meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
+    meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
+    meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv"))
   )
 
   class(v) <- "naomi_output"
