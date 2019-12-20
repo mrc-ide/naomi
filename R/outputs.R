@@ -48,6 +48,24 @@ meta_indicator <-
   )
 
 
+add_stats <- function(df, mode, sample = NULL, prefix = ""){
+
+  df[[paste0(prefix, "mode")]] <- mode
+
+  if(!is.null(sample)) {
+    qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975))
+    df[[paste0(prefix, "mean")]] <- rowMeans(sample)
+    df[[paste0(prefix, "se")]] <- sqrt(rowSums((sample - df[[paste0(prefix, "mean")]])^2) / (max(ncol(sample), 2) - 1))
+    df[[paste0(prefix, "median")]] <- qtl[1,]
+    df[[paste0(prefix, "lower")]] <- qtl[2,]
+    df[[paste0(prefix, "upper")]] <- qtl[3,]
+  } else {
+    df[paste0(prefix, c("mean", "se", "median", "lower", "upper"))] <- NA_real_
+  }
+
+  df
+}
+
 
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
@@ -60,19 +78,12 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
     v <- dplyr::mutate(
       mf,
       quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
-      indicator_id = indicator_id,
-      mode = report[[varname]]
-    )
+      indicator_id = indicator_id)
+
     if(!is.null(naomi_fit$sample)) {
-      smp <- naomi_fit$sample[[varname]]
-      qtl <- apply(smp, 1, stats::quantile, c(0.5, 0.025, 0.975))
-      v$mean <- rowMeans(smp)
-      v$se <- sqrt(rowSums((smp - v$mean)^2) / (max(ncol(smp), 2) - 1))
-      v$median <- qtl[1,]
-      v$lower <- qtl[2,]
-      v$upper <- qtl[3,]
+      v <- add_stats(v, report[[varname]], naomi_fit$sample[[varname]])
     } else {
-      v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
+      v <- add_stats(v, report[[varname]])
     }
 
     v
