@@ -454,7 +454,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, mf_areas,
                                df_art_attend %>%
                                dplyr::select(by_vars) %>%
                                dplyr::mutate(
-                                        Aidx = row_number(),
+                                        Aidx = dplyr::row_number(),
                                         value = 1),
                                by = by_vars)
   

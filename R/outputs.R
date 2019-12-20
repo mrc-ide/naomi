@@ -50,20 +50,21 @@ meta_indicator <-
 
 add_stats <- function(df, mode, sample = NULL, prefix = ""){
 
-  df[[paste0(prefix, "mode")]] <- mode
+  v <- df
+  v[[paste0(prefix, "mode")]] <- mode
 
   if(!is.null(sample)) {
     qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975))
-    df[[paste0(prefix, "mean")]] <- rowMeans(sample)
-    df[[paste0(prefix, "se")]] <- sqrt(rowSums((sample - df[[paste0(prefix, "mean")]])^2) / (max(ncol(sample), 2) - 1))
-    df[[paste0(prefix, "median")]] <- qtl[1,]
-    df[[paste0(prefix, "lower")]] <- qtl[2,]
-    df[[paste0(prefix, "upper")]] <- qtl[3,]
+    v[[paste0(prefix, "mean")]] <- rowMeans(sample)
+    v[[paste0(prefix, "se")]] <- sqrt(rowSums((sample - v[[paste0(prefix, "mean")]])^2) / (max(ncol(sample), 2) - 1))
+    v[[paste0(prefix, "median")]] <- qtl[1,]
+    v[[paste0(prefix, "lower")]] <- qtl[2,]
+    v[[paste0(prefix, "upper")]] <- qtl[3,]
   } else {
-    df[paste0(prefix, c("mean", "se", "median", "lower", "upper"))] <- NA_real_
+    v[paste0(prefix, c("mean", "se", "median", "lower", "upper"))] <- NA_real_
   }
 
-  df
+  v[c(names(df), paste0(prefix, c("mean", "se", "median", "mode", "lower", "upper")))]
 }
 
 
@@ -127,6 +128,76 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                 quarter_id, indicator_id, mean, se, median, mode, lower, upper)
 }
 
+extract_art_attendance <- function(naomi_fit, naomi_mf) {
+
+  report <- naomi_fit$obj$report(naomi_fit$par.full)
+  
+  mfout <- naomi_mf$mf_out %>%
+    dplyr::mutate(out_idx = dplyr::row_number())
+  
+  v <- naomi_mf$mf_artattend %>%
+    dplyr::select(reside_area_id, attend_area_id) %>%
+    dplyr::mutate(sex = "both",
+                  age_group = "00+") %>%
+    dplyr::left_join(
+             dplyr::rename(mfout, reside_area_id = area_id, reside_out_idx = out_idx),
+             by = c("reside_area_id", "sex", "age_group")
+           ) %>%
+    dplyr::left_join(
+             dplyr::rename(mfout, attend_area_id = area_id, attend_out_idx = out_idx),
+             by = c("attend_area_id", "sex", "age_group")
+           )
+
+  m_artattend_ij_t1 <- report$artattend_ij_t1_out
+  m_artnum_reside_t1 <- report$artnum_t1_out[v$reside_out_idx]
+  m_artnum_attend_t1 <- report$artattend_t1_out[v$attend_out_idx]
+  m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
+  m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
+  
+  m_artattend_ij_t2 <- report$artattend_ij_t2_out
+  m_artnum_reside_t2 <- report$artnum_t2_out[v$reside_out_idx]
+  m_artnum_attend_t2 <- report$artattend_t2_out[v$attend_out_idx]
+  m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
+  m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+  
+  if(!is.null(naomi_fit$sample)) {
+
+    s_artattend_ij_t1 <- naomi_fit$sample$artattend_ij_t1_out
+    s_artnum_reside_t1 <- naomi_fit$sample$artnum_t1_out[v$reside_out_idx, ]
+    s_artnum_attend_t1 <- naomi_fit$sample$artattend_t1_out[v$attend_out_idx, ]
+    s_prop_residents_t1 <- s_artattend_ij_t1 / s_artnum_reside_t1
+    s_prop_attendees_t1 <- s_artattend_ij_t1 / s_artnum_attend_t1
+   
+    s_artattend_ij_t2 <- naomi_fit$sample$artattend_ij_t2_out
+    s_artnum_reside_t2 <- naomi_fit$sample$artnum_t2_out[v$reside_out_idx, ]
+    s_artnum_attend_t2 <- naomi_fit$sample$artattend_t2_out[v$attend_out_idx, ]
+    s_prop_residents_t2 <- s_artattend_ij_t2 / s_artnum_reside_t2
+    s_prop_attendees_t2 <- s_artattend_ij_t2 / s_artnum_attend_t2
+  } else {
+    s_artattend_ij_t1 <- NULL
+    s_prop_residents_t1 <- NULL
+    s_prop_attendees_t1 <- NULL
+    s_artattend_ij_t2 <- NULL
+    s_prop_residents_t2 <- NULL
+    s_prop_attendees_t2 <- NULL
+  }
+
+  v$reside_out_idx <- NULL
+  v$attend_out_idx <- NULL
+
+  v_t1 <- dplyr::mutate(v, quarter_id = calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1))
+  v_t1 <- add_stats(v_t1, m_artattend_ij_t1, s_artattend_ij_t1, "artnum_")
+  v_t1 <- add_stats(v_t1, m_prop_residents_t1, s_prop_residents_t1, "prop_residents_")
+  v_t1 <- add_stats(v_t1, m_prop_attendees_t1, s_prop_attendees_t1, "prop_attendees_")
+
+  v_t2 <- dplyr::mutate(v, quarter_id = calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2))
+  v_t2 <- add_stats(v_t2, m_artattend_ij_t2, s_artattend_ij_t2, "artnum_")
+  v_t2 <- add_stats(v_t2, m_prop_residents_t2, s_prop_residents_t2, "prop_residents_")
+  v_t2 <- add_stats(v_t2, m_prop_attendees_t2, s_prop_attendees_t2, "prop_attendees_")
+
+  dplyr::bind_rows(v_t1, v_t2)
+}
+
 
 #' Build output package from fit
 #'
@@ -148,6 +219,8 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
   ##     tidyr::crossing(age_group_id = 30:31)
   ##   )
 
+  art_attendance <- extract_art_attendance(naomi_fit, naomi_mf)
+  
   meta_area <- area_merged %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
     dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
@@ -171,6 +244,7 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
   
   val <- list(
     indicators = indicators,
+    art_attendance = art_attendance,
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
@@ -246,6 +320,58 @@ add_output_labels <- function(naomi_output) {
   indicators
 }
 
+add_art_attendance_labels <- function(naomi_output) {
+
+  stopifnot(inherits(naomi_output, "naomi_output"))
+
+  art_attendance <- naomi_output$art_attendance %>%
+    dplyr::left_join(
+             sf::st_drop_geometry(naomi_output$meta_area) %>%
+             dplyr::select(reside_area_id = area_id,
+                           reside_area_name = area_name,
+                           reside_area_sort_order = area_sort_order),
+             by = "reside_area_id"
+           ) %>%
+    dplyr::left_join(
+             sf::st_drop_geometry(naomi_output$meta_area) %>%
+             dplyr::select(attend_area_id = area_id,
+                           attend_area_name = area_name,
+                           attend_area_sort_order = area_sort_order),
+             by = "attend_area_id"
+           ) %>%
+    dplyr::left_join(
+             naomi_output$meta_age_group %>%
+             dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
+             by = "age_group"
+           ) %>%
+    dplyr::left_join(naomi_output$meta_period, by = "quarter_id") %>%
+    dplyr::arrange(
+             reside_area_sort_order,
+             attend_area_sort_order,
+             quarter_id,
+             sex,
+             age_group_sort_order
+           ) %>%
+    dplyr::select(
+             reside_area_id,
+             reside_area_name,
+             attend_area_id,
+             attend_area_name,
+             sex,
+             age_group,
+             age_group_id,
+             age_group_label,
+             calendar_quarter,
+             quarter_id,
+             quarter_label,
+             dplyr::starts_with("artnum"),
+             dplyr::starts_with("prop_residents"),
+             dplyr::starts_with("prop_attendees")
+           )
+
+  art_attendance
+}
+
 #' Save outputs to zip file
 #'
 #' @param naomi_output Naomi output object
@@ -308,8 +434,10 @@ save_output <- function(filename, dir,
 
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
+    art_attendance <- add_art_attendance_labels(naomi_output)
   } else {
     indicators <- naomi_output$indicators
+    art_attendance <- naomi_output$art_attendance
   }
 
   tmpd <- tempfile()
@@ -319,6 +447,7 @@ save_output <- function(filename, dir,
   naomi_write_csv(indicators, "indicators.csv")
 
   if(!single_csv) {
+    naomi_write_csv(art_attendance, "art_attendance.csv")
     naomi_write_csv(sf::st_drop_geometry(naomi_output$meta_area),
                     "meta_area.csv")
     naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
@@ -375,6 +504,7 @@ read_output_package <- function(path) {
 
   v <- list(
     indicators = readr::read_csv(file.path(tmpd, "indicators.csv")),
+    art_attendance = readr::read_csv(file.path(tmpd, "art_attendance.csv")),
     meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
     meta_age_group = readr::read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr::read_csv(file.path(tmpd, "meta_period.csv")),
