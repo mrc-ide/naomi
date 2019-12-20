@@ -1,4 +1,5 @@
-# naomi 0.0.43
+# naomi 0.0.44
+
 
 * Remove age_group_id from model frames; use human readable age_group everywhere.
 * Output number of ART attendees between every district pair. Currently output at 
@@ -6,9 +7,13 @@
 * spread_areas() allows an sf object as argument and returns boundaries for wide 
   format areas if provided.
 
-# naomi 0.0.42
+# naomi 0.0.43
 
 * Check that esimates quarter (time 2) is greater than survey quarter (time 1).
+
+# naomi 0.0.42
+
+* Add more translations
 
 # naomi 0.0.41
 

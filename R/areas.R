@@ -17,7 +17,7 @@
 #' areas
 #'
 #' @export
-create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
+  create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
                          area_merged = NULL) {
 
   if(is.null(area_merged) &&
@@ -25,9 +25,9 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
       is.null(hierarchy) ||
       is.null(boundaries))
      ) {
-    stop("Either supply levels, hierarchy, and boundaries, or area_merged")
+    stop(t_("AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING"))
   }
-  
+
   if(!is.null(area_merged)) {
     if(!rlang::has_name(area_merged, "center_x"))
       area_merged$center_x <- NA
@@ -43,7 +43,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
 
     boundaries <- dplyr::select(area_merged, area_id, geometry)
   }
-      
+
   if(!rlang::has_name(hierarchy, "center_x"))
     hierarchy$center_x <- NA
   if(!rlang::has_name(hierarchy, "center_y"))
@@ -61,23 +61,22 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
     hierarchy$center_x[missing_center] <- sf::st_coordinates(px)[,1]
     hierarchy$center_y[missing_center] <- sf::st_coordinates(px)[,2]
   }
-    
+
   ## Validate areas
 
   ## - Area levels are unique and sequential
   if(any(duplicated(levels$area_level))) {
     stop(
-      paste0("Area levels not unique.\n",
-             "Duplicated level: ",
+      t_("AREAS_LEVEL_NOT_UNIQUE", list(missing_levels =
              paste(unique(levels$area_level[duplicated(levels$area_level)]),
-                   collapse = ","))
+                   collapse = ",")))
     )
   }
   stopifnot(diff(levels$area_level) == 1)
 
   ## - Number of areas by level is non-decreasing
   stopifnot(diff(levels$n_areas) >= 0)
-  
+
   ## - Levels are consistent with meta data
   if(any(!levels$area_level %in% levels$area_level)) {
     stop(
@@ -117,7 +116,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
   assertthat::assert_that(assertthat::noNA(hierarchy$center_x))
   assertthat::assert_that(assertthat::noNA(hierarchy$center_y))
   assertthat::assert_that(assertthat::noNA(boundaries$geometry))
-  
+
 
   ## TO DO: boundary checks
   ## - Areas are nested
@@ -125,7 +124,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
   ## - Centroids like within geometry (maybe)
   ## ** These checks might be time consuming, perhaps make them optional
 
-  
+
   tree <- hierarchy %>%
     dplyr::filter(!is.na(parent_area_id)) %>%
     dplyr::select(area_id, parent_area_id) %>%
@@ -221,7 +220,7 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
     dplyr::select(area_id, area_level, parent_area_id, area_sort_order)
 
   val <- dplyr::filter(area_pinched, area_id %in% area_scope) %>%
-    dplyr::mutate(area_scope = area_id) 
+    dplyr::mutate(area_scope = area_id)
 
   while(any(val$area_level < level)) {
     done <- dplyr::filter(val, area_level == level)
