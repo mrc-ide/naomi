@@ -1,3 +1,9 @@
+# naomi 0.0.45
+
+* Add INLA model fitting. 
+
+This is for development and comparison purposes, not for production use.
+
 # naomi 0.0.44
 
 * Remove age_group_id from model frames; use human readable age_group everywhere.
