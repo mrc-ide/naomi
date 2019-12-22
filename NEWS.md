@@ -11,6 +11,7 @@ This is for development and comparison purposes, not for production use.
   estimation level only.
 * spread_areas() allows an sf object as argument and returns boundaries for wide 
   format areas if provided.
+* No sex differences in prevalence, ART coverage, or incidence for age below 15 years.
 
 # naomi 0.0.43
 
