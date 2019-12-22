@@ -34,12 +34,12 @@ prepare_tmb_inputs <- function(naomi_data) {
   A_anc_t1 <- create_anc_Amat(naomi_data, "asfr_t1", "population_t1")
   A_anc_t2 <- create_anc_Amat(naomi_data, "asfr_t2", "population_t2")
 
-  X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
+  X_15to49 <- Matrix::t(sparse_model_matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
   ## ART attendance aggregation
 
-  Xgamma <-  Matrix::sparse.model.matrix(~0 + attend_area_idf:as.integer(jstar != 1),
-                                         naomi_data$mf_artattend)
+  Xgamma <-  sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
+                                 naomi_data$mf_artattend)
   
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
@@ -47,8 +47,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
-  Xart_gamma <- Matrix::sparse.model.matrix(~0 + attend_idf, df_art_attend)
-  Xart_idx <- Matrix::sparse.model.matrix(~0 + idf, df_art_attend)
+  Xart_gamma <- sparse_model_matrix(~0 + attend_idf, df_art_attend)
+  Xart_idx <- sparse_model_matrix(~0 + idf, df_art_attend)
 
   A_artattend_t1 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t1_dat, attend_area_id = area_id),
                                           naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
@@ -97,7 +97,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_lambda <- ~0
     f_lambda_x <- ~0
   } else {
-    f_lambda <- ~as.integer(sex == "female")
+    f_lambda <- ~female_15plus
     f_lambda_x <- ~0 + area_idf
   }
     
@@ -107,23 +107,23 @@ prepare_tmb_inputs <- function(naomi_data) {
     population_t2 = df$population_t2,
     Lproj = naomi_data$Lproj,
     projection_duration = naomi_data$projection_duration,
-    X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
-    X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
+    X_rho = stats::model.matrix(~female_15plus, df),
+    X_alpha = stats::model.matrix(~female_15plus, df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
     X_lambda = stats::model.matrix(f_lambda, df),
     X_ancrho = stats::model.matrix(~1, naomi_data$mf_areas),
     X_ancalpha = stats::model.matrix(~1, naomi_data$mf_areas),
-    Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
-    Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
-    Z_rho_a = Matrix::sparse.model.matrix(f_rho_a, df),
-    Z_rho_as = Matrix::sparse.model.matrix(f_rho_a, df) * (df$sex == "female"),
-    Z_alpha_a = Matrix::sparse.model.matrix(f_alpha_a, df),
-    Z_alpha_as = Matrix::sparse.model.matrix(f_alpha_a, df) * (df$sex == "female"),
-    Z_alpha_xt = Matrix::sparse.model.matrix(f_alpha_xt, df),
-    Z_lambda_x = Matrix::sparse.model.matrix(f_lambda_x, df),
+    Z_x = sparse_model_matrix(~0 + area_idf, df),
+    Z_xs = sparse_model_matrix(~0 + area_idf, df, "female_15plus", TRUE),
+    Z_rho_a = sparse_model_matrix(f_rho_a, df),
+    Z_rho_as = sparse_model_matrix(f_rho_a, df, "female_15plus", TRUE),
+    Z_alpha_a = sparse_model_matrix(f_alpha_a, df),
+    Z_alpha_as = sparse_model_matrix(f_alpha_a, df, "female_15plus", TRUE),
+    Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),
+    Z_lambda_x = sparse_model_matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
-    Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
-    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
+    Z_ancrho_x = sparse_model_matrix(~0 + area_idf, naomi_data$mf_areas),
+    Z_ancalpha_x = sparse_model_matrix(~0 + area_idf, naomi_data$mf_areas),
     A_anc_t1 = A_anc_t1,
     A_anc_t2 = A_anc_t2,
     ##
@@ -258,6 +258,24 @@ prepare_tmb_inputs <- function(naomi_data) {
   class(v) <- "naomi_tmb_input"
 
   v
+}
+
+sparse_model_matrix <- function(formula, data, binary_interaction = 1,
+                                drop_zero_cols = FALSE) {
+
+  if(is.character(binary_interaction))
+    binary_interaction <- data[[binary_interaction]]
+
+  stopifnot(length(binary_interaction) %in% c(1, nrow(data)))
+
+  mm <- Matrix::sparse.model.matrix(formula, data)
+  mm <- mm * binary_interaction
+  mm <- Matrix::drop0(mm)
+
+  if(drop_zero_cols)
+    mm <- mm[ , apply(mm, 2, Matrix::nnzero) > 0]
+
+  mm
 }
 
 

@@ -187,9 +187,21 @@ naomi_model_frame <- function(area_merged,
                        age_group = age_groups
                      ) %>%
     dplyr::mutate(idx = dplyr::row_number()) %>%
+    dplyr::left_join(
+             get_age_groups() %>%
+             dplyr::filter(age_group %in% age_groups) %>%
+             dplyr::mutate(
+                      age15plus = as.integer(age_group_start >= 15),
+                      age15to49 = as.integer(age_group_start >= 15 &
+                                             (age_group_start + age_group_span) <= 50)
+                    ) %>%
+             dplyr::select(age_group, age15plus, age15to49),
+             by = "age_group"
+           ) %>%
     dplyr::mutate(area_idf = forcats::as_factor(area_id),
-                  age_group_idf = forcats::as_factor(age_group))
-
+                  age_group_idf = forcats::as_factor(age_group),
+                  female_15plus = as.integer((sex == "female") * age15plus))
+  
   ## Spectrum aggregation and calibration population
   
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
@@ -426,16 +438,6 @@ naomi_model_frame <- function(area_merged,
   ## Incidence model  
     
   mf_model <- mf_model %>%
-    dplyr::left_join(
-             get_age_groups() %>%
-             dplyr::filter(age_group %in% age_groups) %>%
-             dplyr::mutate(
-               age15to49 = as.integer(age_group_start >= 15 &
-                                      (age_group_start + age_group_span) <= 50)
-             ) %>%
-             dplyr::select(age_group, age15to49),
-             by = "age_group"
-           ) %>%
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
              spec_prev15to49_t1 = sum(population_t1 * spec_prev_t1 * age15to49) / sum(population_t1 * age15to49),
