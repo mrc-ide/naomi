@@ -48,10 +48,15 @@ meta_indicator <-
   )
 
 
-add_stats <- function(df, mode, sample = NULL, prefix = ""){
+add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
 
   v <- df
-  v[[paste0(prefix, "mode")]] <- mode
+
+  if(!is.null(mode)) {
+    v[[paste0(prefix, "mode")]] <- mode
+  } else {
+    v[[paste0(prefix, "mode")]] <- NA_real_
+  }
 
   if(!is.null(sample)) {
     qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975))
@@ -146,17 +151,26 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
              by = c("attend_area_id", "sex", "age_group")
            )
 
-  m_artattend_ij_t1 <- mode$artattend_ij_t1_out
-  m_artnum_reside_t1 <- mode$artnum_t1_out[v$reside_out_idx]
-  m_artnum_attend_t1 <- mode$artattend_t1_out[v$attend_out_idx]
-  m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
-  m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
-  
-  m_artattend_ij_t2 <- mode$artattend_ij_t2_out
-  m_artnum_reside_t2 <- mode$artnum_t2_out[v$reside_out_idx]
-  m_artnum_attend_t2 <- mode$artattend_t2_out[v$attend_out_idx]
-  m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
-  m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+  if(!is.null(mode)) {
+    m_artattend_ij_t1 <- mode$artattend_ij_t1_out
+    m_artnum_reside_t1 <- mode$artnum_t1_out[v$reside_out_idx]
+    m_artnum_attend_t1 <- mode$artattend_t1_out[v$attend_out_idx]
+    m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
+    m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
+    
+    m_artattend_ij_t2 <- mode$artattend_ij_t2_out
+    m_artnum_reside_t2 <- mode$artnum_t2_out[v$reside_out_idx]
+    m_artnum_attend_t2 <- mode$artattend_t2_out[v$attend_out_idx]
+    m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
+    m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+  } else {
+    m_artattend_ij_t1 <- NULL
+    m_prop_residents_t1 <- NULL
+    m_prop_attendees_t1 <- NULL
+    m_artattend_ij_t2 <- NULL
+    m_prop_residents_t2 <- NULL
+    m_prop_attendees_t2 <- NULL
+  }
   
   if(!is.null(naomi_fit$sample)) {
 

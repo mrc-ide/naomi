@@ -130,3 +130,18 @@ test_that("add_stats returns expected names and types", {
 
 })
   
+test_that("output_package() works with mode, sample, or both", {
+
+  output_mode <- output_package(a_fit, a_naomi_mf, a_area_merged)
+
+  fit_sample_only <- a_fit_sample
+  fit_sample_only$mode <- NULL
+  output_sample <- output_package(fit_sample_only, a_naomi_mf, a_area_merged)
+
+  expect_true(all(is.na(output_mode$indicators[c("mean", "se", "median", "lower", "upper")])))
+  expect_equal(output_mode$indicators$mode, a_output$indicators$mode)
+
+  expect_true(all(is.na(output_mode$mode)))
+  expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
+               a_output$indicators[c("mean", "se", "median", "lower", "upper")])
+}
