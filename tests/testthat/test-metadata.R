@@ -99,8 +99,8 @@ test_that("metadata is well formed", {
   expect_true(all(meta$name %in%
                     c("HIV prevalence", "ART coverage", "Viral load suppression",
                       "Proportion recently infected", "PLHIV", "Population",
-                      "New infections", "HIV incidence", "ART number",
-                      "Receiving ART", "ANC HIV prevalence",
+                      "New infections", "HIV incidence", "ART number (residents)",
+                      "ART number (attending)", "ANC HIV prevalence",
                       "ANC prior ART coverage")))
   ## No NULLs, NAs or empty strings except for indicator_column and
   ## indicator_value columns
