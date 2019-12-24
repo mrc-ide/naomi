@@ -6,6 +6,8 @@
     "HIV_PREVALENCE": "HIV prevalence",
     "ART_COVERAGE": "ART coverage",
     "ART_NUMBER": "ART number",
+    "ART_NUMBER_RESIDENTS": "ART number (residents)",
+    "ART_NUMBER_ATTENDING": "ART number (attending)",
     "PROPORTION_RECENTLY_INFECTED": "Proportion recently infected",
     "VLS": "Viral load suppression",
     "RECEIVING_ART": "Receiving ART",
