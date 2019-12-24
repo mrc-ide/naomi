@@ -144,4 +144,4 @@ test_that("output_package() works with mode, sample, or both", {
   expect_true(all(is.na(output_mode$mode)))
   expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
                a_output$indicators[c("mean", "se", "median", "lower", "upper")])
-}
+})
