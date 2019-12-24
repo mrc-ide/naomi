@@ -147,3 +147,37 @@ test_that("output_package() works with mode, sample, or both", {
   expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
                a_output$indicators[c("mean", "se", "median", "lower", "upper")])
 })
+
+
+test_that("tmbstan fit returns results", {
+
+  CHAINS <- 2
+  ITER <- 30
+
+  ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
+  ## we are fitting with far too few iterations.
+  stanfit1 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
+  )
+  stanfit1 <- sample_tmbstan(stanfit1)
+  out1 <- output_package(stanfit1, a_naomi_data, a_area_merged)
+  
+  stanfit2 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
+  )
+  stanfit2 <- sample_tmbstan(stanfit2)
+  out2 <- output_package(stanfit2, a_naomi_data, a_area_merged)
+
+  stanfit3 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 29)
+  )
+  stanfit3 <- sample_tmbstan(stanfit3)
+  out3 <- output_package(stanfit3, a_naomi_data, a_area_merged)
+
+  expect_equal(ncol(stanfit1$sample$plhiv_t1), CHAINS * ITER / 2)
+  expect_true(all(is.na(out1$indicators$mode)))
+  expect_true(all(!is.na(out1$indicators[c("mean", "median", "se", "lower", "upper")])))
+  expect_equal(out1$indicators, out2$indicators)
+  expect_true(!all(out1$indicators$mean == out3$indicators$mean))
+  
+})
