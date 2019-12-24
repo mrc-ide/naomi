@@ -338,7 +338,8 @@ fit_tmb <- function(tmb_input,
   
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
-
+  f$mode <- obj$report(f$par.full)
+    
   val <- c(f, obj = list(obj))
   class(val) <- "naomi_fit"
 

@@ -70,8 +70,6 @@ add_stats <- function(df, mode, sample = NULL, prefix = ""){
 
 extract_indicators <- function(naomi_fit, naomi_mf) {
 
-  report <- naomi_fit$obj$report(naomi_fit$par.full)
-
   get_est <- function(varname,
                       indicator_id,
                       calendar_quarter,
@@ -82,9 +80,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
       indicator_id = indicator_id)
 
     if(!is.null(naomi_fit$sample)) {
-      v <- add_stats(v, report[[varname]], naomi_fit$sample[[varname]])
+      v <- add_stats(v, naomi_fit$mode[[varname]], naomi_fit$sample[[varname]])
     } else {
-      v <- add_stats(v, report[[varname]])
+      v <- add_stats(v, naomi_fit$mode[[varname]])
     }
 
     v
@@ -130,7 +128,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
 extract_art_attendance <- function(naomi_fit, naomi_mf) {
 
-  report <- naomi_fit$obj$report(naomi_fit$par.full)
+  mode <- naomi_fit$mode
   
   mfout <- naomi_mf$mf_out %>%
     dplyr::mutate(out_idx = dplyr::row_number())
@@ -148,15 +146,15 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
              by = c("attend_area_id", "sex", "age_group")
            )
 
-  m_artattend_ij_t1 <- report$artattend_ij_t1_out
-  m_artnum_reside_t1 <- report$artnum_t1_out[v$reside_out_idx]
-  m_artnum_attend_t1 <- report$artattend_t1_out[v$attend_out_idx]
+  m_artattend_ij_t1 <- mode$artattend_ij_t1_out
+  m_artnum_reside_t1 <- mode$artnum_t1_out[v$reside_out_idx]
+  m_artnum_attend_t1 <- mode$artattend_t1_out[v$attend_out_idx]
   m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
   m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
   
-  m_artattend_ij_t2 <- report$artattend_ij_t2_out
-  m_artnum_reside_t2 <- report$artnum_t2_out[v$reside_out_idx]
-  m_artnum_attend_t2 <- report$artattend_t2_out[v$attend_out_idx]
+  m_artattend_ij_t2 <- mode$artattend_ij_t2_out
+  m_artnum_reside_t2 <- mode$artnum_t2_out[v$reside_out_idx]
+  m_artnum_attend_t2 <- mode$artattend_t2_out[v$attend_out_idx]
   m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
   m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
   
