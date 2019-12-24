@@ -138,6 +138,8 @@ test_that("output_package() works with mode, sample, or both", {
   fit_sample_only$mode <- NULL
   output_sample <- output_package(fit_sample_only, a_naomi_mf, a_area_merged)
 
+  expect_true(all(!is.na(a_output$indicators[c("mean", "se", "median", "mode", "lower", "upper")])))
+  
   expect_true(all(is.na(output_mode$indicators[c("mean", "se", "median", "lower", "upper")])))
   expect_equal(output_mode$indicators$mode, a_output$indicators$mode)
 
