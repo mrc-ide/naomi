@@ -1,6 +1,6 @@
 # naomi 0.0.45
 
-* Remove age_group_id from model frames; use human readable age_group everywhere.
+* Remove age_group_id, indicator_id, and quarter_id from model frames; use human readable age_group, indicator, and calendar_quarter everywhere.
 * Output number of ART attendees between every district pair. Currently output at 
   estimation level only.
 * spread_areas() allows an sf object as argument and returns boundaries for wide 
