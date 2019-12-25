@@ -181,3 +181,20 @@ test_that("tmbstan fit returns results", {
   expect_true(!all(out1$indicators$mean == out3$indicators$mean))
   
 })
+
+test_that("INLA fit returns results", {
+
+  inla_input <- prepare_inla_inputs(a_naomi_data)
+  inla_fit <- fit_inla(inla_input, integration_strategy = "eb")
+  inla_smp1 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
+  inla_smp2 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
+  inla_smp3 <- sample_inla(inla_fit, nsample = 20, rng_seed = 29)
+
+  out1 <- output_package(inla_smp1, a_naomi_data, a_area_merged)
+  out2 <- output_package(inla_smp2, a_naomi_data, a_area_merged)
+  out3 <- output_package(inla_smp3, a_naomi_data, a_area_merged)
+
+  expect_equal(out1$indicators, out2$indicators)
+  expect_true(!all(out1$indicators$mean == out3$indicators$mean, na.rm = TRUE))
+
+})
