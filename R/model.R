@@ -335,7 +335,7 @@ naomi_model_frame <- function(area_merged,
              time_step,
              calendar_quarter,
              prevalence = plhiv_spectrum / population_spectrum,
-             art_coverage = art_num_spectrum / plhiv_spectrum,
+             art_coverage = pmax(pmin(art_num_spectrum / plhiv_spectrum, 0.999), 0.001),
              incidence = infections_spectrum / susc_previous_year_spectrum,
              asfr = births_spectrum / population_spectrum
            )
@@ -450,7 +450,7 @@ naomi_model_frame <- function(area_merged,
                sum(population_t2 * spec_prev_t2 * age15to49),
              logit_rho_offset = 0,
              logit_alpha_offset = 0,
-             logit_alpha_t1t2_offset = qlogis(pmax(pmin(spec_artcov_t2, 0.999), 0.001)) - qlogis(pmax(pmin(spec_artcov_t2, 0.999), 0.001)),
+             logit_alpha_t1t2_offset = qlogis(spec_artcov_t2) - qlogis(spec_artcov_t1),
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
              log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2)
            ) %>%

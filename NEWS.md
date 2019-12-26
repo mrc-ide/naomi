@@ -6,6 +6,7 @@
 * spread_areas() allows an sf object as argument and returns boundaries for wide 
   format areas if provided.
 * No sex differences in prevalence, ART coverage, or incidence for age below 15 years.
+* Cap Spectrum ART coverage between 0.001 and 0.999 to avoid logit transformation NaN errors.
 
 # naomi 0.0.44
 
