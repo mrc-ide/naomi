@@ -7,12 +7,13 @@ This is for development and comparison purposes, not for production use.
 
 # naomi 0.0.45
 
-* Remove age_group_id from model frames; use human readable age_group everywhere.
+* Remove age_group_id, indicator_id, and quarter_id from model frames; use human readable age_group, indicator, and calendar_quarter everywhere.
 * Output number of ART attendees between every district pair. Currently output at 
   estimation level only.
 * spread_areas() allows an sf object as argument and returns boundaries for wide 
   format areas if provided.
 * No sex differences in prevalence, ART coverage, or incidence for age below 15 years.
+* Cap Spectrum ART coverage between 0.001 and 0.999 to avoid logit transformation NaN errors.
 
 # naomi 0.0.44
 

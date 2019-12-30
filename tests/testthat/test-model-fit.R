@@ -88,7 +88,7 @@ test_that("model fit with no ART data at T2", {
 
 test_that("extract_indicators returns expected names and types", {
 
-  ind_colnames <- c("area_id", "sex", "age_group", "quarter_id", "indicator_id", 
+  ind_colnames <- c("area_id", "sex", "age_group", "calendar_quarter", "indicator", 
                     "mean", "se", "median", "mode", "lower", "upper")
   
   ind1 <- extract_indicators(a_fit, a_naomi_mf)
