@@ -3,6 +3,7 @@ fit_tmbstan <- function(tmb_input,
                         iterations = 500,
                         refresh = 0,
                         rng_seed = NULL,
+                        laplace = FALSE,
                         cores = parallel::detectCores()) {
 
   if(!requireNamespace("tmbstan", quietly = TRUE))
@@ -21,7 +22,8 @@ fit_tmbstan <- function(tmb_input,
     rng_seed <- sample.int(.Machine$integer.max, 1)
   
   f <- tmbstan::tmbstan(fit0$obj, chains = chains, iter = iterations,
-                        refresh = refresh, seed = rng_seed, cores = cores)
+                        refresh = refresh, seed = rng_seed, cores = cores,
+                        laplace = laplace)
   fit <- list(stanfit = f, tmbobj = fit0$obj)
   class(fit) <- "naomi_stanfit"
 
@@ -34,6 +36,12 @@ sample_tmbstan <- function(naomi_stanfit, verbose = FALSE) {
 
   smp <- as.matrix(naomi_stanfit$stanfit, pars = "lp__", include = FALSE)
   obj <- naomi_stanfit$tmbobj
+
+
+  if(ncol(smp) == length(obj$env$last.par) - length(obj$env$random)) {
+    if(verbose) print("Simulating full parameters from Laplace fit")
+    smp <- t(apply(smp, 1, sample_one_par_full, obj))
+  }
 
   if(verbose) print("Simulating outputs")
   sim <- apply(smp, 1, obj$report)
@@ -49,4 +57,26 @@ sample_tmbstan <- function(naomi_stanfit, verbose = FALSE) {
   naomi_stanfit$sample <- sample_out
   
   naomi_stanfit
+}
+
+
+sample_one_par_full <- function(par_fixed, obj) {
+
+  random_idx <- obj$env$random
+  val <- obj$fn(par_fixed)
+  par_full <- obj$env$last.par
+
+  stopifnot(all.equal(par_fixed, par_full[-random_idx]))
+
+  par_random <- par_full[random_idx]
+  hess_random <- obj$env$spHess(par_full, random = TRUE)
+  smp_random <- rmvnorm_sparseprec(1, par_random, hess_random)
+
+  smp_full <- numeric(length(par_full))
+  smp_full[random_idx] <- smp_random
+  smp_full[-random_idx] <- par_fixed
+  names(smp_full)[random_idx] <- colnames(smp_random)
+  names(smp_full)[-random_idx] <- names(par_fixed)
+
+  smp_full
 }

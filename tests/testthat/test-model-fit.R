@@ -182,6 +182,24 @@ test_that("tmbstan fit returns results", {
   
 })
 
+test_that("tmbstan with laplace returns results", {
+
+  CHAINS <- 2
+  ITER <- 4
+  
+  ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
+  ## we are fitting with far too few iterations.
+  stanfit_laplace <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28, laplace = TRUE)
+  )
+  stanfit_laplace <- sample_tmbstan(stanfit_laplace)
+  out_laplace <- output_package(stanfit_laplace, a_naomi_data, a_area_merged)
+  
+  expect_equal(ncol(stanfit_laplace$sample$plhiv_t1), CHAINS * ITER / 2)
+  expect_true(all(is.na(out_laplace$indicators$mode)))
+  expect_true(all(!is.na(out_laplace$indicators[c("mean", "median", "se", "lower", "upper")])))
+})
+
 test_that("INLA fit returns results", {
 
   inla_input <- prepare_inla_inputs(a_naomi_data)

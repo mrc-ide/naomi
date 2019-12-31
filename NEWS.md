@@ -1,6 +1,6 @@
 # naomi 0.0.46
 
-* Add TMB-Stan model fitting.
+* Add TMB-Stan model fitting, with and without Laplace approximation.
 * Add INLA model fitting. 
 
 This is for development and comparison purposes, not for production use.
