@@ -140,14 +140,14 @@ fit_inla <- function(inla_input,
   mode <- list()
   mode$population_t1_out <- as.vector(A_out %*% population_t1)
   mode$plhiv_t1_out <- as.vector(A_out %*% (population_t1 * rho_t1))
-  mode$artnum_t1_out <- as.vector(A_out %*% (population_t1 * rho_t1))
+  mode$artnum_t1_out <- as.vector(A_out %*% (population_t1 * rho_t1 * alpha_t1))
   mode$rho_t1_out <- mode$plhiv_t1_out / mode$population_t1_out
   mode$alpha_t1_out <- mode$artnum_t1_out / mode$plhiv_t1_out
 
   ## TODO: Remove unneeded components of INLA object to reduce object size.
   ##       Should do this if ever want to save these objects on their own.
   v <- list(inlafit_prev = fit_prev,
-            inlafit_artcov = fit_prev,
+            inlafit_artcov = fit_artcov,
             A_out = A_out,
             pred_idx = pred_idx,
             population_t1 = population_t1,
@@ -186,7 +186,7 @@ sample_inla <- function(inlafit, nsample = 1000, rng_seed = NULL, verbose = FALS
   sample <- list()
   sample$population_t1_out <- as.matrix(A_out %*% population_t1)
   sample$plhiv_t1_out <- as.matrix(A_out %*% (population_t1 * rho_t1))
-  sample$artnum_t1_out <- as.matrix(A_out %*% (population_t1 * rho_t1))
+  sample$artnum_t1_out <- as.matrix(A_out %*% (population_t1 * rho_t1 * alpha_t1))
   sample$rho_t1_out <- sample$plhiv_t1_out / sample$population_t1_out
   sample$alpha_t1_out <- sample$artnum_t1_out / sample$plhiv_t1_out
 
