@@ -37,7 +37,6 @@ options <- list(
 
 message("Preparing inputs")
 area_merged <- sf::read_sf(data$shape)
-areas <- create_areas(area_merged = area_merged)
 population <- readr_read_csv(data$population)
 survey <- readr_read_csv(data$survey)
 art_number <- readr_read_csv(data$art)
@@ -73,7 +72,7 @@ anc_prevalence_t2 <- options$anc_prevalence_t2
 anc_art_coverage_t1 <- options$anc_art_coverage_t1
 anc_art_coverage_t2 <- options$anc_art_coverage_t2
 
-naomi_mf <- naomi_model_frame(areas,
+naomi_mf <- naomi_model_frame(area_merged,
                               population,
                               spec,
                               scope = scope,
