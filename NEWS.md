@@ -1,3 +1,7 @@
+# naomi 0.0.47
+
+* Add read_***() functions with col_type parsers.
+
 # naomi 0.0.41
 
 * Separate PLHIV projection and incidence calculation.
