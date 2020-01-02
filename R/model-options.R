@@ -59,10 +59,10 @@ validate_model_options <- function(data, options) {
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
     stop(t_("MISSING_ART_DATA"))
 
-  ##
-  area_merged <- sf::read_sf(data$shape)
-  population <- readr_read_csv(data$population)
-  survey <- readr_read_csv(data$survey)
+  ##   
+  area_merged <- read_area_merged(data$shape)
+  population <- read_population(data$population)
+  survey <- read_survey_indicators(data$survey)
 
   ## # Area selection
   ## !!! TODO: temporary check. More comprehensive validation should be done
