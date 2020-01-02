@@ -36,11 +36,11 @@ options <- list(
 )
 
 message("Preparing inputs")
-area_merged <- sf::read_sf(data$shape)
-population <- readr_read_csv(data$population)
-survey <- readr_read_csv(data$survey)
-art_number <- readr_read_csv(data$art)
-anc <- readr_read_csv(data$anc)
+area_merged <- read_area_merged(data$shape)
+population <- read_population(data$population)
+survey <- read_survey_indicators(data$survey)
+art_number <- read_art_number(data$art)
+anc <- read_anc_testing(data$anc)
 
 spec <- extract_pjnz_naomi(data$pjnz)
 

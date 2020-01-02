@@ -49,12 +49,12 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$start("Validating inputs and options")
   progress$print()
   if (!is.null(data$art_number)) {
-    art_number <- readr_read_csv(data$art_number)
+    art_number <- read_art_number(data$art_number)
   } else {
     art_number <- NULL
   }
   if (!is.null(data$anc_testing)) {
-    anc_testing <- readr_read_csv(data$anc_testing)
+    anc_testing <- read_anc_testing(data$anc_testing)
   } else {
     anc_testing <- NULL
   }
@@ -70,9 +70,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   progress$start("Preparing input data")
   progress$print()
-  area_merged <- sf::read_sf(data$shape)
-  population <- readr_read_csv(data$population)
-  survey <- readr_read_csv(data$survey)
+  area_merged <- read_area_merged(data$shape)
+  population <- read_population(data$population)
+  survey <- read_survey_indicators(data$survey)
   spec <- extract_pjnz_naomi(data$pjnz)
 
   ## Get from the options
