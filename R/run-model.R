@@ -132,7 +132,7 @@ naomi_prepare_data <- function(data, options) {
     art_number <- NULL
   }
   if (!is.null(data$anc_testing)) {
-    anc_testing <- read_anc_tesing(data$anc_testing)
+    anc_testing <- read_anc_testing(data$anc_testing)
   } else {
     anc_testing <- NULL
   }
