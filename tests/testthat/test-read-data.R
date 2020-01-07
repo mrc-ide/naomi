@@ -9,7 +9,22 @@ test_that("read data functions parse expected columns", {
 })
 
 test_that("read data throws error if required columns not found", {
-
   expect_error(read_population(a_hintr_data$survey),
-               "names\\(col_spec\\$cols\\) %in% names\\(val\\) are not all TRUE")
+               "Required columns not found: calendar_quarter, population")
+})
+
+
+test_that("read data works with optional column specs", {
+
+  pop <- read_population(a_hintr_data$population)
+  pop$asfr <- NULL
+  no_asfr_col <- tempfile(fileext = ".csv")
+  readr::write_csv(pop, no_asfr_col, na = "")
+  expect_s3_class(read_population(no_asfr_col), "data.frame")
+
+  pop <- read_population(a_hintr_data$population)
+  pop$area_id <- NULL
+  no_area_id_col <- tempfile(fileext = ".csv")
+  readr::write_csv(pop, no_area_id_col, na = "")
+  expect_error(read_population(no_area_id_col), "Required columns not found: area_id")
 })
