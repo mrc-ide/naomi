@@ -23,6 +23,7 @@
           "type": "select",
           "options":
             <+area_level_options+>,
+          "value": <+area_level_default+>,
           "required": true
         }
       ]
@@ -35,6 +36,7 @@
           "type": "select",
           "options":
             <+calendar_quarter_t2_options+>,
+          "value": <+calendar_quarter_t2_default+>,
           "required": true
         }
       ]
