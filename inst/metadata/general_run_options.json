@@ -36,7 +36,7 @@
           "type": "select",
           "options":
             <+calendar_quarter_t2_options+>,
-          "value": <+calendar_quarter_t2_default+>,
+          "value": "CY2019Q4",
           "required": true
         }
       ]
