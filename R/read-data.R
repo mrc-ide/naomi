@@ -6,6 +6,8 @@
 read_population <- function(file) {
 
   ## !! TODO: add file format asserts
+
+  required_cols <- c("area_id", "calendar_quarter", "sex", "age_group", "population")
   
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
@@ -16,10 +18,13 @@ read_population <- function(file) {
                        population = readr::col_double(),
                        asfr = readr::col_double()
                      )
-                
-  val <- readr::read_csv(file, col_types = col_spec)
+
+  val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
-  stopifnot(names(col_spec$cols) %in% names(val))
+
+  missing_cols <- setdiff(required_cols, names(val))
+  if(length(missing_cols))
+    stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
@@ -31,6 +36,9 @@ read_population <- function(file) {
 read_survey_indicators <- function(file) {
 
   ## !! TODO: add file format asserts
+
+  required_cols <- c("indicator", "survey_id", "area_id", "sex", "age_group",
+                     "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u")
   
   col_spec <- readr::cols_only(
                        indicator = readr::col_character(),
@@ -47,9 +55,13 @@ read_survey_indicators <- function(file) {
                        ci_u = readr::col_double()
                      )
   
-  val <- readr::read_csv(file, col_types = col_spec)
+  val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
-  stopifnot(names(col_spec$cols) %in% names(val))
+
+  missing_cols <- setdiff(required_cols, names(val))
+  if(length(missing_cols))
+    stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
+
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
@@ -62,6 +74,8 @@ read_survey_indicators <- function(file) {
 read_art_number <- function(file) {
 
   ## !! TODO: add file format asserts
+
+  required_cols <- c("area_id", "sex", "age_group", "year", "current_art")
   
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
@@ -71,9 +85,13 @@ read_art_number <- function(file) {
                        current_art = readr::col_double()
                      )
   
-  val <- readr::read_csv(file, col_types = col_spec)
+  val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
-  stopifnot(names(col_spec$cols) %in% names(val))
+
+  missing_cols <- setdiff(required_cols, names(val))
+  if(length(missing_cols))
+    stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
+  
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
@@ -86,6 +104,9 @@ read_art_number <- function(file) {
 read_anc_testing <- function(file) {
 
   ## !! TODO: add file format asserts
+
+  required_cols <- c("area_id", "age_group", "year", "anc_clients",
+                     "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos")
   
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
@@ -100,7 +121,11 @@ read_anc_testing <- function(file) {
   
   val <- readr::read_csv(file, col_types = col_spec)
   readr::stop_for_problems(val)
-  stopifnot(names(col_spec$cols) %in% names(val))
+
+  missing_cols <- setdiff(required_cols, names(val))
+  if(length(missing_cols))
+    stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
+
   
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
@@ -125,4 +150,18 @@ read_area_merged <- function(file) {
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
   val
+}
+
+
+#' Read CSV with missing columns
+#' 
+#' This executes readr::read_csv with suppressing the warning for col_types that are
+#' explicitly specified but not found.
+#' 
+#' @param ... arguments to `readr::read_csv`.
+#' @return return from `readr::read_csv`.
+#' 
+#' @keywords internal 
+read_csv_partial_cols <- function(...){
+  suppress_one_warning(readr::read_csv(...), "The following named parsers don't match the column names")
 }
