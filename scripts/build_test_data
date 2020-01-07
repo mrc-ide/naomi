@@ -36,12 +36,11 @@ options <- list(
 )
 
 message("Preparing inputs")
-area_merged <- sf::read_sf(data$shape)
-areas <- create_areas(area_merged = area_merged)
-population <- readr::read_csv(data$population)
-survey <- readr::read_csv(data$survey)
-art_number <- readr::read_csv(data$art)
-anc <- readr::read_csv(data$anc)
+area_merged <- read_area_merged(data$shape)
+population <- read_population(data$population)
+survey <- read_survey_indicators(data$survey)
+art_number <- read_art_number(data$art)
+anc <- read_anc_testing(data$anc)
 
 spec <- extract_pjnz_naomi(data$pjnz)
 
@@ -73,7 +72,7 @@ anc_prevalence_t2 <- options$anc_prevalence_t2
 anc_art_coverage_t1 <- options$anc_art_coverage_t1
 anc_art_coverage_t2 <- options$anc_art_coverage_t2
 
-naomi_mf <- naomi_model_frame(areas,
+naomi_mf <- naomi_model_frame(area_merged,
                               population,
                               spec,
                               scope = scope,
