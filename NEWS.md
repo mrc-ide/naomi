@@ -1,6 +1,19 @@
+
 # naomi 0.0.47
 
 * Add read_***() functions with col_type parsers.
+
+# naomi 0.0.44
+
+* Change ART indicator labels to "ART Number (residents)" and "ART Number (attending)".
+
+# naomi 0.0.43
+
+* Check that esimates quarter (time 2) is greater than survey quarter (time 1).
+
+# naomi 0.0.42
+
+* Add more translations
 
 # naomi 0.0.41
 

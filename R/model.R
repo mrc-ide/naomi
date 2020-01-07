@@ -216,8 +216,10 @@ naomi_model_frame <- function(area_merged,
            ) 
 
   spectrum_calibration <- dplyr::bind_rows(
-                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter1),
-                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter2)
+                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter1) %>%
+                                  dplyr::mutate(time_step = "quarter1"),
+                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter2) %>%
+                                   dplyr::mutate(time_step = "quarter2")
                                  )
 
   ## # Add population estimates
@@ -229,7 +231,10 @@ naomi_model_frame <- function(area_merged,
   pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas$area_id)
   pop_t1 <- interpolate_population_agesex(pop_subset, calendar_quarter1)
   pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
-  population_est <- dplyr::bind_rows(pop_t1, pop_t2)
+  population_est <- dplyr::bind_rows(
+                             dplyr::mutate(pop_t1, time_step = "quarter1"),
+                             dplyr::mutate(pop_t2, time_step = "quarter2")
+                           )
 
   population_est <- population_est %>%
     dplyr::left_join(
@@ -244,12 +249,12 @@ naomi_model_frame <- function(area_merged,
   
   ## Calibrate population to Spectrum populations
 
-  group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
+  group_vars <- c("spectrum_region_code", "time_step", "calendar_quarter", "sex", "age_group")
   
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::left_join(
              dplyr::count(population_est,
-                          spectrum_region_code, calendar_quarter, sex, age_group,
+                          spectrum_region_code, time_step, calendar_quarter, sex, age_group,
                           wt = population, name = "population_raw"),
              by = group_vars
            )
@@ -286,13 +291,13 @@ naomi_model_frame <- function(area_merged,
   mf_model <- mf_model %>%
     dplyr::left_join(
              population_est %>%
-             dplyr::filter(calendar_quarter == calendar_quarter1) %>%
+             dplyr::filter(time_step == "quarter1") %>%
              dplyr::select(area_id, sex, age_group_id, population_t1 = population),
              by = c("area_id", "sex", "age_group_id")
            ) %>%
     dplyr::left_join(
              population_est %>%
-             dplyr::filter(calendar_quarter == calendar_quarter2) %>%
+             dplyr::filter(time_step == "quarter2") %>%
              dplyr::select(area_id, sex, age_group_id, population_t2 = population),
              by = c("area_id", "sex", "age_group_id")
            )
@@ -320,6 +325,7 @@ naomi_model_frame <- function(area_merged,
              spectrum_region_code,
              sex,
              age_group,
+             time_step,
              calendar_quarter,
              prevalence = plhiv_spectrum / population_spectrum,
              art_coverage = art_num_spectrum / plhiv_spectrum,
@@ -330,7 +336,7 @@ naomi_model_frame <- function(area_merged,
   mf_model <- mf_model %>%
     dplyr::left_join(
              spec_indicators %>%
-             dplyr::filter(calendar_quarter == calendar_quarter1) %>%
+             dplyr::filter(time_step == "quarter1") %>%
              dplyr::left_join(
                       dplyr::select(get_age_groups(), age_group, age_group_id),
                       by = "age_group"
@@ -348,7 +354,7 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::left_join(
              spec_indicators %>%
-             dplyr::filter(calendar_quarter == calendar_quarter2) %>%
+             dplyr::filter(time_step == "quarter2") %>%
              dplyr::left_join(
                       dplyr::select(get_age_groups(), age_group, age_group_id),
                       by = "age_group"

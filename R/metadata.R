@@ -51,7 +51,9 @@ get_colour_scale <- function(iso3 = "default") {
 #' @examples
 #' get_metadata()
 get_metadata <- function() {
-  naomi_read_csv(system_file("metadata", "metadata.csv"))
+  data <- naomi_read_csv(system_file("metadata", "metadata.csv"))
+  data$name <- traduire::translator()$replace(data$name)
+  data
 }
 
 #' Get 5 year age groups

@@ -1,9 +1,9 @@
 {
-  "label": "General",
-  "description": "Select general model options:",
+  "label": "t_(OPTIONS_GENERAL_LABEL)",
+  "description": "t_(OPTIONS_GENERAL_DESCRIPTION)",
   "controlGroups": [
     {
-      "label": "Area scope",
+      "label": "t_(OPTIONS_GENERAL_AREA_SCOPE_LABEL)",
       "controls": [
         {
           "name": "area_scope",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "label": "Area level",
+      "label": "t_(OPTIONS_GENERAL_AREA_LEVEL_LABEL)",
       "controls": [
         {
           "name": "area_level",
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "label": "Calendar quarter to generate estimates",
+      "label": "t_(OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL)",
       "controls": [
         {
           "name": "calendar_quarter_t2",

@@ -28,9 +28,10 @@ get_model_options_template <- function(art, anc) {
 }
 
 read_options <- function(type) {
-  paste(readLines(
+  options <- paste(readLines(
     system_file("metadata", sprintf("%s_run_options.json", type)),
     encoding = "UTF-8"), collapse = "")
+  traduire::translator()$replace(options)
 }
 
 #' Validate a set of model options
@@ -49,14 +50,15 @@ validate_model_options <- function(data, options) {
                         "survey_prevalence")
 
   if(!all(required_options %in% names(options)))
-    stop(paste("Required model options not supplied:",
-               paste(setdiff(required_options, names(options)), collapse = ", ")))
+    stop(t_("MISSING_OPTIONS", list(missing_options =
+      paste(setdiff(required_options, names(options)), collapse = ", "))))
 
   ## TODO: better approach to check file exists and is valid?
   if(is.null(data$art_number) &&
      (!is.null(options$include_art_t1) && options$include_art_t1 == "true" ||
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
-    stop("ART dataset not provided. ART data cannot be selected Yes to include.")
+    stop(t_("MISSING_ART_DATA"))
+
 
   ##   
   area_merged <- read_area_merged(data$shape)
@@ -67,9 +69,13 @@ validate_model_options <- function(data, options) {
   ## !!! TODO: temporary check. More comprehensive validation should be done
   ##     with overhauling the data.tree stuff.
   if(options$area_level == 0)
-    stop("Cannot fit model at country level. Choose a different level.")
-  
+    stop(t_("NO_COUNTRY_LEVEL_FIT"))
 
+  ## Check time T2 is after T1
+  if(calendar_quarter_to_quarter_id(options$calendar_quarter_t1) >=
+     calendar_quarter_to_quarter_id(options$calendar_quarter_t2))
+    stop("Estimates quarter (time 2) must be after survey quarter (time 1)")
+  
   ## # Population inputs
 
   ## TODO:
@@ -106,9 +112,18 @@ validate_model_options <- function(data, options) {
     if (as.logical(options$artattend) &&
        ((is.null(options$include_art_t1) || options$include_art_t1 == "false") &&
        (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
-      stop(t_("art_attendance_impossible"))
+      stop(t_("ART_ATTENDANCE_IMPOSSIBLE"))
     }
   }
 
   TRUE
 }
+
+options_keys_to_text <- function(keys) {
+  ## TODO: Implement a mapping from the key to the value text for returning
+  ## in error messages
+  ## Do we need this check though? The form itself validates missing options
+  ## mrc-1242
+  keys
+}
+
