@@ -1,3 +1,8 @@
+
+# naomi 0.0.47
+
+* Add read_***() functions with col_type parsers.
+
 # naomi 0.0.44
 
 * Change ART indicator labels to "ART Number (residents)" and "ART Number (attending)".
