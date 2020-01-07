@@ -30,7 +30,7 @@
     "OPTIONS_ART_DESCRIPTION": "Select whether to include ART data or not in model run",
     "OPTIONS_ART_INCLUDE_ART_LABEL": "Include ART data",
     "OPTIONS_T1_LABEL": "Time 1",
-    "OPTIONS_T1_HELP": "First year of survey data",
+    "OPTIONS_T1_HELP": "First year of data entered",
     "OPTIONS_QUARTER1_LABEL": "Calendar quarter at midpoint of survey",
     "OPTIONS_T2_LABEL": "Time 2",
     "OPTIONS_T2_HELP": "Year to generate estimates for",
