@@ -93,7 +93,7 @@ test_that("error message translation", {
   options$include_art_t2 <- "false"
 
   err_en <- "ART attendance model can only be estimated if ART programme data are used."
-  err_fr <- "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées"
+  err_fr <- "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées."
 
   expect_error(validate_model_options(a_hintr_data, options),
                err_en)
@@ -120,15 +120,15 @@ test_that("model options template can be translated", {
   on.exit(reset())
 
   options <- get_model_options_template(TRUE, TRUE)
-  expect_true(any(grepl("Générales", options$general)))
+  expect_true(any(grepl("Généralités", options$general)))
   expect_false(any(grepl("General", options$general)))
-  expect_true(any(grepl("Sélectionnez les options générales du modèle:", options$general)))
+  expect_true(any(grepl("Sélectionnez les options générales du modèle :", options$general)))
   expect_false(any(grepl("Select general model options:", options$general)))
 
   reset()
   options <- get_model_options_template(TRUE, TRUE)
-  expect_false(any(grepl("Générales", options$general)))
+  expect_false(any(grepl("Généralités", options$general)))
   expect_true(any(grepl("General", options$general)))
-  expect_false(any(grepl("Sélectionnez les options générales du modèle:", options$general)))
+  expect_false(any(grepl("Sélectionnez les options générales du modèle :", options$general)))
   expect_true(any(grepl("Select general model options:", options$general)))
 })

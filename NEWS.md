@@ -1,3 +1,7 @@
+# naomi 0.0.47
+
+* Add read_***() functions with col_type parsers.
+
 # naomi 0.0.45
 
 * Remove age_group_id, indicator_id, and quarter_id from model frames; use human readable age_group, indicator, and calendar_quarter everywhere.

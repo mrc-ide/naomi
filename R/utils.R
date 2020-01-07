@@ -20,3 +20,11 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
   write.csv(x, tmp, ..., row.names = row.names)
   paste0(readLines(tmp), collapse = "\n")
 }
+
+suppress_one_warning <- function(expr, regexp) {
+  withCallingHandlers(expr, 
+    warning = function(w) {
+        if(grepl(regexp, w$message))
+          invokeRestart("muffleWarning")
+    })
+}                                 
