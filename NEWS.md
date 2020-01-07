@@ -1,3 +1,6 @@
+# naomi 0.0.48
+
+* Add default values for area level and calendar quarter to generate estiamtes for
 
 # naomi 0.0.47
 
