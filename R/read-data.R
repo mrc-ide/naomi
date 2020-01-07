@@ -161,7 +161,7 @@ read_area_merged <- function(file) {
 #' @param ... arguments to `readr::read_csv`.
 #' @return return from `readr::read_csv`.
 #' 
-#' @internal 
+#' @keywords internal 
 read_csv_partial_cols <- function(...){
   suppress_one_warning(readr::read_csv(...), "The following named parsers don't match the column names")
 }
