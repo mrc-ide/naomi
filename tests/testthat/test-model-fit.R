@@ -151,6 +151,8 @@ test_that("output_package() works with mode, sample, or both", {
 
 test_that("tmbstan fit returns results", {
 
+  testthat::skip_on_covr()
+
   CHAINS <- 2
   ITER <- 30
 
@@ -184,6 +186,8 @@ test_that("tmbstan fit returns results", {
 
 test_that("tmbstan with laplace returns results", {
 
+  testthat::skip_on_covr()
+  
   CHAINS <- 2
   ITER <- 4
   
