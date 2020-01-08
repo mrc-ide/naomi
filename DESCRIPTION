@@ -56,7 +56,8 @@ Suggests:
     testthat (>= 2.1.0),
     tidyverse,
     viridis,
-    withr
+    withr,
+    tmbstan
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,

@@ -130,3 +130,93 @@ test_that("add_stats returns expected names and types", {
 
 })
   
+test_that("output_package() works with mode, sample, or both", {
+
+  output_mode <- output_package(a_fit, a_naomi_mf, a_area_merged)
+
+  fit_sample_only <- a_fit_sample
+  fit_sample_only$mode <- NULL
+  output_sample <- output_package(fit_sample_only, a_naomi_mf, a_area_merged)
+
+  expect_true(all(!is.na(a_output$indicators[c("mean", "se", "median", "mode", "lower", "upper")])))
+  
+  expect_true(all(is.na(output_mode$indicators[c("mean", "se", "median", "lower", "upper")])))
+  expect_equal(output_mode$indicators$mode, a_output$indicators$mode)
+
+  expect_true(all(is.na(output_mode$mode)))
+  expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
+               a_output$indicators[c("mean", "se", "median", "lower", "upper")])
+})
+
+
+test_that("tmbstan fit returns results", {
+
+  testthat::skip_on_covr()
+
+  CHAINS <- 2
+  ITER <- 30
+
+  ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
+  ## we are fitting with far too few iterations.
+  stanfit1 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
+  )
+  stanfit1 <- sample_tmbstan(stanfit1)
+  out1 <- output_package(stanfit1, a_naomi_data, a_area_merged)
+  
+  stanfit2 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
+  )
+  stanfit2 <- sample_tmbstan(stanfit2)
+  out2 <- output_package(stanfit2, a_naomi_data, a_area_merged)
+
+  stanfit3 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 29)
+  )
+  stanfit3 <- sample_tmbstan(stanfit3)
+  out3 <- output_package(stanfit3, a_naomi_data, a_area_merged)
+
+  expect_equal(ncol(stanfit1$sample$plhiv_t1), CHAINS * ITER / 2)
+  expect_true(all(is.na(out1$indicators$mode)))
+  expect_true(all(!is.na(out1$indicators[c("mean", "median", "se", "lower", "upper")])))
+  expect_equal(out1$indicators, out2$indicators)
+  expect_true(!all(out1$indicators$mean == out3$indicators$mean))
+  
+})
+
+test_that("tmbstan with laplace returns results", {
+
+  testthat::skip_on_covr()
+  
+  CHAINS <- 2
+  ITER <- 4
+  
+  ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
+  ## we are fitting with far too few iterations.
+  stanfit_laplace <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28, laplace = TRUE)
+  )
+  stanfit_laplace <- sample_tmbstan(stanfit_laplace)
+  out_laplace <- output_package(stanfit_laplace, a_naomi_data, a_area_merged)
+  
+  expect_equal(ncol(stanfit_laplace$sample$plhiv_t1), CHAINS * ITER / 2)
+  expect_true(all(is.na(out_laplace$indicators$mode)))
+  expect_true(all(!is.na(out_laplace$indicators[c("mean", "median", "se", "lower", "upper")])))
+})
+
+test_that("INLA fit returns results", {
+
+  inla_input <- prepare_inla_inputs(a_naomi_data)
+  inla_fit <- fit_inla(inla_input, integration_strategy = "eb")
+  inla_smp1 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
+  inla_smp2 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
+  inla_smp3 <- sample_inla(inla_fit, nsample = 20, rng_seed = 29)
+
+  out1 <- output_package(inla_smp1, a_naomi_data, a_area_merged)
+  out2 <- output_package(inla_smp2, a_naomi_data, a_area_merged)
+  out3 <- output_package(inla_smp3, a_naomi_data, a_area_merged)
+
+  expect_equal(out1$indicators, out2$indicators)
+  expect_true(!all(out1$indicators$mean == out3$indicators$mean, na.rm = TRUE))
+
+})

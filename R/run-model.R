@@ -48,16 +48,12 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   progress$start("Validating inputs and options")
   progress$print()
-  if (!is.null(data$art_number)) {
-    art_number <- read_art_number(data$art_number)
-  } else {
-    art_number <- NULL
-  }
-  if (!is.null(data$anc_testing)) {
-    anc_testing <- read_anc_testing(data$anc_testing)
-  } else {
-    anc_testing <- NULL
-  }
+
+  if(is.null(options$permissive))
+    permissive <- FALSE
+  else
+    permissive <- as.logical(options$permissive)
+
   if (is.null(options$artattend)) {
     options$artattend <- FALSE
   }
@@ -69,76 +65,11 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("Validating inputs and options")
 
   progress$start("Preparing input data")
+
   progress$print()
-  area_merged <- read_area_merged(data$shape)
-  population <- read_population(data$population)
-  survey <- read_survey_indicators(data$survey)
-  spec <- extract_pjnz_naomi(data$pjnz)
 
-  ## Get from the options
-  scope <- options$area_scope
-  level <- as.integer(options$area_level)
-  calendar_quarter_t1 <- options$calendar_quarter_t1
-  calendar_quarter_t2 <- options$calendar_quarter_t2
-  prev_survey_ids  <- options$survey_prevalence
-  recent_survey_ids <- options$survey_recently_infected
-  artcov_survey_ids <- options$survey_art_coverage
-
-  if(is.null(options$permissive))
-    permissive <- FALSE
-  else
-    permissive <- as.logical(options$permissive)
-
-
-
-  ## VLS survey data not supported by model options
-  vls_survey_ids <- NULL
-
-  if(!is.null(options$include_art_t1) &&
-     as.logical(options$include_art_t1))
-    artnum_calendar_quarter1 <- calendar_quarter_t1
-  else
-    artnum_calendar_quarter1 <- NULL
-
-  if(!is.null(options$include_art_t2) &&
-     as.logical(options$include_art_t2))
-    artnum_calendar_quarter2 <- calendar_quarter_t2
-  else
-    artnum_calendar_quarter2 <- NULL
-
-  anc_prevalence_year1 <- options$anc_prevalence_year1
-  anc_prevalence_year2 <- options$anc_prevalence_year2
-  anc_art_coverage_year1 <- options$anc_art_coverage_year1
-  anc_art_coverage_year2 <- options$anc_art_coverage_year2
-
-  naomi_mf <- naomi_model_frame(
-    area_merged,
-    population,
-    spec,
-    scope = scope,
-    level = level,
-    calendar_quarter_t1,
-    calendar_quarter_t2,
-    spectrum_population_calibration = options$spectrum_population_calibration,
-    artattend = as.logical(options$artattend),
-    artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
-  )
-
-  naomi_data <- select_naomi_data(naomi_mf,
-                                  survey,
-                                  anc_testing,
-                                  art_number,
-                                  prev_survey_ids,
-                                  artcov_survey_ids,
-                                  recent_survey_ids,
-                                  vls_survey_ids,
-                                  artnum_calendar_quarter1,
-                                  artnum_calendar_quarter2,
-                                  anc_prevalence_year1,
-                                  anc_prevalence_year2,
-                                  anc_art_coverage_year1,
-                                  anc_art_coverage_year2)
-
+  naomi_data <- naomi_prepare_data(data, options)
+  
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
   progress$complete("Preparing input data")
@@ -166,9 +97,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   ## TODO: Include input data in output package based on model options
   ## input download_input
-  outputs <- output_package(fit, naomi_mf, area_merged)
+  outputs <- output_package(fit, naomi_data, naomi_data$areas)
 
-  outputs <- calibrate_outputs(outputs, naomi_mf,
+  outputs <- calibrate_outputs(outputs, naomi_data,
                                options$spectrum_plhiv_calibration_level,
                                options$spectrum_plhiv_calibration_strat,
                                options$spectrum_artnum_calibration_level,
@@ -185,6 +116,85 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   list(output_path = output_path,
        spectrum_path = spectrum_path,
        summary_path = summary_path)
+}
+
+naomi_prepare_data <- function(data, options) {
+
+  area_merged <- read_area_merged(data$shape)
+  population <- read_population(data$population)
+  survey <- read_survey_indicators(data$survey)
+
+  spec <- extract_pjnz_naomi(data$pjnz)
+
+  if (!is.null(data$art_number)) {
+    art_number <- read_art_number(data$art_number)
+  } else {
+    art_number <- NULL
+  }
+  if (!is.null(data$anc_testing)) {
+    anc_testing <- read_anc_testing(data$anc_testing)
+  } else {
+    anc_testing <- NULL
+  }
+  
+  ## Get from the options
+  scope <- options$area_scope
+  level <- as.integer(options$area_level)
+  calendar_quarter_t1 <- options$calendar_quarter_t1
+  calendar_quarter_t2 <- options$calendar_quarter_t2
+  prev_survey_ids  <- options$survey_prevalence
+  recent_survey_ids <- options$survey_recently_infected
+  artcov_survey_ids <- options$survey_art_coverage
+    
+  ## VLS survey data not supported by model options
+  vls_survey_ids <- NULL
+  
+  if(!is.null(options$include_art_t1) &&
+     as.logical(options$include_art_t1))
+    artnum_calendar_quarter1 <- calendar_quarter_t1
+  else
+    artnum_calendar_quarter1 <- NULL
+  
+  if(!is.null(options$include_art_t2) &&
+     as.logical(options$include_art_t2))
+    artnum_calendar_quarter2 <- calendar_quarter_t2
+  else
+    artnum_calendar_quarter2 <- NULL
+  
+  anc_prevalence_year1 <- options$anc_prevalence_year1
+  anc_prevalence_year2 <- options$anc_prevalence_year2
+  anc_art_coverage_year1 <- options$anc_art_coverage_year1
+  anc_art_coverage_year2 <- options$anc_art_coverage_year2
+  
+  naomi_mf <- naomi_model_frame(
+    area_merged,
+    population,
+    spec,
+    scope = scope,
+    level = level,
+    calendar_quarter_t1,
+    calendar_quarter_t2,
+    spectrum_population_calibration = options$spectrum_population_calibration,
+    artattend = as.logical(options$artattend),
+    artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
+  )
+  
+  naomi_data <- select_naomi_data(naomi_mf,
+                                  survey,
+                                  anc_testing,
+                                  art_number,
+                                  prev_survey_ids,
+                                  artcov_survey_ids,
+                                  recent_survey_ids,
+                                  vls_survey_ids,
+                                  artnum_calendar_quarter1,
+                                  artnum_calendar_quarter2,
+                                  anc_prevalence_year1,
+                                  anc_prevalence_year2,
+                                  anc_art_coverage_year1,
+                                  anc_art_coverage_year2)
+
+  return(naomi_data)
 }
 
 new_progress <- function() {
