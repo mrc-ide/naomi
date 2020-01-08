@@ -91,7 +91,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_alpha_t1t2_offset <- numeric(nrow(naomi_data$mf_model))
   }
 
-  ## If no recent infeciton data, do not estimate incidence sex ratio or
+  ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
   if(nrow(naomi_data$recent_dat) == 0) {
     f_lambda <- ~0
