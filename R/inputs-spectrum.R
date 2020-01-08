@@ -127,7 +127,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
   spec_quarter <- spec %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L),
                   year = NULL) %>%
-    dplyr::filter(dplyr::between(quarter_id, quarter_id1 - 4, quarter_id2 + 4)) %>%
+    dplyr::filter(dplyr::between(quarter_id, quarter_id1 - 4, quarter_id2 + 8)) %>%
     tidyr::crossing(age_quarter = 0:3) %>%
     dplyr::mutate(age_quarter = pmin(4 * age + age_quarter, max(age)*4),
                   age = NULL,
@@ -166,29 +166,39 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
 
   infections_cohort <- spec_quarter %>%
     ## Subtract 4 quarters to move infections from end year to forthcoming year
-    dplyr::mutate(age_quarter = age_quarter - 4,
+    dplyr::mutate(cohort_quarter = quarter_id - age_quarter,
+                  age_quarter = NULL,
                   quarter_id = quarter_id - 4) %>%
     tidyr::crossing(quarter = 0:3) %>%
     dplyr::mutate(quarter_id = quarter_id + quarter,
                   quarter = NULL,
                   infections = infections / 4,
-                  cohort_quarter = quarter_id - age_quarter) %>%
+                  age_quarter = quarter_id - cohort_quarter)
+
+  ## Put half the new infections in the next age group
+  infections_cohort <- infections_cohort %>%
+    dplyr::mutate(infections = infections / 2) %>%
+    dplyr::bind_rows(
+             dplyr::mutate(., age_quarter = age_quarter + 1)
+           ) %>%
     dplyr::filter(quarter_id >= quarter_id1,
-                  quarter_id < quarter_id2) %>%
-    dplyr::count(spectrum_region_code, sex, cohort_quarter, wt = infections, name = "infections")
+                  quarter_id < quarter_id2 + 4) %>%
+    dplyr::mutate(age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
+                  age_group2 = age_quarter_to_age_group(quarter_id2 - cohort_quarter),
+                  age_group_infection = age_quarter_to_age_group(age_quarter)) %>%
+    dplyr::count(spectrum_region_code, sex, quarter_id, age_group1, age_group2, age_group_infection,
+                 wt = infections, name = "infections")
   
   infections_t1t2 <- infections_cohort %>%
-    dplyr::mutate(age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
-                  age_group2 = age_quarter_to_age_group(quarter_id2 - cohort_quarter)) %>%
+    dplyr::filter(quarter_id < quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
-                 wt = infections, name = "infections")
+                 wt = infections, name = "infections_t1t2")
   
   hivpop_t1t2 <- dplyr::inner_join(hivpop_t1, hivpop_t2,
                                    by = c("spectrum_region_code", "sex", "age_group1")) %>%
     dplyr::left_join(infections_t1t2,
                      by = c("spectrum_region_code", "sex", "age_group1", "age_group2")) %>%
-    dplyr::mutate(L = (hivpop2 - infections) / hivpop1)
-
+    dplyr::mutate(L_hivpop = (hivpop2 - infections_t1t2) / hivpop1)
 
   hivpopLproj <- hivpop_t1t2 %>%
     dplyr::inner_join(
@@ -199,13 +209,41 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
              dplyr::select(mf_model, spectrum_region_code, sex, age_group2 = age_group, area_id, idx2 = idx),
              by = c("spectrum_region_code", "sex", "age_group2", "area_id")
            )
+  
+  Lproj_hivpop <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
+                                       j = hivpopLproj$idx1,
+                                       x = hivpopLproj$L_hivpop,
+                                       dims = rep(nrow(mf_model), 2))
 
-  Lproj <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
-                                j = hivpopLproj$idx1,
-                                x = hivpopLproj$L,
-                                dims = rep(nrow(mf_model), 2))
+  infections_age_t2 <- infections_cohort %>%
+    dplyr::filter(quarter_id < quarter_id2) %>%
+    dplyr::count(spectrum_region_code, sex, age_group_infection, age_group2,
+                 wt = infections, name = "infections_age_t2")
 
-  Lproj
+  infections_age <- infections_cohort %>%
+    dplyr::filter(quarter_id < quarter_id2) %>%
+    dplyr::count(spectrum_region_code, sex, age_group_infection,
+                 wt = infections, name = "infections_age")
+
+  incidLproj <- dplyr::left_join(infections_age_t2, infections_age,
+                                 by = c("spectrum_region_code", "sex", "age_group_infection")) %>%
+    dplyr::mutate(L_incid = dplyr::if_else(infections_age == 0, 0, infections_age_t2 / infections_age)) %>%
+    dplyr::inner_join(
+             dplyr::select(mf_model, spectrum_region_code, sex, age_group_infection = age_group, area_id, idx1 = idx),
+             by = c("spectrum_region_code", "sex", "age_group_infection")
+           ) %>%
+    dplyr::inner_join(
+             dplyr::select(mf_model, spectrum_region_code, sex, age_group2 = age_group, area_id, idx2 = idx),
+             by = c("spectrum_region_code", "sex", "age_group2", "area_id")
+           )
+
+  Lproj_incid <- Matrix::sparseMatrix(i = incidLproj$idx2,
+                                      j = incidLproj$idx1,
+                                      x = incidLproj$L_incid,
+                                      dims = rep(nrow(mf_model), 2))
+  
+  list(Lproj_hivpop = Lproj_hivpop,
+       Lproj_incid = Lproj_incid)
 }
 
 #' Interpolate Spectrum to quarter_id

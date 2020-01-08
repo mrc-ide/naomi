@@ -105,7 +105,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
-    Lproj = naomi_data$Lproj,
+    Lproj_hivpop = naomi_data$Lproj_hivpop,
+    Lproj_incid = naomi_data$Lproj_incid,
     projection_duration = naomi_data$projection_duration,
     X_rho = stats::model.matrix(~female_15plus, df),
     X_alpha = stats::model.matrix(~female_15plus, df),

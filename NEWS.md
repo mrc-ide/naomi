@@ -1,3 +1,8 @@
+
+# naomi 0.0.49
+
+* Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.
+
 # naomi 0.0.47
 
 * Add read_***() functions with col_type parsers.

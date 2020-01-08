@@ -372,7 +372,6 @@ naomi_model_frame <- function(area_merged,
 
   
   ## Projection matrix
-
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2)
@@ -465,7 +464,8 @@ naomi_model_frame <- function(area_merged,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
             A_out = outf$A,
-            Lproj = Lproj,
+            Lproj_hivpop = Lproj$Lproj_hivpop,
+            Lproj_incid = Lproj$Lproj_incid,
             projection_duration = projection_duration,
             age_groups = age_groups,
             sexes = sexes,
