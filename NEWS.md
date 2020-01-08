@@ -1,7 +1,10 @@
-
 # naomi 0.0.49
 
 * Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.
+
+# naomi 0.0.48
+
+* Add default values for area level and calendar quarter to generate estiamtes for
 
 # naomi 0.0.47
 
