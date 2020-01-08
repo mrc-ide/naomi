@@ -21,7 +21,7 @@
     "OPTIONS_GENERAL_DESCRIPTION": "Select general model options:",
     "OPTIONS_GENERAL_AREA_SCOPE_LABEL": "Area scope",
     "OPTIONS_GENERAL_AREA_LEVEL_LABEL": "Area level",
-    "OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL": "Calendar quarter to generate estimes",
+    "OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL": "Calendar quarter to generate estimates",
     "OPTIONS_ANC_LABEL": "ANC",
     "OPTIONS_ANC_DESCRIPTION": "Optionally select which quarter of data to use at time point 1 and 2",
     "OPTIONS_ANC_PREVALENCE_LABEL": "Prevalence",

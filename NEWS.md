@@ -1,3 +1,12 @@
+# naomi 0.0.49
+
+* Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.
+* Add new paediatric HIV infections betwen time 1 and time 2 proportional to HIV survivors by age and prevalence among women age 15-49 in Spectrum.
+
+# naomi 0.0.48
+
+* Add default values for area level and calendar quarter to generate estiamtes for
+
 # naomi 0.0.47
 
 * Add read_***() functions with col_type parsers.
