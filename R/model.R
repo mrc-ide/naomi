@@ -451,7 +451,9 @@ naomi_model_frame <- function(area_merged,
              logit_alpha_offset = 0,
              logit_alpha_t1t2_offset = qlogis(spec_artcov_t2) - qlogis(spec_artcov_t1),
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
-             log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2)
+             log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
+             log_lambda_t1_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t1_offset),
+             log_lambda_t2_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t2_offset)
            ) %>%
     dplyr::ungroup()
 
@@ -466,6 +468,7 @@ naomi_model_frame <- function(area_merged,
             A_out = outf$A,
             Lproj_hivpop = Lproj$Lproj_hivpop,
             Lproj_incid = Lproj$Lproj_incid,
+            Lproj_paed = Lproj$Lproj_paed,
             projection_duration = projection_duration,
             age_groups = age_groups,
             sexes = sexes,

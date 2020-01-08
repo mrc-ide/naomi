@@ -194,7 +194,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
     dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
                  wt = infections, name = "infections_t1t2")
   
-  hivpop_t1t2 <- dplyr::inner_join(hivpop_t1, hivpop_t2,
+  hivpop_t1t2 <- dplyr::right_join(hivpop_t1, hivpop_t2,
                                    by = c("spectrum_region_code", "sex", "age_group1")) %>%
     dplyr::left_join(infections_t1t2,
                      by = c("spectrum_region_code", "sex", "age_group1", "age_group2")) %>%
@@ -241,9 +241,47 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2) {
                                       j = incidLproj$idx1,
                                       x = incidLproj$L_incid,
                                       dims = rep(nrow(mf_model), 2))
+
+  ## Paediatric entrants and survivors between time 1 and time 2
+
+  paedLproj <- hivpop_t1t2 %>%
+    dplyr::filter(is.na(age_group1)) %>%
+    dplyr::select(spectrum_region_code, sex2 = sex, age_group2, hivpop2) %>%
+    dplyr::left_join(
+             hivpop_t1 %>%
+             dplyr::left_join(get_age_groups(),
+                              by = c("age_group1" = "age_group")) %>%
+             dplyr::filter(
+                      sex == "female",
+                      age_group_start >= 15,
+                      (age_group_start + age_group_span) < 50
+                    ) %>%
+             dplyr::select(spectrum_region_code, sex1 = sex, age_group1, hivpop1),
+             by = "spectrum_region_code"
+           ) %>%
+    dplyr::group_by(spectrum_region_code, sex2, age_group2) %>%
+    dplyr::mutate(L_paed = hivpop2 / sum(hivpop1))
+
+  paedLproj <- paedLproj %>%
+    dplyr::inner_join(
+             dplyr::select(mf_model, spectrum_region_code, sex1 = sex,
+                           age_group1 = age_group, area_id, idx1 = idx),
+             by = c("spectrum_region_code", "sex1", "age_group1")
+         ) %>%
+    dplyr::inner_join(
+             dplyr::select(mf_model, spectrum_region_code, sex2 = sex,
+                           age_group2 = age_group, area_id, idx2 = idx),
+             by = c("spectrum_region_code", "sex2", "age_group2", "area_id")
+           )
+
+  Lproj_paed <- Matrix::sparseMatrix(i = paedLproj$idx2,
+                                     j = paedLproj$idx1,
+                                     x = paedLproj$L_paed,
+                                     dims = rep(nrow(mf_model), 2))
   
   list(Lproj_hivpop = Lproj_hivpop,
-       Lproj_incid = Lproj_incid)
+       Lproj_incid = Lproj_incid,
+       Lproj_paed = Lproj_paed)
 }
 
 #' Interpolate Spectrum to quarter_id
