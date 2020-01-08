@@ -34,26 +34,44 @@ prepare_tmb_inputs <- function(naomi_data) {
   A_anc_t1 <- create_anc_Amat(naomi_data, "asfr_t1", "population_t1")
   A_anc_t2 <- create_anc_Amat(naomi_data, "asfr_t2", "population_t2")
 
-  X_15to49 <- Matrix::t(Matrix::sparse.model.matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
+  X_15to49 <- Matrix::t(sparse_model_matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
   ## ART attendance aggregation
 
-  Xgamma <-  Matrix::sparse.model.matrix(~0 + attend_area_idf:as.integer(jstar != 1),
-                                         naomi_data$mf_artattend)
+  Xgamma <-  sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
+                                 naomi_data$mf_artattend)
   
   df_art_attend <- naomi_data$mf_model %>%
-    dplyr::left_join(naomi_data$mf_artattend, by = c("area_idx" = "reside_area_idx")) %>%
-    dplyr::mutate(artattend_idf = forcats::as_factor(artattend_idx),
+    dplyr::rename(reside_area_id = area_id) %>%
+    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id") %>%
+    dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
-  Xart_gamma <- Matrix::sparse.model.matrix(~0 + artattend_idf, df_art_attend)
-  Xart_idx <- Matrix::sparse.model.matrix(~0 + idf, df_art_attend)
+  Xart_gamma <- sparse_model_matrix(~0 + attend_idf, df_art_attend)
+  Xart_idx <- sparse_model_matrix(~0 + idf, df_art_attend)
 
-  A_artattend_t1 <- create_artattend_Amat(naomi_data$artnum_t1_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
-  A_artattend_t2 <- create_artattend_Amat(naomi_data$artnum_t2_dat, naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_t1 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t1_dat, attend_area_id = area_id),
+                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_t2 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t2_dat, attend_area_id = area_id),
+                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
 
-  A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, area_id, sex, age_group_id, artnum_idx = idx),
-                                          naomi_data$age_group_ids, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group, artnum_idx = idx),
+                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+
+  A_art_reside_attend <- naomi_data$mf_artattend %>%
+    dplyr::transmute(
+             reside_area_id,
+             attend_area_id,
+             sex = "both",
+             age_group = "00+",
+             artnum_idx = dplyr::row_number()
+           ) %>%
+    create_artattend_Amat(naomi_data$age_groups,
+                          naomi_data$sexes,
+                          naomi_data$mf_areas,
+                          df_art_attend,
+                          by_residence = TRUE)
+                                          
 
   ## Construct TMB data and initial parameter vectors
 
@@ -79,7 +97,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_lambda <- ~0
     f_lambda_x <- ~0
   } else {
-    f_lambda <- ~as.integer(sex == "female")
+    f_lambda <- ~female_15plus
     f_lambda_x <- ~0 + area_idf
   }
     
@@ -87,25 +105,27 @@ prepare_tmb_inputs <- function(naomi_data) {
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
-    Lproj = naomi_data$Lproj,
+    Lproj_hivpop = naomi_data$Lproj_hivpop,
+    Lproj_incid = naomi_data$Lproj_incid,
+    Lproj_paed = naomi_data$Lproj_paed,
     projection_duration = naomi_data$projection_duration,
-    X_rho = stats::model.matrix(~as.integer(sex == "female"), df),
-    X_alpha = stats::model.matrix(~as.integer(sex == "female"), df),
+    X_rho = stats::model.matrix(~female_15plus, df),
+    X_alpha = stats::model.matrix(~female_15plus, df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
     X_lambda = stats::model.matrix(f_lambda, df),
     X_ancrho = stats::model.matrix(~1, naomi_data$mf_areas),
     X_ancalpha = stats::model.matrix(~1, naomi_data$mf_areas),
-    Z_x = Matrix::sparse.model.matrix(~0 + area_idf, df),
-    Z_xs = Matrix::sparse.model.matrix(~0 + area_idf, df) * (df$sex == "female"),
-    Z_rho_a = Matrix::sparse.model.matrix(f_rho_a, df),
-    Z_rho_as = Matrix::sparse.model.matrix(f_rho_a, df) * (df$sex == "female"),
-    Z_alpha_a = Matrix::sparse.model.matrix(f_alpha_a, df),
-    Z_alpha_as = Matrix::sparse.model.matrix(f_alpha_a, df) * (df$sex == "female"),
-    Z_alpha_xt = Matrix::sparse.model.matrix(f_alpha_xt, df),
-    Z_lambda_x = Matrix::sparse.model.matrix(f_lambda_x, df),
+    Z_x = sparse_model_matrix(~0 + area_idf, df),
+    Z_xs = sparse_model_matrix(~0 + area_idf, df, "female_15plus", TRUE),
+    Z_rho_a = sparse_model_matrix(f_rho_a, df),
+    Z_rho_as = sparse_model_matrix(f_rho_a, df, "female_15plus", TRUE),
+    Z_alpha_a = sparse_model_matrix(f_alpha_a, df),
+    Z_alpha_as = sparse_model_matrix(f_alpha_a, df, "female_15plus", TRUE),
+    Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),
+    Z_lambda_x = sparse_model_matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
-    Z_ancrho_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
-    Z_ancalpha_x = Matrix::sparse.model.matrix(~0 + area_idf, naomi_data$mf_areas),
+    Z_ancrho_x = sparse_model_matrix(~0 + area_idf, naomi_data$mf_areas),
+    Z_ancalpha_x = sparse_model_matrix(~0 + area_idf, naomi_data$mf_areas),
     A_anc_t1 = A_anc_t1,
     A_anc_t2 = A_anc_t2,
     ##
@@ -116,7 +136,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
     n_nb = naomi_data$mf_areas$n_neighbors,
     adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,
-    adj_j = naomi_data$mf_artattend$artattend_area_idx - 1L,
+    adj_j = naomi_data$mf_artattend$attend_area_idx - 1L,
     Xgamma = Xgamma,
     log_gamma_offset = naomi_data$mf_artattend$log_gamma_offset,
     Xart_idx = Xart_idx,
@@ -167,7 +187,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
     A_artattend_t2 = A_artattend_t2,
     x_artnum_t2 = naomi_data$artnum_t2_dat$current_art,
-    A_artattend_mf = A_artattend_mf
+    A_artattend_mf = A_artattend_mf,
+    A_art_reside_attend = A_art_reside_attend
   )
 
 
@@ -239,6 +260,24 @@ prepare_tmb_inputs <- function(naomi_data) {
   class(v) <- "naomi_tmb_input"
 
   v
+}
+
+sparse_model_matrix <- function(formula, data, binary_interaction = 1,
+                                drop_zero_cols = FALSE) {
+
+  if(is.character(binary_interaction))
+    binary_interaction <- data[[binary_interaction]]
+
+  stopifnot(length(binary_interaction) %in% c(1, nrow(data)))
+
+  mm <- Matrix::sparse.model.matrix(formula, data)
+  mm <- mm * binary_interaction
+  mm <- Matrix::drop0(mm)
+
+  if(drop_zero_cols)
+    mm <- mm[ , apply(mm, 2, Matrix::nnzero) > 0]
+
+  mm
 }
 
 
@@ -391,25 +430,32 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
 }
 
 
-create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_art_attend) {
-
+create_artattend_Amat <- function(artnum_df, age_groups, sexes, mf_areas,
+                                  df_art_attend, by_residence = FALSE) {
+  
+  ## If by_residence = TRUE, merge by reside_area_id, else aggregate over all
+  ## reside_area_id
+  by_vars <- c("attend_area_id", "sex", "age_group")
+  if(by_residence)
+    by_vars <- c(by_vars, "reside_area_id")
+  
   A_artnum <- artnum_df %>%
-    dplyr::select(area_id, sex, age_group_id, artnum_idx) %>%
-    dplyr::rename(artdat_age_group_id = age_group_id,
+    dplyr::select(by_vars, artnum_idx) %>%
+    dplyr::rename(artdat_age_group = age_group,
                   artdat_sex = sex) %>%
     dplyr::left_join(
              get_age_groups() %>%
              dplyr::transmute(
-                      artdat_age_group_id = age_group_id,
+                      artdat_age_group = age_group,
                       artdat_age_start = age_group_start,
                       artdat_age_end = age_group_start + age_group_span
                     ),
-             by = "artdat_age_group_id"
+             by = "artdat_age_group"
            ) %>%
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(
              get_age_groups() %>%
-             dplyr::filter(age_group_id %in% age_group_ids)
+             dplyr::filter(age_group %in% age_groups)
            ) %>%
     dplyr::filter(
              artdat_age_start <= age_group_start,
@@ -421,22 +467,18 @@ create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
              by = "artdat_sex"
-           ) %>%
-    dplyr::left_join(
-             dplyr::select(mf_areas, area_id, area_idx),
-             by = "area_id"
-           ) %>%
-    dplyr::left_join(
-             df_art_attend %>%
-             dplyr::transmute(
-                      artattend_area_idx,
-                      age_group_id,
-                      sex,
-                      Aidx = row_number(),
-                      value = 1
-      ),
-      by = c("area_idx" = "artattend_area_idx", "sex" = "sex", "age_group_id" = "age_group_id")
-      ) %>%
+           )
+
+  ## Merge to ART attendance data frame
+  A_artnum <- dplyr::left_join(A_artnum,
+                               df_art_attend %>%
+                               dplyr::select(by_vars) %>%
+                               dplyr::mutate(
+                                        Aidx = dplyr::row_number(),
+                                        value = 1),
+                               by = by_vars)
+  
+  A_artnum <- A_artnum %>%
     {
       Matrix::spMatrix(nrow(artnum_df),
                        nrow(df_art_attend),
@@ -444,6 +486,6 @@ create_artattend_Amat <- function(artnum_df, age_group_ids, sexes, mf_areas, df_
                        .$Aidx,
                        .$value)
     }
-
+  
   A_artnum
 }

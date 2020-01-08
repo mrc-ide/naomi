@@ -10,8 +10,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 
   stopifnot(methods::is(areas, "naomi_areas"))
   
-  age_group_ids <- unique(mf_model$age_group_id)
-
+  age_groups <- unique(mf_model$age_group)
 
   model_area_ids <- unique(mf_model$area_id)
   
@@ -52,39 +51,39 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
                          stringsAsFactors = FALSE) %>%
     dplyr::filter(sex %in% sexes, sex_out %in% !!sex_out)
   
-  age_group_id_out <- get_age_group_id_out(age_group_ids)
+  age_group_out <- get_age_group_out(age_groups)
   
   age_group_join <- get_age_groups() %>%
-    dplyr::filter(age_group_id %in% age_group_id_out) %>%
+    dplyr::filter(age_group %in% age_group_out) %>%
     stats::setNames(paste0(names(.), "_out")) %>%
     tidyr::crossing(get_age_groups() %>%
-                    dplyr::filter(age_group_id %in% age_group_ids)) %>%
+                    dplyr::filter(age_group %in% age_groups)) %>%
     dplyr::filter(age_group_start_out <= age_group_start,
                   age_group_span_out == Inf |
                   (age_group_start + age_group_span) <=
                   (age_group_start_out + age_group_span_out)) %>%
-    dplyr::select(age_group_id_out, age_group_id)
+    dplyr::select(age_group_out, age_group)
 
-  stopifnot(age_group_ids %in% age_group_join$age_group_id)
+  stopifnot(age_groups %in% age_group_join$age_group)
 
   mf_out <- tidyr::crossing(
                      area_id = area_id_out,
                      sex = sex_out,
-                     age_group_id = age_group_id_out
+                     age_group = age_group_out
                    )
 
   df_join <- tidyr::crossing(area_id_join, sex_join, age_group_join) %>%
     dplyr::full_join(
              mf_model %>%
-             dplyr::select("area_id", "sex", "age_group_id", "idx"),
-             by = c("area_id", "sex", "age_group_id")) %>%
+             dplyr::select("area_id", "sex", "age_group", "idx"),
+             by = c("area_id", "sex", "age_group")) %>%
     dplyr::full_join(
              mf_out %>%
              dplyr::mutate(out_idx = dplyr::row_number())
             ,
              by = c("area_id_out" = "area_id",
                     "sex_out" = "sex",
-                    "age_group_id_out" = "age_group_id")
+                    "age_group_out" = "age_group")
            ) %>%
     dplyr::mutate(x = 1)
 
@@ -108,7 +107,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param level Admin level
 #' @param calendar_quarter1 Calendar quarter at time 1 ("CYyyyyQq")
 #' @param calendar_quarter2 Calendar quarter at time 2 ("CYyyyyQq")
-#' @param age_group_ids Age group ids
+#' @param age_groups Age groups to include in model frame
 #' @param sexes Sexes
 #' @param omega Omega
 #' @param rita_param rita_param
@@ -136,7 +135,7 @@ naomi_model_frame <- function(area_merged,
                               level = max(areas$tree$Get("area_level")),
                               calendar_quarter1,
                               calendar_quarter2,
-                              age_group_ids = 1:17,
+                              age_groups = get_five_year_age_groups(),
                               sexes = c("male", "female"),
                               omega = 0.7,
                               rita_param = list(OmegaT0      = 130 / 365,
@@ -185,12 +184,24 @@ naomi_model_frame <- function(area_merged,
   mf_model <- tidyr::crossing(
                        mf_areas,
                        sex = sexes,
-                       age_group_id = age_group_ids
+                       age_group = age_groups
                      ) %>%
     dplyr::mutate(idx = dplyr::row_number()) %>%
+    dplyr::left_join(
+             get_age_groups() %>%
+             dplyr::filter(age_group %in% age_groups) %>%
+             dplyr::mutate(
+                      age15plus = as.integer(age_group_start >= 15),
+                      age15to49 = as.integer(age_group_start >= 15 &
+                                             (age_group_start + age_group_span) <= 50)
+                    ) %>%
+             dplyr::select(age_group, age15plus, age15to49),
+             by = "age_group"
+           ) %>%
     dplyr::mutate(area_idf = forcats::as_factor(area_id),
-                  age_group_idf = forcats::as_factor(age_group_id))
-
+                  age_group_idf = forcats::as_factor(age_group),
+                  female_15plus = as.integer((sex == "female") * age15plus))
+  
   ## Spectrum aggregation and calibration population
   
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
@@ -237,10 +248,6 @@ naomi_model_frame <- function(area_merged,
                            )
 
   population_est <- population_est %>%
-    dplyr::left_join(
-             dplyr::select(get_age_groups(), age_group, age_group_id),
-             by = "age_group"
-           ) %>%
     dplyr::left_join(
              dplyr::select(mf_areas, area_id, spectrum_region_code),
              by = "area_id"
@@ -292,14 +299,14 @@ naomi_model_frame <- function(area_merged,
     dplyr::left_join(
              population_est %>%
              dplyr::filter(time_step == "quarter1") %>%
-             dplyr::select(area_id, sex, age_group_id, population_t1 = population),
-             by = c("area_id", "sex", "age_group_id")
+             dplyr::select(area_id, sex, age_group, population_t1 = population),
+             by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::left_join(
              population_est %>%
              dplyr::filter(time_step == "quarter2") %>%
-             dplyr::select(area_id, sex, age_group_id, population_t2 = population),
-             by = c("area_id", "sex", "age_group_id")
+             dplyr::select(area_id, sex, age_group, population_t2 = population),
+             by = c("area_id", "sex", "age_group")
            )
 
   stopifnot(!is.na(mf_model$population_t1))
@@ -316,9 +323,9 @@ naomi_model_frame <- function(area_merged,
     mf_model$population_t2[zeropop2] <- 0.1
   }
 
-
+  
   ## Add Spectrum inputs
-
+  
   ## TODO::insert flag to aggregate national or regional
   spec_indicators <- spectrum_calibration %>%
     dplyr::transmute(
@@ -328,7 +335,7 @@ naomi_model_frame <- function(area_merged,
              time_step,
              calendar_quarter,
              prevalence = plhiv_spectrum / population_spectrum,
-             art_coverage = art_num_spectrum / plhiv_spectrum,
+             art_coverage = pmax(pmin(art_num_spectrum / plhiv_spectrum, 0.999), 0.001),
              incidence = infections_spectrum / susc_previous_year_spectrum,
              asfr = births_spectrum / population_spectrum
            )
@@ -337,43 +344,34 @@ naomi_model_frame <- function(area_merged,
     dplyr::left_join(
              spec_indicators %>%
              dplyr::filter(time_step == "quarter1") %>%
-             dplyr::left_join(
-                      dplyr::select(get_age_groups(), age_group, age_group_id),
-                      by = "age_group"
-                    ) %>%
              dplyr::select(
                       spectrum_region_code,
                       sex,
-                      age_group_id,
+                      age_group,
                       spec_prev_t1 = prevalence,
                       spec_incid_t1 = incidence,
                       spec_artcov_t1 = art_coverage,
                       asfr_t1 = asfr
                     ),
-             by = c("spectrum_region_code", "sex", "age_group_id")
+             by = c("spectrum_region_code", "sex", "age_group")
            ) %>%
     dplyr::left_join(
              spec_indicators %>%
              dplyr::filter(time_step == "quarter2") %>%
-             dplyr::left_join(
-                      dplyr::select(get_age_groups(), age_group, age_group_id),
-                      by = "age_group"
-                    ) %>%
              dplyr::select(
                       spectrum_region_code,
                       sex,
-                      age_group_id,
+                      age_group,
                       spec_prev_t2 = prevalence,
                       spec_incid_t2 = incidence,
                       spec_artcov_t2 = art_coverage,
                       asfr_t2 = asfr
                     ),
-             by = c("spectrum_region_code", "sex", "age_group_id")
+             by = c("spectrum_region_code", "sex", "age_group")
            )
 
   
   ## Projection matrix
-
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2)
@@ -415,29 +413,30 @@ naomi_model_frame <- function(area_merged,
     methods::as("dgCMatrix") %>%
     Matrix::summary() %>%
     dplyr::rename(reside_area_idx = i,
-                  artattend_area_idx = j) %>%
-    dplyr::mutate(x = NULL,
-                  istar = as.integer(reside_area_idx == artattend_area_idx),
-                  jstar = as.integer(reside_area_idx == artattend_area_idx)) %>%
-    dplyr::arrange(reside_area_idx, istar, artattend_area_idx, jstar) %>%
-    dplyr::mutate(artattend_idx = dplyr::row_number(),
-                  attend_area_idf = forcats::as_factor(artattend_area_idx),
+                  attend_area_idx = j,) %>%
+    dplyr::left_join(
+             dplyr::select(mf_areas, reside_area_id = area_id, reside_area_idx = area_idx),
+             by = "reside_area_idx"
+           ) %>%
+    dplyr::left_join(
+             dplyr::select(mf_areas, attend_area_id = area_id, attend_area_idx = area_idx),
+             by = "attend_area_idx"
+           ) %>%
+    dplyr::transmute(reside_area_id,
+                     attend_area_id,
+                     reside_area_idx,
+                     attend_area_idx,
+                     istar = as.integer(reside_area_idx == attend_area_idx),
+                     jstar = as.integer(reside_area_idx == attend_area_idx)) %>%
+    dplyr::arrange(reside_area_idx, istar, attend_area_idx, jstar) %>%
+    dplyr::mutate(attend_idx = dplyr::row_number(),
+                  attend_area_idf = forcats::as_factor(attend_area_idx),
                   log_gamma_offset = dplyr::if_else(jstar == 1, 0, as.numeric(artattend_log_gamma_offset)))
 
 
   ## Incidence model  
     
   mf_model <- mf_model %>%
-    dplyr::left_join(
-             get_age_groups() %>%
-             dplyr::filter(age_group_id %in% age_group_ids) %>%
-             dplyr::mutate(
-               age15to49 = as.integer(age_group_start >= 15 &
-                                      (age_group_start + age_group_span) <= 50)
-             ) %>%
-             dplyr::select(age_group_id, age15to49),
-             by = "age_group_id"
-           ) %>%
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
              spec_prev15to49_t1 = sum(population_t1 * spec_prev_t1 * age15to49) / sum(population_t1 * age15to49),
@@ -450,9 +449,11 @@ naomi_model_frame <- function(area_merged,
                sum(population_t2 * spec_prev_t2 * age15to49),
              logit_rho_offset = 0,
              logit_alpha_offset = 0,
-             logit_alpha_t1t2_offset = qlogis(pmax(pmin(spec_artcov_t2, 0.999), 0.001)) - qlogis(pmax(pmin(spec_artcov_t2, 0.999), 0.001)),
+             logit_alpha_t1t2_offset = qlogis(spec_artcov_t2) - qlogis(spec_artcov_t1),
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
-             log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2)
+             log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
+             log_lambda_t1_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t1_offset),
+             log_lambda_t2_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t2_offset)
            ) %>%
     dplyr::ungroup()
 
@@ -465,9 +466,11 @@ naomi_model_frame <- function(area_merged,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
             A_out = outf$A,
-            Lproj = Lproj,
+            Lproj_hivpop = Lproj$Lproj_hivpop,
+            Lproj_incid = Lproj$Lproj_incid,
+            Lproj_paed = Lproj$Lproj_paed,
             projection_duration = projection_duration,
-            age_group_ids = age_group_ids,
+            age_groups = age_groups,
             sexes = sexes,
             calendar_quarter1 = calendar_quarter1,
             calendar_quarter2 = calendar_quarter2,
@@ -567,12 +570,12 @@ update_mf_offsets <- function(naomi_mf,
   get_idx <- function(mf, df) {
 
     age_max <- df %>%
-      dplyr::left_join(get_age_groups(), by = "age_group_id") %>%
+      dplyr::left_join(get_age_groups(), by = "age_group") %>%
       dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
       .$age_max
 
     mf %>%
-      dplyr::left_join(get_age_groups(), by = "age_group_id") %>%
+      dplyr::left_join(get_age_groups(), by = "age_group") %>%
       dplyr::transmute(idx,
                        data_range = as.integer((age_group_start + age_group_span) <= age_max),
                        offset_range = as.integer((age_group_start + age_group_span) >= age_max),
@@ -641,14 +644,14 @@ update_mf_offsets <- function(naomi_mf,
 #' Ensures that age groups are fully spanned by modelled
 #' ages.
 #'
-#' @param age_group_ids Modelled age group ids. Assumed to
+#' @param age_groups Modelled age groups. Assumed to
 #'   be non-overlapping.
 #'
 #' @keywords internal
-get_age_group_id_out <- function(age_group_ids) {
+get_age_group_out <- function(age_groups) {
 
   agegr <- get_age_groups() %>%
-    dplyr::filter(age_group_id %in% age_group_ids) %>%
+    dplyr::filter(age_group %in% age_groups) %>%
     dplyr::transmute(mod_agegr_start = age_group_start,
                      mod_agegr_span = age_group_span)
 
@@ -659,13 +662,13 @@ get_age_group_id_out <- function(age_group_ids) {
     tidyr::crossing(agegr) %>%
     dplyr::filter(age_group_start <= mod_agegr_start,
                   age_group_start + age_group_span >= mod_agegr_start + mod_agegr_span) %>%
-    dplyr::group_by(age_group_id) %>%
+    dplyr::group_by(age_group) %>%
     dplyr::filter(age_group_start == min(mod_agegr_start)) %>%
     dplyr::ungroup() %>%
-    dplyr::count(age_group_id, age_group_span, wt = mod_agegr_span) %>%
+    dplyr::count(age_group, age_group_span, wt = mod_agegr_span) %>%
     dplyr::filter(age_group_span == n)
 
-  v$age_group_id
+  v$age_group
 }
 
 
@@ -695,17 +698,12 @@ survey_prevalence_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
     dplyr::inner_join(
              survey_hiv_indicators %>%
              dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "prev") %>%
-             dplyr::left_join(
-                      get_age_groups() %>%
-                      dplyr::select(age_group, age_group_id),
-                      by = "age_group"
-                    ),
-             by = c("area_id", "sex", "age_group_id")
+                           indicator == "prev"),
+             by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
-    dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
 
   prev_dat
 }
@@ -718,17 +716,12 @@ survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
     dplyr::inner_join(
              survey_hiv_indicators %>%
              dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "artcov") %>%
-             dplyr::left_join(
-                      get_age_groups() %>%
-                      dplyr::select(age_group, age_group_id),
-                      by = "age_group"
-                    ),
-             by = c("area_id", "sex", "age_group_id")
+                           indicator == "artcov"),
+             by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
-    dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
 
   artcov_dat
 }
@@ -741,17 +734,12 @@ survey_vls_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
     dplyr::inner_join(
              survey_hiv_indicators %>%
              dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "vls") %>%
-             dplyr::left_join(
-                      get_age_groups() %>%
-                      dplyr::select(age_group, age_group_id),
-                      by = "age_group"
-                    ),
-             by = c("area_id", "sex", "age_group_id")
+                           indicator == "vls"),
+             by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
-    dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
 
   vls_dat
 }
@@ -762,23 +750,18 @@ survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
                              min_age = 15, max_age = 80) {
 
   recent_dat <- naomi_mf$mf_model %>%
-    dplyr::left_join(get_age_groups(), by = "age_group_id") %>%
+    dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::filter(age_group_start >= min_age,
                   age_group_start + age_group_span <= max_age) %>%
     dplyr::inner_join(
              survey_hiv_indicators %>%
              dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "recent") %>%
-             dplyr::left_join(
-                      get_age_groups() %>%
-                      dplyr::select(age_group, age_group_id),
-                      by = "age_group"
-                    ),
-             by = c("area_id", "sex", "age_group_id")
+                           indicator == "recent"),
+             by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::mutate(n = n_obs,
                   x = n * est) %>%
-    dplyr::select(idx, area_id, age_group_id, sex, survey_id, n, x, est, se)
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
 
   recent_dat
 }
@@ -927,7 +910,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     artnum_dat <- data.frame(
       area_id = character(0),
       sex = character(0),
-      age_group_id = integer(0),
+      age_group = character(0),
       artnum_idx = integer(0),
       current_art = integer(0),
       stringsAsFactors = FALSE
@@ -937,15 +920,10 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     artnum_dat <- art_number %>%
       dplyr::filter(year == !!year,
                     area_id %in% naomi_mf$mf_areas$area_id) %>%
-      dplyr::left_join(
-               get_age_groups() %>%
-               dplyr::select(age_group, age_group_id),
-               by = "age_group"
-             ) %>%
       dplyr::transmute(
                area_id,
                sex,
-               age_group_id,
+               age_group,
                artnum_idx = dplyr::row_number(),
                current_art
              )

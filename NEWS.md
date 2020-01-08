@@ -1,3 +1,8 @@
+# naomi 0.0.49
+
+* Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.
+* Add new paediatric HIV infections betwen time 1 and time 2 proportional to HIV survivors by age and prevalence among women age 15-49 in Spectrum.
+
 # naomi 0.0.48
 
 * Add default values for area level and calendar quarter to generate estiamtes for
@@ -5,6 +10,16 @@
 # naomi 0.0.47
 
 * Add read_***() functions with col_type parsers.
+
+# naomi 0.0.45
+
+* Remove age_group_id, indicator_id, and quarter_id from model frames; use human readable age_group, indicator, and calendar_quarter everywhere.
+* Output number of ART attendees between every district pair. Currently output at 
+  estimation level only.
+* spread_areas() allows an sf object as argument and returns boundaries for wide 
+  format areas if provided.
+* No sex differences in prevalence, ART coverage, or incidence for age below 15 years.
+* Cap Spectrum ART coverage between 0.001 and 0.999 to avoid logit transformation NaN errors.
 
 # naomi 0.0.44
 

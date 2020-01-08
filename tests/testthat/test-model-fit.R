@@ -85,3 +85,48 @@ test_that("model fit with no ART data at T2", {
     expect_true(!"beta_alpha_t2" %in% names(fit$par.full))
     expect_true(!"u_alpha_xt" %in% names(fit$par.full))
 })
+
+test_that("extract_indicators returns expected names and types", {
+
+  ind_colnames <- c("area_id", "sex", "age_group", "calendar_quarter", "indicator", 
+                    "mean", "se", "median", "mode", "lower", "upper")
+  
+  ind1 <- extract_indicators(a_fit, a_naomi_mf)
+  expect_setequal(names(ind1), ind_colnames)
+  expect_true(!any(is.na(ind1$mode)))
+  expect_true(all(is.na(ind1[c("mean", "se", "median", "lower", "upper")])))
+  expect_true(all(vapply(ind1[c("mean", "se", "median", "mode", "lower", "upper")],
+                         typeof, character(1)) == "double"))
+
+  ind_sample <- extract_indicators(a_fit_sample, a_naomi_mf)
+  expect_setequal(names(ind_sample), ind_colnames)
+  expect_true(!any(is.na(ind_sample)))
+  expect_true(all(vapply(ind_sample[c("mean", "se", "median", "mode", "lower", "upper")],
+                         typeof, character(1)) == "double"))
+
+})
+
+
+test_that("add_stats returns expected names and types", {
+
+  prefix_colnames <- c("id", "x_mode", "x_mean", "x_se",
+                       "x_median", "x_lower", "x_upper")
+
+  m <- 1:3 / 10
+  s <- matrix(1:12 / 10, length(m))
+  
+  ## sample = NULL
+  v1 <- add_stats(data.frame(id = 1:3), m, prefix = "x_")
+  expect_setequal(names(v1), prefix_colnames)
+  expect_true(all(vapply(v1[prefix_colnames[-1]], typeof, character(1)) == "double"))
+  expect_true(!any(is.na(v1$mode)))
+  expect_true(all(is.na(v1[c("x_mean", "x_se", "x_median", "x_lower", "x_upper")])))
+              
+  ## with sample
+  v2 <- add_stats(data.frame(id = 1:3), m, s, prefix = "x_")
+  expect_setequal(names(v2), prefix_colnames)
+  expect_true(all(vapply(v2[prefix_colnames[-1]], typeof, character(1)) == "double"))
+  expect_true(!any(is.na(v2)))
+
+})
+  

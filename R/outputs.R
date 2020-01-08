@@ -1,7 +1,6 @@
 
 meta_indicator <-
   data.frame(
-    indicator_id = 1:10,
     indicator = c("population",
                   "prevalence",
                   "plhiv",
@@ -42,11 +41,32 @@ meta_indicator <-
                   "infections_out",
                   "anc_rho",
                   "anc_alpha"),
+    indicator_sort_order = 1:10,
+    indicator_id = 1:10,
     format = NA,
     scale = NA,
     stringsAsFactors = FALSE
   )
 
+
+add_stats <- function(df, mode, sample = NULL, prefix = ""){
+
+  v <- df
+  v[[paste0(prefix, "mode")]] <- mode
+
+  if(!is.null(sample)) {
+    qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975))
+    v[[paste0(prefix, "mean")]] <- rowMeans(sample)
+    v[[paste0(prefix, "se")]] <- sqrt(rowSums((sample - v[[paste0(prefix, "mean")]])^2) / (max(ncol(sample), 2) - 1))
+    v[[paste0(prefix, "median")]] <- qtl[1,]
+    v[[paste0(prefix, "lower")]] <- qtl[2,]
+    v[[paste0(prefix, "upper")]] <- qtl[3,]
+  } else {
+    v[paste0(prefix, c("mean", "se", "median", "lower", "upper"))] <- NA_real_
+  }
+
+  v[c(names(df), paste0(prefix, c("mean", "se", "median", "mode", "lower", "upper")))]
+}
 
 
 extract_indicators <- function(naomi_fit, naomi_mf) {
@@ -54,66 +74,130 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   report <- naomi_fit$obj$report(naomi_fit$par.full)
 
   get_est <- function(varname,
-                      indicator_id,
+                      indicator,
                       calendar_quarter,
                       mf = naomi_mf$mf_out) {
     v <- dplyr::mutate(
-      mf,
-      quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
-      indicator_id = indicator_id,
-      mode = report[[varname]]
-    )
+                  mf,
+                  calendar_quarter = calendar_quarter,
+                  indicator = indicator)
+
     if(!is.null(naomi_fit$sample)) {
-      smp <- naomi_fit$sample[[varname]]
-      qtl <- apply(smp, 1, stats::quantile, c(0.5, 0.025, 0.975))
-      v$mean <- rowMeans(smp)
-      v$se <- sqrt(rowSums((smp - v$mean)^2) / (max(ncol(smp), 2) - 1))
-      v$median <- qtl[1,]
-      v$lower <- qtl[2,]
-      v$upper <- qtl[3,]
+      v <- add_stats(v, report[[varname]], naomi_fit$sample[[varname]])
     } else {
-      v[c("mean", "se", "median", "lower", "upper")] <- NA_real_
+      v <- add_stats(v, report[[varname]])
     }
 
     v
   }
 
-  indicator_ids_t1 <- c("population_t1_out" = 1,
-                        "rho_t1_out" = 2,
-                        "plhiv_t1_out" = 3,
-                        "alpha_t1_out" = 4,
-                        "artnum_t1_out" = 5,
-                        "artattend_t1_out" = 6,
-                        "lambda_t1_out" = 7,
-                        "infections_t1_out" = 8)
+  indicators_t1 <- c("population_t1_out" = "population",
+                     "rho_t1_out" = "prevalence",
+                     "plhiv_t1_out" = "plhiv",
+                     "alpha_t1_out" = "art_coverage",
+                     "artnum_t1_out" = "art_num_residents",
+                     "artattend_t1_out" = "art_num_attend",
+                     "lambda_t1_out" = "incidence",
+                     "infections_t1_out" = "infections")
 
-  indicator_ids_t2 <- c("population_t2_out" = 1,
-                        "rho_t2_out" = 2,
-                        "plhiv_t2_out" = 3,
-                        "alpha_t2_out" = 4,
-                        "artnum_t2_out" = 5,
-                        "artattend_t2_out" = 6,
-                        "lambda_t2_out" = 7,
-                        "infections_t2_out" = 8)
+  indicators_t2 <- c("population_t2_out" = "population",
+                     "rho_t2_out" = "prevalence",
+                     "plhiv_t2_out" = "plhiv",
+                     "alpha_t2_out" = "art_coverage",
+                     "artnum_t2_out" = "art_num_residents",
+                     "artattend_t2_out" = "art_num_attend",
+                     "lambda_t2_out" = "incidence",
+                     "infections_t2_out" = "infections")
 
-  indicators_t1 <- Map(get_est, names(indicator_ids_t1), indicator_ids_t1, naomi_mf$calendar_quarter1)
-  indicators_t2 <- Map(get_est, names(indicator_ids_t2), indicator_ids_t2, naomi_mf$calendar_quarter2)
+
+  indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
+  indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
-                     age_group_id = 18)
+                     age_group = "15-49")
 
   out <- dplyr::bind_rows(
-                  indicators_t1,
-                  get_est("anc_rho_t1_out", 9, naomi_mf$calendar_quarter1, mf_anc_out),
-                  get_est("anc_alpha_t1_out", 10, naomi_mf$calendar_quarter1, mf_anc_out),
-                  indicators_t2,
-                  get_est("anc_rho_t2_out", 9, naomi_mf$calendar_quarter2, mf_anc_out),
-                  get_est("anc_alpha_t2_out", 10, naomi_mf$calendar_quarter2, mf_anc_out))
-  
+                  indicator_est_t1,
+                  get_est("anc_rho_t1_out", "anc_prevalence", naomi_mf$calendar_quarter1, mf_anc_out),
+                  get_est("anc_alpha_t1_out", "anc_art_coverage", naomi_mf$calendar_quarter1, mf_anc_out),
+                  indicator_est_t2,
+                  get_est("anc_rho_t2_out", "anc_prevalence", naomi_mf$calendar_quarter2, mf_anc_out),
+                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out))
+
   dplyr::select(out, names(naomi_mf$mf_out),
-                quarter_id, indicator_id, mean, se, median, mode, lower, upper)
+                calendar_quarter, indicator, mean, se, median, mode, lower, upper)
+}
+
+extract_art_attendance <- function(naomi_fit, naomi_mf) {
+
+  report <- naomi_fit$obj$report(naomi_fit$par.full)
+
+  mfout <- naomi_mf$mf_out %>%
+    dplyr::mutate(out_idx = dplyr::row_number())
+
+  v <- naomi_mf$mf_artattend %>%
+    dplyr::select(reside_area_id, attend_area_id) %>%
+    dplyr::mutate(sex = "both",
+                  age_group = "00+") %>%
+    dplyr::left_join(
+             dplyr::rename(mfout, reside_area_id = area_id, reside_out_idx = out_idx),
+             by = c("reside_area_id", "sex", "age_group")
+           ) %>%
+    dplyr::left_join(
+             dplyr::rename(mfout, attend_area_id = area_id, attend_out_idx = out_idx),
+             by = c("attend_area_id", "sex", "age_group")
+           )
+
+  m_artattend_ij_t1 <- report$artattend_ij_t1_out
+  m_artnum_reside_t1 <- report$artnum_t1_out[v$reside_out_idx]
+  m_artnum_attend_t1 <- report$artattend_t1_out[v$attend_out_idx]
+  m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
+  m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
+
+  m_artattend_ij_t2 <- report$artattend_ij_t2_out
+  m_artnum_reside_t2 <- report$artnum_t2_out[v$reside_out_idx]
+  m_artnum_attend_t2 <- report$artattend_t2_out[v$attend_out_idx]
+  m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
+  m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+
+  if(!is.null(naomi_fit$sample)) {
+
+    s_artattend_ij_t1 <- naomi_fit$sample$artattend_ij_t1_out
+    s_artnum_reside_t1 <- naomi_fit$sample$artnum_t1_out[v$reside_out_idx, ]
+    s_artnum_attend_t1 <- naomi_fit$sample$artattend_t1_out[v$attend_out_idx, ]
+    s_prop_residents_t1 <- s_artattend_ij_t1 / s_artnum_reside_t1
+    s_prop_attendees_t1 <- s_artattend_ij_t1 / s_artnum_attend_t1
+
+    s_artattend_ij_t2 <- naomi_fit$sample$artattend_ij_t2_out
+    s_artnum_reside_t2 <- naomi_fit$sample$artnum_t2_out[v$reside_out_idx, ]
+    s_artnum_attend_t2 <- naomi_fit$sample$artattend_t2_out[v$attend_out_idx, ]
+    s_prop_residents_t2 <- s_artattend_ij_t2 / s_artnum_reside_t2
+    s_prop_attendees_t2 <- s_artattend_ij_t2 / s_artnum_attend_t2
+  } else {
+    s_artattend_ij_t1 <- NULL
+    s_prop_residents_t1 <- NULL
+    s_prop_attendees_t1 <- NULL
+    s_artattend_ij_t2 <- NULL
+    s_prop_residents_t2 <- NULL
+    s_prop_attendees_t2 <- NULL
+  }
+
+  v$reside_out_idx <- NULL
+  v$attend_out_idx <- NULL
+
+  v_t1 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter1)
+  v_t1 <- add_stats(v_t1, m_artattend_ij_t1, s_artattend_ij_t1, "artnum_")
+  v_t1 <- add_stats(v_t1, m_prop_residents_t1, s_prop_residents_t1, "prop_residents_")
+  v_t1 <- add_stats(v_t1, m_prop_attendees_t1, s_prop_attendees_t1, "prop_attendees_")
+
+  v_t2 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter2)
+  v_t2 <- add_stats(v_t2, m_artattend_ij_t2, s_artattend_ij_t2, "artnum_")
+  v_t2 <- add_stats(v_t2, m_prop_residents_t2, s_prop_residents_t2, "prop_residents_")
+  v_t2 <- add_stats(v_t2, m_prop_attendees_t2, s_prop_attendees_t2, "prop_attendees_")
+
+  dplyr::bind_rows(v_t1, v_t2)
 }
 
 
@@ -137,6 +221,8 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
   ##     tidyr::crossing(age_group_id = 30:31)
   ##   )
 
+  art_attendance <- extract_art_attendance(naomi_fit, naomi_mf)
+
   meta_area <- area_merged %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
     dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
@@ -157,9 +243,10 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
   fit <- list()
   fit$spectrum_calibration <- naomi_mf$spectrum_calibration
   fit$calibration_options <- naomi_mf$calibration_options
-  
+
   val <- list(
     indicators = indicators,
+    art_attendance = art_attendance,
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
@@ -193,19 +280,19 @@ add_output_labels <- function(naomi_output) {
     dplyr::left_join(
              naomi_output$meta_age_group %>%
              dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
-             by = "age_group_id"
+             by = "age_group"
            ) %>%
-    dplyr::left_join(naomi_output$meta_period, by = "quarter_id") %>%
+    dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
     dplyr::left_join(
              naomi_output$meta_indicator %>%
-             dplyr::select(indicator_id, indicator, indicator_label),
-             by = "indicator_id"
+             dplyr::select(indicator, indicator_label, indicator_sort_order, indicator_id),
+             by = "indicator"
            ) %>%
     dplyr::arrange(
              area_level,
              area_sort_order,
-             quarter_id,
-             indicator_id,
+             calendar_quarter,
+             indicator_sort_order,
              sex,
              age_group_sort_order
            ) %>%
@@ -233,6 +320,58 @@ add_output_labels <- function(naomi_output) {
            )
 
   indicators
+}
+
+add_art_attendance_labels <- function(naomi_output) {
+
+  stopifnot(inherits(naomi_output, "naomi_output"))
+
+  art_attendance <- naomi_output$art_attendance %>%
+    dplyr::left_join(
+             sf::st_drop_geometry(naomi_output$meta_area) %>%
+             dplyr::select(reside_area_id = area_id,
+                           reside_area_name = area_name,
+                           reside_area_sort_order = area_sort_order),
+             by = "reside_area_id"
+           ) %>%
+    dplyr::left_join(
+             sf::st_drop_geometry(naomi_output$meta_area) %>%
+             dplyr::select(attend_area_id = area_id,
+                           attend_area_name = area_name,
+                           attend_area_sort_order = area_sort_order),
+             by = "attend_area_id"
+           ) %>%
+    dplyr::left_join(
+             naomi_output$meta_age_group %>%
+             dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
+             by = "age_group"
+           ) %>%
+    dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
+    dplyr::arrange(
+             reside_area_sort_order,
+             attend_area_sort_order,
+             calendar_quarter,
+             sex,
+             age_group_sort_order
+           ) %>%
+    dplyr::select(
+             reside_area_id,
+             reside_area_name,
+             attend_area_id,
+             attend_area_name,
+             sex,
+             age_group,
+             age_group_id,
+             age_group_label,
+             calendar_quarter,
+             quarter_id,
+             quarter_label,
+             dplyr::starts_with("artnum"),
+             dplyr::starts_with("prop_residents"),
+             dplyr::starts_with("prop_attendees")
+           )
+
+  art_attendance
 }
 
 #' Save outputs to zip file
@@ -297,8 +436,10 @@ save_output <- function(filename, dir,
 
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
+    art_attendance <- add_art_attendance_labels(naomi_output)
   } else {
     indicators <- naomi_output$indicators
+    art_attendance <- naomi_output$art_attendance
   }
 
   tmpd <- tempfile()
@@ -308,6 +449,7 @@ save_output <- function(filename, dir,
   naomi_write_csv(indicators, "indicators.csv")
 
   if(!single_csv) {
+    naomi_write_csv(art_attendance, "art_attendance.csv")
     naomi_write_csv(sf::st_drop_geometry(naomi_output$meta_area),
                     "meta_area.csv")
     naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
@@ -364,6 +506,7 @@ read_output_package <- function(path) {
 
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
+    art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
     meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
@@ -386,36 +529,25 @@ calibrate_outputs <- function(output,
 
   stopifnot(inherits(output, "naomi_output"))
   stopifnot(inherits(naomi_mf, "naomi_mf"))
-  
+
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
 
   ## !!! TODO: much of this joining will be obolete by replacing _id with
   ##     the more readable versions.
 
-  mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group_id) %>%
+  mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
     dplyr::left_join(
              sf::st_drop_geometry(output$meta_area) %>%
              dplyr::select(area_id, spectrum_region_code),
              by = "area_id"
-           ) %>%
-    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
-                     by = "age_group_id") %>%
-    dplyr::select(-age_group_id)
-  
-  mfout <- dplyr::select(naomi_mf$mf_out, area_id, sex, age_group_id) %>%
-    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
-                     by = "age_group_id")
+           )
+
+  mfout <- dplyr::select(naomi_mf$mf_out, area_id, sex, age_group)
 
   indicators <- output$indicators %>%
-    dplyr::select(area_id, sex, age_group_id, quarter_id, indicator_id, 
-                  mean, se, median, mode, lower, upper) %>%
-    dplyr::left_join(dplyr::select(output$meta_indicator, indicator_id, indicator),
-                     by = "indicator_id") %>%
-    dplyr::left_join(dplyr::select(output$meta_period, quarter_id, calendar_quarter),
-                     by = "quarter_id") %>%
-    dplyr::left_join(dplyr::select(output$meta_age_group, age_group_id, age_group),
-                     by = "age_group_id")
-             
+    dplyr::select(area_id, sex, age_group, calendar_quarter, indicator,
+                  mean, se, median, mode, lower, upper)
+
   ## Subset to most granular estimates in model frame.
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
@@ -427,7 +559,7 @@ calibrate_outputs <- function(output,
     dplyr::group_by_at(c("indicator", group_vars)) %>%
     dplyr::summarise(est_raw = sum(mean)) %>%
     dplyr::ungroup()
-  
+
   spectrum_calibration <- naomi_mf$spectrum_calibration %>%
     dplyr::mutate(age_coarse = dplyr::if_else(
                                         age_group %in% c("00-04", "05-09", "10-14"),
@@ -448,36 +580,36 @@ calibrate_outputs <- function(output,
            )
 
   ## Calculate calibration ratios for PLHIV and ART Number
-  
+
   plhiv_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                           spectrum_plhiv_calibration_strat)
-  
+
   if(length(plhiv_aggr_var) > 0L) {
-    
+
     spectrum_calibration <- spectrum_calibration %>%
       dplyr::group_by_at(plhiv_aggr_var) %>%
       dplyr::mutate(plhiv_calibration = sum(plhiv_spectrum) / sum(plhiv_raw)) %>%
       dplyr::ungroup()
-    
+
   } else {
     spectrum_calibration$plhiv_calibration <- 1.0
   }
-  
+
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
-  
-  
+
+
   if(length(artnum_aggr_var) > 0L) {
-    
+
     spectrum_calibration <- spectrum_calibration %>%
       dplyr::group_by_at(artnum_aggr_var) %>%
       dplyr::mutate(art_num_calibration = sum(art_num_spectrum) / sum(art_num_raw)) %>%
       dplyr::ungroup()
-    
+
   } else {
     spectrum_calibration$art_num_calibration <- 1.0
   }
-  
+
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::mutate(plhiv = plhiv_raw * plhiv_calibration,
                   art_num = art_num_raw * art_num_calibration) %>%
@@ -485,10 +617,10 @@ calibrate_outputs <- function(output,
                   population_spectrum, population_raw, population_calibration, population,
                   plhiv_spectrum, plhiv_raw, plhiv_calibration, plhiv,
                   art_num_spectrum, art_num_raw, art_num_calibration, art_num)
-  
+
 
   ## Calculate calibrated PLHIV at finest stratification (mf_model)
-  
+
   val <- val %>%
     dplyr::left_join(
              spectrum_calibration %>%
@@ -501,8 +633,8 @@ calibrate_outputs <- function(output,
              by = c("indicator", group_vars)
            ) %>%
     dplyr::mutate(adjusted = mean * calibration)
-  
-  
+
+
   .expand <- function(cq, ind) {
     byv <- c("area_id", "sex", "spectrum_region_code", "age_group")
     m <- dplyr::filter(val, calendar_quarter == cq, indicator == ind)
@@ -512,16 +644,16 @@ calibrate_outputs <- function(output,
                   indicator = ind,
                   adjusted = as.numeric(naomi_mf$A_out %*% m$adjusted))
   }
-  
+
   adj <- dplyr::bind_rows(
                   .expand(naomi_mf$calendar_quarter1, "plhiv"),
                   .expand(naomi_mf$calendar_quarter2, "plhiv"),
                   .expand(naomi_mf$calendar_quarter1, "art_num_residents"),
                   .expand(naomi_mf$calendar_quarter2, "art_num_residents")
                 )
-  
+
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
-  
+
   adj <- dplyr::inner_join(
                   dplyr::select(indicators, byv, mean),
                   dplyr::select(adj, byv, adjusted),
@@ -534,7 +666,7 @@ calibrate_outputs <- function(output,
            ) %>%
     tidyr::spread(indicator, ratio) %>%
     dplyr::rename(plhiv_calib = plhiv, artnum_calib = art_num_residents)
-  
+
   out <- indicators %>%
     dplyr::left_join(adj, by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
     dplyr::mutate(
@@ -553,10 +685,10 @@ calibrate_outputs <- function(output,
              upper = upper * calibration
            ) %>%
     dplyr::select(names(output$indicators))
-  
-  
+
+
   ## Save calibration options
-  
+
   calibration_options <- c(output$fit$calibration_options,
                            list(spectrum_plhiv_calibration_level  = spectrum_plhiv_calibration_level,
                                 spectrum_plhiv_calibration_strat  = spectrum_plhiv_calibration_strat,
@@ -567,10 +699,10 @@ calibrate_outputs <- function(output,
   output$indicators <- out
   output$fit$spectrum_calibration <- spectrum_calibration
   output$fit$calibration_options <- calibration_options
-  
+
   output
 }
-                
+
 get_spectrum_aggr_var <- function(level, strat) {
 
   if(!level %in% c("national", "subnational", "none"))
@@ -579,23 +711,22 @@ get_spectrum_aggr_var <- function(level, strat) {
   if(level == "none")
     return(character(0))
 
-  
+
   aggr_vars <- "calendar_quarter"
-  
+
   if(level == "subnational")
     aggr_vars <- c(aggr_vars, "spectrum_region_code")
-  
+
   stratvar <- switch(strat,
-                   "age_coarse" = "age_coarse",
-                   "sex_age_coarse" = c("sex", "age_coarse"),
-                   "age_group" = "age_group",
-                   "sex_age_group" = c("sex", "age_group"))
+                     "age_coarse" = "age_coarse",
+                     "sex_age_coarse" = c("sex", "age_coarse"),
+                     "age_group" = "age_group",
+                     "sex_age_group" = c("sex", "age_group"))
 
   if(is.null(stratvar))
     stop(paste0("Calibration stratification \"", strat, "\" not found."))
-  
+
   aggr_vars <- c(aggr_vars, stratvar)
 
   aggr_vars
 }
- 
