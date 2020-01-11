@@ -1,3 +1,7 @@
+# naomi 0.0.50
+
+* Add spatial interaction to ART coverage model for <15 / 15+ to allow different paediatric vs. adult ART coverage and different change in paediatric coverage. This reduces paediatric ART data distorting adult model results.
+
 # naomi 0.0.49
 
 * Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.

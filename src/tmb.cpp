@@ -44,6 +44,8 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Z_alpha_a);
   DATA_SPARSE_MATRIX(Z_alpha_as);
   DATA_SPARSE_MATRIX(Z_alpha_xt);
+  DATA_SPARSE_MATRIX(Z_alpha_xa);
+  DATA_SPARSE_MATRIX(Z_alpha_xat);
   DATA_SPARSE_MATRIX(Z_lambda_x);
 
   DATA_VECTOR(logit_rho_offset);
@@ -267,6 +269,14 @@ Type objective_function<Type>::operator() ()
   Type sigma_alpha_xt(exp(log_sigma_alpha_xt));
   val -= dnorm(exp(log_sigma_alpha_xt), Type(0.0), Type(2.5), true) + log_sigma_alpha_xt;
 
+  PARAMETER(log_sigma_alpha_xa);
+  Type sigma_alpha_xa(exp(log_sigma_alpha_xa));
+  val -= dnorm(exp(log_sigma_alpha_xa), Type(0.0), Type(2.5), true) + log_sigma_alpha_xa;
+  
+  PARAMETER(log_sigma_alpha_xat);
+  Type sigma_alpha_xat(exp(log_sigma_alpha_xat));
+  val -= dnorm(exp(log_sigma_alpha_xat), Type(0.0), Type(2.5), true) + log_sigma_alpha_xat;
+  
   PARAMETER_VECTOR(us_alpha_x);
   val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
   val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
@@ -291,6 +301,12 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(u_alpha_xt);
   val -= sum(dnorm(u_alpha_xt, 0.0, 1.0, true));
+
+  PARAMETER_VECTOR(u_alpha_xa);
+  val -= sum(dnorm(u_alpha_xa, 0.0, 1.0, true));
+
+  PARAMETER_VECTOR(u_alpha_xat);
+  val -= sum(dnorm(u_alpha_xat, 0.0, 1.0, true));
 
   // * HIV incidence model *
 
@@ -370,7 +386,8 @@ Type objective_function<Type>::operator() ()
   			Z_x * u_alpha_x * sigma_alpha_x +
   			Z_xs * u_alpha_xs * sigma_alpha_xs +
   			Z_alpha_a * u_alpha_a * sigma_alpha_a +
-  			Z_alpha_as * u_alpha_as * sigma_alpha_as);
+  			Z_alpha_as * u_alpha_as * sigma_alpha_as +
+			Z_alpha_xa * u_alpha_xa * sigma_alpha_xa);
 
 
   vector<Type> rho_t1(invlogit(mu_rho));
@@ -400,7 +417,8 @@ Type objective_function<Type>::operator() ()
 
   vector<Type> mu_alpha_t2(mu_alpha + logit_alpha_t1t2_offset +
 			   X_alpha_t2 * beta_alpha_t2 +
-			   Z_alpha_xt * u_alpha_xt * sigma_alpha_xt);
+			   Z_alpha_xt * u_alpha_xt * sigma_alpha_xt +
+			   Z_alpha_xat * u_alpha_xat * sigma_alpha_xat);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
 
   vector<Type> infections_t1t2((1 - exp(-lambda_t1 * projection_duration)) * (population_t1 - plhiv_t1));

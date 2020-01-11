@@ -191,11 +191,12 @@ naomi_model_frame <- function(area_merged,
              get_age_groups() %>%
              dplyr::filter(age_group %in% age_groups) %>%
              dplyr::mutate(
+                      age_below15 = as.integer(!age_group_start >= 15),
                       age15plus = as.integer(age_group_start >= 15),
                       age15to49 = as.integer(age_group_start >= 15 &
                                              (age_group_start + age_group_span) <= 50)
                     ) %>%
-             dplyr::select(age_group, age15plus, age15to49),
+             dplyr::select(age_group, age_below15, age15plus, age15to49),
              by = "age_group"
            ) %>%
     dplyr::mutate(area_idf = forcats::as_factor(area_id),
