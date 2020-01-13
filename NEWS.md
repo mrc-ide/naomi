@@ -1,6 +1,7 @@
 # naomi 0.0.50
 
 * Add spatial interaction to ART coverage model for <15 / 15+ to allow different paediatric vs. adult ART coverage and different change in paediatric coverage. This reduces paediatric ART data distorting adult model results.
+* ART number dataset accepts either year or calendar_quarter column.
 
 # naomi 0.0.49
 
