@@ -35,7 +35,7 @@ test_that("artnum_mf() returns expected number of records", {
 })
 
 test_that("artnum_mf() throws errors for invalid inputs", {
-  expect_error(artnum_mf("CY1924Q4", mwi_art_number, a_naomi_mf))
+  expect_error(artnum_mf("CY1924Q4", mwi_art_number, a_naomi_mf), "Set calendar_quarter = NULL if you intend to include no ART data.")
   expect_error(artnum_mf("CY2016Q1", mwi_art_number, "jibberish"))
   expect_error(artnum_mf(c("CY2016Q1", "CY2016Q2"), mwi_art_number, "jibberish"))
 })
