@@ -899,13 +899,6 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     year <- NULL
   }
 
-  if(!is.null(art_number) &&
-
-     length(year) &&
-     !year %in% art_number$year)
-    stop(paste0("No ART data found for year ", year, ".\n",
-                "Set year = NULL if you intend to include no ART data."))
-
   if(is.null(year) || is.null(art_number)) {
     ## No number on ART data or no year specified
 
@@ -918,6 +911,13 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       stringsAsFactors = FALSE
     )
   } else {
+
+    art_number$year <- year_labels(calendar_quarter_to_quarter_id(art_number$calendar_quarter))
+    
+    if(!year %in% art_number$year)
+      stop(paste0("No ART data found for year ", year, ".\n",
+                  "Set year = NULL if you intend to include no ART data."))
+    
     ## !!! Note: should add some subsetting for sex and age group.
     artnum_dat <- art_number %>%
       dplyr::filter(year == !!year,

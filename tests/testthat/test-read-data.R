@@ -28,3 +28,29 @@ test_that("read data works with optional column specs", {
   readr::write_csv(pop, no_area_id_col, na = "")
   expect_error(read_population(no_area_id_col), "Required columns not found: area_id")
 })
+
+test_that("read_art_number() allows year or calendar_quarter entry", {
+
+  raw <- readr_read_csv(a_hintr_data$art_number)
+  v0 <- read_art_number(a_hintr_data$art_number)
+  
+  f1 <- tempfile(fileext = ".csv")
+  dplyr::mutate(raw, year = NULL, calendar_quarter = NULL) %>%
+    readr::write_csv(f1, na = "")
+  expect_error(read_art_number(f1), "Both 'year' and 'calendar_quarter' are missing. One must be present.")
+
+  f2 <- tempfile(fileext = ".csv")
+  dplyr::mutate(raw, year = year + 1) %>%
+    readr::write_csv(f2, na = "")
+  expect_error(read_art_number(f2), "Inconsistent year and calendar_quarter found in ART dataset.")
+
+  f3 <- tempfile(fileext = ".csv")
+  dplyr::mutate(raw, year = NULL) %>%
+    readr::write_csv(f3, na = "")
+  expect_equal(read_art_number(f3), v0)
+
+  f4 <- tempfile(fileext = ".csv")
+  dplyr::mutate(raw, calendar_quarter = NULL) %>%
+    readr::write_csv(f4, na = "")
+  expect_equal(read_art_number(f4), v0)
+})
