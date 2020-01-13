@@ -161,10 +161,6 @@ naomi_prepare_data <- function(data, options) {
   else
     artnum_calendar_quarter2 <- NULL
   
-  anc_prevalence_year1 <- options$anc_prevalence_year1
-  anc_prevalence_year2 <- options$anc_prevalence_year2
-  anc_art_coverage_year1 <- options$anc_art_coverage_year1
-  anc_art_coverage_year2 <- options$anc_art_coverage_year2
   
   naomi_mf <- naomi_model_frame(
     area_merged,
@@ -189,10 +185,10 @@ naomi_prepare_data <- function(data, options) {
                                   vls_survey_ids,
                                   artnum_calendar_quarter1,
                                   artnum_calendar_quarter2,
-                                  anc_prevalence_year1,
-                                  anc_prevalence_year2,
-                                  anc_art_coverage_year1,
-                                  anc_art_coverage_year2)
+                                  options$anc_prevalence_year1,
+                                  options$anc_prevalence_year2,
+                                  options$anc_art_coverage_year1,
+                                  options$anc_art_coverage_year2)
 
   return(naomi_data)
 }
