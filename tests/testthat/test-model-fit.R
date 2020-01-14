@@ -3,7 +3,7 @@ context("test-model-fit")
 test_that("setting rng_seed returns same outputs", {
 
   a_fit_sample2 <- sample_tmb(a_fit, nsample = 30, rng_seed = 28)
-  a_output2 <- output_package(a_fit_sample2, a_naomi_mf, a_area_merged)
+  a_output2 <- output_package(a_fit_sample2, a_naomi_mf)
 
   expect_equal(a_fit_sample$sample, a_fit_sample2$sample)
   expect_equal(a_output$indicators$mean, a_output2$indicators$mean)
@@ -132,11 +132,11 @@ test_that("add_stats returns expected names and types", {
   
 test_that("output_package() works with mode, sample, or both", {
 
-  output_mode <- output_package(a_fit, a_naomi_mf, a_area_merged)
+  output_mode <- output_package(a_fit, a_naomi_mf)
 
   fit_sample_only <- a_fit_sample
   fit_sample_only$mode <- NULL
-  output_sample <- output_package(fit_sample_only, a_naomi_mf, a_area_merged)
+  output_sample <- output_package(fit_sample_only, a_naomi_mf)
 
   expect_true(all(!is.na(a_output$indicators[c("mean", "se", "median", "mode", "lower", "upper")])))
   
@@ -162,19 +162,19 @@ test_that("tmbstan fit returns results", {
     fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
   )
   stanfit1 <- sample_tmbstan(stanfit1)
-  out1 <- output_package(stanfit1, a_naomi_data, a_area_merged)
+  out1 <- output_package(stanfit1, a_naomi_data)
   
   stanfit2 <- suppressWarnings(
     fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
   )
   stanfit2 <- sample_tmbstan(stanfit2)
-  out2 <- output_package(stanfit2, a_naomi_data, a_area_merged)
+  out2 <- output_package(stanfit2, a_naomi_data)
 
   stanfit3 <- suppressWarnings(
     fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 29)
   )
   stanfit3 <- sample_tmbstan(stanfit3)
-  out3 <- output_package(stanfit3, a_naomi_data, a_area_merged)
+  out3 <- output_package(stanfit3, a_naomi_data)
 
   expect_equal(ncol(stanfit1$sample$plhiv_t1), CHAINS * ITER / 2)
   expect_true(all(is.na(out1$indicators$mode)))
@@ -197,7 +197,7 @@ test_that("tmbstan with laplace returns results", {
     fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28, laplace = TRUE)
   )
   stanfit_laplace <- sample_tmbstan(stanfit_laplace)
-  out_laplace <- output_package(stanfit_laplace, a_naomi_data, a_area_merged)
+  out_laplace <- output_package(stanfit_laplace, a_naomi_data)
   
   expect_equal(ncol(stanfit_laplace$sample$plhiv_t1), CHAINS * ITER / 2)
   expect_true(all(is.na(out_laplace$indicators$mode)))
@@ -212,9 +212,9 @@ test_that("INLA fit returns results", {
   inla_smp2 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
   inla_smp3 <- sample_inla(inla_fit, nsample = 20, rng_seed = 29)
 
-  out1 <- output_package(inla_smp1, a_naomi_data, a_area_merged)
-  out2 <- output_package(inla_smp2, a_naomi_data, a_area_merged)
-  out3 <- output_package(inla_smp3, a_naomi_data, a_area_merged)
+  out1 <- output_package(inla_smp1, a_naomi_data)
+  out2 <- output_package(inla_smp2, a_naomi_data)
+  out3 <- output_package(inla_smp3, a_naomi_data)
 
   expect_equal(out1$indicators, out2$indicators)
   expect_true(!all(out1$indicators$mean == out3$indicators$mean, na.rm = TRUE))
