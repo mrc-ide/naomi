@@ -216,7 +216,7 @@
 			]
 		},
 	        {
-			"label": "Approximate district survey design effect",
+		       "label": "Approximate district survey design effect",
                        "helpText": "Approximate design effect to scale effective sample size for survey observations. Typically this will be smaller than the full survey design effect.",
 		        "controls": [
 				{
@@ -224,7 +224,7 @@
 					"label": "Prevalence",
 					"type": "number",
 					"required": true,
-				        "value" = 1.0
+    				        "value": 1.0,
 					"helpText": "Approximate DEFF for HIV prevalence"
 				},
 			    	{
@@ -232,7 +232,7 @@
 					"label": "ART coverage",
 					"type": "number",
 					"required": true,
-				        "value" = 1.0
+				        "value": 1.0,
 					"helpText": "Approximate DEFF for ART coverage"
 				},
 			        {
@@ -240,7 +240,7 @@
 					"label": "Proportion recently infected",
 					"type": "number",
 					"required": true,
-				        "value" = 1.0
+				        "value": 1.0,
 					"helpText": "Approximate DEFF for proportion recently infected amongst HIV positive"
 				}
 			]
