@@ -51,6 +51,7 @@ test_that("population calibration options", {
                                level = 4,
                                calendar_quarter1 = "CY2016Q1",
                                calendar_quarter2 = "CY2018Q3",
+                               calendar_quarter2 = "CY2019Q2",
                                spectrum_population_calibration = "none")
 
   expect_true(all(mf_none$spectrum_calibration$population_calibration == 1))

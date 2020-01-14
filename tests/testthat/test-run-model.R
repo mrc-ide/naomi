@@ -72,6 +72,7 @@ test_that("model can be run without programme data", {
     area_level = "4",
     calendar_quarter_t1 = "CY2016Q1",
     calendar_quarter_t2 = "CY2018Q3",
+    calendar_quarter_t2 = "CY2019Q2",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
