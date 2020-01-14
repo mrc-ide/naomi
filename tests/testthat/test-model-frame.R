@@ -51,7 +51,7 @@ test_that("population calibration options", {
                                level = 4,
                                calendar_quarter1 = "CY2016Q1",
                                calendar_quarter2 = "CY2018Q3",
-                               calendar_quarter2 = "CY2019Q2",
+                               calendar_quarter3 = "CY2019Q2",
                                spectrum_population_calibration = "none")
 
   expect_true(all(mf_none$spectrum_calibration$population_calibration == 1))
@@ -59,9 +59,9 @@ test_that("population calibration options", {
                mf_none$spectrum_calibration$population)
   expect_false(all(mf_none$spectrum_calibration$population_spectrum == 
                    mf_none$spectrum_calibration$population))
-  expect_equal(sum(mf_none$mf_model$population_t1 + mf_none$mf_model$population_t2),
+  expect_equal(sum(mf_none$mf_model$population_t1 + mf_none$mf_model$population_t2 + mf_none$mf_model$population_t3),
                sum(mf_none$spectrum_calibration$population))
-  expect_equal(sum(mf_none$mf_model$population_t1 + mf_none$mf_model$population_t2),
+  expect_equal(sum(mf_none$mf_model$population_t1 + mf_none$mf_model$population_t2 + + mf_none$mf_model$population_t3),
                sum(mf_none$spectrum_calibration$population_raw))
 
 
@@ -75,6 +75,7 @@ test_that("population calibration options", {
                               level = 4,
                               calendar_quarter1 = "CY2016Q1",
                               calendar_quarter2 = "CY2018Q3",
+                              calendar_quarter3 = "CY2019Q2",
                               spectrum_population_calibration = "national")
 
   expect_false(all(mf_nat$spectrum_calibration$population_calibration == 1))
@@ -82,9 +83,9 @@ test_that("population calibration options", {
                sum(mf_nat$spectrum_calibration$population))
   expect_equal(sum(mf_nat$spectrum_calibration$population_spectrum),
                sum(mf_nat$spectrum_calibration$population))
-  expect_equal(sum(mf_nat$mf_model$population_t1 + mf_nat$mf_model$population_t2),
+  expect_equal(sum(mf_nat$mf_model$population_t1 + mf_nat$mf_model$population_t2 + mf_nat$mf_model$population_t3),
                sum(mf_nat$spectrum_calibration$population))
-  expect_equal(sum(mf_nat$mf_model$population_t1 + mf_nat$mf_model$population_t2),
+  expect_equal(sum(mf_nat$mf_model$population_t1 + mf_nat$mf_model$population_t2 + mf_nat$mf_model$population_t3),
                sum(mf_nat$spectrum_calibration$population_spectrum))
 
   
@@ -95,6 +96,7 @@ test_that("population calibration options", {
                                  level = 4,
                                  calendar_quarter1 = "CY2016Q1",
                                  calendar_quarter2 = "CY2018Q3",
+                                 calendar_quarter3 = "CY2019Q2",
                                  spectrum_population_calibration = "subnational")
 
   expect_false(all(mf_subnat$spectrum_calibration$population_calibration == 1))
@@ -102,9 +104,9 @@ test_that("population calibration options", {
                sum(mf_subnat$spectrum_calibration$population))
   expect_equal(mf_subnat$spectrum_calibration$population_spectrum,
                mf_subnat$spectrum_calibration$population)
-  expect_equal(sum(mf_subnat$mf_model$population_t1 + mf_subnat$mf_model$population_t2),
+  expect_equal(sum(mf_subnat$mf_model$population_t1 + mf_subnat$mf_model$population_t2 + mf_subnat$mf_model$population_t3),
                sum(mf_subnat$spectrum_calibration$population))
-  expect_equal(sum(mf_subnat$mf_model$population_t1 + mf_subnat$mf_model$population_t2),
+  expect_equal(sum(mf_subnat$mf_model$population_t1 + mf_subnat$mf_model$population_t2 + mf_subnat$mf_model$population_t3),
                sum(mf_subnat$spectrum_calibration$population_spectrum))
  
   expect_error(
@@ -115,6 +117,7 @@ test_that("population calibration options", {
                level = 4,
                calendar_quarter1 = "CY2016Q1",
                calendar_quarter2 = "CY2018Q3",
+               calendar_quarter3 = "CY2019Q2",
                spectrum_population_calibration = "jibberish"),
     "spectrum_calibration_option \"jibberish\" not found."
   )
