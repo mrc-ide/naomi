@@ -26,6 +26,7 @@
 #' * area_level
 #' * calendar_quarter_t1
 #' * calendar_quarter_t2
+#' * calendar_quarter_t3
 #' * survey_prevalence
 #' * survey_art_coverage
 #' * survey_recently_infected
@@ -155,6 +156,7 @@ naomi_prepare_data <- function(data, options) {
   level <- as.integer(options$area_level)
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
+  calendar_quarter_t3 <- options$calendar_quarter_t3
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
@@ -183,6 +185,7 @@ naomi_prepare_data <- function(data, options) {
     level = level,
     calendar_quarter_t1,
     calendar_quarter_t2,
+    calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
