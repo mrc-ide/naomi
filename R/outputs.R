@@ -686,8 +686,10 @@ calibrate_outputs <- function(output,
   adj <- dplyr::bind_rows(
                   .expand(naomi_mf$calendar_quarter1, "plhiv"),
                   .expand(naomi_mf$calendar_quarter2, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter3, "plhiv"),
                   .expand(naomi_mf$calendar_quarter1, "art_num_residents"),
-                  .expand(naomi_mf$calendar_quarter2, "art_num_residents")
+                  .expand(naomi_mf$calendar_quarter2, "art_num_residents"),
+                  .expand(naomi_mf$calendar_quarter3, "art_num_residents")
                 )
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
