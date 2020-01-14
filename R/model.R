@@ -191,11 +191,12 @@ naomi_model_frame <- function(area_merged,
              get_age_groups() %>%
              dplyr::filter(age_group %in% age_groups) %>%
              dplyr::mutate(
+                      age_below15 = as.integer(!age_group_start >= 15),
                       age15plus = as.integer(age_group_start >= 15),
                       age15to49 = as.integer(age_group_start >= 15 &
                                              (age_group_start + age_group_span) <= 50)
                     ) %>%
-             dplyr::select(age_group, age15plus, age15to49),
+             dplyr::select(age_group, age_below15, age15plus, age15to49),
              by = "age_group"
            ) %>%
     dplyr::mutate(area_idf = forcats::as_factor(area_id),
@@ -470,6 +471,7 @@ naomi_model_frame <- function(area_merged,
             Lproj_incid = Lproj$Lproj_incid,
             Lproj_paed = Lproj$Lproj_paed,
             projection_duration = projection_duration,
+            areas = area_merged,
             age_groups = age_groups,
             sexes = sexes,
             calendar_quarter1 = calendar_quarter1,
@@ -885,26 +887,20 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
 #' @rdname anc_testing_prev_mf
 #'
 #' @param calendar_quarter Calendar quarter
+#'
+#' @details
+#'
+#' Number on ART at desired quarter are linearly interpolated within the dataset.
+#' If the desired quarter is before the earliest data, the first value may
+#' be carried back by up to one year (four quarters). Data are never carried forward
+#' 
 #' @export
 artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
   stopifnot(length(calendar_quarter) <= 1)
   stopifnot(is(naomi_mf, "naomi_mf"))
 
-  if(!is.null(calendar_quarter)) {
-    year <- year_labels(calendar_quarter_to_quarter_id(calendar_quarter))
-  } else {
-    year <- NULL
-  }
-
-  if(!is.null(art_number) &&
-
-     length(year) &&
-     !year %in% art_number$year)
-    stop(paste0("No ART data found for year ", year, ".\n",
-                "Set year = NULL if you intend to include no ART data."))
-
-  if(is.null(year) || is.null(art_number)) {
+  if(is.null(calendar_quarter) || is.null(art_number)) {
     ## No number on ART data or no year specified
 
     artnum_dat <- data.frame(
@@ -916,10 +912,32 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       stringsAsFactors = FALSE
     )
   } else {
-    ## !!! Note: should add some subsetting for sex and age group.
-    artnum_dat <- art_number %>%
-      dplyr::filter(year == !!year,
-                    area_id %in% naomi_mf$mf_areas$area_id) %>%
+
+    out_quarter_id <- calendar_quarter_to_quarter_id(calendar_quarter)
+    
+    dat <- art_number %>%
+      dplyr::inner_join(
+               dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
+               by = "area_id"
+             ) %>%
+      dplyr::mutate(
+               quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
+             )
+    
+    dat <- dat %>%
+      dplyr::group_by(area_id, sex, age_group, spectrum_region_code) %>%
+      dplyr::summarise(min_data_quarter = min(quarter_id),
+                       max_data_quarter = max(quarter_id),
+                       current_art = approx(quarter_id, current_art, out_quarter_id, rule =2)$y) %>%
+      dplyr::ungroup() %>%
+      dplyr::filter(out_quarter_id > min_data_quarter - 4L,
+                    out_quarter_id <= max_data_quarter)
+
+    if(nrow(dat) == 0)
+      stop(paste0("No ART data found for quarter ", calendar_quarter, ".\n", 
+            "Set calendar_quarter = NULL if you intend to include no ART data."))
+    
+    artnum_dat <- dat %>%
       dplyr::transmute(
                area_id,
                sex,
@@ -928,6 +946,6 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
                current_art
              )
   }
-
+  
   artnum_dat
 }

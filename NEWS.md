@@ -1,3 +1,9 @@
+# naomi 0.0.50
+
+* Add spatial interaction to ART coverage model for <15 / 15+ to allow different paediatric vs. adult ART coverage and different change in paediatric coverage. This reduces paediatric ART data distorting adult model results.
+* ART number dataset accepts either year or calendar_quarter column.
+* Linearly interpolate number on ART for model fitting. If desired quarter is before earliest data, the earliest ART number may be carried backward by up to four quarters. Number on ART are never carried forwards.
+
 # naomi 0.0.49
 
 * Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.
@@ -10,6 +16,13 @@
 # naomi 0.0.47
 
 * Add read_***() functions with col_type parsers.
+
+# naomi 0.0.46
+
+* Add TMB-Stan model fitting, with and without Laplace approximation.
+* Add INLA model fitting. 
+
+This is for development and comparison purposes, not for production use.
 
 # naomi 0.0.45
 

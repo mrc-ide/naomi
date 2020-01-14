@@ -80,7 +80,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
 
-  ## If no t2 ART data, do not fit a change, use logit difference from Spectrum
+  ## If no t2 ART data, do not fit a change in ART coverage. Use logit difference
+  ## in ART coverage from Spectrum.
   if(nrow(naomi_data$artnum_t2_dat) == 0) {
     f_alpha_t2 <- ~0
     f_alpha_xt <- ~0
@@ -91,13 +92,40 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_alpha_t1t2_offset <- numeric(nrow(naomi_data$mf_model))
   }
 
-  ## If no recent infeciton data, do not estimate incidence sex ratio or
+  ## Paediatric ART coverage random effects
+  artnum_t1_dat <- naomi_data$artnum_t1_dat %>%
+    dplyr::left_join(get_age_groups(), by = "age_group") %>%
+    dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
+  
+  artnum_t2_dat <- naomi_data$artnum_t2_dat %>%
+    dplyr::left_join(get_age_groups(), by = "age_group") %>%
+    dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
+  
+  has_t1_paed_art <- any(artnum_t1_dat$age_group_end < 15)
+  has_t2_paed_art <- any(artnum_t2_dat$age_group_end < 15)
+
+  if(has_t1_paed_art & has_t2_paed_art) {
+    f_alpha_t2 <- ~1 + age_below15
+    f_alpha_xat <- ~0 + area_idf
+  } else {
+    f_alpha_xat <- ~0
+  }
+
+  if(has_t1_paed_art | has_t2_paed_art) {
+    f_alpha_xa <- ~0 + area_idf
+  } else {
+    f_alpha_xa <- ~0
+  }
+    
+
+
+  ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
   if(nrow(naomi_data$recent_dat) == 0) {
     f_lambda <- ~0
     f_lambda_x <- ~0
   } else {
-    f_lambda <- ~female_15plus
+    f_lambda <- ~ 1 + female_15plus
     f_lambda_x <- ~0 + area_idf
   }
     
@@ -122,6 +150,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_alpha_a = sparse_model_matrix(f_alpha_a, df),
     Z_alpha_as = sparse_model_matrix(f_alpha_a, df, "female_15plus", TRUE),
     Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),
+    Z_alpha_xa = sparse_model_matrix(f_alpha_xa, df, "age_below15"),
+    Z_alpha_xat = sparse_model_matrix(f_alpha_xat, df, "age_below15"),
     Z_lambda_x = sparse_model_matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
     Z_ancrho_x = sparse_model_matrix(~0 + area_idf, naomi_data$mf_areas),
@@ -219,6 +249,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     u_alpha_a = numeric(ncol(dtmb$Z_alpha_a)),
     u_alpha_as = numeric(ncol(dtmb$Z_alpha_as)),
     u_alpha_xt = numeric(ncol(dtmb$Z_alpha_xt)),
+    u_alpha_xa = numeric(ncol(dtmb$Z_alpha_xa)),
+    u_alpha_xat = numeric(ncol(dtmb$Z_alpha_xat)),
     ##
     log_sigma_lambda_x = 0,
     ui_lambda_x = numeric(ncol(dtmb$Z_x)),
@@ -241,6 +273,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_phi_alpha_xs = 0,
     log_sigma_alpha_xs = 0,
     log_sigma_alpha_xt = 0,
+    log_sigma_alpha_xa = 0,
+    log_sigma_alpha_xat = 0,
     ##
     OmegaT_raw = 0,
     log_betaT = 0,
@@ -315,6 +349,7 @@ fit_tmb <- function(tmb_input,
                                    "us_alpha_xs", "ui_alpha_xs",
                                    "u_alpha_a", "u_alpha_as",
                                    "u_alpha_xt",
+                                   "u_alpha_xa", "u_alpha_xat",
                                    ##
                                    "ui_lambda_x",
                                    "logit_nu_raw",
@@ -337,10 +372,14 @@ fit_tmb <- function(tmb_input,
 
   if(f$convergence != 0)
     warning(paste("convergence error:", f$message))
+
+  if(outer_verbose)
+    message(paste("converged:", f$message))
   
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
-
+  f$mode <- obj$report(f$par.full)
+    
   val <- c(f, obj = list(obj))
   class(val) <- "naomi_fit"
 

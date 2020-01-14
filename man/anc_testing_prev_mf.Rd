@@ -29,3 +29,8 @@ Calculated prevalence
 \description{
 Prepare Model Frames for Programme Datasets
 }
+\details{
+Number on ART at desired quarter are linearly interpolated within the dataset.
+If the desired quarter is before the earliest data, the first value may
+be carried back by up to one year (four quarters). Data are never carried forward
+}

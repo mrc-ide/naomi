@@ -72,8 +72,9 @@ mwi_art_number <- mwi_art_number %>%
     select(age_group_label, age_group)
   ) %>%
   mutate(sex = "both",
+         calendar_quarter = paste0("CY", year, "Q4"),
          age_group_label = NULL) %>%
-  select(area_id, sex, age_group, year, current_art)
+  select(area_id, sex, age_group, year, calendar_quarter, current_art)
 
 usethis::use_data(
            mwi_anc_testing,

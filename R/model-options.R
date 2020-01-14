@@ -59,7 +59,6 @@ validate_model_options <- function(data, options) {
       !is.null(options$include_art_t2) && options$include_art_t2 == "true"))
     stop(t_("MISSING_ART_DATA"))
 
-
   ##   
   area_merged <- read_area_merged(data$shape)
   population <- read_population(data$population)

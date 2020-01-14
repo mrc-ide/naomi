@@ -75,13 +75,14 @@ read_art_number <- function(file) {
 
   ## !! TODO: add file format asserts
 
-  required_cols <- c("area_id", "sex", "age_group", "year", "current_art")
+  required_cols <- c("area_id", "sex", "age_group", "current_art")
   
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
                        sex = readr::col_character(),
                        age_group = readr::col_character(),
                        year = readr::col_integer(),
+                       calendar_quarter = readr::col_character(),
                        current_art = readr::col_double()
                      )
   
@@ -91,12 +92,31 @@ read_art_number <- function(file) {
   missing_cols <- setdiff(required_cols, names(val))
   if(length(missing_cols))
     stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
-  
+
+  if(!any(c("year", "calendar_quarter") %in% names(val)))
+     stop(paste0("Both 'year' and 'calendar_quarter' are missing. One must be present."))
+
+  if(!"calendar_quarter" %in% names(val))
+    val$calendar_quarter <- NA_character_
+
+  if("year" %in% names(val)) {
+    
+    if(any(!is.na(val$calendar_quarter) &
+           val$year != as.integer(substr(val$calendar_quarter, 3, 6))))
+      stop("Inconsistent year and calendar_quarter found in ART dataset.")
+
+    ## If calendar quarter is not specified, assumed that represents end-of-year reporting
+    val <- val %>%
+      dplyr::mutate(
+               calendar_quarter = dplyr::if_else(is.na(calendar_quarter), paste0("CY", year, "Q4"), calendar_quarter)
+             )
+  }
+
+  ## !! TODO: check all columns are valid calendar quarters
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
-  val
-
+  dplyr::select(val, area_id, sex, age_group, calendar_quarter, current_art)
 }
 
 #' @rdname read_population
