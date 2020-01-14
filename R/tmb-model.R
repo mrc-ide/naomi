@@ -219,6 +219,15 @@ prepare_tmb_inputs <- function(naomi_data) {
     A_artattend_mf = A_artattend_mf,
     A_art_reside_attend = A_art_reside_attend,
     ##
+    ## Time 3 projection inputs
+    population_t3 = df$population_t3,
+    Lproj_hivpop_t2t3 = naomi_data$Lproj_hivpop_t2t3,
+    Lproj_incid_t2t3 = naomi_data$Lproj_incid_t2t3,
+    Lproj_paed_t2t3 = naomi_data$Lproj_paed_t2t3,
+    projection_duration_t2t3 = naomi_data$projection_duration_t2t3,
+    logit_alpha_t2t3_offset = df$logit_alpha_t2t3_offset,
+    log_lambda_t3_offset = df$log_lambda_t3_offset,
+    ##
     A_out = naomi_data$A_out,
     calc_outputs = 1L
   )
