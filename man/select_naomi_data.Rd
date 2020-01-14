@@ -20,7 +20,11 @@ select_naomi_data(
  
     anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
   anc_artcov_year_t1 = anc_prev_year_t1,
-  anc_artcov_year_t2 = anc_prev_year_t2
+  anc_artcov_year_t2 = anc_prev_year_t2,
+  deff_prev = 1,
+  deff_artcov = 1,
+  deff_recent = 1,
+  deff_vls = 1
 )
 }
 \arguments{

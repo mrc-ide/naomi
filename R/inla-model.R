@@ -25,7 +25,7 @@ prepare_inla_inputs <- function(naomi_data) {
   df_prev <- df %>%
     dplyr::mutate(anc = 0) %>%
     dplyr::full_join(
-             dplyr::select(naomi_data$prev_dat, area_id, sex, age_group, n, x),
+             dplyr::select(naomi_data$prev_dat, area_id, sex, age_group, n = n_eff, x = x_eff),
              by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::bind_rows(
@@ -52,7 +52,7 @@ prepare_inla_inputs <- function(naomi_data) {
   df_artcov <- df %>%
     dplyr::mutate(anc = 0) %>%
     dplyr::full_join(
-             dplyr::select(naomi_data$artcov_dat, area_id, sex, age_group, n, x),
+             dplyr::select(naomi_data$artcov_dat, area_id, sex, age_group, n = n_eff, x = x_eff),
              by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::bind_rows(
