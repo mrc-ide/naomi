@@ -49,10 +49,15 @@ meta_indicator <-
   )
 
 
-add_stats <- function(df, mode, sample = NULL, prefix = ""){
+add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
 
   v <- df
-  v[[paste0(prefix, "mode")]] <- mode
+
+  if(!is.null(mode)) {
+    v[[paste0(prefix, "mode")]] <- mode
+  } else {
+    v[[paste0(prefix, "mode")]] <- NA_real_
+  }
 
   if(!is.null(sample)) {
     qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975))
@@ -70,9 +75,7 @@ add_stats <- function(df, mode, sample = NULL, prefix = ""){
 
 
 extract_indicators <- function(naomi_fit, naomi_mf) {
-
-  report <- naomi_fit$obj$report(naomi_fit$par.full)
-
+  
   get_est <- function(varname,
                       indicator,
                       calendar_quarter,
@@ -83,9 +86,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                   indicator = indicator)
 
     if(!is.null(naomi_fit$sample)) {
-      v <- add_stats(v, report[[varname]], naomi_fit$sample[[varname]])
+      v <- add_stats(v, naomi_fit$mode[[varname]], naomi_fit$sample[[varname]])
     } else {
-      v <- add_stats(v, report[[varname]])
+      v <- add_stats(v, naomi_fit$mode[[varname]])
     }
 
     v
@@ -132,7 +135,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
 extract_art_attendance <- function(naomi_fit, naomi_mf) {
 
-  report <- naomi_fit$obj$report(naomi_fit$par.full)
+  mode <- naomi_fit$mode
 
   mfout <- naomi_mf$mf_out %>%
     dplyr::mutate(out_idx = dplyr::row_number())
@@ -150,36 +153,61 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
              by = c("attend_area_id", "sex", "age_group")
            )
 
-  m_artattend_ij_t1 <- report$artattend_ij_t1_out
-  m_artnum_reside_t1 <- report$artnum_t1_out[v$reside_out_idx]
-  m_artnum_attend_t1 <- report$artattend_t1_out[v$attend_out_idx]
-  m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
-  m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
+  if(!is.null(mode)) {
+    m_artattend_ij_t1 <- mode$artattend_ij_t1_out
+    m_artnum_reside_t1 <- mode$artnum_t1_out[v$reside_out_idx]
+    m_artnum_attend_t1 <- mode$artattend_t1_out[v$attend_out_idx]
+    
+    m_artattend_ij_t2 <- mode$artattend_ij_t2_out
+    m_artnum_reside_t2 <- mode$artnum_t2_out[v$reside_out_idx]
+    m_artnum_attend_t2 <- mode$artattend_t2_out[v$attend_out_idx]
+  } else {
+    m_artattend_ij_t1 <- NULL
+    m_artattend_ij_t2 <- NULL
+  }
 
-  m_artattend_ij_t2 <- report$artattend_ij_t2_out
-  m_artnum_reside_t2 <- report$artnum_t2_out[v$reside_out_idx]
-  m_artnum_attend_t2 <- report$artattend_t2_out[v$attend_out_idx]
-  m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
-  m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+  if(!is.null(m_artattend_ij_t1)) {
+    m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
+    m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
+  } else {
+    m_prop_residents_t1 <- NULL
+    m_prop_attendees_t1 <- NULL
+  }
+
+  if(!is.null(m_artattend_ij_t2)) {
+    m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
+    m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+  } else {
+    m_prop_residents_t2 <- NULL
+    m_prop_attendees_t2 <- NULL
+  }
 
   if(!is.null(naomi_fit$sample)) {
 
     s_artattend_ij_t1 <- naomi_fit$sample$artattend_ij_t1_out
     s_artnum_reside_t1 <- naomi_fit$sample$artnum_t1_out[v$reside_out_idx, ]
     s_artnum_attend_t1 <- naomi_fit$sample$artattend_t1_out[v$attend_out_idx, ]
-    s_prop_residents_t1 <- s_artattend_ij_t1 / s_artnum_reside_t1
-    s_prop_attendees_t1 <- s_artattend_ij_t1 / s_artnum_attend_t1
 
     s_artattend_ij_t2 <- naomi_fit$sample$artattend_ij_t2_out
     s_artnum_reside_t2 <- naomi_fit$sample$artnum_t2_out[v$reside_out_idx, ]
     s_artnum_attend_t2 <- naomi_fit$sample$artattend_t2_out[v$attend_out_idx, ]
+  } else {
+    s_artattend_ij_t1 <- NULL
+    s_artattend_ij_t2 <- NULL
+  }
+
+  if(!is.null(s_artattend_ij_t1)) {
+    s_prop_residents_t1 <- s_artattend_ij_t1 / s_artnum_reside_t1
+    s_prop_attendees_t1 <- s_artattend_ij_t1 / s_artnum_attend_t1
+  } else {
+    s_prop_residents_t1 <- NULL
+    s_prop_attendees_t1 <- NULL
+  }
+
+  if(!is.null(s_artattend_ij_t2)) {
     s_prop_residents_t2 <- s_artattend_ij_t2 / s_artnum_reside_t2
     s_prop_attendees_t2 <- s_artattend_ij_t2 / s_artnum_attend_t2
   } else {
-    s_artattend_ij_t1 <- NULL
-    s_prop_residents_t1 <- NULL
-    s_prop_attendees_t1 <- NULL
-    s_artattend_ij_t2 <- NULL
     s_prop_residents_t2 <- NULL
     s_prop_attendees_t2 <- NULL
   }
