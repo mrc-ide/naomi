@@ -112,9 +112,18 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
+  indicators_t3 <- c("population_t3_out" = "population",
+                     "rho_t3_out" = "prevalence",
+                     "plhiv_t3_out" = "plhiv",
+                     "alpha_t3_out" = "art_coverage",
+                     "artnum_t3_out" = "art_num_residents",
+                     "artattend_t3_out" = "art_num_attend",
+                     "lambda_t3_out" = "incidence",
+                     "infections_t3_out" = "infections")
 
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
+  indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
@@ -127,8 +136,10 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                   get_est("anc_alpha_t1_out", "anc_art_coverage", naomi_mf$calendar_quarter1, mf_anc_out),
                   indicator_est_t2,
                   get_est("anc_rho_t2_out", "anc_prevalence", naomi_mf$calendar_quarter2, mf_anc_out),
-                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out))
-
+                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out),
+                  indicator_est_t3
+                )
+  
   dplyr::select(out, names(naomi_mf$mf_out),
                 calendar_quarter, indicator, mean, se, median, mode, lower, upper)
 }
