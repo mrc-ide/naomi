@@ -520,12 +520,6 @@ Type objective_function<Type>::operator() ()
 
   val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));
 
-  REPORT(A_j_t1);
-  REPORT(sd_A_j_t1);
-
-  REPORT(A_j_t2);
-  REPORT(sd_A_j_t2);
-
   // Calculate model outputs
 
   DATA_SPARSE_MATRIX(A_out);
@@ -566,24 +560,6 @@ Type objective_function<Type>::operator() ()
     vector<Type> anc_alpha_t1_out(invlogit(mu_anc_alpha_t1));
     vector<Type> anc_alpha_t2_out(invlogit(mu_anc_alpha_t2));
 
-    REPORT(plhiv_t1);
-    REPORT(population_t1);
-    REPORT(artnum_t1);
-    REPORT(infections_t1);
-
-    REPORT(plhiv_t2);
-    REPORT(population_t2);
-    REPORT(artnum_t2);
-    REPORT(infections_t2);
-
-
-    REPORT(mu_rho);
-    REPORT(mu_alpha);
-    REPORT(mu_lambda_t1);
-    REPORT(phi_rho_a);
-    REPORT(sigma_rho_a);
-    REPORT(gamma_art);
-
     REPORT(population_t1_out);
     REPORT(rho_t1_out);
     REPORT(plhiv_t1_out);
@@ -609,13 +585,6 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_alpha_t1_out);
     REPORT(anc_rho_t2_out);
     REPORT(anc_alpha_t2_out);
-
-    REPORT(pR_i);
-    REPORT(nu);
-
-    REPORT(infections_t1);
-    REPORT(infections_t1t2);
-    REPORT(infections_t2);
   }
   
   return val;
