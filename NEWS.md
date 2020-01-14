@@ -1,3 +1,8 @@
+# naomi 0.0.52
+
+* Automatically remove rows with all NA values in `read_*()` functions.
+* Remove extraneous argument area_merged from output.
+
 # naomi 0.0.51
 
 * Add optional approximate design effect to scale effective sample size for survey prevalence, art coverage, and proportion recent observations.
