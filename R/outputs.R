@@ -233,11 +233,10 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
 #'
 #' @param naomi_fit Fitted naomi model
 #' @param naomi_mf Naomi model frame
-#' @param area_merged Merged area dataset
 #'
 #' @return List containing output indicators and metadata.
 #' @export
-output_package <- function(naomi_fit, naomi_mf, area_merged) {
+output_package <- function(naomi_fit, naomi_mf) {
 
   indicators <- extract_indicators(naomi_fit, naomi_mf)
 
@@ -251,7 +250,7 @@ output_package <- function(naomi_fit, naomi_mf, area_merged) {
 
   art_attendance <- extract_art_attendance(naomi_fit, naomi_mf)
 
-  meta_area <- area_merged %>%
+  meta_area <- naomi_mf$area %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
     dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
     sf::st_as_sf()

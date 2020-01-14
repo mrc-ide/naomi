@@ -22,6 +22,8 @@ read_population <- function(file) {
   val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
+  val <- drop_na_rows(val)
+
   missing_cols <- setdiff(required_cols, names(val))
   if(length(missing_cols))
     stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
@@ -58,6 +60,8 @@ read_survey_indicators <- function(file) {
   val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
+  val <- drop_na_rows(val)
+  
   missing_cols <- setdiff(required_cols, names(val))
   if(length(missing_cols))
     stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
@@ -88,6 +92,8 @@ read_art_number <- function(file) {
   
   val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
+
+  val <- drop_na_rows(val)
 
   missing_cols <- setdiff(required_cols, names(val))
   if(length(missing_cols))
@@ -142,6 +148,8 @@ read_anc_testing <- function(file) {
   val <- readr::read_csv(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
+  val <- drop_na_rows(val)
+
   missing_cols <- setdiff(required_cols, names(val))
   if(length(missing_cols))
     stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
@@ -184,4 +192,9 @@ read_area_merged <- function(file) {
 #' @keywords internal 
 read_csv_partial_cols <- function(...){
   suppress_one_warning(readr::read_csv(...), "The following named parsers don't match the column names")
+}
+
+drop_na_rows <- function(x) {
+  na_rows <- apply(is.na(x) | x == "", 1, all)
+  x[!na_rows, ]
 }

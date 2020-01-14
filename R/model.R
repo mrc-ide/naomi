@@ -557,6 +557,10 @@ naomi_model_frame <- function(area_merged,
 #' @param anc_prev_year_t2 Calendar year (possibly multiple) for second time point for ANC prevalence.
 #' @param anc_artcov_year_t1 Calendar year (possibly multiple) for first time point for ANC ART coverage.
 #' @param anc_artcov_year_t2 Calendar year (possibly multiple) for second time point for ANC ART coverage.
+#' @param deff_prev Approximate design effect for survey prevalence.
+#' @param deff_artcov Approximate design effect for survey ART coverage.
+#' @param deff_recent Approximate design effect for survey proportion recently infected.
+#' @param deff_vls Approximate design effect for survey viral load suppression.
 #'
 #' @details
 #' See example datasets for examples of required template for data sets. *`_survey_ids` must be reflected
@@ -564,6 +568,10 @@ naomi_model_frame <- function(area_merged,
 #'
 #' ART coverage and VLS survey data should not be included from the same survey. This is checked
 #' by the function call and will throw an error.
+#'
+#' The `deff_*` arguments are approximate design effects used to scale the effective sample size for survey
+#' observations. Stratified design effects are will not be the same as full survey DEFF and there is not
+#' a straightforward way to approximate these. 
 #'
 #' @seealso [mwi_survey_hiv_indicators], [mwi_anc_testing], [mwi_art_number], [convert_quarter_id]
 #'

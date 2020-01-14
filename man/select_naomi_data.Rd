@@ -55,6 +55,14 @@ select_naomi_data(
 \item{anc_artcov_year_t1}{Calendar year (possibly multiple) for first time point for ANC ART coverage.}
 
 \item{anc_artcov_year_t2}{Calendar year (possibly multiple) for second time point for ANC ART coverage.}
+
+\item{deff_prev}{Approximate design effect for survey prevalence.}
+
+\item{deff_artcov}{Approximate design effect for survey ART coverage.}
+
+\item{deff_recent}{Approximate design effect for survey proportion recently infected.}
+
+\item{deff_vls}{Approximate design effect for survey viral load suppression.}
 }
 \description{
 Select data for model fitting
@@ -65,6 +73,10 @@ in \code{survey_hiv_indicators}.
 
 ART coverage and VLS survey data should not be included from the same survey. This is checked
 by the function call and will throw an error.
+
+The \verb{deff_*} arguments are approximate design effects used to scale the effective sample size for survey
+observations. Stratified design effects are will not be the same as full survey DEFF and there is not
+a straightforward way to approximate these.
 }
 \seealso{
 \link{mwi_survey_hiv_indicators}, \link{mwi_anc_testing}, \link{mwi_art_number}, \link{convert_quarter_id}

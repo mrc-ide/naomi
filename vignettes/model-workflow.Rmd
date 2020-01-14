@@ -225,7 +225,7 @@ estimates before running `report_tmb()` to calculate posterior intervals.
 
 
 ```r
-outputs <- output_package(fit, naomi_mf, areas)
+outputs <- output_package(fit, naomi_mf)
 ```
 
 The output package consists of a data frame of indicators and metadata
@@ -305,7 +305,7 @@ Regenerate outputs with uncertainty ranges.
 
 
 ```r
-system.time(outputs <- output_package(fit, naomi_mf, areas))
+system.time(outputs <- output_package(fit, naomi_mf))
 #>    user  system elapsed 
 #>   4.658   0.000   4.671
 
