@@ -505,6 +505,10 @@ naomi_model_frame <- function(area_merged,
 #' @param anc_prev_year_t2 Calendar year (possibly multiple) for second time point for ANC prevalence.
 #' @param anc_artcov_year_t1 Calendar year (possibly multiple) for first time point for ANC ART coverage.
 #' @param anc_artcov_year_t2 Calendar year (possibly multiple) for second time point for ANC ART coverage.
+#' @param deff_prev Approximate design effect for survey prevalence.
+#' @param deff_artcov Approximate design effect for survey ART coverage.
+#' @param deff_recent Approximate design effect for survey proportion recently infected.
+#' @param deff_vls Approximate design effect for survey viral load suppression.
 #'
 #' @details
 #' See example datasets for examples of required template for data sets. *`_survey_ids` must be reflected
@@ -512,6 +516,10 @@ naomi_model_frame <- function(area_merged,
 #'
 #' ART coverage and VLS survey data should not be included from the same survey. This is checked
 #' by the function call and will throw an error.
+#'
+#' The `deff_*` arguments are approximate design effects used to scale the effective sample size for survey
+#' observations. Stratified design effects are will not be the same as full survey DEFF and there is not
+#' a straightforward way to approximate these. 
 #'
 #' @seealso [mwi_survey_hiv_indicators], [mwi_anc_testing], [mwi_art_number], [convert_quarter_id]
 #'
@@ -529,7 +537,11 @@ select_naomi_data <- function(naomi_mf,
                               anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
                               anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
                               anc_artcov_year_t1 = anc_prev_year_t1,
-                              anc_artcov_year_t2 = anc_prev_year_t2) {
+                              anc_artcov_year_t2 = anc_prev_year_t2,
+                              deff_prev = 1.0,
+                              deff_artcov = 1.0,
+                              deff_recent = 1.0,
+                              deff_vls = 1.0) {
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
@@ -537,10 +549,11 @@ select_naomi_data <- function(naomi_mf,
     stop(paste("Do not use ART coverage and VLS data from the same survey:",
                intersect(artcov_survey_ids, vls_survey_ids)))
 
-  naomi_mf$prev_dat <- survey_prevalence_mf(prev_survey_ids, survey_hiv_indicators, naomi_mf)
-  naomi_mf$artcov_dat <- survey_artcov_mf(artcov_survey_ids, survey_hiv_indicators, naomi_mf)
-  naomi_mf$recent_dat <- survey_recent_mf(recent_survey_ids, survey_hiv_indicators, naomi_mf)
-  naomi_mf$vls_dat <- survey_vls_mf(vls_survey_ids, survey_hiv_indicators, naomi_mf)
+  naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prev", survey_hiv_indicators, naomi_mf, deff = deff_prev)
+  naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "artcov", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
+  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent", survey_hiv_indicators, naomi_mf,
+                                   deff = deff_recent, min_age = 15, max_age = 80)
+  naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "vls", survey_hiv_indicators, naomi_mf, deff = deff_vls)
 
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
@@ -688,84 +701,35 @@ get_sex_out <- function(sexes) {
 #' Prepare model frames for survey datasets
 #'
 #' @param survey_ids Survey IDs
+#' @param indicator Indicator to filter, character string
 #' @param survey_hiv_indicators Survey HIV indicators
 #' @param naomi_mf Naomi model frame
+#' @param deff Assumed design effect for scaling effective sample size
 #' @param min_age Min age for calculating recent infection
 #' @param max_age Max age for calculating recent infection
 #'
 #' @export
-survey_prevalence_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
+survey_mf <- function(survey_ids, indicator,
+                      survey_hiv_indicators, naomi_mf,
+                      deff = 1.0,
+                      min_age = 0, max_age = 80) {
 
-  prev_dat <- naomi_mf$mf_model %>%
-    dplyr::inner_join(
-             survey_hiv_indicators %>%
-             dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "prev"),
-             by = c("area_id", "sex", "age_group")
-           ) %>%
-    dplyr::mutate(n = n_obs,
-                  x = n * est) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
-
-  prev_dat
-}
-
-#' @rdname survey_prevalence_mf
-#' @export
-survey_artcov_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
-
-  artcov_dat <- naomi_mf$mf_model %>%
-    dplyr::inner_join(
-             survey_hiv_indicators %>%
-             dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "artcov"),
-             by = c("area_id", "sex", "age_group")
-           ) %>%
-    dplyr::mutate(n = n_obs,
-                  x = n * est) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
-
-  artcov_dat
-}
-
-#' @rdname survey_prevalence_mf
-#' @export
-survey_vls_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf) {
-
-  vls_dat <- naomi_mf$mf_model %>%
-    dplyr::inner_join(
-             survey_hiv_indicators %>%
-             dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "vls"),
-             by = c("area_id", "sex", "age_group")
-           ) %>%
-    dplyr::mutate(n = n_obs,
-                  x = n * est) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
-
-  vls_dat
-}
-
-#' @rdname survey_prevalence_mf
-#' @export
-survey_recent_mf <- function(survey_ids, survey_hiv_indicators, naomi_mf,
-                             min_age = 15, max_age = 80) {
-
-  recent_dat <- naomi_mf$mf_model %>%
+  dat <- naomi_mf$mf_model %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::filter(age_group_start >= min_age,
                   age_group_start + age_group_span <= max_age) %>%
     dplyr::inner_join(
              survey_hiv_indicators %>%
              dplyr::filter(survey_id %in% survey_ids,
-                           indicator == "recent"),
+                           indicator == !!indicator),
              by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::mutate(n = n_obs,
-                  x = n * est) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, x, est, se)
-
-  recent_dat
+                  n_eff = n / deff,
+                  x_eff = n_eff * est) %>%
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, est, se)
+  
+  dat
 }
 
 

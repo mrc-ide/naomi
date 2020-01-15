@@ -214,6 +214,35 @@
 					"helpText": "t_(OPTIONS_ADVANCED_LOGIT_HELP)"
 				}
 			]
+		},
+	        {
+		       "label": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
+		        "controls": [
+				{
+					"name": "deff_prev",
+					"label": "t_(HIV_PREVALENCE)",
+					"type": "number",
+					"required": true,
+    				        "value": 1.0,
+					"helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
+				},
+			    	{
+					"name": "deff_artcov",
+					"label": "t_(ART_COVERAGE)",
+					"type": "number",
+					"required": true,
+				        "value": 1.0,
+					"helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
+				},
+			        {
+					"name": "deff_recent",
+					"label": "t_(PROPORTION_RECENTLY_INFECTED)",
+					"type": "number",
+					"required": true,
+				        "value": 1.0,
+					"helpText": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP)"
+				}
+			]
 		}
 	]
 }

@@ -120,3 +120,45 @@ test_that("population calibration options", {
 
 })
                
+
+test_that("survey design effect scales effect sample size", {
+
+  mf1 <- survey_mf("MWI2016PHIA", "prev", mwi_survey_hiv_indicators, a_naomi_mf, deff = 1.0)
+  mf2 <- survey_mf("MWI2016PHIA", "prev", mwi_survey_hiv_indicators, a_naomi_mf, deff = 2.5)
+
+  expect_equal(mf1$n, mf1$n_eff)
+  expect_equal(mf2$n, mf2$n_eff * 2.5)
+  expect_equal(mf1$n_eff, 2.5 * mf2$n_eff)
+  expect_equal(mf1$x_eff, 2.5 * mf2$x_eff)
+})
+
+test_that("artnum_mf() throws errors for invalid inputs", {
+  expect_error(artnum_mf("CY1924Q4", mwi_art_number, a_naomi_mf), "Set calendar_quarter = NULL if you intend to include no ART data.")
+  expect_error(artnum_mf("CY2016Q1", mwi_art_number, "jibberish"))
+  expect_error(artnum_mf(c("CY2016Q1", "CY2016Q2"), mwi_art_number, "jibberish"))
+})
+
+
+test_that("select_naomi_data() returns expected stratifications", {
+
+  prev_age_groups <- dplyr::filter(get_age_groups(),
+                                   age_group %in% get_five_year_age_groups(),
+                                   age_group_start + age_group_span - 1 < 65) %>%
+    .$age_group
+  
+  artcov_age_groups <- dplyr::filter(get_age_groups(),
+                                     age_group %in% get_five_year_age_groups(),
+                                     age_group_start + age_group_span - 1 < 65) %>%
+    .$age_group
+  
+  recent_age_groups <- dplyr::filter(get_age_groups(),
+                                     age_group %in% get_five_year_age_groups(),
+                                     age_group_start >= 15,
+                                     age_group_start + age_group_span - 1 < 65) %>%
+    .$age_group
+                                   
+  expect_setequal(a_naomi_data$prev_dat$age_group, prev_age_groups)
+  expect_setequal(a_naomi_data$artcov_dat$age_group, artcov_age_groups)
+  expect_setequal(a_naomi_data$recent_dat$age_group, recent_age_groups)
+  
+})

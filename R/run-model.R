@@ -136,6 +136,19 @@ naomi_prepare_data <- function(data, options) {
   } else {
     anc_testing <- NULL
   }
+
+  if(is.null(options$deff_prev))
+    options$deff_prev <- 1.0
+
+  if(is.null(options$deff_artcov))
+    options$deff_artcov <- 1.0
+
+  if(is.null(options$deff_recent))
+    options$deff_recent <- 1.0
+  
+  if(is.null(options$deff_vls))
+    options$deff_vls <- 1.0
+
   
   ## Get from the options
   scope <- options$area_scope
@@ -188,7 +201,11 @@ naomi_prepare_data <- function(data, options) {
                                   options$anc_prevalence_year1,
                                   options$anc_prevalence_year2,
                                   options$anc_art_coverage_year1,
-                                  options$anc_art_coverage_year2)
+                                  options$anc_art_coverage_year2,
+                                  deff_prev = options$deff_prev,
+                                  deff_artcov = options$deff_artcov,
+                                  deff_recent = options$deff_recent,
+                                  deff_vls = options$deff_vls)
 
   return(naomi_data)
 }

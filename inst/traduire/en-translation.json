@@ -75,6 +75,10 @@
     "OPTIONS_ADVANCED_LOGIT_MEAN_LABEL": "Logit prior mean for neighboring district attraction",
     "OPTIONS_ADVANCED_LOGIT_HELP": "Logit offset for odds of obtaining ART in district j compared to home district",
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Either supply levels, hierarchy, and boundaries, or area_merged",
-    "AREAS_LEVEL_NOT_UNIQUE": "Area levels not unique.\nDuplicated level: {{missing_levels}}"
+    "AREAS_LEVEL_NOT_UNIQUE": "Area levels not unique.\nDuplicated level: {{missing_levels}}",
+    "OPTIONS_ADVANCED_APPROX_DEFF_LABEL": "Approximate district survey design effect",
+    "OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP": "Approximate DEFF to scale effective sample size for survey for HIV prevalence observations.",
+    "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "Approximate DEFF to scale effective sample size for survey for ART coverage.",
+    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF to scale effective sample size for survey for proportion recently infected amongst HIV positive"
 
 }
