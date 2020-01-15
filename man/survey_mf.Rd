@@ -10,7 +10,7 @@ survey_mf(
   survey_hiv_indicators,
   naomi_mf,
   deff = 1,
-  min_age = 15,
+  min_age = 0,
   max_age = 80
 )
 }
