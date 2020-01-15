@@ -97,7 +97,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   ## TODO: Include input data in output package based on model options
   ## input download_input
-  outputs <- output_package(fit, naomi_data, naomi_data$areas)
+  outputs <- output_package(fit, naomi_data)
 
   outputs <- calibrate_outputs(outputs, naomi_data,
                                options$spectrum_plhiv_calibration_level,

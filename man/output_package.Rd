@@ -4,14 +4,12 @@
 \alias{output_package}
 \title{Build output package from fit}
 \usage{
-output_package(naomi_fit, naomi_mf, area_merged)
+output_package(naomi_fit, naomi_mf)
 }
 \arguments{
 \item{naomi_fit}{Fitted naomi model}
 
 \item{naomi_mf}{Naomi model frame}
-
-\item{area_merged}{Merged area dataset}
 }
 \value{
 List containing output indicators and metadata.
