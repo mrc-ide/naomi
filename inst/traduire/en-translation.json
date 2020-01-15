@@ -77,9 +77,8 @@
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Either supply levels, hierarchy, and boundaries, or area_merged",
     "AREAS_LEVEL_NOT_UNIQUE": "Area levels not unique.\nDuplicated level: {{missing_levels}}",
     "OPTIONS_ADVANCED_APPROX_DEFF_LABEL": "Approximate district survey design effect",
-    "OPTIONS_ADVANCED_APPROX_DEFF_HELP": "Approximate design effect to scale effective sample size for survey observations. Typically this will be smaller than the full survey design effect.",
-    "OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP": "Approximate DEFF for HIV prevalence.",
-    "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "Approximate DEFF for ART coverage.",
-    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF for proportion recently infected amongst HIV positive"
+    "OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP": "Approximate DEFF to scale effective sample size for survey for HIV prevalence observations.",
+    "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "Approximate DEFF to scale effective sample size for survey for ART coverage.",
+    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF to scale effective sample size for survey for proportion recently infected amongst HIV positive"
 
 }
