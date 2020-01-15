@@ -603,7 +603,8 @@ select_naomi_data <- function(naomi_mf,
 
   naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prev", survey_hiv_indicators, naomi_mf, deff = deff_prev)
   naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "artcov", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
-  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent", survey_hiv_indicators, naomi_mf, deff = deff_recent)
+  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent", survey_hiv_indicators, naomi_mf,
+                                   deff = deff_recent, min_age = 15, max_age = 80)
   naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "vls", survey_hiv_indicators, naomi_mf, deff = deff_vls)
 
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
@@ -763,7 +764,7 @@ get_sex_out <- function(sexes) {
 survey_mf <- function(survey_ids, indicator,
                       survey_hiv_indicators, naomi_mf,
                       deff = 1.0,
-                      min_age = 15, max_age = 80) {
+                      min_age = 0, max_age = 80) {
 
   dat <- naomi_mf$mf_model %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
