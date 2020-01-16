@@ -260,7 +260,9 @@ output_package <- function(naomi_fit, naomi_mf) {
     sf::st_as_sf()
 
   meta_period <- data.frame(
-    calendar_quarter = c(naomi_mf$calendar_quarter1, naomi_mf$calendar_quarter2),
+    calendar_quarter = c(naomi_mf$calendar_quarter1,
+                         naomi_mf$calendar_quarter2,
+                         naomi_mf$calendar_quarter3),
     stringsAsFactors = FALSE
   )%>%
     dplyr::mutate(
