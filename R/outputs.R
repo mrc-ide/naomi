@@ -855,3 +855,137 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   output
 }
+
+
+#' Export naomi outputs to PEPFAR Data Pack format
+#'
+#' @param naomi_output a naomi_output object.
+#' @param path path to save Data Pack CSV.
+#' @param psnu_level area_level for PEPFAR PSNU to export.
+#' @param calendar_quarter calendar_quarter to export estimates.
+#'
+#' @export
+export_datapack <- function(naomi_output,
+                            path,
+                            psnu_level = max(naomi_output$meta_area$area_level),
+                            calendar_quarter = max(naomi_output$meta_period$calendar_quarter)) {
+
+  stopifnot(inherits(naomi_output, "naomi_output"))
+  stopifnot(psnu_level %in% naomi_output$meta_area$area_level)
+  stopifnot(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
+
+  if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
+    path <- paste0(path, ".csv")
+  }
+
+  dataelement <- c("plhiv" = "IMPATT.PLHIV (SUBNAT, Age/Sex)",
+                   "art_num_attend" = "TX_CURR_SUBNAT (N, SUBNAT, Age Aggregated/Sex): Receiving ART",
+                   "population" = "IMPATT.POP_EST (SUBNAT, Age/Sex)",
+                   "prevalence" = "IMPATT.HIV_PREV (SUBNAT, Age/Sex)",
+                   "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
+
+  dataelementuid = c("plhiv" = "VprOvRGKX9r",
+                     "art_num_attend" = "KeIo9JZPFIC",
+                     "population" = "KssDaTsGWnS",
+                     "prevalence" = "lJtpR5byqps",
+                     "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
+  
+  category_1  <- "Age (<1-50+, 12)"
+  categoryOption_uid_1 <- "HoZv6qBZvE7"
+  categoryOption_name_1 <- c("00-00" = "<1",
+                             "01-04" = "1-4",
+                             "05-09" = "05-09",
+                             "10-14" = "10-14",
+                             "15-19" = "15-19",
+                             "20-24" = "20-24",
+                             "25-29" = "25-29",
+                             "30-34" = "30-34",
+                             "35-39" = "35-39",
+                             "40-44" = "40-44",
+                             "45-49" = "45-49",
+                             "50+"   = "50+")
+  categoryOption_uid_1.1 <- c("00-00" = "sMBMO5xAq5T",
+                              "01-04" = "VHpjs9qdLFF",
+                              "05-09" = "eQG9DwiqSQR",
+                              "10-14" = "jcGQdcpPSJP",
+                              "15-19" = "ttf9eZCHsTU",
+                              "20-24" = "GaScV37Kk29",
+                              "25-29" = "meeNUPwEOtj",
+                              "30-34" = "AZaNm5B8vn9",
+                              "35-39" = "R32YPF38CJJ",
+                              "40-44" = "JEth8vg25Rv",
+                              "45-49" = "rQLOOlL3UOQ",
+                              "50+"   = "rQLOOlL3UOQ")
+  category_2  <- "Sex"
+  categoryuid_2 <- "SEOZOio7f7o"
+  categoryOption_uid_2 <-  c("male" = "Qn0I5FbKQOA",
+                             "female" = "Z1EnpTPaUfq")
+  categoryOption_name_2 <-  c("male" = "Male",
+                              "female" = "Female")
+
+  strat <- tidyr::nesting(
+    indicator = names(dataelementuid),
+    dataelement,
+    dataelementuid
+  ) %>%
+    tidyr::expand_grid(
+      tidyr::nesting(
+        age_group = names(categoryOption_uid_1.1),
+        categoryOption_uid_1,
+        category_1,
+        categoryOption_uid_1.1,
+        categoryOption_name_1 = paste0("=\"", categoryOption_name_1, "\""),
+      )
+    ) %>%
+    tidyr::expand_grid(
+      tidyr::nesting(
+        sex = names(categoryOption_uid_2),
+        categoryuid_2,
+        category_2,
+        categoryOption_uid_2,
+        categoryOption_name_2
+      )
+    )
+
+
+  dat <- naomi_output$indicators %>%
+    dplyr::semi_join(
+             naomi_output$meta_area %>%
+             dplyr::filter(area_level == psnu_level),
+             by = "area_id"
+           ) %>%
+    dplyr::filter(indicator %in% names(dataelementuid),
+                  calendar_quarter == !!calendar_quarter,
+                  sex %in% names(categoryOption_uid_2) & age_group %in% names(categoryOption_uid_1.1) |
+                  sex == "both" & age_group == "00+") %>%
+    dplyr::transmute(area_id, indicator, sex, age_group, value = mean, rse = se / mean)
+
+  dat <- dat %>%
+    dplyr::filter(age_group != "00+") %>%
+    dplyr::rename(age_sex_rse = rse) %>%
+    dplyr::left_join(
+             dplyr::filter(dat, age_group == "00+") %>%
+             dplyr::select(-age_group, -sex, -value) %>%
+             dplyr::rename(district_rse = rse),
+             by = c("area_id", "indicator")
+           ) %>%
+    dplyr::left_join(
+             sf::st_drop_geometry(naomi_output$meta_area) %>%
+             dplyr::select(psnu = area_name, area_id),
+             by = "area_id"
+           ) %>%
+    dplyr::arrange(indicator, area_id, sex, age_group)
+
+  datapack <- dat %>%
+    dplyr::left_join(strat, by = c("indicator", "age_group", "sex")) %>%
+    dplyr::select(psnu, area_id, dataelement, dataelementuid,
+                  category_1, categoryOption_uid_1,
+                  category_2, categoryuid_2,
+                  categoryOption_name_1, categoryOption_uid_1.1,
+                  categoryOption_name_2, categoryOption_uid_2,
+                  value, age_sex_rse, district_rse)
+
+  naomi_write_csv(datapack, path)
+
+  path
+}

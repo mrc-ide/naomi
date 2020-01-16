@@ -24,10 +24,20 @@ test_that("traidure hooks work in model outputs", {
 
 test_that("all output stratifications are included in metatdata", {
 
-  expect_setequal(a_output$indicators$age_group,
-                  setdiff(a_output$meta_age_group$age_group, c("00-00", "01-04")))
-  expect_setequal(a_output$indicators$indicator, a_output$meta_indicator$indicator)
-  expect_setequal(a_output$indicators$area_id, a_output$meta_area$area_id)
-  expect_setequal(a_output$indicators$calendar_quarter, a_output$meta_period$calendar_quarter)
+  expect_setequal(a_output_full$indicators$age_group, a_output_full$meta_age_group$age_group)
+  expect_setequal(a_output_full$indicators$indicator, a_output_full$meta_indicator$indicator)
+  expect_setequal(a_output_full$indicators$area_id, a_output_full$meta_area$area_id)
+  expect_setequal(a_output_full$indicators$calendar_quarter, a_output_full$meta_period$calendar_quarter)
 
+})
+
+
+test_that("datapack export writes a csv", {
+
+  tmpf <- tempfile(fileext = ".csv")
+  res <- export_datapack(a_output_full, tmpf)
+  datapack <- readr_read_csv(res)
+
+  expect_equal(tmpf, res)
+  expect_true(!any(is.na(datapack)))
 })
