@@ -139,7 +139,20 @@
 {
 	"label": "t_(OPTIONS_OUTPUT_LABEL)",
 	"description": "t_(OPTIONS_OUTPUT_DESCRIPTION)",
-	"controlGroups": []
+        "controlGroups": [
+    		{
+			"label": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL)",
+			"controls": [
+				{
+					"name": "calendar_quarter_t3",
+					"type": "string",
+					"value": "CY2020Q3",
+					"helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
+					"required": true
+				}
+			]
+		}
+	]
 },
 {
 	"label": "t_(OPTIONS_ADVANCED_LABEL)",

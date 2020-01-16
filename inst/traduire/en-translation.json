@@ -80,6 +80,7 @@
     "OPTIONS_ADVANCED_APPROX_DEFF_HELP": "Approximate design effect to scale effective sample size for survey observations. Typically this will be smaller than the full survey design effect.",
     "OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP": "Approximate DEFF for HIV prevalence.",
     "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "Approximate DEFF for ART coverage.",
-    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF for proportion recently infected amongst HIV positive"
-
+    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF for proportion recently infected amongst HIV positive",
+    "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Projection quarter:",
+    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Calendar quarter to generate short-term projection. Must be after calendar quarter to generate estimates. Formated \"CYyyyyQz\"."
 }
