@@ -5,7 +5,7 @@ test_that("traidure hooks work in model outputs", {
   out_en <- output_package(a_fit_sample, a_naomi_mf)
   expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "September 2018"))
   expect_setequal(out_en$meta_indicator$indicator_label[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
-                  c("ART Coverage", "HIV Prevalence"))
+                  c("ART coverage", "HIV prevalence"))
   expect_setequal(out_en$meta_indicator$description[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Proportion of PLHIV on ART (residents)", "Proportion of total population HIV positive"))
    

@@ -1,5 +1,5 @@
+get_meta_indicator <- function() {
 
-meta_indicator <-
   data.frame(
     indicator = c("population",
                   "prevalence",
@@ -47,6 +47,7 @@ meta_indicator <-
     scale = NA,
     stringsAsFactors = FALSE
   )
+}
 
 
 add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
@@ -288,7 +289,7 @@ output_package <- function(naomi_fit, naomi_mf) {
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
-    meta_indicator = meta_indicator,
+    meta_indicator = get_meta_indicator(),
     fit = fit
   )
 
