@@ -230,7 +230,6 @@
 		},
 	        {
 		       "label": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
-                       "helpText": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
 		        "controls": [
 				{
 					"name": "deff_prev",
