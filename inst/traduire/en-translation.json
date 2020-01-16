@@ -85,5 +85,15 @@
     "MONTH_MARCH": "March",
     "MONTH_JUNE": "June",
     "MONTH_SEPTEMBER": "September",
-    "MONTH_DECEMBER": "December"
+    "MONTH_DECEMBER": "December",
+    "INDICATOR_LABEL_POPULATION": "Population size",
+    "INDICATOR_LABEL_PREVALENCE": "Proportion of total population HIV positive",
+    "INDICATOR_LABEL_PLHIV": "Number of people living with HIV",
+    "INDICATOR_LABEL_ART_COVERAGE": "Proportion of PLHIV on ART (residents)",
+    "INDICATOR_LABEL_ART_NUM_RESIDENTS": "Number on ART (residents)",
+    "INDICATOR_LABEL_ART_NUM_ATTENDING": "Number receiving ART (attending)",
+    "INDICATOR_LABEL_INCIDENCE": "HIV incidence rate per year",
+    "INDICATOR_LABEL_INFECTIONS": "Number of new infections per year",
+    "INDICATOR_LABEL_ANC_PREVALENCE": "HIV prevalence among ANC attendees",
+    "INDICATOR_LABEL_ANC_ART_COVERAGE": "ART coverage among ANC attendees prior to first ANC"
 }
