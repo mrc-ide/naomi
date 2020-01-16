@@ -81,5 +81,9 @@
     "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "Approximate DEFF to scale effective sample size for survey for ART coverage.",
     "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF to scale effective sample size for survey for proportion recently infected amongst HIV positive",
     "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Projection quarter:",
-    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Calendar quarter to generate short-term projection. Must be after calendar quarter to generate estimates. Formated \"CYyyyyQz\"."
+    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Calendar quarter to generate short-term projection. Must be after calendar quarter to generate estimates.",
+    "MONTH_MARCH": "March",
+    "MONTH_JUNE": "June",
+    "MONTH_SEPTEMBER": "September",
+    "MONTH_DECEMBER": "December"
 }

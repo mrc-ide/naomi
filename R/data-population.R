@@ -66,7 +66,7 @@ quarter_number <- function(quarter_id) {
 #' @rdname quarter_year_labels
 #' @export
 quarter_labels <- function(quarter_id) {
-  c("March", "June", "September", "December")[quarter_number(quarter_id)]
+  c(t_("MONTH_MARCH"), t_("MONTH_JUNE"), t_("MONTH_SEPTEMBER"), t_("MONTH_DECEMBER"))[quarter_number(quarter_id)]
 }
 
 #' @rdname quarter_year_labels
