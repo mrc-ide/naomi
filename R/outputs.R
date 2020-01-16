@@ -1,5 +1,5 @@
+get_meta_indicator <- function() {
 
-meta_indicator <-
   data.frame(
     indicator = c("population",
                   "prevalence",
@@ -11,26 +11,26 @@ meta_indicator <-
                   "infections",
                   "anc_prevalence",
                   "anc_art_coverage"),
-    indicator_label = c("Population",
-                        "HIV Prevalence",
-                        "PLHIV",
-                        "ART Coverage",
-                        "ART Number (residents)",
-                        "ART Number (attending)",
-                        "HIV Incidence",
-                        "New Infections",
-                        "ANC HIV Prevalence",
-                        "ANC Prior ART Coverage"),
-    description = c("Population size",
-                    "Proportion of total population HIV positive",
-                    "Number of people living with HIV",
-                    "Proportion of PLHIV on ART (residents)",
-                    "Number on ART (residents)",
-                    "Number receiving ART (attending)",
-                    "HIV incidence rate per year",
-                    "Number of new infections per year",
-                    "HIV prevalence among ANC attendees",
-                    "ART coverage among ANC attendees prior to first ANC"),
+    indicator_label = c(t_("POPULATION"),
+                        t_("HIV_PREVALENCE"),
+                        t_("PLHIV"),
+                        t_("ART_COVERAGE"),
+                        t_("ART_NUMBER_RESIDENTS"),
+                        t_("ART_NUMBER_ATTENDING"),
+                        t_("INCIDENCE"),
+                        t_("NEW_INFECTIONS"),
+                        t_("ANC_HIV_PREVALENCE"),
+                        t_("ANC_PRIOR_ART_COVERAGE")),
+    description = c(t_("INDICATOR_LABEL_POPULATION"),
+                    t_("INDICATOR_LABEL_PREVALENCE"),
+                    t_("INDICATOR_LABEL_PLHIV"),
+                    t_("INDICATOR_LABEL_ART_COVERAGE"),
+                    t_("INDICATOR_LABEL_ART_NUM_RESIDENTS"),
+                    t_("INDICATOR_LABEL_ART_NUM_ATTENDING"),
+                    t_("INDICATOR_LABEL_INCIDENCE"),
+                    t_("INDICATOR_LABEL_INFECTIONS"),
+                    t_("INDICATOR_LABEL_ANC_PREVALENCE"),
+                    t_("INDICATOR_LABEL_ANC_ART_COVERAGE")),
     parameter = c("population_out",
                   "rho_out",
                   "plhiv_out",
@@ -47,6 +47,7 @@ meta_indicator <-
     scale = NA,
     stringsAsFactors = FALSE
   )
+}
 
 
 add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
@@ -280,7 +281,7 @@ output_package <- function(naomi_fit, naomi_mf) {
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
-    meta_indicator = meta_indicator,
+    meta_indicator = get_meta_indicator(),
     fit = fit
   )
 

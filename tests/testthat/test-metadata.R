@@ -133,7 +133,7 @@ test_that("metadata synced with meta_indicator", {
     dplyr::distinct(name, indicator_value) %>%
     dplyr::mutate(indicator_value = as.integer(indicator_value)) %>%
     dplyr::full_join(
-             meta_indicator %>%
+             get_meta_indicator() %>%
              dplyr::select(indicator_id, indicator_label),
              by = c("indicator_value" = "indicator_id")
            )
