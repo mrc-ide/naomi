@@ -20,3 +20,14 @@ test_that("traidure hooks work in model outputs", {
   ## expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
   ##                 c("<...>", "<...>"))
 })
+
+
+test_that("all output stratifications are included in metatdata", {
+
+  expect_setequal(a_output$indicators$age_group,
+                  setdiff(a_output$meta_age_group$age_group, c("00-00", "01-04")))
+  expect_setequal(a_output$indicators$indicator, a_output$meta_indicator$indicator)
+  expect_setequal(a_output$indicators$area_id, a_output$meta_area$area_id)
+  expect_setequal(a_output$indicators$calendar_quarter, a_output$meta_period$calendar_quarter)
+
+})
