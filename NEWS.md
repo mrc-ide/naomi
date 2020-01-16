@@ -1,3 +1,7 @@
+# naomi 0.0.54
+
+* Add output stratification for age groups <1, 1-4.  This is simply disaggregated based on proportions from Spectrum with now uncertainty.
+
 # naomi 0.0.53
 
 * Do not calculate reported output aggregations during model fitting. This should modestly reduce model objective function computation time.

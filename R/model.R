@@ -242,6 +242,36 @@ naomi_model_frame <- function(area_merged,
                                    dplyr::mutate(time_step = "quarter3")
                                  )
 
+  ## Spectrum age <1 / 1-4 distribution
+
+  spec_0to4strat <- spec %>%    
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id3) + 2),
+                  age %in% 0:4) %>%
+    dplyr::mutate(age_group = dplyr::if_else(age == 0, "00-00", "01-04"),
+                  sex = "both",
+                  births = 0,
+                  susc_previous_year = 0) %>%
+    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections), sum) %>%
+    dplyr::mutate(births = 0, susc_previous_year = 0) %>%
+    dplyr::ungroup()
+
+  spectrum_0to4distribution <- dplyr::bind_rows(
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter1),
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter2),
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter3)
+                                      ) %>%
+    dplyr::group_by(spectrum_region_code, calendar_quarter) %>%
+    dplyr::transmute(age_group,
+                     population = population_spectrum / sum(population_spectrum),
+                     plhiv = plhiv_spectrum / sum(plhiv_spectrum),
+                     art_num_attend = art_num_spectrum / sum(art_num_spectrum),
+                     art_num_residents = art_num_attend,
+                     infections = infections_spectrum / sum(infections_spectrum)) %>%
+    tidyr::gather(indicator, distribution, population, plhiv, art_num_attend, art_num_residents, infections) %>%
+    dplyr::ungroup()
+                     
+  
   ## # Add population estimates
 
   ## !!! TODO: There's an opportunity for real mess here if areas are subset to part
@@ -530,6 +560,7 @@ naomi_model_frame <- function(area_merged,
             calendar_quarter3 = calendar_quarter3,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
+            spectrum_0to4distribution = spectrum_0to4distribution,
             omega = omega,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,
