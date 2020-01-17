@@ -108,6 +108,7 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(adj_j);
 
   DATA_SPARSE_MATRIX(Xgamma);
+  DATA_SPARSE_MATRIX(Xgamma_t2);
   DATA_VECTOR(log_gamma_offset);
 
 
@@ -368,6 +369,12 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(log_or_gamma);
   val -= dnorm(log_or_gamma, 0.0, 1.0, true).sum();
 
+  PARAMETER(log_sigma_or_gamma_t1t2);
+  Type sigma_or_gamma_t1t2(exp(log_sigma_or_gamma_t1t2));
+  val -= dnorm(sigma_or_gamma_t1t2, Type(0.0), Type(2.5), true) + log_sigma_or_gamma_t1t2;
+    
+  PARAMETER_VECTOR(log_or_gamma_t1t2);
+  val -= dnorm(log_or_gamma_t1t2, 0.0, 1.0, true).sum();
 
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
   vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
@@ -511,7 +518,18 @@ Type objective_function<Type>::operator() ()
 
   val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
 
-  vector<Type> prop_art_ij_t2((Xart_idx * prop_art_t2) * (Xart_gamma * gamma_art));
+  vector<Type> gamma_art_t2(exp(Xgamma * log_or_gamma * sigma_or_gamma + Xgamma_t2 * log_or_gamma_t1t2 * sigma_or_gamma_t1t2 + log_gamma_offset));
+  cum_nb = 0;
+  for(int i = 0; i < n_nb.size(); i++){
+    Type cum_exp_or_gamma_i = 0.0;
+    for(int j = 0; j < n_nb[i]+1; j++)
+      cum_exp_or_gamma_i += gamma_art_t2[cum_nb + i + j];
+    for(int j = 0; j < n_nb[i]+1; j++)
+      gamma_art_t2[cum_nb + i + j] /= cum_exp_or_gamma_i;
+    cum_nb += n_nb[i];
+  }
+  
+  vector<Type> prop_art_ij_t2((Xart_idx * prop_art_t2) * (Xart_gamma * gamma_art_t2));
   vector<Type> population_ij_t2(Xart_idx * population_t2);
 
   vector<Type> artnum_ij_t2(population_ij_t2 * prop_art_ij_t2);
@@ -617,7 +635,7 @@ Type objective_function<Type>::operator() ()
     
     vector<Type> infections_t3(exp(mu_lambda_t3) * (population_t3 - plhiv_t3));
 
-    vector<Type> prop_art_ij_t3((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art));
+    vector<Type> prop_art_ij_t3((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art_t2));  // Note: using same ART attendance as T2
     vector<Type> population_ij_t3(Xart_idx * population_t3);
     vector<Type> artnum_ij_t3(population_ij_t3 * prop_art_ij_t3);
 

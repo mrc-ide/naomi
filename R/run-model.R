@@ -55,13 +55,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   else
     permissive <- as.logical(options$permissive)
 
-  if (is.null(options$artattend)) {
-    options$artattend <- FALSE
-  }
-  if (is.null(options$artattend_log_gamma_offset)) {
-    options$artattend_log_gamma_offset <- -4
-  }
-
   validate_model_options(data, options)
   progress$complete("Validating inputs and options")
 
@@ -142,6 +135,16 @@ naomi_prepare_data <- function(data, options) {
   } else {
     anc_testing <- NULL
   }
+  
+  if (is.null(options$artattend)) {
+    options$artattend <- FALSE
+  }
+  if (is.null(options$artattend_t2)) {
+    options$artattend_t2 <- FALSE
+  }
+  if (is.null(options$artattend_log_gamma_offset)) {
+    options$artattend_log_gamma_offset <- -4
+  }
 
   if(is.null(options$deff_prev))
     options$deff_prev <- 1.0
@@ -193,6 +196,7 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
+    artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
   )
   

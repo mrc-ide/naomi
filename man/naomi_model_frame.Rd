@@ -20,6 +20,7 @@ naomi_model_frame(
     qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT = 1),
   sigma_u_sd = 1,
   artattend = TRUE,
+  artattend_t2 = FALSE,
   artattend_log_gamma_offset = -4,
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,

@@ -38,8 +38,13 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## ART attendance aggregation
 
-  Xgamma <-  sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
-                                 naomi_data$mf_artattend)
+  Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
+                                naomi_data$mf_artattend)
+  if(naomi_data$artattend_t2) {
+    Xgamma_t2 <- Xgamma
+  } else {
+    Xgamma_t2 <- sparse_model_matrix(~0, naomi_data$mf_artattend)
+  }
   
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
@@ -168,6 +173,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,
     adj_j = naomi_data$mf_artattend$attend_area_idx - 1L,
     Xgamma = Xgamma,
+    Xgamma_t2 = Xgamma_t2,
     log_gamma_offset = naomi_data$mf_artattend$log_gamma_offset,
     Xart_idx = Xart_idx,
     Xart_gamma = Xart_gamma,
@@ -297,7 +303,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_sigma_ancalpha_xt = 0,
     ##
     log_or_gamma = numeric(ncol(dtmb$Xgamma)),
-    log_sigma_or_gamma = 0
+    log_sigma_or_gamma = 0,
+    log_or_gamma_t1t2 = numeric(ncol(dtmb$Xgamma_t2)),
+    log_sigma_or_gamma_t1t2 = 0
   )
 
   v <- list(data = dtmb,
@@ -354,7 +362,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE) {
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    "ui_anc_rho_xt", "ui_anc_alpha_xt",
                                    ##
-                                   "log_or_gamma"))
+                                   "log_or_gamma", "log_or_gamma_t1t2"))
 
   obj
 }
