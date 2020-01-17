@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 0.0.55
+Version: 0.0.56
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -57,7 +57,8 @@ Suggests:
     tidyverse,
     viridis,
     withr,
-    tmbstan
+    tmbstan,
+    lubridate
 VignetteBuilder: knitr
 LinkingTo: 
     TMB,

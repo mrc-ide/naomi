@@ -46,6 +46,7 @@ read_survey_indicators <- function(file) {
                        indicator = readr::col_character(),
                        survey_id = readr::col_character(),
                        survey_year = readr::col_integer(),
+                       survey_mid_calendar_quarter = readr::col_character(),
                        area_id = readr::col_character(),
                        sex = readr::col_character(),
                        age_group = readr::col_character(),

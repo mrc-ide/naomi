@@ -127,7 +127,9 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                        sex = c("male", "female", "both"),
                                        age_group_id = NULL,
                                        area_top_level = min(areas$area_level),
-                                       area_bottom_level = max(areas$area_level)) {
+                                       area_bottom_level = max(areas$area_level),
+                                       artcov_def = c("both", "arv", "artself"),
+                                       by_restype = FALSE) {
 
   ## 1. Identify age groups to calculate for each survey_id
   age_group <- get_age_groups()
@@ -169,7 +171,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   ## 3. Expand individuals dataset to repeat for all individiuals within each
   ##    age/sex group for a given survey
-
+  
   ind <- survey_individuals %>%
     dplyr::inner_join(survey_biomarker,
                       by = c("survey_id", "cluster_id", "household", "line")) %>%
@@ -185,18 +187,34 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   ind <- dplyr::inner_join(ind, clust_area, by = c("survey_id", "cluster_id"))
 
+  if(by_restype)
+    ind <- dplyr::bind_rows(ind, dplyr::mutate(ind, restype = "all"))
+  else
+    ind <- dplyr::mutate(ind, restype = "all")
+
 
   ## 5. Construct ART coverage indicator as either self-report or ART biomarker
   ##    and gather to long dataset for each biomarker
 
+  if(artcov_def[1] == "both") {
+    ind <- ind %>%
+      dplyr::group_by(survey_id) %>%
+      dplyr::mutate(has_artcov = any(!is.na(arv) | !is.na(artself)),
+                    artcov = dplyr::case_when(!has_artcov ~ NA_integer_,
+                                              hivstatus == 0 ~ NA_integer_,
+                                              arv == 1 | artself == 1 ~ 1L,
+                                              TRUE ~ 0L)) %>%
+      dplyr::select(-has_artcov, -artself, -arv) %>%
+      dplyr::ungroup()
+  } else if(artcov_def[1] %in% c("arv", "artself")) {
+    ind <- dplyr::rename(ind, artcov = artcov_def[1]) %>%
+      dplyr::mutate(artcov = dplyr::if_else(hivstatus == 0,  NA_integer_, as.integer(artcov)))
+  } else {
+    stop(paste("Invalid artcov_def value:", artcov_def[1]))
+  }
+    
+    
   ind <- ind %>%
-    dplyr::group_by(survey_id) %>%
-    dplyr::mutate(has_artcov = any(!is.na(arv) | !is.na(artself)),
-                  artcov = dplyr::case_when(!has_artcov ~ NA_integer_,
-                                            hivstatus == 0 ~ NA_integer_,
-                                            arv == 1 | artself == 1 ~ 1L,
-                                            TRUE ~ 0L)) %>%
-    dplyr::select(-has_artcov, -artself, -arv) %>%
     dplyr::rename(prev = hivstatus) %>%
     tidyr::gather(indicator, est, prev, artcov, vls, recent) %>%
     dplyr::filter(!is.na(est))
@@ -208,13 +226,13 @@ calc_survey_hiv_indicators <- function(survey_meta,
     dplyr::filter(!is.na(hivweight), hivweight > 0)
 
   cnt <- dat %>%
-    dplyr::group_by(indicator, survey_id, area_id, sex, age_group) %>%
+    dplyr::group_by(indicator, survey_id, area_id, restype, sex, age_group) %>%
     dplyr::summarise(n_cluster = dplyr::n_distinct(cluster_id),
                      n_obs = dplyr::n()) %>%
     dplyr::ungroup()
 
   datspl <- dat %>%
-    dplyr::mutate(spl = paste(indicator, survey_id, area_level, sex, age_group)) %>%
+    dplyr::mutate(spl = paste(indicator, survey_id, area_level, restype, sex, age_group)) %>%
     split(.$spl)
 
   do_svymean <- function(df) {
@@ -226,7 +244,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                              weights = ~hivweight)
 
     survey::svyby(~est,
-                  ~ indicator + survey_id + area_id + sex + age_group,
+                  ~ indicator + survey_id + area_id + restype + sex + age_group,
                   des, survey::svymean)
   }
 
@@ -237,10 +255,10 @@ calc_survey_hiv_indicators <- function(survey_meta,
   val <- cnt %>%
     dplyr::full_join(
              dplyr::bind_rows(est_spl),
-             by = c("indicator", "survey_id", "area_id", "sex", "age_group")
+             by = c("indicator", "survey_id", "area_id", "restype", "sex", "age_group")
            ) %>%
     dplyr::left_join(
-             survey_meta %>% select(survey_id, survey_year),
+             survey_meta %>% select(survey_id, survey_mid_calendar_quarter),
              by = c("survey_id")
     ) %>%
     dplyr::left_join(
@@ -249,17 +267,18 @@ calc_survey_hiv_indicators <- function(survey_meta,
              by = c("area_id")
            ) %>%
     dplyr::arrange(
-             fct_relevel(indicator, "prev", "artcov", "vls", "recent"),
+             factor(indicator, c("prev", "artcov", "vls", "recent")),
              survey_id,
-             survey_year,
+             survey_mid_calendar_quarter,
              area_level,
              area_sort_order,
              area_id,
-             fct_relevel(sex, "both", "male", "female"),
+             factor(restype, c("all", "urban", "rural")),
+             factor(sex, c("both", "male", "female")),
              age_group
            ) %>%
     dplyr::select(
-             indicator, survey_id, survey_year, area_id, sex, age_group,
+             indicator, survey_id, survey_mid_calendar_quarter, area_id, restype, sex, age_group,
              n_cluster, n_obs, est, se) %>%
     dplyr::distinct() %>%
     dplyr::mutate(
@@ -268,4 +287,32 @@ calc_survey_hiv_indicators <- function(survey_meta,
            )
 
   val
+}
+
+
+#' # Find Calendar Quarter Midpoint of Two Dates
+#'
+#' @param start_date vector coercibel to Date
+#' @param end_date vector coercibel to Date
+#'
+#' @return A vector of calendar quarters
+#'
+#' @examples
+#' start <- c("2005-04-01", "2010-12-01", "2016-01-01")
+#' end <-c("2005-08-01", "2011-05-01", "2016-06-01")
+#'
+#' @export
+get_mid_calendar_quarter <- function(start_date, end_date) {
+
+  start_date <- as.Date(start_date)
+  end_date <- as.Date(end_date)
+
+  stopifnot(start_date <= end_date)
+  stopifnot(!is.na(start_date))
+  stopifnot(!is.na(end_date))
+  
+  date4 <- (lubridate::decimal_date(start_date) + lubridate::decimal_date(end_date)) / 2
+  date4 <- round(4 * date4) - 1
+
+  paste0("CY", date4 %/% 4, "Q", date4 %% 4 + 1)
 }
