@@ -113,7 +113,8 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param omega Omega
 #' @param rita_param rita_param
 #' @param sigma_u_sd sigma_u_sd
-#' @param artattend artattend
+#' @param artattend logical; whether to estimate neighboring district ART attendance
+#' @param artattend_t2 logical; whether to allow time-varying neighboring district ART attendance
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.

@@ -55,7 +55,9 @@ ids.}
 
 \item{sigma_u_sd}{sigma_u_sd}
 
-\item{artattend}{artattend}
+\item{artattend}{logical; whether to estimate neighboring district ART attendance}
+
+\item{artattend_t2}{logical; whether to allow time-varying neighboring district ART attendance}
 
 \item{artattend_log_gamma_offset}{logit offset for neigboring district ART attendance}
 
