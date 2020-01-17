@@ -20,7 +20,7 @@ test_that("model can be run", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 30624 + 40)
+  expect_true(nrow(output) == 15312 * 3 + 2*2*10)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -72,6 +72,7 @@ test_that("model can be run without programme data", {
     area_level = "4",
     calendar_quarter_t1 = "CY2016Q1",
     calendar_quarter_t2 = "CY2018Q3",
+    calendar_quarter_t3 = "CY2019Q2",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
@@ -101,7 +102,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 30624 + 2*2*10)
+  expect_true(nrow(output) == 15312 * 3 + 2*2*10)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)

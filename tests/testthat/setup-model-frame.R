@@ -11,6 +11,7 @@ a_naomi_mf <- naomi_model_frame(a_area_merged,
                                 level = 4,
                                 calendar_quarter1 = "CY2016Q1",
                                 calendar_quarter2 = "CY2018Q3",
+                                calendar_quarter3 = "CY2019Q2",
                                 artattend = FALSE,
                                 spectrum_population_calibration = "none")
 

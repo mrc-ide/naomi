@@ -1,5 +1,5 @@
+get_meta_indicator <- function() {
 
-meta_indicator <-
   data.frame(
     indicator = c("population",
                   "prevalence",
@@ -11,26 +11,26 @@ meta_indicator <-
                   "infections",
                   "anc_prevalence",
                   "anc_art_coverage"),
-    indicator_label = c("Population",
-                        "HIV Prevalence",
-                        "PLHIV",
-                        "ART Coverage",
-                        "ART Number (residents)",
-                        "ART Number (attending)",
-                        "HIV Incidence",
-                        "New Infections",
-                        "ANC HIV Prevalence",
-                        "ANC Prior ART Coverage"),
-    description = c("Population size",
-                    "Proportion of total population HIV positive",
-                    "Number of people living with HIV",
-                    "Proportion of PLHIV on ART (residents)",
-                    "Number on ART (residents)",
-                    "Number receiving ART (attending)",
-                    "HIV incidence rate per year",
-                    "Number of new infections per year",
-                    "HIV prevalence among ANC attendees",
-                    "ART coverage among ANC attendees prior to first ANC"),
+    indicator_label = c(t_("POPULATION"),
+                        t_("HIV_PREVALENCE"),
+                        t_("PLHIV"),
+                        t_("ART_COVERAGE"),
+                        t_("ART_NUMBER_RESIDENTS"),
+                        t_("ART_NUMBER_ATTENDING"),
+                        t_("INCIDENCE"),
+                        t_("NEW_INFECTIONS"),
+                        t_("ANC_HIV_PREVALENCE"),
+                        t_("ANC_PRIOR_ART_COVERAGE")),
+    description = c(t_("INDICATOR_LABEL_POPULATION"),
+                    t_("INDICATOR_LABEL_PREVALENCE"),
+                    t_("INDICATOR_LABEL_PLHIV"),
+                    t_("INDICATOR_LABEL_ART_COVERAGE"),
+                    t_("INDICATOR_LABEL_ART_NUM_RESIDENTS"),
+                    t_("INDICATOR_LABEL_ART_NUM_ATTENDING"),
+                    t_("INDICATOR_LABEL_INCIDENCE"),
+                    t_("INDICATOR_LABEL_INFECTIONS"),
+                    t_("INDICATOR_LABEL_ANC_PREVALENCE"),
+                    t_("INDICATOR_LABEL_ANC_ART_COVERAGE")),
     parameter = c("population_out",
                   "rho_out",
                   "plhiv_out",
@@ -47,6 +47,7 @@ meta_indicator <-
     scale = NA,
     stringsAsFactors = FALSE
   )
+}
 
 
 add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
@@ -112,9 +113,18 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
+  indicators_t3 <- c("population_t3_out" = "population",
+                     "rho_t3_out" = "prevalence",
+                     "plhiv_t3_out" = "plhiv",
+                     "alpha_t3_out" = "art_coverage",
+                     "artnum_t3_out" = "art_num_residents",
+                     "artattend_t3_out" = "art_num_attend",
+                     "lambda_t3_out" = "incidence",
+                     "infections_t3_out" = "infections")
 
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
+  indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
@@ -127,8 +137,10 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                   get_est("anc_alpha_t1_out", "anc_art_coverage", naomi_mf$calendar_quarter1, mf_anc_out),
                   indicator_est_t2,
                   get_est("anc_rho_t2_out", "anc_prevalence", naomi_mf$calendar_quarter2, mf_anc_out),
-                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out))
-
+                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out),
+                  indicator_est_t3
+                )
+  
   dplyr::select(out, names(naomi_mf$mf_out),
                 calendar_quarter, indicator, mean, se, median, mode, lower, upper)
 }
@@ -256,7 +268,9 @@ output_package <- function(naomi_fit, naomi_mf) {
     sf::st_as_sf()
 
   meta_period <- data.frame(
-    calendar_quarter = c(naomi_mf$calendar_quarter1, naomi_mf$calendar_quarter2),
+    calendar_quarter = c(naomi_mf$calendar_quarter1,
+                         naomi_mf$calendar_quarter2,
+                         naomi_mf$calendar_quarter3),
     stringsAsFactors = FALSE
   )%>%
     dplyr::mutate(
@@ -277,7 +291,7 @@ output_package <- function(naomi_fit, naomi_mf) {
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
-    meta_indicator = meta_indicator,
+    meta_indicator = get_meta_indicator(),
     fit = fit
   )
 
@@ -675,8 +689,10 @@ calibrate_outputs <- function(output,
   adj <- dplyr::bind_rows(
                   .expand(naomi_mf$calendar_quarter1, "plhiv"),
                   .expand(naomi_mf$calendar_quarter2, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter3, "plhiv"),
                   .expand(naomi_mf$calendar_quarter1, "art_num_residents"),
-                  .expand(naomi_mf$calendar_quarter2, "art_num_residents")
+                  .expand(naomi_mf$calendar_quarter2, "art_num_residents"),
+                  .expand(naomi_mf$calendar_quarter3, "art_num_residents")
                 )
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")

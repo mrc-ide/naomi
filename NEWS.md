@@ -1,3 +1,8 @@
+# naomi 0.0.53
+
+* Do not calculate reported output aggregations during model fitting. This should modestly reduce model objective function computation time.
+* Output projection to a third calendar quarter. Projection outputs are computed after objective function calcuation. Predicted ANC attendance at time 3 is not computed.
+
 # naomi 0.0.52
 
 * Automatically remove rows with all NA values in `read_*()` functions.

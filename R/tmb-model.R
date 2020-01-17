@@ -186,7 +186,6 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_lambda_t1_offset = naomi_data$mf_model$log_lambda_t1_offset,
     log_lambda_t2_offset = naomi_data$mf_model$log_lambda_t2_offset,
     ##
-    A_out = naomi_data$A_out,
     idx_prev = naomi_data$prev_dat$idx - 1L,
     x_prev = naomi_data$prev_dat$x_eff,
     n_prev = naomi_data$prev_dat$n_eff,
@@ -218,7 +217,19 @@ prepare_tmb_inputs <- function(naomi_data) {
     A_artattend_t2 = A_artattend_t2,
     x_artnum_t2 = naomi_data$artnum_t2_dat$current_art,
     A_artattend_mf = A_artattend_mf,
-    A_art_reside_attend = A_art_reside_attend
+    A_art_reside_attend = A_art_reside_attend,
+    ##
+    ## Time 3 projection inputs
+    population_t3 = df$population_t3,
+    Lproj_hivpop_t2t3 = naomi_data$Lproj_hivpop_t2t3,
+    Lproj_incid_t2t3 = naomi_data$Lproj_incid_t2t3,
+    Lproj_paed_t2t3 = naomi_data$Lproj_paed_t2t3,
+    projection_duration_t2t3 = naomi_data$projection_duration_t2t3,
+    logit_alpha_t2t3_offset = df$logit_alpha_t2t3_offset,
+    log_lambda_t3_offset = df$log_lambda_t3_offset,
+    ##
+    A_out = naomi_data$A_out,
+    calc_outputs = 1L
   )
 
 
@@ -314,26 +325,12 @@ sparse_model_matrix <- function(formula, data, binary_interaction = 1,
   mm
 }
 
+make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE) {
 
-#' Fit TMB model
-#'
-#' @param tmb_input Model input data
-#' @param outer_verbose If TRUE print function and parameters every iteration
-#' @param inner_verbose If TRUE then disable tracing information from TMB
-#' @param max_iter maximum number of iterations
-#'
-#' @return Fit model.
-#' @export
-fit_tmb <- function(tmb_input,
-                    outer_verbose = TRUE,
-                    inner_verbose = FALSE,
-                    max_iter = 250
-                    ) {
-
-  stopifnot(inherits(tmb_input, "naomi_tmb_input"))
-
-  obj <- TMB::MakeADFun(data = tmb_input$data,
-                        parameters = tmb_input$par_init,
+  data$calc_outputs <- as.integer(calc_outputs)
+                                 
+  obj <- TMB::MakeADFun(data = data,
+                        parameters = par,
                         DLL = "naomi",
                         silent = !inner_verbose,
                         random = c("beta_rho",
@@ -359,17 +356,40 @@ fit_tmb <- function(tmb_input,
                                    ##
                                    "log_or_gamma"))
 
+  obj
+}
+  
+
+#' Fit TMB model
+#'
+#' @param tmb_input Model input data
+#' @param outer_verbose If TRUE print function and parameters every iteration
+#' @param inner_verbose If TRUE then disable tracing information from TMB
+#' @param max_iter maximum number of iterations
+#'
+#' @return Fit model.
+#' @export
+fit_tmb <- function(tmb_input,
+                    outer_verbose = TRUE,
+                    inner_verbose = FALSE,
+                    max_iter = 250
+                    ) {
+
+  stopifnot(inherits(tmb_input, "naomi_tmb_input"))
+
+  obj <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 0L, inner_verbose)
+
   trace <- if(outer_verbose) 1 else 0
   f <- withCallingHandlers(
     stats::nlminb(obj$par, obj$fn, obj$gr,
                   control = list(trace = trace,
                                  iter.max = max_iter)),
     warning = function(w) {
-        if(grepl("NA/NaN function evaluation", w$message))
-          invokeRestart("muffleWarning")
-      }
-    )
-
+      if(grepl("NA/NaN function evaluation", w$message))
+        invokeRestart("muffleWarning")
+    }
+  )
+  
   if(f$convergence != 0)
     warning(paste("convergence error:", f$message))
 
@@ -378,9 +398,11 @@ fit_tmb <- function(tmb_input,
   
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
-  f$mode <- obj$report(f$par.full)
+
+  objout <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 1L, inner_verbose)
+  f$mode <- objout$report(f$par.full)
     
-  val <- c(f, obj = list(obj))
+  val <- c(f, obj = list(objout))
   class(val) <- "naomi_fit"
 
   val
