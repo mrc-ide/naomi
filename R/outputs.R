@@ -584,7 +584,7 @@ calibrate_outputs <- function(output,
   ## Subset to most granular estimates in model frame.
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
-    dplyr::filter(indicator %in% c("plhiv", "art_num_residents")) %>%
+    dplyr::filter(indicator %in% c("plhiv", "art_num_residents", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, group_vars, mean)
 
@@ -610,6 +610,13 @@ calibrate_outputs <- function(output,
              dplyr::select(-indicator) %>%
              dplyr::rename(art_num_raw = est_raw),
              by = group_vars
+           ) %>%
+    dplyr::left_join(
+             val_aggr %>%
+             dplyr::filter(indicator == "infections") %>%
+             dplyr::select(-indicator) %>%
+             dplyr::rename(infections_raw = est_raw),
+             by = group_vars
            )
 
   ## Calculate calibration ratios for PLHIV and ART Number
@@ -627,7 +634,6 @@ calibrate_outputs <- function(output,
   } else {
     spectrum_calibration$plhiv_calibration <- 1.0
   }
-
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
 
@@ -643,13 +649,20 @@ calibrate_outputs <- function(output,
     spectrum_calibration$art_num_calibration <- 1.0
   }
 
+
+  ## Note: New infections calibration not yet implemented
+  spectrum_calibration$infections_calibration <- 1.0
+  
+
   spectrum_calibration <- spectrum_calibration %>%
-    dplyr::mutate(plhiv = plhiv_raw * plhiv_calibration,
-                  art_num = art_num_raw * art_num_calibration) %>%
+    dplyr::mutate(plhiv_final = plhiv_raw * plhiv_calibration,
+                  art_num_final = art_num_raw * art_num_calibration,
+                  infections_final = infections_raw * infections_calibration) %>%
     dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
-                  population_spectrum, population_raw, population_calibration, population,
-                  plhiv_spectrum, plhiv_raw, plhiv_calibration, plhiv,
-                  art_num_spectrum, art_num_raw, art_num_calibration, art_num)
+                  population_spectrum, population_raw, population_calibration, population_final = population,
+                  plhiv_spectrum, plhiv_raw, plhiv_calibration, plhiv_final,
+                  art_num_spectrum, art_num_raw, art_num_calibration, art_num_final,
+                  infections_spectrum, infections_raw, infections_calibration, infections_final)
 
 
   ## Calculate calibrated PLHIV at finest stratification (mf_model)
