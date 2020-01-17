@@ -11,5 +11,6 @@ naomi_init_traduire <- function() {
   traduire::translator_register(NULL, languages[[1]], namespaces[[1]],
                                 resource_pattern = pattern,
                                 namespaces = namespaces,
+                                fallback = "en",
                                 languages = languages)
 }
