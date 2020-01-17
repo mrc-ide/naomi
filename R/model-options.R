@@ -46,7 +46,9 @@ read_options <- function(type) {
 validate_model_options <- function(data, options) {
 
   required_options <- c("area_scope", "area_level",
-                        "calendar_quarter_t1", "calendar_quarter_t2",
+                        "calendar_quarter_t1",
+                        "calendar_quarter_t2",
+                        "calendar_quarter_t3",
                         "survey_prevalence")
 
   if(!all(required_options %in% names(options)))
@@ -74,7 +76,12 @@ validate_model_options <- function(data, options) {
   if(calendar_quarter_to_quarter_id(options$calendar_quarter_t1) >=
      calendar_quarter_to_quarter_id(options$calendar_quarter_t2))
     stop("Estimates quarter (time 2) must be after survey quarter (time 1)")
-  
+
+    ## Check time T3 is after T2
+  if(calendar_quarter_to_quarter_id(options$calendar_quarter_t2) >=
+     calendar_quarter_to_quarter_id(options$calendar_quarter_t3))
+    stop("Projection quarter (time 3) must be after estimates quarter (time 2)")
+
   ## # Population inputs
 
   ## TODO:
