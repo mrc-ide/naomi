@@ -1,3 +1,12 @@
+# naomi 0.0.55
+
+* Option for time-varying ART attendance odds ratio. The option `artattend_t2` can be set to TRUE if there is evidence that patterns of cross-district ART attendance changed for the period before the survey and the inter-survey period.
+
+# naomi 0.0.54
+
+* Add output stratification for age groups <1, 1-4.  This is simply disaggregated based on proportions from Spectrum with now uncertainty.
+* Add function `export_datapack()` to export an output package to datapack CSV format.
+
 # naomi 0.0.53
 
 * Do not calculate reported output aggregations during model fitting. This should modestly reduce model objective function computation time.

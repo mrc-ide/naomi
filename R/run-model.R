@@ -55,13 +55,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   else
     permissive <- as.logical(options$permissive)
 
-  if (is.null(options$artattend)) {
-    options$artattend <- FALSE
-  }
-  if (is.null(options$artattend_log_gamma_offset)) {
-    options$artattend_log_gamma_offset <- -4
-  }
-
   validate_model_options(data, options)
   progress$complete("Validating inputs and options")
 
@@ -105,7 +98,12 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                options$spectrum_plhiv_calibration_strat,
                                options$spectrum_artnum_calibration_level,
                                options$spectrum_artnum_calibration_strat)
+
+  outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
+  
   attr(outputs, "info") <- naomi_info(data, options)
+
+
 
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
@@ -136,6 +134,16 @@ naomi_prepare_data <- function(data, options) {
     anc_testing <- read_anc_testing(data$anc_testing)
   } else {
     anc_testing <- NULL
+  }
+  
+  if (is.null(options$artattend)) {
+    options$artattend <- FALSE
+  }
+  if (is.null(options$artattend_t2)) {
+    options$artattend_t2 <- FALSE
+  }
+  if (is.null(options$artattend_log_gamma_offset)) {
+    options$artattend_log_gamma_offset <- -4
   }
 
   if(is.null(options$deff_prev))
@@ -188,6 +196,7 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
+    artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
   )
   

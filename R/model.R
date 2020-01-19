@@ -113,7 +113,8 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param omega Omega
 #' @param rita_param rita_param
 #' @param sigma_u_sd sigma_u_sd
-#' @param artattend artattend
+#' @param artattend logical; whether to estimate neighboring district ART attendance
+#' @param artattend_t2 logical; whether to allow time-varying neighboring district ART attendance
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
@@ -147,6 +148,7 @@ naomi_model_frame <- function(area_merged,
                                                 ritaT        = 1.0),
                               sigma_u_sd   = 1.0,
                               artattend = TRUE,
+                              artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
@@ -242,6 +244,36 @@ naomi_model_frame <- function(area_merged,
                                    dplyr::mutate(time_step = "quarter3")
                                  )
 
+  ## Spectrum age <1 / 1-4 distribution
+
+  spec_0to4strat <- spec %>%    
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id3) + 2),
+                  age %in% 0:4) %>%
+    dplyr::mutate(age_group = dplyr::if_else(age == 0, "00-00", "01-04"),
+                  sex = "both",
+                  births = 0,
+                  susc_previous_year = 0) %>%
+    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections), sum) %>%
+    dplyr::mutate(births = 0, susc_previous_year = 0) %>%
+    dplyr::ungroup()
+
+  spectrum_0to4distribution <- dplyr::bind_rows(
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter1),
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter2),
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter3)
+                                      ) %>%
+    dplyr::group_by(spectrum_region_code, calendar_quarter) %>%
+    dplyr::transmute(age_group,
+                     population = population_spectrum / sum(population_spectrum),
+                     plhiv = plhiv_spectrum / sum(plhiv_spectrum),
+                     art_num_attend = art_num_spectrum / sum(art_num_spectrum),
+                     art_num_residents = art_num_attend,
+                     infections = infections_spectrum / sum(infections_spectrum)) %>%
+    tidyr::gather(indicator, distribution, population, plhiv, art_num_attend, art_num_residents, infections) %>%
+    dplyr::ungroup()
+                     
+  
   ## # Add population estimates
 
   ## !!! TODO: There's an opportunity for real mess here if areas are subset to part
@@ -510,6 +542,7 @@ naomi_model_frame <- function(area_merged,
             mf_out = outf$mf,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
+            artattend_t2 = artattend_t2,
             A_out = outf$A,
             Lproj_hivpop = Lproj$Lproj_hivpop,
             Lproj_incid = Lproj$Lproj_incid,
@@ -530,6 +563,7 @@ naomi_model_frame <- function(area_merged,
             calendar_quarter3 = calendar_quarter3,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
+            spectrum_0to4distribution = spectrum_0to4distribution,
             omega = omega,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,

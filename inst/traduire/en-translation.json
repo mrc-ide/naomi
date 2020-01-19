@@ -95,5 +95,7 @@
     "INDICATOR_LABEL_INCIDENCE": "HIV incidence rate per year",
     "INDICATOR_LABEL_INFECTIONS": "Number of new infections per year",
     "INDICATOR_LABEL_ANC_PREVALENCE": "HIV prevalence among ANC attendees",
-    "INDICATOR_LABEL_ANC_ART_COVERAGE": "ART coverage among ANC attendees prior to first ANC"
+    "INDICATOR_LABEL_ANC_ART_COVERAGE": "ART coverage among ANC attendees prior to first ANC",
+    "OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL": "Time-varying neighbouring district ART attendance",
+    "OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP": "Allow the odds for seeking treatment in neighboring district to change over time."
 }
