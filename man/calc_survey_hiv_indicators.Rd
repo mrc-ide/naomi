@@ -14,7 +14,9 @@ calc_survey_hiv_indicators(
   sex = c("male", "female", "both"),
   age_group_id = NULL,
   area_top_level = min(areas$area_level),
-  area_bottom_level = max(areas$area_level)
+  area_bottom_level = max(areas$area_level),
+  artcov_definition = c("both", "arv", "artself"),
+  by_restype = FALSE
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ calc_survey_hiv_indicators(
 \item{area_top_level}{Area top level.}
 
 \item{area_bottom_level}{Area bottom level.}
+
+\item{artcov_definition}{Definition to use for calculate ART coverage.}
+
+\item{by_restype}{Whether to stratify estimates by urban/rural restype; logical.}
 }
 \description{
 Calculate age/sex/area stratified survey estimates for biomarker outcomes
@@ -53,4 +59,12 @@ rewritten to be more efficient.
 \item Need generic function to calculate
 \item Flexibility about age/sex stratifications to calculate.
 }
+
+The argument \code{artcov_definition} controls whether to use both ARV biomarker and
+self-report (\code{artcov_definition = "both"}; default), ARV biomarker only
+(\code{artcov_definition = "arv"}), or self-report ART use only
+(\code{artcov_definition = "artself"}).  If option is \code{"both"}, then all HIV positive
+are used as the denomiator and no missing data on either indicator are
+incorporated. If the option is \code{"arv"} or \code{"artself"} then missing values in those
+variables, respectively, are treated as missing.
 }

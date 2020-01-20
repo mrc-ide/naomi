@@ -898,16 +898,16 @@ export_datapack <- function(naomi_output,
                    "prevalence" = "IMPATT.HIV_PREV (SUBNAT, Age/Sex)",
                    "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
 
-  dataelementuid = c("plhiv" = "VprOvRGKX9r",
-                     "art_num_attend" = "KeIo9JZPFIC",
+  dataelementuid = c("plhiv" = "iwSejvD8cXl",
+                     "art_num_attend" = "xghQXueYJxu",
                      "population" = "KssDaTsGWnS",
                      "prevalence" = "lJtpR5byqps",
                      "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
   
   category_1  <- "Age (<1-50+, 12)"
   categoryOption_uid_1 <- "HoZv6qBZvE7"
-  categoryOption_name_1 <- c("00-00" = "<1",
-                             "01-04" = "1-4",
+  categoryOption_name_1 <- c("00-00" = "<01",
+                             "01-04" = "01-04",
                              "05-09" = "05-09",
                              "10-14" = "10-14",
                              "15-19" = "15-19",
@@ -929,7 +929,7 @@ export_datapack <- function(naomi_output,
                               "35-39" = "R32YPF38CJJ",
                               "40-44" = "JEth8vg25Rv",
                               "45-49" = "rQLOOlL3UOQ",
-                              "50+"   = "rQLOOlL3UOQ")
+                              "50+"   = "TpXlQcoXGZF")
   category_2  <- "Sex"
   categoryuid_2 <- "SEOZOio7f7o"
   categoryOption_uid_2 <-  c("male" = "Qn0I5FbKQOA",
