@@ -5,6 +5,11 @@ Formatting updates requested for Data Pack 2019:
 * Change age_group_label for ages <1 and 1-4 to <01 and 01-04.
 * Change dataelement UIDs for TX_CURR_SUBNAT and PLHIV.
 
+# naomi 0.0.56
+
+* Replace `survey_year` with `survey_mid_calendar_quarter` in the survey indicators dataset.
+* Add column `restype` for urban/rural to survey indicators datasets and option to stratify survey indicators calculation by urban/rural.
+
 # naomi 0.0.55
 
 * Option for time-varying ART attendance odds ratio. The option `artattend_t2` can be set to TRUE if there is evidence that patterns of cross-district ART attendance changed for the period before the survey and the inter-survey period.

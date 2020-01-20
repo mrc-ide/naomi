@@ -16,15 +16,6 @@ devtools::load_all()
 #'    * Note: cluster coordinates not yet available. IMPUTED for demonstration.
 #' 
 
-#' Read shape file from ZIP
-st_read_zip_list <- function(zfile, pattern = "shp$") {
-  tmpd <- tempfile()
-  on.exit(unlink(tmpd))
-  unzip(zfile, exdir = tmpd)
-  f <- list.files(tmpd, pattern, recursive = TRUE, full.names = TRUE)
-  lapply(f, sf::st_read)
-}
-
 
 #' ## Load datasets
 
@@ -49,7 +40,7 @@ surveys <- dhs_surveys(countryIds = "MW") %>%
 paths <- paste0("~/Data/shape files/DHS/", surveys$SurveyId, ".zip") %>%
   setNames(surveys$survey_id)
 
-geom_raw <- lapply(paths, st_read_zip_list) %>%
+geom_raw <- lapply(paths, read_sf_zip_list) %>%
   unlist(recursive = FALSE)
 
 
@@ -423,6 +414,7 @@ dhs_meta <- surveys %>%
             survey_year = SurveyYear,
             fieldwork_start = FieldworkStart,
             fieldwork_end = FieldworkEnd,
+            survey_mid_calendar_quarter = get_mid_calendar_quarter(as.Date(FieldworkStart)+15, as.Date(FieldworkEnd)+15),
             female_age_min = as.integer(MinAgeWomen),
             female_age_max = as.integer(MaxAgeWomen),
             male_age_min = as.integer(MinAgeMen),
@@ -546,9 +538,7 @@ ge <- bind_rows(
 
 area_sample <- mwi_population_agesex %>%
   filter(source == "Census 2018") %>%
-  mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
-         calendar_quarter = NULL) %>%
-  interpolate_population_agesex(quarter_ids = convert_quarter_id(2016, 1)) %>%
+  interpolate_population_agesex(calendar_quarters = "CY2016Q1") %>%
   inner_join(
     get_age_groups() %>%
     filter(age_group_start >= 15,
@@ -684,10 +674,10 @@ phia_meta <- phia_individuals %>%
   mutate(iso3 = substr(survey_id, 1, 3),
          country = "Malawi",
          survey_type = "PHIA",
-         survey_year = recode(iso3, "MWI" = 2016),
+         survey_mid_calendar_quarter = recode(iso3, "MWI" = "CY2016Q1"),
          fieldwork_start = recode(iso3, "MWI" = "2015-11-01"),
          fieldwork_end   = recode(iso3, "MWI" = "2016-08-01")) %>%
-    ungroup
+    ungroup()
 
 
 #' ## Combine DHS and PHIA dataset
