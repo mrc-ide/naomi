@@ -3,6 +3,7 @@
 Formatting updates requested for Data Pack 2019:
 
 * Change age_group_label for ages <1 and 1-4 to <01 and 01-04.
+* Change dataelement UIDs for TX_CURR_SUBNAT and PLHIV.
 
 # naomi 0.0.55
 
