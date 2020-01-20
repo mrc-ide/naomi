@@ -18,6 +18,10 @@ Additional_repositories:
     https://inla.r-inla-download.org/R/stable,
     https://mrc-ide.github.io/drat
 Imports: 
+    INLA,
+    Matrix,
+    R6,
+    TMB,
     assertthat,
     data.tree,
     dplyr,
@@ -26,12 +30,9 @@ Imports:
     ggplot2,
     gridExtra,
     here,
-    INLA,
     magrittr,
-    Matrix,
     methods,
     mvtnorm,
-    R6,
     readr,
     rlang,
     sf,
@@ -39,15 +40,15 @@ Imports:
     specio (>= 0.1.2),
     tidyr,
     traduire,
-    TMB,
     yaml,
     zip,
     zoo
 Suggests: 
+    DiagrammeR,
     covr,
     datamodelr,
-    DiagrammeR,
     knitr,
+    lubridate,
     mockery,
     rdhs,
     rmarkdown,
@@ -55,15 +56,14 @@ Suggests:
     survey,
     testthat (>= 2.1.0),
     tidyverse,
-    viridis,
-    withr,
     tmbstan,
-    lubridate
+    viridis,
+    withr
 VignetteBuilder: knitr
 LinkingTo: 
-    TMB,
-    RcppEigen
+    RcppEigen,
+    TMB
 Remotes:
-    mrc-ide/eppasm,
     bergant/datamodelr,
+    mrc-ide/eppasm,
     reside-ic/traduire
