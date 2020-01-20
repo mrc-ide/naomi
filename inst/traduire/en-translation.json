@@ -97,5 +97,10 @@
     "INDICATOR_LABEL_ANC_PREVALENCE": "HIV prevalence among ANC attendees",
     "INDICATOR_LABEL_ANC_ART_COVERAGE": "ART coverage among ANC attendees prior to first ANC",
     "OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL": "Time-varying neighbouring district ART attendance",
-    "OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP": "Allow the odds for seeking treatment in neighboring district to change over time."
+    "OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP": "Allow the odds for seeking treatment in neighboring district to change over time.",
+    "PROGRESS_VALIDATE_OPTIONS": "Validating inputs and options",
+    "PROGRESS_PREPARE_INPUTS": "Preparing input data",
+    "PROGRESS_FIT_MODEL": "Fitting the model",
+    "PROGRESS_UNCERTAINTY": "Generating uncertainty ranges",
+    "PROGRESS_PREPARE_OUTPUTS": "Preparing outputs"
 }

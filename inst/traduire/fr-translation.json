@@ -93,5 +93,10 @@
     "INDICATOR_LABEL_INCIDENCE": "Taux d'incidence de VIH par année",
     "INDICATOR_LABEL_INFECTIONS": "Nombre des nouvelles infections",
     "INDICATOR_LABEL_ANC_PREVALENCE": "Prévalence du VIH dans les cliniques prénatales",
-    "INDICATOR_LABEL_ANC_ART_COVERAGE": "Couverture ART antérieure dans les cliniques prénatales"
+    "INDICATOR_LABEL_ANC_ART_COVERAGE": "Couverture ART antérieure dans les cliniques prénatales",
+    "PROGRESS_VALIDATE_OPTIONS": "Validation des entrées et des options",
+    "PROGRESS_PREPARE_INPUTS": "Préparation des données d'entrée",
+    "PROGRESS_FIT_MODEL": "Montage du modèle",
+    "PROGRESS_UNCERTAINTY": "Génération de plages d'incertitude",
+    "PROGRESS_PREPARE_OUTPUTS": "Préparation des sorties"
 }
