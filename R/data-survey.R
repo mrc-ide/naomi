@@ -116,6 +116,19 @@ expand_survey_clusters <- function(survey_clusters,
 #' @param age_group_id Age group id.
 #' @param area_top_level Area top level.
 #' @param area_bottom_level Area bottom level.
+#' @param artcov_definition Definition to use for calculate ART coverage.
+#' @param by_restype Whether to stratify estimates by urban/rural restype; logical.
+#'
+#'
+#' @details
+#'
+#' The argument `artcov_definition` controls whether to use both ARV biomarker and
+#' self-report (`artcov_definition = "both"`; default), ARV biomarker only
+#' (`artcov_definition = "arv"`), or self-report ART use only
+#' (`artcov_definition = "artself"`).  If option is `"both"`, then all HIV positive
+#' are used as the denomiator and no missing data on either indicator are
+#' incorporated. If the option is `"arv"` or `"artself"` then missing values in those
+#' variables, respectively, are treated as missing.
 #'
 #' @export
 calc_survey_hiv_indicators <- function(survey_meta,
