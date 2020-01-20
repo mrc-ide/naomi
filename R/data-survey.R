@@ -327,9 +327,10 @@ get_mid_calendar_quarter <- function(start_date, end_date) {
   stopifnot(start_date <= end_date)
   
   date4 <- (start_date + end_date) / 2
-  date4 <- round(4 * date4) - 1
+  year <- floor(date4) 
+  quarter <- floor((date4 %% 1) * 4) + 1
 
-  paste0("CY", date4 %/% 4, "Q", date4 %% 4 + 1)
+  paste0("CY", year, "Q", quarter)
 }
 
 
