@@ -341,7 +341,7 @@ get_mid_calendar_quarter <- function(start_date, end_date) {
 #' @param read_fn function used to read matched files.
 #'
 #' @export
-read_sf_zip_list <- function(zfile, pattern = "shp$", read_fn = sf::read_sf) {
+read_sf_zip_list <- function(zfile, pattern = "\\.shp$", read_fn = sf::read_sf) {
   tmpd <- tempfile()
   on.exit(unlink(tmpd))
   unzip(zfile, exdir = tmpd)
