@@ -1,3 +1,9 @@
+# naomi 0.0.57
+
+Formatting updates requested for Data Pack 2019:
+
+* Change age_group_label for ages <1 and 1-4 to <01 and 01-04.
+
 # naomi 0.0.55
 
 * Option for time-varying ART attendance odds ratio. The option `artattend_t2` can be set to TRUE if there is evidence that patterns of cross-district ART attendance changed for the period before the survey and the inter-survey period.
