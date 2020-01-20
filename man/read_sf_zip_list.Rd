@@ -4,7 +4,7 @@
 \alias{read_sf_zip_list}
 \title{Read Multiple Shape Files in ZIP Archive}
 \usage{
-read_sf_zip_list(zfile, pattern = "shp$", read_fn = sf::read_sf)
+read_sf_zip_list(zfile, pattern = "\\\\.shp$", read_fn = sf::read_sf)
 }
 \arguments{
 \item{zfile}{path to a zip directory}

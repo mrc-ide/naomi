@@ -314,7 +314,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
 #' start <- c("2005-04-01", "2010-12-01", "2016-01-01")
 #' end <-c("2005-08-01", "2011-05-01", "2016-06-01")
 #'
-#' mid_calendar_quarter <- get_mid_calenndar_quarter(start, end)
+#' mid_calendar_quarter <- get_mid_calendar_quarter(start, end)
 #'
 #' @export
 get_mid_calendar_quarter <- function(start_date, end_date) {
