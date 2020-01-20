@@ -98,5 +98,11 @@
     "PROGRESS_PREPARE_INPUTS": "Préparation des données d'entrée",
     "PROGRESS_FIT_MODEL": "Montage du modèle",
     "PROGRESS_UNCERTAINTY": "Génération de plages d'incertitude",
-    "PROGRESS_PREPARE_OUTPUTS": "Préparation des sorties"
+    "PROGRESS_PREPARE_OUTPUTS": "Préparation des sorties",
+    "NO_ART_DATA_FOR_QUARTER": "Aucune donnée ART trouvée pour le trimestre {{calendar_quarter}}.\nDéfinissez inclure les données ART sur 'Non' si vous avez l'intention de ne pas inclure de données ART.",
+    "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "Le test ANC sur ART est supérieur au test anc total positif.",
+    "ANC_DATA_MISSING_FOR_YEAR": "Données de test ANC introuvables pour l'année {{missing_year}}.",
+    "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "Test ANC positif supérieur au test anc statut total connu.",
+    "ART_COV_AND_VLS_SAME_SURVEY": "N'utilisez pas la couverture ART et les données VLS de la même enquête: {{survey_ids}}",
+    "SCOPE_AREAS_MISSING_HIERARCHY": "Zones de portée {{missing_areas}} introuvable dans la hiérarchie."
 }
