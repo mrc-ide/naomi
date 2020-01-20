@@ -366,8 +366,8 @@ naomi_model_frame <- function(area_merged,
   zeropop2 <- mf_model$population_t2 == 0
   zeropop3 <- mf_model$population_t3 == 0
 
-  if(any(zeropop1) | any(zeropop2)) {
-    warning(paste("Zero population input for", sum(zeropop1) + sum(zeropop2) + sum(zeropo3),
+  if(any(zeropop1) | any(zeropop2) | any(zeropop3)) {
+    warning(paste("Zero population input for", sum(zeropop1) + sum(zeropop2) + sum(zeropop3),
                   "area/age/sex groups.",
                   "Replaced with population 0.1."))
     mf_model$population_t1[zeropop1] <- 0.1
