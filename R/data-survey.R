@@ -290,7 +290,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
 }
 
 
-#' # Find Calendar Quarter Midpoint of Two Dates
+#' Find Calendar Quarter Midpoint of Two Dates
 #'
 #' @param start_date vector coercibel to Date
 #' @param end_date vector coercibel to Date
@@ -304,15 +304,34 @@ calc_survey_hiv_indicators <- function(survey_meta,
 #' @export
 get_mid_calendar_quarter <- function(start_date, end_date) {
 
-  start_date <- as.Date(start_date)
-  end_date <- as.Date(end_date)
+  start_date <- lubridate::decimal_date(as.Date(start_date))
+  end_date <- lubridate::decimal_date(as.Date(end_date))
 
   stopifnot(start_date <= end_date)
   stopifnot(!is.na(start_date))
   stopifnot(!is.na(end_date))
   
-  date4 <- (lubridate::decimal_date(start_date) + lubridate::decimal_date(end_date)) / 2
+  date4 <- (start_date + end_date) / 2
   date4 <- round(4 * date4) - 1
 
   paste0("CY", date4 %/% 4, "Q", date4 %% 4 + 1)
+}
+
+
+#' Read Multiple Shape Files in ZIP Archive
+#'
+#' Reads all files in ZIP archive `zfile` matching `pattern` with
+#' function `read_fn` and returns as a list.
+#'
+#' @param zfile path to a zip directory
+#' @param pattern string pattern passed to [`list.files`].
+#' @param read_fn function used to read matched files.
+#'
+#' @export
+read_sf_zip_list <- function(zfile, pattern = "shp$", read_fn = sf::read_sf) {
+  tmpd <- tempfile()
+  on.exit(unlink(tmpd))
+  unzip(zfile, exdir = tmpd)
+  f <- list.files(tmpd, pattern, recursive = TRUE, full.names = TRUE)
+  lapply(f, sf::read_sf)
 }
