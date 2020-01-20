@@ -14,7 +14,9 @@ calc_survey_hiv_indicators(
   sex = c("male", "female", "both"),
   age_group_id = NULL,
   area_top_level = min(areas$area_level),
-  area_bottom_level = max(areas$area_level)
+  area_bottom_level = max(areas$area_level),
+  artcov_definition = c("both", "arv", "artself"),
+  by_restype = FALSE
 )
 }
 \arguments{

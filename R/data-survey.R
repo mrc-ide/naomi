@@ -128,7 +128,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                        age_group_id = NULL,
                                        area_top_level = min(areas$area_level),
                                        area_bottom_level = max(areas$area_level),
-                                       artcov_def = c("both", "arv", "artself"),
+                                       artcov_definition = c("both", "arv", "artself"),
                                        by_restype = FALSE) {
 
   ## 1. Identify age groups to calculate for each survey_id
@@ -196,7 +196,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
   ## 5. Construct ART coverage indicator as either self-report or ART biomarker
   ##    and gather to long dataset for each biomarker
 
-  if(artcov_def[1] == "both") {
+  if(artcov_definition[1] == "both") {
     ind <- ind %>%
       dplyr::group_by(survey_id) %>%
       dplyr::mutate(has_artcov = any(!is.na(arv) | !is.na(artself)),
@@ -206,11 +206,11 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                               TRUE ~ 0L)) %>%
       dplyr::select(-has_artcov, -artself, -arv) %>%
       dplyr::ungroup()
-  } else if(artcov_def[1] %in% c("arv", "artself")) {
-    ind <- dplyr::rename(ind, artcov = artcov_def[1]) %>%
+  } else if(artcov_definition[1] %in% c("arv", "artself")) {
+    ind <- dplyr::rename(ind, artcov = artcov_definition[1]) %>%
       dplyr::mutate(artcov = dplyr::if_else(hivstatus == 0,  NA_integer_, as.integer(artcov)))
   } else {
-    stop(paste("Invalid artcov_def value:", artcov_def[1]))
+    stop(paste("Invalid artcov_definition value:", artcov_definition[1]))
   }
     
     
