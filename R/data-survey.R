@@ -314,15 +314,17 @@ calc_survey_hiv_indicators <- function(survey_meta,
 #' start <- c("2005-04-01", "2010-12-01", "2016-01-01")
 #' end <-c("2005-08-01", "2011-05-01", "2016-06-01")
 #'
+#' mid_calendar_quarter <- get_mid_calenndar_quarter(start, end)
+#'
 #' @export
 get_mid_calendar_quarter <- function(start_date, end_date) {
 
   start_date <- lubridate::decimal_date(as.Date(start_date))
   end_date <- lubridate::decimal_date(as.Date(end_date))
 
-  stopifnot(start_date <= end_date)
   stopifnot(!is.na(start_date))
   stopifnot(!is.na(end_date))
+  stopifnot(start_date <= end_date)
   
   date4 <- (start_date + end_date) / 2
   date4 <- round(4 * date4) - 1
