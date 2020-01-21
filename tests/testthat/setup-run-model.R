@@ -32,7 +32,7 @@ a_hintr_options <- list(
   spectrum_artnum_calibration_level = "none",
   spectrum_artnum_calibration_strat = "age_coarse",
   artattend = "true",
-  artattend = "false",
+  artattend_t2 = "false",
   artattend_log_gamma_offset = -4L,
   rng_seed = 17,
   no_of_samples = 20,
