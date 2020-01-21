@@ -93,5 +93,21 @@
     "INDICATOR_LABEL_INCIDENCE": "Taux d'incidence de VIH par année",
     "INDICATOR_LABEL_INFECTIONS": "Nombre des nouvelles infections",
     "INDICATOR_LABEL_ANC_PREVALENCE": "Prévalence du VIH dans les cliniques prénatales",
-    "INDICATOR_LABEL_ANC_ART_COVERAGE": "Couverture ART antérieure dans les cliniques prénatales"
+    "INDICATOR_LABEL_ANC_ART_COVERAGE": "Couverture ART antérieure dans les cliniques prénatales",
+    "OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL": "Assiduité du ART des districts  voisinant variable avec le temps",
+    "OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP": "Permettre la probabilité de demander un traitement dans des districts voisinant à changer avec le temps",
+    "PROGRESS_VALIDATE_OPTIONS": "Validation des entrées et des options",
+    "PROGRESS_PREPARE_INPUTS": "Préparation des données d'entrée",
+    "PROGRESS_FIT_MODEL": "Ajustement du modèle",
+    "PROGRESS_UNCERTAINTY": "Génération de fourchettes d'incertitude",
+    "PROGRESS_PREPARE_OUTPUTS": "Préparation des sorties",
+    "NO_ART_DATA_FOR_QUARTER": "Aucune donnée ART trouvée pour le trimestre {{calendar_quarter}}.\nDéfinissez 'inclure les données ART' sur 'Non' si vous avez l'intention de ne pas inclure de données ART.",
+    "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "Le test CPN sur ART est supérieur au test CPN total positif.",
+    "ANC_DATA_MISSING_FOR_YEAR": "Données de test CPN introuvables pour l'année {{missing_year}}.",
+    "ANC_DATA_MISSING_FOR_YEAR_PLURAL": "Données de test CPN introuvables pour l'années {{missing_year}}.",
+    "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "Le nombre de participants des cliniques prénatales séropositives (numérateur) est plus grand que le nombre de participants des cliniques prénatales avec un résultat du statut VIH (dénominateur).",
+    "ART_COV_AND_VLS_SAME_SURVEY": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de la même enquête: {{survey_ids}}",
+    "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de les même enquêtes: {{survey_ids}}",
+    "SCOPE_AREAS_MISSING_HIERARCHY": "Périmètre de zone {{missing_areas}} introuvable dans la hiérarchie.",
+    "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvables dans la hiérarchie."
 }
