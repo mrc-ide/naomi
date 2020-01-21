@@ -267,11 +267,7 @@ Progress <- R6::R6Class("Progress", list(
     self$progress[[index]]$complete <- TRUE
   },
   find_step = function(step_name) {
-    steps <- names(self$progress) == step_name
-    if (sum(steps) != 1) {
-      stop(sprintf("Found %s steps matching message %s.", sum(steps), step_name))
-    }
-    step <- which(steps)
+    self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
   },
   print = function() {
     signalCondition(structure(list(message = self$progress),
