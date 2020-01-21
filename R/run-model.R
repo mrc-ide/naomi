@@ -259,14 +259,14 @@ Progress <- R6::R6Class("Progress", list(
       )
   },
   start = function(step_name) {
-    index <- self$find_step(step_name)
-    self$progress[[index]]$started <- TRUE
+    self$step_exists(step_name)
+    self$progress[[step_name]]$started <- TRUE
   },
   complete = function(step_name) {
-    index <- self$find_step(step_name)
-    self$progress[[index]]$complete <- TRUE
+    self$step_exists(step_name)
+    self$progress[[step_name]]$complete <- TRUE
   },
-  find_step = function(step_name) {
+  step_exists = function(step_name) {
     self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
   },
   print = function() {
