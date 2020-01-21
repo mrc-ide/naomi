@@ -22,9 +22,13 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
 }
 
 suppress_one_warning <- function(expr, regexp) {
-  withCallingHandlers(expr, 
+  withCallingHandlers(expr,
     warning = function(w) {
         if(grepl(regexp, w$message))
           invokeRestart("muffleWarning")
     })
-}                                 
+}
+
+`%||%` <- function(a, b) {
+  if (is.null(a)) b else a
+}
