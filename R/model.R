@@ -164,8 +164,11 @@ naomi_model_frame <- function(area_merged,
   ## Get leaves that are children of scope
   area_id_leaves <- areas$tree$Get("leaves", traversal = "level")
 
-  if(length(setdiff(scope, names(area_id_leaves)))) {
-    stop(t_("SCOPE_AREAS_MISSING_HIERARCHY", list(missing_areas = setdiff(scope, names(area_id_leaves)))))
+  if (length(setdiff(scope, names(area_id_leaves)))) {
+    missing_areas = setdiff(scope, names(area_id_leaves))
+    stop(t_("SCOPE_AREAS_MISSING_HIERARCHY",
+            list(missing_areas = paste(missing_areas, collapse = ", ")),
+            count = length(missing_areas)))
   }
 
   area_id <- area_id_leaves[scope] %>%
@@ -632,9 +635,11 @@ select_naomi_data <- function(naomi_mf,
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
-  if(length(intersect(artcov_survey_ids, vls_survey_ids))) {
+  common_surveys <- intersect(artcov_survey_ids, vls_survey_ids)
+  if (length(common_surveys)) {
     stop(t_("ART_COV_AND_VLS_SAME_SURVEY",
-            list(survey_ids = intersect(artcov_survey_ids, vls_survey_ids))))
+            list(survey_ids = paste(common_surveys, collapse = ", ")),
+            count = length(common_surveys)))
   }
 
   naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prev", survey_hiv_indicators, naomi_mf, deff = deff_prev)
@@ -842,9 +847,11 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
     )
   } else {
 
-    if(!all(year %in% anc_testing$year)) {
+    if (!all(year %in% anc_testing$year)) {
+      missing_years <- setdiff(year, anc_testing$year)
       stop(t_("ANC_DATA_MISSING_FOR_YEAR",
-              list(missing_year = setdiff(year, anc_testing$year))))
+              list(missing_year = paste(missing_years, collapse = ", ")),
+              count = length(missing_years)))
     }
 
     ## Drop any observations with NA in required columns
@@ -896,9 +903,11 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
     )
   } else {
 
-    if(!all(year %in% anc_testing$year)) {
+    if (!all(year %in% anc_testing$year)) {
+      missing_years <- setdiff(year, anc_testing$year)
       stop(t_("ANC_DATA_MISSING_FOR_YEAR",
-              list(missing_year = setdiff(year, anc_testing$year))))
+              list(missing_year = paste(missing_years, collapse = ", ")),
+              count = length(missing_years)))
     }
 
     ## Drop any observations with NA in required columns
@@ -988,7 +997,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter)
 
-    if(nrow(dat) == 0) {
+    if (nrow(dat) == 0) {
       stop(t_("NO_ART_DATA_FOR_QUARTER",
               list(calendar_quarter = calendar_quarter)))
     }

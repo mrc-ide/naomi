@@ -104,7 +104,10 @@
     "NO_ART_DATA_FOR_QUARTER": "Aucune donnée ART trouvée pour le trimestre {{calendar_quarter}}.\nDéfinissez 'inclure les données ART' sur 'Non' si vous avez l'intention de ne pas inclure de données ART.",
     "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "Le test CPN sur ART est supérieur au test CPN total positif.",
     "ANC_DATA_MISSING_FOR_YEAR": "Données de test CPN introuvables pour l'année {{missing_year}}.",
+    "ANC_DATA_MISSING_FOR_YEAR_PLURAL": "Données de test CPN introuvables pour l'années {{missing_year}}.",
     "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "Le nombre de participants des cliniques prénatales séropositives (numérateur) est plus grand que le nombre de participants des cliniques prénatales avec un résultat du statut VIH (dénominateur).",
     "ART_COV_AND_VLS_SAME_SURVEY": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de la même enquête: {{survey_ids}}",
-    "SCOPE_AREAS_MISSING_HIERARCHY": "Périmètres de zone {{missing_areas}} introuvable dans la hiérarchie."
+    "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de la même enquêtes: {{survey_ids}}",
+    "SCOPE_AREAS_MISSING_HIERARCHY": "Périmètres de zone {{missing_areas}} introuvable dans la hiérarchie.",
+    "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvable dans la hiérarchie."
 }
