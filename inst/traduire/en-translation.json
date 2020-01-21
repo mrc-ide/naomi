@@ -103,10 +103,10 @@
     "PROGRESS_FIT_MODEL": "Fitting the model",
     "PROGRESS_UNCERTAINTY": "Generating uncertainty ranges",
     "PROGRESS_PREPARE_OUTPUTS": "Preparing outputs",
-    "NO_ART_DATA_FOR_QUARTER": "No ART data found for quarter {{calendar_quarter}}.\nSet include ART data to 'No' if you intend to include no ART data.",
-    "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "ANC testing on ART greater than anc testing total positive.",
+    "NO_ART_DATA_FOR_QUARTER": "No ART data found for quarter {{calendar_quarter}}.\nSet 'Include ART data' to 'No' if you intend to include no ART data.",
+    "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "ANC testing on ART greater than ANC testing total positive.",
     "ANC_DATA_MISSING_FOR_YEAR": "ANC testing data not found for year {{missing_year}}.",
-    "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "ANC testing positive greater than anc testing total known status.",
+    "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "Number of HIV positive ANC attendees (numerator) is greater than number of ANC attendees with an HIV status outcome (denominator).",
     "ART_COV_AND_VLS_SAME_SURVEY": "Do not use ART coverage and VLS data from the same survey: {{survey_ids}}",
     "SCOPE_AREAS_MISSING_HIERARCHY": "Scope areas {{missing_areas}} not found in hierarchy."
 }
