@@ -1,3 +1,7 @@
+# noami 0.0.58
+
+* Small fix to tests: model options.
+
 # naomi 0.0.57
 
 Formatting updates requested for Data Pack 2019:
