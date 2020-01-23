@@ -146,7 +146,7 @@ read_anc_testing <- function(file) {
                        ancrt_test_pos = readr::col_double()
                      )
   
-  val <- readr::read_csv(file, col_types = col_spec)
+  val <- readr_read_csv(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
   val <- drop_na_rows(val)
@@ -192,7 +192,7 @@ read_area_merged <- function(file) {
 #' 
 #' @keywords internal 
 read_csv_partial_cols <- function(...){
-  suppress_one_warning(readr::read_csv(...), "The following named parsers don't match the column names")
+  suppress_one_warning(readr_read_csv(...), "The following named parsers don't match the column names")
 }
 
 drop_na_rows <- function(x) {
