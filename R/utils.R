@@ -2,12 +2,21 @@ naomi_write_csv <- function(...) {
   write.csv(..., row.names = FALSE, na = "")
 }
 
-naomi_read_csv <- function(...) {
-  read.csv(..., stringsAsFactors = FALSE)
+naomi_read_csv <- function(file, ...) {
+  csv_reader(file, FALSE)(file, ..., stringsAsFactors = FALSE)
 }
 
-readr_read_csv <- function(..., col_types = readr::cols()) {
-  readr::read_csv(..., col_types = col_types)
+readr_read_csv <- function(file, ..., col_types = readr::cols()) {
+  csv_reader(file, TRUE)(file, ..., col_types = col_types)
+}
+
+csv_reader <- function(file, readr = FALSE) {
+  header <- readLines(file, 1)
+  if (!grepl(",", header) && grepl(";", header)) {
+    if (readr) readr::read_csv2 else utils::read.csv2
+  } else {
+    if (readr) readr::read_csv else utils::read.csv
+  }
 }
 
 system_file <- function(...) {
