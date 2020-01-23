@@ -12,13 +12,15 @@ naomi_model_frame(
   level = max(areas$tree$Get("area_level")),
   calendar_quarter1,
   calendar_quarter2,
-  age_group_ids = 1:17,
+  calendar_quarter3,
+  age_groups = get_five_year_age_groups(),
   sexes = c("male", "female"),
   omega = 0.7,
   rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 - 118)/365)/(2 *
     qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT = 1),
   sigma_u_sd = 1,
   artattend = TRUE,
+  artattend_t2 = FALSE,
   artattend_log_gamma_offset = -4,
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
@@ -41,7 +43,9 @@ ids.}
 
 \item{calendar_quarter2}{Calendar quarter at time 2 ("CYyyyyQq")}
 
-\item{age_group_ids}{Age group ids}
+\item{calendar_quarter3}{Calendar quarter at time 3 ("CYyyyyQq")}
+
+\item{age_groups}{Age groups to include in model frame}
 
 \item{sexes}{Sexes}
 
@@ -51,7 +55,9 @@ ids.}
 
 \item{sigma_u_sd}{sigma_u_sd}
 
-\item{artattend}{artattend}
+\item{artattend}{logical; whether to estimate neighboring district ART attendance}
+
+\item{artattend_t2}{logical; whether to allow time-varying neighboring district ART attendance}
 
 \item{artattend_log_gamma_offset}{logit offset for neigboring district ART attendance}
 

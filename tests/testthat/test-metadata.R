@@ -99,8 +99,8 @@ test_that("metadata is well formed", {
   expect_true(all(meta$name %in%
                     c("HIV prevalence", "ART coverage", "Viral load suppression",
                       "Proportion recently infected", "PLHIV", "Population",
-                      "New infections", "HIV incidence", "ART number",
-                      "Receiving ART", "ANC HIV prevalence",
+                      "New infections", "HIV incidence", "ART number (residents)",
+                      "ART number (attending)", "ANC HIV prevalence",
                       "ANC prior ART coverage")))
   ## No NULLs, NAs or empty strings except for indicator_column and
   ## indicator_value columns
@@ -123,20 +123,32 @@ test_that("can get 5 year age groups", {
 })
 
 ## !!!! TODO: metadata.csv and the meta_indicator data.frame  should not
-##            exist separately. Long-term refactor to consolidate.
+## exist separately. Long-term refactor to consolidate.
 test_that("metadata synced with meta_indicator", {
 
-  metadata <- naomi_read_csv(system_file("metadata", "metadata.csv"))
+  metadata <- get_metadata()
 
   check <- metadata %>%
     dplyr::filter(indicator_column == "indicator_id") %>%
     dplyr::distinct(name, indicator_value) %>%
     dplyr::mutate(indicator_value = as.integer(indicator_value)) %>%
     dplyr::full_join(
-             meta_indicator %>%
+             get_meta_indicator() %>%
              dplyr::select(indicator_id, indicator_label),
              by = c("indicator_value" = "indicator_id")
            )
 
-    expect_equal(tolower(check$name), tolower(check$indicator_label))
+  expect_equal(tolower(check$name), tolower(check$indicator_label))
+})
+
+test_that("metadata can be translated", {
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+
+  metadata <- get_metadata()
+  expect_equal(metadata[1, "name"], "Prévalence du VIH")
+
+  reset()
+  metadata <- get_metadata()
+  expect_equal(metadata[1, "name"], "HIV prevalence")
 })

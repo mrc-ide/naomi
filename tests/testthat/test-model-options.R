@@ -93,7 +93,7 @@ test_that("error message translation", {
   options$include_art_t2 <- "false"
 
   err_en <- "ART attendance model can only be estimated if ART programme data are used."
-  err_fr <- "Le modèle de participation aux TAR ne peut être estimé si les données du programme de TAR sont utilisées"
+  err_fr <- "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées."
 
   expect_error(validate_model_options(a_hintr_data, options),
                err_en)
@@ -104,4 +104,65 @@ test_that("error message translation", {
   reset()
   expect_error(validate_model_options(a_hintr_data, options),
                err_en)
+})
+
+test_that("check for required model options", {
+  options <- list(
+    area_scope = "MWI",
+    area_level = "4"
+  )
+  expect_error(validate_model_options(a_hintr_data, options),
+               "Required model options not supplied: calendar_quarter_t1, calendar_quarter_t2, calendar_quarter_t3, survey_prevalence")
+})
+
+test_that("model options template can be translated", {
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+
+  options <- get_model_options_template(TRUE, TRUE)
+  expect_true(any(grepl("Généralités", options$general)))
+  expect_false(any(grepl("General", options$general)))
+  expect_true(any(grepl("Sélectionnez les options générales du modèle :", options$general)))
+  expect_false(any(grepl("Select general model options:", options$general)))
+
+  reset()
+  options <- get_model_options_template(TRUE, TRUE)
+  expect_false(any(grepl("Généralités", options$general)))
+  expect_true(any(grepl("General", options$general)))
+  expect_false(any(grepl("Sélectionnez les options générales du modèle :", options$general)))
+  expect_true(any(grepl("Select general model options:", options$general)))
+})
+
+test_that("artattend_t2 option produces model frames", {
+
+  options_TRUE <- a_hintr_options
+  options_TRUE$artattend_t2 <- "true"
+  data_TRUE <- naomi_prepare_data(a_hintr_data, options_TRUE)
+  inputs_TRUE <- prepare_tmb_inputs(data_TRUE)
+
+  options_NULL <- a_hintr_options
+  options_NULL$artattend_t2 <- NULL
+  data_NULL <- naomi_prepare_data(a_hintr_data, options_NULL)
+  inputs_NULL <- prepare_tmb_inputs(data_NULL)
+
+  options_FALSE <- a_hintr_options
+  options_FALSE$artattend_t2 <- "false"
+  data_FALSE <- naomi_prepare_data(a_hintr_data, options_FALSE)
+  inputs_FALSE <- prepare_tmb_inputs(data_FALSE)
+
+  n_attend_nb <- nrow(data_TRUE$mf_artattend)
+  n_areas <- nrow(data_TRUE$mf_areas)
+
+  expect_equal(ncol(inputs_TRUE$data$Xgamma_t2), n_areas)
+  expect_equal(nrow(inputs_TRUE$data$Xgamma_t2), n_attend_nb)
+  expect_equal(inputs_TRUE$par_init$log_or_gamma_t1t2, numeric(n_areas))
+
+  expect_equal(ncol(inputs_FALSE$data$Xgamma_t2), 0)
+  expect_equal(nrow(inputs_FALSE$data$Xgamma_t2), n_attend_nb)
+  expect_equal(inputs_FALSE$par_init$log_or_gamma_t1t2, numeric(0))
+
+  expect_equal(ncol(inputs_NULL$data$Xgamma_t2), 0)
+  expect_equal(nrow(inputs_NULL$data$Xgamma_t2), n_attend_nb)
+  expect_equal(inputs_NULL$par_init$log_or_gamma_t1t2, numeric(0))
+
 })

@@ -3,7 +3,7 @@ context("test-model-fit")
 test_that("setting rng_seed returns same outputs", {
 
   a_fit_sample2 <- sample_tmb(a_fit, nsample = 30, rng_seed = 28)
-  a_output2 <- output_package(a_fit_sample2, a_naomi_mf, a_area_merged)
+  a_output2 <- output_package(a_fit_sample2, a_naomi_mf)
 
   expect_equal(a_fit_sample$sample, a_fit_sample2$sample)
   expect_equal(a_output$indicators$mean, a_output2$indicators$mean)
@@ -84,4 +84,139 @@ test_that("model fit with no ART data at T2", {
 
     expect_true(!"beta_alpha_t2" %in% names(fit$par.full))
     expect_true(!"u_alpha_xt" %in% names(fit$par.full))
+})
+
+test_that("extract_indicators returns expected names and types", {
+
+  ind_colnames <- c("area_id", "sex", "age_group", "calendar_quarter", "indicator", 
+                    "mean", "se", "median", "mode", "lower", "upper")
+  
+  ind1 <- extract_indicators(a_fit, a_naomi_mf)
+  expect_setequal(names(ind1), ind_colnames)
+  expect_true(!any(is.na(ind1$mode)))
+  expect_true(all(is.na(ind1[c("mean", "se", "median", "lower", "upper")])))
+  expect_true(all(vapply(ind1[c("mean", "se", "median", "mode", "lower", "upper")],
+                         typeof, character(1)) == "double"))
+
+  ind_sample <- extract_indicators(a_fit_sample, a_naomi_mf)
+  expect_setequal(names(ind_sample), ind_colnames)
+  expect_true(!any(is.na(ind_sample)))
+  expect_true(all(vapply(ind_sample[c("mean", "se", "median", "mode", "lower", "upper")],
+                         typeof, character(1)) == "double"))
+
+})
+
+
+test_that("add_stats returns expected names and types", {
+
+  prefix_colnames <- c("id", "x_mode", "x_mean", "x_se",
+                       "x_median", "x_lower", "x_upper")
+
+  m <- 1:3 / 10
+  s <- matrix(1:12 / 10, length(m))
+  
+  ## sample = NULL
+  v1 <- add_stats(data.frame(id = 1:3), m, prefix = "x_")
+  expect_setequal(names(v1), prefix_colnames)
+  expect_true(all(vapply(v1[prefix_colnames[-1]], typeof, character(1)) == "double"))
+  expect_true(!any(is.na(v1$mode)))
+  expect_true(all(is.na(v1[c("x_mean", "x_se", "x_median", "x_lower", "x_upper")])))
+              
+  ## with sample
+  v2 <- add_stats(data.frame(id = 1:3), m, s, prefix = "x_")
+  expect_setequal(names(v2), prefix_colnames)
+  expect_true(all(vapply(v2[prefix_colnames[-1]], typeof, character(1)) == "double"))
+  expect_true(!any(is.na(v2)))
+
+})
+  
+test_that("output_package() works with mode, sample, or both", {
+
+  output_mode <- output_package(a_fit, a_naomi_mf)
+
+  fit_sample_only <- a_fit_sample
+  fit_sample_only$mode <- NULL
+  output_sample <- output_package(fit_sample_only, a_naomi_mf)
+
+  expect_true(all(!is.na(a_output$indicators[c("mean", "se", "median", "mode", "lower", "upper")])))
+  
+  expect_true(all(is.na(output_mode$indicators[c("mean", "se", "median", "lower", "upper")])))
+  expect_equal(output_mode$indicators$mode, a_output$indicators$mode)
+
+  expect_true(all(is.na(output_mode$mode)))
+  expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
+               a_output$indicators[c("mean", "se", "median", "lower", "upper")])
+})
+
+
+test_that("tmbstan fit returns results", {
+
+  testthat::skip_on_covr()
+
+  CHAINS <- 2
+  ITER <- 30
+
+  ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
+  ## we are fitting with far too few iterations.
+  stanfit1 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
+  )
+  stanfit1 <- sample_tmbstan(stanfit1)
+  out1 <- output_package(stanfit1, a_naomi_data)
+  
+  stanfit2 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28)
+  )
+  stanfit2 <- sample_tmbstan(stanfit2)
+  out2 <- output_package(stanfit2, a_naomi_data)
+
+  stanfit3 <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 29)
+  )
+  stanfit3 <- sample_tmbstan(stanfit3)
+  out3 <- output_package(stanfit3, a_naomi_data)
+
+  expect_equal(ncol(stanfit1$sample$plhiv_t1), CHAINS * ITER / 2)
+  expect_true(all(is.na(out1$indicators$mode)))
+  expect_true(all(!is.na(out1$indicators[c("mean", "median", "se", "lower", "upper")])))
+  expect_equal(out1$indicators, out2$indicators)
+  expect_true(!all(out1$indicators$mean == out3$indicators$mean))
+  
+})
+
+test_that("tmbstan with laplace returns results", {
+
+  testthat::skip_on_covr()
+  
+  CHAINS <- 2
+  ITER <- 4
+  
+  ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
+  ## we are fitting with far too few iterations.
+  stanfit_laplace <- suppressWarnings(
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28, laplace = TRUE)
+  )
+  stanfit_laplace <- sample_tmbstan(stanfit_laplace)
+  out_laplace <- output_package(stanfit_laplace, a_naomi_data)
+  
+  expect_equal(ncol(stanfit_laplace$sample$plhiv_t1), CHAINS * ITER / 2)
+  expect_true(all(is.na(out_laplace$indicators$mode)))
+  expect_true(all(!is.na(out_laplace$indicators[c("mean", "median", "se", "lower", "upper")])))
+})
+
+test_that("INLA fit returns results", {
+
+  inla_input <- prepare_inla_inputs(a_naomi_data)
+  inla_fit <- fit_inla(inla_input, integration_strategy = "eb")
+  inla_smp1 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
+  inla_smp2 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)
+  inla_smp3 <- sample_inla(inla_fit, nsample = 20, rng_seed = 29)
+
+  out1 <- output_package(inla_smp1, a_naomi_data)
+  out2 <- output_package(inla_smp2, a_naomi_data)
+  out3 <- output_package(inla_smp3, a_naomi_data)
+
+  expect_equal(out1$indicators, out2$indicators)
+  expect_true(!all(out1$indicators$mean == out3$indicators$mean, na.rm = TRUE))
+
 })

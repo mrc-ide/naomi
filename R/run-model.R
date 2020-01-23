@@ -26,6 +26,7 @@
 #' * area_level
 #' * calendar_quarter_t1
 #' * calendar_quarter_t2
+#' * calendar_quarter_t3
 #' * survey_prevalence
 #' * survey_art_coverage
 #' * survey_recently_infected
@@ -46,50 +47,127 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   INLA:::inla.dynload.workaround()
   progress <- new_progress()
 
-  progress$start("Validating inputs and options")
+  progress$start("validate_options")
   progress$print()
-  if (!is.null(data$art_number)) {
-    art_number <- readr::read_csv(data$art_number)
-  } else {
-    art_number <- NULL
-  }
-  if (!is.null(data$anc_testing)) {
-    anc_testing <- readr::read_csv(data$anc_testing)
-  } else {
-    anc_testing <- NULL
-  }
-  if (is.null(options$artattend)) {
-    options$artattend <- FALSE
-  }
-  if (is.null(options$artattend_log_gamma_offset)) {
-    options$artattend_log_gamma_offset <- -4
-  }
-
-  validate_model_options(data, options)
-  progress$complete("Validating inputs and options")
-
-  progress$start("Preparing input data")
-  progress$print()
-  area_merged <- sf::read_sf(data$shape)
-  population <- readr::read_csv(data$population)
-  survey <- readr::read_csv(data$survey)
-  spec <- extract_pjnz_naomi(data$pjnz)
-
-  ## Get from the options
-  scope <- options$area_scope
-  level <- as.integer(options$area_level)
-  calendar_quarter_t1 <- options$calendar_quarter_t1
-  calendar_quarter_t2 <- options$calendar_quarter_t2
-  prev_survey_ids  <- options$survey_prevalence
-  recent_survey_ids <- options$survey_recently_infected
-  artcov_survey_ids <- options$survey_art_coverage
 
   if(is.null(options$permissive))
     permissive <- FALSE
   else
     permissive <- as.logical(options$permissive)
 
+  validate_model_options(data, options)
+  progress$complete("validate_options")
 
+  progress$start("prepare_inputs")
+
+  progress$print()
+
+  naomi_data <- naomi_prepare_data(data, options)
+
+  tmb_inputs <- prepare_tmb_inputs(naomi_data)
+
+  progress$complete("prepare_inputs")
+  progress$start("fit_model")
+  progress$print()
+
+  fit <- fit_tmb(tmb_inputs,
+                 outer_verbose = ifelse(is.null(options$outer_verbose), FALSE, options$outer_verbose),
+                 inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose),
+                 max_iter = ifelse(is.null(options$max_iterations), 250, options$max_iterations))
+
+  if(fit$convergence != 0 && !permissive)
+    stop(paste("convergence error:", fit$message))
+
+  progress$complete("fit_model")
+  progress$start("uncertainty")
+  progress$print()
+  fit <- sample_tmb(fit,
+                    nsample = options$no_of_samples,
+                    rng_seed = options$rng_seed)
+
+  progress$complete("uncertainty")
+  progress$start("prepare_outputs")
+  progress$print()
+
+  ## TODO: Include input data in output package based on model options
+  ## input download_input
+  outputs <- output_package(fit, naomi_data)
+
+  outputs <- calibrate_outputs(outputs, naomi_data,
+                               options$spectrum_plhiv_calibration_level,
+                               options$spectrum_plhiv_calibration_strat,
+                               options$spectrum_artnum_calibration_level,
+                               options$spectrum_artnum_calibration_strat)
+
+  outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
+
+  attr(outputs, "info") <- naomi_info(data, options)
+
+
+
+  indicators <- add_output_labels(outputs)
+  saveRDS(indicators, file = output_path)
+  save_result_summary(summary_path, outputs)
+  save_output_spectrum(spectrum_path, outputs)
+
+  progress$complete("prepare_outputs")
+  progress$print()
+  list(output_path = output_path,
+       spectrum_path = spectrum_path,
+       summary_path = summary_path)
+}
+
+naomi_prepare_data <- function(data, options) {
+
+  area_merged <- read_area_merged(data$shape)
+  population <- read_population(data$population)
+  survey <- read_survey_indicators(data$survey)
+
+  spec <- extract_pjnz_naomi(data$pjnz)
+
+  if (!is.null(data$art_number)) {
+    art_number <- read_art_number(data$art_number)
+  } else {
+    art_number <- NULL
+  }
+  if (!is.null(data$anc_testing)) {
+    anc_testing <- read_anc_testing(data$anc_testing)
+  } else {
+    anc_testing <- NULL
+  }
+
+  if (is.null(options$artattend)) {
+    options$artattend <- FALSE
+  }
+  if (is.null(options$artattend_t2)) {
+    options$artattend_t2 <- FALSE
+  }
+  if (is.null(options$artattend_log_gamma_offset)) {
+    options$artattend_log_gamma_offset <- -4
+  }
+
+  if(is.null(options$deff_prev))
+    options$deff_prev <- 1.0
+
+  if(is.null(options$deff_artcov))
+    options$deff_artcov <- 1.0
+
+  if(is.null(options$deff_recent))
+    options$deff_recent <- 1.0
+
+  if(is.null(options$deff_vls))
+    options$deff_vls <- 1.0
+
+
+  ## Get from the options
+  scope <- options$area_scope
+  level <- as.integer(options$area_level)
+  calendar_quarter_t1 <- options$calendar_quarter_t1
+  calendar_quarter_t2 <- options$calendar_quarter_t2
+  calendar_quarter_t3 <- options$calendar_quarter_t3
+  prev_survey_ids  <- options$survey_prevalence
+  recent_survey_ids <- options$survey_recently_infected
+  artcov_survey_ids <- options$survey_art_coverage
 
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
@@ -106,10 +184,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   else
     artnum_calendar_quarter2 <- NULL
 
-  anc_prevalence_year1 <- options$anc_prevalence_year1
-  anc_prevalence_year2 <- options$anc_prevalence_year2
-  anc_art_coverage_year1 <- options$anc_art_coverage_year1
-  anc_art_coverage_year2 <- options$anc_art_coverage_year2
 
   naomi_mf <- naomi_model_frame(
     area_merged,
@@ -119,8 +193,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     level = level,
     calendar_quarter_t1,
     calendar_quarter_t2,
+    calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
+    artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
   )
 
@@ -134,57 +210,16 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                   vls_survey_ids,
                                   artnum_calendar_quarter1,
                                   artnum_calendar_quarter2,
-                                  anc_prevalence_year1,
-                                  anc_prevalence_year2,
-                                  anc_art_coverage_year1,
-                                  anc_art_coverage_year2)
+                                  options$anc_prevalence_year1,
+                                  options$anc_prevalence_year2,
+                                  options$anc_art_coverage_year1,
+                                  options$anc_art_coverage_year2,
+                                  deff_prev = options$deff_prev,
+                                  deff_artcov = options$deff_artcov,
+                                  deff_recent = options$deff_recent,
+                                  deff_vls = options$deff_vls)
 
-  tmb_inputs <- prepare_tmb_inputs(naomi_data)
-
-  progress$complete("Preparing input data")
-  progress$start("Fitting the model")
-  progress$print()
-
-  fit <- fit_tmb(tmb_inputs,
-                 outer_verbose = ifelse(is.null(options$outer_verbose), FALSE, options$outer_verbose),
-                 inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose),
-                 max_iter = ifelse(is.null(options$max_iterations), 250, options$max_iterations))
-
-  if(fit$convergence != 0 && !permissive)
-    stop(paste("convergence error:", fit$message))
-
-  progress$complete("Fitting the model")
-  progress$start("Generating uncertainty ranges")
-  progress$print()
-  fit <- sample_tmb(fit,
-                    nsample = options$no_of_samples,
-                    rng_seed = options$rng_seed)
-
-  progress$complete("Generating uncertainty ranges")
-  progress$start("Preparing outputs")
-  progress$print()
-
-  ## TODO: Include input data in output package based on model options
-  ## input download_input
-  outputs <- output_package(fit, naomi_mf, area_merged)
-
-  outputs <- calibrate_outputs(outputs, naomi_mf,
-                               options$spectrum_plhiv_calibration_level,
-                               options$spectrum_plhiv_calibration_strat,
-                               options$spectrum_artnum_calibration_level,
-                               options$spectrum_artnum_calibration_strat)
-  attr(outputs, "info") <- naomi_info(data, options)
-
-  indicators <- add_output_labels(outputs)
-  saveRDS(indicators, file = output_path)
-  save_result_summary(summary_path, outputs)
-  save_output_spectrum(spectrum_path, outputs)
-
-  progress$complete("Preparing outputs")
-  progress$print()
-  list(output_path = output_path,
-       spectrum_path = spectrum_path,
-       summary_path = summary_path)
+  return(naomi_data)
 }
 
 new_progress <- function() {
@@ -196,49 +231,43 @@ Progress <- R6::R6Class("Progress", list(
   initialize = function() {
     self$progress <-
       list(
-        list(
+        validate_options = list(
           started = FALSE,
           complete = FALSE,
-          name = "Validating inputs and options"
+          name = t_("PROGRESS_VALIDATE_OPTIONS")
         ),
-        list(
+        prepare_inputs = list(
           started = FALSE,
           complete = FALSE,
-          name = "Preparing input data"
+          name = t_("PROGRESS_PREPARE_INPUTS")
         ),
-        list(
+        fit_model = list(
           started = FALSE,
           complete = FALSE,
-          name = "Fitting the model"
+          name = t_("PROGRESS_FIT_MODEL")
         ),
-        list(
+        uncertainty = list(
           started = FALSE,
           complete = FALSE,
-          name = "Generating uncertainty ranges"
+          name = t_("PROGRESS_UNCERTAINTY")
         ),
-        list(
+        prepare_outputs = list(
           started = FALSE,
           complete = FALSE,
-          name = "Preparing outputs"
+          name = t_("PROGRESS_PREPARE_OUTPUTS")
         )
       )
   },
-  start = function(message) {
-    index <- self$find_step(message)
-    self$progress[[index]]$started <- TRUE
+  start = function(step_name) {
+    self$step_exists(step_name)
+    self$progress[[step_name]]$started <- TRUE
   },
-  complete = function(message) {
-    index <- self$find_step(message)
-    self$progress[[index]]$complete <- TRUE
+  complete = function(step_name) {
+    self$step_exists(step_name)
+    self$progress[[step_name]]$complete <- TRUE
   },
-  find_step = function(message) {
-    steps <- vapply(self$progress, function(step) {
-      step$name == message
-    }, logical(1))
-    if (sum(steps) != 1) {
-      stop(sprintf("Found %s steps matching message %s.", sum(steps), message))
-    }
-    step <- which(steps)
+  step_exists = function(step_name) {
+    self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
   },
   print = function() {
     signalCondition(structure(list(message = self$progress),

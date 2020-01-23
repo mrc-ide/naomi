@@ -2,8 +2,21 @@ naomi_write_csv <- function(...) {
   write.csv(..., row.names = FALSE, na = "")
 }
 
-naomi_read_csv <- function(...) {
-  read.csv(..., stringsAsFactors = FALSE)
+naomi_read_csv <- function(file, ...) {
+  csv_reader(file, FALSE)(file, ..., stringsAsFactors = FALSE)
+}
+
+readr_read_csv <- function(file, ..., col_types = readr::cols()) {
+  csv_reader(file, TRUE)(file, ..., col_types = col_types)
+}
+
+csv_reader <- function(file, readr = FALSE) {
+  header <- readLines(file, 1)
+  if (!grepl(",", header) && grepl(";", header)) {
+    if (readr) readr::read_csv2 else utils::read.csv2
+  } else {
+    if (readr) readr::read_csv else utils::read.csv
+  }
 }
 
 system_file <- function(...) {
@@ -15,4 +28,16 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
   on.exit(unlink(tmp))
   write.csv(x, tmp, ..., row.names = row.names)
   paste0(readLines(tmp), collapse = "\n")
+}
+
+suppress_one_warning <- function(expr, regexp) {
+  withCallingHandlers(expr,
+    warning = function(w) {
+        if(grepl(regexp, w$message))
+          invokeRestart("muffleWarning")
+    })
+}
+
+`%||%` <- function(a, b) {
+  if (is.null(a)) b else a
 }

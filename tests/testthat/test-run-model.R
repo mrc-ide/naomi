@@ -20,7 +20,7 @@ test_that("model can be run", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 30624 + 40)
+  expect_true(nrow(output) == 16368 * 3 + 2*2*10)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -28,8 +28,8 @@ test_that("model can be run", {
   info_names <- paste0("info/", names(info))
   expect_setequal(
     file_list$Name,
-    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -41,8 +41,8 @@ test_that("model can be run", {
   file_list <- unzip(model_run$summary_path, list = TRUE)
   expect_setequal(
     file_list$Name,
-    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -72,6 +72,7 @@ test_that("model can be run without programme data", {
     area_level = "4",
     calendar_quarter_t1 = "CY2016Q1",
     calendar_quarter_t2 = "CY2018Q3",
+    calendar_quarter_t3 = "CY2019Q2",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
@@ -101,7 +102,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_id", "quarter_label",
                  "indicator", "indicator_id", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 30624 + 2*2*10)
+  expect_true(nrow(output) == 16368 * 3 + 2*2*10)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -110,8 +111,8 @@ test_that("model can be run without programme data", {
   info_names <- paste0("info/", names(info))
   expect_setequal(
     file_list$Name,
-    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -122,8 +123,8 @@ test_that("model can be run without programme data", {
   file_list <- unzip(model_run$summary_path, list = TRUE)
   expect_setequal(
     file_list$Name,
-    c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-      "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -302,3 +303,11 @@ test_that("naomi_info_input(data) handles NULL string", {
   expect_equal(nrow(naomi_info_input(data)), 3)
 })
 
+test_that("invalid time sequencing returns an error", {
+
+  options <- a_hintr_options
+  options$calendar_quarter_t2 <- a_hintr_options$calendar_quarter_t1
+  expect_error(hintr_run_model(a_hintr_data, options),
+               "Estimates quarter \\(time 2\\) must be after survey quarter \\(time 1\\)")
+
+})

@@ -1,40 +1,40 @@
 {
-	"label": "ART",
-	"description": "Select whether to include ART data or not in model run",
+	"label": "t_(OPTIONS_ART_LABEL)",
+	"description": "t_(OPTIONS_ART_DESCRIPTION)",
 	"controlGroups": [
 		{
-			"label": "Include ART data",
+			"label": "t_(OPTIONS_ART_INCLUDE_ART_LABEL)",
 			"controls": [
 				{
 					"name": "include_art_t1",
-					"label": "Time 1",
+					"label": "t_(OPTIONS_T1_LABEL)",
 					"type": "select",
-					"helpText": "Select whether to include ART data or not in model run",
+					"helpText": "t_(OPTIONS_T1_HELP)",
 					"options": [
 						{
 							"id": "true",
-							"label": "Yes"
+							"label": "t_(OPTIONS_YES_LABEL)"
 						},
 						{
 							"id": "false",
-							"label": "No"
+							"label": "t_(OPTIONS_NO_LABEL)"
 						}
 					],
 					"required": true
 				},
 				{
 					"name": "include_art_t2",
-					"label": "Time 2",
+					"label": "t_(OPTIONS_T2_LABEL)",
 					"type": "select",
-					"helpText": "Select whether to include ART data or not in model run",
+					"helpText": "t_(OPTIONS_T2_HELP)",
 					"options": [
 						{
 							"id": "true",
-							"label": "Yes"
+							"label": "t_(OPTIONS_YES_LABEL)"
 						},
 						{
 							"id": "false",
-							"label": "No"
+							"label": "t_(OPTIONS_NO_LABEL)"
 						}
 					],
 					"required": true
@@ -42,7 +42,7 @@
 			]
 		},
 		{
-			"label": "Estimate neighbouring district ART attendance",
+			"label": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_LABEL)",
 			"controls": [
 				{
 					"name": "artattend",
@@ -51,15 +51,15 @@
 					"options": [
 						{
 							"id": "false",
-							"label": "No"
+							"label": "t_(OPTIONS_NO_LABEL)"
 						},
 						{
 							"id": "true",
-							"label": "Yes"
+							"label": "t_(OPTIONS_YES_LABEL)"
 						}
 					],
 					"value": "false",
-					"helpText": "Model proportion of ART residents who seek treatment in neighboring districts."
+					"helpText": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_HELP)"
 				}
 			]
 		}

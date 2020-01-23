@@ -1,3 +1,102 @@
+# noami 0.0.59
+
+* Accept semicolon delimited files
+
+# noami 0.0.58
+
+* Small fix to tests: model options.
+
+# naomi 0.0.57
+
+Formatting updates requested for Data Pack 2019:
+
+* Change age_group_label for ages <1 and 1-4 to <01 and 01-04.
+* Change dataelement UIDs for TX_CURR_SUBNAT and PLHIV.
+
+# naomi 0.0.56
+
+* Replace `survey_year` with `survey_mid_calendar_quarter` in the survey indicators dataset.
+* Add column `restype` for urban/rural to survey indicators datasets and option to stratify survey indicators calculation by urban/rural.
+
+# naomi 0.0.55
+
+* Option for time-varying ART attendance odds ratio. The option `artattend_t2` can be set to TRUE if there is evidence that patterns of cross-district ART attendance changed for the period before the survey and the inter-survey period.
+
+# naomi 0.0.54
+
+* Add output stratification for age groups <1, 1-4.  This is simply disaggregated based on proportions from Spectrum with now uncertainty.
+* Add function `export_datapack()` to export an output package to datapack CSV format.
+
+# naomi 0.0.53
+
+* Do not calculate reported output aggregations during model fitting. This should modestly reduce model objective function computation time.
+* Output projection to a third calendar quarter. Projection outputs are computed after objective function calcuation. Predicted ANC attendance at time 3 is not computed.
+
+# naomi 0.0.52
+
+* Automatically remove rows with all NA values in `read_*()` functions.
+* Remove extraneous argument area_merged from output.
+
+# naomi 0.0.51
+
+* Add optional approximate design effect to scale effective sample size for survey prevalence, art coverage, and proportion recent observations.
+
+# naomi 0.0.50
+
+* Add spatial interaction to ART coverage model for <15 / 15+ to allow different paediatric vs. adult ART coverage and different change in paediatric coverage. This reduces paediatric ART data distorting adult model results.
+* ART number dataset accepts either year or calendar_quarter column.
+* Linearly interpolate number on ART for model fitting. If desired quarter is before earliest data, the earliest ART number may be carried backward by up to four quarters. Number on ART are never carried forwards.
+
+# naomi 0.0.49
+
+* Properly age new infections between time 1 and time 2 based on ageing and incidecne trend from Spectrum.
+* Add new paediatric HIV infections betwen time 1 and time 2 proportional to HIV survivors by age and prevalence among women age 15-49 in Spectrum.
+
+# naomi 0.0.48
+
+* Add default values for area level and calendar quarter to generate estiamtes for
+
+# naomi 0.0.47
+
+* Add read_***() functions with col_type parsers.
+
+# naomi 0.0.46
+
+* Add TMB-Stan model fitting, with and without Laplace approximation.
+* Add INLA model fitting. 
+
+This is for development and comparison purposes, not for production use.
+
+# naomi 0.0.45
+
+* Remove age_group_id, indicator_id, and quarter_id from model frames; use human readable age_group, indicator, and calendar_quarter everywhere.
+* Output number of ART attendees between every district pair. Currently output at 
+  estimation level only.
+* spread_areas() allows an sf object as argument and returns boundaries for wide 
+  format areas if provided.
+* No sex differences in prevalence, ART coverage, or incidence for age below 15 years.
+* Cap Spectrum ART coverage between 0.001 and 0.999 to avoid logit transformation NaN errors.
+
+# naomi 0.0.44
+
+* Change ART indicator labels to "ART Number (residents)" and "ART Number (attending)".
+
+# naomi 0.0.43
+
+* Check that esimates quarter (time 2) is greater than survey quarter (time 1).
+
+# naomi 0.0.42
+
+* Add more translations
+
+# naomi 0.0.41
+
+* Separate PLHIV projection and incidence calculation.
+
+# naomi 0.0.40
+
+* Cap ART coverage by age/sex from Spectrum between 0.1% and 99.9% to avoid logit difference evaluating to +/-Inf.
+
 # naomi 0.0.39
 
 * Set Mozambique colour scales

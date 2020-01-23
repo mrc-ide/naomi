@@ -47,6 +47,7 @@ The \code{options} argument must be a list specifying minimally:
 \item area_level
 \item calendar_quarter_t1
 \item calendar_quarter_t2
+\item calendar_quarter_t3
 \item survey_prevalence
 \item survey_art_coverage
 \item survey_recently_infected

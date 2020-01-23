@@ -173,7 +173,7 @@ fit <- fit_tmb(tmb_inputs)
 #' Calculate model outputs. We can calculate outputs based on posterior mode
 #' estimates before running `report_tmb()` to calculate posterior intervals.
 
-outputs <- output_package(fit, naomi_mf, area_merged)
+outputs <- output_package(fit, naomi_mf)
 
 #' The output package consists of a data frame of indicators and metadata
 #' defining the labels for each indicator.
@@ -208,7 +208,7 @@ system.time(fit <- sample_tmb(fit))
 #' Regenerate outputs with uncertainty ranges.
 
 ##+ make_output_package, cache = TRUE
-system.time(outputs <- output_package(fit, naomi_mf, area_merged))
+system.time(outputs <- output_package(fit, naomi_mf))
 
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",

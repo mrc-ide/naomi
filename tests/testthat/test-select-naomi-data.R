@@ -2,7 +2,7 @@ context("test-select-naomi-data")
 
 test_that("select ANC programme data returns expected rows", {
 
-  anc_testing <- readr::read_csv(a_hintr_data$anc_testing)
+  anc_testing <- read_anc_testing(a_hintr_data$anc_testing)
 
   expect_equal(nrow(anc_testing_prev_mf(2017, anc_testing, a_naomi_mf)),
                     nrow(a_naomi_mf$mf_areas))
