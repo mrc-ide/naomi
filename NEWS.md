@@ -1,3 +1,7 @@
+# noami 0.0.59
+
+* Accept semicolon delimited files
+
 # noami 0.0.58
 
 * Small fix to tests: model options.
