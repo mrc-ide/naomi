@@ -166,3 +166,32 @@ test_that("artattend_t2 option produces model frames", {
   expect_equal(inputs_NULL$par_init$log_or_gamma_t1t2, numeric(0))
 
 })
+
+test_that("validation check for spectrum region code returns error", {
+
+  expect_true(validate_model_options(a_hintr_data, a_hintr_options))
+
+  areas_na_spectrum_region_code <- read_area_merged(a_hintr_data$shape)
+  areas_na_spectrum_region_code$spectrum_region_code <- NA_integer_
+  tmp_areas_na_spectrum_region_code <- tempfile(fileext = ".geojson")
+  sf::write_sf(areas_na_spectrum_region_code, tmp_areas_na_spectrum_region_code)
+
+  data_na_spectrum_region_code <- a_hintr_data
+  data_na_spectrum_region_code$shape <- tmp_areas_na_spectrum_region_code
+
+  expect_error(validate_model_options(data_na_spectrum_region_code, a_hintr_options),
+               "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level.")
+
+  areas_bad_spectrum_region_code <- read_area_merged(a_hintr_data$shape)
+  areas_bad_spectrum_region_code$spectrum_region_code[nrow(areas_bad_spectrum_region_code)] <- 1L
+  tmp_areas_bad_spectrum_region_code <- tempfile(fileext = ".geojson")
+  sf::write_sf(areas_bad_spectrum_region_code, tmp_areas_bad_spectrum_region_code)
+
+  data_bad_spectrum_region_code <- a_hintr_data
+  data_bad_spectrum_region_code$shape <- tmp_areas_bad_spectrum_region_code
+
+  expect_error(validate_model_options(data_bad_spectrum_region_code, a_hintr_options),
+               "Some spectrum region code in your shape file are not in PJNZ extracts. Please update your shape file to include the correct codes")
+               
+})
+          
