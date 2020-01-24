@@ -1,3 +1,7 @@
+# naomi 0.0.62
+
+* Better error messages with pjnz/geojson mismatch
+
 # naomi 0.0.61
 
 * Add country-specific colour scales for WCA countries.

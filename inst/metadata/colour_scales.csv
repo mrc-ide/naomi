@@ -83,8 +83,8 @@ CIV,art_coverage,interpolateViridis,0,1,FALSE
 CIV,vls,interpolateWarm,0,1,FALSE
 CIV,recent,interpolatePlasma,0,0.6,TRUE
 CIV,art_number,interpolateViridis,0,10500,TRUE
-CIV,population,interpolateViridis,0,20000000,FALSE
-CIV,plhiv,interpolateMagma,0,1500000,TRUE
+CIV,population,interpolateViridis,0,3000000,FALSE
+CIV,plhiv,interpolateMagma,0,100000,TRUE
 CIV,incidence,interpolateMagma,0,0.0015,TRUE
 CIV,new_infections,interpolateMagma,0,6000,TRUE
 CIV,receiving_art,interpolateViridis,0,1,FALSE

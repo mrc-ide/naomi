@@ -110,6 +110,8 @@
     "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "Number of HIV positive ANC attendees (numerator) is greater than number of ANC attendees with an HIV status outcome (denominator).",
     "ART_COV_AND_VLS_SAME_SURVEY": "Do not use ART coverage and VLS data from the same survey: {{survey_ids}}",
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "Do not use ART coverage and VLS data from the same surveys: {{survey_ids}}",
+    "PJNZ_SHAPE_CODE_MISMATCH": "Some spectrum region code in your shape file are not in PJNZ extracts. Please update your shape file to include the correct codes",
     "SCOPE_AREAS_MISSING_HIERARCHY": "Scope area {{missing_areas}} not found in hierarchy.",
-    "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Scope areas {{missing_areas}} not found in hierarchy."
+    "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Scope areas {{missing_areas}} not found in hierarchy.",
+    "SHAPE_SPECTRUM_REGION_ALL_NA": "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level."
 }
