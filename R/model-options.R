@@ -122,6 +122,17 @@ validate_model_options <- function(data, options) {
     }
   }
 
+  #' ## !! TODO: naomi::extract_pjnz_naomi() should be replaced with function that only extracts regions code
+  spec <- naomi::extract_pjnz_naomi(data$pjnz)
+
+  missing_spectrum_regions <-
+    all(is.na(area_merged$spectrum_region_code) ||
+        area_merged$spectrum_region_code %in% spec$spectrum_region_code)
+  #' ## !! TODO: return names and codes of missing regions
+  if (missing_spectrum_regions) {
+    stop(t_("PJNZ_SHAPE_CODE_MISMATCH"))
+  }
+
   TRUE
 }
 

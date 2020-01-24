@@ -110,6 +110,7 @@
     "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "Le nombre de participants des cliniques prénatales séropositives (numérateur) est plus grand que le nombre de participants des cliniques prénatales avec un résultat du statut VIH (dénominateur).",
     "ART_COV_AND_VLS_SAME_SURVEY": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de la même enquête: {{survey_ids}}",
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de les même enquêtes: {{survey_ids}}",
+    "PJNZ_SHAPE_CODE_MISMATCH": "Il y a des codes de Spectrum dans votre fichier de formes qui n'existent pas dans votre fichier PJNZ. Veuillez mettre à jour votre fichier de formes pour inclure les bons codes.",
     "SCOPE_AREAS_MISSING_HIERARCHY": "Périmètre de zone {{missing_areas}} introuvable dans la hiérarchie.",
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvables dans la hiérarchie."
 }
