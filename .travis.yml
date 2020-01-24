@@ -18,5 +18,6 @@ r_github_packages:
   - mrc-ide/eppasm
   - mrc-ide/specio
   - reside-ic/traduire
-after_success:
-  - Rscript -e 'covr::codecov()'
+# Disabled for now as timing out on travis
+# after_success:
+#   - Rscript -e 'covr::codecov()'
