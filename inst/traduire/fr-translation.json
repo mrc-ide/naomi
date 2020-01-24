@@ -112,5 +112,6 @@
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "N'utilisez pas la couverture ART et les données VLS (Suppression de la charge virale) de les même enquêtes: {{survey_ids}}",
     "PJNZ_SHAPE_CODE_MISMATCH": "Il y a des codes de Spectrum dans votre fichier de formes qui n'existent pas dans votre fichier PJNZ. Veuillez mettre à jour votre fichier de formes pour inclure les bons codes.",
     "SCOPE_AREAS_MISSING_HIERARCHY": "Périmètre de zone {{missing_areas}} introuvable dans la hiérarchie.",
-    "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvables dans la hiérarchie."
+    "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvables dans la hiérarchie.",
+    "SHAPE_SPECTRUM_REGION_ALL_NA": "Le colonne avec le code de région Spectrum est manquant dans votre fichier de formes. Veuillez mettre à jour votre fichier de formes avec le code de région Spectrum pour le niveau d'estimation."
 }
