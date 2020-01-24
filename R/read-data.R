@@ -138,7 +138,7 @@ read_anc_testing <- function(file) {
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
                        age_group = readr::col_character(),
-                       year = readr::col_integer(),
+                       year = readr::col_double(),
                        anc_clients = readr::col_double(),
                        ancrt_known_pos = readr::col_double(),
                        ancrt_already_art = readr::col_double(),
@@ -148,6 +148,8 @@ read_anc_testing <- function(file) {
   
   val <- readr_read_csv(file, col_types = col_spec)
   readr::stop_for_problems(val)
+  stopifnot(val$year %% 1 == 0)
+  val$year <- as.integer(val$year)
 
   val <- drop_na_rows(val)
 
