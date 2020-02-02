@@ -207,7 +207,6 @@ Type objective_function<Type>::operator() ()
   Type sigma_rho_xa(exp(log_sigma_rho_xa));
   val -= dnorm(sigma_rho_xa, Type(0.0), Type(0.5), true) + log_sigma_rho_xa;
 
-
   // latent effects
 
   PARAMETER_VECTOR(us_rho_x);
@@ -234,7 +233,10 @@ Type objective_function<Type>::operator() ()
     val += AR1(phi_rho_as)(u_rho_as);
 
   PARAMETER_VECTOR(u_rho_xa);
-  val -= sum(dnorm(u_rho_xa, 0.0, 1.0, true));
+  if (u_rho_xa.size() > 0) {
+    val -= Type(-0.5) * (u_rho_xa * (Q_x * u_rho_xa)).sum();
+    val -= dnorm(sum(u_rho_xa), Type(0.0), Type(0.001) * u_rho_xa.size(), true); // soft sum-to-zero constraint
+  }
 
 
   // * ART coverage model *
