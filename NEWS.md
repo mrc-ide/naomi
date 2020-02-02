@@ -1,3 +1,7 @@
+# naomi 0.0.63
+
+* Area random effect for prevalence below age 15 interaction. Implemented as option `rho_paed_x_term` specified by argument `naomi_model_frame(..., rho_paed_x_term = TRUE, ...)`. Defaualt value is `FALSE`.
+
 # naomi 0.0.62
 
 * Better error messages with pjnz/geojson mismatch

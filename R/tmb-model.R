@@ -85,6 +85,12 @@ prepare_tmb_inputs <- function(naomi_data) {
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
 
+  if (naomi_data$rho_paed_x_term) {
+    f_rho_xa <- ~0 + area_idf
+  } else {
+    f_rho_xa <- ~0
+  }
+
   ## If no t2 ART data, do not fit a change in ART coverage. Use logit difference
   ## in ART coverage from Spectrum.
   if(nrow(naomi_data$artnum_t2_dat) == 0) {
@@ -109,20 +115,18 @@ prepare_tmb_inputs <- function(naomi_data) {
   has_t1_paed_art <- any(artnum_t1_dat$age_group_end < 15)
   has_t2_paed_art <- any(artnum_t2_dat$age_group_end < 15)
 
-  if(has_t1_paed_art & has_t2_paed_art) {
-    f_alpha_t2 <- ~1 + age_below15
-    f_alpha_xat <- ~0 + area_idf
-  } else {
-    f_alpha_xat <- ~0
-  }
-
   if(has_t1_paed_art | has_t2_paed_art) {
     f_alpha_xa <- ~0 + area_idf
   } else {
     f_alpha_xa <- ~0
   }
-    
 
+  if(has_t1_paed_art & has_t2_paed_art) {
+    f_alpha_t2 <- ~1 + age_below15
+    f_alpha_xat <- ~0 + area_idf
+  } else {
+    f_alpha_xat <- ~0
+  }    
 
   ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
@@ -152,6 +156,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_xs = sparse_model_matrix(~0 + area_idf, df, "female_15plus", TRUE),
     Z_rho_a = sparse_model_matrix(f_rho_a, df),
     Z_rho_as = sparse_model_matrix(f_rho_a, df, "female_15plus", TRUE),
+    Z_rho_xa = sparse_model_matrix(f_rho_xa, df, "age_below15"),
     Z_alpha_a = sparse_model_matrix(f_alpha_a, df),
     Z_alpha_as = sparse_model_matrix(f_alpha_a, df, "female_15plus", TRUE),
     Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),
@@ -254,6 +259,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     ui_rho_xs = numeric(ncol(dtmb$Z_xs)),
     u_rho_a = numeric(ncol(dtmb$Z_rho_a)),
     u_rho_as = numeric(ncol(dtmb$Z_rho_as)),
+    u_rho_xa = numeric(ncol(dtmb$Z_rho_xa)),
     ui_anc_rho_x = numeric(ncol(dtmb$Z_x)),
     ui_anc_alpha_x = numeric(ncol(dtmb$Z_x)),
     ui_anc_rho_xt = numeric(ncol(dtmb$Z_x)),
@@ -280,6 +286,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_sigma_rho_x = 0,
     logit_phi_rho_xs = 0,
     log_sigma_rho_xs = 0,
+    log_sigma_rho_xa = log(0.5),
     ##
     logit_phi_alpha_a = 0,
     log_sigma_alpha_a = 0,
@@ -349,6 +356,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE) {
                                    "us_rho_x", "ui_rho_x",
                                    "us_rho_xs", "ui_rho_xs",
                                    "u_rho_a", "u_rho_as",
+                                   "u_rho_xa",
                                    ##
                                    "us_alpha_x", "ui_alpha_x",
                                    "us_alpha_xs", "ui_alpha_xs",
