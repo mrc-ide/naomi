@@ -60,6 +60,8 @@
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL": "Sex and 5-year age group",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL": "Adjust to Spectrum number on ART",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP": "Calibrate to Spectrum mean total on ART",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_LABEL": "Adjust to Spectrum number of new infections",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP": "Calibrate to Spectrum mean total new infections",
     "OPTIONS_OUTPUT_LABEL": "Output options",
     "OPTIONS_OUTPUT_DESCRIPTION": "Options for controlling downloaded model results",
     "OPTIONS_ADVANCED_LABEL": "Advanced",
