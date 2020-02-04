@@ -16,7 +16,11 @@ get_age_groups <- function() {
                     sub("-Inf", "+", .),
                   age_group_label = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
                     sub("-Inf", "+", .) %>%
-                    dplyr::recode("0+" = "all ages", "0-0" = "<01", "1-4" = "01-04"),
+                    dplyr::recode("0+" = "all ages",
+                                  "0-0" = "<01",
+                                  "1-4" = "01-04",
+                                  "0-4" = "00-04",
+                                  "5-9" = "05-09"),
                   age_group_sort_order = c(13:29, 1:12, 30, 31)) %>%
     dplyr::select(age_group_id,
                   age_group,
