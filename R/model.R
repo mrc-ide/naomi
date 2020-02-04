@@ -116,6 +116,7 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param artattend logical; whether to estimate neighboring district ART attendance
 #' @param artattend_t2 logical; whether to allow time-varying neighboring district ART attendance
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
+#' @param rho_paed_x_term logical; whether to include area 
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
@@ -150,6 +151,7 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
+                              rho_paed_x_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national") {
@@ -547,6 +549,7 @@ naomi_model_frame <- function(area_merged,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
+            rho_paed_x_term = rho_paed_x_term,
             A_out = outf$A,
             Lproj_hivpop = Lproj$Lproj_hivpop,
             Lproj_incid = Lproj$Lproj_incid,

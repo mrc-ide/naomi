@@ -194,7 +194,7 @@ test_that("tmbstan with laplace returns results", {
   ## suppressWarnings() because Stan will throw a bunch of convergence warnings as
   ## we are fitting with far too few iterations.
   stanfit_laplace <- suppressWarnings(
-    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 28, laplace = TRUE)
+    fit_tmbstan(a_tmb_inputs, chains = CHAINS, iterations = ITER, rng_seed = 29, laplace = TRUE)
   )
   stanfit_laplace <- sample_tmbstan(stanfit_laplace)
   out_laplace <- output_package(stanfit_laplace, a_naomi_data)

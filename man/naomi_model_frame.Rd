@@ -22,6 +22,7 @@ naomi_model_frame(
   artattend = TRUE,
   artattend_t2 = FALSE,
   artattend_log_gamma_offset = -4,
+  rho_paed_x_term = FALSE,
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
   spectrum_population_calibration = "national"
@@ -60,6 +61,8 @@ ids.}
 \item{artattend_t2}{logical; whether to allow time-varying neighboring district ART attendance}
 
 \item{artattend_log_gamma_offset}{logit offset for neigboring district ART attendance}
+
+\item{rho_paed_x_term}{logical; whether to include area}
 
 \item{logit_nu_mean}{mean of logit viral load suppression.}
 

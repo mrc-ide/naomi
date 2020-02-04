@@ -41,6 +41,7 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Z_xs);
   DATA_SPARSE_MATRIX(Z_rho_a);
   DATA_SPARSE_MATRIX(Z_rho_as);
+  DATA_SPARSE_MATRIX(Z_rho_xa);
   DATA_SPARSE_MATRIX(Z_alpha_a);
   DATA_SPARSE_MATRIX(Z_alpha_as);
   DATA_SPARSE_MATRIX(Z_alpha_xt);
@@ -202,6 +203,10 @@ Type objective_function<Type>::operator() ()
   Type sigma_rho_as(exp(log_sigma_rho_as));
   val -= dnorm(sigma_rho_as, Type(0.0), Type(2.5), true) + log_sigma_rho_as;
 
+  PARAMETER(log_sigma_rho_xa);
+  Type sigma_rho_xa(exp(log_sigma_rho_xa));
+  val -= dnorm(sigma_rho_xa, Type(0.0), Type(0.5), true) + log_sigma_rho_xa;
+
   // latent effects
 
   PARAMETER_VECTOR(us_rho_x);
@@ -227,6 +232,11 @@ Type objective_function<Type>::operator() ()
   if(u_rho_as.size() > 0)
     val += AR1(phi_rho_as)(u_rho_as);
 
+  PARAMETER_VECTOR(u_rho_xa);
+  if (u_rho_xa.size() > 0) {
+    val -= Type(-0.5) * (u_rho_xa * (Q_x * u_rho_xa)).sum();
+    val -= dnorm(sum(u_rho_xa), Type(0.0), Type(0.001) * u_rho_xa.size(), true); // soft sum-to-zero constraint
+  }
 
 
   // * ART coverage model *
@@ -247,7 +257,7 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER(log_sigma_alpha_xs);
   Type sigma_alpha_xs(exp(log_sigma_alpha_xs));
-  val -= dnorm(exp(log_sigma_alpha_xs), Type(0.0), Type(2.5), true) + log_sigma_alpha_xs;
+  val -= dnorm(sigma_alpha_xs, Type(0.0), Type(2.5), true) + log_sigma_alpha_xs;
 
   PARAMETER(logit_phi_alpha_a);
   val -= dnorm(logit_phi_alpha_a, Type(0.0), Type(2.582), true);  // INLA default
@@ -267,15 +277,15 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER(log_sigma_alpha_xt);
   Type sigma_alpha_xt(exp(log_sigma_alpha_xt));
-  val -= dnorm(exp(log_sigma_alpha_xt), Type(0.0), Type(2.5), true) + log_sigma_alpha_xt;
+  val -= dnorm(sigma_alpha_xt, Type(0.0), Type(2.5), true) + log_sigma_alpha_xt;
 
   PARAMETER(log_sigma_alpha_xa);
   Type sigma_alpha_xa(exp(log_sigma_alpha_xa));
-  val -= dnorm(exp(log_sigma_alpha_xa), Type(0.0), Type(2.5), true) + log_sigma_alpha_xa;
+  val -= dnorm(sigma_alpha_xa, Type(0.0), Type(2.5), true) + log_sigma_alpha_xa;
 
   PARAMETER(log_sigma_alpha_xat);
   Type sigma_alpha_xat(exp(log_sigma_alpha_xat));
-  val -= dnorm(exp(log_sigma_alpha_xat), Type(0.0), Type(2.5), true) + log_sigma_alpha_xat;
+  val -= dnorm(sigma_alpha_xat, Type(0.0), Type(2.5), true) + log_sigma_alpha_xat;
 
   PARAMETER_VECTOR(us_alpha_x);
   val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
@@ -383,7 +393,8 @@ Type objective_function<Type>::operator() ()
                       Z_x * u_rho_x * sigma_rho_x +
                       Z_xs * u_rho_xs * sigma_rho_xs +
                       Z_rho_a * u_rho_a * sigma_rho_a +
-                      Z_rho_as * u_rho_as * sigma_rho_as);
+                      Z_rho_as * u_rho_as * sigma_rho_as +
+		      Z_rho_xa * u_rho_xa * sigma_rho_xa);
 
   vector<Type> u_alpha_x(sqrt(phi_alpha_x) * us_alpha_x + sqrt(1 - phi_alpha_x) * ui_alpha_x);
   vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);

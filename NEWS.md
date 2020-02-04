@@ -1,3 +1,11 @@
+# naomi 0.0.64
+
+* Area random effect for prevalence below age 15 interaction as ICAR model. Implemented as option `rho_paed_x_term` specified by argument `naomi_model_frame(..., rho_paed_x_term = TRUE, ...)`. Defaualt value is `FALSE`.
+* Initialize hyperparameters at prior mode.
+* Add calibration option for new infections to Spectrum new infections.
+* Update default Spectrum calibration option to "national".
+* Update default time-varying ART attendance "yes".
+
 # naomi 0.0.63 
 
 * Change age_group_label for ages 0-4 and 5-9 to 00-04 and 05-09 for Data Pack.
