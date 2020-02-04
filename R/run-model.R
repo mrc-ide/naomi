@@ -97,7 +97,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                options$spectrum_plhiv_calibration_level,
                                options$spectrum_plhiv_calibration_strat,
                                options$spectrum_artnum_calibration_level,
-                               options$spectrum_artnum_calibration_strat)
+                               options$spectrum_artnum_calibration_strat,
+                               options$spectrum_infections_calibration_level,
+                               options$spectrum_infections_calibration_strat)
 
   outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
 

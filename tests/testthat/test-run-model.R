@@ -81,6 +81,8 @@ test_that("model can be run without programme data", {
     spectrum_plhiv_calibration_strat = "sex_age_group",
     spectrum_artnum_calibration_level = "national",
     spectrum_artnum_calibration_strat = "age_coarse",
+    spectrum_infections_calibration_level = "national",
+    spectrum_infections_calibration_strat = "age_coarse",
     rng_seed = 17,
     no_of_samples = 20,
     max_iter = 250,
@@ -223,6 +225,7 @@ test_that("setting rng_seed returns same output", {
   options$artattend <- "false"
   options$spectrum_plhiv_calibration_level <- "none"
   options$spectrum_artnum_calibration_level <- "none"
+  options$spectrum_infections_calibration_level <- "none"
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
