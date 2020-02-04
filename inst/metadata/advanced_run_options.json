@@ -50,7 +50,7 @@
 							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
 						}
 					],
-					"value": "none",
+					"value": "national",
 					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
 				},
 				{
@@ -103,7 +103,7 @@
 							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
 						}
 					],
-					"value": "none",
+					"value": "national",
 					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
 				},
 				{
@@ -156,7 +156,7 @@
 							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
 						}
 					],
-					"value": "none",
+					"value": "national",
 					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
 				},
 				{
@@ -340,7 +340,7 @@
 					"required": true,
 					"options": [
 						{
-							"id": "false",
+							"id": "true",
 							"label": "t_(OPTIONS_NO_LABEL)"
 						},
 						{
