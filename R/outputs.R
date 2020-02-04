@@ -774,7 +774,7 @@ calibrate_outputs <- function(output,
     dplyr::left_join(incidence_calibration,
               by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
     dplyr::mutate(
-             calibration = tidyr::replace_na(incidence_calibration, 1.0),
+             calibration = dplyr::if_else(indicator == "incidence", incidence_calibration, 1.0),
              mean = mean * calibration,
              se = se * calibration,
              median = median * calibration,
