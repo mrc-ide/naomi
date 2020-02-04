@@ -2,6 +2,7 @@
 
 * Area random effect for prevalence below age 15 interaction as ICAR model. Implemented as option `rho_paed_x_term` specified by argument `naomi_model_frame(..., rho_paed_x_term = TRUE, ...)`. Defaualt value is `FALSE`.
 * Initialize hyperparameters at prior mode.
+* Add calibration option for new infections to Spectrum new infections.
 
 # naomi 0.0.62
 

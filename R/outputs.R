@@ -559,7 +559,9 @@ calibrate_outputs <- function(output,
                               spectrum_plhiv_calibration_level,
                               spectrum_plhiv_calibration_strat,
                               spectrum_artnum_calibration_level,
-                              spectrum_artnum_calibration_strat) {
+                              spectrum_artnum_calibration_strat,
+                              spectrum_infections_calibration_level,
+                              spectrum_infections_calibration_strat) {
 
   stopifnot(inherits(output, "naomi_output"))
   stopifnot(inherits(naomi_mf, "naomi_mf"))
@@ -620,7 +622,7 @@ calibrate_outputs <- function(output,
              by = group_vars
            )
 
-  ## Calculate calibration ratios for PLHIV and ART Number
+  ## Calculate calibration ratios for PLHIV, ART number, and new infections
 
   plhiv_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                           spectrum_plhiv_calibration_strat)
@@ -635,9 +637,9 @@ calibrate_outputs <- function(output,
   } else {
     spectrum_calibration$plhiv_calibration <- 1.0
   }
+  
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
-
 
   if(length(artnum_aggr_var) > 0L) {
 
@@ -650,10 +652,20 @@ calibrate_outputs <- function(output,
     spectrum_calibration$art_num_calibration <- 1.0
   }
 
-
-  ## Note: New infections calibration not yet implemented
-  spectrum_calibration$infections_calibration <- 1.0
   
+  infections_aggr_var <- get_spectrum_aggr_var(spectrum_infections_calibration_level,
+                                               spectrum_infections_calibration_strat)
+  
+  if (length(infections_aggr_var) > 0L) {
+    
+    spectrum_calibration <- spectrum_calibration %>%
+      dplyr::group_by_at(infections_aggr_var) %>%
+      dplyr::mutate(infections_calibration = dplyr::if_else(sum(infections_raw) == 0, 0, sum(infections_spectrum) / sum(infections_raw))) %>%
+      dplyr::ungroup()
+    
+  } else {
+    spectrum_calibration$infections_calibration <- 1.0
+  }
 
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::mutate(plhiv_final = plhiv_raw * plhiv_calibration,
@@ -674,9 +686,11 @@ calibrate_outputs <- function(output,
              dplyr::select(
                       group_vars,
                       plhiv = plhiv_calibration,
-                      art_num_residents = art_num_calibration
+                      art_num_residents = art_num_calibration,
+                      infections = infections_calibration
                     ) %>%
-             tidyr::gather(indicator, calibration, plhiv, art_num_residents),
+             tidyr::gather(indicator, calibration,
+                           plhiv, art_num_residents, infections),
              by = c("indicator", group_vars)
            ) %>%
     dplyr::mutate(adjusted = mean * calibration)
@@ -698,7 +712,10 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "plhiv"),
                   .expand(naomi_mf$calendar_quarter1, "art_num_residents"),
                   .expand(naomi_mf$calendar_quarter2, "art_num_residents"),
-                  .expand(naomi_mf$calendar_quarter3, "art_num_residents")
+                  .expand(naomi_mf$calendar_quarter3, "art_num_residents"),
+                  .expand(naomi_mf$calendar_quarter1, "infections"),
+                  .expand(naomi_mf$calendar_quarter2, "infections"),
+                  .expand(naomi_mf$calendar_quarter3, "infections")
                 )
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
@@ -709,12 +726,15 @@ calibrate_outputs <- function(output,
                   by = byv
                 ) %>%
     dplyr::mutate(
-             ratio = adjusted / mean,
+             ratio = dplyr::if_else(adjusted == 0, 0, adjusted / mean),
              mean = NULL,
              adjusted = NULL
            ) %>%
     tidyr::spread(indicator, ratio) %>%
-    dplyr::rename(plhiv_calib = plhiv, artnum_calib = art_num_residents)
+    dplyr::rename(plhiv_calib = plhiv,
+                  artnum_calib = art_num_residents,
+                  infections_calib = infections)
+
 
   out <- indicators %>%
     dplyr::left_join(adj, by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
@@ -725,6 +745,7 @@ calibrate_outputs <- function(output,
                                     indicator == "art_coverage" ~ artnum_calib / plhiv_calib,
                                     indicator == "art_num_residents" ~ artnum_calib,
                                     indicator == "art_num_attend" ~ artnum_calib,
+                                    indicator == "infections" ~ infections_calib,
                                     TRUE ~ 1.0),
              mean = mean * calibration,
              se = se * calibration,
@@ -736,13 +757,42 @@ calibrate_outputs <- function(output,
     dplyr::select(names(output$indicators))
 
 
+  incidence_calibration <- out %>%
+    dplyr::filter(indicator %in% c("population", "plhiv", "infections", "incidence")) %>%
+    tidyr::pivot_wider(
+             id_cols = c(area_id, sex, age_group, calendar_quarter),
+             names_from = indicator,
+             values_from = mean
+           ) %>%
+    dplyr::mutate(
+             incidence_new = infections / (population - plhiv),
+             incidence_calibration = dplyr::if_else(incidence_new == 0, 0, incidence_new / incidence)
+           ) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, incidence_calibration)
+
+  out <- out %>%
+    dplyr::left_join(incidence_calibration,
+              by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
+    dplyr::mutate(
+             calibration = tidyr::replace_na(incidence_calibration, 1.0),
+             mean = mean * calibration,
+             se = se * calibration,
+             median = median * calibration,
+             mode = mode * calibration,
+             lower = lower * calibration,
+             upper = upper * calibration
+           ) %>%
+    dplyr::select(names(output$indicators))    
+  
   ## Save calibration options
 
   calibration_options <- c(output$fit$calibration_options,
                            list(spectrum_plhiv_calibration_level  = spectrum_plhiv_calibration_level,
                                 spectrum_plhiv_calibration_strat  = spectrum_plhiv_calibration_strat,
                                 spectrum_artnum_calibration_level = spectrum_artnum_calibration_level,
-                                spectrum_artnum_calibration_strat = spectrum_artnum_calibration_strat)
+                                spectrum_artnum_calibration_strat = spectrum_artnum_calibration_strat,
+                                spectrum_infections_calibration_level = spectrum_infections_calibration_level,
+                                spectrum_infections_calibration_strat = spectrum_infections_calibration_strat)
                            )
 
   output$indicators <- out
