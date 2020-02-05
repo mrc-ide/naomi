@@ -340,7 +340,7 @@
 					"required": true,
 					"options": [
 						{
-							"id": "true",
+							"id": "false",
 							"label": "t_(OPTIONS_NO_LABEL)"
 						},
 						{
@@ -348,7 +348,7 @@
 							"label": "t_(OPTIONS_YES_LABEL)"
 						}
 					],
-					"value": "false",
+					"value": "true",
 					"helpText": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP)"
 				}
 			]
