@@ -1,3 +1,7 @@
+# naomi 0.0.65
+
+* Fix error in default option for time-varying ART attendance model option in 0.0.64 release.
+
 # naomi 0.0.64
 
 * Area random effect for prevalence below age 15 interaction as ICAR model. Implemented as option `rho_paed_x_term` specified by argument `naomi_model_frame(..., rho_paed_x_term = TRUE, ...)`. Defaualt value is `FALSE`.
