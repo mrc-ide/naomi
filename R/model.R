@@ -695,13 +695,21 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
       .$age_max
 
+    age_min <- df %>%
+      dplyr::left_join(get_age_groups(), by = "age_group") %>%
+      dplyr::summarise(age_min = min(age_group_start)) %>%
+      .$age_min
+    
     mf %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
       dplyr::transmute(idx,
-                       data_range = as.integer((age_group_start + age_group_span) <= age_max),
-                       offset_range = as.integer((age_group_start + age_group_span) >= age_max),
-                       age_fct = factor(pmin(age_group_start,
-                                             max(age_group_start * data_range))))
+                       data_range = as.integer(age_group_start >= age_min & (age_group_start + age_group_span) <= age_max),
+                       upper_offset_range = as.integer((age_group_start + age_group_span) >= age_max),
+                       lower_offset_range = as.integer(age_group_start <= age_min),
+                       age_fct = pmin(age_group_start, max(age_group_start * data_range)),
+                       age_fct = pmax(age_fct, min(age_fct / data_range, na.rm = TRUE)),
+                       age_fct = factor(age_fct))
+                                             
   }
 
 
@@ -722,9 +730,12 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::mutate(
                rho_a_fct = age_fct,
                age_fct = NULL,
-               logit_rho_offset = dplyr::if_else(offset_range == 1, qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * offset_range)), 0),
+               logit_rho_offset = dplyr::case_when(upper_offset_range == 1 ~ qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * upper_offset_range)),
+                                                   lower_offset_range == 1 ~ qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * lower_offset_range)),
+                                                   TRUE ~ 0),
                data_range = NULL,
-               offset_range = NULL
+               lower_offset_range = NULL,
+               upper_offset_range = NULL
              ) %>%
       dplyr::ungroup()
   }
@@ -750,9 +761,12 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::mutate(
                alpha_a_fct = age_fct,
                age_fct = NULL,
-               logit_alpha_offset = dplyr::if_else(offset_range == 1, qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * offset_range)), 0),
+               logit_alpha_offset = dplyr::case_when(upper_offset_range == 1 ~ qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * upper_offset_range)),
+                                                     lower_offset_range == 1 ~ qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * lower_offset_range)),
+                                                     TRUE ~ 0),
                data_range = NULL,
-               offset_range = NULL
+               lower_offset_range = NULL,
+               upper_offset_range = NULL
              ) %>%
       dplyr::ungroup()
   }

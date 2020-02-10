@@ -1,3 +1,7 @@
+# naomi 0.0.66
+
+* Use logit offsets for ages below which survey data are available. This is principally used for age 0-14 when survey data start at age 15.
+
 # naomi 0.0.65
 
 * Fix error in default option for time-varying ART attendance model option in 0.0.64 release.
