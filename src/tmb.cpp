@@ -37,16 +37,21 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(X_ancrho);
   DATA_MATRIX(X_ancalpha);
 
-  DATA_SPARSE_MATRIX(Z_x);
-  DATA_SPARSE_MATRIX(Z_xs);
+  DATA_SPARSE_MATRIX(Z_rho_x);
+  DATA_SPARSE_MATRIX(Z_rho_xs);
   DATA_SPARSE_MATRIX(Z_rho_a);
   DATA_SPARSE_MATRIX(Z_rho_as);
   DATA_SPARSE_MATRIX(Z_rho_xa);
+
+  DATA_SPARSE_MATRIX(Z_alpha_x);
+  DATA_SPARSE_MATRIX(Z_alpha_xs);
   DATA_SPARSE_MATRIX(Z_alpha_a);
   DATA_SPARSE_MATRIX(Z_alpha_as);
   DATA_SPARSE_MATRIX(Z_alpha_xt);
   DATA_SPARSE_MATRIX(Z_alpha_xa);
   DATA_SPARSE_MATRIX(Z_alpha_xat);
+
+  DATA_SPARSE_MATRIX(Z_x);
   DATA_SPARSE_MATRIX(Z_lambda_x);
 
   DATA_VECTOR(logit_rho_offset);
@@ -390,8 +395,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
   vector<Type> mu_rho(X_rho * beta_rho +
                       logit_rho_offset +
-                      Z_x * u_rho_x * sigma_rho_x +
-                      Z_xs * u_rho_xs * sigma_rho_xs +
+                      Z_rho_x * u_rho_x * sigma_rho_x +
+                      Z_rho_xs * u_rho_xs * sigma_rho_xs +
                       Z_rho_a * u_rho_a * sigma_rho_a +
                       Z_rho_as * u_rho_as * sigma_rho_as +
 		      Z_rho_xa * u_rho_xa * sigma_rho_xa);
@@ -400,8 +405,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);
   vector<Type> mu_alpha(X_alpha * beta_alpha +
                         logit_alpha_offset +
-                        Z_x * u_alpha_x * sigma_alpha_x +
-                        Z_xs * u_alpha_xs * sigma_alpha_xs +
+                        Z_alpha_x * u_alpha_x * sigma_alpha_x +
+                        Z_alpha_xs * u_alpha_xs * sigma_alpha_xs +
                         Z_alpha_a * u_alpha_a * sigma_alpha_a +
                         Z_alpha_as * u_alpha_as * sigma_alpha_as +
                         Z_alpha_xa * u_alpha_xa * sigma_alpha_xa);

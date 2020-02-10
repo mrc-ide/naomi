@@ -540,6 +540,16 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::ungroup()
 
+  ## Paediatric prevalence ratio model
+  mf_model <- mf_model %>%
+    dplyr::group_by(area_id) %>%
+    dplyr::mutate(
+             spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
+             paed_rho_ratio = dplyr::if_else(age_group %in% c("00-04", "05-09", "10-14"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             spec_prev15to49f_t1 = NULL
+           ) %>%
+    dplyr::ungroup()
+
   ## Remove unneeded columns from spectrum_calibration
   spectrum_calibration$susc_previous_year_spectrum <- NULL
   spectrum_calibration$births_spectrum <- NULL
