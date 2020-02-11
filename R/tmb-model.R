@@ -34,8 +34,6 @@ prepare_tmb_inputs <- function(naomi_data) {
   A_anc_t1 <- create_anc_Amat(naomi_data, "asfr_t1", "population_t1")
   A_anc_t2 <- create_anc_Amat(naomi_data, "asfr_t2", "population_t2")
 
-  X_15to49 <- Matrix::t(sparse_model_matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
-
   ## ART attendance aggregation
 
   Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
@@ -81,6 +79,15 @@ prepare_tmb_inputs <- function(naomi_data) {
   ## Construct TMB data and initial parameter vectors
 
   df <- naomi_data$mf_model
+
+
+  X_15to49 <- Matrix::t(sparse_model_matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
+
+  ## Paediatric prevalence from 15-49 female ratio
+  A_15to49f <- Matrix::t(Matrix::sparse.model.matrix(~0 + area_idf:age15to49:as.integer(sex == "female"):population_t1, df))
+  df$bin_paed_rho_model <- 1 - df$bin_rho_model
+  X_paed_rho_ratio <- sparse_model_matrix(~-1 + area_idf:paed_rho_ratio:bin_paed_rho_model, df)
+  paed_rho_ratio_offset <- 0.5 * df$bin_rho_model
 
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
@@ -146,16 +153,16 @@ prepare_tmb_inputs <- function(naomi_data) {
     Lproj_incid = naomi_data$Lproj_incid,
     Lproj_paed = naomi_data$Lproj_paed,
     projection_duration = naomi_data$projection_duration,
-    X_rho = stats::model.matrix(~female_15plus, df),
+    X_rho = as.matrix(sparse_model_matrix(~female_15plus, df, "bin_rho_model", TRUE)),
     X_alpha = stats::model.matrix(~female_15plus, df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
     X_lambda = stats::model.matrix(f_lambda, df),
     X_ancrho = stats::model.matrix(~1, naomi_data$mf_areas),
     X_ancalpha = stats::model.matrix(~1, naomi_data$mf_areas),
     Z_x = sparse_model_matrix(~0 + area_idf, df),
-    Z_rho_x = sparse_model_matrix(~0 + area_idf, df),
+    Z_rho_x = sparse_model_matrix(~0 + area_idf, df, "bin_rho_model", TRUE),
     Z_rho_xs = sparse_model_matrix(~0 + area_idf, df, "female_15plus", TRUE),
-    Z_rho_a = sparse_model_matrix(f_rho_a, df),
+    Z_rho_a = sparse_model_matrix(f_rho_a, df, "bin_rho_model", TRUE),
     Z_rho_as = sparse_model_matrix(f_rho_a, df, "female_15plus", TRUE),
     Z_rho_xa = sparse_model_matrix(f_rho_xa, df, "age_below15"),
     Z_alpha_x = sparse_model_matrix(~0 + area_idf, df),
@@ -172,7 +179,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     A_anc_t1 = A_anc_t1,
     A_anc_t2 = A_anc_t2,
     ##
-    logit_rho_offset = naomi_data$mf_model$logit_rho_offset,
+    logit_rho_offset = naomi_data$mf_model$logit_rho_offset * naomi_data$mf_model$bin_rho_model,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
     logit_alpha_t1t2_offset = logit_alpha_t1t2_offset,
     ##
@@ -199,6 +206,10 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_15to49 = X_15to49,
     log_lambda_t1_offset = naomi_data$mf_model$log_lambda_t1_offset,
     log_lambda_t2_offset = naomi_data$mf_model$log_lambda_t2_offset,
+    ##
+    A_15to49f = A_15to49f,
+    X_paed_rho_ratio = X_paed_rho_ratio,
+    paed_rho_ratio_offset = paed_rho_ratio_offset,
     ##
     idx_prev = naomi_data$prev_dat$idx - 1L,
     x_prev = naomi_data$prev_dat$x_eff,

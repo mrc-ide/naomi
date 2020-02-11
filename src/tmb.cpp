@@ -136,6 +136,12 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(log_lambda_t1_offset);
   DATA_VECTOR(log_lambda_t2_offset);
 
+  // Paediatric prevalence ratio model
+
+  DATA_SPARSE_MATRIX(A_15to49f);
+  DATA_SPARSE_MATRIX(X_paed_rho_ratio);
+  DATA_VECTOR(paed_rho_ratio_offset);
+
   // ** Initialize nll **
   Type val(0);
 
@@ -401,6 +407,16 @@ Type objective_function<Type>::operator() ()
                       Z_rho_as * u_rho_as * sigma_rho_as +
 		      Z_rho_xa * u_rho_xa * sigma_rho_xa);
 
+  // paediatric prevalence
+
+  vector<Type> ones(X_rho.rows());
+  ones.fill(1.0);
+
+  vector<Type> rho_15to49_f((A_15to49f * invlogit(mu_rho)) / (A_15to49f * ones));
+  vector<Type> mu_rho_paed(X_paed_rho_ratio * rho_15to49_f + paed_rho_ratio_offset);
+  mu_rho_paed = logit(mu_rho_paed);
+  mu_rho += mu_rho_paed;
+
   vector<Type> u_alpha_x(sqrt(phi_alpha_x) * us_alpha_x + sqrt(1 - phi_alpha_x) * ui_alpha_x);
   vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);
   vector<Type> mu_alpha(X_alpha * beta_alpha +
@@ -432,10 +448,6 @@ Type objective_function<Type>::operator() ()
 
 
   // Projection from t1 to t2
-
-  vector<Type> ones(rho_t1.size());
-  ones.fill(1.0);
-
 
   vector<Type> mu_alpha_t2(mu_alpha + logit_alpha_t1t2_offset +
                            X_alpha_t2 * beta_alpha_t2 +
