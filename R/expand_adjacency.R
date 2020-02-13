@@ -1,5 +1,5 @@
-expand_adjacency <- function(M, max.dist, specific_districts = NA) {
-
+expand_adjacency <- function(M, max.dist, specific_districts) {
+  
 tmp.adj.m <- M
 
 ## Zero is unconnected

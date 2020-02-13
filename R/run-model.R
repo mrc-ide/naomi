@@ -170,6 +170,8 @@ naomi_prepare_data <- function(data, options) {
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
+  max.dist <- options$max.dist
+  specific_districts <- options$specific_districts
 
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
@@ -196,6 +198,8 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter_t1,
     calendar_quarter_t2,
     calendar_quarter_t3,
+    max.dist,
+    specific_districts,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
