@@ -478,7 +478,14 @@ naomi_model_frame <- function(area_merged,
 
   ## ART attendance model
 
-  artattendM <- if(artattend) expand_adjacency(M, max.dist, specific_districts) else matrix(0, nrow(M), ncol(M))
+  if(artattend & max.dist >2)
+    artattendM <- expand_adjacency(M, max.dist, specific_districts)
+  
+  if(artattend & max.dist < 3)
+    artattendM <- M
+  
+  if(!artattend)
+    artattendM <- matrix(0, nrow(M), ncol(M))
 
   mf_areas <- mf_areas %>%
     dplyr::left_join(
