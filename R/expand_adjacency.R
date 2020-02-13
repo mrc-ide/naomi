@@ -1,4 +1,4 @@
-expand_adjacency <- function(M, max.dist = 3) {
+expand_adjacency <- function(M, max.dist, specific_districts = NA) {
 
 tmp.adj.m <- M
 
@@ -12,7 +12,7 @@ diag(tmp.adj.m) <- 1
 ## degree.m will hold the degrees
 degree.m <- c()
 for (i in 1:nrow(M)) {
-  print(i)
+  # print(i)
   ## First-degree neighbors for region i
   col.v <- tmp.adj.m[, i]
   ## Storage for collection of pre-identified regions
@@ -46,9 +46,20 @@ for (i in 1:nrow(M)) {
 degree.m[degree.m == 0] <- Inf
 degree.m[degree.m > max.dist] <- Inf
 
-new.adj.m <- 1*is.finite(degree.m)
-diag(new.adj.m) <- 0
+degree.m <- 1*is.finite(degree.m)
+diag(degree.m) <- 0
 
-new.adj.m
+if(!is.na(specific_districts)) {
+  
+  M[specific_districts,] <- degree.m[specific_districts,]
+  M[, specific_districts] <- degree.m[, specific_districts]
+  
+} else {
+  
+  M <- degree.m
+  
+}
+
+M
 
 }
