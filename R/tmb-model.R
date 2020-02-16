@@ -557,15 +557,42 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
              by = "artdat_sex"
-           )
+    )
+
+  ## Map artattend_area_id to model_area_id
+  A_artnum <- A_artnum %>%
+    dplyr::left_join(
+      area_aggregation,
+      by = c("attend_area_id" = "area_id")
+    ) %>%
+    dplyr::mutate(attend_area_id = model_area_id,
+                  model_area_id = NULL)
+
+  ## Check no areas with duplicated reporting
+
+  art_duplicated_check <- A_artnum %>%
+    dplyr::count(attend_area_id, age_group, sex) %>%
+    dplyr::filter(n > 1)
+
+  if (nrow(art_duplicated_check)) {
+    stop(paste("ART data multiply reported for some age/sex strata in areas:",
+               paste(art_duplicated_check$attend_area_id, collapse = ", ")))
+  }
 
   ## Merge to ART attendance data frame
+  df_art_attend <- df_art_attend %>%
+    dplyr::select(by_vars) %>%
+    dplyr::mutate(
+      df_art_attend_idx = dplyr::row_number(),
+      value = 1
+    )
+  
   A_artnum <- dplyr::left_join(A_artnum,
                                df_art_attend %>%
                                dplyr::select(by_vars) %>%
                                dplyr::mutate(
-                                        Aidx = dplyr::row_number(),
-                                        value = 1),
+                                 Aidx = dplyr::row_number(),
+                                 value = 1),
                                by = by_vars)
   
   A_artnum <- A_artnum %>%

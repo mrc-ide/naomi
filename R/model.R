@@ -956,16 +956,30 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     out_quarter_id <- calendar_quarter_to_quarter_id(calendar_quarter)
 
     dat <- art_number %>%
-      dplyr::inner_join(
-               dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
-               by = "area_id"
-             ) %>%
+      dplyr::semi_join(
+        naomi_mf$area_aggregation,
+        by = "area_id"
+      ) %>%
       dplyr::mutate(
                quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
-             )
+      )
 
+    ## Check no areas with duplicated reporting
+    art_duplicated_check <- dat %>%
+      dplyr::left_join(
+        naomi_mf$area_aggregation,
+        by = "area_id"
+      ) %>%
+      dplyr::count(model_area_id, age_group, sex, calendar_quarter) %>%
+      dplyr::filter(n > 1)
+    
+    if (nrow(art_duplicated_check)) {
+      stop(paste("ART data multiply reported for some age/sex strata in areas:",
+                 paste(unique(art_duplicated_check$model_area_id), collapse = ", ")))
+    }
+    
     dat <- dat %>%
-      dplyr::group_by(area_id, sex, age_group, spectrum_region_code) %>%
+      dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
                        current_art = approx(quarter_id, current_art, out_quarter_id, rule =2)$y) %>%

@@ -1,5 +1,7 @@
 # naomi 0.0.66
 
+* Allow fitting to ART data to aggregated areas. There is a check that the same model area is not included in more than on area in the ART dataset.
+
 # naomi 0.0.65
 
 * Fix error in default option for time-varying ART attendance model option in 0.0.64 release.
