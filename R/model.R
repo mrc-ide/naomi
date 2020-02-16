@@ -1,7 +1,7 @@
 #' Model Frame and Linear Transform for Aggregated Model Outputs
 #'
 #' @param mf_model Model frame
-#' @param areas naomi_areas object.
+#' @param area_aggregation data.frame with columns `area_id` and `model_area_id`.
 #'
 #' @export
 naomi_output_frame <- function(mf_model, area_aggregation) {

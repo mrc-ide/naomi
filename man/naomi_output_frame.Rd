@@ -9,7 +9,7 @@ naomi_output_frame(mf_model, area_aggregation)
 \arguments{
 \item{mf_model}{Model frame}
 
-\item{areas}{naomi_areas object.}
+\item{area_aggregation}{data.frame with columns \code{area_id} and \code{model_area_id}.}
 }
 \description{
 Model Frame and Linear Transform for Aggregated Model Outputs

@@ -55,13 +55,26 @@ prepare_tmb_inputs <- function(naomi_data) {
   Xart_gamma <- sparse_model_matrix(~0 + attend_idf, df_art_attend)
   Xart_idx <- sparse_model_matrix(~0 + idf, df_art_attend)
 
-  A_artattend_t1 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t1_dat, attend_area_id = area_id),
-                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
-  A_artattend_t2 <- create_artattend_Amat(dplyr::rename(naomi_data$artnum_t2_dat, attend_area_id = area_id),
-                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_t1 <- create_artattend_Amat(artnum_df = dplyr::rename(naomi_data$artnum_t1_dat, attend_area_id = area_id),
+                                          age_groups = naomi_data$age_groups,
+                                          sexes = naomi_data$sexes,
+                                          area_aggregation = naomi_data$area_aggregation,
+                                          df_art_attend = df_art_attend,
+                                          by_residence = FALSE)
 
-  A_artattend_mf <- create_artattend_Amat(dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group, artnum_idx = idx),
-                                          naomi_data$age_groups, naomi_data$sexes, naomi_data$mf_areas, df_art_attend)
+  A_artattend_t2 <- create_artattend_Amat(artnum_df = dplyr::rename(naomi_data$artnum_t2_dat, attend_area_id = area_id),
+                                          age_groups = naomi_data$age_groups,
+                                          sexes = naomi_data$sexes,
+                                          area_aggregation = naomi_data$area_aggregation,
+                                          df_art_attend = df_art_attend,
+                                          by_residence = FALSE)
+
+  A_artattend_mf <- create_artattend_Amat(artnum_df = dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group, artnum_idx = idx),
+                                          age_groups = naomi_data$age_groups,
+                                          sexes = naomi_data$sexes,
+                                          area_aggregation = naomi_data$area_aggregation,
+                                          df_art_attend = df_art_attend,
+                                          by_residence = FALSE)
 
   A_art_reside_attend <- naomi_data$mf_artattend %>%
     dplyr::transmute(
@@ -71,10 +84,10 @@ prepare_tmb_inputs <- function(naomi_data) {
              age_group = "00+",
              artnum_idx = dplyr::row_number()
            ) %>%
-    create_artattend_Amat(naomi_data$age_groups,
-                          naomi_data$sexes,
-                          naomi_data$mf_areas,
-                          df_art_attend,
+    create_artattend_Amat(age_groups = naomi_data$age_groups,
+                          sexes = naomi_data$sexes,
+                          area_aggregation = naomi_data$area_aggregation,
+                          df_art_attend = df_art_attend,
                           by_residence = TRUE)
                                           
 
@@ -507,7 +520,7 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
 }
 
 
-create_artattend_Amat <- function(artnum_df, age_groups, sexes, mf_areas,
+create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation,
                                   df_art_attend, by_residence = FALSE) {
   
   ## If by_residence = TRUE, merge by reside_area_id, else aggregate over all
