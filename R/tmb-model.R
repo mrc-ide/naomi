@@ -569,14 +569,14 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                   model_area_id = NULL)
 
   ## Check no areas with duplicated reporting
-
-  art_duplicated_check <- A_artnum %>%
-    dplyr::count(attend_area_id, age_group, sex) %>%
+  art_duplicated_check <- A_artnum %>%  
+    dplyr::group_by_at(by_vars) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
     dplyr::filter(n > 1)
 
   if (nrow(art_duplicated_check)) {
     stop(paste("ART data multiply reported for some age/sex strata in areas:",
-               paste(art_duplicated_check$attend_area_id, collapse = ", ")))
+               paste(unique(art_duplicated_check$attend_area_id), collapse = ", ")))
   }
 
   ## Merge to ART attendance data frame
