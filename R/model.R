@@ -2,46 +2,13 @@
 #'
 #' @param mf_model Model frame
 #' @param areas naomi_areas object.
-#' @param drop_partial_areas Drop areas from output if some children are
-#'   missing (default TRUE).
 #'
 #' @export
-naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
-
-  stopifnot(methods::is(areas, "naomi_areas"))
+naomi_output_frame <- function(mf_model, area_aggregation) {
 
   age_groups <- unique(mf_model$age_group)
 
   model_area_ids <- unique(mf_model$area_id)
-
-  area_id_out <- areas$tree$Get("area_id",
-                                filterFun = function(x) x$display_level,
-                                traversal = "level")
-  area_id_out_leaves <- areas$tree$Get("leaves",
-                                       filterFun = function(x) x$display_level,
-                                       traversal = "level") %>%
-    lapply(data.tree::Get, "area_id")
-
-  area_id_out_leaves <- area_id_out_leaves[!duplicated(area_id_out)]
-  area_id_out <- area_id_out[!duplicated(area_id_out)]
-
-  leaf_in_model <- lapply(area_id_out_leaves, `%in%`, model_area_ids)
-  if(drop_partial_areas) {
-    all_leaves_in_model <- vapply(leaf_in_model, all, logical(1))
-    area_id_out <- area_id_out[all_leaves_in_model]
-    area_id_out_leaves <- area_id_out_leaves[all_leaves_in_model]
-  } else {
-    area_id_out_leaves <- Map("[", area_id_out_leaves, leaf_in_model)
-    area_id_out <- area_id_out[lengths(area_id_out_leaves) > 0]
-    area_id_out_leaves <- area_id_out_leaves[lengths(area_id_out_leaves) > 0]
-  }
-
-  area_id_join <- Map(data.frame,
-                      area_id_out = area_id_out,
-                      area_id = area_id_out_leaves,
-                      stringsAsFactors = FALSE) %>%
-    dplyr::bind_rows() %>%
-    dplyr::distinct()
 
   sexes <- unique(mf_model$sex)
   sex_out <- get_sex_out(sexes)
@@ -67,21 +34,22 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
   stopifnot(age_groups %in% age_group_join$age_group)
 
   mf_out <- tidyr::crossing(
-                     area_id = area_id_out,
+                     area_id = area_aggregation$area_id,
                      sex = sex_out,
                      age_group = age_group_out
-                   )
+  )
 
-  df_join <- tidyr::crossing(area_id_join, sex_join, age_group_join) %>%
+  df_join <- tidyr::crossing(area_aggregation, sex_join, age_group_join) %>%
     dplyr::full_join(
              mf_model %>%
              dplyr::select("area_id", "sex", "age_group", "idx"),
-             by = c("area_id", "sex", "age_group")) %>%
+      by = c("model_area_id" = "area_id",
+             "sex", "age_group")) %>%
     dplyr::full_join(
              mf_out %>%
              dplyr::mutate(out_idx = dplyr::row_number())
             ,
-             by = c("area_id_out" = "area_id",
+             by = c("area_id" = "area_id",
                     "sex_out" = "sex",
                     "age_group_out" = "age_group")
            ) %>%
@@ -471,7 +439,11 @@ naomi_model_frame <- function(area_merged,
 
   ## Model output
 
-  outf <- naomi_output_frame(mf_model, areas)
+  area_aggregation <- create_area_aggregation(model_area_ids = mf_model$area_id,
+                                              areas = areas,
+                                              drop_partial_areas = TRUE)
+  outf <- naomi_output_frame(mf_model, area_aggregation)
+  
 
 
   ## ART attendance model
@@ -550,6 +522,7 @@ naomi_model_frame <- function(area_merged,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
             rho_paed_x_term = rho_paed_x_term,
+            area_aggregation = area_aggregation,
             A_out = outf$A,
             Lproj_hivpop = Lproj$Lproj_hivpop,
             Lproj_incid = Lproj$Lproj_incid,

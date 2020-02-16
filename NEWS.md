@@ -1,3 +1,5 @@
+# naomi 0.0.66
+
 # naomi 0.0.65
 
 * Fix error in default option for time-varying ART attendance model option in 0.0.64 release.
