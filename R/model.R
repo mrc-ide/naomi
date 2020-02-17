@@ -84,7 +84,8 @@ naomi_output_frame <- function(mf_model, area_aggregation) {
 #' @param artattend logical; whether to estimate neighboring district ART attendance
 #' @param artattend_t2 logical; whether to allow time-varying neighboring district ART attendance
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
-#' @param rho_paed_x_term logical; whether to include area 
+#' @param rho_paed_15to49f_ratio logical; to model paediatric prevalence as ratio of 15-49 female prevalence
+#' @param rho_paed_x_term logical; to include area interaction for paediatric prevalence
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
@@ -119,6 +120,7 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
+                              rho_paed_15to49f_ratio = FALSE,
                               rho_paed_x_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
@@ -512,6 +514,17 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::ungroup()
 
+  ## Paediatric prevalence ratio model
+  mf_model <- mf_model %>%
+    dplyr::group_by(area_id) %>%
+    dplyr::mutate(
+             spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
+             paed_rho_ratio = dplyr::if_else(age_group %in% c("00-04", "05-09", "10-14"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("00-04", "05-09", "10-14")) else 1.0,
+             spec_prev15to49f_t1 = NULL
+           ) %>%
+    dplyr::ungroup()
+
   ## Remove unneeded columns from spectrum_calibration
   spectrum_calibration$susc_previous_year_spectrum <- NULL
   spectrum_calibration$births_spectrum <- NULL
@@ -658,13 +671,21 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
       .$age_max
 
+    age_min <- df %>%
+      dplyr::left_join(get_age_groups(), by = "age_group") %>%
+      dplyr::summarise(age_min = min(age_group_start)) %>%
+      .$age_min
+    
     mf %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
       dplyr::transmute(idx,
-                       data_range = as.integer((age_group_start + age_group_span) <= age_max),
-                       offset_range = as.integer((age_group_start + age_group_span) >= age_max),
-                       age_fct = factor(pmin(age_group_start,
-                                             max(age_group_start * data_range))))
+                       data_range = as.integer(age_group_start >= age_min & (age_group_start + age_group_span) <= age_max),
+                       upper_offset_range = as.integer((age_group_start + age_group_span) >= age_max),
+                       lower_offset_range = as.integer(age_group_start <= age_min),
+                       age_fct = pmin(age_group_start, max(age_group_start * data_range)),
+                       age_fct = pmax(age_fct, min(age_fct / data_range, na.rm = TRUE)),
+                       age_fct = factor(age_fct))
+                                             
   }
 
 
@@ -685,9 +706,12 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::mutate(
                rho_a_fct = age_fct,
                age_fct = NULL,
-               logit_rho_offset = dplyr::if_else(offset_range == 1, qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * offset_range)), 0),
+               logit_rho_offset = dplyr::case_when(upper_offset_range == 1 ~ qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * upper_offset_range)),
+                                                   lower_offset_range == 1 ~ qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * lower_offset_range)),
+                                                   TRUE ~ 0),
                data_range = NULL,
-               offset_range = NULL
+               lower_offset_range = NULL,
+               upper_offset_range = NULL
              ) %>%
       dplyr::ungroup()
   }
@@ -713,9 +737,12 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::mutate(
                alpha_a_fct = age_fct,
                age_fct = NULL,
-               logit_alpha_offset = dplyr::if_else(offset_range == 1, qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * offset_range)), 0),
+               logit_alpha_offset = dplyr::case_when(upper_offset_range == 1 ~ qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * upper_offset_range)),
+                                                     lower_offset_range == 1 ~ qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * lower_offset_range)),
+                                                     TRUE ~ 0),
                data_range = NULL,
-               offset_range = NULL
+               lower_offset_range = NULL,
+               upper_offset_range = NULL
              ) %>%
       dplyr::ungroup()
   }
