@@ -1,3 +1,11 @@
+# naomi 0.0.66
+
+* Allow fitting to ART data to aggregated areas. There is a check that the same model area is not included in more than on area in the ART dataset.
+* Use logit offsets for ages below which survey data are available. This is principally used for age 0-14 when survey data start at age 15.
+* Add option `rho_paed_15to49f_ratio` to calculate paediatric prevalence as ratio of female 15-49 adult prevalence.
+* Recode string is passed by JSON for ANC testing data year as NULL.
+
+
 # naomi 0.0.65
 
 * Fix error in default option for time-varying ART attendance model option in 0.0.64 release.

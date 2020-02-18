@@ -234,3 +234,56 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
   dplyr::arrange(val, area_scope, area_sort_order) %>%
     dplyr::select(area_scope, area_id, area_level)
 }
+
+
+#' Long data frame mapping area hierarchy areas to model level areas
+#'
+#' @param model_area_ids vector of model areas.
+#' @param areas naomi_areas object.
+#' @param drop_partial_areas Drop areas from output if some children are
+#'   missing (default TRUE).
+#'
+#' @examples
+#'
+#' area_merged <- read_area_merged(system.file("extdata/areas/area_merged.geojson", package = "naomi"))
+#' areas <- create_areas(area_merged = area_merged)
+#' model_area_ids <- area_merged$area_id[area_merged$area_level == 4]
+#'
+#' create_area_aggregation(model_area_ids, areas)
+#'
+#' @export
+create_area_aggregation <- function(model_area_ids, areas, drop_partial_areas = TRUE) {
+
+  stopifnot(methods::is(areas, "naomi_areas"))
+  
+  area_id_out <- areas$tree$Get("area_id",
+                                traversal = "level")
+  area_id_out_leaves <- areas$tree$Get("leaves",
+                                       traversal = "level") %>%
+    lapply(data.tree::Get, "area_id")
+
+  area_id_out_leaves <- area_id_out_leaves[!duplicated(area_id_out)]
+  area_id_out <- area_id_out[!duplicated(area_id_out)]
+
+  stopifnot(model_area_ids %in% unlist(area_id_out_leaves))
+  
+  leaf_in_model <- lapply(area_id_out_leaves, `%in%`, model_area_ids)
+  if(drop_partial_areas) {
+    all_leaves_in_model <- vapply(leaf_in_model, all, logical(1))
+    area_id_out <- area_id_out[all_leaves_in_model]
+    area_id_out_leaves <- area_id_out_leaves[all_leaves_in_model]
+  } else {
+    area_id_out_leaves <- Map("[", area_id_out_leaves, leaf_in_model)
+    area_id_out <- area_id_out[lengths(area_id_out_leaves) > 0]
+    area_id_out_leaves <- area_id_out_leaves[lengths(area_id_out_leaves) > 0]
+  }
+
+  area_id_join <- Map(data.frame,
+                      area_id = area_id_out,
+                      model_area_id = area_id_out_leaves,
+                      stringsAsFactors = FALSE) %>%
+    dplyr::bind_rows() %>%
+    dplyr::distinct()
+
+  area_id_join
+}

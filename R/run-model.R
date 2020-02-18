@@ -186,6 +186,15 @@ naomi_prepare_data <- function(data, options) {
   else
     artnum_calendar_quarter2 <- NULL
 
+  ## Recode anc_*_year* from "" to NULL
+  if(!is.null(options$anc_prevalence_year1) && options$anc_prevalence_year1 == "")
+    options["anc_prevalence_year1"] <- list(NULL)
+  if(!is.null(options$anc_prevalence_year2) && options$anc_prevalence_year2 == "")
+    options["anc_prevalence_year2"] <- list(NULL)
+  if(!is.null(options$anc_art_coverage_year1) && options$anc_art_coverage_year1 == "")
+    options["anc_art_coverage_year1"] <- list(NULL)
+  if(!is.null(options$anc_art_coverage_year2) && options$anc_art_coverage_year2 == "")
+    options["anc_art_coverage_year2"] <- list(NULL)
 
   naomi_mf <- naomi_model_frame(
     area_merged,

@@ -4,15 +4,12 @@
 \alias{naomi_output_frame}
 \title{Model Frame and Linear Transform for Aggregated Model Outputs}
 \usage{
-naomi_output_frame(mf_model, areas, drop_partial_areas = TRUE)
+naomi_output_frame(mf_model, area_aggregation)
 }
 \arguments{
 \item{mf_model}{Model frame}
 
-\item{areas}{naomi_areas object.}
-
-\item{drop_partial_areas}{Drop areas from output if some children are
-missing (default TRUE).}
+\item{area_aggregation}{data.frame with columns \code{area_id} and \code{model_area_id}.}
 }
 \description{
 Model Frame and Linear Transform for Aggregated Model Outputs

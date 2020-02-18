@@ -1,47 +1,14 @@
 #' Model Frame and Linear Transform for Aggregated Model Outputs
 #'
 #' @param mf_model Model frame
-#' @param areas naomi_areas object.
-#' @param drop_partial_areas Drop areas from output if some children are
-#'   missing (default TRUE).
+#' @param area_aggregation data.frame with columns `area_id` and `model_area_id`.
 #'
 #' @export
-naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
-
-  stopifnot(methods::is(areas, "naomi_areas"))
+naomi_output_frame <- function(mf_model, area_aggregation) {
 
   age_groups <- unique(mf_model$age_group)
 
   model_area_ids <- unique(mf_model$area_id)
-
-  area_id_out <- areas$tree$Get("area_id",
-                                filterFun = function(x) x$display_level,
-                                traversal = "level")
-  area_id_out_leaves <- areas$tree$Get("leaves",
-                                       filterFun = function(x) x$display_level,
-                                       traversal = "level") %>%
-    lapply(data.tree::Get, "area_id")
-
-  area_id_out_leaves <- area_id_out_leaves[!duplicated(area_id_out)]
-  area_id_out <- area_id_out[!duplicated(area_id_out)]
-
-  leaf_in_model <- lapply(area_id_out_leaves, `%in%`, model_area_ids)
-  if(drop_partial_areas) {
-    all_leaves_in_model <- vapply(leaf_in_model, all, logical(1))
-    area_id_out <- area_id_out[all_leaves_in_model]
-    area_id_out_leaves <- area_id_out_leaves[all_leaves_in_model]
-  } else {
-    area_id_out_leaves <- Map("[", area_id_out_leaves, leaf_in_model)
-    area_id_out <- area_id_out[lengths(area_id_out_leaves) > 0]
-    area_id_out_leaves <- area_id_out_leaves[lengths(area_id_out_leaves) > 0]
-  }
-
-  area_id_join <- Map(data.frame,
-                      area_id_out = area_id_out,
-                      area_id = area_id_out_leaves,
-                      stringsAsFactors = FALSE) %>%
-    dplyr::bind_rows() %>%
-    dplyr::distinct()
 
   sexes <- unique(mf_model$sex)
   sex_out <- get_sex_out(sexes)
@@ -67,21 +34,22 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
   stopifnot(age_groups %in% age_group_join$age_group)
 
   mf_out <- tidyr::crossing(
-                     area_id = area_id_out,
+                     area_id = area_aggregation$area_id,
                      sex = sex_out,
                      age_group = age_group_out
-                   )
+  )
 
-  df_join <- tidyr::crossing(area_id_join, sex_join, age_group_join) %>%
+  df_join <- tidyr::crossing(area_aggregation, sex_join, age_group_join) %>%
     dplyr::full_join(
              mf_model %>%
              dplyr::select("area_id", "sex", "age_group", "idx"),
-             by = c("area_id", "sex", "age_group")) %>%
+      by = c("model_area_id" = "area_id",
+             "sex", "age_group")) %>%
     dplyr::full_join(
              mf_out %>%
              dplyr::mutate(out_idx = dplyr::row_number())
             ,
-             by = c("area_id_out" = "area_id",
+             by = c("area_id" = "area_id",
                     "sex_out" = "sex",
                     "age_group_out" = "age_group")
            ) %>%
@@ -116,7 +84,8 @@ naomi_output_frame <- function(mf_model, areas, drop_partial_areas = TRUE) {
 #' @param artattend logical; whether to estimate neighboring district ART attendance
 #' @param artattend_t2 logical; whether to allow time-varying neighboring district ART attendance
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
-#' @param rho_paed_x_term logical; whether to include area 
+#' @param rho_paed_15to49f_ratio logical; to model paediatric prevalence as ratio of 15-49 female prevalence
+#' @param rho_paed_x_term logical; to include area interaction for paediatric prevalence
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
@@ -151,6 +120,7 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
+                              rho_paed_15to49f_ratio = FALSE,
                               rho_paed_x_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
@@ -471,7 +441,11 @@ naomi_model_frame <- function(area_merged,
 
   ## Model output
 
-  outf <- naomi_output_frame(mf_model, areas)
+  area_aggregation <- create_area_aggregation(model_area_ids = mf_model$area_id,
+                                              areas = areas,
+                                              drop_partial_areas = TRUE)
+  outf <- naomi_output_frame(mf_model, area_aggregation)
+  
 
 
   ## ART attendance model
@@ -540,6 +514,17 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::ungroup()
 
+  ## Paediatric prevalence ratio model
+  mf_model <- mf_model %>%
+    dplyr::group_by(area_id) %>%
+    dplyr::mutate(
+             spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
+             paed_rho_ratio = dplyr::if_else(age_group %in% c("00-04", "05-09", "10-14"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("00-04", "05-09", "10-14")) else 1.0,
+             spec_prev15to49f_t1 = NULL
+           ) %>%
+    dplyr::ungroup()
+
   ## Remove unneeded columns from spectrum_calibration
   spectrum_calibration$susc_previous_year_spectrum <- NULL
   spectrum_calibration$births_spectrum <- NULL
@@ -550,6 +535,7 @@ naomi_model_frame <- function(area_merged,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
             rho_paed_x_term = rho_paed_x_term,
+            area_aggregation = area_aggregation,
             A_out = outf$A,
             Lproj_hivpop = Lproj$Lproj_hivpop,
             Lproj_incid = Lproj$Lproj_incid,
@@ -685,13 +671,21 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
       .$age_max
 
+    age_min <- df %>%
+      dplyr::left_join(get_age_groups(), by = "age_group") %>%
+      dplyr::summarise(age_min = min(age_group_start)) %>%
+      .$age_min
+    
     mf %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
       dplyr::transmute(idx,
-                       data_range = as.integer((age_group_start + age_group_span) <= age_max),
-                       offset_range = as.integer((age_group_start + age_group_span) >= age_max),
-                       age_fct = factor(pmin(age_group_start,
-                                             max(age_group_start * data_range))))
+                       data_range = as.integer(age_group_start >= age_min & (age_group_start + age_group_span) <= age_max),
+                       upper_offset_range = as.integer((age_group_start + age_group_span) >= age_max),
+                       lower_offset_range = as.integer(age_group_start <= age_min),
+                       age_fct = pmin(age_group_start, max(age_group_start * data_range)),
+                       age_fct = pmax(age_fct, min(age_fct / data_range, na.rm = TRUE)),
+                       age_fct = factor(age_fct))
+                                             
   }
 
 
@@ -712,9 +706,12 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::mutate(
                rho_a_fct = age_fct,
                age_fct = NULL,
-               logit_rho_offset = dplyr::if_else(offset_range == 1, qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * offset_range)), 0),
+               logit_rho_offset = dplyr::case_when(upper_offset_range == 1 ~ qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * upper_offset_range)),
+                                                   lower_offset_range == 1 ~ qlogis(spec_prev_t1) - qlogis(max(spec_prev_t1 * data_range * lower_offset_range)),
+                                                   TRUE ~ 0),
                data_range = NULL,
-               offset_range = NULL
+               lower_offset_range = NULL,
+               upper_offset_range = NULL
              ) %>%
       dplyr::ungroup()
   }
@@ -740,9 +737,12 @@ update_mf_offsets <- function(naomi_mf,
       dplyr::mutate(
                alpha_a_fct = age_fct,
                age_fct = NULL,
-               logit_alpha_offset = dplyr::if_else(offset_range == 1, qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * offset_range)), 0),
+               logit_alpha_offset = dplyr::case_when(upper_offset_range == 1 ~ qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * upper_offset_range)),
+                                                     lower_offset_range == 1 ~ qlogis(spec_artcov_t1) - qlogis(max(spec_artcov_t1 * data_range * lower_offset_range)),
+                                                     TRUE ~ 0),
                data_range = NULL,
-               offset_range = NULL
+               lower_offset_range = NULL,
+               upper_offset_range = NULL
              ) %>%
       dplyr::ungroup()
   }
@@ -983,16 +983,30 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     out_quarter_id <- calendar_quarter_to_quarter_id(calendar_quarter)
 
     dat <- art_number %>%
-      dplyr::inner_join(
-               dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
-               by = "area_id"
-             ) %>%
+      dplyr::semi_join(
+        naomi_mf$area_aggregation,
+        by = "area_id"
+      ) %>%
       dplyr::mutate(
                quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
-             )
+      )
 
+    ## Check no areas with duplicated reporting
+    art_duplicated_check <- dat %>%
+      dplyr::left_join(
+        naomi_mf$area_aggregation,
+        by = "area_id"
+      ) %>%
+      dplyr::count(model_area_id, age_group, sex, calendar_quarter) %>%
+      dplyr::filter(n > 1)
+    
+    if (nrow(art_duplicated_check)) {
+      stop(paste("ART data multiply reported for some age/sex strata in areas:",
+                 paste(unique(art_duplicated_check$model_area_id), collapse = ", ")))
+    }
+    
     dat <- dat %>%
-      dplyr::group_by(area_id, sex, age_group, spectrum_region_code) %>%
+      dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
                        current_art = approx(quarter_id, current_art, out_quarter_id, rule =2)$y) %>%
