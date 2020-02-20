@@ -314,3 +314,17 @@ test_that("invalid time sequencing returns an error", {
                "Estimates quarter \\(time 2\\) must be after survey quarter \\(time 1\\)")
 
 })
+
+
+test_that("model works with empty string for ANC year", {
+
+  options <- a_hintr_options
+  options$anc_prevalence_year1 <- ""
+  options$anc_prevalence_year2 <- ""
+  options$anc_art_coverage_year1 <- ""
+  options$anc_art_coverage_year2 <- ""
+  
+  model_run <- hintr_run_model(a_hintr_data, options)
+
+  expect_equal(names(model_run), c("output_path", "spectrum_path", "summary_path"))
+})
