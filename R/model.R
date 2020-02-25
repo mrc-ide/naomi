@@ -452,10 +452,10 @@ naomi_model_frame <- function(area_merged,
 
   ## ART attendance model
 
-  if(artattend & max.dist >2)
+  if(artattend & max.dist == 3)
     artattendM <- expand_adjacency(M, max.dist, specific_districts)
   
-  if(artattend & max.dist < 3)
+  if(artattend & max.dist == 2)
     artattendM <- M
   
   if(!artattend)
