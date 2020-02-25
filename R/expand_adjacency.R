@@ -1,6 +1,8 @@
 expand_adjacency <- function(M, max.dist, specific_districts) {
   
   new_mat <- M %*% M
+  new_mat[new_mat != 0] <- 1
+  diag(new_mat) <- 0
   
 # tmp.adj.m <- M
 # 
@@ -51,6 +53,7 @@ expand_adjacency <- function(M, max.dist, specific_districts) {
 # degree.m <- 1*is.finite(degree.m)
 # diag(degree.m) <- 0
 # new_mat <- degree.m
+
 
 if(!is.na(specific_districts)) {
   
