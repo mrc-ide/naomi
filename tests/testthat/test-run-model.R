@@ -11,7 +11,7 @@ test_that("model can be run", {
                                output_spectrum,
                                summary_path)
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path"))
+               c("output_path", "spectrum_path", "summary_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -60,6 +60,7 @@ test_that("model can be run", {
         names(outputs$meta_area))
   )
 
+  expect_equal(model_run$metadata$areas, "MWI_1_2")
 })
 
 test_that("model can be run without programme data", {
@@ -323,7 +324,7 @@ test_that("model works with empty string for ANC year", {
   options$anc_prevalence_year2 <- ""
   options$anc_art_coverage_year1 <- ""
   options$anc_art_coverage_year2 <- ""
-  
+
   model_run <- hintr_run_model(a_hintr_data, options)
 
   expect_equal(names(model_run), c("output_path", "spectrum_path", "summary_path"))

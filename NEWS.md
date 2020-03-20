@@ -1,3 +1,7 @@
+# naomi 0.0.67
+
+* Pass some metadata back from model run for use in output formatting
+
 # naomi 0.0.66
 
 * Allow fitting to ART data to aggregated areas. There is a check that the same model area is not included in more than on area in the ART dataset.

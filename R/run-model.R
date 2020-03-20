@@ -106,7 +106,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   attr(outputs, "info") <- naomi_info(data, options)
 
 
-
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
   save_result_summary(summary_path, outputs)
@@ -116,7 +115,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$print()
   list(output_path = output_path,
        spectrum_path = spectrum_path,
-       summary_path = summary_path)
+       summary_path = summary_path,
+       metadata = list(
+         areas = options$area_scope
+       ))
 }
 
 naomi_prepare_data <- function(data, options) {
