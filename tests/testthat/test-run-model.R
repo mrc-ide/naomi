@@ -24,7 +24,7 @@ test_that("model can be run", {
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
-  info <- naomi_info(a_hintr_data, a_hintr_options)
+  info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
   info_names <- paste0("info/", names(info))
   expect_setequal(
     file_list$Name,
@@ -59,7 +59,6 @@ test_that("model can be run", {
           "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
         names(outputs$meta_area))
   )
-
 })
 
 test_that("model can be run without programme data", {
@@ -109,7 +108,7 @@ test_that("model can be run without programme data", {
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
 
-  info <- naomi_info(data, options)
+  info <- naomi_info(format_data_input(data), options)
   info_names <- paste0("info/", names(info))
   expect_setequal(
     file_list$Name,
@@ -296,14 +295,30 @@ test_that("exceeding max_iterations convergence error or warning", {
                                  summary_path))
 })
 
+test_that("naomi_info_input contains filename and hash info", {
+  data <- list(
+    pjnz = list(
+      path = system_file("extdata/mwi2019.PJNZ"),
+      hash = "pjnz_hash",
+      filename = "mwi2019.PJNZ"
+    ),
+    population = list(
+      path = system_file("extdata/population/population_agesex.csv"),
+      hash = "population_hash",
+      filename = "population_agesex.csv"
+    ),
+    art = NULL
+  )
 
-test_that("naomi_info_input(data) handles NULL string", {
+  info <- naomi_info_input(data)
 
-  data <- list(file1 = "file1.ext",
-               file2 = "file2.ext",
-               file3 = NULL)
-
-  expect_equal(nrow(naomi_info_input(data)), 3)
+  expect_equal(nrow(info), 3)
+  expect_equal(info, data.frame(
+    role = c("pjnz", "population", "art"),
+    filename = c("mwi2019.PJNZ", "population_agesex.csv", NA),
+    md5sum = c("pjnz_hash", "population_hash", NA),
+    stringsAsFactors = FALSE
+  ))
 })
 
 test_that("invalid time sequencing returns an error", {
@@ -323,8 +338,43 @@ test_that("model works with empty string for ANC year", {
   options$anc_prevalence_year2 <- ""
   options$anc_art_coverage_year1 <- ""
   options$anc_art_coverage_year2 <- ""
-  
+
   model_run <- hintr_run_model(a_hintr_data, options)
 
   expect_equal(names(model_run), c("output_path", "spectrum_path", "summary_path"))
+})
+
+test_that("input data types can be formatted", {
+  path1 <- tempfile()
+  writeLines("test", path1)
+  path2 <- tempfile()
+  writeLines("test2", path2)
+  formatted <- format_data_input(list(
+    file1 = path1,
+    file2 = path2
+  ))
+
+  expect_equal(names(formatted), c("file1", "file2"))
+  expect_equal(names(formatted$file1), c("path", "hash", "filename"))
+  expect_equal(formatted$file1$path, path1)
+  expect_equal(names(formatted$file2), c("path", "hash", "filename"))
+  expect_equal(formatted$file2$path, path2)
+
+  ## Correctly formatted data is unchanged
+  test_data <- list(
+    file1 = list(
+      path = "path/to/file1",
+      hash = "hash1",
+      filename = "file1"
+    ),
+    file2 = list(
+      path = "path/to/file2",
+      hash = "hash2",
+      filename = "file2"
+    )
+  )
+  expect_equal(format_data_input(test_data), test_data)
+
+  expect_error(format_data_input(2),
+               "Unsupported input data type, must be a list of file paths or list of file metadata")
 })
