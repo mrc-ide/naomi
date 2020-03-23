@@ -9,6 +9,9 @@ RUN apt-get update && apt-get -y install \
         libv8-dev \
         libxml2-dev \
         protobuf-compiler \
+        texinfo \
+        texlive \
+        texlive-fonts-extra \
         zlib1g-dev
 
 COPY docker/bin /usr/local/bin/
