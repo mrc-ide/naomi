@@ -40,9 +40,9 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
     scales \
     sf \
     spdep \
-    specio (>= 0.1.2) \
+    specio \
     survey \
-    testthat (>= 2.1.0) \
+    testthat \
     tidyr \
     tidyverse \
     tmbstan \
