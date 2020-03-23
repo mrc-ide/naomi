@@ -3,8 +3,6 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
-git clone https://github.com/mrc-ide/naomi
-
 docker build --pull \
        -t $TAG_SHA \
        -t $TAG_BRANCH \
