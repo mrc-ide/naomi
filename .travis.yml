@@ -1,7 +1,7 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: R
-sudo: false
+sudo: required  # to allow r_binary_packages
 dist: xenial
 addons:
   apt:
@@ -11,13 +11,39 @@ addons:
       - libudunits2-dev
       - libv8-dev
 cache: packages
-r_packages:
-  - covr
 r_github_packages:
   - bergant/datamodelr
   - mrc-ide/eppasm
   - mrc-ide/specio
   - reside-ic/traduire
+r_binary_packages:
+  - assertthat
+  - data.tree
+  - dplyr
+  - forcats
+  - ggplot2
+  - magrittr
+  - readr
+  - rlang
+  - sf
+  - spdep
+  - tidyr
+  - yaml
+  - zip
+  - zoo
+  - knitr
+  - lubridate
+  - rmarkdown
+  - scales
+  - survey
+  - testthat
+  - tidyverse
+  - viridis
+  - withr
+
 # Disabled for now as timing out on travis
+# r_packages:
+#   - covr
 # after_success:
 #   - Rscript -e 'covr::codecov()'
+

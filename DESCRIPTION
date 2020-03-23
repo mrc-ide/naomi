@@ -57,7 +57,7 @@ Suggests:
     testthat (>= 2.1.0),
     tidyverse,
     tmbstan,
-    viridis,
+    viridis,    
     withr
 VignetteBuilder: knitr
 LinkingTo: 
