@@ -56,7 +56,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
 RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
     INLA
 
-RUN install_remote \
+RUN install_packages remotes && install_remote \
     bergant/datamodelr \
     mrc-ide/eppasm \
     reside-ic/traduire
