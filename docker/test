@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(dirname $0)
+. $HERE/common
+
+NAME_REDIS=hintr_redis
+NAME_SERVER=hintr_server
+NAME_NETWORK=hintr_network
+NAME_VOLUME=hintr_volume
+
+function cleanup {
+    echo "Cleaning up"
+    docker kill $NAME_REDIS > /dev/null || true
+    docker kill $NAME_SERVER > /dev/null || true
+    docker network rm $NAME_NETWORK > /dev/null || true
+    docker volume rm $NAME_VOLUME > /dev/null || true
+}
+
+trap cleanup EXIT
+
+docker network create $NAME_NETWORK
+docker volume create $NAME_VOLUME
+
+docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
+       --name hintr_redis redis
+docker run --rm -d --network=$NAME_NETWORK \
+       -p 8888:8888 \
+       -e REDIS_URL=redis://redis:6379 \
+       -e USE_MOCK_MODEL=true \
+       --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
+       --mount type=volume,src=$NAME_VOLUME,dst=/results \
+       --name $NAME_SERVER $TAG_SHA
+
+set +e
+for attempt in $(seq 10); do
+    echo "Attempt $attempt"
+    RESPONSE=$(curl --silent http://localhost:8888)
+    if [ "$RESPONSE" == '"Welcome to hintr"' ]; then
+        echo "SUCCESS"
+        exit 0
+    fi
+    sleep 0.5
+done
+
+echo "FAIL"
+exit 1
