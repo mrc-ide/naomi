@@ -23,9 +23,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
     assertthat \
     covr \
     data.tree \
-    datamodelr \
     dplyr \
-    eppasm \
     forcats \
     ggplot2 \
     gridExtra \
@@ -33,7 +31,6 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
     knitr \
     lubridate \
     magrittr \
-    methods \
     mockery \
     mvtnorm \
     rdhs \
