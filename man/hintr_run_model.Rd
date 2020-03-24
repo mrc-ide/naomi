@@ -41,6 +41,15 @@ The \code{data} argument must be a list specifying paths to the following:
 \item \code{art_number} (optional)
 }
 
+Each item in list can either be a character containing the path to the file
+or another list of the format:
+
+list(
+path = "path/to/file",
+hash = "file_hash",
+filename = "file"
+)
+
 The \code{options} argument must be a list specifying minimally:
 \itemize{
 \item area_scope

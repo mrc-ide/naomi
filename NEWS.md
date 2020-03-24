@@ -1,3 +1,7 @@
+# naomi 0.0.67
+
+* Allow passing input data to `naomi_run_model` either as list of file paths or list of lists each containing a path, hash and filename
+
 # naomi 0.0.66
 
 * Allow fitting to ART data to aggregated areas. There is a check that the same model area is not included in more than on area in the ART dataset.
