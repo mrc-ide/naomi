@@ -1,6 +1,10 @@
-# naomi 0.0.67
+# naomi 0.0.68
 
 * Pass some metadata back from model run for use in output formatting
+
+# naomi 0.0.67
+
+* Allow passing input data to `naomi_run_model` either as list of file paths or list of lists each containing a path, hash and filename
 
 # naomi 0.0.66
 
