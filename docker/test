@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(dirname $0)
+. $HERE/common
+
+docker run --rm $TAG_SHA test_self
