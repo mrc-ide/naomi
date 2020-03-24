@@ -183,7 +183,8 @@ test_that("validation check for spectrum region code returns error", {
   data_na_spectrum_region_code <- a_hintr_data
   data_na_spectrum_region_code$shape <- tmp_areas_na_spectrum_region_code
 
-  expect_error(validate_model_options(data_na_spectrum_region_code, a_hintr_options),
+  expect_error(validate_model_options(
+    format_data_input(data_na_spectrum_region_code), a_hintr_options),
                "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level.")
 
   areas_bad_spectrum_region_code <- read_area_merged(a_hintr_data$shape)
@@ -194,7 +195,8 @@ test_that("validation check for spectrum region code returns error", {
   data_bad_spectrum_region_code <- a_hintr_data
   data_bad_spectrum_region_code$shape <- tmp_areas_bad_spectrum_region_code
 
-  expect_error(validate_model_options(data_bad_spectrum_region_code, a_hintr_options),
+  expect_error(validate_model_options(
+    format_data_input(data_bad_spectrum_region_code), a_hintr_options),
                "Some spectrum region code in your shape file are not in PJNZ extracts. Please update your shape file to include the correct codes")
 
 })
