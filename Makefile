@@ -38,6 +38,8 @@ vignettes/model-workflow.Rmd: vignettes_src/model-workflow.Rmd
 
 vignettes/data-model.Rmd: vignettes_src/data-model.Rmd
 	cp $^ $@
+	mkdir vignettes/figure
+	./vignettes/script/create_data_model.R
 
 vignettes_install: vignettes/model-workflow.Rmd vignettes/data-model.Rmd
 	${RSCRIPT} -e 'tools::buildVignettes(dir = ".")'
@@ -45,7 +47,7 @@ vignettes_install: vignettes/model-workflow.Rmd vignettes/data-model.Rmd
 vignettes:
 	rm -rf vignettes/figure
 	rm -rf vignettes_src/outputs
-	rm -f vignettes/model-workflow.Rmd vignettes/data-model.Rmd
+	rm -f vignettes/data-model.Rmd
 	make vignettes_install
 
 .PHONY: test roxygen install build check check_all pkgdown website vignettes vignettes_rmd vignettes_install
