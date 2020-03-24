@@ -11,7 +11,7 @@ test_that("model can be run", {
                                output_spectrum,
                                summary_path)
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path"))
+               c("output_path", "spectrum_path", "summary_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -59,6 +59,8 @@ test_that("model can be run", {
           "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
         names(outputs$meta_area))
   )
+
+  expect_equal(model_run$metadata$areas, "MWI_1_2")
 })
 
 test_that("model can be run without programme data", {
@@ -94,7 +96,7 @@ test_that("model can be run without programme data", {
   model_run <- hintr_run_model(data, options, output_path, output_spectrum,
                          summary_path)
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path"))
+               c("output_path", "spectrum_path", "summary_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -341,7 +343,8 @@ test_that("model works with empty string for ANC year", {
 
   model_run <- hintr_run_model(a_hintr_data, options)
 
-  expect_equal(names(model_run), c("output_path", "spectrum_path", "summary_path"))
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "summary_path", "metadata"))
 })
 
 test_that("input data types can be formatted", {
