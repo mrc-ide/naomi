@@ -435,7 +435,7 @@ remove_art_attendance_labels <- function(naomi_output) {
 #'
 #' @param naomi_output Naomi output object.
 #' @param area_id vector of area_ids to include/exclude.
-#' @param area_id vector of area_levels to include/exclude.
+#' @param area_level vector of area_levels to include/exclude.
 #' @param sex vector of sexes to include/exclude.
 #' @param age_group vector of age_groups to include/exclude.
 #' @param calendar_quarter vector of calendar_quarters to include/exclude.

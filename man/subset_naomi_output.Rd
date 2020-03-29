@@ -19,7 +19,9 @@ subset_naomi_output(
 \arguments{
 \item{naomi_output}{Naomi output object.}
 
-\item{area_id}{vector of area_levels to include/exclude.}
+\item{area_id}{vector of area_ids to include/exclude.}
+
+\item{area_level}{vector of area_levels to include/exclude.}
 
 \item{sex}{vector of sexes to include/exclude.}
 
