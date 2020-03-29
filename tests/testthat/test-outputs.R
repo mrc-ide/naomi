@@ -99,6 +99,16 @@ test_that("subset output returns expected subset", {
   expect_setequal(calendar_quarter_sub, sub_keep$indicators$calendar_quarter)
   expect_setequal(indicator_sub, sub_keep$indicators$indicator)
 
+
+  area_level_sub <- 1
+  sub_keep_level <- subset_naomi_output(a_output,
+                                        area_level = area_level_sub,
+                                        sex = sex_sub,
+                                        age_group = age_group_sub,
+                                        calendar_quarter = calendar_quarter_sub,
+                                        indicator = indicator_sub)
+  expect_setequal("MWI_1_1", sub_keep_level$indicators$area_id)
+
   sub_drop <- subset_naomi_output(a_output,
                                   area_id = area_id_sub,
                                   sex = sex_sub,
@@ -116,6 +126,11 @@ test_that("subset output returns expected subset", {
                   sub_drop$indicators$calendar_quarter)
   expect_setequal(setdiff(a_output$meta_indicator$indicator, indicator_sub),
                   sub_drop$indicators$indicator)
+
+
+  sub_drop_level <- subset_naomi_output(a_output, area_level = 2:4, drop = TRUE)
+  expect_setequal("MWI_1_1", sub_drop_level$indicators$area_id)
+
 
   expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1", "jibberish")),
                "area_ids not found in naomi_output: jibberish")

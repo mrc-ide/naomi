@@ -435,6 +435,7 @@ remove_art_attendance_labels <- function(naomi_output) {
 #'
 #' @param naomi_output Naomi output object.
 #' @param area_id vector of area_ids to include/exclude.
+#' @param area_id vector of area_levels to include/exclude.
 #' @param sex vector of sexes to include/exclude.
 #' @param age_group vector of age_groups to include/exclude.
 #' @param calendar_quarter vector of calendar_quarters to include/exclude.
@@ -458,6 +459,7 @@ remove_art_attendance_labels <- function(naomi_output) {
 #' 
 subset_naomi_output <- function(naomi_output,
                                 area_id = NULL,
+                                area_level = NULL,
                                 sex = NULL,
                                 age_group = NULL,
                                 calendar_quarter = NULL,
@@ -476,6 +478,18 @@ subset_naomi_output <- function(naomi_output,
       naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, !area_id %in% !!area_id)
     } else {
       naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, area_id %in% !!area_id)
+    }
+  }
+
+  if(!is.null(area_level)) {
+    if(check_list && !all(area_level %in% naomi_output$meta_area$area_level)) {
+      missing_area_level <- setdiff(area_level, naomi_output$meta_area$area_level)
+      stop(paste("area_levels not found in naomi_output:", paste(missing_area_level, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, !area_level %in% !!area_level)
+    } else {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, area_level %in% !!area_level)
     }
   }
 

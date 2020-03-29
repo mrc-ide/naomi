@@ -7,6 +7,7 @@
 subset_naomi_output(
   naomi_output,
   area_id = NULL,
+  area_level = NULL,
   sex = NULL,
   age_group = NULL,
   calendar_quarter = NULL,
@@ -18,7 +19,7 @@ subset_naomi_output(
 \arguments{
 \item{naomi_output}{Naomi output object.}
 
-\item{area_id}{vector of area_ids to include/exclude.}
+\item{area_id}{vector of area_levels to include/exclude.}
 
 \item{sex}{vector of sexes to include/exclude.}
 
