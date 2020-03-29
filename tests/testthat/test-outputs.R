@@ -31,7 +31,6 @@ test_that("all output stratifications are included in metatdata", {
 
 })
 
-
 test_that("datapack export writes a csv", {
 
   tmpf <- tempfile(fileext = ".csv")
@@ -40,4 +39,49 @@ test_that("datapack export writes a csv", {
 
   expect_equal(tmpf, res)
   expect_true(!any(is.na(datapack)))
+})
+
+test_that("write and read hintr outputs returns same thing", {
+
+  read1 <- read_output_package(a_hintr_output$spectrum_path)
+
+  tmpf <- tempfile(fileext = ".zip")
+  save_output_spectrum(tmpf, read1)
+  read2 <- read_output_package(tmpf)
+
+  ## The sfc column creates an error for expect_equal(). Check the type
+  ## then drop the geometry column.
+  expect_is(read2$meta_area, "sf")
+  read1$meta_area <- sf::st_drop_geometry(read1$meta_area)
+  read2$meta_area <- sf::st_drop_geometry(read2$meta_area)
+  
+  expect_equal(read1, read2)
+})
+
+test_that("write and read naomi outputs returns same thing", {
+
+  tmpf <- tempfile(fileext = ".zip")
+  save_output_package(a_output_full, basename(tmpf), dirname(tmpf))
+  
+  read1 <- read_output_package(tmpf)
+
+  ## Note: expect_equal(a_output_full, read1) doesn't work due to 
+  ## rounding errors in CSV write/read of numerical outputs.
+  
+  expect_equal(lapply(a_output_full, names), lapply(read1, names))
+  expect_equal(lapply(a_output_full, dim), lapply(read1, dim))
+
+  expect_equal(lapply(a_output_full$fit, names), lapply(read1$fit, names))
+  expect_equal(lapply(a_output_full$fit, dim), lapply(read1$fit, dim))
+    
+  expect_equal(attributes(a_output_full), attributes(read1))
+})
+
+test_that("subset output returns output packages", {
+
+  outf <- tempfile(fileext = ".zip")
+  save_output_spectrum(outf, a_output_full)
+
+  output_full <- read_output_package(outf)
+  
 })

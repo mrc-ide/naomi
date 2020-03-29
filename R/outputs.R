@@ -355,6 +355,17 @@ add_output_labels <- function(naomi_output) {
   indicators
 }
 
+remove_output_labels <- function(naomi_output) {
+
+  dplyr::select(naomi_output$indicators,
+                area_id,
+                sex,
+                age_group,
+                calendar_quarter,
+                indicator, 
+                mean, se, median, mode, lower, upper)
+}
+
 add_art_attendance_labels <- function(naomi_output) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
@@ -406,6 +417,20 @@ add_art_attendance_labels <- function(naomi_output) {
 
   art_attendance
 }
+
+remove_art_attendance_labels <- function(naomi_output) {
+
+  dplyr::select(naomi_output$art_attendance,
+                reside_area_id,
+                attend_area_id,
+                sex,
+                age_group,
+                calendar_quarter,
+                dplyr::starts_with("artnum"),
+                dplyr::starts_with("prop_residents"),
+                dplyr::starts_with("prop_attendees"))
+}
+
 
 #' Save outputs to zip file
 #'
@@ -467,6 +492,9 @@ save_output <- function(filename, dir,
       "File", path, "already exists. Set overwrite = TRUE to write output."))
   }
 
+  naomi_output$indicators <- remove_output_labels(naomi_output)
+  naomi_output$art_attendance <- remove_art_attendance_labels(naomi_output)
+  
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
     art_attendance <- add_art_attendance_labels(naomi_output)
@@ -490,6 +518,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
 
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
+    
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         sf::st_write(naomi_output$meta_area, "boundaries.geojson", quiet = TRUE)
@@ -537,15 +566,33 @@ read_output_package <- function(path) {
 
   utils::unzip(path, exdir = tmpd)
 
+  ## Fit list
+  spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
+  calibration_options <- readr_read_csv(file.path(tmpd, "fit/calibration_options.csv"))
+  calibration_options <- setNames(calibration_options$value,
+                                  calibration_options$option)
+
+  fit <- list(spectrum_calibration = spectrum_calibration,
+              calibration_options = calibration_options)
+    
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
     art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
-    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
+    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),    
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
-    fit = list(spectrum_calibration = readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv")))
+    fit = fit
   )
+
+  v$meta_area$name <- NULL
+
+  info_files <- list.files(file.path(tmpd, "info"))
+  if(length(info_files)) {
+    info <- lapply(file.path(tmpd, "info", info_files), readLines)
+    names(info) <- info_files
+    attr(v, "info") <- info
+  }
 
   class(v) <- "naomi_output"
   v
