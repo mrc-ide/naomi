@@ -56,9 +56,21 @@ test_that("model can be run", {
 
   expect_true(
     all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
-          "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
+          "spectrum_region_code", "area_sort_order", "geometry") %in%
         names(outputs$meta_area))
   )
+
+  tmpf <- tempfile()
+  unzip(model_run$spectrum_path, "boundaries.geojson", exdir = tmpf)
+  output_boundaries <- sf::read_sf(file.path(tmpf, "boundaries.geojson"))
+
+  ## Column 'name' added in boundaries.geojson during save_output() for Spectrum
+  expect_true(
+    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
+      "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
+      names(output_boundaries))
+  )
+
 
   expect_equal(model_run$metadata$areas, "MWI_1_2")
 })
@@ -136,9 +148,6 @@ test_that("model can be run without programme data", {
 
 test_that("model fit without survey ART and survey recency data", {
 
-  ## !!! TODO: need to get this working or validation flags
-  skip("Need to return to either get working or set validation flags")
-
   options <- a_hintr_options
   options$survey_art_coverage <- NULL
   expect_error(
@@ -152,15 +161,14 @@ test_that("model fit without survey ART and survey recency data", {
     NA)
 
   ## No survey ART coverage or ART programme data
-  ## !!! TODO: This is a situation that **should** be supported, needs attention
   options <- a_hintr_options
   options$survey_art_coverage <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
+  options$artattend <- "false"
   expect_error(
     hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
-    "false convergence \\(8\\)")
-
+    NA)
 }
 )
 
