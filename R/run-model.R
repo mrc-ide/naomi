@@ -20,6 +20,15 @@
 #' * `anc_testing` (optional)
 #' * `art_number` (optional)
 #'
+#' Each item in list can either be a character containing the path to the file
+#' or another list of the format:
+#'
+#' list(
+#'   path = "path/to/file",
+#'   hash = "file_hash",
+#'   filename = "file"
+#' )
+#'
 #' The `options` argument must be a list specifying minimally:
 #'
 #' * area_scope
@@ -43,12 +52,13 @@
 hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
                             summary_path = tempfile(fileext = ".zip")) {
-
   INLA:::inla.dynload.workaround()
   progress <- new_progress()
 
   progress$start("validate_options")
   progress$print()
+
+  data <- format_data_input(data)
 
   if(is.null(options$permissive))
     permissive <- FALSE
@@ -59,8 +69,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("validate_options")
 
   progress$start("prepare_inputs")
-
   progress$print()
+
 
   naomi_data <- naomi_prepare_data(data, options)
 
@@ -106,7 +116,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   attr(outputs, "info") <- naomi_info(data, options)
 
 
-
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
   save_result_summary(summary_path, outputs)
@@ -116,24 +125,27 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$print()
   list(output_path = output_path,
        spectrum_path = spectrum_path,
-       summary_path = summary_path)
+       summary_path = summary_path,
+       metadata = list(
+         areas = options$area_scope
+       ))
 }
 
 naomi_prepare_data <- function(data, options) {
 
-  area_merged <- read_area_merged(data$shape)
-  population <- read_population(data$population)
-  survey <- read_survey_indicators(data$survey)
+  area_merged <- read_area_merged(data$shape$path)
+  population <- read_population(data$population$path)
+  survey <- read_survey_indicators(data$survey$path)
 
-  spec <- extract_pjnz_naomi(data$pjnz)
+  spec <- extract_pjnz_naomi(data$pjnz$path)
 
   if (!is.null(data$art_number)) {
-    art_number <- read_art_number(data$art_number)
+    art_number <- read_art_number(data$art_number$path)
   } else {
     art_number <- NULL
   }
   if (!is.null(data$anc_testing)) {
-    anc_testing <- read_anc_testing(data$anc_testing)
+    anc_testing <- read_anc_testing(data$anc_testing$path)
   } else {
     anc_testing <- NULL
   }
@@ -287,16 +299,22 @@ Progress <- R6::R6Class("Progress", list(
 ))
 
 naomi_info_input <- function(data) {
-
-  data[vapply(data, is.null, logical(1))] <- "<NULL>"
-
-  files <- vapply(data, identity, character(1))
-  hash <- unname(tools::md5sum(vapply(data, identity, character(1))))
+  get_col_from_list <- function(data, what) {
+    value <- data[[what]]
+    if (is.null(value)) {
+      value <- NA_character_
+    }
+    value
+  }
+  filenames <- vapply(data, get_col_from_list, character(1), "filename")
+  hash <- vapply(data, get_col_from_list, character(1), "hash")
   data.frame(
     role = names(data),
-    filename = basename(files),
-    md5sum = unname(tools::md5sum(files)),
-    stringsAsFactors = FALSE)
+    filename = filenames,
+    md5sum = hash,
+    stringsAsFactors = FALSE,
+    row.names = NULL
+  )
 }
 
 naomi_info_packages <- function() {
@@ -319,4 +337,36 @@ naomi_info <- function(data, options) {
   list("inputs.csv" = write_csv_string(naomi_info_input(data)),
        "options.yml" = yaml::as.yaml(options),
        "packages.csv" = write_csv_string(naomi_info_packages()))
+}
+
+## Ensures data is of format
+## list(
+##   input = list(
+##     path = "path/to/file",
+##     hash = "file_hash",
+##     filename = "filename"
+##   ),
+##   input2 = list(
+##     ...
+##   ),
+##   ...
+## )
+## From either a list of file paths or returns passed in data unchanged
+format_data_input <- function(data) {
+  if (all(vapply(data, is.character, logical(1)))) {
+    data <- convert_format(data)
+  } else if (!all(vapply(data, is.list, logical(1)))) {
+    stop("Unsupported input data type, must be a list of file paths or list of file metadata.")
+  }
+  data
+}
+
+convert_format <- function(data) {
+  lapply(data, function(input) {
+    list(
+      path = input,
+      hash = tools::md5sum(input),
+      filename = basename(input)
+    )
+  })
 }
