@@ -77,11 +77,99 @@ test_that("write and read naomi outputs returns same thing", {
   expect_equal(attributes(a_output_full), attributes(read1))
 })
 
-test_that("subset output returns output packages", {
+test_that("subset output returns expected subset", {
 
-  outf <- tempfile(fileext = ".zip")
-  save_output_spectrum(outf, a_output_full)
 
-  output_full <- read_output_package(outf)
+  area_id_sub <- c("MWI_1_1", "MWI_2_1")
+  sex_sub <- "both"
+  age_group_sub <- c("00-14", "15-24", "50+")
+  calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
+  indicator_sub <- c("prevalence", "plhiv")
+  
+  sub_keep <- subset_naomi_output(a_output,
+                                  area_id = area_id_sub,
+                                  sex = sex_sub,
+                                  age_group = age_group_sub,
+                                  calendar_quarter = calendar_quarter_sub,
+                                  indicator = indicator_sub)
+
+  expect_setequal(area_id_sub, sub_keep$indicators$area_id)
+  expect_setequal(sex_sub, sub_keep$indicators$sex)
+  expect_setequal(age_group_sub, sub_keep$indicators$age_group)
+  expect_setequal(calendar_quarter_sub, sub_keep$indicators$calendar_quarter)
+  expect_setequal(indicator_sub, sub_keep$indicators$indicator)
+
+  sub_drop <- subset_naomi_output(a_output,
+                                  area_id = area_id_sub,
+                                  sex = sex_sub,
+                                  age_group = age_group_sub,
+                                  calendar_quarter = calendar_quarter_sub,
+                                  indicator = indicator_sub,
+                                  drop = TRUE)
+
+  expect_setequal(setdiff(a_output$meta_area$area_id, area_id_sub),
+                  sub_drop$indicators$area_id)
+  expect_setequal(c("male", "female"), sub_drop$indicators$sex)
+  expect_setequal(setdiff(a_output$meta_age_group$age_group, c(age_group_sub, "00-00", "01-04")),
+                  sub_drop$indicators$age_group)
+  expect_setequal(setdiff(a_output$meta_period$calendar_quarter, calendar_quarter_sub),
+                  sub_drop$indicators$calendar_quarter)
+  expect_setequal(setdiff(a_output$meta_indicator$indicator, indicator_sub),
+                  sub_drop$indicators$indicator)
+
+  expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1", "jibberish")),
+               "area_ids not found in naomi_output: jibberish")
+  expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1", "jibberish"), check_list = FALSE), NA)
+
+})
+
+test_that("subset_output_package() saves expected output package", {
+
+  area_id_sub <- c("MWI_1_2", "MWI_2_2")
+  sex_sub <- "both"
+  age_group_sub <- c("00-14", "15-24", "50+")
+  calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
+  indicator_sub <- c("prevalence", "plhiv")
+
+  sub_keep_file <- tempfile(fileext = ".zip")
+
+  sub_keep_return <- subset_output_package(a_hintr_output$spectrum_path,
+                                           sub_keep_file,
+                                           area_id = area_id_sub,
+                                           sex = sex_sub,
+                                           age_group = age_group_sub,
+                                           calendar_quarter = calendar_quarter_sub,
+                                           indicator = indicator_sub)
+
+  sub_keep_out <- read_output_package(sub_keep_file)
+
+  expect_equal(normalizePath(sub_keep_return),
+               normalizePath(sub_keep_file))
+  expect_is(sub_keep_out, "naomi_output")
+  expect_setequal(area_id_sub, sub_keep_out$indicators$area_id)
+  expect_setequal(sex_sub, sub_keep_out$indicators$sex)
+  expect_setequal(age_group_sub, sub_keep_out$indicators$age_group)
+  expect_setequal(calendar_quarter_sub, sub_keep_out$indicators$calendar_quarter)
+  expect_setequal(indicator_sub, sub_keep_out$indicators$indicator)
+
+
+  sub_drop_file <- tempfile(fileext = ".zip")
+  
+  sub_drop_return <- subset_output_package(a_hintr_output$spectrum_path,
+                                           sub_drop_file,
+                                           area_id = area_id_sub,
+                                           sex = sex_sub,
+                                           age_group = age_group_sub,
+                                           calendar_quarter = calendar_quarter_sub,
+                                           indicator = indicator_sub,
+                                           drop = TRUE)
+
+  sub_drop_out <- read_output_package(sub_drop_file)
+
+  expect_true(!any(area_id_sub %in% sub_drop_out$indicators$area_id))
+  expect_true(!any(sex_sub %in% sub_drop_out$indicators$sex))
+  expect_true(!any(age_group_sub %in% sub_drop_out$indicators$age_group))
+  expect_true(!any(calendar_quarter_sub %in% sub_drop_out$indicators$calendar_quarter))
+  expect_true(!any(indicator_sub %in% sub_drop_out$indicators$indicator))
   
 })

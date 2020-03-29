@@ -431,6 +431,123 @@ remove_art_attendance_labels <- function(naomi_output) {
                 dplyr::starts_with("prop_attendees"))
 }
 
+#' Subset the results returned in Naomi output package
+#'
+#' @param naomi_output Naomi output object.
+#' @param area_id vector of area_ids to include/exclude.
+#' @param sex vector of sexes to include/exclude.
+#' @param age_group vector of age_groups to include/exclude.
+#' @param calendar_quarter vector of calendar_quarters to include/exclude.
+#' @param indicator vector of indicators to include/exclude.
+#' @param drop logical whether to drop the supplied indices instead of keep
+#'   only the supplied indices (default).          
+#' @param check_list logical whether to check that supplied values are in the
+#'   output package to be subsetted.
+#'
+#' @return
+#' A naomi output package with a subset of results.
+#'
+#' @details
+#' If arguemnts are `NULL` (default), no subsetting is done on that dimension.
+#' 
+#' By default the argument `check_list = TRUE` means an error will be thrown
+#' if any of the values in the vectors to subset are not found in the
+#' `naomi_output` object supplied. This might be set to `FALSE` for some batch
+#' processing applications, for example of the `naomi_output` could have already
+#' been partially subsetted.
+#' 
+subset_naomi_output <- function(naomi_output,
+                                area_id = NULL,
+                                sex = NULL,
+                                age_group = NULL,
+                                calendar_quarter = NULL,
+                                indicator = NULL,
+                                drop = FALSE,
+                                check_list = TRUE) {
+
+  stopifnot(inherits(naomi_output, "naomi_output"))
+
+  if(!is.null(area_id)) {
+    if(check_list && !all(area_id %in% naomi_output$meta_area$area_id)) {
+      missing_area_id <- setdiff(area_id, naomi_output$meta_area$area_id)
+      stop(paste("area_ids not found in naomi_output:", paste(missing_area_id, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, !area_id %in% !!area_id)
+    } else {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, area_id %in% !!area_id)
+    }
+  }
+
+  if(!is.null(age_group)) {
+    if(check_list && !all(age_group %in% naomi_output$meta_age_group$age_group)) {
+      missing_age_group <- setdiff(age_group, naomi_output$meta_age_group$age_group)
+      stop(paste("age_groups not found in naomi_output:", paste(missing_age_group, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_age_group <- dplyr::filter(naomi_output$meta_age_group, !age_group %in% !!age_group)
+    } else {
+      naomi_output$meta_age_group <- dplyr::filter(naomi_output$meta_age_group, age_group %in% !!age_group)
+    }
+  }
+
+  if(!is.null(calendar_quarter)) {
+    if(check_list && !all(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)) {
+      missing_calendar_quarter <- setdiff(calendar_quarter, naomi_output$meta_period$calendar_quarter)
+      stop(paste("calendar_quarters not found in naomi_output:", paste(missing_calendar_quarter, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_period <- dplyr::filter(naomi_output$meta_period, !calendar_quarter %in% !!calendar_quarter)
+    } else {
+      naomi_output$meta_period <- dplyr::filter(naomi_output$meta_period, calendar_quarter %in% !!calendar_quarter)
+    }
+  }
+  
+  if(!is.null(indicator)) {
+    if(check_list && !all(indicator %in% naomi_output$meta_indicator$indicator)) {
+      missing_indicator <- setdiff(indicator, naomi_output$meta_indicator$indicator)
+      stop(paste("indicators not found in naomi_output:", paste(missing_indicator, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_indicator <- dplyr::filter(naomi_output$meta_indicator, !indicator %in% !!indicator)
+    } else {
+      naomi_output$meta_indicator <- dplyr::filter(naomi_output$meta_indicator, indicator %in% !!indicator)
+    }
+  }
+
+
+  ## There is no meta_sex table, so sex is dropped directly from indicators
+  if(!is.null(sex)) {
+    sexes <- c("male", "female", "both")
+    
+    if(check_list && !all(sex %in% sexes)) {
+      missing_sex <- setdiff(sex, sexes)
+      stop(paste("sexes not found in naomi_output:", paste(missing_sex, collapse = ",")))
+    }
+    
+    if(drop) {
+      naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                               !sex %in% !!sex)
+    } else {
+      naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                               sex %in% !!sex)
+    }
+  }
+  
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           area_id %in% naomi_output$meta_area$area_id)
+                                           
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           age_group %in% naomi_output$meta_age_group$age_group)
+                                           
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
+
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           indicator %in% naomi_output$meta_indicator$indicator)
+
+  naomi_output
+}
 
 #' Save outputs to zip file
 #'
@@ -598,6 +715,33 @@ read_output_package <- function(path) {
   v
 }
 
+
+#' Resave a subsetted Naomi output package
+#'
+#' This function reads an output package, subsets it using [subset_naomi_output()]
+#' and resaves the ouput package.
+#' 
+#' @param path file path to naomi output package.
+#' @param output_path path to resave subsetted output package.
+#' @param ... arguments to [subset_naomi_output()].
+#'
+#' @return path to saved output package.
+#'
+#' @details
+#' See `?subset_naomi_output()` for subsetting arguments and options.
+#' 
+#' @seealso
+#' [subset_naomi_output()]
+#'
+#' @export
+subset_output_package <- function(path, output_path, ...) {
+
+  naomi_output <- read_output_package(path)
+  naomi_output <- subset_naomi_output(naomi_output, ...)
+  save_output_spectrum(output_path, naomi_output)
+}
+  
+  
 
 ## !!! TODO: Documentation and tests
 
