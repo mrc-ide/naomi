@@ -544,7 +544,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
     by_vars <- c(by_vars, "reside_area_id")
   
   A_artnum <- artnum_df %>%
-    dplyr::select(by_vars, artnum_idx) %>%
+    dplyr::select(tidyselect::all_of(by_vars), artnum_idx) %>%
     dplyr::rename(artdat_age_group = age_group,
                   artdat_sex = sex) %>%
     dplyr::left_join(
@@ -595,7 +595,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
 
   ## Merge to ART attendance data frame
   df_art_attend <- df_art_attend %>%
-    dplyr::select(by_vars) %>%
+    dplyr::select(tidyselect::all_of(by_vars)) %>%
     dplyr::mutate(
       df_art_attend_idx = dplyr::row_number(),
       value = 1
@@ -603,7 +603,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   
   A_artnum <- dplyr::left_join(A_artnum,
                                df_art_attend %>%
-                               dplyr::select(by_vars) %>%
+                               dplyr::select(tidyselect::all_of(by_vars)) %>%
                                dplyr::mutate(
                                  Aidx = dplyr::row_number(),
                                  value = 1),

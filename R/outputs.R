@@ -636,7 +636,7 @@ calibrate_outputs <- function(output,
   val <- indicators %>%
     dplyr::filter(indicator %in% c("plhiv", "art_num_residents", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
-    dplyr::select(area_id, indicator, group_vars, mean)
+    dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
   val_aggr <- val %>%
     dplyr::group_by_at(c("indicator", group_vars)) %>%
@@ -731,7 +731,7 @@ calibrate_outputs <- function(output,
     dplyr::left_join(
              spectrum_calibration %>%
              dplyr::select(
-                      group_vars,
+                      tidyselect::all_of(group_vars),
                       plhiv = plhiv_calibration,
                       art_num_residents = art_num_calibration,
                       infections = infections_calibration
@@ -768,8 +768,8 @@ calibrate_outputs <- function(output,
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
 
   adj <- dplyr::inner_join(
-                  dplyr::select(indicators, byv, mean),
-                  dplyr::select(adj, byv, adjusted),
+                  dplyr::select(indicators, tidyselect::all_of(byv), mean),
+                  dplyr::select(adj, tidyselect::all_of(byv), adjusted),
                   by = byv
                 ) %>%
     dplyr::mutate(

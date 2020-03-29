@@ -207,7 +207,7 @@ naomi_model_frame <- function(area_merged,
     dplyr::left_join(
              dplyr::mutate(spec_aggr, susc_previous_year = totpop - hivpop,
                            year = year + 1) %>%
-             dplyr::select(group_vars, susc_previous_year),
+             dplyr::select(tidyselect::all_of(group_vars), susc_previous_year),
              by = group_vars
            )
 
@@ -301,7 +301,9 @@ naomi_model_frame <- function(area_merged,
 
     population_est <- population_est %>%
       dplyr::left_join(
-               dplyr::select(spectrum_calibration, group_vars, population_calibration),
+               dplyr::select(spectrum_calibration,
+                             tidyselect::all_of(group_vars),
+                             population_calibration),
                by = group_vars
              ) %>%
       dplyr::mutate(population = population * population_calibration)

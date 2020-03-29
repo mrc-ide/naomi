@@ -39,6 +39,7 @@ Imports:
     spdep,
     specio (>= 0.1.2),
     tidyr,
+    tidyselect (>= 1.0.0),
     traduire,
     yaml,
     zip,
