@@ -206,6 +206,13 @@ test_that("tmbstan with laplace returns results", {
 
 test_that("INLA fit returns results", {
   testthat::skip("Test regressed and no longer working possible due to INLA update on 17/03/2020")
+
+  ## NOTE: The error is related to new check in INLA for integer count data:
+  ## * INLA.Data1: BINOMIAL likelihood is defined on integers, but y[4] = 1.16298220095
+  ## This was introduced in INLA version 20.01.25:
+  ## * https://bitbucket.org/hrue/r-inla/src/d74b5207d5473e40c0d7d6092f6a525d83403e04/rinla/inst/NEWS.Rd#lines-112
+  ## Query raised on INLA discussion board, pending.
+  
   inla_input <- prepare_inla_inputs(a_naomi_data)
   inla_fit <- fit_inla(inla_input, integration_strategy = "eb")
   inla_smp1 <- sample_inla(inla_fit, nsample = 20, rng_seed = 28)

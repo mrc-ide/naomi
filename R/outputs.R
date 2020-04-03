@@ -355,6 +355,17 @@ add_output_labels <- function(naomi_output) {
   indicators
 }
 
+remove_output_labels <- function(naomi_output) {
+
+  dplyr::select(naomi_output$indicators,
+                area_id,
+                sex,
+                age_group,
+                calendar_quarter,
+                indicator, 
+                mean, se, median, mode, lower, upper)
+}
+
 add_art_attendance_labels <- function(naomi_output) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
@@ -405,6 +416,151 @@ add_art_attendance_labels <- function(naomi_output) {
            )
 
   art_attendance
+}
+
+remove_art_attendance_labels <- function(naomi_output) {
+
+  dplyr::select(naomi_output$art_attendance,
+                reside_area_id,
+                attend_area_id,
+                sex,
+                age_group,
+                calendar_quarter,
+                dplyr::starts_with("artnum"),
+                dplyr::starts_with("prop_residents"),
+                dplyr::starts_with("prop_attendees"))
+}
+
+#' Subset the results returned in Naomi output package
+#'
+#' @param naomi_output Naomi output object.
+#' @param area_id vector of area_ids to include/exclude.
+#' @param area_level vector of area_levels to include/exclude.
+#' @param sex vector of sexes to include/exclude.
+#' @param age_group vector of age_groups to include/exclude.
+#' @param calendar_quarter vector of calendar_quarters to include/exclude.
+#' @param indicator vector of indicators to include/exclude.
+#' @param drop logical whether to drop the supplied indices instead of keep
+#'   only the supplied indices (default).          
+#' @param check_list logical whether to check that supplied values are in the
+#'   output package to be subsetted.
+#'
+#' @return
+#' A naomi output package with a subset of results.
+#'
+#' @details
+#' If arguemnts are `NULL` (default), no subsetting is done on that dimension.
+#' 
+#' By default the argument `check_list = TRUE` means an error will be thrown
+#' if any of the values in the vectors to subset are not found in the
+#' `naomi_output` object supplied. This might be set to `FALSE` for some batch
+#' processing applications, for example of the `naomi_output` could have already
+#' been partially subsetted.
+#' 
+subset_naomi_output <- function(naomi_output,
+                                area_id = NULL,
+                                area_level = NULL,
+                                sex = NULL,
+                                age_group = NULL,
+                                calendar_quarter = NULL,
+                                indicator = NULL,
+                                drop = FALSE,
+                                check_list = TRUE) {
+
+  stopifnot(inherits(naomi_output, "naomi_output"))
+
+  if(!is.null(area_id)) {
+    if(check_list && !all(area_id %in% naomi_output$meta_area$area_id)) {
+      missing_area_id <- setdiff(area_id, naomi_output$meta_area$area_id)
+      stop(paste("area_ids not found in naomi_output:", paste(missing_area_id, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, !area_id %in% !!area_id)
+    } else {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, area_id %in% !!area_id)
+    }
+  }
+
+  if(!is.null(area_level)) {
+    if(check_list && !all(area_level %in% naomi_output$meta_area$area_level)) {
+      missing_area_level <- setdiff(area_level, naomi_output$meta_area$area_level)
+      stop(paste("area_levels not found in naomi_output:", paste(missing_area_level, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, !area_level %in% !!area_level)
+    } else {
+      naomi_output$meta_area <- dplyr::filter(naomi_output$meta_area, area_level %in% !!area_level)
+    }
+  }
+
+  if(!is.null(age_group)) {
+    if(check_list && !all(age_group %in% naomi_output$meta_age_group$age_group)) {
+      missing_age_group <- setdiff(age_group, naomi_output$meta_age_group$age_group)
+      stop(paste("age_groups not found in naomi_output:", paste(missing_age_group, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_age_group <- dplyr::filter(naomi_output$meta_age_group, !age_group %in% !!age_group)
+    } else {
+      naomi_output$meta_age_group <- dplyr::filter(naomi_output$meta_age_group, age_group %in% !!age_group)
+    }
+  }
+
+  if(!is.null(calendar_quarter)) {
+    if(check_list && !all(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)) {
+      missing_calendar_quarter <- setdiff(calendar_quarter, naomi_output$meta_period$calendar_quarter)
+      stop(paste("calendar_quarters not found in naomi_output:", paste(missing_calendar_quarter, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_period <- dplyr::filter(naomi_output$meta_period, !calendar_quarter %in% !!calendar_quarter)
+    } else {
+      naomi_output$meta_period <- dplyr::filter(naomi_output$meta_period, calendar_quarter %in% !!calendar_quarter)
+    }
+  }
+  
+  if(!is.null(indicator)) {
+    if(check_list && !all(indicator %in% naomi_output$meta_indicator$indicator)) {
+      missing_indicator <- setdiff(indicator, naomi_output$meta_indicator$indicator)
+      stop(paste("indicators not found in naomi_output:", paste(missing_indicator, collapse = ",")))
+    }
+    if(drop) {
+      naomi_output$meta_indicator <- dplyr::filter(naomi_output$meta_indicator, !indicator %in% !!indicator)
+    } else {
+      naomi_output$meta_indicator <- dplyr::filter(naomi_output$meta_indicator, indicator %in% !!indicator)
+    }
+  }
+
+
+  ## There is no meta_sex table, so sex is dropped directly from indicators
+  if(!is.null(sex)) {
+    sexes <- c("male", "female", "both")
+    
+    if(check_list && !all(sex %in% sexes)) {
+      missing_sex <- setdiff(sex, sexes)
+      stop(paste("sexes not found in naomi_output:", paste(missing_sex, collapse = ",")))
+    }
+    
+    if(drop) {
+      naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                               !sex %in% !!sex)
+    } else {
+      naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                               sex %in% !!sex)
+    }
+  }
+  
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           area_id %in% naomi_output$meta_area$area_id)
+                                           
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           age_group %in% naomi_output$meta_age_group$age_group)
+                                           
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
+
+  naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
+                                           indicator %in% naomi_output$meta_indicator$indicator)
+
+  naomi_output
 }
 
 #' Save outputs to zip file
@@ -467,6 +623,9 @@ save_output <- function(filename, dir,
       "File", path, "already exists. Set overwrite = TRUE to write output."))
   }
 
+  naomi_output$indicators <- remove_output_labels(naomi_output)
+  naomi_output$art_attendance <- remove_art_attendance_labels(naomi_output)
+  
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
     art_attendance <- add_art_attendance_labels(naomi_output)
@@ -490,6 +649,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
 
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
+    
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         sf::st_write(naomi_output$meta_area, "boundaries.geojson", quiet = TRUE)
@@ -537,20 +697,65 @@ read_output_package <- function(path) {
 
   utils::unzip(path, exdir = tmpd)
 
+  ## Fit list
+  spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
+  calibration_options <- readr_read_csv(file.path(tmpd, "fit/calibration_options.csv"))
+  calibration_options <- setNames(calibration_options$value,
+                                  calibration_options$option)
+
+  fit <- list(spectrum_calibration = spectrum_calibration,
+              calibration_options = calibration_options)
+    
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
     art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
-    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
+    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),    
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
-    fit = list(spectrum_calibration = readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv")))
+    fit = fit
   )
+
+  v$meta_area$name <- NULL
+
+  info_files <- list.files(file.path(tmpd, "info"))
+  if(length(info_files)) {
+    info <- lapply(file.path(tmpd, "info", info_files), readLines)
+    names(info) <- info_files
+    attr(v, "info") <- info
+  }
 
   class(v) <- "naomi_output"
   v
 }
 
+
+#' Resave a subsetted Naomi output package
+#'
+#' This function reads an output package, subsets it using [subset_naomi_output()]
+#' and resaves the ouput package.
+#' 
+#' @param path file path to naomi output package.
+#' @param output_path path to resave subsetted output package.
+#' @param ... arguments to [subset_naomi_output()].
+#'
+#' @return path to saved output package.
+#'
+#' @details
+#' See `?subset_naomi_output()` for subsetting arguments and options.
+#' 
+#' @seealso
+#' [subset_naomi_output()]
+#'
+#' @export
+subset_output_package <- function(path, output_path, ...) {
+
+  naomi_output <- read_output_package(path)
+  naomi_output <- subset_naomi_output(naomi_output, ...)
+  save_output_spectrum(output_path, naomi_output)
+}
+  
+  
 
 ## !!! TODO: Documentation and tests
 
@@ -589,7 +794,7 @@ calibrate_outputs <- function(output,
   val <- indicators %>%
     dplyr::filter(indicator %in% c("plhiv", "art_num_residents", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
-    dplyr::select(area_id, indicator, group_vars, mean)
+    dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
   val_aggr <- val %>%
     dplyr::group_by_at(c("indicator", group_vars)) %>%
@@ -684,7 +889,7 @@ calibrate_outputs <- function(output,
     dplyr::left_join(
              spectrum_calibration %>%
              dplyr::select(
-                      group_vars,
+                      tidyselect::all_of(group_vars),
                       plhiv = plhiv_calibration,
                       art_num_residents = art_num_calibration,
                       infections = infections_calibration
@@ -721,8 +926,8 @@ calibrate_outputs <- function(output,
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
 
   adj <- dplyr::inner_join(
-                  dplyr::select(indicators, byv, mean),
-                  dplyr::select(adj, byv, adjusted),
+                  dplyr::select(indicators, tidyselect::all_of(byv), mean),
+                  dplyr::select(adj, tidyselect::all_of(byv), adjusted),
                   by = byv
                 ) %>%
     dplyr::mutate(

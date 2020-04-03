@@ -1,3 +1,7 @@
+# naomi 0.0.69 
+
+* Add functions `subset_output_package()` to subset and re-save a zipped Naomi output package.
+
 # naomi 0.0.68
 
 * Pass some metadata back from model run for use in output formatting

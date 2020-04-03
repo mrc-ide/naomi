@@ -42,6 +42,8 @@ a_hintr_options <- list(
   permissive = "false"
 )
 
+a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)
+                               
 a_hintr_options_bad <- a_hintr_options
 a_hintr_options_bad$calendar_quarter_t2 <- NULL
 

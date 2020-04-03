@@ -42,7 +42,9 @@ read_options <- function(type) {
 #' @param options Key-value list of model options
 #'
 #' @return TRUE if valid otherwise throw an error
+#'
 #' @export
+#' 
 validate_model_options <- function(data, options) {
 
   required_options <- c("area_scope", "area_level",
