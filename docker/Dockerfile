@@ -64,4 +64,11 @@ RUN install_packages remotes && install_remote \
     mrc-ide/eppasm \
     reside-ic/traduire
 
+ARG GIT_SHA='UNKNOWN'
+ARG GIT_BRANCH='UNKNOWN'
+ARG NAOMI_VERSION='UNKNOWN'
+ENV NAOMI_GIT_HASH $GIT_SHA
+ENV NAOMI_GIT_BRANCH $GIT_BRANCH
+ENV NAOMI_VERSION $NAOMI_VERSION
+
 COPY . /src
