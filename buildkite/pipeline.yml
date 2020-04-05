@@ -23,6 +23,7 @@ steps:
   - trigger: "orderly-dot-server"
     label: ":rocket: hintr (from naomi) :docker:"
     build:
-      branch: master
+      # branch: master # TODO <- set this one back once hintr merged
+      branch: mrc-1471
       env:
         NAOMI_SHA: "${BUILDKITE_COMMIT}"
