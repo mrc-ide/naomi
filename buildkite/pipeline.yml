@@ -20,7 +20,7 @@ steps:
   # This triggers on every hint build so that we can check that the
   # changes work with hintr, and pass the naomi sha through an
   # environment variable.  The build is against hintr master
-  - trigger: "orderly-dot-server"
+  - trigger: "hintr"
     label: ":rocket: hintr (from naomi) :docker:"
     build:
       # branch: master # TODO <- set this one back once hintr merged
