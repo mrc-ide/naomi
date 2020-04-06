@@ -13,7 +13,7 @@ steps:
     async: true
     build:
       # branch: master # TODO <- set this one back once hintr merged
-      branch: mrc-1471
+      branch: master
       env:
         NAOMI_SHA: "${BUILDKITE_COMMIT}"
 
