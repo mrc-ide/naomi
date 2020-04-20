@@ -4,9 +4,10 @@ HERE=$(dirname $0)
 . $HERE/common
 
 docker build --pull \
+       --build-arg GIT_SHA=$GIT_SHA \
+       --build-arg GIT_BRANCH=$GIT_BRANCH \
+       --build-arg NAOMI_VERSION=$PACKAGE_VERSION \
        -t $TAG_SHA \
-       -t $TAG_BRANCH \
-       -t $TAG_VERSION \
        -f docker/Dockerfile \
        .
 

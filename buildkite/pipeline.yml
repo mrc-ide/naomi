@@ -1,0 +1,30 @@
+steps:
+  - label: ":whale: Build"
+    command: docker/build
+
+  # The next step triggers a build on the hintr:
+  # https://buildkite.com/docs/pipelines/trigger-step
+  #
+  # This triggers on every hint build so that we can check that the
+  # changes work with hintr, and pass the naomi sha through an
+  # environment variable.  The build is against hintr master
+  - trigger: "hintr"
+    label: ":rocket: hintr (from naomi) :docker:"
+    async: true
+    build:
+      # branch: master # TODO <- set this one back once hintr merged
+      branch: master
+      env:
+        NAOMI_SHA: "${BUILDKITE_COMMIT}"
+
+  - wait
+
+  - label: ":hammer: Test"
+    command: docker/test
+
+  - wait
+
+  - label: ":shipit: Push images"
+    command: docker/push
+
+  - wait
