@@ -1,3 +1,9 @@
+# naomi 0.0.70
+
+* Use summary output download function to download a Naomi output package with 
+  coarse age groups only: 15-49, 15-64, 15+, 50+, 00+, 00-64, 00-14, 15-24, 
+  25-34, 35-49, 50-64, 65+.
+
 # naomi 0.0.69 
 
 * Add functions `subset_output_package()` to subset and re-save a zipped Naomi output package.

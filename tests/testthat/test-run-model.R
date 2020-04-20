@@ -71,6 +71,12 @@ test_that("model can be run", {
       names(output_boundaries))
   )
 
+  ## Check coarse age outputs saved in summar_path
+  coarse_ages <- c("15-49", "15-64", "15+", "50+", "00+", "00-64", "00-14",
+                   "15-24", "25-34", "35-49", "50-64", "65+")
+  coarse_age_outputs <- read_output_package(model_run$summary_path)
+  expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
+  expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   expect_equal(model_run$metadata$areas, "MWI_1_2")
 })
