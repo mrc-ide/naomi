@@ -3,4 +3,4 @@ set -e
 HERE=$(dirname $0)
 $HERE/build
 $HERE/test
-$HERE/push
+#$HERE/push

@@ -3,4 +3,7 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
+# In case we switch agents between steps
+[ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
+
 docker run --rm $TAG_SHA test_self
