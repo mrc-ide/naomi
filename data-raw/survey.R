@@ -35,14 +35,12 @@ surveys <- dhs_surveys(countryIds = "MW") %>%
 
 #' DHS survey boundaries dataset
 #' * DHS survey boundary shapefiles: https://spatialdata.dhsprogram.com/boundaries/#view=table&countryId=MW
-#' * Note: download via rdhs in development
 
 paths <- paste0("~/Data/shape files/DHS/", surveys$SurveyId, ".zip") %>%
   setNames(surveys$survey_id)
 
-geom_raw <- lapply(paths, read_sf_zip_list) %>%
+geom_raw <- Map(download_boundaries, surveyId = surveys$SurveyId, method = "sf") %>%
   unlist(recursive = FALSE)
-
 
 geom <- geom_raw %>%
   lapply(select, DHSCC, SVYID, REG_ID, MULTLEVEL, LEVELRNK, REGVAR, REGCODE, REGNAME, OTHREGVAR, OTHREGCO, OTHREGNA) %>%
@@ -218,7 +216,7 @@ hrclust <- Map(extract_clusters,
                hrd$path,
                hrd$survey_id,
                hrd$REGVAR) %>%
-  bind_rows
+  bind_rows()
 
 #' Check that all region IDs appear in survey_regions dataset
 hrclust %>%
@@ -403,7 +401,7 @@ extract_dhs <- function(SurveyId){
 }
 
 individual <- lapply(surveys$SurveyId, extract_dhs) %>%
-  bind_rows
+  bind_rows()
 
 #' Survey metadata
 dhs_meta <- surveys %>%
@@ -424,10 +422,10 @@ dhs_meta <- surveys %>%
             notes = NA_character_) 
 
 dhs_regions <- dhs_regions %>%
-  ungroup 
+  ungroup()
 
 dhs_clusters <- clusters %>%
-  ungroup 
+  ungroup()
 
 dhs_individuals <- individual %>%
   left_join(surveys %>% select(survey_id, SurveyId)) %>%
@@ -442,7 +440,7 @@ dhs_biomarker <- individual %>%
 
 #' ### Load datasets
 
-mphia_path <- "~/Documents/Data/PHIA/release/Malawi/datasets/"
+mphia_path <- "~/Data/household surveys/PHIA/datasets/Malawi/datasets/"
 
 bio <- file.path(mphia_path, "02_MPHIA 2015-2016 Adult Biomarker Dataset (DTA).zip") %>%
   rdhs::read_zipdata(readfn = haven::read_dta)

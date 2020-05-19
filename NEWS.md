@@ -1,3 +1,7 @@
+# naomi 0.0.71
+
+* Use `rdhs::download_boundaries()` in script `data-raw/survey.R`. (No change to model or datasets.)
+
 # naomi 0.0.70
 
 * Use summary output download function to download a Naomi output package with 
