@@ -426,14 +426,11 @@ naomi_model_frame <- function(area_merged,
   projection_duration_t2t3 <- (quarter_id3 - quarter_id2) / 4
 
   ## Adjacency matrix
-  M <- mf_areas %>%
-    dplyr::mutate(geometry = areas$boundaries[area_id]) %>%
-    sf::st_as_sf() %>%
-    methods::as("Spatial") %>%
-    spdep::poly2nb(.$area_id) %>%
-    spdep::nb2mat(style = "B", zero.policy = TRUE)
+  mf_areas_sf <- mf_areas
+  mf_areas_sf$geometry <- areas$boundaries[area_id]
+  mf_areas_sf <- sf::st_as_sf(mf_areas_sf)
+  M <- create_adj_matrix(mf_areas_sf)
 
-  colnames(M) <- rownames(M)
 
   ## Scaled  precision matrix for 'BYM2' model.
   Q  <- INLA::inla.scale.model(diag(rowSums(M)) - M,
