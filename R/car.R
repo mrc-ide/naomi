@@ -42,28 +42,50 @@ create_edge_list <- function(adj_matrix) {
   edges
 }
 
-calculate_scaling_factor <- function(n, edges) {
+#' Scale of GMRF precision matrix
+#'
+#' This function scales the precision matrix of a GMRF such that the geometric
+#' mean of the marginal variance is one.
+#'
+#' @param Q Precision matrix for a GMRF.
+#' @param A Linear constraint for Q.
+#' @param eps Value of the small constant added to the diagonal of Q for
+#'   invertibility.
+#' 
+#' @details
+#'
+#' This implements the same thing as [`INLA::inla.scale.model`]. The marginal
+#' variance of each connected component is one.
+#'
+#' @export
+scale_gmrf_precision <- function(Q,
+                                 A = matrix(1, ncol = ncol(Q)),
+                                 eps = sqrt(.Machine$double.eps)) {
 
-  ## Build the adjacency matrix
+  nb <- spdep::mat2listw(abs(Q))$neighbours
+  comp <- spdep::n.comp.nb(nb)
 
-  adj.matrix <- Matrix::sparseMatrix(i=edges[,1],j=edges[,2],x=1,symmetric=TRUE)
+  for (k in seq_len(comp$nc)) {
+    idx <- which(comp$comp.id == k)
+    Qc <- Q[idx, idx, drop = FALSE]
 
-  ## The ICAR precision matrix (note! This is singular)
-  Q <-  Matrix::Diagonal(n, Matrix::rowSums(adj.matrix)) - adj.matrix
+    if (length(idx) == 1) {
+      ## set marginal variance for islands = 1
+      Qc[1, 1] <- 1
+    } else {
+      Ac <- A[ , idx, drop = FALSE]
+      Qc_eps <- Qc + Matrix::Diagonal(ncol(Qc)) * max(Matrix::diag(Qc)) * eps
+      Qc_inv <- qinv(Qc_eps, A = Ac)
+      scaling_factor <- exp(mean(log(Matrix::diag(Qc_inv))))
+      Qc <- scaling_factor * Qc
+    }
 
-  ## Add a small jitter to the diagonal for numerical stability (optional but recommended)
-  Q_pert <- Q + Matrix::Diagonal(n) * max(Matrix::diag(Q)) * sqrt(.Machine$double.eps)
+    Q[idx, idx] <- Qc
+  }
 
-  ## Compute the diagonal elements of the covariance matrix subject to the 
-  ## constraint that the entries of the ICAR sum to zero.
-  ## See the function help for further details.
-  ## Q_inv <- INLA::inla.qinv(Q_pert, constr=list(A = matrix(1, 1, n),e=0))
-  Q_inv <- qinv(Q_pert, A = matrix(1, 1, n))
-  
-  # Compute the geometric mean of the variances, which are on the diagonal of Q.inv
-  scaling_factor <- exp(mean(log(Matrix::diag(Q_inv))))
-  return(scaling_factor)
+  Q
 }
+
 
 qinv <- function(Q, A = NULL) {
   Sigma <- Matrix::solve(Q)
@@ -72,7 +94,7 @@ qinv <- function(Q, A = NULL) {
   else {
     A <- matrix(1,1, nrow(Sigma))
     W <- Sigma %*% t(A)
-    Sigma_const <- Sigma - W %*% solve(A %*% W) %*% t(W)
+    Sigma_const <- Sigma - W %*% Matrix::solve(A %*% W) %*% Matrix::t(W)
     return(Sigma_const)
   }
 }
