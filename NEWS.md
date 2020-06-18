@@ -3,7 +3,9 @@
 * Added function `create_adj_matrix()` to create an adjacency matrix from a shape file.
 * Added function `scale_gmrf_precision()` to scale precision matrix such that geometric
   mean of marginal variance is one. This mirrors the behaviour of `INLA::inla.scale.model()`.
-  
+* Remove dependency on INLA package. Now prompted to install if `fit_inla()` is 
+  called and the package is not found.
+
 # naomi 0.0.71
 
 * Use `rdhs::download_boundaries()` in script `data-raw/survey.R`. (No change to model or datasets.)

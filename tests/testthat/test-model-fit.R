@@ -151,7 +151,11 @@ test_that("output_package() works with mode, sample, or both", {
 
 test_that("tmbstan fit returns results", {
 
-  testthat::skip_on_covr()
+  if ( !requireNamespace("INLA", quietly = TRUE) ) {
+    testthat::skip("INLA package not installed")
+  }
+
+  INLA:::inla.dynload.workaround()
 
   CHAINS <- 2
   ITER <- 30
@@ -206,6 +210,9 @@ test_that("tmbstan with laplace returns results", {
 
 test_that("INLA fit returns results", {
   testthat::skip("Test regressed and no longer working possible due to INLA update on 17/03/2020")
+
+  
+  INLA:::inla.dynload.workaround()
 
   ## NOTE: The error is related to new check in INLA for integer count data:
   ## * INLA.Data1: BINOMIAL likelihood is defined on integers, but y[4] = 1.16298220095

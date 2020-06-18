@@ -1,4 +1,3 @@
-INLA:::inla.dynload.workaround()
 
 a_area_merged <- sf::read_sf(system.file("extdata/areas/area_merged.geojson", package = "naomi"))
 a_spec <- extract_pjnz_naomi(system.file("extdata/mwi2019.PJNZ", package = "naomi"))

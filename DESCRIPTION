@@ -18,7 +18,6 @@ Additional_repositories:
     https://inla.r-inla-download.org/R/stable,
     https://mrc-ide.github.io/drat
 Imports: 
-    INLA,
     Matrix,
     R6,
     TMB,
@@ -46,6 +45,7 @@ Imports:
     zoo
 Suggests: 
     DiagrammeR,
+    INLA,
     covr,
     datamodelr,
     knitr,
