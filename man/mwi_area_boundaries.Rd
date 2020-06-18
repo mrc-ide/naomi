@@ -4,7 +4,9 @@
 \name{mwi_area_boundaries}
 \alias{mwi_area_boundaries}
 \title{Malawi area boundaries.}
-\format{sf object representing area boundaries}
+\format{
+sf object representing area boundaries
+}
 \source{
 Malawi
 }

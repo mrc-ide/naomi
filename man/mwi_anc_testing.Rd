@@ -5,7 +5,8 @@
 \alias{mwi_anc_testing}
 \alias{mwi_art_number}
 \title{Programme data: Malawi routine HIV service delivery data}
-\format{TODO: Link to mwi_areas dataset
+\format{
+TODO: Link to mwi_areas dataset
 \code{mwi_art_number} is a dataset with 2042 observations on the following 5 variables:
 \describe{
 \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
@@ -25,7 +26,10 @@ TODO: Link to mwi_areas dataset
 \item{\code{ancrt_already_art}}{Number of ANC clients already on ART prior to first ANC visit.}
 \item{\code{ancrt_tested}}{Number of ANC clients tested for HIV and received result.}
 \item{\code{ancrt_test_pos}}{Number of ANC clients testing HIV postive.}
-}}
+}
+
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 510 rows and 6 columns.
+}
 \source{
 Department of HIV & AIDS, Minitry of Health, Malawi.
 \url{http://hiv.health.gov.mw/index.php/our-documents}

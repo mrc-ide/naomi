@@ -4,7 +4,9 @@
 \name{mwi_area_hierarchy}
 \alias{mwi_area_hierarchy}
 \title{Malawi area hierarchy}
-\format{Data frame}
+\format{
+Data frame
+}
 \source{
 Malawi
 }

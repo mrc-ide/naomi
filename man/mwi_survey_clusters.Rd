@@ -4,7 +4,9 @@
 \name{mwi_survey_clusters}
 \alias{mwi_survey_clusters}
 \title{Malawi survey clusters}
-\format{Data frame}
+\format{
+Data frame
+}
 \source{
 Malawi
 }

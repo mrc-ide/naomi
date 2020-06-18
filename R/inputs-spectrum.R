@@ -407,7 +407,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 
   quarter_id_out <- calendar_quarter_to_quarter_id(calendar_quarter_out)
 
-  spec_aggr %>%
+  val <- spec_aggr %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
     dplyr::group_by(spectrum_region_code, sex, age_group) %>%
     dplyr::summarise(
@@ -419,14 +419,17 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
              susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
              births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out)
            ) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
-                  population_spectrum,
-                  plhiv_spectrum,
-                  art_num_spectrum,
-                  infections_spectrum,
-                  susc_previous_year_spectrum,
-                  births_spectrum)
+    dplyr::ungroup()
+
+  
+  dplyr::select(val,
+                spectrum_region_code, sex, age_group, calendar_quarter,
+                population_spectrum,
+                plhiv_spectrum,
+                art_num_spectrum,
+                infections_spectrum,
+                susc_previous_year_spectrum,
+                births_spectrum)
 }
 
 log_lin_approx <- function(x, y, xout, replace_na_value = 0){
