@@ -3,7 +3,7 @@ naomi_set_language <- function(language) {
 }
 
 naomi_translator <- function() {
-  traduire::translator()
+  traduire::translator(package = "naomi")
 }
 
 naomi_translator_unregister <- function() {
