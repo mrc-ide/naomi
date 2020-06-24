@@ -4,7 +4,9 @@
 \name{mwi_population_agesex}
 \alias{mwi_population_agesex}
 \title{Malawi age-sex stratified population data}
-\format{Data frame}
+\format{
+Data frame
+}
 \source{
 Malawi
 }

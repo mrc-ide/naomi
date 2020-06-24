@@ -4,7 +4,9 @@
 \name{mwi_survey_biomarker}
 \alias{mwi_survey_biomarker}
 \title{Malawi survye biomarkers}
-\format{Data frame}
+\format{
+Data frame
+}
 \source{
 Malawi
 }

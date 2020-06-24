@@ -126,6 +126,10 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
 
+  indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
+  indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
+  indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
+  
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
@@ -304,53 +308,55 @@ add_output_labels <- function(naomi_output) {
   stopifnot(inherits(naomi_output, "naomi_output"))
 
   indicators <- naomi_output$indicators %>%
-    dplyr::left_join(
-             naomi_output$meta_area %>%
-             as.data.frame %>%
-             dplyr::select(area_id, area_level, area_level_label, area_name, area_sort_order),
-             by = "area_id"
-           ) %>%
-    dplyr::left_join(
-             naomi_output$meta_age_group %>%
-             dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
-             by = "age_group"
-           ) %>%
-    dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
-    dplyr::left_join(
-             naomi_output$meta_indicator %>%
-             dplyr::select(indicator, indicator_label, indicator_sort_order, indicator_id),
-             by = "indicator"
-           ) %>%
-    dplyr::arrange(
-             area_level,
-             area_sort_order,
-             calendar_quarter,
-             indicator_sort_order,
-             sex,
-             age_group_sort_order
-           ) %>%
-    dplyr::select(
-             area_level,
-             area_level_label,
-             area_id,
-             area_name,
-             sex,
-             age_group,
-             age_group_id,
-             age_group_label,
-             calendar_quarter,
-             quarter_id,
-             quarter_label,
-             indicator,
-             indicator_id,
-             indicator_label,
-             mean,
-             se,
-             median,
-             mode,
-             lower,
-             upper
-           )
+    dplyr::select(area_id, sex, age_group, calendar_quarter, indicator,
+                  mean, se, median, mode, lower, upper)
+
+  meta_area <- naomi_output$meta_area %>%
+    sf::st_drop_geometry() %>%
+    dplyr::select(area_id, area_level, area_level_label, area_name, area_sort_order)
+  indicators <- dplyr::left_join(indicators, meta_area, by = "area_id")
+
+  meta_age_group <- naomi_output$meta_age_group %>%
+    dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order)
+  indicators <- dplyr::left_join(indicators, meta_age_group, by = "age_group")
+
+  indicators <- dplyr::left_join(indicators, naomi_output$meta_period,
+                                 by = "calendar_quarter")
+
+  meta_indicators <- naomi_output$meta_indicator %>%
+    dplyr::select(indicator, indicator_label, indicator_sort_order, indicator_id)
+  indicators <- dplyr::left_join(indicators, meta_indicators, by = "indicator")
+
+  indicators <- dplyr::arrange(indicators,
+                               area_level,
+                               area_sort_order,
+                               calendar_quarter,
+                               indicator_sort_order,
+                               sex,
+                               age_group_sort_order)
+
+  indicators <- dplyr::select(indicators,
+                              area_level,
+                              area_level_label,
+                              area_id,
+                              area_name,
+                              sex,
+                              age_group,
+                              age_group_id,
+                              age_group_label,
+                              calendar_quarter,
+                              quarter_id,
+                              quarter_label,
+                              indicator,
+                              indicator_id,
+                              indicator_label,
+                              mean,
+                              se,
+                              median,
+                              mode,
+                              lower,
+                              upper
+                              )
 
   indicators
 }
@@ -362,7 +368,7 @@ remove_output_labels <- function(naomi_output) {
                 sex,
                 age_group,
                 calendar_quarter,
-                indicator, 
+                indicator,
                 mean, se, median, mode, lower, upper)
 }
 
@@ -441,7 +447,7 @@ remove_art_attendance_labels <- function(naomi_output) {
 #' @param calendar_quarter vector of calendar_quarters to include/exclude.
 #' @param indicator vector of indicators to include/exclude.
 #' @param drop logical whether to drop the supplied indices instead of keep
-#'   only the supplied indices (default).          
+#'   only the supplied indices (default).
 #' @param check_list logical whether to check that supplied values are in the
 #'   output package to be subsetted.
 #'
@@ -450,13 +456,13 @@ remove_art_attendance_labels <- function(naomi_output) {
 #'
 #' @details
 #' If arguemnts are `NULL` (default), no subsetting is done on that dimension.
-#' 
+#'
 #' By default the argument `check_list = TRUE` means an error will be thrown
 #' if any of the values in the vectors to subset are not found in the
 #' `naomi_output` object supplied. This might be set to `FALSE` for some batch
 #' processing applications, for example of the `naomi_output` could have already
 #' been partially subsetted.
-#' 
+#'
 subset_naomi_output <- function(naomi_output,
                                 area_id = NULL,
                                 area_level = NULL,
@@ -516,7 +522,7 @@ subset_naomi_output <- function(naomi_output,
       naomi_output$meta_period <- dplyr::filter(naomi_output$meta_period, calendar_quarter %in% !!calendar_quarter)
     }
   }
-  
+
   if(!is.null(indicator)) {
     if(check_list && !all(indicator %in% naomi_output$meta_indicator$indicator)) {
       missing_indicator <- setdiff(indicator, naomi_output$meta_indicator$indicator)
@@ -533,12 +539,12 @@ subset_naomi_output <- function(naomi_output,
   ## There is no meta_sex table, so sex is dropped directly from indicators
   if(!is.null(sex)) {
     sexes <- c("male", "female", "both")
-    
+
     if(check_list && !all(sex %in% sexes)) {
       missing_sex <- setdiff(sex, sexes)
       stop(paste("sexes not found in naomi_output:", paste(missing_sex, collapse = ",")))
     }
-    
+
     if(drop) {
       naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
                                                !sex %in% !!sex)
@@ -547,13 +553,13 @@ subset_naomi_output <- function(naomi_output,
                                                sex %in% !!sex)
     }
   }
-  
+
   naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
                                            area_id %in% naomi_output$meta_area$area_id)
-                                           
+
   naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
                                            age_group %in% naomi_output$meta_age_group$age_group)
-                                           
+
   naomi_output$indicators <- dplyr::filter(naomi_output$indicators,
                                            calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
 
@@ -594,7 +600,7 @@ save_result_summary <- function(path, naomi_output) {
   age_groups_keep <- c("15-49", "15-64", "15+", "50+", "00+", "00-64",
                        "00-14", "15-24", "25-34", "35-49", "50-64", "65+")
   naomi_output_sub <- subset_naomi_output(naomi_output, age_group = age_groups_keep)
-  
+
   save_output(basename(path), dirname(path), naomi_output_sub, overwrite = FALSE,
               with_labels = TRUE, boundary_format = "geojson",
               single_csv = FALSE)
@@ -630,7 +636,7 @@ save_output <- function(filename, dir,
 
   naomi_output$indicators <- remove_output_labels(naomi_output)
   naomi_output$art_attendance <- remove_art_attendance_labels(naomi_output)
-  
+
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
     art_attendance <- add_art_attendance_labels(naomi_output)
@@ -654,7 +660,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
 
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
-    
+
     if(!is.null(boundary_format) && !is.na(boundary_format)) {
       if(boundary_format == "geojson") {
         sf::st_write(naomi_output$meta_area, "boundaries.geojson", quiet = TRUE)
@@ -710,11 +716,11 @@ read_output_package <- function(path) {
 
   fit <- list(spectrum_calibration = spectrum_calibration,
               calibration_options = calibration_options)
-    
+
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
     art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
-    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),    
+    meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
@@ -739,7 +745,7 @@ read_output_package <- function(path) {
 #'
 #' This function reads an output package, subsets it using [subset_naomi_output()]
 #' and resaves the ouput package.
-#' 
+#'
 #' @param path file path to naomi output package.
 #' @param output_path path to resave subsetted output package.
 #' @param ... arguments to [subset_naomi_output()].
@@ -748,7 +754,7 @@ read_output_package <- function(path) {
 #'
 #' @details
 #' See `?subset_naomi_output()` for subsetting arguments and options.
-#' 
+#'
 #' @seealso
 #' [subset_naomi_output()]
 #'
@@ -759,8 +765,8 @@ subset_output_package <- function(path, output_path, ...) {
   naomi_output <- subset_naomi_output(naomi_output, ...)
   save_output_spectrum(output_path, naomi_output)
 }
-  
-  
+
+
 
 ## !!! TODO: Documentation and tests
 
@@ -847,7 +853,7 @@ calibrate_outputs <- function(output,
   } else {
     spectrum_calibration$plhiv_calibration <- 1.0
   }
-  
+
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
 
@@ -862,17 +868,17 @@ calibrate_outputs <- function(output,
     spectrum_calibration$art_num_calibration <- 1.0
   }
 
-  
+
   infections_aggr_var <- get_spectrum_aggr_var(spectrum_infections_calibration_level,
                                                spectrum_infections_calibration_strat)
-  
+
   if (length(infections_aggr_var) > 0L) {
-    
+
     spectrum_calibration <- spectrum_calibration %>%
       dplyr::group_by_at(infections_aggr_var) %>%
       dplyr::mutate(infections_calibration = dplyr::if_else(sum(infections_raw) == 0, 0, sum(infections_spectrum) / sum(infections_raw))) %>%
       dplyr::ungroup()
-    
+
   } else {
     spectrum_calibration$infections_calibration <- 1.0
   }
@@ -982,7 +988,7 @@ calibrate_outputs <- function(output,
 
   out <- out %>%
     dplyr::left_join(incidence_calibration,
-              by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
+                     by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
     dplyr::mutate(
              calibration = dplyr::if_else(indicator == "incidence", incidence_calibration, 1.0),
              mean = mean * calibration,
@@ -992,8 +998,8 @@ calibrate_outputs <- function(output,
              lower = lower * calibration,
              upper = upper * calibration
            ) %>%
-    dplyr::select(names(output$indicators))    
-  
+    dplyr::select(names(output$indicators))
+
   ## Save calibration options
 
   calibration_options <- c(output$fit$calibration_options,
@@ -1163,7 +1169,7 @@ export_datapack <- function(naomi_output,
                      "population" = "KssDaTsGWnS",
                      "prevalence" = "lJtpR5byqps",
                      "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
-  
+
   category_1  <- "Age (<1-50+, 12)"
   categoryOption_uid_1 <- "HoZv6qBZvE7"
   categoryOption_name_1 <- c("00-00" = "<01",
@@ -1198,28 +1204,28 @@ export_datapack <- function(naomi_output,
                               "female" = "Female")
 
   strat <- tidyr::nesting(
-    indicator = names(dataelementuid),
-    dataelement,
-    dataelementuid
-  ) %>%
+                    indicator = names(dataelementuid),
+                    dataelement,
+                    dataelementuid
+                  ) %>%
     tidyr::expand_grid(
-      tidyr::nesting(
-        age_group = names(categoryOption_uid_1.1),
-        categoryOption_uid_1,
-        category_1,
-        categoryOption_uid_1.1,
-        categoryOption_name_1 = paste0("=\"", categoryOption_name_1, "\""),
-      )
-    ) %>%
+             tidyr::nesting(
+                      age_group = names(categoryOption_uid_1.1),
+                      categoryOption_uid_1,
+                      category_1,
+                      categoryOption_uid_1.1,
+                      categoryOption_name_1 = paste0("=\"", categoryOption_name_1, "\""),
+                      )
+           ) %>%
     tidyr::expand_grid(
-      tidyr::nesting(
-        sex = names(categoryOption_uid_2),
-        categoryuid_2,
-        category_2,
-        categoryOption_uid_2,
-        categoryOption_name_2
-      )
-    )
+             tidyr::nesting(
+                      sex = names(categoryOption_uid_2),
+                      categoryuid_2,
+                      category_2,
+                      categoryOption_uid_2,
+                      categoryOption_name_2
+                    )
+           )
 
 
   dat <- naomi_output$indicators %>%

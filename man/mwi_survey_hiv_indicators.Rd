@@ -4,7 +4,9 @@
 \name{mwi_survey_hiv_indicators}
 \alias{mwi_survey_hiv_indicators}
 \title{Malawi HIV indicators}
-\format{Data frame}
+\format{
+Data frame
+}
 \source{
 Malawi
 }

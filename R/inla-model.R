@@ -109,6 +109,10 @@ fit_inla <- function(inla_input,
                      verbose = FALSE,
                      inla_verbose = FALSE) {
 
+  if ( !requireNamespace("INLA", quietly = TRUE) ) {
+    stop("Please install the package INLA is required for fit_inla().")
+  }
+
   if(verbose) print("INLA fitting prevalence model")
   fit_prev <- INLA::inla(inla_input$formula_prev,
                          data = inla_input$data_prev,
@@ -159,6 +163,10 @@ fit_inla <- function(inla_input,
 
 sample_inla <- function(inlafit, nsample = 1000, rng_seed = NULL, verbose = FALSE) {
 
+  if ( !requireNamespace("INLA", quietly = TRUE) ) {
+    stop("Please install the package INLA is required for sample_inla().")
+  }
+  
   if(is.null(rng_seed))
     rng_seed <- 0L
 
