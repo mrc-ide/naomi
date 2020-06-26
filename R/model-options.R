@@ -44,7 +44,6 @@ read_options <- function(type) {
 #' @return TRUE if valid otherwise throw an error
 #'
 #' @export
-#'
 validate_model_options <- function(data, options) {
 
   required_options <- c("area_scope", "area_level",

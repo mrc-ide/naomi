@@ -44,7 +44,6 @@ Imports:
     zoo
 Suggests: 
     DiagrammeR,
-    INLA,
     covr,
     datamodelr,
     knitr,
