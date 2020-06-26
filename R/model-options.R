@@ -44,7 +44,7 @@ read_options <- function(type) {
 #' @return TRUE if valid otherwise throw an error
 #'
 #' @export
-#' 
+#'
 validate_model_options <- function(data, options) {
 
   required_options <- c("area_scope", "area_level",
@@ -141,12 +141,3 @@ validate_model_options <- function(data, options) {
 
   TRUE
 }
-
-options_keys_to_text <- function(keys) {
-  ## TODO: Implement a mapping from the key to the value text for returning
-  ## in error messages
-  ## Do we need this check though? The form itself validates missing options
-  ## mrc-1242
-  keys
-}
-
