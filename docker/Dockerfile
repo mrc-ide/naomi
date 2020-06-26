@@ -1,7 +1,6 @@
-FROM mrcide/naomi_base:latest
+FROM mrcide/naomi-base:latest
 
 COPY docker/bin /usr/local/bin/
-COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
     INLA
