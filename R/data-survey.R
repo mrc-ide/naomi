@@ -332,22 +332,3 @@ get_mid_calendar_quarter <- function(start_date, end_date) {
 
   paste0("CY", year, "Q", quarter)
 }
-
-
-#' Read Multiple Shape Files in ZIP Archive
-#'
-#' Reads all files in ZIP archive `zfile` matching `pattern` with
-#' function `read_fn` and returns as a list.
-#'
-#' @param zfile path to a zip directory
-#' @param pattern string pattern passed to [`list.files`].
-#' @param read_fn function used to read matched files.
-#'
-#' @export
-read_sf_zip_list <- function(zfile, pattern = "\\.shp$", read_fn = sf::read_sf) {
-  tmpd <- tempfile()
-  on.exit(unlink(tmpd))
-  unzip(zfile, exdir = tmpd)
-  f <- list.files(tmpd, pattern, recursive = TRUE, full.names = TRUE)
-  lapply(f, sf::read_sf)
-}
