@@ -184,7 +184,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   ## 3. Expand individuals dataset to repeat for all individiuals within each
   ##    age/sex group for a given survey
-  
+
   ind <- survey_individuals %>%
     dplyr::inner_join(survey_biomarker,
                       by = c("survey_id", "cluster_id", "household", "line")) %>%
@@ -225,8 +225,8 @@ calc_survey_hiv_indicators <- function(survey_meta,
   } else {
     stop(paste("Invalid artcov_definition value:", artcov_definition[1]))
   }
-    
-    
+
+
   ind <- ind %>%
     dplyr::rename(prev = hivstatus) %>%
     tidyr::gather(indicator, est, prev, artcov, vls, recent) %>%
@@ -325,29 +325,10 @@ get_mid_calendar_quarter <- function(start_date, end_date) {
   stopifnot(!is.na(start_date))
   stopifnot(!is.na(end_date))
   stopifnot(start_date <= end_date)
-  
+
   date4 <- (start_date + end_date) / 2
-  year <- floor(date4) 
+  year <- floor(date4)
   quarter <- floor((date4 %% 1) * 4) + 1
 
   paste0("CY", year, "Q", quarter)
-}
-
-
-#' Read Multiple Shape Files in ZIP Archive
-#'
-#' Reads all files in ZIP archive `zfile` matching `pattern` with
-#' function `read_fn` and returns as a list.
-#'
-#' @param zfile path to a zip directory
-#' @param pattern string pattern passed to [`list.files`].
-#' @param read_fn function used to read matched files.
-#'
-#' @export
-read_sf_zip_list <- function(zfile, pattern = "\\.shp$", read_fn = sf::read_sf) {
-  tmpd <- tempfile()
-  on.exit(unlink(tmpd))
-  unzip(zfile, exdir = tmpd)
-  f <- list.files(tmpd, pattern, recursive = TRUE, full.names = TRUE)
-  lapply(f, sf::read_sf)
 }

@@ -129,7 +129,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
-  
+
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",

@@ -251,6 +251,7 @@ new_progress <- function() {
 
 Progress <- R6::R6Class("Progress", list(
   progress = NULL,
+  cloneable = FALSE,
   initialize = function() {
     self$progress <-
       list(

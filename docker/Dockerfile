@@ -2,9 +2,6 @@ FROM mrcide/naomi-base:latest
 
 COPY docker/bin /usr/local/bin/
 
-RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
-    INLA
-
 ARG GIT_SHA='UNKNOWN'
 ARG GIT_BRANCH='UNKNOWN'
 ARG NAOMI_VERSION='UNKNOWN'

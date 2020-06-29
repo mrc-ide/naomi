@@ -1,17 +1,3 @@
-#' Read shape file from ZIP
-#'
-#' @param zfile Path to zip file
-#' @param pattern Pattern to read files for from zip, defaults to files ending
-#' with 'shp'
-#'
-#' @export
-st_read_zip <- function(zfile, pattern = "shp$") {
-  tmpd <- tempfile()
-  on.exit(unlink(tmpd))
-  utils::unzip(zfile, exdir = tmpd)
-  sf::st_read(list.files(tmpd, pattern, recursive = TRUE, full.names = TRUE))
-}
-
 #' Convert nested hierarchy from wide to long format
 #'
 #' @param x Wide format nested hierarchy.
@@ -117,7 +103,7 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
   } else {
     boundaries <- NULL
   }
-    
+
   stopifnot(min_level >= min(areas$area_level))
   stopifnot(max_level <= max(areas$area_level))
 

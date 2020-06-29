@@ -1,3 +1,8 @@
+# naomi 1.0.0
+
+* Move tmbstan and INLA models to naomi.extensions repo as they add heavyweight 
+  dependencies which are not required for the main model to run
+
 # naomi 0.0.72
 
 * Added function `create_adj_matrix()` to create an adjacency matrix from a shape file.
