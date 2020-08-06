@@ -152,3 +152,10 @@ test_that("metadata can be translated", {
   metadata <- get_metadata()
   expect_equal(metadata[1, "name"], "HIV prevalence")
 })
+
+test_that("uncertainty metadata set for all model output data", {
+  metadata <- get_metadata()
+  output_meta <- metadata[metadata$data_type == "output", ]
+  expect_true(all(!(output_meta$error_low_column == "")))
+  expect_true(all(!(output_meta$error_high_column == "")))
+})
