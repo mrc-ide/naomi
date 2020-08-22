@@ -518,8 +518,11 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
 
   if(verbose) print("Returning sample")
   fit$sample <- Map(vapply, list(sim), "[[", lapply(lengths(r), numeric), names(r))
-  is_vector <- vapply(fit$sample, class, character(1)) == "numeric"
-  fit$sample[is_vector] <- lapply(fit$sample[is_vector], as.matrix, nrow = 1)
+
+  is_vector <- lapply(fit$sample, class)
+  is_vector <- vapply(is_vector, "[", character(1), 1) == "numeric"
+
+  fit$sample[is_vector] <- lapply(fit$sample[is_vector], matrix, nrow = 1)
   names(fit$sample) <- names(r)
 
   fit
