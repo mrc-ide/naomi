@@ -1,3 +1,7 @@
+# naomi 1.0.2
+
+* Patch to `sample_tmb()` for R 4.0 changes.
+
 # naomi 1.0.0
 
 * Move tmbstan and INLA models to naomi.extensions repo as they add heavyweight 
