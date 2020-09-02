@@ -5,7 +5,7 @@
 
 Naomi model for subnational HIV estimates
 
-### Development steps
+### Development steps.
 
 * Make changes in a new branch
 * Run tests from the command line using `make test` or via R using `devtools::test()` to ensure changes don't cause regressions to existing functionality
