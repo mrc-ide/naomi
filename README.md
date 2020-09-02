@@ -16,7 +16,7 @@ Naomi model for subnational HIV estimates
 
 ## Code coverage
 
-To check code coverage from R
+To check code coverage from R.
 
 ```
 cov <- covr::package_coverage()
