@@ -1,6 +1,6 @@
 get_meta_indicator <- function() {
 
-  data.frame(
+  df <- data.frame(
     indicator = c("population",
                   "prevalence",
                   "plhiv",
@@ -43,12 +43,103 @@ get_meta_indicator <- function() {
                   "anc_alpha"),
     indicator_sort_order = 1:10,
     indicator_id = 1:10,
-    format = NA,
-    scale = NA,
     stringsAsFactors = FALSE
   )
+
+  accuracy <- c("population" = 1000,
+                "prevalence" = 0.01,
+                "plhiv" = 100,
+                "art_coverage" = 0.1,
+                "art_num_residents" = 1,
+                "art_num_attend" = 1,
+                "incidence" = 0.01,
+                "infections" = 100,
+                "anc_prevalence" = 0.01,
+                "anc_art_coverage" = 0.1)
+
+  scale <- c("population" = 1,
+             "prevalence" = 100,
+             "plhiv" = 1,
+             "art_coverage" = 100,
+             "art_num_residents" = 1,
+             "art_num_attend" = 1,
+             "incidence" = 1000,
+             "infections" = 100,
+             "anc_prevalence" = 100,
+             "anc_art_coverage" = 100)
+
+  prefix <- NA
+  suffix <- c("prevalence" = "%",
+              "art_coverage" = "%",
+              "anc_prevalence" = "%",
+              "anc_art_coverage" = "%")
+
+  df$accuracy <- accuracy[df$indicator]
+  df$scale <- scale[df$indicator]
+  df$prefix <- prefix[df$indicator]
+  df$suffix <- suffix[df$indicator]
+
+  df$prefix[is.na(df$prefix)] <- ""
+  df$suffix[is.na(df$suffix)] <- ""
+
+  df
 }
 
+#' Format numerical values for display
+#'
+#' @param x numerical vector.
+#' @param accuracy A number to round to. E.g. use '0.01' to show 2
+#'   decimal places. Accuracy is applied after scaling.
+#' @param scale A scaling factor: 'x' is multipled by 'scale' before
+#'   any formatting.
+#' @param prefix Symbols to display before the value.
+#' @param suffix Symbols to display after the value.
+#' 
+#' @return A character vector of `length(x)`.
+#'
+#' @details
+#' This is modelled after [scales::number()].
+#'
+#' All arguments must be either length 1 or length(x).
+#'
+#' 'NA' values in `prefix` or `suffix` are replaced by "".
+#'
+#' @examples
+#'
+#' x <- c(50.97617, 767.07075, 188.78788, 3.49416, 718.98248)
+#' accuracy <- c(0.01, 1, 100, 0.1, 0.001)
+#' scale <- c(1, 1, 1, 100, 1)
+#' prefix <- c("$", "", "", "", "")
+#' suffix <- c("", "", "", "%", "")
+#'
+#' display_number(x, accuracy, scale, prefix, suffix)
+#' paste0(prefix, round(scale * x / accuracy) * accuracy, suffix)
+#' 
+#' @export
+display_number <- function(x, accuracy = 0.0001, scale = 1, prefix = "", suffix = "") {
+
+  len_x <- length(x)
+  
+  if ( !length(accuracy) %in% c(1, len_x) ) {
+    stop("length(accuracy) must be length 1 or length(x)")
+  }
+  if ( !length(scale) %in% c(1, len_x) ) {
+    stop("length(scale) must be length 1 or length(x)")
+  }
+  if ( !length(prefix) %in% c(1, len_x) ) {
+    stop("length(prefix) must be length 1 or length(x)")
+  }
+  if ( !length(suffix) %in% c(1, len_x) ) {
+    stop("length(suffix) must be length 1 or length(x)")
+  }
+
+  prefix[is.na(prefix)] <- ""
+  suffix[is.na(suffix)] <- ""
+
+  val <- x * scale
+  val <- round( x / accuracy ) * accuracy
+  paste0(prefix, val, suffix)
+}
 
 add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
 

@@ -41,8 +41,9 @@ read_options <- function(type) {
 #' @param data The set of input data for the model run
 #' @param options Key-value list of model options
 #'
-#' @return TRUE if valid otherwise throw an error
-#'
+#' @return
+#' TRUE if valid otherwise throw an error
+#' 
 #' @export
 validate_model_options <- function(data, options) {
 
@@ -127,13 +128,13 @@ validate_model_options <- function(data, options) {
     stop(t_("SHAPE_SPECTRUM_REGION_ALL_NA"))
   }
 
-  #' ## !! TODO: naomi::extract_pjnz_naomi() should be replaced with function that only extracts regions code
+  ## !! TODO: naomi::extract_pjnz_naomi() should be replaced with function that only extracts regions code
   spec <- naomi::extract_pjnz_naomi(data$pjnz$path)
 
   missing_spectrum_regions <-
     !all(is.na(area_merged$spectrum_region_code) |
         area_merged$spectrum_region_code %in% spec$spectrum_region_code)
-  #' ## !! TODO: return names and codes of missing regions
+  ## !! TODO: return names and codes of missing regions
   if (missing_spectrum_regions) {
     stop(t_("PJNZ_SHAPE_CODE_MISMATCH"))
   }

@@ -1,3 +1,8 @@
+# naomi 1.0.3
+
+* Add fields `accuracy`, `scale`, `prefix`, and `suffix` to the _meta_indicator_ table.
+* New function `display_number()` modelled after `scales::number()`.
+
 # naomi 1.0.2
 
 * Patch to `sample_tmb()` for R 4.0 changes.
