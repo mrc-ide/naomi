@@ -43,7 +43,7 @@ a_hintr_options <- list(
 )
 
 a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)
-                               
+
 a_hintr_options_bad <- a_hintr_options
 a_hintr_options_bad$calendar_quarter_t2 <- NULL
 
@@ -91,11 +91,7 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
        output = output,
        warnings = testthat:::get_messages(warnings$as_list()),
        messages = testthat:::get_messages(messages$as_list()),
-       progress = get_progress_messages(progress$as_list()))
-}
-
-get_progress_messages <- function(x) {
-  lapply(x, "[[", "message")
+       progress = progress$as_list())
 }
 
 MockProgress <- R6::R6Class(

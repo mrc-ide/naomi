@@ -294,7 +294,7 @@ Progress <- R6::R6Class("Progress", list(
     self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
   },
   print = function() {
-    signalCondition(structure(list(message = self$progress),
+    signalCondition(structure(self$progress,
                               class = c("progress", "condition")))
   }
 ))
