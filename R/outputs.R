@@ -137,7 +137,7 @@ display_number <- function(x, accuracy = 0.0001, scale = 1, prefix = "", suffix 
   suffix[is.na(suffix)] <- ""
 
   val <- x * scale
-  val <- round( x / accuracy ) * accuracy
+  val <- round( val / accuracy ) * accuracy
   paste0(prefix, val, suffix)
 }
 

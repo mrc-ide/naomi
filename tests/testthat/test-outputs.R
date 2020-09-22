@@ -188,3 +188,23 @@ test_that("subset_output_package() saves expected output package", {
   expect_true(!any(indicator_sub %in% sub_drop_out$indicators$indicator))
   
 })
+
+
+test_that("number_format() returns expected results", {
+
+  x <- c(50.97617, 767.07075, 188.78788, 3.49416, 718.98248)
+  accuracy <- c(0.01, 1, 100, 0.1, 0.001)
+  scale <- c(1, 1, 1, 100, 1)
+  prefix <- c("$", "", "", "", "")
+  suffix <- c("", "", "", "%", "")
+
+  expect_equal(display_number(x, accuracy, scale, prefix, suffix),
+               c("$50.98", "767", "200", "349.4%", "718.982"))
+
+  expect_equal(display_number(x, accuracy, scale, NA, suffix),
+               c("50.98", "767", "200", "349.4%", "718.982"))
+
+  expect_equal(display_number(x, 10, scale, prefix, suffix),
+               c("$50", "770", "190", "350%", "720"))
+  
+})
