@@ -1,4 +1,4 @@
-# naomi 1.0.3
+# naomi 1.0.4
 
 * Add fields `accuracy`, `scale`, `prefix`, and `suffix` to the _meta_indicator_ table.
 * New function `display_number()` modelled after `scales::number()`.
