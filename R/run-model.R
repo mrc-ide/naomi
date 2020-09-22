@@ -131,6 +131,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
        ))
 }
 
+#' Prepare data inputs from file paths and model options
+#' 
+#' @rdname hintr_run_model
+#' @export
 naomi_prepare_data <- function(data, options) {
 
   area_merged <- read_area_merged(data$shape$path)

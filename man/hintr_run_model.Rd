@@ -2,6 +2,7 @@
 % Please edit documentation in R/run-model.R
 \name{hintr_run_model}
 \alias{hintr_run_model}
+\alias{naomi_prepare_data}
 \title{Run the model and save output to file}
 \usage{
 hintr_run_model(
@@ -11,6 +12,8 @@ hintr_run_model(
   spectrum_path = tempfile(fileext = ".zip"),
   summary_path = tempfile(fileext = ".zip")
 )
+
+naomi_prepare_data(data, options)
 }
 \arguments{
 \item{data}{List of paths to input data files.}
