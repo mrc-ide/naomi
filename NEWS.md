@@ -1,3 +1,8 @@
+# naomi 1.0.4
+
+* Rename summary_path in model run args to coarse_output_path to be more
+  representative of actual output (in preparation for adding summary report)
+
 # naomi 1.0.2
 
 * Patch to `sample_tmb()` for R 4.0 changes.
