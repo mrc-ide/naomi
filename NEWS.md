@@ -1,3 +1,7 @@
+# naomi 1.0.4
+
+* Add `get_calibration_options()` to retrieve options for calibration
+
 # naomi 1.0.2
 
 * Patch to `sample_tmb()` for R 4.0 changes.
