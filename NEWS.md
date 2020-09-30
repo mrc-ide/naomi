@@ -1,3 +1,7 @@
+# naomi 1.0.6
+
+* Add summary_report_path to model run for saving summary report
+
 # naomi 1.0.5
 
 * Rename summary_path in model run args to coarse_output_path to be more

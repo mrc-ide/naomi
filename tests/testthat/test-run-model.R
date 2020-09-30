@@ -5,13 +5,16 @@ test_that("model can be run", {
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   coarse_output_path <- tempfile(fileext = ".zip")
+  summary_report_path = tempfile(fileext = ".html")
   model_run <- hintr_run_model(a_hintr_data,
                                a_hintr_options,
                                output_path,
                                output_spectrum,
-                               coarse_output_path)
+                               coarse_output_path,
+                               summary_report_path)
   expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "metadata"))
+                                   "coarse_output_path",
+                                   "summary_report_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -71,7 +74,7 @@ test_that("model can be run", {
       names(output_boundaries))
   )
 
-  ## Check coarse age outputs saved in summar_path
+  ## Check coarse age outputs saved in coarse_output_path
   coarse_ages <- c("15-49", "15-64", "15+", "50+", "00+", "00-64", "00-14",
                    "15-24", "25-34", "35-49", "50-64", "65+")
   coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
@@ -79,6 +82,9 @@ test_that("model can be run", {
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   expect_equal(model_run$metadata$areas, "MWI_1_2")
+
+  ## Summary report has been generated
+  expect_equal(readLines(summary_report_path), "<h1>Temp</h1>")
 })
 
 test_that("model can be run without programme data", {
@@ -114,7 +120,8 @@ test_that("model can be run without programme data", {
   model_run <- hintr_run_model(data, options, output_path, output_spectrum,
                                coarse_output_path)
   expect_equal(names(model_run),  c("output_path", "spectrum_path",
-                                    "coarse_output_path", "metadata"))
+                                    "coarse_output_path", "summary_path",
+                                    "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -332,7 +339,8 @@ test_that("model works with empty string for ANC year", {
   model_run <- hintr_run_model(a_hintr_data, options)
 
   expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "metadata"))
+                                   "coarse_output_path", "summary_report",
+                                   "metadata"))
 })
 
 test_that("input data types can be formatted", {

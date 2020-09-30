@@ -8,6 +8,7 @@
 #' @param output_path Path to store output indicators as an RDS at.
 #' @param spectrum_path Path to store spectrum digest file at.
 #' @param coarse_output_path Path to store coarse age group output zip file at.
+#' @param summary_report_path Path to store summary report at.
 #'
 #' @details
 #'
@@ -46,12 +47,13 @@
 #' * anc_art_coverage_year1
 #' * anc_art_coverage_year2
 #'
-#' @return Paths to 3 output files.
+#' @return Paths to 4 output files.
 #' @export
 #'
 hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
-                            coarse_output_path = tempfile(fileext = ".zip")) {
+                            coarse_output_path = tempfile(fileext = ".zip"),
+                            summary_report_path = tempfile(fileext = ".html")) {
 
   progress <- new_progress()
 
@@ -120,12 +122,15 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   saveRDS(indicators, file = output_path)
   save_output_coarse_age_groups(coarse_output_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
+  ## Add any other input you need to produce the summary report
+  generate_output_summary_report(summary_report_path)
 
   progress$complete("prepare_outputs")
   progress$print()
   list(output_path = output_path,
        spectrum_path = spectrum_path,
        coarse_output_path = coarse_output_path,
+       summary_report_path = summary_report_path,
        metadata = list(
          areas = options$area_scope
        ))

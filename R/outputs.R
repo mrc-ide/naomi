@@ -613,7 +613,6 @@ save_output_spectrum <- function(path, naomi_output) {
               single_csv = FALSE)
 }
 
-
 save_output <- function(filename, dir,
                         naomi_output,
                         overwrite = FALSE,
@@ -695,6 +694,20 @@ save_output <- function(filename, dir,
 
   zip::zipr(path, list.files())
   path
+}
+
+#' Generate and save summary report at specified path
+#'
+#' @param path Path to save summary report at
+#'
+#' @return Path to summary report
+#' @keywords internal
+generate_output_summary_report <- function(path) {
+  ## Locate RMD using system_file()
+
+  ## Knit it with any inputs you need (as an html file) saving output to path
+  writeLines("<h1>Temp</h1>", path)
+  invisible(path)
 }
 
 
