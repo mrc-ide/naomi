@@ -1,386 +1,386 @@
 {
-	"label": "t_(OPTIONS_CALIBRATION_LABEL)",
-	"description": "t_(OPTIONS_CALIBRATION_DESCRIPTION)",
-	"controlGroups": [
-		{
-			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL)",
-			"controls": [
-				{
-					"name": "spectrum_population_calibration",
-					"type": "select",
-					"options": [
-						{
-							"id": "none",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
-						},
-						{
-							"id": "national",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
-						},
-						{
-							"id": "subnational",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
-						}
-					],
-					"value": "national",
-					"required": true,
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP)"
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_LABEL)",
-			"controls": [
-				{
-					"name": "spectrum_plhiv_calibration_level",
-					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "none",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
-						},
-						{
-							"id": "national",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
-						},
-						{
-							"id": "subnational",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
-						}
-					],
-					"value": "national",
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
-				},
-				{
-					"name": "spectrum_plhiv_calibration_strat",
-					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "age_coarse",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
-						},
-						{
-							"id": "sex_age_coarse",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
-						},
-						{
-							"id": "age_group",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
-						},
-						{
-							"id": "sex_age_group",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
-						}
-					],
-					"value": "sex_age_coarse",
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL)",
-			"controls": [
-				{
-					"name": "spectrum_artnum_calibration_level",
-					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "none",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
-						},
-						{
-							"id": "national",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
-						},
-						{
-							"id": "subnational",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
-						}
-					],
-					"value": "national",
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
-				},
-				{
-					"name": "spectrum_artnum_calibration_strat",
-					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "age_coarse",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
-						},
-						{
-							"id": "sex_age_coarse",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
-						},
-						{
-							"id": "age_group",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
-						},
-						{
-							"id": "sex_age_group",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
-						}
-					],
-					"value": "sex_age_coarse",
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_LABEL)",
-			"controls": [
-				{
-					"name": "spectrum_infections_calibration_level",
-					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "none",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
-						},
-						{
-							"id": "national",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
-						},
-						{
-							"id": "subnational",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
-						}
-					],
-					"value": "national",
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
-				},
-				{
-					"name": "spectrum_infections_calibration_strat",
-					"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "age_coarse",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
-						},
-						{
-							"id": "sex_age_coarse",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
-						},
-						{
-							"id": "age_group",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
-						},
-						{
-							"id": "sex_age_group",
-							"label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
-						}
-					],
-					"value": "sex_age_coarse",
-					"helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
-				}
-			]
-		}
-	]
+  "label": "t_(OPTIONS_CALIBRATION_LABEL)",
+  "description": "t_(OPTIONS_CALIBRATION_DESCRIPTION)",
+  "controlGroups": [
+    {
+      "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL)",
+      "controls": [
+        {
+          "name": "spectrum_population_calibration",
+          "type": "select",
+          "options": [
+            {
+              "id": "none",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
+            },
+            {
+              "id": "national",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
+            },
+            {
+              "id": "subnational",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
+            }
+          ],
+          "value": "national",
+          "required": true,
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_LABEL)",
+      "controls": [
+        {
+          "name": "spectrum_plhiv_calibration_level",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "none",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
+            },
+            {
+              "id": "national",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
+            },
+            {
+              "id": "subnational",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
+            }
+          ],
+          "value": "national",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
+        },
+        {
+          "name": "spectrum_plhiv_calibration_strat",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "sex_age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
+            },
+            {
+              "id": "sex_age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
+            }
+          ],
+          "value": "sex_age_coarse",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_PLHIV_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL)",
+      "controls": [
+        {
+          "name": "spectrum_artnum_calibration_level",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "none",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
+            },
+            {
+              "id": "national",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
+            },
+            {
+              "id": "subnational",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
+            }
+          ],
+          "value": "national",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
+        },
+        {
+          "name": "spectrum_artnum_calibration_strat",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "sex_age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
+            },
+            {
+              "id": "sex_age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
+            }
+          ],
+          "value": "sex_age_coarse",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_LABEL)",
+      "controls": [
+        {
+          "name": "spectrum_infections_calibration_level",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "none",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
+            },
+            {
+              "id": "national",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
+            },
+            {
+              "id": "subnational",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
+            }
+          ],
+          "value": "national",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
+        },
+        {
+          "name": "spectrum_infections_calibration_strat",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "sex_age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
+            },
+            {
+              "id": "sex_age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
+            }
+          ],
+          "value": "sex_age_coarse",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
+        }
+      ]
+    }
+  ]
 },
 {
-	"label": "t_(OPTIONS_OUTPUT_LABEL)",
-	"description": "t_(OPTIONS_OUTPUT_DESCRIPTION)",
+  "label": "t_(OPTIONS_OUTPUT_LABEL)",
+  "description": "t_(OPTIONS_OUTPUT_DESCRIPTION)",
         "controlGroups": [
-    		{
-			"label": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL)",
-			"controls": [
-				{
-					"name": "calendar_quarter_t3",
-					"type": "select",
-					"value": "CY2020Q3",
-					"helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
- 				        "required": true,
-				        "options": [
-   					        {
-							"id": "CY2020Q1",
-							"label": "t_(MONTH_MARCH) 2020"
-						},
-   					        {
-							"id": "CY2020Q2",
-							"label": "t_(MONTH_JUNE) 2020"
-						},
-   					        {
-							"id": "CY2020Q3",
-							"label": "t_(MONTH_SEPTEMBER) 2020"
-						},
-   					        {
-							"id": "CY2020Q4",
-							"label": "t_(MONTH_DECEMBER) 2020"
-						},
-   					        {
-							"id": "CY2021Q1",
-							"label": "t_(MONTH_MARCH) 2021"
-						},
-   					        {
-							"id": "CY2021Q2",
-							"label": "t_(MONTH_JUNE) 2021"
-						},
-   					        {
-							"id": "CY2021Q3",
-							"label": "t_(MONTH_SEPTEMBER) 2021"
-						},
-   					        {
-							"id": "CY2021Q4",
-							"label": "t_(MONTH_DECEMBER) 2021"
-						},
-   					        {
-							"id": "CY2022Q1",
-							"label": "t_(MONTH_MARCH) 2022"
-						},
-   					        {
-							"id": "CY2022Q2",
-							"label": "t_(MONTH_JUNE) 2022"
-						},
-   					        {
-							"id": "CY2022Q3",
-							"label": "t_(MONTH_SEPTEMBER) 2022"
-						},
-   					        {
-							"id": "CY2022Q4",
-							"label": "t_(MONTH_DECEMBER) 2022"
-						}
-					]
-				}
-			]
-		}
-	]
+        {
+      "label": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL)",
+      "controls": [
+        {
+          "name": "calendar_quarter_t3",
+          "type": "select",
+          "value": "CY2020Q3",
+          "helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
+                 "required": true,
+                "options": [
+                     {
+              "id": "CY2020Q1",
+              "label": "t_(MONTH_MARCH) 2020"
+            },
+                     {
+              "id": "CY2020Q2",
+              "label": "t_(MONTH_JUNE) 2020"
+            },
+                     {
+              "id": "CY2020Q3",
+              "label": "t_(MONTH_SEPTEMBER) 2020"
+            },
+                     {
+              "id": "CY2020Q4",
+              "label": "t_(MONTH_DECEMBER) 2020"
+            },
+                     {
+              "id": "CY2021Q1",
+              "label": "t_(MONTH_MARCH) 2021"
+            },
+                     {
+              "id": "CY2021Q2",
+              "label": "t_(MONTH_JUNE) 2021"
+            },
+                     {
+              "id": "CY2021Q3",
+              "label": "t_(MONTH_SEPTEMBER) 2021"
+            },
+                     {
+              "id": "CY2021Q4",
+              "label": "t_(MONTH_DECEMBER) 2021"
+            },
+                     {
+              "id": "CY2022Q1",
+              "label": "t_(MONTH_MARCH) 2022"
+            },
+                     {
+              "id": "CY2022Q2",
+              "label": "t_(MONTH_JUNE) 2022"
+            },
+                     {
+              "id": "CY2022Q3",
+              "label": "t_(MONTH_SEPTEMBER) 2022"
+            },
+                     {
+              "id": "CY2022Q4",
+              "label": "t_(MONTH_DECEMBER) 2022"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 },
 {
-	"label": "t_(OPTIONS_ADVANCED_LABEL)",
-	"description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
-	"controlGroups": [
-		{
-			"label": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_LABEL)",
-			"controls": [
-				{
-					"name": "max_iterations",
-					"type": "number",
-					"value": 250,
-					"helpText": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_HELP)",
-					"required": true
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_LABEL)",
-			"controls": [
-				{
-					"name": "no_of_samples",
-					"type": "number",
-					"value": 1000,
-					"helpText": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP)",
-					"required": true
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_LABEL)",
-			"controls": [
-				{
-					"name": "rng_seed",
-					"type": "number",
-					"value": 28,
-					"required": false,
-					"helpText": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_HELP)"
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_ADVANCED_PERMISSIVE_LABEL)",
-			"controls": [
-				{
-					"name": "permissive",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "true",
-							"label": "t_(OPTIONS_YES_LABEL)"
-						},
-						{
-							"id": "false",
-							"label": "t_(OPTIONS_NO_LABEL)"
-						}
-					],
-					"value": "false",
-					"helpText": "t_(OPTIONS_ADVANCED_PERMISSIVE_HELP)"
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_ADVANCED_LOGIT_MEAN_LABEL)",
-			"controls": [
-				{
-					"name": "artattend_log_gamma_offset",
-					"type": "number",
-					"required": true,
-					"value": -4,
-					"helpText": "t_(OPTIONS_ADVANCED_LOGIT_HELP)"
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL)",
-			"controls": [
-				{
-					"name": "artattend_t2",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "false",
-							"label": "t_(OPTIONS_NO_LABEL)"
-						},
-						{
-							"id": "true",
-							"label": "t_(OPTIONS_YES_LABEL)"
-						}
-					],
-					"value": "true",
-					"helpText": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP)"
-				}
-			]
-		},
-	        {
-		       "label": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
-		        "controls": [
-				{
-					"name": "deff_prev",
-					"label": "t_(HIV_PREVALENCE)",
-					"type": "number",
-					"required": true,
-    				        "value": 1.0,
-					"helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
-				},
-			    	{
-					"name": "deff_artcov",
-					"label": "t_(ART_COVERAGE)",
-					"type": "number",
-					"required": true,
-				        "value": 1.0,
-					"helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
-				},
-			        {
-					"name": "deff_recent",
-					"label": "t_(PROPORTION_RECENTLY_INFECTED)",
-					"type": "number",
-					"required": true,
-				        "value": 1.0,
-					"helpText": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP)"
-				}
-			]
-		}
-	]
+  "label": "t_(OPTIONS_ADVANCED_LABEL)",
+  "description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
+  "controlGroups": [
+    {
+      "label": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_LABEL)",
+      "controls": [
+        {
+          "name": "max_iterations",
+          "type": "number",
+          "value": 250,
+          "helpText": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_HELP)",
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_LABEL)",
+      "controls": [
+        {
+          "name": "no_of_samples",
+          "type": "number",
+          "value": 1000,
+          "helpText": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP)",
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_LABEL)",
+      "controls": [
+        {
+          "name": "rng_seed",
+          "type": "number",
+          "value": 28,
+          "required": false,
+          "helpText": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_PERMISSIVE_LABEL)",
+      "controls": [
+        {
+          "name": "permissive",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "false",
+          "helpText": "t_(OPTIONS_ADVANCED_PERMISSIVE_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_LOGIT_MEAN_LABEL)",
+      "controls": [
+        {
+          "name": "artattend_log_gamma_offset",
+          "type": "number",
+          "required": true,
+          "value": -4,
+          "helpText": "t_(OPTIONS_ADVANCED_LOGIT_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL)",
+      "controls": [
+        {
+          "name": "artattend_t2",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            },
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP)"
+        }
+      ]
+    },
+          {
+           "label": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
+            "controls": [
+        {
+          "name": "deff_prev",
+          "label": "t_(HIV_PREVALENCE)",
+          "type": "number",
+          "required": true,
+                    "value": 1.0,
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
+        },
+            {
+          "name": "deff_artcov",
+          "label": "t_(ART_COVERAGE)",
+          "type": "number",
+          "required": true,
+                "value": 1.0,
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
+        },
+              {
+          "name": "deff_recent",
+          "label": "t_(PROPORTION_RECENTLY_INFECTED)",
+          "type": "number",
+          "required": true,
+                "value": 1.0,
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP)"
+        }
+      ]
+    }
+  ]
 }
