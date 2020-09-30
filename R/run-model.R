@@ -103,6 +103,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   ## input download_input
   outputs <- output_package(fit, naomi_data)
 
+  ## TODO: Remove calibration after separate options are integrated
+  ## into app
   outputs <- calibrate_outputs(outputs, naomi_data,
                                options$spectrum_plhiv_calibration_level,
                                options$spectrum_plhiv_calibration_strat,
@@ -123,6 +125,35 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   progress$complete("prepare_outputs")
   progress$print()
+  list(output_path = output_path,
+       spectrum_path = spectrum_path,
+       summary_path = summary_path,
+       metadata = list(
+         areas = options$area_scope
+       ))
+}
+
+hintr_calibrate <- function(naomi_output_path, naomi_data_path,
+                            calibration_options) {
+  output <- readRDS(naomi_output_path)
+  naomi_data <- readRDS(naomi_data_path)
+  outputs <- calibrate_outputs(
+    naomi_output, naomi_data,
+    calibration_options$spectrum_plhiv_calibration_level,
+    calibration_options$spectrum_plhiv_calibration_strat,
+    calibration_options$spectrum_artnum_calibration_level,
+    calibration_options$spectrum_artnum_calibration_strat,
+    calibration_options$spectrum_infections_calibration_level,
+    calibration_options$spectrum_infections_calibration_strat)
+
+  outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
+
+  attr(outputs, "info") <- naomi_info(data, options)
+
+  indicators <- add_output_labels(outputs)
+  saveRDS(indicators, file = output_path)
+  save_result_summary(summary_path, outputs)
+  save_output_spectrum(spectrum_path, outputs)
   list(output_path = output_path,
        spectrum_path = spectrum_path,
        summary_path = summary_path,
