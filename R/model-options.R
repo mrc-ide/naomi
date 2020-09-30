@@ -34,6 +34,17 @@ read_options <- function(type) {
   traduire::translator()$replace(options)
 }
 
+#' Get JSON representing model calibration options
+#'
+#' @return Model calibration options.
+#' @export
+#'
+#' @examples
+#' get_model_calibration_options()
+get_model_calibration_options <- function() {
+  read_options("calibration")
+}
+
 #' Validate a set of model options
 #'
 #' This validates that a set of model options can be used to run the model

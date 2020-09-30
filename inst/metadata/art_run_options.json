@@ -1,67 +1,67 @@
 {
-	"label": "t_(OPTIONS_ART_LABEL)",
-	"description": "t_(OPTIONS_ART_DESCRIPTION)",
-	"controlGroups": [
-		{
-			"label": "t_(OPTIONS_ART_INCLUDE_ART_LABEL)",
-			"controls": [
-				{
-					"name": "include_art_t1",
-					"label": "t_(OPTIONS_T1_LABEL)",
-					"type": "select",
-					"helpText": "t_(OPTIONS_T1_HELP)",
-					"options": [
-						{
-							"id": "true",
-							"label": "t_(OPTIONS_YES_LABEL)"
-						},
-						{
-							"id": "false",
-							"label": "t_(OPTIONS_NO_LABEL)"
-						}
-					],
-					"required": true
-				},
-				{
-					"name": "include_art_t2",
-					"label": "t_(OPTIONS_T2_LABEL)",
-					"type": "select",
-					"helpText": "t_(OPTIONS_T2_HELP)",
-					"options": [
-						{
-							"id": "true",
-							"label": "t_(OPTIONS_YES_LABEL)"
-						},
-						{
-							"id": "false",
-							"label": "t_(OPTIONS_NO_LABEL)"
-						}
-					],
-					"required": true
-				}
-			]
-		},
-		{
-			"label": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_LABEL)",
-			"controls": [
-				{
-					"name": "artattend",
-					"type": "select",
-					"required": true,
-					"options": [
-						{
-							"id": "false",
-							"label": "t_(OPTIONS_NO_LABEL)"
-						},
-						{
-							"id": "true",
-							"label": "t_(OPTIONS_YES_LABEL)"
-						}
-					],
-					"value": "true",
-					"helpText": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_HELP)"
-				}
-			]
-		}
-	]
+  "label": "t_(OPTIONS_ART_LABEL)",
+  "description": "t_(OPTIONS_ART_DESCRIPTION)",
+  "controlGroups": [
+    {
+      "label": "t_(OPTIONS_ART_INCLUDE_ART_LABEL)",
+      "controls": [
+        {
+          "name": "include_art_t1",
+          "label": "t_(OPTIONS_T1_LABEL)",
+          "type": "select",
+          "helpText": "t_(OPTIONS_T1_HELP)",
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "required": true
+        },
+        {
+          "name": "include_art_t2",
+          "label": "t_(OPTIONS_T2_LABEL)",
+          "type": "select",
+          "helpText": "t_(OPTIONS_T2_HELP)",
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_LABEL)",
+      "controls": [
+        {
+          "name": "artattend",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            },
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_HELP)"
+        }
+      ]
+    }
+  ]
 }
