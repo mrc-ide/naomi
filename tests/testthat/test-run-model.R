@@ -89,7 +89,7 @@ test_that("model can be run", {
   expect_s3_class(calibration_data$output_package, "naomi_output")
   expect_s3_class(calibration_data$naomi_data, "naomi_data")
   expect_s3_class(calibration_data$naomi_data, "naomi_mf")
-  expect_equal(calibration_data$info,
+  expect_equal(names(calibration_data$info),
                c("inputs.csv", "options.yml", "packages.csv"))
 })
 
@@ -403,7 +403,7 @@ test_that("model run can be calibrated", {
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output$spectrum_path,
                         a_hintr_output$spectrum_path)
-  file_list <- unzip(model_run$spectrum_path, list = TRUE)
+  file_list <- unzip(calibrated_output$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
   info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
   info_names <- paste0("info/", names(info))
@@ -418,7 +418,7 @@ test_that("model run can be calibrated", {
   ## Summary file has been calibrated
   expect_file_different(calibrated_output$summary_path,
                         a_hintr_output$summary_path)
-  file_list <- unzip(model_run$summary_path, list = TRUE)
+  file_list <- unzip(calibrated_output$summary_path, list = TRUE)
   expect_setequal(
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
