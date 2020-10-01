@@ -111,6 +111,9 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     output_package = outputs,
     naomi_data = naomi_data
   )
+  ## TODO: Remove this call to calibrate_outputs once front end has been
+  ## updated to support separate calibration
+  ## Should hintr not return any data either?
   outputs <- calibrate_outputs(outputs, naomi_data,
                                options$spectrum_plhiv_calibration_level,
                                options$spectrum_plhiv_calibration_strat,
@@ -182,6 +185,9 @@ hintr_calibrate <- function(output, calibration_options) {
   calibrated_output <- disaggregate_0to4_outputs(calibrated_output,
                                                  calibration_data$naomi_data)
 
+  calibration_data$info$calibration_options.yml <-
+    yaml::as.yaml(calibration_options)
+  saveRDS(calibration_data, output$calibration_path)
   attr(calibrated_output, "info") <- calibration_data$info
 
   indicators <- add_output_labels(calibrated_output)

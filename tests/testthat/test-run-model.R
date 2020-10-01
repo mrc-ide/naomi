@@ -411,7 +411,7 @@ test_that("model run can be calibrated", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-      "meta_period.csv", "info/", info_names,
+      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
@@ -423,13 +423,30 @@ test_that("model run can be calibrated", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-      "meta_period.csv", "info/", info_names,
+      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
-  ## calibration data is unchanged
-  expect_file_equivalent(calibrated_output$calibration_path,
-                         a_hintr_output$calibration_path)
+  ## calibration data: info has been updated but everything else unchanged
+  expect_file_different(calibrated_output$calibration_path,
+                        a_hintr_output$calibration_path)
+  pre_calibration_data <- readRDS(a_hintr_output$calibration_path)
+  post_calibration_data <- readRDS(calibrated_output$calibration_path)
+  expect_equal(post_calibration_data$output_package,
+               pre_calibration_data$output_package)
+  expect_equal(post_calibration_data$naomi_data,
+               pre_calibration_data$naomi_data)
+  expect_equal(names(post_calibration_data$info),
+              c("inputs.csv", "options.yml", "packages.csv",
+                "calibration_options.yml"))
+  expect_equal(post_calibration_data$info$inputs.csv,
+               pre_calibration_data$info$inputs.csv)
+  expect_equal(post_calibration_data$info$options.yml,
+               pre_calibration_data$info$options.yml)
+  expect_equal(post_calibration_data$info$packages.csv,
+               pre_calibration_data$info$packages.csv)
+  expect_equal(post_calibration_data$info$calibration_options.yml,
+               yaml::as.yaml(a_hintr_calibration_options))
 
   ## metadata is unchanged
   expect_equal(calibrated_output$metadata, a_hintr_output$metadata)
@@ -477,6 +494,28 @@ test_that("model run can be calibrated", {
   ## calibration data is unchanged
   expect_file_equivalent(calibrated_output_2$calibration_path,
                          a_hintr_output$calibration_path)
+
+  ## calibration data: info has been updated but everything else unchanged
+  expect_file_different(calibrated_output_2$calibration_path,
+                        a_hintr_output$calibration_path)
+  expect_file_different(calibrated_output_2$calibration_path,
+                        calibrated_output$calibration_path)
+  post_calibration_2_data <- readRDS(calibrated_output_2$calibration_path)
+  expect_equal(post_calibration_2_data$output_package,
+               pre_calibration_data$output_package)
+  expect_equal(post_calibration_2_data$naomi_data,
+               pre_calibration_data$naomi_data)
+  expect_equal(names(post_calibration_2_data$info),
+              c("inputs.csv", "options.yml", "packages.csv",
+                "calibration_options.yml"))
+  expect_equal(post_calibration_2_data$info$inputs.csv,
+               pre_calibration_data$info$inputs.csv)
+  expect_equal(post_calibration_2_data$info$options.yml,
+               pre_calibration_data$info$options.yml)
+  expect_equal(post_calibration_2_data$info$packages.csv,
+               pre_calibration_data$info$packages.csv)
+  expect_equal(post_calibration_2_data$info$calibration_options.yml,
+               yaml::as.yaml(calibration_options))
 
   ## metadata is unchanged
   expect_equal(calibrated_output_2$metadata, a_hintr_output$metadata)
