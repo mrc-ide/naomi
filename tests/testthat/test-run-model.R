@@ -491,10 +491,6 @@ test_that("model run can be calibrated", {
                         calibrated_output$summary_path)
   expect_true(file.size(calibrated_output_2$summary_path) > 2000)
 
-  ## calibration data is unchanged
-  expect_file_equivalent(calibrated_output_2$calibration_path,
-                         a_hintr_output$calibration_path)
-
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,
                         a_hintr_output$calibration_path)
