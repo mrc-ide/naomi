@@ -1,0 +1,87 @@
+---
+title: "District HIV Estimates"
+output: html_document
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+fig_width: 5
+fig_height: 5
+params:
+  country: NA
+  spectrum_file: NA
+  output_zip: NA
+    
+---
+
+```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
+library(readr)
+library(ggplot2)
+library(naomi)
+library(dplyr)
+library(sf)
+library(forcats)
+library(knitr)
+library(gt)
+library(purrr)
+
+# grab inputs
+country <- params$country
+spectrum_file<- as.character(params$spectrum_file)
+output_zip <- params$output_zip
+
+# read in naomi outputs zip file
+outputs <- naomi::read_output_package(output_zip)
+
+indicators <- add_output_labels(outputs) %>%
+  left_join(outputs$meta_area %>% select(area_level, area_id, center_x, center_y)) %>%
+  sf::st_as_sf()
+```
+
+``` {r, echo = FALSE, results = 'asis'}
+cat(paste0("#### These estimates are derived from ", spectrum_file), sep = "\n")
+
+```
+
+
+Naomi combines district-level data about HIV from several sources in a statistical model:
+
+
+### HIV Prevalence & PLHIV
+```{r HIV_prev_map, echo=FALSE,warning = FALSE, out.width  =  "50%" }
+ 
+par(mar = c(4, 4, .1, .1))
+
+indicators %>%
+  filter(age_group == "15-49",
+         indicator == "prevalence",
+         area_level == 2 ) %>%
+  ggplot(aes(fill = mode)) +
+  guides(fill = guide_legend(title = "HIV Prevalence 15-49 \n October 2020")) +
+  geom_sf() +
+  coord_sf(datum = NA) +
+  scale_fill_viridis_c(option = "C",
+                              labels = scales::percent_format(),
+                              direction = -1) +
+   th_map()
+
+ indicators %>%
+  filter(age_group == "15-49",
+         indicator == "plhiv",
+         area_level == 2 ) %>%
+  ggplot(aes(fill = mode))  +
+  geom_sf() +
+  coord_sf(datum = NA) +
+  guides(fill = guide_legend(title = "PLHIV 15-49 \n October 2020")) +
+  viridis::scale_fill_viridis(option = "C",
+                              direction = -1) +
+   th_map()
+ 
+ 
+
+ 
+ 
+```
+
+
+### Incidence
+
+
+### ART Coverage

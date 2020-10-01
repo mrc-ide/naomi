@@ -85,6 +85,9 @@ test_that("model can be run", {
 
   ## Summary report has been generated
   expect_equal(readLines(summary_report_path), "<h1>Temp</h1>")
+  expect_true(file.size(summary_report_path) > 2000)
+  expect_true(any(grepl("These estimates are derived from",
+                        readLines(summary_report_path))))
 })
 
 test_that("model can be run without programme data", {

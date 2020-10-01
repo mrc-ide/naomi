@@ -702,12 +702,17 @@ save_output <- function(filename, dir,
 #'
 #' @return Path to summary report
 #' @keywords internal
-generate_output_summary_report <- function(path) {
-  ## Locate RMD using system_file()
+generate_output_summary_report <- function(report_path, output_zip) {
+  rmd_path <- system_file("report/summary_report.Rmd")
 
-  ## Knit it with any inputs you need (as an html file) saving output to path
-  writeLines("<h1>Temp</h1>", path)
-  invisible(path)
+  rmarkdown::render(rmd_path, params = list(
+    country = "iso3",
+    spectrum_file = "Spectrum File Name",
+    output_zip = output_zip),
+    output_file = report_path
+     )
+
+  invisible(report_path)
 }
 
 
