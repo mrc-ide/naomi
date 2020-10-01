@@ -155,10 +155,16 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
-## This will read calibration data from output
-## run calibration using calibration options
-## overwrite output_path, summary_path and spectrum_path with calibrated data
-## return hintr_output
+#' Calibrate hintr_output
+#'
+#' Take a previously generated hintr_output object and calibrate. Format
+#' response as another hintr_output object.
+#'
+#' @param output A hintr_output object
+#' @param calibration_options A set of calibration options
+#'
+#' @return Calibrated hintr_output object
+#' @export
 hintr_calibrate <- function(output, calibration_options) {
   if (!is_hintr_output(output)) {
     stop("Invalid object passed to calibrate, must be 'hintr_output'")
@@ -180,8 +186,9 @@ hintr_calibrate <- function(output, calibration_options) {
 
   indicators <- add_output_labels(calibrated_output)
   saveRDS(indicators, file = output$output_path)
-  save_result_summary(output$summary_path, calibrated_output)
-  save_output_spectrum(output$spectrum_path, calibrated_output)
+  save_result_summary(output$summary_path, calibrated_output, overwrite = TRUE)
+  save_output_spectrum(output$spectrum_path, calibrated_output,
+                       overwrite = TRUE)
   build_hintr_output(output$output_path, output$spectrum_path,
                      output$summary_path, output$calibration_path,
                      output$metadata)

@@ -9,7 +9,8 @@ hintr_run_model(
   options,
   output_path = tempfile(),
   spectrum_path = tempfile(fileext = ".zip"),
-  summary_path = tempfile(fileext = ".zip")
+  summary_path = tempfile(fileext = ".zip"),
+  calibration_path = tempfile(fileext = ".rds")
 )
 }
 \arguments{
@@ -22,9 +23,11 @@ hintr_run_model(
 \item{spectrum_path}{Path to store spectrum digest file at.}
 
 \item{summary_path}{Path to store summary download zip file at.}
+
+\item{calibration_path}{Path to store data required for calibrating model.}
 }
 \value{
-Paths to 3 output files.
+Paths to 4 output files.
 }
 \description{
 This prepares the model inputs from data and options and saves output as
