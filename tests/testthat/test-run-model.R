@@ -4,17 +4,17 @@ test_that("model can be run", {
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
   calibration_path <- tempfile(fileext = ".rds")
   model_run <- hintr_run_model(a_hintr_data,
                                a_hintr_options,
                                output_path,
                                output_spectrum,
-                               summary_path,
+                               coarse_output_path,
                                calibration_path)
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path",
+               c("output_path", "spectrum_path", "coarse_output_path",
                  "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
@@ -38,8 +38,8 @@ test_that("model can be run", {
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
-  expect_equal(model_run$summary_path, summary_path)
-  file_list <- unzip(model_run$summary_path, list = TRUE)
+  expect_equal(model_run$coarse_output_path, coarse_output_path)
+  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_setequal(
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
@@ -75,7 +75,7 @@ test_that("model can be run", {
   ## Check coarse age outputs saved in summar_path
   coarse_ages <- c("15-49", "15-64", "15+", "50+", "00+", "00-64", "00-14",
                    "15-24", "25-34", "35-49", "50-64", "65+")
-  coarse_age_outputs <- read_output_package(model_run$summary_path)
+  coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
   expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
@@ -122,11 +122,11 @@ test_that("model can be run without programme data", {
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
   model_run <- hintr_run_model(data, options, output_path, output_spectrum,
-                         summary_path)
+                               coarse_output_path)
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path",
+               c("output_path", "spectrum_path", "coarse_output_path",
                  "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
@@ -153,8 +153,8 @@ test_that("model can be run without programme data", {
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
-  expect_equal(model_run$summary_path, summary_path)
-  file_list <- unzip(model_run$summary_path, list = TRUE)
+  expect_equal(model_run$coarse_output_path, coarse_output_path)
+  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_setequal(
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
@@ -197,12 +197,12 @@ test_that("progress messages are printed", {
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
   with_mock("naomi:::new_progress" = mock_new_progress,
             "naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
     model_run <- naomi_evaluate_promise(
       hintr_run_model(a_hintr_data, a_hintr_options,
-                      output_path, output_spectrum, summary_path))
+                      output_path, output_spectrum, coarse_output_path))
   })
   expect_equal(length(model_run$progress), 6)
   for (step in model_run$progress) {
@@ -231,10 +231,10 @@ test_that("progress messages are printed", {
 test_that("model run throws error for invalid inputs", {
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
   expect_error(
     hintr_run_model(data, a_hintr_options_bad,
-                    output_path, output_spectrum, summary_path)
+                    output_path, output_spectrum, coarse_output_path)
 
   )
 })
@@ -257,31 +257,31 @@ test_that("setting rng_seed returns same output", {
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
 
   model_run <- hintr_run_model(data, options,
                                output_path, output_spectrum,
-                               summary_path)
+                               coarse_output_path)
 
   options2 <- options
   options2$rng_seed <- 17
 
   output_path2 <- tempfile()
   output_spectrum2 <- tempfile(fileext = ".zip")
-  summary_path2 <- tempfile(fileext = ".zip")
+  coarse_output_path2 <- tempfile(fileext = ".zip")
 
   model_run2 <- hintr_run_model(data, options2, output_path2,
-                                output_spectrum2, summary_path2)
+                                output_spectrum2, coarse_output_path2)
 
   options3 <- options
   options3$rng_seed <- NULL
 
   output_path3 <- tempfile()
   output_spectrum3 <- tempfile(fileext = ".zip")
-  summary_path3 <- tempfile(fileext = ".zip")
+  coarse_output_path3 <- tempfile(fileext = ".zip")
 
   model_run3 <- hintr_run_model(data, options3, output_path3,
-                                output_spectrum3, summary_path3)
+                                output_spectrum3, coarse_output_path3)
 
   output <- readRDS(model_run$output_path)
   output2 <- readRDS(model_run2$output_path)
@@ -309,19 +309,19 @@ test_that("exceeding max_iterations convergence error or warning", {
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
 
   expect_error(hintr_run_model(data, options,
                                output_path, output_spectrum,
-                               summary_path))
+                               coarse_output_path))
 
   options$permissive <- "true"
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
-  summary_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
   expect_warning(hintr_run_model(data, options,
                                  output_path, output_spectrum,
-                                 summary_path))
+                                 coarse_output_path))
 })
 
 test_that("invalid time sequencing returns an error", {
@@ -345,7 +345,7 @@ test_that("model works with empty string for ANC year", {
   model_run <- hintr_run_model(a_hintr_data, options)
 
   expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path",
+               c("output_path", "spectrum_path", "coarse_output_path",
                  "calibration_path","metadata"))
 })
 

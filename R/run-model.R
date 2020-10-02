@@ -7,7 +7,7 @@
 #' @param options List of model run options (see details).
 #' @param output_path Path to store output indicators as an RDS at.
 #' @param spectrum_path Path to store spectrum digest file at.
-#' @param summary_path Path to store summary download zip file at.
+#' @param coarse_output_path Path to store coarse age group output zip file at.
 #' @param calibration_path Path to store data required for calibrating model.
 #'
 #' @details
@@ -52,7 +52,7 @@
 #'
 hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
-                            summary_path = tempfile(fileext = ".zip"),
+                            coarse_output_path = tempfile(fileext = ".zip"),
                             calibration_path = tempfile(fileext = ".rds")) {
 
   progress <- new_progress()
@@ -131,23 +131,23 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
   indicators <- add_output_labels(outputs)
   saveRDS(indicators, file = output_path)
-  save_result_summary(summary_path, outputs)
+  save_output_coarse_age_groups(coarse_output_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
 
   progress$complete("prepare_outputs")
   progress$print()
   build_hintr_output(
-    output_path, spectrum_path, summary_path, calibration_path,
+    output_path, spectrum_path, coarse_output_path, calibration_path,
     metadata = list(
       areas = options$area_scope
-    ))
+  ))
 }
 
-build_hintr_output <- function(output_path, spectrum_path, summary_path,
+build_hintr_output <- function(output_path, spectrum_path, coarse_output_path,
                                calibration_path, metadata) {
   out <- list(output_path = output_path,
               spectrum_path = spectrum_path,
-              summary_path = summary_path,
+              coarse_output_path = coarse_output_path,
               calibration_path = calibration_path,
               metadata = metadata)
   class(out) <- "hintr_output"
@@ -192,11 +192,12 @@ hintr_calibrate <- function(output, calibration_options) {
 
   indicators <- add_output_labels(calibrated_output)
   saveRDS(indicators, file = output$output_path)
-  save_result_summary(output$summary_path, calibrated_output, overwrite = TRUE)
+  save_output_coarse_age_groups(output$coarse_output_path, calibrated_output,
+                                overwrite = TRUE)
   save_output_spectrum(output$spectrum_path, calibrated_output,
                        overwrite = TRUE)
   build_hintr_output(output$output_path, output$spectrum_path,
-                     output$summary_path, output$calibration_path,
+                     output$coarse_output_path, output$calibration_path,
                      output$metadata)
 }
 
