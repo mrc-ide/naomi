@@ -415,10 +415,10 @@ test_that("model run can be calibrated", {
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
-  ## Summary file has been calibrated
-  expect_file_different(calibrated_output$summary_path,
-                        a_hintr_output$summary_path)
-  file_list <- unzip(calibrated_output$summary_path, list = TRUE)
+  ## Coarse age group output file has been calibrated
+  expect_file_different(calibrated_output$coarse_output_path,
+                        a_hintr_output$coarse_output_path)
+  file_list <- unzip(calibrated_output$coarse_output_path, list = TRUE)
   expect_setequal(
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
@@ -484,12 +484,12 @@ test_that("model run can be calibrated", {
   ## There is some data
   expect_true(file.size(calibrated_output_2$spectrum_path) > 2000)
 
-  ## Summary file has been calibrated
-  expect_file_different(calibrated_output_2$summary_path,
-                        a_hintr_output$summary_path)
-  expect_file_different(calibrated_output_2$summary_path,
-                        calibrated_output$summary_path)
-  expect_true(file.size(calibrated_output_2$summary_path) > 2000)
+  ## Coarse age-group output file has been calibrated
+  expect_file_different(calibrated_output_2$coarse_output_path,
+                        a_hintr_output$coarse_output_path)
+  expect_file_different(calibrated_output_2$coarse_output_path,
+                        calibrated_output$coarse_output_path)
+  expect_true(file.size(calibrated_output_2$coarse_output_path) > 2000)
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,
