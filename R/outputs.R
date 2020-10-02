@@ -595,22 +595,22 @@ save_output_package <- function(naomi_output,
               with_labels, boundary_format, single_csv)
 }
 
-save_output_coarse_age_groups <- function(path, naomi_output) {
+save_output_coarse_age_groups <- function(path, naomi_output,
+                                          overwrite = FALSE) {
 
   age_groups_keep <- c("15-49", "15-64", "15+", "50+", "00+", "00-64",
                        "00-14", "15-24", "25-34", "35-49", "50-64", "65+")
   naomi_output_sub <- subset_naomi_output(naomi_output, age_group = age_groups_keep)
 
-  save_output(basename(path), dirname(path), naomi_output_sub, overwrite = FALSE,
-              with_labels = TRUE, boundary_format = "geojson",
-              single_csv = FALSE)
+  save_output(basename(path), dirname(path), naomi_output_sub,
+              overwrite = overwrite, with_labels = TRUE,
+              boundary_format = "geojson", single_csv = FALSE)
 }
 
-save_output_spectrum <- function(path, naomi_output) {
+save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output,
-              overwrite = FALSE,
-              with_labels = TRUE, boundary_format = "geojson",
-              single_csv = FALSE)
+              overwrite = overwrite, with_labels = TRUE,
+              boundary_format = "geojson", single_csv = FALSE)
 }
 
 

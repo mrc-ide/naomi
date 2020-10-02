@@ -1,5 +1,9 @@
 # naomi 1.0.5
 
+* Add `hintr_calibrate()` which takes output and calibration options and runs
+  calibration and returns in hintr output format
+
+# naomi 1.0.4
 * Rename summary_path in model run args to coarse_output_path to be more
   representative of actual output (in preparation for adding summary report)
 

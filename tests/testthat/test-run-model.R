@@ -5,13 +5,17 @@ test_that("model can be run", {
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   coarse_output_path <- tempfile(fileext = ".zip")
+  calibration_path <- tempfile(fileext = ".rds")
   model_run <- hintr_run_model(a_hintr_data,
                                a_hintr_options,
                                output_path,
                                output_spectrum,
-                               coarse_output_path)
-  expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "metadata"))
+                               coarse_output_path,
+                               calibration_path)
+  expect_s3_class(model_run, "hintr_output")
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "coarse_output_path",
+                 "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -34,9 +38,6 @@ test_that("model can be run", {
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
-
-  ## TODO: replace with checks for spectrum digest once function to create
-  ## that has been added mrc-636
   expect_equal(model_run$coarse_output_path, coarse_output_path)
   file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_setequal(
@@ -79,6 +80,17 @@ test_that("model can be run", {
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   expect_equal(model_run$metadata$areas, "MWI_1_2")
+
+  ## Calibration data is stored
+  expect_true(!is.null(model_run$calibration_path))
+  calibration_data <- readRDS(model_run$calibration_path)
+  expect_equal(names(calibration_data),
+               c("output_package", "naomi_data", "info"))
+  expect_s3_class(calibration_data$output_package, "naomi_output")
+  expect_s3_class(calibration_data$naomi_data, "naomi_data")
+  expect_s3_class(calibration_data$naomi_data, "naomi_mf")
+  expect_equal(names(calibration_data$info),
+               c("inputs.csv", "options.yml", "packages.csv"))
 })
 
 test_that("model can be run without programme data", {
@@ -113,8 +125,9 @@ test_that("model can be run without programme data", {
   coarse_output_path <- tempfile(fileext = ".zip")
   model_run <- hintr_run_model(data, options, output_path, output_spectrum,
                                coarse_output_path)
-  expect_equal(names(model_run),  c("output_path", "spectrum_path",
-                                    "coarse_output_path", "metadata"))
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "coarse_output_path",
+                 "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -331,8 +344,9 @@ test_that("model works with empty string for ANC year", {
 
   model_run <- hintr_run_model(a_hintr_data, options)
 
-  expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "metadata"))
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "coarse_output_path",
+                 "calibration_path","metadata"))
 })
 
 test_that("input data types can be formatted", {
@@ -368,4 +382,137 @@ test_that("input data types can be formatted", {
 
   expect_error(format_data_input(2),
                "Unsupported input data type, must be a list of file paths or list of file metadata")
+})
+
+test_that("model run can be calibrated", {
+  ## Calibration modifies files in place. We want to make sure we don't modify
+  ## the test setup output and introduce race condition in tests.
+  ## Create a copy and calibrate that
+  output <- clone_output(a_hintr_output)
+  calibrated_output <- hintr_calibrate(output, a_hintr_calibration_options)
+
+  expect_s3_class(calibrated_output, "hintr_output")
+
+  ## Output has been calibrated
+  expect_file_different(calibrated_output$output_path,
+                        a_hintr_output$output_path)
+  indicators_output <- readRDS(calibrated_output$output_path)
+  ## Check there is some data
+  expect_true(nrow(indicators_output) == 16368 * 3 + 2*2*10)
+
+  ## Spectrum file has been calibrated
+  expect_file_different(calibrated_output$spectrum_path,
+                        a_hintr_output$spectrum_path)
+  file_list <- unzip(calibrated_output$spectrum_path, list = TRUE)
+  ## Note that this test is likely quite platform specific
+  info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
+  info_names <- paste0("info/", names(info))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
+      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
+
+  ## Coarse age group output file has been calibrated
+  expect_file_different(calibrated_output$coarse_output_path,
+                        a_hintr_output$coarse_output_path)
+  file_list <- unzip(calibrated_output$coarse_output_path, list = TRUE)
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
+      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
+
+  ## calibration data: info has been updated but everything else unchanged
+  expect_file_different(calibrated_output$calibration_path,
+                        a_hintr_output$calibration_path)
+  pre_calibration_data <- readRDS(a_hintr_output$calibration_path)
+  post_calibration_data <- readRDS(calibrated_output$calibration_path)
+  expect_equal(post_calibration_data$output_package,
+               pre_calibration_data$output_package)
+  expect_equal(post_calibration_data$naomi_data,
+               pre_calibration_data$naomi_data)
+  expect_equal(names(post_calibration_data$info),
+              c("inputs.csv", "options.yml", "packages.csv",
+                "calibration_options.yml"))
+  expect_equal(post_calibration_data$info$inputs.csv,
+               pre_calibration_data$info$inputs.csv)
+  expect_equal(post_calibration_data$info$options.yml,
+               pre_calibration_data$info$options.yml)
+  expect_equal(post_calibration_data$info$packages.csv,
+               pre_calibration_data$info$packages.csv)
+  expect_equal(post_calibration_data$info$calibration_options.yml,
+               yaml::as.yaml(a_hintr_calibration_options))
+
+  ## metadata is unchanged
+  expect_equal(calibrated_output$metadata, a_hintr_output$metadata)
+
+  ## Can calibrate multiple times
+  ## Copy files again as calibration modified in place and we want to test
+  ## that recalibrating returns us new results
+  clone <- clone_output(calibrated_output)
+  calibration_options <- list(
+    spectrum_plhiv_calibration_level = "national",
+    spectrum_plhiv_calibration_strat = "sex_age_coarse",
+    spectrum_artnum_calibration_level = "subnational",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    spectrum_infections_calibration_level = "none",
+    spectrum_infections_calibration_strat = "age_coarse"
+  )
+  calibrated_output_2 <- hintr_calibrate(clone, calibration_options)
+
+  expect_s3_class(calibrated_output_2, "hintr_output")
+
+  ## Output has been calibrated
+  expect_file_different(calibrated_output_2$output_path,
+                        a_hintr_output$output_path)
+  expect_file_different(calibrated_output_2$output_path,
+                        calibrated_output$output_path)
+  indicators_output <- readRDS(calibrated_output_2$output_path)
+  ## Check there is some data
+  expect_true(nrow(indicators_output) == 16368 * 3 + 2*2*10)
+
+  ## Spectrum file has been calibrated
+  expect_file_different(calibrated_output_2$spectrum_path,
+                        a_hintr_output$spectrum_path)
+  expect_file_different(calibrated_output_2$spectrum_path,
+                        calibrated_output$spectrum_path)
+  ## There is some data
+  expect_true(file.size(calibrated_output_2$spectrum_path) > 2000)
+
+  ## Coarse age-group output file has been calibrated
+  expect_file_different(calibrated_output_2$coarse_output_path,
+                        a_hintr_output$coarse_output_path)
+  expect_file_different(calibrated_output_2$coarse_output_path,
+                        calibrated_output$coarse_output_path)
+  expect_true(file.size(calibrated_output_2$coarse_output_path) > 2000)
+
+  ## calibration data: info has been updated but everything else unchanged
+  expect_file_different(calibrated_output_2$calibration_path,
+                        a_hintr_output$calibration_path)
+  expect_file_different(calibrated_output_2$calibration_path,
+                        calibrated_output$calibration_path)
+  post_calibration_2_data <- readRDS(calibrated_output_2$calibration_path)
+  expect_equal(post_calibration_2_data$output_package,
+               pre_calibration_data$output_package)
+  expect_equal(post_calibration_2_data$naomi_data,
+               pre_calibration_data$naomi_data)
+  expect_equal(names(post_calibration_2_data$info),
+              c("inputs.csv", "options.yml", "packages.csv",
+                "calibration_options.yml"))
+  expect_equal(post_calibration_2_data$info$inputs.csv,
+               pre_calibration_data$info$inputs.csv)
+  expect_equal(post_calibration_2_data$info$options.yml,
+               pre_calibration_data$info$options.yml)
+  expect_equal(post_calibration_2_data$info$packages.csv,
+               pre_calibration_data$info$packages.csv)
+  expect_equal(post_calibration_2_data$info$calibration_options.yml,
+               yaml::as.yaml(calibration_options))
+
+  ## metadata is unchanged
+  expect_equal(calibrated_output_2$metadata, a_hintr_output$metadata)
 })
