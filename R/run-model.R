@@ -170,7 +170,7 @@ is_hintr_output <- function(object) {
 #' @export
 hintr_calibrate <- function(output, calibration_options) {
   if (!is_hintr_output(output)) {
-    stop("Invalid object passed to calibrate, must be 'hintr_output'")
+    stop(t_("INVALID_CALIBRATE_OBJECT"))
   }
   calibration_data <- readRDS(output$calibration_path)
   calibrated_output <- calibrate_outputs(

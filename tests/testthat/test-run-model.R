@@ -516,3 +516,9 @@ test_that("model run can be calibrated", {
   ## metadata is unchanged
   expect_equal(calibrated_output_2$metadata, a_hintr_output$metadata)
 })
+
+test_that("useful error returned when model output can't be calibrated", {
+  expect_error(hintr_calibrate(NULL, list(test = "option")),
+               paste0("Can't calibrate this model output, please re-run model",
+               " to get updated output"))
+})
