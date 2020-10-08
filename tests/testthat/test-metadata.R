@@ -102,11 +102,17 @@ test_that("metadata is well formed", {
                       "New infections", "HIV incidence", "ART number (residents)",
                       "ART number (attending)", "ANC HIV prevalence",
                       "ANC prior ART coverage")))
-  ## No NULLs, NAs or empty strings except for indicator_column and
-  ## indicator_value columns
+  expect_equal(
+    colnames(meta),
+    c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
+      "error_high_column", "indicator_column", "indicator_value", "name",
+      "scale", "accuracy", "format"))
+  ## No NULLs, NAs or empty strings except for indicator_column,
+  ## indicator_value and accuracy columns
   non_empty_columns <- colnames(
     meta[, !(colnames(meta) %in% c("error_low_column", "error_high_column",
-                                   "indicator_column", "indicator_value"))])
+                                   "indicator_column", "indicator_value",
+                                   "accuracy"))])
   non_empty <- function(x) {
     !is.null(x) & !is.na(x) & !(x == "")
   }
