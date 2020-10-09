@@ -770,6 +770,9 @@ subset_output_package <- function(path, output_path, ...) {
 
 ## !!! TODO: Documentation and tests
 
+#' Calibrate naomi model outputs
+#'
+#' @importMethodsFrom Matrix %*%
 calibrate_outputs <- function(output,
                               naomi_mf,
                               spectrum_plhiv_calibration_level,
@@ -913,13 +916,17 @@ calibrate_outputs <- function(output,
 
 
   .expand <- function(cq, ind) {
+
     byv <- c("area_id", "sex", "spectrum_region_code", "age_group")
     m <- dplyr::filter(val, calendar_quarter == cq, indicator == ind)
     m <- dplyr::left_join(mf, m, by = byv)
-    dplyr::mutate(mfout,
-                  calendar_quarter = cq,
-                  indicator = ind,
-                  adjusted = as.numeric(naomi_mf$A_out %*% m$adjusted))
+
+    val <- mfout
+    val$calendar_quarter <- cq
+    val$indicator <- ind
+    val$adjusted = as.numeric(naomi_mf$A_out %*% m$adjusted)
+
+    val
   }
 
   adj <- dplyr::bind_rows(
