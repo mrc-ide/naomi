@@ -122,8 +122,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   saveRDS(indicators, file = output_path)
   save_output_coarse_age_groups(coarse_output_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
-  ## Add any other input you need to produce the summary report
-  generate_output_summary_report(summary_report_path, spectrum_path)
+  generate_output_summary_report(summary_report_path,
+                                 spectrum_path,
+                                 options,
+                                 data$pjnz$filename)
 
   progress$complete("prepare_outputs")
   progress$print()

@@ -85,8 +85,9 @@ test_that("model can be run", {
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("These estimates are derived from",
-                        readLines(summary_report_path))))
+  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_path))))
+  expect_true(any(grepl(basename(a_hintr_data$pjnz), readLines(summary_report_path))))
+  expect_true(any(grepl("MWI_1_2", readLines(summary_report_path))))
 })
 
 test_that("model can be run without programme data", {

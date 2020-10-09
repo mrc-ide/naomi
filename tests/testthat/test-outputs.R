@@ -191,9 +191,11 @@ test_that("subset_output_package() saves expected output package", {
 
 test_that("can generate summary report", {
   t <- tempfile(fileext = ".html")
-  generate_output_summary_report(t, a_hintr_output$spectrum_path)
+  generate_output_summary_report(t, a_hintr_output$spectrum_path, a_hintr_options, "mwi2019.PJNZ")
   expect_true(file.size(t) > 2000)
-  expect_true(any(grepl("These estimates are derived from", readLines(t))))
+  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(t))))
+  expect_true(any(grepl("mwi2019.PJNZ", readLines(t))))
+  expect_true(any(grepl("MWI_1_2", readLines(t))))
 })
 
 
