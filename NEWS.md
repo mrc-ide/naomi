@@ -1,3 +1,7 @@
+# naomi 1.0.6
+
+* Import sparse matrix multiplication `%*%` from `Matrix` package.
+
 # naomi 1.0.5
 
 * Add `hintr_calibrate()` which takes output and calibration options and runs
