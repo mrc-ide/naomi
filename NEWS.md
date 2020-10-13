@@ -1,3 +1,7 @@
+# naomi 1.0.7
+
+* Return indicator formatting metadata in `get_metadata()` and `get_plotting_metadata()`
+
 # naomi 1.0.6
 
 * Import sparse matrix multiplication `%*%` from `Matrix` package.
