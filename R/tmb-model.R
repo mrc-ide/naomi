@@ -485,6 +485,10 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
 
+  to_tape <- TMB:::isNullPointer(fit$obj$env$ADFun$ptr)
+  if (to_tape) 
+    fit$obj$retape(FALSE)
+
   if(!random_only) {
     if(verbose) print("Calculating joint precision")
     hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
