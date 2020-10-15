@@ -1,7 +1,8 @@
 # naomi 1.0.8
 
-* Avoid segfault in `sample_tmb()` when redo the sampling with different TMB
-  configuration (different computer/number of set threads).
+* Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB
+  configuration (different computer/number of set threads) by recreating the
+  pointers if they are missing using `obj$retape()`.
 
 # naomi 1.0.7
 
