@@ -146,9 +146,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     summary_report_path,
     calibration_path,
     metadata = list(
-      areas = options$area_scope,
-      options = options,
-      pjnz_filename = data$pjnz$filename
+      areas = options$area_scope
   ))
 }
 
@@ -209,9 +207,7 @@ hintr_calibrate <- function(output, calibration_options) {
   save_output_spectrum(output$spectrum_path, calibrated_output,
                        overwrite = TRUE)
   generate_output_summary_report(output$summary_report_path,
-                                 output$spectrum_path,
-                                 output$metadata$options,
-                                 output$metadata$pjnz_filename)
+                                 output$spectrum_path)
   build_hintr_output(output$output_path, output$spectrum_path,
                      output$coarse_output_path, output$summary_report_path,
                      output$calibration_path,

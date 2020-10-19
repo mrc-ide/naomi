@@ -83,8 +83,6 @@ test_that("model can be run", {
 
   ## Metadata has been saved
   expect_equal(model_run$metadata$areas, "MWI_1_2")
-  expect_equal(model_run$metadata$options, a_hintr_options)
-  expect_equal(model_run$metadata$pjnz_filename, "mwi2019.PJNZ")
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
