@@ -16,8 +16,8 @@ output_zip <- params$output_zip
 outputs <- naomi::read_output_package(output_zip)
 inputs <- unz(output_zip, "info/inputs.csv") 
 inputs <- read.csv(inputs)
-options <- unz(output_zip, "info/options.yml") 
-options <- yaml::yaml.load_file(options)
+options <- unz(output_zip, "info/options.yml")
+options <- yaml::read_yaml(options)
 
 
 indicators <- naomi::add_output_labels(outputs) %>%

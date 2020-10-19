@@ -178,14 +178,12 @@ test_that("model fit without survey ART and survey recency data", {
 
   options <- a_hintr_options
   options$survey_art_coverage <- NULL
-  expect_error(hintr_run_model(a_hintr_data, options, tempfile(), tempfile(),
-                               tempfile(), tempfile(), tempfile()),
+  expect_error(hintr_run_model(a_hintr_data, options),
                NA)
 
   options <- a_hintr_options
   options$survey_recently_infected <- NULL
-  expect_error(hintr_run_model(a_hintr_data, options, tempfile(), tempfile(),
-                               tempfile(), tempfile(), tempfile()),
+  expect_error(hintr_run_model(a_hintr_data, options),
                NA)
 
   ## No survey ART coverage or ART programme data
@@ -194,8 +192,7 @@ test_that("model fit without survey ART and survey recency data", {
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
   options$artattend <- "false"
-  expect_error(hintr_run_model(a_hintr_data, options, tempfile(), tempfile(),
-                               tempfile(), tempfile(), tempfile()),
+  expect_error(hintr_run_model(a_hintr_data, options),
                NA)
 }
 )

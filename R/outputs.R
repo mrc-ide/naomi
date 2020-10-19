@@ -700,13 +700,11 @@ save_output <- function(filename, dir,
 #'
 #' @param report_path Path to save summary report at
 #' @param output_zip Path to model outputs zip file
-
 #'
 #' @return Path to summary report
 #' @keywords internal
 generate_output_summary_report <- function(report_path,
                                            output_zip) {
-
   rmd_path <- system_file("report/summary_report.Rmd")
 
   rmarkdown::render(rmd_path, params = list(
