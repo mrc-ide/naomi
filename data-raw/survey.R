@@ -216,7 +216,9 @@ hrclust <- Map(extract_clusters,
                hrd$path,
                hrd$survey_id,
                hrd$REGVAR) %>%
+  lapply(mutate, survey_region_id = as.integer(survey_region_id)) %>%
   bind_rows()
+
 
 #' Check that all region IDs appear in survey_regions dataset
 hrclust %>%
@@ -547,7 +549,8 @@ area_sample <- mwi_population_agesex %>%
   count(area_id, survey_id, survey_region_id, wt = population, name = "pop15to64") %>%
   group_by(survey_id, survey_region_id) %>%
   summarise(area_ids = list(area_id),
-            area_pops = list(pop15to64))
+            area_pops = list(pop15to64),
+            .groups = "drop")
   
 #' Sample area_id for each cluster proportional to population size
 sample2 <- function(x, size, replace = FALSE, prob = NULL) {
