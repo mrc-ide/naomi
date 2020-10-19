@@ -43,7 +43,7 @@ mwi_anc_testing <- mwi_anc_testing %>%
     mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
-  mutate(age_group = "15-49") %>%
+  mutate(age_group = "Y015_049") %>%
   group_by(area_id, age_group, year) %>%
   summarise_at(vars(anc_clients, ancrt_known_pos, ancrt_already_art, ancrt_tested, ancrt_test_pos), sum)
 
