@@ -1,3 +1,7 @@
+# naomi 2.0.0
+
+Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to be backward compatible with 2020 version of Naomi model.
+
 # naomi 1.0.8
 
 * Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB
