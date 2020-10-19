@@ -106,7 +106,7 @@ pop_pyramid_outputs <- function(disag_data,
     ggplot2::scale_fill_manual(values = c("male" = left_colour, "female" = right_colour)) +
     ggplot2::theme_classic(base_size = 10) +
     ggplot2::theme(legend.position = "top", 
-                   plot.title = element_text(size = 8, face = "bold",
+                   plot.title = ggplot2::element_text(size = 8, face = "bold",
                                              hjust = 0.5),
                    axis.title = ggplot2::element_text(size = 6), 
                    axis.text.x = ggplot2::element_text(size = 5),
@@ -197,7 +197,8 @@ p3 <- map_outputs(geom_data = data,
                   legend_title = "Infections" )
 
 
-grid::grid.draw(cbind(ggplotGrob(p1), ggplotGrob(p2), ggplotGrob(p3)))
+grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2), 
+                      ggplot2::ggplotGrob(p3)))
 
 ```
 
@@ -249,7 +250,8 @@ p6 <- map_outputs(geom_data = data,
                   legend_label = scales::label_number(0.01, 1000)
 )
 
-grid::grid.draw(cbind(ggplotGrob(p4), ggplotGrob(p5), ggplotGrob(p6)))
+grid::grid.draw(cbind(ggplot2::ggplotGrob(p4), ggplot2::ggplotGrob(p5), 
+                      ggplot2::ggplotGrob(p6)))
 
 ```
 
@@ -301,7 +303,7 @@ p8 <- pop_pyramid_outputs(disag_data = age_sex,
 )
 
 
-p8 <- p8 + theme(
+p8 <- p8 + ggplot2::theme(
   axis.title.y = ggplot2::element_blank(),
   axis.text.y = ggplot2::element_blank(),
   axis.ticks.y = ggplot2::element_blank()
@@ -319,14 +321,15 @@ p9 <- pop_pyramid_outputs(disag_data = age_sex,
                           fig_title = "Annual HIV infections"
 )
 
-p9 <- p9 + theme(
+p9 <- p9 + ggplot2::theme(
   axis.title.y = ggplot2::element_blank(),
   axis.text.y = ggplot2::element_blank(),
   axis.ticks.y = ggplot2::element_blank()
 )
 
 # Plot figs together
-grid::grid.draw(cbind(ggplotGrob(p7), ggplotGrob(p8), ggplotGrob(p9)))
+grid::grid.draw(cbind(ggplot2::ggplotGrob(p7), ggplot2::ggplotGrob(p8), 
+                      ggplot2::ggplotGrob(p9)))
 
 ```
 
@@ -390,8 +393,8 @@ if("0" %in% area_levels) {
     ggplot2::geom_hline(yintercept= national_prev, linetype="dashed", color = "black")+
     ggplot2::scale_fill_manual(name = paste0("National HIV Prevalence: \n ", round(national_prev*100, 2),"%"),
                                values = c("above" = "red4", "below" = "mistyrose2")) +
-    ggtitle("HIV Prevalence") + 
-    coord_flip()
+    ggplot2::ggtitle("HIV Prevalence") + 
+    ggplot2::coord_flip()
   
   
   #-------------------------------------------------------------------------------
@@ -437,8 +440,8 @@ if("0" %in% area_levels) {
     ggplot2::geom_hline(yintercept= national_art, linetype="dashed", color = "black")+
     ggplot2::scale_fill_manual(name = paste0("National ART Coverage:\n ", round(national_art*100, 2),"%"),
                                values = art_colours_2) +
-    ggtitle("Proportion PLHIV on ART") +
-    coord_flip()
+    ggplot2::ggtitle("Proportion PLHIV on ART") +
+    ggplot2::coord_flip()
   
   
   #-----------------------------------------------------------------------------
@@ -472,11 +475,12 @@ if("0" %in% area_levels) {
                         color = "black") +
     ggplot2::scale_fill_manual(name = paste0("National HIV Incidence\n per 1000 population: ", round(national_inc*1000, 2)),
                                values = c("above" = "skyblue4", "below" = "slategray3")) +
-    ggtitle("Rate of HIV infection") +
-    coord_flip()
+    ggplot2::ggtitle("Rate of HIV infection") +
+    ggplot2::coord_flip()
   
   # Plot figs together 
-  grid::grid.draw(cbind(ggplotGrob(p13), ggplotGrob(p14), ggplotGrob(p15)))
+  grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14), 
+                        ggplot2::ggplotGrob(p15)))
   
 } else {
   
@@ -502,8 +506,8 @@ if("0" %in% area_levels) {
       axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
       axis.title.y = ggplot2::element_blank()) +
     ggplot2::ylab("Prevalence") +
-    ggtitle("HIV Prevalence") + 
-    coord_flip()
+    ggplot2::ggtitle("HIV Prevalence") + 
+    ggplot2::coord_flip()
   
   #-----------------------------------------------------------------------------
   # Barplot: ART coverage
@@ -524,8 +528,8 @@ if("0" %in% area_levels) {
                    axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
                    axis.title.y = ggplot2::element_blank()) +
     ggplot2::ylab("ART Coverage") +
-    ggtitle("Proportion PLHIV on ART") +
-    coord_flip()
+    ggplot2::ggtitle("Proportion PLHIV on ART") +
+    ggplot2::coord_flip()
   
   #-----------------------------------------------------------------------------
   # Barplot: Incidence per 1000
@@ -546,11 +550,12 @@ if("0" %in% area_levels) {
                    axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
                    axis.title.y = ggplot2::element_blank()) +
     ggplot2::ylab("HIV Incidence (per 1000 population)") +
-    ggtitle("Rate of HIV infection") +
-    coord_flip()
+    ggplot2::ggtitle("Rate of HIV infection") +
+    ggplot2::coord_flip()
   
   # Plot figs together 
-  grid::grid.draw(cbind(ggplotGrob(p13), ggplotGrob(p14), ggplotGrob(p15)))
+  grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14), 
+                        ggplot2::ggplotGrob(p15)))
   
 }
 
@@ -576,7 +581,7 @@ x1 <- data %>% sf::st_drop_geometry() %>%
 x2 <- x1 %>% dplyr::mutate_if(~is.numeric(.),
                               ~dplyr::if_else(indicator %in% percent_indicators,
                                               round(. *100, 2),
-                                              if_else(indicator == "incidence", 
+                                              dplyr::if_else(indicator == "incidence", 
                                                       round(.*1000, 2), 
                                                       ceiling(.))))
 
@@ -609,13 +614,13 @@ x4 %>% gt::gt(rowname_col = "area_name") %>%
   ) %>%
   gt::tab_spanner(
     label = gt::md("**Distribution of HIV**"),
-    columns = vars('plhiv', 'prevalence')) %>%
+    columns = gt::vars('plhiv', 'prevalence')) %>%
   gt::tab_spanner(
     label = gt::md("**Annual HIV infections**"),
-    columns = vars('incidence', 'infections')) %>%
+    columns = gt::vars('incidence', 'infections')) %>%
   gt::tab_spanner(
     label = gt::md("**Antiretroviral Treatment**"),
-    columns = vars('art_coverage', 'art_num_residents', 'art_num_attend')) %>%
+    columns = gt::vars('art_coverage', 'art_num_residents', 'art_num_attend')) %>%
   gt::cols_label(
     plhiv = gt::md("**PLHIV**"),
     prevalence = gt::md("**HIV prevalence**"),
