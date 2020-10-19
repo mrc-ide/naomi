@@ -135,9 +135,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   save_output_coarse_age_groups(coarse_output_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
   generate_output_summary_report(summary_report_path,
-                                 spectrum_path,
-                                 options,
-                                 data$pjnz$filename)
+                                 spectrum_path)
 
   progress$complete("prepare_outputs")
   progress$print()
