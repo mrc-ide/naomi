@@ -700,16 +700,19 @@ save_output <- function(filename, dir,
 #'
 #' @param report_path Path to save summary report at
 #' @param output_zip Path to model outputs zip file
+#' @param quiet Suppress printing of the pandoc command line
 #'
 #' @return Path to summary report
 #' @keywords internal
 generate_output_summary_report <- function(report_path,
-                                           output_zip) {
+                                           output_zip,
+                                           quiet = FALSE) {
   rmd_path <- system_file("report/summary_report.Rmd")
 
   rmarkdown::render(rmd_path, params = list(
     output_zip = output_zip),
-    output_file = report_path
+    output_file = report_path,
+    quiet = quiet
   )
 
   invisible(report_path)

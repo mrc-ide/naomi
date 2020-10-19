@@ -135,7 +135,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   save_output_coarse_age_groups(coarse_output_path, outputs)
   save_output_spectrum(spectrum_path, outputs)
   generate_output_summary_report(summary_report_path,
-                                 spectrum_path)
+                                 spectrum_path,
+                                 quiet = TRUE)
 
   progress$complete("prepare_outputs")
   progress$print()
@@ -207,7 +208,8 @@ hintr_calibrate <- function(output, calibration_options) {
   save_output_spectrum(output$spectrum_path, calibrated_output,
                        overwrite = TRUE)
   generate_output_summary_report(output$summary_report_path,
-                                 output$spectrum_path)
+                                 output$spectrum_path,
+                                 quiet = TRUE)
   build_hintr_output(output$output_path, output$spectrum_path,
                      output$coarse_output_path, output$summary_report_path,
                      output$calibration_path,
