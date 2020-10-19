@@ -595,22 +595,22 @@ save_output_package <- function(naomi_output,
               with_labels, boundary_format, single_csv)
 }
 
-save_output_coarse_age_groups <- function(path, naomi_output) {
+save_output_coarse_age_groups <- function(path, naomi_output,
+                                          overwrite = FALSE) {
 
   age_groups_keep <- c("15-49", "15-64", "15+", "50+", "00+", "00-64",
                        "00-14", "15-24", "25-34", "35-49", "50-64", "65+")
   naomi_output_sub <- subset_naomi_output(naomi_output, age_group = age_groups_keep)
 
-  save_output(basename(path), dirname(path), naomi_output_sub, overwrite = FALSE,
-              with_labels = TRUE, boundary_format = "geojson",
-              single_csv = FALSE)
+  save_output(basename(path), dirname(path), naomi_output_sub,
+              overwrite = overwrite, with_labels = TRUE,
+              boundary_format = "geojson", single_csv = FALSE)
 }
 
-save_output_spectrum <- function(path, naomi_output) {
+save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output,
-              overwrite = FALSE,
-              with_labels = TRUE, boundary_format = "geojson",
-              single_csv = FALSE)
+              overwrite = overwrite, with_labels = TRUE,
+              boundary_format = "geojson", single_csv = FALSE)
 }
 
 save_output <- function(filename, dir,
@@ -717,7 +717,7 @@ generate_output_summary_report <- function(report_path,
     output_zip = output_zip,
     spectrum_file = spectrum_file),
     output_file = report_path
-     )
+  )
 
   invisible(report_path)
 }
@@ -795,6 +795,9 @@ subset_output_package <- function(path, output_path, ...) {
 
 ## !!! TODO: Documentation and tests
 
+#' Calibrate naomi model outputs
+#'
+#' @importMethodsFrom Matrix %*%
 calibrate_outputs <- function(output,
                               naomi_mf,
                               spectrum_plhiv_calibration_level,
@@ -938,13 +941,17 @@ calibrate_outputs <- function(output,
 
 
   .expand <- function(cq, ind) {
+
     byv <- c("area_id", "sex", "spectrum_region_code", "age_group")
     m <- dplyr::filter(val, calendar_quarter == cq, indicator == ind)
     m <- dplyr::left_join(mf, m, by = byv)
-    dplyr::mutate(mfout,
-                  calendar_quarter = cq,
-                  indicator = ind,
-                  adjusted = as.numeric(naomi_mf$A_out %*% m$adjusted))
+
+    val <- mfout
+    val$calendar_quarter <- cq
+    val$indicator <- ind
+    val$adjusted = as.numeric(naomi_mf$A_out %*% m$adjusted)
+
+    val
   }
 
   adj <- dplyr::bind_rows(

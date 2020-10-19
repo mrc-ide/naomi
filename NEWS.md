@@ -1,13 +1,29 @@
-# naomi 1.0.6
+# naomi 1.0.9
 
 * Add summary_report_path to model run for saving summary report
 
+# naomi 1.0.8
+
+* Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB
+  configuration (different computer/number of set threads) by recreating the
+  pointers if they are missing using `obj$retape()`.
+
+# naomi 1.0.7
+
+* Return indicator formatting metadata in `get_metadata()` and `get_plotting_metadata()`
+
+# naomi 1.0.6
+
+* Import sparse matrix multiplication `%*%` from `Matrix` package.
+
 # naomi 1.0.5
 
-* Rename summary_path in model run args to coarse_output_path to be more
-  representative of actual output (in preparation for adding summary report)
+* Add `hintr_calibrate()` which takes output and calibration options and runs
+  calibration and returns in hintr output format
 
 # naomi 1.0.4
+* Rename summary_path in model run args to coarse_output_path to be more
+  representative of actual output (in preparation for adding summary report)
 * Add `get_calibration_options()` to retrieve options for calibration
 
 # naomi 1.0.2
