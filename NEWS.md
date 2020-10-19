@@ -1,3 +1,9 @@
+# naomi 1.0.9
+
+* Add a basic vignette showing example script for running `hintr_run_model()` 
+  for reproducing web app workflow.
+  
+
 # naomi 1.0.8
 
 * Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB
