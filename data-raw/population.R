@@ -58,7 +58,9 @@ a5 <- Map(readxl::read_excel,
 a5aggr <- a5 %>%
   filter(age != "Total") %>%
   mutate(age = sub("\\+", "", age) %>% type.convert,
-         age_group = cut(age, c(0, 1, 1:18*5, Inf), c("Less than 1 Year", "1-4", paste0(1:17*5, "-", 2:18*5 - 1), "90+"), TRUE, FALSE)) %>%
+         age_group = cut(age, c(0, 1, 1:18*5, Inf),
+                         c("Less than 1 Year", "1-4", paste0(1:17*5, "-", 2:18*5 - 1), "90+"),
+                         TRUE, FALSE)) %>%
   count(area_id, area_level, area_name, sex, age_group, wt = pop_a5, name = "pop_a5")
 
 
@@ -203,7 +205,7 @@ cens18adj %>%
         axis.text.x = element_text(hjust = 1.0, angle = 90)) +
   ggtitle("Ratio of 2018 Census to 2008 population projections")
 
-ggsave("~/Downloads/mwi_census2018_projections2008_comparison.pdf", h=8.5, w=16)
+## ggsave("mwi_census2018_projections2008_comparison.pdf", h=8.5, w=16)
 
 
 population_agesex <- nso %>%
