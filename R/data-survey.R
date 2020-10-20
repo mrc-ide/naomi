@@ -113,7 +113,7 @@ expand_survey_clusters <- function(survey_clusters,
 #' @param survey_biomarker Survey biomarkers.
 #' @param areas Areas.
 #' @param sex Sex.
-#' @param age_group Age group.
+#' @param age_group_include Vector of age agroups to include
 #' @param area_top_level Area top level.
 #' @param area_bottom_level Area bottom level.
 #' @param artcov_definition Definition to use for calculate ART coverage.
@@ -138,19 +138,19 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                        survey_biomarker,
                                        areas,
                                        sex = c("male", "female", "both"),
-                                       age_group = NULL,
+                                       age_group_include = NULL,
                                        area_top_level = min(areas$area_level),
                                        area_bottom_level = max(areas$area_level),
                                        artcov_definition = c("both", "arv", "artself"),
                                        by_restype = FALSE) {
 
   ## 1. Identify age groups to calculate for each survey_id
-  age_group <- get_age_groups()
+  age_groups <- get_age_groups()
 
-  if(!is.null(age_group))
-    age_group <- dplyr::filter(age_group, age_group %in% !!age_group)
+  if(!is.null(age_group_include))
+    age_groups <- dplyr::filter(age_group, age_group %in% !!age_group_include)
 
-  sex_age_group <- tidyr::crossing(sex, age_group)
+  sex_age_group <- tidyr::crossing(sex, age_groups)
 
   ## Only keep age groups that are fully contained within survey age range.
   ## For example, if survey sampled age 18-64, don't want to calculate
@@ -229,8 +229,8 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   ind <- ind %>%
     dplyr::rename(prev = hivstatus) %>%
-    tidyr::gather(indicator, est, prev, artcov, vls, recent) %>%
-    dplyr::filter(!is.na(est))
+    tidyr::gather(indicator, estimate, prev, artcov, vls, recent) %>%
+    dplyr::filter(!is.na(estimate))
 
   ## 6. Calculate outcomes
   ## Note: using survey region as strata right now. Most DHS use region + restype
@@ -240,9 +240,10 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   cnt <- dat %>%
     dplyr::group_by(indicator, survey_id, area_id, restype, sex, age_group) %>%
-    dplyr::summarise(n_cluster = dplyr::n_distinct(cluster_id),
-                     n_obs = dplyr::n()) %>%
-    dplyr::ungroup()
+    dplyr::summarise(n_clusters = dplyr::n_distinct(cluster_id),
+                     n_observations = dplyr::n(),
+                     n_eff_kish = sum(hivweight)^2 / sum(hivweight^2),
+                     .groups = "drop")
 
   datspl <- dat %>%
     dplyr::mutate(spl = paste(indicator, survey_id, area_level, restype, sex, age_group)) %>%
@@ -256,9 +257,11 @@ calc_survey_hiv_indicators <- function(survey_meta,
                              nest = TRUE,
                              weights = ~hivweight)
 
-    survey::svyby(~est,
-                  ~ indicator + survey_id + area_id + restype + sex + age_group,
-                  des, survey::svymean)
+    val <- survey::svyby(~estimate,
+                         ~ indicator + survey_id + area_id + restype + sex + age_group,
+                         des, survey::svymean)
+    names(val)[names(val) == "se"] <- "std_error"
+    val
   }
 
   options(survey.lonely.psu="adjust")
@@ -292,11 +295,11 @@ calc_survey_hiv_indicators <- function(survey_meta,
            ) %>%
     dplyr::select(
              indicator, survey_id, survey_mid_calendar_quarter, area_id, restype, sex, age_group,
-             n_cluster, n_obs, est, se) %>%
+             n_clusters, n_observations, n_eff_kish, estimate, std_error) %>%
     dplyr::distinct() %>%
     dplyr::mutate(
-             ci_l = if_else(!est %in% 0:1, stats::plogis(stats::qlogis(est) - stats::qnorm(0.975) * se / (est * (1-est))), NA_real_),
-             ci_u = if_else(!est %in% 0:1, stats::plogis(stats::qlogis(est) + stats::qnorm(0.975) * se / (est * (1-est))), NA_real_)
+             ci_lower = if_else(!estimate %in% 0:1, stats::plogis(stats::qlogis(estimate) - stats::qnorm(0.975) * std_error / (estimate * (1-estimate))), NA_real_),
+             ci_upper = if_else(!estimate %in% 0:1, stats::plogis(stats::qlogis(estimate) + stats::qnorm(0.975) * std_error / (estimate * (1-estimate))), NA_real_)
            )
 
   val

@@ -731,7 +731,6 @@ usethis::use_data(
          )
 
 
-
 dir.create(here("inst/extdata/survey/"))
            
 write_csv(mwi_survey_meta, here("inst/extdata/survey/survey_meta.csv"))
