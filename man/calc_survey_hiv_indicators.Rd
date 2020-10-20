@@ -12,7 +12,7 @@ calc_survey_hiv_indicators(
   survey_biomarker,
   areas,
   sex = c("male", "female", "both"),
-  age_group_id = NULL,
+  age_group = NULL,
   area_top_level = min(areas$area_level),
   area_bottom_level = max(areas$area_level),
   artcov_definition = c("both", "arv", "artself"),
@@ -34,7 +34,7 @@ calc_survey_hiv_indicators(
 
 \item{sex}{Sex.}
 
-\item{age_group_id}{Age group id.}
+\item{age_group}{Age group.}
 
 \item{area_top_level}{Area top level.}
 

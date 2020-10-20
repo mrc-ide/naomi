@@ -771,6 +771,7 @@ subset_output_package <- function(path, output_path, ...) {
 #' Calibrate naomi model outputs
 #'
 #' @importMethodsFrom Matrix %*%
+#' @export
 calibrate_outputs <- function(output,
                               naomi_mf,
                               spectrum_plhiv_calibration_level,

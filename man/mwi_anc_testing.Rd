@@ -11,8 +11,8 @@ TODO: Link to mwi_areas dataset
 \describe{
 \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 \item{\code{sex}}{Sex as a character vector -- all values are "both".}
-\item{\code{age_group_id}}{Value 20 is age 15+, 24 is age 0-14.}
-\item{\code{quarter_id}}{Quarter ID (integer).}
+\item{\code{age_group}}{Value "Y015_999" is age 15+, "Y000_014" is age 0-14.}
+\item{\code{calendar_quarter}}{Calendar quarter.}
 \item{\code{current_art}}{Number currently on ART at the end of the quarter.}
 }
 
