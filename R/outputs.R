@@ -133,7 +133,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
-                     age_group = "15-49")
+                     age_group = "Y015_049")
 
   out <- dplyr::bind_rows(
                   indicator_est_t1,
@@ -159,7 +159,7 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
   v <- naomi_mf$mf_artattend %>%
     dplyr::select(reside_area_id, attend_area_id) %>%
     dplyr::mutate(sex = "both",
-                  age_group = "00+") %>%
+                  age_group = "Y000_999") %>%
     dplyr::left_join(
              dplyr::rename(mfout, reside_area_id = area_id, reside_out_idx = out_idx),
              by = c("reside_area_id", "sex", "age_group")
@@ -598,8 +598,8 @@ save_output_package <- function(naomi_output,
 save_output_coarse_age_groups <- function(path, naomi_output,
                                           overwrite = FALSE) {
 
-  age_groups_keep <- c("15-49", "15-64", "15+", "50+", "00+", "00-64",
-                       "00-14", "15-24", "25-34", "35-49", "50-64", "65+")
+  age_groups_keep <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064",
+                       "Y000_014", "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
   naomi_output_sub <- subset_naomi_output(naomi_output, age_group = age_groups_keep)
 
   save_output(basename(path), dirname(path), naomi_output_sub,
@@ -817,8 +817,8 @@ calibrate_outputs <- function(output,
 
   spectrum_calibration <- naomi_mf$spectrum_calibration %>%
     dplyr::mutate(age_coarse = dplyr::if_else(
-                                        age_group %in% c("00-04", "05-09", "10-14"),
-                                        "00-14", "15+")) %>%
+                                        age_group %in% c("Y000_004", "Y005_009", "Y010_014"),
+                                        "Y000_014", "Y015_999")) %>%
     dplyr::left_join(
              val_aggr %>%
              dplyr::filter(indicator == "plhiv") %>%
@@ -1064,8 +1064,10 @@ get_spectrum_aggr_var <- function(level, strat) {
 #' @export
 disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
+  age_group_0to4_id  <- "Y000_004"
+  
   out0to4 <- output$indicators %>%
-    dplyr::filter(age_group == "00-04") %>%
+    dplyr::filter(age_group == age_group_0to4_id) %>%
     dplyr::mutate(age_group = NULL)
 
   strat_mean_counts_model <- out0to4 %>%
@@ -1083,11 +1085,11 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
 
   mf_0to4_model <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group, idx_model = idx) %>%
-    dplyr::filter(age_group == "00-04")
+    dplyr::filter(age_group == age_group_0to4_id )
 
   mf_0to4_out <- naomi_mf$mf_out %>%
     dplyr::mutate(idx_out = dplyr::row_number()) %>%
-    dplyr::filter(age_group == "00-04") %>%
+    dplyr::filter(age_group == age_group_0to4_id) %>%
     dplyr::select(area_id_out = area_id,
                   sex_out = sex,
                   age_group_out = age_group,
@@ -1179,30 +1181,30 @@ export_datapack <- function(naomi_output,
 
   category_1  <- "Age (<1-50+, 12)"
   categoryOption_uid_1 <- "HoZv6qBZvE7"
-  categoryOption_name_1 <- c("00-00" = "<01",
-                             "01-04" = "01-04",
-                             "05-09" = "05-09",
-                             "10-14" = "10-14",
-                             "15-19" = "15-19",
-                             "20-24" = "20-24",
-                             "25-29" = "25-29",
-                             "30-34" = "30-34",
-                             "35-39" = "35-39",
-                             "40-44" = "40-44",
-                             "45-49" = "45-49",
-                             "50+"   = "50+")
-  categoryOption_uid_1.1 <- c("00-00" = "sMBMO5xAq5T",
-                              "01-04" = "VHpjs9qdLFF",
-                              "05-09" = "eQG9DwiqSQR",
-                              "10-14" = "jcGQdcpPSJP",
-                              "15-19" = "ttf9eZCHsTU",
-                              "20-24" = "GaScV37Kk29",
-                              "25-29" = "meeNUPwEOtj",
-                              "30-34" = "AZaNm5B8vn9",
-                              "35-39" = "R32YPF38CJJ",
-                              "40-44" = "JEth8vg25Rv",
-                              "45-49" = "rQLOOlL3UOQ",
-                              "50+"   = "TpXlQcoXGZF")
+  categoryOption_name_1 <- c("Y000_000" = "<01",
+                             "Y001_004" = "01-04",
+                             "Y005_009" = "05-09",
+                             "Y010_014" = "10-14",
+                             "Y015_019" = "15-19",
+                             "Y020_024" = "20-24",
+                             "Y025_029" = "25-29",
+                             "Y030_034" = "30-34",
+                             "Y035_039" = "35-39",
+                             "Y040_044" = "40-44",
+                             "Y045_049" = "45-49",
+                             "Y050_999" = "50+")
+  categoryOption_uid_1.1 <- c("Y000_000" = "sMBMO5xAq5T",
+                              "Y001_004" = "VHpjs9qdLFF",
+                              "Y005_009" = "eQG9DwiqSQR",
+                              "Y010_014" = "jcGQdcpPSJP",
+                              "Y015_019" = "ttf9eZCHsTU",
+                              "Y020_024" = "GaScV37Kk29",
+                              "Y025_029" = "meeNUPwEOtj",
+                              "Y030_034" = "AZaNm5B8vn9",
+                              "Y035_039" = "R32YPF38CJJ",
+                              "Y040_044" = "JEth8vg25Rv",
+                              "Y045_049" = "rQLOOlL3UOQ",
+                              "Y050_999" = "TpXlQcoXGZF")
   category_2  <- "Sex"
   categoryuid_2 <- "SEOZOio7f7o"
   categoryOption_uid_2 <-  c("male" = "Qn0I5FbKQOA",
@@ -1244,14 +1246,14 @@ export_datapack <- function(naomi_output,
     dplyr::filter(indicator %in% names(dataelementuid),
                   calendar_quarter == !!calendar_quarter,
                   sex %in% names(categoryOption_uid_2) & age_group %in% names(categoryOption_uid_1.1) |
-                  sex == "both" & age_group == "00+") %>%
+                  sex == "both" & age_group == "Y000_999") %>%
     dplyr::transmute(area_id, indicator, sex, age_group, value = mean, rse = se / mean)
 
   dat <- dat %>%
-    dplyr::filter(age_group != "00+") %>%
+    dplyr::filter(age_group != "Y000_999") %>%
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
-             dplyr::filter(dat, age_group == "00+") %>%
+             dplyr::filter(dat, age_group == "Y000_999") %>%
              dplyr::select(-age_group, -sex, -value) %>%
              dplyr::rename(district_rse = rse),
              by = c("area_id", "indicator")

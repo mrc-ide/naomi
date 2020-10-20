@@ -79,7 +79,7 @@ prepare_tmb_inputs <- function(naomi_data) {
              reside_area_id,
              attend_area_id,
              sex = "both",
-             age_group = "00+",
+             age_group = "Y000_999",
              artnum_idx = dplyr::row_number()
            ) %>%
     create_artattend_Amat(age_groups = naomi_data$age_groups,

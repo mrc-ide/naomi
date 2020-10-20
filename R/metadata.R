@@ -67,6 +67,6 @@ get_metadata <- function() {
 #' get_five_year_age_groups()
 get_five_year_age_groups <- function() {
   age_groups <- get_age_groups()
-  age_groups <- age_groups[age_groups$age_group_span == 5 | age_groups$age_group == "80+", ]
+  age_groups <- age_groups[age_groups$age_group_span == 5 | age_groups$age_group == "Y080_999", ]
   age_groups$age_group
 }

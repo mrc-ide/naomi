@@ -125,7 +125,7 @@ test_that("metadata is well formed", {
 test_that("can get 5 year age groups", {
   age_groups <- get_five_year_age_groups()
   expect_length(age_groups, 17)
-  expect_equal(age_groups[1], "00-04")
+  expect_equal(age_groups[1], "Y000_004")
 })
 
 ## !!!! TODO: metadata.csv and the meta_indicator data.frame  should not

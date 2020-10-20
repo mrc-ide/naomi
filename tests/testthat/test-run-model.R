@@ -73,8 +73,8 @@ test_that("model can be run", {
   )
 
   ## Check coarse age outputs saved in summar_path
-  coarse_ages <- c("15-49", "15-64", "15+", "50+", "00+", "00-64", "00-14",
-                   "15-24", "25-34", "35-49", "50-64", "65+")
+  coarse_ages <_0 c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064", "Y000_014",
+                   "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
   coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
   expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)

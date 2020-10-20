@@ -225,7 +225,7 @@ naomi_model_frame <- function(area_merged,
   spec_0to4strat <- spec %>%
     dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id3) + 2),
                   age %in% 0:4) %>%
-    dplyr::mutate(age_group = dplyr::if_else(age == 0, "00-00", "01-04"),
+    dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both",
                   births = 0,
                   susc_previous_year = 0) %>%
@@ -504,9 +504,9 @@ naomi_model_frame <- function(area_merged,
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
              log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
              log_lambda_t3_offset = log(spec_incid_t3) - log(spec_prev15to49_t3) - log(1 - omega * spec_artcov15to49_t3),
-             log_lambda_t1_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t1_offset),
-             log_lambda_t2_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t2_offset),
-             log_lambda_t3_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t3_offset)
+             log_lambda_t1_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t1_offset),
+             log_lambda_t2_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t2_offset),
+             log_lambda_t3_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t3_offset)
            ) %>%
     dplyr::ungroup()
 
@@ -515,8 +515,8 @@ naomi_model_frame <- function(area_merged,
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
              spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
-             paed_rho_ratio = dplyr::if_else(age_group %in% c("00-04", "05-09", "10-14"), spec_prev_t1 / spec_prev15to49f_t1, 0),
-             bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("00-04", "05-09", "10-14")) else 1.0,
+             paed_rho_ratio = dplyr::if_else(age_group %in% c("Y000_004", "Y005_009", "Y010_014"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
              spec_prev15to49f_t1 = NULL
            ) %>%
     dplyr::ungroup()

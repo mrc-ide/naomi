@@ -106,7 +106,7 @@ read_spectrum_region_code <- function(pjnz) {
 #' 
 #' @export
 cut_naomi_age_group <- function(age) {
-  labs <- c(sprintf("%02.0f-%02.0f", 0:15*5, 0:15*5 + 4), "80+")
+  labs <- c(sprintf("Y%03.0f_%03.0f", 0:15*5, 0:15*5 + 4), "Y080_999")
   age_group <- cut(x = age, breaks = c(0:16*5, Inf), labels = labs,
                    include.lowest = TRUE, right = FALSE)
   as.character(age_group)
@@ -114,7 +114,7 @@ cut_naomi_age_group <- function(age) {
   
 age_quarter_to_age_group <- function(age_quarter) {
   f <- cut(age_quarter, breaks = c(0:16*5*4, Inf),
-           labels = c(sprintf("%02d-%02d", 0:15*5, 0:15*5+4), "80+"),
+           labels = c(sprintf("Y%03d_%03d", 0:15*5, 0:15*5+4), "Y080_999"),
            include.lowest = TRUE, right = FALSE)
   as.character(f)
 }
