@@ -816,10 +816,10 @@ survey_mf <- function(survey_ids, indicator,
                            indicator == !!indicator),
              by = c("area_id", "sex", "age_group")
            ) %>%
-    dplyr::mutate(n = n_obs,
+    dplyr::mutate(n = n_observations,
                   n_eff = n / deff,
-                  x_eff = n_eff * est) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, est, se)
+                  x_eff = n_eff * estimate) %>%
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
 
   dat
 }
@@ -858,17 +858,17 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       dplyr::filter(
                year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id,
-               !is.na(ancrt_known_pos),
-               !is.na(ancrt_test_pos),
-               !is.na(ancrt_tested)
+               !is.na(anc_known_pos),
+               !is.na(anc_tested_pos),
+               !is.na(anc_tested)
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_tested), sum) %>%
+      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested), sum) %>%
       dplyr::ungroup() %>%
       dplyr::transmute(
                area_id,
-               anc_prev_x = ancrt_known_pos + ancrt_test_pos,
-               anc_prev_n = ancrt_known_pos + ancrt_tested
+               anc_prev_x = anc_known_pos + anc_tested_pos,
+               anc_prev_n = anc_known_pos + anc_tested
              )
 
     if(any(anc_prev_dat$anc_prev_x > anc_prev_dat$anc_prev_n))
@@ -914,18 +914,18 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       dplyr::filter(
                year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id,
-               !is.na(ancrt_known_pos),
-               !is.na(ancrt_test_pos),
-               !is.na(ancrt_already_art)
+               !is.na(anc_known_pos),
+               !is.na(anc_tested_pos),
+               !is.na(anc_already_art)
              )  %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum) %>%
+      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_already_art), sum) %>%
       dplyr::ungroup() %>%
-      dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
+      dplyr::mutate(anc_total_pos = anc_known_pos + anc_tested_pos) %>%
       dplyr::transmute(
                area_id,
-               anc_artcov_x = ancrt_already_art,
-               anc_artcov_n = ancrt_totpos
+               anc_artcov_x = anc_already_art,
+               anc_artcov_n = anc_total_pos
              )
 
     if(any(anc_artcov_dat$anc_artcov_x > anc_artcov_dat$anc_artcov_n)) {
@@ -971,7 +971,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       sex = character(0),
       age_group = character(0),
       artnum_idx = integer(0),
-      current_art = integer(0),
+      art_current = integer(0),
       stringsAsFactors = FALSE
     )
   } else {
@@ -1005,7 +1005,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
-                       current_art = approx(quarter_id, current_art, out_quarter_id, rule =2)$y) %>%
+                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y) %>%
       dplyr::ungroup() %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter)
@@ -1021,7 +1021,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
                sex,
                age_group,
                artnum_idx = dplyr::row_number(),
-               current_art
+               art_current
              )
   }
 

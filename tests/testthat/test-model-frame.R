@@ -28,10 +28,10 @@ test_that("artnum_mf() returns expected number of records", {
   expect_equal(nrow(artnum_mf(NULL, mwi_art_number, a_naomi_mf)), 0L)
   expect_equal(nrow(artnum_mf("CY2016Q1", NULL, a_naomi_mf)), 0L)
   expect_named(artnum_mf(NULL, mwi_art_number, a_naomi_mf),
-               c("area_id", "sex", "age_group", "artnum_idx", "current_art"))
+               c("area_id", "sex", "age_group", "artnum_idx", "art_current"))
   expect_equal(nrow(artnum_mf("CY2016Q1", mwi_art_number, a_naomi_mf)), 14L)
   expect_named(artnum_mf("CY2016Q1", mwi_art_number, a_naomi_mf),
-               c("area_id", "sex", "age_group", "artnum_idx", "current_art"))
+               c("area_id", "sex", "age_group", "artnum_idx", "art_current"))
 })
 
 test_that("artnum_mf() throws errors for invalid inputs", {

@@ -14,7 +14,8 @@
 #'    \item{\code{sex}}{Sex as a character vector -- all values are "both".}
 #'    \item{\code{age_group}}{Value "Y015_999" is age 15+, "Y000_014" is age 0-14.}
 #'    \item{\code{calendar_quarter}}{Calendar quarter.}
-#'    \item{\code{current_art}}{Number currently on ART at the end of the quarter.}
+#'    \item{\code{art_current}}{Number currently on ART at the end of the quarter.}
+#'    \item{\code{art_new}}{Number newly initiated ART during the quarter.}
 #'   }
 #'
 #'  TODO: Link to mwi_areas dataset
@@ -23,10 +24,10 @@
 #'    \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
 #'    \item{\code{quarter_id}}{Quarter ID (integer).}
 #'    \item{\code{anc_clients}}{Number of unique ANC clients during quarter.}
-#'    \item{\code{ancrt_known_pos}}{Number of ANC clients already known to be HIV positive prior to first ANC visit and not tested for HIV.}
-#'    \item{\code{ancrt_already_art}}{Number of ANC clients already on ART prior to first ANC visit.}
-#'    \item{\code{ancrt_tested}}{Number of ANC clients tested for HIV and received result.}
-#'    \item{\code{ancrt_test_pos}}{Number of ANC clients testing HIV postive.}
+#'    \item{\code{anc_known_pos}}{Number of ANC clients already known to be HIV positive prior to first ANC visit and not tested for HIV.}
+#'    \item{\code{anc_already_art}}{Number of ANC clients already on ART prior to first ANC visit.}
+#'    \item{\code{anc_tested}}{Number of ANC clients tested for HIV and received result.}
+#'    \item{\code{anc_tested_pos}}{Number of ANC clients testing HIV postive.}
 #'  }
 #'
 #' @source

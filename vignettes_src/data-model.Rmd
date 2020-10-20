@@ -120,6 +120,6 @@ The table `survey_hiv_indicators` should also contain all survey HIV prevalence 
 
 The model is currently specified to accept ART numbers by age 0-14 (`age_group  = `r filter(naomi::get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group = `r filter(naomi::get_age_groups(), age_group_label == "15+")$age_group``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
 
-For `art_number` it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area.  Current specification requires a value `current_art = 0` for an area with no ART whereas no entry for a given area will be interpreted as missing data.  This could be revised, for example to require explicit input for all areas with a code for missing data.
+For `art_number` it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area.  Current specification requires a value `art_current = 0` for an area with no ART whereas no entry for a given area will be interpreted as missing data.  This could be revised, for example to require explicit input for all areas with a code for missing data.
 
 The `anc_testing` data is currently input for all ages of pregnant women aggregated, that is `age_group = `r filter(naomi::get_age_groups(), age_group_label == "15-49")$age_group`` for age 15-49.

@@ -1,14 +1,14 @@
 data_type,plot_type,indicator,value_column,error_low_column,error_high_column,indicator_column,indicator_value,name,scale,accuracy,format
 survey,choropleth,prevalence,est,,,indicator,prev,t_(HIV_PREVALENCE),1,,0.00%
 survey,choropleth,art_coverage,est,,,indicator,artcov,t_(ART_COVERAGE),1,,0.00%
-programme,choropleth,current_art,current_art,,,,,t_(ART_NUMBER_ATTENDING),1,,0
+programme,choropleth,art_current,art_current,,,,,t_(ART_NUMBER_ATTENDING),1,,0
 survey,choropleth,recent,est,,,indicator,recent,t_(PROPORTION_RECENTLY_INFECTED),100,100,0
 survey,choropleth,vls,est,,,indicator,vls,t_(VLS),1,,0.00%
 anc,choropleth,prevalence,prevalence,,,,,t_(HIV_PREVALENCE),1,,0.00%
 anc,choropleth,art_coverage,art_coverage,,,,,t_(ART_COVERAGE),1,,0.00%
 output,choropleth,prevalence,mean,lower,upper,indicator,prevalence,t_(HIV_PREVALENCE),1,,0.00%
 output,choropleth,art_coverage,mean,lower,upper,indicator,art_coverage,t_(ART_COVERAGE),1,,0.00%
-output,choropleth,current_art,mean,lower,upper,indicator,art_num_residents,t_(ART_NUMBER_RESIDENTS),1,,0
+output,choropleth,art_current,mean,lower,upper,indicator,art_num_residents,t_(ART_NUMBER_RESIDENTS),1,,0
 output,choropleth,receiving_art,mean,lower,upper,indicator,art_num_attend,t_(ART_NUMBER_ATTENDING),1,,0
 output,choropleth,population,mean,lower,upper,indicator,population,t_(POPULATION),1,1000,0
 output,choropleth,plhiv,mean,lower,upper,indicator,plhiv,t_(PLHIV),1,100,0
@@ -18,7 +18,7 @@ output,choropleth,anc_prevalence,mean,lower,upper,indicator,anc_prevalence,t_(AN
 output,choropleth,anc_art_coverage,mean,lower,upper,indicator,anc_art_coverage,t_(ANC_PRIOR_ART_COVERAGE),1,,0.00%
 output,barchart,prevalence,mean,lower,upper,indicator,prevalence,t_(HIV_PREVALENCE),1,,0.00%
 output,barchart,art_coverage,mean,lower,upper,indicator,art_coverage,t_(ART_COVERAGE),1,,0.00%
-output,barchart,current_art,mean,lower,upper,indicator,art_num_residents,t_(ART_NUMBER_RESIDENTS),1,,0
+output,barchart,art_current,mean,lower,upper,indicator,art_num_residents,t_(ART_NUMBER_RESIDENTS),1,,0
 output,barchart,receiving_art,mean,lower,upper,indicator,art_num_attend,t_(ART_NUMBER_ATTENDING),1,,0
 output,barchart,population,mean,lower,upper,indicator,population,t_(POPULATION),1,1000,0
 output,barchart,plhiv,mean,lower,upper,indicator,plhiv,t_(PLHIV),1,100,0

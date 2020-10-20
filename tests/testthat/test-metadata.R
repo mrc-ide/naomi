@@ -39,7 +39,7 @@ test_that("can get plot metadata for a country", {
       "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
   expect_true(all(unique(metadata$indicator) %in%
-                  c("art_coverage", "current_art", "receiving_art",
+                  c("art_coverage", "art_current", "receiving_art",
                     "prevalence", "art_number",
                     "incidence", "new_infections", "plhiv", "population",
                     "recent", "vls",
@@ -56,7 +56,7 @@ test_that("can get plot metadata for missing country with defaults", {
       "colour", "min", "max", "invert_scale") %in%
       names(metadata$result)))
   expect_true(all(unique(metadata$result$indicator) %in%
-                  c("art_coverage", "current_art", "receiving_art",
+                  c("art_coverage", "art_current", "receiving_art",
                     "prevalence", "art_number",
                     "incidence", "new_infections", "plhiv", "population",
                     "recent", "vls",
@@ -66,7 +66,7 @@ test_that("can get plot metadata for missing country with defaults", {
 test_that("colour scales metadata is well formed", {
   scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
   expect_true(all(scales$indicator %in%
-    c("art_coverage", "current_art", "receiving_art", "prevalence", "vls", "recent",
+    c("art_coverage", "art_current", "receiving_art", "prevalence", "vls", "recent",
       "art_number", "plhiv", "incidence", "population", "new_infections",
       "anc_prevalence", "anc_art_coverage")))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
@@ -89,7 +89,7 @@ test_that("colour scales metadata is well formed", {
 test_that("metadata is well formed", {
   meta <- get_metadata()
   expect_true(all(meta$indicator %in%
-    c("art_coverage", "current_art", "prevalence", "vls", "recent", "plhiv",
+    c("art_coverage", "art_current", "prevalence", "vls", "recent", "plhiv",
       "incidence", "art_number", "population", "incidence", "new_infections",
       "receiving_art", "anc_prevalence", "anc_art_coverage")))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
