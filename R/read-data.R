@@ -40,7 +40,8 @@ read_survey_indicators <- function(file) {
   ## !! TODO: add file format asserts
 
   required_cols <- c("indicator", "survey_id", "area_id", "sex", "age_group",
-                     "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u")
+                     "n_clusters", "n_observations", "n_eff_kish",
+                     "estimate", "std_error", "ci_lower", "ci_upper")
   
   col_spec <- readr::cols_only(
                        indicator = readr::col_character(),
@@ -50,12 +51,13 @@ read_survey_indicators <- function(file) {
                        area_id = readr::col_character(),
                        sex = readr::col_character(),
                        age_group = readr::col_character(),
-                       n_cluster = readr::col_integer(),
-                       n_obs = readr::col_integer(),
-                       est = readr::col_double(),
-                       se = readr::col_double(),
-                       ci_l = readr::col_double(),
-                       ci_u = readr::col_double()
+                       n_clusters = readr::col_integer(),
+                       n_observations = readr::col_integer(),
+                       n_eff_kish = readr::col_doubl(),
+                       estimate = readr::col_double(),
+                       std_error = readr::col_double(),
+                       ci_lower = readr::col_double(),
+                       ci_upper = readr::col_double()
                      )
   
   val <- read_csv_partial_cols(file, col_types = col_spec)
@@ -80,7 +82,7 @@ read_art_number <- function(file) {
 
   ## !! TODO: add file format asserts
 
-  required_cols <- c("area_id", "sex", "age_group", "current_art")
+  required_cols <- c("area_id", "sex", "age_group", "art_current")
   
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
@@ -88,7 +90,8 @@ read_art_number <- function(file) {
                        age_group = readr::col_character(),
                        year = readr::col_integer(),
                        calendar_quarter = readr::col_character(),
-                       current_art = readr::col_double()
+                       art_current = readr::col_double(),
+                       art_new = readr::col_double()
                      )
   
   val <- read_csv_partial_cols(file, col_types = col_spec)
@@ -140,10 +143,10 @@ read_anc_testing <- function(file) {
                        age_group = readr::col_character(),
                        year = readr::col_double(),
                        anc_clients = readr::col_double(),
-                       ancrt_known_pos = readr::col_double(),
-                       ancrt_already_art = readr::col_double(),
-                       ancrt_tested = readr::col_double(),
-                       ancrt_test_pos = readr::col_double()
+                       anc_known_pos = readr::col_double(),
+                       anc_already_art = readr::col_double(),
+                       anc_tested = readr::col_double(),
+                       anc_tested_pos = readr::col_double()
                      )
   
   val <- readr_read_csv(file, col_types = col_spec)
