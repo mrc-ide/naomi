@@ -135,13 +135,12 @@ test_that("metadata synced with meta_indicator", {
   metadata <- get_metadata()
 
   check <- metadata %>%
-    dplyr::filter(indicator_column == "indicator_id") %>%
+    dplyr::filter(data_type == "output") %>%
     dplyr::distinct(name, indicator_value) %>%
-    dplyr::mutate(indicator_value = as.integer(indicator_value)) %>%
     dplyr::full_join(
              get_meta_indicator() %>%
-             dplyr::select(indicator_id, indicator_label),
-             by = c("indicator_value" = "indicator_id")
+             dplyr::select(indicator, indicator_label),
+             by = c("indicator_value" = "indicator")
            )
 
   expect_equal(tolower(check$name), tolower(check$indicator_label))

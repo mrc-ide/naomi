@@ -21,8 +21,8 @@ test_that("model can be run", {
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
                  "sex", "age_group", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label",
-                 "indicator", "indicator_id", "indicator_label",
+                 "calendar_quarter", "quarter_label",
+                 "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) == 16368 * 3 + 2*2*10)
   expect_equal(model_run$spectrum_path, output_spectrum)
@@ -133,8 +133,8 @@ test_that("model can be run without programme data", {
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
                  "sex", "age_group", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label",
-                 "indicator", "indicator_id", "indicator_label",
+                 "calendar_quarter", "quarter_label",
+                 "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) == 16368 * 3 + 2*2*10)
 

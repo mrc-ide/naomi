@@ -42,7 +42,6 @@ get_meta_indicator <- function() {
                   "anc_rho",
                   "anc_alpha"),
     indicator_sort_order = 1:10,
-    indicator_id = 1:10,
     format = NA,
     scale = NA,
     stringsAsFactors = FALSE
@@ -324,7 +323,7 @@ add_output_labels <- function(naomi_output) {
                                  by = "calendar_quarter")
 
   meta_indicators <- naomi_output$meta_indicator %>%
-    dplyr::select(indicator, indicator_label, indicator_sort_order, indicator_id)
+    dplyr::select(indicator, indicator_label, indicator_sort_order)
   indicators <- dplyr::left_join(indicators, meta_indicators, by = "indicator")
 
   indicators <- dplyr::arrange(indicators,
@@ -344,10 +343,8 @@ add_output_labels <- function(naomi_output) {
                               age_group,
                               age_group_label,
                               calendar_quarter,
-                              quarter_id,
                               quarter_label,
                               indicator,
-                              indicator_id,
                               indicator_label,
                               mean,
                               se,
@@ -412,7 +409,6 @@ add_art_attendance_labels <- function(naomi_output) {
              age_group,
              age_group_label,
              calendar_quarter,
-             quarter_id,
              quarter_label,
              dplyr::starts_with("artnum"),
              dplyr::starts_with("prop_residents"),
