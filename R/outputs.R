@@ -709,9 +709,13 @@ generate_output_summary_report <- function(report_path,
                                            quiet = FALSE) {
   rmd_path <- system_file("report/summary_report.Rmd")
 
+  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+  report_filename <- basename(report_path)
+  output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
   rmarkdown::render(rmd_path, params = list(
-    output_zip = output_zip),
-    output_file = report_path,
+    output_zip = output_zip_path),
+    output_dir = report_path_dir,
+    output_file = report_filename,
     quiet = quiet
   )
 
