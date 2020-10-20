@@ -1,4 +1,4 @@
-FROM mrcide/naomi-base:add-pandoc
+FROM mrcide/naomi-base:latest
 
 COPY docker/bin /usr/local/bin/
 
