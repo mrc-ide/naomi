@@ -1,4 +1,4 @@
-area_id,age_group,year,anc_clients,ancrt_known_pos,ancrt_already_art,ancrt_tested,ancrt_test_pos
+area_id,age_group,year,anc_clients,anc_known_pos,anc_already_art,anc_tested,anc_tested_pos
 MWI_4_1,Y015_049,2011,4325,24,0,2322,50
 MWI_4_1,Y015_049,2012,8571,34,17,3415,41
 MWI_4_1,Y015_049,2013,8428,57,45,5319,132

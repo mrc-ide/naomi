@@ -53,7 +53,7 @@ read_survey_indicators <- function(file) {
                        age_group = readr::col_character(),
                        n_clusters = readr::col_integer(),
                        n_observations = readr::col_integer(),
-                       n_eff_kish = readr::col_doubl(),
+                       n_eff_kish = readr::col_double(),
                        estimate = readr::col_double(),
                        std_error = readr::col_double(),
                        ci_lower = readr::col_double(),
@@ -126,7 +126,7 @@ read_art_number <- function(file) {
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
-  dplyr::select(val, area_id, sex, age_group, calendar_quarter, current_art)
+  dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current)
 }
 
 #' @rdname read_population
@@ -136,7 +136,7 @@ read_anc_testing <- function(file) {
   ## !! TODO: add file format asserts
 
   required_cols <- c("area_id", "age_group", "year", "anc_clients",
-                     "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos")
+                     "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos")
   
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
