@@ -317,7 +317,7 @@ add_output_labels <- function(naomi_output) {
   indicators <- dplyr::left_join(indicators, meta_area, by = "area_id")
 
   meta_age_group <- naomi_output$meta_age_group %>%
-    dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order)
+    dplyr::select(age_group, age_group_label, age_group_sort_order)
   indicators <- dplyr::left_join(indicators, meta_age_group, by = "age_group")
 
   indicators <- dplyr::left_join(indicators, naomi_output$meta_period,
@@ -342,7 +342,6 @@ add_output_labels <- function(naomi_output) {
                               area_name,
                               sex,
                               age_group,
-                              age_group_id,
                               age_group_label,
                               calendar_quarter,
                               quarter_id,
@@ -393,7 +392,7 @@ add_art_attendance_labels <- function(naomi_output) {
            ) %>%
     dplyr::left_join(
              naomi_output$meta_age_group %>%
-             dplyr::select(age_group_id, age_group, age_group_label, age_group_sort_order),
+             dplyr::select(age_group, age_group_label, age_group_sort_order),
              by = "age_group"
            ) %>%
     dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
@@ -411,7 +410,6 @@ add_art_attendance_labels <- function(naomi_output) {
              attend_area_name,
              sex,
              age_group,
-             age_group_id,
              age_group_label,
              calendar_quarter,
              quarter_id,

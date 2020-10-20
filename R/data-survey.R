@@ -113,7 +113,7 @@ expand_survey_clusters <- function(survey_clusters,
 #' @param survey_biomarker Survey biomarkers.
 #' @param areas Areas.
 #' @param sex Sex.
-#' @param age_group_id Age group id.
+#' @param age_group Age group.
 #' @param area_top_level Area top level.
 #' @param area_bottom_level Area bottom level.
 #' @param artcov_definition Definition to use for calculate ART coverage.
@@ -138,7 +138,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                        survey_biomarker,
                                        areas,
                                        sex = c("male", "female", "both"),
-                                       age_group_id = NULL,
+                                       age_group = NULL,
                                        area_top_level = min(areas$area_level),
                                        area_bottom_level = max(areas$area_level),
                                        artcov_definition = c("both", "arv", "artself"),
@@ -147,8 +147,8 @@ calc_survey_hiv_indicators <- function(survey_meta,
   ## 1. Identify age groups to calculate for each survey_id
   age_group <- get_age_groups()
 
-  if(!is.null(age_group_id))
-    age_group <- dplyr::filter(age_group, age_group_id %in% !!age_group_id)
+  if(!is.null(age_group))
+    age_group <- dplyr::filter(age_group, age_group %in% !!age_group)
 
   sex_age_group <- tidyr::crossing(sex, age_group)
 
