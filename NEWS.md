@@ -1,8 +1,15 @@
-# naomi 1.0.9
+# naomi 1.0.11
 
 * Add a basic vignette showing example script for running `hintr_run_model()` 
   for reproducing web app workflow.
   
+# naomi 1.0.10
+
+* Edit `summary_report.Rmd` to remove `age_group_id`.
+
+# naomi 1.0.9
+
+* Add summary_report_path to model run for saving summary report
 
 # naomi 1.0.8
 

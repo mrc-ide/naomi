@@ -613,7 +613,6 @@ save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
               boundary_format = "geojson", single_csv = FALSE)
 }
 
-
 save_output <- function(filename, dir,
                         naomi_output,
                         overwrite = FALSE,
@@ -695,6 +694,32 @@ save_output <- function(filename, dir,
 
   zip::zipr(path, list.files())
   path
+}
+
+#' Generate and save summary report at specified path
+#'
+#' @param report_path Path to save summary report at
+#' @param output_zip Path to model outputs zip file
+#' @param quiet Suppress printing of the pandoc command line
+#'
+#' @return Path to summary report
+#' @keywords internal
+generate_output_summary_report <- function(report_path,
+                                           output_zip,
+                                           quiet = FALSE) {
+  rmd_path <- system_file("report/summary_report.Rmd")
+
+  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+  report_filename <- basename(report_path)
+  output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
+  rmarkdown::render(rmd_path, params = list(
+    output_zip = output_zip_path),
+    output_dir = report_path_dir,
+    output_file = report_filename,
+    quiet = quiet
+  )
+
+  invisible(report_path)
 }
 
 
