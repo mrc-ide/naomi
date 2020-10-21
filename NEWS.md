@@ -5,6 +5,13 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
 * Update age group codes to `YXXX_XXX`.
 * Chage `age_group_label` from 00-04 to 0-4 and 05-09 to 5-9.
 * Remove `age_group_id`, `indicator_id`, and `quarter_id` column from output package.
+* Rename columns in datasets for consistency with Fjelltop UNAIDS data inputs package:
+  - ANC testing dataset: `ancrt_*` changed to `anc_*`.
+  - ART programme data: `current_art` changed to `art_current` and `art_new` column added.
+  - Survey HIV indicators: make several column names more human readable.
+* Add Kish effective sample size approximation (`sum(weights) ^ 2 / sum(weights ^ 2)`) 
+  to survey indicators dataset in field `n_eff_kish`.
+
 
 # naomi 1.0.8
 
