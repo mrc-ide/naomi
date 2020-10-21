@@ -11,6 +11,7 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
   - Survey HIV indicators: make several column names more human readable.
 * Add Kish effective sample size approximation (`sum(weights) ^ 2 / sum(weights ^ 2)`) 
   to survey indicators dataset in field `n_eff_kish`.
+* Harmonise indicator names in survey dataset with outputs (`prevalence`, `art_coverage`).
 
 # naomi 1.0.11
 

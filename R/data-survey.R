@@ -228,8 +228,12 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
 
   ind <- ind %>%
-    dplyr::rename(prev = hivstatus) %>%
-    tidyr::gather(indicator, estimate, prev, artcov, vls, recent) %>%
+    dplyr::rename(prevalence = hivstatus,
+                  art_coverage = artcov,
+                  viral_suppression_plhiv = vls,
+                  recent_infected = recent) %>%
+    tidyr::gather(indicator, estimate,
+                  prevalence, art_coverage, viral_suppression_plhiv, recent_infected) %>%
     dplyr::filter(!is.na(estimate))
 
   ## 6. Calculate outcomes
@@ -283,7 +287,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
              by = c("area_id")
            ) %>%
     dplyr::arrange(
-             factor(indicator, c("prev", "artcov", "vls", "recent")),
+             factor(indicator, c("prevalence", "art_coverage", "viral_suppression_plhiv", "recent_infected")),
              survey_id,
              survey_mid_calendar_quarter,
              area_level,
