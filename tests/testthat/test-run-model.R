@@ -1,21 +1,23 @@
 context("run-model")
 
 test_that("model can be run", {
-
+o
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   coarse_output_path <- tempfile(fileext = ".zip")
+  summary_report_path = tempfile(fileext = ".html")
   calibration_path <- tempfile(fileext = ".rds")
   model_run <- hintr_run_model(a_hintr_data,
                                a_hintr_options,
                                output_path,
                                output_spectrum,
                                coarse_output_path,
+                               summary_report_path,
                                calibration_path)
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "coarse_output_path",
-                 "calibration_path", "metadata"))
+                 "summary_report_path", "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -72,14 +74,22 @@ test_that("model can be run", {
       names(output_boundaries))
   )
 
-  ## Check coarse age outputs saved in summar_path
-  coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064", "Y000_014",
-                   "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
+  ## Check coarse age outputs saved in coarse_output_path
+coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064",
+                 "Y000_014", "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
+
   coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
   expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
+  ## Metadata has been saved
   expect_equal(model_run$metadata$areas, "MWI_1_2")
+
+  ## Summary report has been generated
+  expect_true(file.size(summary_report_path) > 2000)
+  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_path))))
+  expect_true(any(grepl(basename(a_hintr_data$pjnz), readLines(summary_report_path))))
+  expect_true(any(grepl("Central", readLines(summary_report_path))))
 
   ## Calibration data is stored
   expect_true(!is.null(model_run$calibration_path))
@@ -127,7 +137,7 @@ test_that("model can be run without programme data", {
                                coarse_output_path)
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "coarse_output_path",
-                 "calibration_path", "metadata"))
+                 "summary_report_path", "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -169,15 +179,13 @@ test_that("model fit without survey ART and survey recency data", {
 
   options <- a_hintr_options
   options$survey_art_coverage <- NULL
-  expect_error(
-    hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
-    NA)
+  expect_error(hintr_run_model(a_hintr_data, options),
+               NA)
 
   options <- a_hintr_options
   options$survey_recently_infected <- NULL
-  expect_error(
-    hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
-    NA)
+  expect_error(hintr_run_model(a_hintr_data, options),
+               NA)
 
   ## No survey ART coverage or ART programme data
   options <- a_hintr_options
@@ -185,9 +193,8 @@ test_that("model fit without survey ART and survey recency data", {
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
   options$artattend <- "false"
-  expect_error(
-    hintr_run_model(a_hintr_data, options, tempfile(), tempfile(), tempfile()),
-    NA)
+  expect_error(hintr_run_model(a_hintr_data, options),
+               NA)
 }
 )
 
@@ -346,7 +353,7 @@ test_that("model works with empty string for ANC year", {
 
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "coarse_output_path",
-                 "calibration_path","metadata"))
+                 "summary_report_path", "calibration_path","metadata"))
 })
 
 test_that("input data types can be formatted", {
@@ -427,6 +434,15 @@ test_that("model run can be calibrated", {
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
+  ## Summary report has been calibrated
+  summary_report <- calibrated_output$summary_report_path
+  ## Content of report is the same so check that it has been regenerated
+  expect_true(file.info(summary_report)$ctime >
+                file.info(a_hintr_output$summary_report_path)$ctime)
+  ## Options & filename are available to calibrated report
+  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report))))
+  expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report))))
+
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output$calibration_path,
                         a_hintr_output$calibration_path)
@@ -490,6 +506,14 @@ test_that("model run can be calibrated", {
   expect_file_different(calibrated_output_2$coarse_output_path,
                         calibrated_output$coarse_output_path)
   expect_true(file.size(calibrated_output_2$coarse_output_path) > 2000)
+
+  ## Summary report has been calibrated
+  summary_report_2 <- calibrated_output_2$summary_report_path
+  expect_true(file.info(summary_report_2)$ctime >
+                file.info(a_hintr_output$summary_report_path)$ctime)
+  ## Options & filename are available to calibrated report
+  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_2))))
+  expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,

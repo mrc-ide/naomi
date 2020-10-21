@@ -123,11 +123,14 @@ clone_output <- function(output) {
   file.copy(output$output_path, output_path)
   spectrum_path <- tempfile(fileext = ".zip")
   file.copy(output$spectrum_path, spectrum_path)
-  summary_path <- tempfile(fileext = ".zip")
-  file.copy(output$summary_path, summary_path)
+  coarse_output_path <- tempfile(fileext = ".zip")
+  file.copy(output$coarse_output_path, coarse_output_path)
+  summary_report_path <- tempfile(fileext = ".html")
+  file.copy(output$summary_report_path, summary_report_path)
   calibration_path <- tempfile(fileext = ".rds")
   file.copy(output$calibration_path, calibration_path)
-  build_hintr_output(output_path, spectrum_path, summary_path, calibration_path,
+  build_hintr_output(output_path, spectrum_path, coarse_output_path,
+                     summary_report_path, calibration_path,
                      output$metadata)
 }
 

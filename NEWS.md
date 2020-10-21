@@ -1,3 +1,4 @@
+
 # naomi 2.0.0
 
 Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to be backward compatible with 2020 version of Naomi model.
@@ -5,6 +6,10 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
 * Update age group codes to `YXXX_XXX`.
 * Chage `age_group_label` from 00-04 to 0-4 and 05-09 to 5-9.
 * Remove `age_group_id`, `indicator_id`, and `quarter_id` column from output package.
+
+# naomi 1.0.9
+
+* Add summary_report_path to model run for saving summary report
 
 # naomi 1.0.8
 
