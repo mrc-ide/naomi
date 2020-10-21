@@ -1,7 +1,7 @@
 context("run-model")
 
 test_that("model can be run", {
-o
+
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
   coarse_output_path <- tempfile(fileext = ".zip")

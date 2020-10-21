@@ -106,13 +106,13 @@ test_that("metadata is well formed", {
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
       "error_high_column", "indicator_column", "indicator_value", "name",
-      "scale", "accuracy", "format"))
+      "scale", "accuracy", "format", "indicator_sort_order"))
   ## No NULLs, NAs or empty strings except for indicator_column,
   ## indicator_value and accuracy columns
   non_empty_columns <- colnames(
     meta[, !(colnames(meta) %in% c("error_low_column", "error_high_column",
                                    "indicator_column", "indicator_value",
-                                   "accuracy"))])
+                                   "accuracy", "indicator_sort_order"))])
   non_empty <- function(x) {
     !is.null(x) & !is.na(x) & !(x == "")
   }
