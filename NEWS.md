@@ -13,6 +13,14 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
   to survey indicators dataset in field `n_eff_kish`.
 
 
+# naomi 1.0.10
+
+* Edit `summary_report.Rmd` to remove `age_group_id`.
+
+# naomi 1.0.9
+
+* Add summary_report_path to model run for saving summary report
+
 # naomi 1.0.8
 
 * Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB

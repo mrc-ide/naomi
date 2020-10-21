@@ -53,6 +53,16 @@ get_colour_scale <- function(iso3 = "default") {
 get_metadata <- function() {
   data <- naomi_read_csv(system_file("metadata", "metadata.csv"))
   data$name <- traduire::translator()$replace(data$name)
+  
+  ## TODO: refactor these into one location (issue #144)
+  other_data <- get_meta_indicator()
+
+  data <- data %>%
+    dplyr::left_join(
+             dplyr::select(other_data, indicator, indicator_sort_order),
+             by = c("indicator_value" = "indicator")
+           )
+
   data
 }
 
