@@ -12,7 +12,11 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
 * Add Kish effective sample size approximation (`sum(weights) ^ 2 / sum(weights ^ 2)`) 
   to survey indicators dataset in field `n_eff_kish`.
 
+# naomi 1.0.11
 
+* Add a basic vignette showing example script for running `hintr_run_model()` 
+  for reproducing web app workflow.
+  
 # naomi 1.0.10
 
 * Edit `summary_report.Rmd` to remove `age_group_id`.
