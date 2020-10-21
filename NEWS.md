@@ -1,3 +1,7 @@
+# naomi 1.0.9
+
+* Add summary_report_path to model run for saving summary report
+
 # naomi 1.0.8
 
 * Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB
