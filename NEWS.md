@@ -13,6 +13,10 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
   to survey indicators dataset in field `n_eff_kish`.
 * Harmonise indicator names in survey dataset with outputs (`prevalence`, `art_coverage`).
 * Rename calculated ANC input indicators to `anc_prevalence` and `anc_art_coverage`.
+* Harmonise ART number output indicators with ART input data indicators:
+  - `art_num_attend` becomes `art_current`.
+  - `art_num_residents` becomes `art_current_residents`.
+  
 
 # naomi 1.0.11
 
