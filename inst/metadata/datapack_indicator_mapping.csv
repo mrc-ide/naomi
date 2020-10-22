@@ -1,0 +1,6 @@
+indicator,datapack_indicator_id,datapack_indicator_label
+plhiv,iwSejvD8cXl,"IMPATT.PLHIV (SUBNAT, Age/Sex)"
+art_current,xghQXueYJxu,"TX_CURR_SUBNAT (N, SUBNAT, Age Aggregated/Sex): Receiving ART"
+population,KssDaTsGWnS,"IMPATT.POP_EST (SUBNAT, Age/Sex)"
+prevalence,lJtpR5byqps,"IMPATT.HIV_PREV (SUBNAT, Age/Sex)"
+art_coverage,TX_CURR_SUBNAT.N.coverage,TX_CURR_SUBNAT.N.coverage

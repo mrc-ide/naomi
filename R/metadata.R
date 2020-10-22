@@ -54,7 +54,7 @@ get_metadata <- function() {
   data <- naomi_read_csv(system_file("metadata", "metadata.csv"))
   data$name <- traduire::translator()$replace(data$name)
   
-  ## TODO: refactor these into one location (issue #144)
+  ## TODO: refactor these into one location (issue #145)
   other_data <- get_meta_indicator()
 
   data <- data %>%

@@ -1,52 +1,23 @@
+
+#' Get indicator metadata
+#'
+#' @return data.frame of indicator ids, labels, descriptions, and parameter mapping.
+#' 
+#' 
+#' @export
+#'
+#' @examples
+#' get_meta_indicator()
 get_meta_indicator <- function() {
 
-  data.frame(
-    indicator = c("population",
-                  "prevalence",
-                  "plhiv",
-                  "art_coverage",
-                  "art_current_residents",
-                  "art_current",
-                  "incidence",
-                  "infections",
-                  "anc_prevalence",
-                  "anc_art_coverage"),
-    indicator_label = c(t_("POPULATION"),
-                        t_("HIV_PREVALENCE"),
-                        t_("PLHIV"),
-                        t_("ART_COVERAGE"),
-                        t_("ART_NUMBER_RESIDENTS"),
-                        t_("ART_NUMBER_ATTENDING"),
-                        t_("INCIDENCE"),
-                        t_("NEW_INFECTIONS"),
-                        t_("ANC_HIV_PREVALENCE"),
-                        t_("ANC_PRIOR_ART_COVERAGE")),
-    description = c(t_("INDICATOR_LABEL_POPULATION"),
-                    t_("INDICATOR_LABEL_PREVALENCE"),
-                    t_("INDICATOR_LABEL_PLHIV"),
-                    t_("INDICATOR_LABEL_ART_COVERAGE"),
-                    t_("INDICATOR_LABEL_ART_NUM_RESIDENTS"),
-                    t_("INDICATOR_LABEL_ART_NUM_ATTENDING"),
-                    t_("INDICATOR_LABEL_INCIDENCE"),
-                    t_("INDICATOR_LABEL_INFECTIONS"),
-                    t_("INDICATOR_LABEL_ANC_PREVALENCE"),
-                    t_("INDICATOR_LABEL_ANC_ART_COVERAGE")),
-    parameter = c("population_out",
-                  "rho_out",
-                  "plhiv_out",
-                  "alpha_out",
-                  "artnum_out",
-                  "artattend_out",
-                  "lambda_out",
-                  "infections_out",
-                  "anc_rho",
-                  "anc_alpha"),
-    indicator_sort_order = 1:10,
-    format = NA,
-    scale = NA,
-    stringsAsFactors = FALSE
-  )
+  ## TODO: refactor this to be harmonised with inst/metadata/metadata.csv.
+  val <- naomi_read_csv(system_file("metadata", "meta_indicator.csv"))
+  val$indicator_label <- traduire::translator()$replace(val$indicator_label)
+  val$description <- traduire::translator()$replace(val$description)
+
+  val
 }
+
 
 
 add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
@@ -1187,75 +1158,57 @@ export_datapack <- function(naomi_output,
     path <- paste0(path, ".csv")
   }
 
-  dataelement <- c("plhiv" = "IMPATT.PLHIV (SUBNAT, Age/Sex)",
-                   "art_current" = "TX_CURR_SUBNAT (N, SUBNAT, Age Aggregated/Sex): Receiving ART",
-                   "population" = "IMPATT.POP_EST (SUBNAT, Age/Sex)",
-                   "prevalence" = "IMPATT.HIV_PREV (SUBNAT, Age/Sex)",
-                   "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
-
-  dataelementuid = c("plhiv" = "iwSejvD8cXl",
-                     "art_current" = "xghQXueYJxu",
-                     "population" = "KssDaTsGWnS",
-                     "prevalence" = "lJtpR5byqps",
-                     "art_coverage" = "TX_CURR_SUBNAT.N.coverage")
-
-  category_1  <- "Age (<1-50+, 12)"
-  categoryOption_uid_1 <- "HoZv6qBZvE7"
-  categoryOption_name_1 <- c("Y000_000" = "<01",
-                             "Y001_004" = "01-04",
-                             "Y005_009" = "05-09",
-                             "Y010_014" = "10-14",
-                             "Y015_019" = "15-19",
-                             "Y020_024" = "20-24",
-                             "Y025_029" = "25-29",
-                             "Y030_034" = "30-34",
-                             "Y035_039" = "35-39",
-                             "Y040_044" = "40-44",
-                             "Y045_049" = "45-49",
-                             "Y050_999" = "50+")
-  categoryOption_uid_1.1 <- c("Y000_000" = "sMBMO5xAq5T",
-                              "Y001_004" = "VHpjs9qdLFF",
-                              "Y005_009" = "eQG9DwiqSQR",
-                              "Y010_014" = "jcGQdcpPSJP",
-                              "Y015_019" = "ttf9eZCHsTU",
-                              "Y020_024" = "GaScV37Kk29",
-                              "Y025_029" = "meeNUPwEOtj",
-                              "Y030_034" = "AZaNm5B8vn9",
-                              "Y035_039" = "R32YPF38CJJ",
-                              "Y040_044" = "JEth8vg25Rv",
-                              "Y045_049" = "rQLOOlL3UOQ",
-                              "Y050_999" = "TpXlQcoXGZF")
-  category_2  <- "Sex"
-  categoryuid_2 <- "SEOZOio7f7o"
-  categoryOption_uid_2 <-  c("male" = "Qn0I5FbKQOA",
-                             "female" = "Z1EnpTPaUfq")
-  categoryOption_name_2 <-  c("male" = "Male",
-                              "female" = "Female")
-
-  strat <- tidyr::nesting(
-                    indicator = names(dataelementuid),
-                    dataelement,
-                    dataelementuid
-                  ) %>%
-    tidyr::expand_grid(
-             tidyr::nesting(
-                      age_group = names(categoryOption_uid_1.1),
-                      categoryOption_uid_1,
-                      category_1,
-                      categoryOption_uid_1.1,
-                      categoryOption_name_1 = paste0("=\"", categoryOption_name_1, "\""),
-                      )
+  datapack_indicator_map <- naomi_read_csv(system_file("metadata", "datapack_indicator_mapping.csv"))
+  datapack_age_group_map <- naomi_read_csv(system_file("metadata", "datapack_age_group_mapping.csv"))
+  datapack_sex_map <- naomi_read_csv(system_file("metadata", "datapack_sex_mapping.csv"))
+  
+  datapack_indicator_map <- datapack_indicator_map %>%
+    dplyr::rename(
+             dataelement = datapack_indicator_label,
+             dataelementuid = datapack_indicator_id
            ) %>%
-    tidyr::expand_grid(
-             tidyr::nesting(
-                      sex = names(categoryOption_uid_2),
-                      categoryuid_2,
-                      category_2,
-                      categoryOption_uid_2,
-                      categoryOption_name_2
-                    )
+    dplyr::select(indicator, dataelement, dataelementuid)
+                    
+
+  datapack_age_group_map <- datapack_age_group_map %>%
+    dplyr::rename(
+             categoryOption_name_1 = datapack_age_group_label,
+             categoryOption_uid_1.1 = datapack_age_group_id
+           ) %>%
+    dplyr::mutate(
+             category_1 = "Age (<1-50+, 12)",
+             categoryOption_uid_1 = "HoZv6qBZvE7",
+             categoryOption_name_1 = paste0("\"", categoryOption_name_1, "\"")
+           ) %>%
+    dplyr::select(
+             age_group,
+             categoryOption_uid_1,
+             category_1,
+             categoryOption_uid_1.1,
+             categoryOption_name_1
            )
 
+  datapack_sex_map <- datapack_sex_map %>%
+    dplyr::rename(
+             categoryOption_name_2 = datapack_sex_label,
+             categoryOption_uid_2 = datapack_sex_id
+           ) %>%
+    dplyr::mutate(
+             category_2 = "Sex",
+             categoryuid_2 = "SEOZOio7f7o"
+           ) %>%
+    dplyr::select(
+             sex,
+             categoryuid_2,
+             category_2,
+             categoryOption_uid_2,
+             categoryOption_name_2
+           )
+  
+
+  strat <-  datapack_indicator_map %>%
+    tidyr::expand_grid(datapack_age_group_map) %>%
+    tidyr::expand_grid(datapack_sex_map) 
 
   dat <- naomi_output$indicators %>%
     dplyr::semi_join(
@@ -1263,9 +1216,10 @@ export_datapack <- function(naomi_output,
              dplyr::filter(area_level == psnu_level),
              by = "area_id"
            ) %>%
-    dplyr::filter(indicator %in% names(dataelementuid),
+    dplyr::filter(indicator %in% datapack_indicator_map$indicator,
                   calendar_quarter == !!calendar_quarter,
-                  sex %in% names(categoryOption_uid_2) & age_group %in% names(categoryOption_uid_1.1) |
+                  sex %in% datapack_sex_map$sex &
+                  age_group %in% datapack_age_group_map$age_group |
                   sex == "both" & age_group == "Y000_999") %>%
     dplyr::transmute(area_id, indicator, sex, age_group, value = mean, rse = se / mean)
 
