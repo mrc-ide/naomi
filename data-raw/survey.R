@@ -206,7 +206,7 @@ extract_clusters <- function(path, survey_id, REGVAR){
     transmute(survey_id,
               cluster_id = hv001,
               survey_region_id = .data[[REGVAR]],
-              restype = factor(hv025, 1:2, c("urban", "rural"))) %>%
+              res_type = factor(hv025, 1:2, c("urban", "rural"))) %>%
     distinct
 
   val
@@ -288,7 +288,7 @@ clusters <- clusters %>%
   ungroup %>% 
   transmute(survey_id,
             cluster_id = cluster_id,
-            restype,
+            res_type,
             survey_region_id, 
             longitude,
             latitude,
@@ -529,7 +529,7 @@ ge <- bind_rows(
 ) %>%
   distinct(survey_id,
            cluster_id,
-           restype = factor(urban, 1:2, c("urban", "rural")),
+           res_type = factor(urban, 1:2, c("urban", "rural")),
            survey_region_id = as.integer(zone))
 
 

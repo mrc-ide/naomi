@@ -46,7 +46,7 @@ expand_survey_clusters <- function(survey_clusters,
                                    bottom_level = max(areas$area_level)) {
 
   clusters <- survey_clusters %>%
-    dplyr::select(survey_id, cluster_id, restype, survey_region_id, geoloc_area_id) %>%
+    dplyr::select(survey_id, cluster_id, res_type, survey_region_id, geoloc_area_id) %>%
     dplyr::left_join(
              survey_regions %>%
              dplyr::select(survey_id, survey_region_id, survey_region_area_id),
@@ -117,7 +117,7 @@ expand_survey_clusters <- function(survey_clusters,
 #' @param area_top_level Area top level.
 #' @param area_bottom_level Area bottom level.
 #' @param artcov_definition Definition to use for calculate ART coverage.
-#' @param by_restype Whether to stratify estimates by urban/rural restype; logical.
+#' @param by_res_type Whether to stratify estimates by urban/rural res_type; logical.
 #'
 #'
 #' @details
@@ -142,7 +142,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                                        area_top_level = min(areas$area_level),
                                        area_bottom_level = max(areas$area_level),
                                        artcov_definition = c("both", "arv", "artself"),
-                                       by_restype = FALSE) {
+                                       by_res_type = FALSE) {
 
   ## 1. Identify age groups to calculate for each survey_id
   age_groups <- get_age_groups()
@@ -200,10 +200,10 @@ calc_survey_hiv_indicators <- function(survey_meta,
 
   ind <- dplyr::inner_join(ind, clust_area, by = c("survey_id", "cluster_id"))
 
-  if(by_restype)
-    ind <- dplyr::bind_rows(ind, dplyr::mutate(ind, restype = "all"))
+  if(by_res_type)
+    ind <- dplyr::bind_rows(ind, dplyr::mutate(ind, res_type = "all"))
   else
-    ind <- dplyr::mutate(ind, restype = "all")
+    ind <- dplyr::mutate(ind, res_type = "all")
 
 
   ## 5. Construct ART coverage indicator as either self-report or ART biomarker
@@ -237,20 +237,20 @@ calc_survey_hiv_indicators <- function(survey_meta,
     dplyr::filter(!is.na(estimate))
 
   ## 6. Calculate outcomes
-  ## Note: using survey region as strata right now. Most DHS use region + restype
+  ## Note: using survey region as strata right now. Most DHS use region + res_type
 
   dat <- ind %>%
     dplyr::filter(!is.na(hivweight), hivweight > 0)
 
   cnt <- dat %>%
-    dplyr::group_by(indicator, survey_id, area_id, restype, sex, age_group) %>%
+    dplyr::group_by(indicator, survey_id, area_id, res_type, sex, age_group) %>%
     dplyr::summarise(n_clusters = dplyr::n_distinct(cluster_id),
                      n_observations = dplyr::n(),
                      n_eff_kish = sum(hivweight)^2 / sum(hivweight^2),
                      .groups = "drop")
 
   datspl <- dat %>%
-    dplyr::mutate(spl = paste(indicator, survey_id, area_level, restype, sex, age_group)) %>%
+    dplyr::mutate(spl = paste(indicator, survey_id, area_level, res_type, sex, age_group)) %>%
     split(.$spl)
 
   do_svymean <- function(df) {
@@ -262,7 +262,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
                              weights = ~hivweight)
 
     val <- survey::svyby(~estimate,
-                         ~ indicator + survey_id + area_id + restype + sex + age_group,
+                         ~ indicator + survey_id + area_id + res_type + sex + age_group,
                          des, survey::svymean)
     names(val)[names(val) == "se"] <- "std_error"
     val
@@ -275,7 +275,7 @@ calc_survey_hiv_indicators <- function(survey_meta,
   val <- cnt %>%
     dplyr::full_join(
              dplyr::bind_rows(est_spl),
-             by = c("indicator", "survey_id", "area_id", "restype", "sex", "age_group")
+             by = c("indicator", "survey_id", "area_id", "res_type", "sex", "age_group")
            ) %>%
     dplyr::left_join(
              survey_meta %>% select(survey_id, survey_mid_calendar_quarter),
@@ -293,12 +293,12 @@ calc_survey_hiv_indicators <- function(survey_meta,
              area_level,
              area_sort_order,
              area_id,
-             factor(restype, c("all", "urban", "rural")),
+             factor(res_type, c("all", "urban", "rural")),
              factor(sex, c("both", "male", "female")),
              age_group
            ) %>%
     dplyr::select(
-             indicator, survey_id, survey_mid_calendar_quarter, area_id, restype, sex, age_group,
+             indicator, survey_id, survey_mid_calendar_quarter, area_id, res_type, sex, age_group,
              n_clusters, n_observations, n_eff_kish, estimate, std_error) %>%
     dplyr::distinct() %>%
     dplyr::mutate(

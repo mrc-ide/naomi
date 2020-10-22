@@ -243,10 +243,10 @@ naomi_model_frame <- function(area_merged,
     dplyr::transmute(age_group,
                      population = population_spectrum / sum(population_spectrum),
                      plhiv = plhiv_spectrum / sum(plhiv_spectrum),
-                     art_num_attend = art_num_spectrum / sum(art_num_spectrum),
-                     art_num_residents = art_num_attend,
+                     art_current = art_current_spectrum / sum(art_current_spectrum),
+                     art_current_residents = art_current,
                      infections = infections_spectrum / sum(infections_spectrum)) %>%
-    tidyr::gather(indicator, distribution, population, plhiv, art_num_attend, art_num_residents, infections) %>%
+    tidyr::gather(indicator, distribution, population, plhiv, art_current, art_current_residents, infections) %>%
     dplyr::ungroup()
 
 
@@ -365,7 +365,7 @@ naomi_model_frame <- function(area_merged,
              time_step,
              calendar_quarter,
              prevalence = plhiv_spectrum / population_spectrum,
-             art_coverage = pmax(pmin(art_num_spectrum / plhiv_spectrum, 0.999), 0.001),
+             art_coverage = pmax(pmin(art_current_spectrum / plhiv_spectrum, 0.999), 0.001),
              incidence = infections_spectrum / susc_previous_year_spectrum,
              asfr = births_spectrum / population_spectrum
            )

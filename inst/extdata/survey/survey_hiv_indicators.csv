@@ -1,4 +1,4 @@
-indicator,survey_id,survey_mid_calendar_quarter,area_id,restype,sex,age_group,n_clusters,n_observations,n_eff_kish,estimate,std_error,ci_lower,ci_upper
+indicator,survey_id,survey_mid_calendar_quarter,area_id,res_type,sex,age_group,n_clusters,n_observations,n_eff_kish,estimate,std_error,ci_lower,ci_upper
 prevalence,MWI2004DHS,CY2004Q4,MWI,all,both,Y015_019,392,1000,655.6497881624256,0.021035708925081848,0.0048601713992375605,0.01334943547161138,0.03299953023935002
 prevalence,MWI2004DHS,CY2004Q4,MWI,all,both,Y015_024,477,2116,1302.268597738034,0.06019422194803898,0.006004860718437764,0.04944701248524357,0.07309768601889038
 prevalence,MWI2004DHS,CY2004Q4,MWI,all,both,Y015_049,512,5136,3125.687847978268,0.11830933857108744,0.006909678706379366,0.10542327337073344,0.1325371305722404
