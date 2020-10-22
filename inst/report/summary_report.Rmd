@@ -272,9 +272,9 @@ age_sex <- indicators %>% sf::st_drop_geometry()%>%
   dplyr::filter(area_level == area_filter,
                 calendar_quarter == quarter,
                 sex != "both",
-                age_group_id %in% 0:17) %>% #change range for different disags
+                age_group %in% get_five_year_age_groups()) %>%
   dplyr::left_join(naomi::get_age_groups()) %>%
-  dplyr::mutate(age_group = forcats::fct_reorder(age_group_label, age_group_id),
+  dplyr::mutate(age_group = forcats::fct_reorder(age_group_label, age_group_sort_order),
                 sex = factor(sex, levels = c("male", "female")) )
 
 

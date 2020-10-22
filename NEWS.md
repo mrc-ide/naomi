@@ -1,3 +1,7 @@
+# naomi 1.0.10
+
+* Edit `summary_report.Rmd` to remove `age_group_id`.
+
 # naomi 1.0.9
 
 * Add summary_report_path to model run for saving summary report
