@@ -89,9 +89,10 @@ test_that("colour scales metadata is well formed", {
 test_that("metadata is well formed", {
   meta <- get_metadata()
   expect_true(all(meta$indicator %in%
-    c("art_coverage", "art_current", "prevalence", "vls", "recent", "plhiv",
-      "incidence", "art_number", "population", "incidence", "new_infections",
-      "receiving_art", "anc_prevalence", "anc_art_coverage")))
+                  c("art_coverage", "art_current", "prevalence", "viral_suppression_plhiv",
+                    "recent_infected", "plhiv",
+                    "incidence", "art_number", "population", "incidence", "new_infections",
+                    "receiving_art", "anc_prevalence", "anc_art_coverage")))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))

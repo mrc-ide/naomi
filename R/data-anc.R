@@ -5,8 +5,8 @@
 #' @return Data frame with prevalence and ART coverage
 #' @export
 calculate_prevalence_art_coverage <- function(data) {
-  data$prevalence <- calculate_anc_prevalence(data)
-  data$art_coverage <- calculate_anc_art_coverage(data)
+  data$anc_prevalence <- calculate_anc_prevalence(data)
+  data$anc_art_coverage <- calculate_anc_art_coverage(data)
   data
 }
 

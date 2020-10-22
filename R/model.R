@@ -627,11 +627,11 @@ select_naomi_data <- function(naomi_mf,
             count = length(common_surveys)))
   }
 
-  naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prev", survey_hiv_indicators, naomi_mf, deff = deff_prev)
-  naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "artcov", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
-  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent", survey_hiv_indicators, naomi_mf,
+  naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prevalence", survey_hiv_indicators, naomi_mf, deff = deff_prev)
+  naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "art_coverage", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
+  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent_infected", survey_hiv_indicators, naomi_mf,
                                    deff = deff_recent, min_age = 15, max_age = 80)
-  naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "vls", survey_hiv_indicators, naomi_mf, deff = deff_vls)
+  naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "viral_suppression_plhiv", survey_hiv_indicators, naomi_mf, deff = deff_vls)
 
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
