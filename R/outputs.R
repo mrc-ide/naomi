@@ -1,52 +1,23 @@
+
+#' Get indicator metadata
+#'
+#' @return data.frame of indicator ids, labels, descriptions, and parameter mapping.
+#' 
+#' 
+#' @export
+#'
+#' @examples
+#' get_meta_indicator()
 get_meta_indicator <- function() {
 
-  data.frame(
-    indicator = c("population",
-                  "prevalence",
-                  "plhiv",
-                  "art_coverage",
-                  "art_current_residents",
-                  "art_current",
-                  "incidence",
-                  "infections",
-                  "anc_prevalence",
-                  "anc_art_coverage"),
-    indicator_label = c(t_("POPULATION"),
-                        t_("HIV_PREVALENCE"),
-                        t_("PLHIV"),
-                        t_("ART_COVERAGE"),
-                        t_("ART_NUMBER_RESIDENTS"),
-                        t_("ART_NUMBER_ATTENDING"),
-                        t_("INCIDENCE"),
-                        t_("NEW_INFECTIONS"),
-                        t_("ANC_HIV_PREVALENCE"),
-                        t_("ANC_PRIOR_ART_COVERAGE")),
-    description = c(t_("INDICATOR_LABEL_POPULATION"),
-                    t_("INDICATOR_LABEL_PREVALENCE"),
-                    t_("INDICATOR_LABEL_PLHIV"),
-                    t_("INDICATOR_LABEL_ART_COVERAGE"),
-                    t_("INDICATOR_LABEL_ART_NUM_RESIDENTS"),
-                    t_("INDICATOR_LABEL_ART_NUM_ATTENDING"),
-                    t_("INDICATOR_LABEL_INCIDENCE"),
-                    t_("INDICATOR_LABEL_INFECTIONS"),
-                    t_("INDICATOR_LABEL_ANC_PREVALENCE"),
-                    t_("INDICATOR_LABEL_ANC_ART_COVERAGE")),
-    parameter = c("population_out",
-                  "rho_out",
-                  "plhiv_out",
-                  "alpha_out",
-                  "artnum_out",
-                  "artattend_out",
-                  "lambda_out",
-                  "infections_out",
-                  "anc_rho",
-                  "anc_alpha"),
-    indicator_sort_order = 1:10,
-    format = NA,
-    scale = NA,
-    stringsAsFactors = FALSE
-  )
+  ## TODO: refactor this to be harmonised with inst/metadata/metadata.csv.
+  val <- naomi_read_csv(system_file("metadata", "meta_indicator.csv"))
+  val$indicator_label <- traduire::translator()$replace(val$indicator_label)
+  val$description <- traduire::translator()$replace(val$description)
+
+  val
 }
+
 
 
 add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){

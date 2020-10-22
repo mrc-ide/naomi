@@ -17,6 +17,15 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
   - `art_num_attend` becomes `art_current`.
   - `art_num_residents` becomes `art_current_residents`.
   
+Internal changes:
+
+* Move several metadata tables to CSV tables saved in `inst/metadata/` rather than
+  scripted functions.
+  - `meta_age_group.csv` accessed by `get_age_groups()`.
+  - `meta_indicator.csv` accessed by `get_meta_indicator()`.
+  - Data Pack ID mapping tables: `datapack_indicator_mapping.csv`, 
+    `datapack_agegroup_mapping.csv`, `datapack_sex_mapping.csv`.
+
 
 # naomi 1.0.11
 
