@@ -37,7 +37,7 @@ max-width: 1600px;
 
 .logo_unaids {
    height: 60px;
-  padding-left: 500px;
+  padding-left: 1200px;
 
 }
 
@@ -167,21 +167,12 @@ pop_pyramid_outputs <- function(disag_data,
 
 ```
 
-<style type="text/css">
-.main-container {
-max-width: 1800px;
-margin-left: 10;
-margin-right: 10;
-}
-</style>
-
 
 ``` {r, echo = FALSE, results = 'asis'}
-cat(paste0("#### These  are **", country, "** estimates for **", period, "**."), sep = "\n")
+cat(paste0("This report summarises the **", country, "** results from the Naomi model as of **", period, "**."), sep = "\n")
 ```
 
-
-Naomi combines district-level data about HIV from several sources in a statistical model:
+Further technical information about the Naomi model is available at the end of this document. Naomi combines district-level data about HIV from several sources in a statistical model:
 
 ```{r, echo = FALSE, results = 'asis'}
 text <- tibble::tibble(prefix = c("National Spectrum data from file: ",
@@ -679,3 +670,6 @@ x4 %>% gt::gt(rowname_col = "area_name") %>%
 
 ```
 
+### **Naomi methods**
+
+[place holder text for Naomi methods]
