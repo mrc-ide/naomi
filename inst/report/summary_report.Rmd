@@ -16,9 +16,9 @@ output:
 ``` {css, echo = FALSE}
 
 .main-container {
-max-width: 1600px;
-margin-left: 5;
-margin-right: 5;
+max-width: 1800px;
+margin-left: 1;
+margin-right: 1;
 }
 
 .banner {
@@ -31,8 +31,14 @@ max-width: 1600px;
 
 }
 
-.logo {
+.logo_naomi {
  height: 60px;
+}
+
+.logo_unaids {
+   height: 60px;
+  padding-left: 500px;
+
 }
 
 .text {
