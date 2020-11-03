@@ -707,17 +707,31 @@ save_output <- function(filename, dir,
 generate_output_summary_report <- function(report_path,
                                            output_zip,
                                            quiet = FALSE) {
-  rmd_path <- system_file("report/summary_report.Rmd")
 
-  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+## Render uses relative paths to locate the html file and pacakge author
+## advises against using output_dir see:
+## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
+## so set up a temp directory with all report sources and generate from there
+
+  tmpd <- tempfile()
+  dir.create(tmpd)
+  old <- setwd(tmpd)
+  on.exit(setwd(old))
+  on.exit(unlink(tmpd, recursive = TRUE), add = TRUE)
+
+  file.copy(list.files(system_file("report"), full.names = TRUE), ".")
+
+
   report_filename <- basename(report_path)
   output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
-  rmarkdown::render(rmd_path, params = list(
+  rmarkdown::render("summary_report.Rmd", params = list(
     output_zip = output_zip_path),
-    output_dir = report_path_dir,
     output_file = report_filename,
     quiet = quiet
   )
+
+  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+  file.copy(report_filename, report_path_dir)
 
   invisible(report_path)
 }

@@ -1,13 +1,51 @@
 ---
 title: District HIV Estimates
-output: html_document
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 fig_width: 5
 fig_height: 5
 params:
   output_zip: NA
+  spectrum_file: NA
+  options: NA
+output:
+  html_document:
+    includes:
+      in_header: header.html
 ---
-  
+
+``` {css, echo = FALSE}
+
+.main-container {
+max-width: 1600px;
+margin-left: 5;
+margin-right: 5;
+}
+
+.banner {
+ background-color: #b5132c;
+  font-weight: 200;
+  position: relative;
+  padding: .5rem 1rem;
+  display: flex;
+max-width: 1600px;
+
+}
+
+.logo {
+ height: 60px;
+}
+
+.text {
+ padding-left: 10px;
+ padding-top: 10px;
+ color: white;
+font-size: 35px;
+
+}
+
+```
+
+
 ```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
   
 # Read in files from naomi outputs zip
