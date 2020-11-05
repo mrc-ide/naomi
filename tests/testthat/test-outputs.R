@@ -197,5 +197,3 @@ test_that("can generate summary report", {
   expect_true(any(grepl("mwi2019.PJNZ", readLines(t))))
   expect_true(any(grepl("Central", readLines(t))))
 })
-
-
