@@ -33,8 +33,8 @@ age_group_meta <- naomi::get_age_groups()
 
 fertility <- data.frame(area_id = character(0),
                         time = numeric(0),
-                        age_group_id = integer(0),
-                        quarter_id = integer(0),
+                        age_group = character(0),
+                        calendar_quarter = character(0),
                         asfr = numeric(0))
 
 #' surveys
@@ -118,8 +118,8 @@ The table `survey_hiv_indicators` should also contain all survey HIV prevalence 
 * `art_number` reports the number currently receiving ART at the end of each quarter by area.
 * `anc_testing` reports antenatal clinic (ANC) attendees and outcomes during the quarter. 
 
-The model is currently specified to accept ART numbers by age 0-14 (`age_group_id  = `r filter(naomi::get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group_id = `r filter(naomi::get_age_groups(), age_group_label == "15+")$age_group_id``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
+The model is currently specified to accept ART numbers by age 0-14 (`age_group  = `r filter(naomi::get_age_groups(), age_group_label == "0-14")``) and age 15+ (`age_group = `r filter(naomi::get_age_groups(), age_group_label == "15+")$age_group``) either both sexes together (`sex = "both"`) or by sex (`sex = "female"`/`sex = "male"`).  Possible extension may allow ART inputs by finer stratification.
 
-For `art_number` it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area.  Current specification requires a value `current_art = 0` for an area with no ART whereas no entry for a given area will be interpreted as missing data.  This could be revised, for example to require explicit input for all areas with a code for missing data.
+For `art_number` it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area.  Current specification requires a value `art_current = 0` for an area with no ART whereas no entry for a given area will be interpreted as missing data.  This could be revised, for example to require explicit input for all areas with a code for missing data.
 
-The `anc_testing` data is currently input for all ages of pregnant women aggregated, that is `age_group_id = `r filter(naomi::get_age_groups(), age_group_label == "15-49")$age_group_id`` for age 15-49.
+The `anc_testing` data is currently input for all ages of pregnant women aggregated, that is `age_group = `r filter(naomi::get_age_groups(), age_group_label == "15-49")$age_group`` for age 15-49.

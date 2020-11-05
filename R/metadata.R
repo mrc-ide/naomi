@@ -53,6 +53,16 @@ get_colour_scale <- function(iso3 = "default") {
 get_metadata <- function() {
   data <- naomi_read_csv(system_file("metadata", "metadata.csv"))
   data$name <- traduire::translator()$replace(data$name)
+  
+  ## TODO: refactor these into one location (issue #145)
+  other_data <- get_meta_indicator()
+
+  data <- data %>%
+    dplyr::left_join(
+             dplyr::select(other_data, indicator, indicator_sort_order),
+             by = c("indicator_value" = "indicator")
+           )
+
   data
 }
 
@@ -67,6 +77,6 @@ get_metadata <- function() {
 #' get_five_year_age_groups()
 get_five_year_age_groups <- function() {
   age_groups <- get_age_groups()
-  age_groups <- age_groups[age_groups$age_group_span == 5 | age_groups$age_group == "80+", ]
+  age_groups <- age_groups[age_groups$age_group_span == 5 | age_groups$age_group == "Y080_999", ]
   age_groups$age_group
 }

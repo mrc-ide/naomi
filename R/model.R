@@ -225,7 +225,7 @@ naomi_model_frame <- function(area_merged,
   spec_0to4strat <- spec %>%
     dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id3) + 2),
                   age %in% 0:4) %>%
-    dplyr::mutate(age_group = dplyr::if_else(age == 0, "00-00", "01-04"),
+    dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both",
                   births = 0,
                   susc_previous_year = 0) %>%
@@ -243,10 +243,10 @@ naomi_model_frame <- function(area_merged,
     dplyr::transmute(age_group,
                      population = population_spectrum / sum(population_spectrum),
                      plhiv = plhiv_spectrum / sum(plhiv_spectrum),
-                     art_num_attend = art_num_spectrum / sum(art_num_spectrum),
-                     art_num_residents = art_num_attend,
+                     art_current = art_current_spectrum / sum(art_current_spectrum),
+                     art_current_residents = art_current,
                      infections = infections_spectrum / sum(infections_spectrum)) %>%
-    tidyr::gather(indicator, distribution, population, plhiv, art_num_attend, art_num_residents, infections) %>%
+    tidyr::gather(indicator, distribution, population, plhiv, art_current, art_current_residents, infections) %>%
     dplyr::ungroup()
 
 
@@ -365,7 +365,7 @@ naomi_model_frame <- function(area_merged,
              time_step,
              calendar_quarter,
              prevalence = plhiv_spectrum / population_spectrum,
-             art_coverage = pmax(pmin(art_num_spectrum / plhiv_spectrum, 0.999), 0.001),
+             art_coverage = pmax(pmin(art_current_spectrum / plhiv_spectrum, 0.999), 0.001),
              incidence = infections_spectrum / susc_previous_year_spectrum,
              asfr = births_spectrum / population_spectrum
            )
@@ -504,9 +504,9 @@ naomi_model_frame <- function(area_merged,
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
              log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
              log_lambda_t3_offset = log(spec_incid_t3) - log(spec_prev15to49_t3) - log(1 - omega * spec_artcov15to49_t3),
-             log_lambda_t1_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t1_offset),
-             log_lambda_t2_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t2_offset),
-             log_lambda_t3_offset = dplyr::if_else(age_group == "00-04", -Inf, log_lambda_t3_offset)
+             log_lambda_t1_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t1_offset),
+             log_lambda_t2_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t2_offset),
+             log_lambda_t3_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t3_offset)
            ) %>%
     dplyr::ungroup()
 
@@ -515,8 +515,8 @@ naomi_model_frame <- function(area_merged,
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
              spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
-             paed_rho_ratio = dplyr::if_else(age_group %in% c("00-04", "05-09", "10-14"), spec_prev_t1 / spec_prev15to49f_t1, 0),
-             bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("00-04", "05-09", "10-14")) else 1.0,
+             paed_rho_ratio = dplyr::if_else(age_group %in% c("Y000_004", "Y005_009", "Y010_014"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
              spec_prev15to49f_t1 = NULL
            ) %>%
     dplyr::ungroup()
@@ -627,11 +627,11 @@ select_naomi_data <- function(naomi_mf,
             count = length(common_surveys)))
   }
 
-  naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prev", survey_hiv_indicators, naomi_mf, deff = deff_prev)
-  naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "artcov", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
-  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent", survey_hiv_indicators, naomi_mf,
+  naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prevalence", survey_hiv_indicators, naomi_mf, deff = deff_prev)
+  naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "art_coverage", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
+  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent_infected", survey_hiv_indicators, naomi_mf,
                                    deff = deff_recent, min_age = 15, max_age = 80)
-  naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "vls", survey_hiv_indicators, naomi_mf, deff = deff_vls)
+  naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "viral_suppression_plhiv", survey_hiv_indicators, naomi_mf, deff = deff_vls)
 
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
@@ -816,10 +816,10 @@ survey_mf <- function(survey_ids, indicator,
                            indicator == !!indicator),
              by = c("area_id", "sex", "age_group")
            ) %>%
-    dplyr::mutate(n = n_obs,
+    dplyr::mutate(n = n_observations,
                   n_eff = n / deff,
-                  x_eff = n_eff * est) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, est, se)
+                  x_eff = n_eff * estimate) %>%
+    dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
 
   dat
 }
@@ -858,17 +858,17 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       dplyr::filter(
                year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id,
-               !is.na(ancrt_known_pos),
-               !is.na(ancrt_test_pos),
-               !is.na(ancrt_tested)
+               !is.na(anc_known_pos),
+               !is.na(anc_tested_pos),
+               !is.na(anc_tested)
              ) %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_tested), sum) %>%
+      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested), sum) %>%
       dplyr::ungroup() %>%
       dplyr::transmute(
                area_id,
-               anc_prev_x = ancrt_known_pos + ancrt_test_pos,
-               anc_prev_n = ancrt_known_pos + ancrt_tested
+               anc_prev_x = anc_known_pos + anc_tested_pos,
+               anc_prev_n = anc_known_pos + anc_tested
              )
 
     if(any(anc_prev_dat$anc_prev_x > anc_prev_dat$anc_prev_n))
@@ -914,18 +914,18 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       dplyr::filter(
                year %in% !!year,
                area_id %in% naomi_mf$mf_model$area_id,
-               !is.na(ancrt_known_pos),
-               !is.na(ancrt_test_pos),
-               !is.na(ancrt_already_art)
+               !is.na(anc_known_pos),
+               !is.na(anc_tested_pos),
+               !is.na(anc_already_art)
              )  %>%
       dplyr::group_by(area_id) %>%
-      dplyr::summarise_at(dplyr::vars(ancrt_known_pos, ancrt_test_pos, ancrt_already_art), sum) %>%
+      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_already_art), sum) %>%
       dplyr::ungroup() %>%
-      dplyr::mutate(ancrt_totpos = ancrt_known_pos + ancrt_test_pos) %>%
+      dplyr::mutate(anc_total_pos = anc_known_pos + anc_tested_pos) %>%
       dplyr::transmute(
                area_id,
-               anc_artcov_x = ancrt_already_art,
-               anc_artcov_n = ancrt_totpos
+               anc_artcov_x = anc_already_art,
+               anc_artcov_n = anc_total_pos
              )
 
     if(any(anc_artcov_dat$anc_artcov_x > anc_artcov_dat$anc_artcov_n)) {
@@ -971,7 +971,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       sex = character(0),
       age_group = character(0),
       artnum_idx = integer(0),
-      current_art = integer(0),
+      art_current = integer(0),
       stringsAsFactors = FALSE
     )
   } else {
@@ -1005,7 +1005,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
-                       current_art = approx(quarter_id, current_art, out_quarter_id, rule =2)$y) %>%
+                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y) %>%
       dplyr::ungroup() %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter)
@@ -1021,7 +1021,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
                sex,
                age_group,
                artnum_idx = dplyr::row_number(),
-               current_art
+               art_current
              )
   }
 

@@ -161,7 +161,7 @@ cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
 #-------------------------------------------------------------------------------
 p1 <- map_outputs(geom_data = data, 
                   var = "plhiv",
-                  age = "15-49", 
+                  age = "Y015_049", 
                   sex = "both", 
                   start_colour_scale = "white", 
                   end_colour_scale = "red4", 
@@ -174,8 +174,8 @@ p1 <- map_outputs(geom_data = data,
 # # By lowest area_level
 #-------------------------------------------------------------------------------
 p2 <- map_outputs(geom_data = data, 
-                  var = "art_num_residents",
-                  age = "15+", 
+                  var = "art_current_residents",
+                  age = "Y015_999", 
                   sex = "both", 
                   start_colour_scale = "white", 
                   end_colour_scale = "olivedrab4", 
@@ -189,7 +189,7 @@ p2 <- map_outputs(geom_data = data,
 #-------------------------------------------------------------------------------
 p3 <- map_outputs(geom_data = data, 
                   var = "infections",
-                  age = "15-49", 
+                  age = "Y015_049", 
                   sex = "both", 
                   start_colour_scale = "white", 
                   end_colour_scale = "skyblue4", 
@@ -212,7 +212,7 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2),
 #-------------------------------------------------------------------------------
 p4 <- map_outputs(geom_data = data, 
                   var = "prevalence",
-                  age = "15-49", 
+                  age = "Y015_049", 
                   sex = "both", 
                   start_colour_scale = "white", 
                   end_colour_scale = "red4", 
@@ -226,7 +226,7 @@ p4 <- map_outputs(geom_data = data,
 #-------------------------------------------------------------------------------
 p5 <- map_outputs(geom_data = data, 
                   var = "art_coverage",
-                  age = "15+", 
+                  age = "Y015_999", 
                   sex = "both", 
                   start_colour_scale = "white", 
                   end_colour_scale = "olivedrab4", 
@@ -241,7 +241,7 @@ p5 <- map_outputs(geom_data = data,
 #-------------------------------------------------------------------------------
 p6 <- map_outputs(geom_data = data, 
                   var = "incidence",
-                  age = "15-49", 
+                  age = "Y015_049", 
                   sex = "both", 
                   start_colour_scale = "white", 
                   end_colour_scale = "skyblue4", 
@@ -267,7 +267,8 @@ if("0" %in% area_levels){
   area_filter = min(indicators$area_level)
 } 
 
-age_sex <- indicators %>% sf::st_drop_geometry()%>%
+age_sex <- indicators %>%
+  sf::st_drop_geometry() %>%
   dplyr::left_join(outputs$meta_age_group) %>%
   dplyr::filter(area_level == area_filter,
                 calendar_quarter == quarter,
@@ -295,7 +296,7 @@ p7 <- pop_pyramid_outputs(disag_data = age_sex,
 # # By age and sex (15-49)
 #-------------------------------------------------------------------------------
 p8 <- pop_pyramid_outputs(disag_data = age_sex,
-                          var = "art_num_residents",
+                          var = "art_current_residents",
                           left_colour = "honeydew3",
                           right_colour = "olivedrab4",
                           x_axis_title = "Number on ART",
@@ -353,7 +354,7 @@ if("0" %in% area_levels) {
     sf::st_drop_geometry() %>%
     dplyr::filter(area_level == 0,
                   sex == "both",
-                  age_group_label == "15-49",
+                  age_group == "Y015_049",
                   calendar_quarter == quarter)
   
   national_inc <- national[national$indicator == "incidence",]$mean
@@ -366,7 +367,7 @@ if("0" %in% area_levels) {
   #-----------------------------------------------------------------------------
   p13 <- data %>% sf::st_drop_geometry() %>%
     dplyr::filter(indicator == "prevalence", 
-                  age_group == "15-49",
+                  age_group == "Y015_049",
                   sex == "both", 
     )%>%
     dplyr::mutate(threshold = ifelse(mean > national_prev,"above", "below"),
@@ -409,7 +410,7 @@ if("0" %in% area_levels) {
   ## assign ART coverage categories 
   art_data <- data %>% 
     dplyr::filter(indicator == "art_coverage", 
-                  age_group == "15+",
+                  age_group == "Y015_999",
                   sex == "both") %>%
     dplyr::mutate(mean = round(mean, 2), 
                   threshold = dplyr::case_when(mean >= 0.8 ~ ">80%", 
@@ -449,7 +450,7 @@ if("0" %in% area_levels) {
   # # By lowest area_level, descending, compared to national indicator
   #-----------------------------------------------------------------------------
   p15 <- data %>% dplyr::filter(indicator == "incidence", 
-                                age_group == "15-49",
+                                age_group == "Y015_049",
                                 sex == "both") %>%
     dplyr::mutate(threshold = ifelse(mean > national_inc,"above", "below"),
                   threshold = as.factor(threshold)) %>%
@@ -490,7 +491,7 @@ if("0" %in% area_levels) {
   #-----------------------------------------------------------------------------
   p13 <- data %>% sf::st_drop_geometry() %>%
     dplyr::filter(indicator == "prevalence", 
-                  age_group == "15-49",
+                  age_group == "Y015_049",
                   sex == "both", 
     )%>%
     ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
@@ -535,9 +536,10 @@ if("0" %in% area_levels) {
   # Barplot: Incidence per 1000
   # # By lowest area_level, descending, compared to national indicator
   #-----------------------------------------------------------------------------
-  p15 <- data %>% dplyr::filter(indicator == "incidence", 
-                                age_group == "15-49",
-                                sex == "both") %>%
+  p15 <- data %>%
+    dplyr::filter(indicator == "incidence", 
+                  age_group == "Y015_049",
+                  sex == "both") %>%
     ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
                                  mean,
                                  ymin = lower,
@@ -570,20 +572,22 @@ if("0" %in% area_levels) {
 
 # # Format data for table
 percent_indicators <- c("prevalence", "art_coverage")
-whole_indicators <- c("plhiv", "infections", "art_num_attend", "art_num_residents")
+whole_indicators <- c("plhiv", "infections", "art_current", "art_current_residents")
 
-x1 <- data %>% sf::st_drop_geometry() %>%
-  dplyr::filter(age_group == "15-49",
+x1 <- data %>%
+  sf::st_drop_geometry() %>%
+  dplyr::filter(age_group == "Y015_049",
                 sex == "both") %>%
   dplyr::select(area_name, mean, lower, upper, indicator)
 
 # Format indicators
-x2 <- x1 %>% dplyr::mutate_if(~is.numeric(.),
-                              ~dplyr::if_else(indicator %in% percent_indicators,
-                                              round(. *100, 2),
-                                              dplyr::if_else(indicator == "incidence", 
-                                                      round(.*1000, 2), 
-                                                      ceiling(.))))
+x2 <- x1 %>%
+  dplyr::mutate_if(~is.numeric(.),
+                   ~dplyr::if_else(indicator %in% percent_indicators,
+                                   round(. *100, 2),
+                                   dplyr::if_else(indicator == "incidence", 
+                                                  round(.*1000, 2), 
+                                                  ceiling(.))))
 
 x3 <- x2  %>% dplyr::mutate(val = ifelse(indicator %in% percent_indicators,
                                          paste0(mean,"%"," (",lower,"-",upper,"%)"),
@@ -593,8 +597,8 @@ x4 <- x3 %>%
   dplyr::select(area_name, val, indicator) %>%
   tidyr::spread(indicator, val) %>%
   dplyr::select(area_name, plhiv, prevalence, infections, incidence,
-                art_coverage, art_num_residents,
-                art_num_attend)
+                art_coverage, art_current_residents,
+                art_current)
 
 
 # #-------------------------------------------------------------------------------
@@ -620,15 +624,15 @@ x4 %>% gt::gt(rowname_col = "area_name") %>%
     columns = gt::vars('incidence', 'infections')) %>%
   gt::tab_spanner(
     label = gt::md("**Antiretroviral Treatment**"),
-    columns = gt::vars('art_coverage', 'art_num_residents', 'art_num_attend')) %>%
+    columns = gt::vars('art_coverage', 'art_current_residents', 'art_current')) %>%
   gt::cols_label(
     plhiv = gt::md("**PLHIV**"),
     prevalence = gt::md("**HIV prevalence**"),
     infections = gt::md("**New infections**"),
     incidence = gt::md("**Incidence (per 1000)**"),
     art_coverage = gt::md("**ART coverage**"),
-    art_num_attend = gt::md("**Number residents receiving treatment**"),
-    art_num_residents = gt::md("**Number total clients receiving treatment**")
+    art_current = gt::md("**Number residents receiving treatment**"),
+    art_current_residents = gt::md("**Number total clients receiving treatment**")
   ) %>%
   gt::cols_align(align = "center") %>%
   gt::cols_width(everything()~ px(150))
