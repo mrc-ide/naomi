@@ -2,8 +2,8 @@
 #' Get indicator metadata
 #'
 #' @return data.frame of indicator ids, labels, descriptions, and parameter mapping.
-#' 
-#' 
+#'
+#'
 #' @export
 #'
 #' @examples
@@ -672,12 +672,13 @@ save_output <- function(filename, dir,
 generate_output_summary_report <- function(report_path,
                                            output_zip,
                                            quiet = FALSE) {
-
-## Render uses relative paths to locate the html file and pacakge author
-## advises against using output_dir see:
-## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
-## so set up a temp directory with all report sources and generate from there
-
+  report_filename <- basename(report_path)
+  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+  output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
+  ## Render uses relative paths to locate the html file and pacakge author
+  ## advises against using output_dir see:
+  ## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
+  ## so set up a temp directory with all report sources and generate from there
   tmpd <- tempfile()
   dir.create(tmpd)
   old <- setwd(tmpd)
@@ -686,18 +687,13 @@ generate_output_summary_report <- function(report_path,
 
   file.copy(list.files(system_file("report"), full.names = TRUE), ".")
 
-
-  report_filename <- basename(report_path)
-  output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
   rmarkdown::render("summary_report.Rmd", params = list(
     output_zip = output_zip_path),
     output_file = report_filename,
     quiet = quiet
   )
 
-  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
   file.copy(report_filename, report_path_dir)
-
   invisible(report_path)
 }
 
@@ -1070,7 +1066,7 @@ get_spectrum_aggr_var <- function(level, strat) {
 disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   age_group_0to4_id  <- "Y000_004"
-  
+
   out0to4 <- output$indicators %>%
     dplyr::filter(age_group == age_group_0to4_id) %>%
     dplyr::mutate(age_group = NULL)
@@ -1175,14 +1171,14 @@ export_datapack <- function(naomi_output,
   datapack_indicator_map <- naomi_read_csv(system_file("metadata", "datapack_indicator_mapping.csv"))
   datapack_age_group_map <- naomi_read_csv(system_file("metadata", "datapack_age_group_mapping.csv"))
   datapack_sex_map <- naomi_read_csv(system_file("metadata", "datapack_sex_mapping.csv"))
-  
+
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
              dataelement = datapack_indicator_label,
              dataelementuid = datapack_indicator_id
            ) %>%
     dplyr::select(indicator, dataelement, dataelementuid)
-                    
+
 
   datapack_age_group_map <- datapack_age_group_map %>%
     dplyr::rename(
@@ -1218,11 +1214,11 @@ export_datapack <- function(naomi_output,
              categoryOption_uid_2,
              categoryOption_name_2
            )
-  
+
 
   strat <-  datapack_indicator_map %>%
     tidyr::expand_grid(datapack_age_group_map) %>%
-    tidyr::expand_grid(datapack_sex_map) 
+    tidyr::expand_grid(datapack_sex_map)
 
   dat <- naomi_output$indicators %>%
     dplyr::semi_join(
