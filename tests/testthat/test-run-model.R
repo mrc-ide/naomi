@@ -22,9 +22,9 @@ test_that("model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_id", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label",
-                 "indicator", "indicator_id", "indicator_label",
+                 "sex", "age_group", "age_group_label",
+                 "calendar_quarter", "quarter_label",
+                 "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) == 16368 * 3 + 2*2*10)
   expect_equal(model_run$spectrum_path, output_spectrum)
@@ -75,8 +75,9 @@ test_that("model can be run", {
   )
 
   ## Check coarse age outputs saved in coarse_output_path
-  coarse_ages <- c("15-49", "15-64", "15+", "50+", "00+", "00-64", "00-14",
-                   "15-24", "25-34", "35-49", "50-64", "65+")
+coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064",
+                 "Y000_014", "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
+
   coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
   expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
@@ -141,9 +142,9 @@ test_that("model can be run without programme data", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_id", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label",
-                 "indicator", "indicator_id", "indicator_label",
+                 "sex", "age_group", "age_group_label",
+                 "calendar_quarter", "quarter_label",
+                 "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) == 16368 * 3 + 2*2*10)
 

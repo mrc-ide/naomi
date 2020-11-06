@@ -43,9 +43,9 @@ mwi_anc_testing <- mwi_anc_testing %>%
     mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = c("district32" = "area_name")
   ) %>%
-  mutate(age_group = "15-49") %>%
+  mutate(age_group = "Y015_049") %>%
   group_by(area_id, age_group, year) %>%
-  summarise_at(vars(anc_clients, ancrt_known_pos, ancrt_already_art, ancrt_tested, ancrt_test_pos), sum)
+  summarise_at(vars(anc_clients, anc_known_pos, anc_already_art, anc_tested, anc_tested_pos), sum)
 
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
@@ -63,18 +63,22 @@ mwi_art_number <- mwi_art_number %>%
 #' Based on Spectrum file outputs, which were triangulated 
 
 mwi_art_number <- mwi_art_number %>%
-  mutate(`0-14` = art_tot * 0.06,
-         `15+` = art_tot * 0.94,
+  crossing(age_group_label = c("0-14", "15+")) %>%
+  mutate(art_prop = case_when(age_group_label == "0-14" ~ 0.06,
+                              age_group_label == "15+" ~ 0.94),
+         art_current = round(art_tot * art_prop),
+         art_new = round(art_new * art_prop),
+         art_prop = NULL,
          art_tot = NULL) %>%
-  gather(age_group_label, current_art, `0-14`, `15+`) %>%
   left_join(
     get_age_groups() %>%
-    select(age_group_label, age_group)
+    select(age_group_label, age_group),
+    by = "age_group_label"
   ) %>%
   mutate(sex = "both",
          calendar_quarter = paste0("CY", year, "Q4"),
          age_group_label = NULL) %>%
-  select(area_id, sex, age_group, year, calendar_quarter, current_art)
+  select(area_id, sex, age_group, year, calendar_quarter, art_current, art_new)
 
 usethis::use_data(
            mwi_anc_testing,

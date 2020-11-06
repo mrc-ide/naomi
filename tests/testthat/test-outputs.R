@@ -82,7 +82,7 @@ test_that("subset output returns expected subset", {
 
   area_id_sub <- c("MWI_1_1", "MWI_2_1")
   sex_sub <- "both"
-  age_group_sub <- c("00-14", "15-24", "50+")
+  age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
   calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
   indicator_sub <- c("prevalence", "plhiv")
 
@@ -120,7 +120,7 @@ test_that("subset output returns expected subset", {
   expect_setequal(setdiff(a_output$meta_area$area_id, area_id_sub),
                   sub_drop$indicators$area_id)
   expect_setequal(c("male", "female"), sub_drop$indicators$sex)
-  expect_setequal(setdiff(a_output$meta_age_group$age_group, c(age_group_sub, "00-00", "01-04")),
+  expect_setequal(setdiff(a_output$meta_age_group$age_group, c(age_group_sub, "Y000_000", "Y001_004")),
                   sub_drop$indicators$age_group)
   expect_setequal(setdiff(a_output$meta_period$calendar_quarter, calendar_quarter_sub),
                   sub_drop$indicators$calendar_quarter)
@@ -142,7 +142,7 @@ test_that("subset_output_package() saves expected output package", {
 
   area_id_sub <- c("MWI_1_2", "MWI_2_2")
   sex_sub <- "both"
-  age_group_sub <- c("00-14", "15-24", "50+")
+  age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
   calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
   indicator_sub <- c("prevalence", "plhiv")
 
@@ -199,5 +199,3 @@ test_that("can generate summary report", {
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo_naomi\"", content)))
 })
-
-

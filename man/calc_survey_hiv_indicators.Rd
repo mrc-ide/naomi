@@ -12,11 +12,11 @@ calc_survey_hiv_indicators(
   survey_biomarker,
   areas,
   sex = c("male", "female", "both"),
-  age_group_id = NULL,
+  age_group_include = NULL,
   area_top_level = min(areas$area_level),
   area_bottom_level = max(areas$area_level),
   artcov_definition = c("both", "arv", "artself"),
-  by_restype = FALSE
+  by_res_type = FALSE
 )
 }
 \arguments{
@@ -34,7 +34,7 @@ calc_survey_hiv_indicators(
 
 \item{sex}{Sex.}
 
-\item{age_group_id}{Age group id.}
+\item{age_group_include}{Vector of age agroups to include}
 
 \item{area_top_level}{Area top level.}
 
@@ -42,7 +42,7 @@ calc_survey_hiv_indicators(
 
 \item{artcov_definition}{Definition to use for calculate ART coverage.}
 
-\item{by_restype}{Whether to stratify estimates by urban/rural restype; logical.}
+\item{by_res_type}{Whether to stratify estimates by urban/rural res_type; logical.}
 }
 \description{
 Calculate age/sex/area stratified survey estimates for biomarker outcomes

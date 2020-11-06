@@ -106,7 +106,7 @@ read_spectrum_region_code <- function(pjnz) {
 #' 
 #' @export
 cut_naomi_age_group <- function(age) {
-  labs <- c(sprintf("%02.0f-%02.0f", 0:15*5, 0:15*5 + 4), "80+")
+  labs <- c(sprintf("Y%03.0f_%03.0f", 0:15*5, 0:15*5 + 4), "Y080_999")
   age_group <- cut(x = age, breaks = c(0:16*5, Inf), labels = labs,
                    include.lowest = TRUE, right = FALSE)
   as.character(age_group)
@@ -114,7 +114,7 @@ cut_naomi_age_group <- function(age) {
   
 age_quarter_to_age_group <- function(age_quarter) {
   f <- cut(age_quarter, breaks = c(0:16*5*4, Inf),
-           labels = c(sprintf("%02d-%02d", 0:15*5, 0:15*5+4), "80+"),
+           labels = c(sprintf("Y%03d_%03d", 0:15*5, 0:15*5+4), "Y080_999"),
            include.lowest = TRUE, right = FALSE)
   as.character(f)
 }
@@ -414,7 +414,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
              calendar_quarter = calendar_quarter_out,
              population_spectrum = log_lin_approx(quarter_id, totpop, quarter_id_out),
              plhiv_spectrum = log_lin_approx(quarter_id, hivpop, quarter_id_out),
-             art_num_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
+             art_current_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
              infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
              susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
              births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out)
@@ -426,7 +426,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
                 spectrum_region_code, sex, age_group, calendar_quarter,
                 population_spectrum,
                 plhiv_spectrum,
-                art_num_spectrum,
+                art_current_spectrum,
                 infections_spectrum,
                 susc_previous_year_spectrum,
                 births_spectrum)

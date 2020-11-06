@@ -10,6 +10,7 @@ hintr_run_model(
   output_path = tempfile(),
   spectrum_path = tempfile(fileext = ".zip"),
   coarse_output_path = tempfile(fileext = ".zip"),
+  summary_report_path = tempfile(fileext = ".html"),
   calibration_path = tempfile(fileext = ".rds")
 )
 }
@@ -23,6 +24,8 @@ hintr_run_model(
 \item{spectrum_path}{Path to store spectrum digest file at.}
 
 \item{coarse_output_path}{Path to store coarse age group output zip file at.}
+
+\item{summary_report_path}{Path to store summary report at.}
 
 \item{calibration_path}{Path to store data required for calibrating model.}
 }
