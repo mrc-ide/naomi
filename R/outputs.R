@@ -682,19 +682,18 @@ generate_output_summary_report <- function(report_path,
   ## then copy report to destination
   tmpd <- tempfile()
   dir.create(tmpd)
-  old <- setwd(tmpd)
-  on.exit(setwd(old))
-  on.exit(unlink(tmpd, recursive = TRUE), add = TRUE)
+  on.exit(unlink(tmpd, recursive = TRUE))
+  withr::with_dir(tmpd, {
+    fs::file_copy(list.files(system_file("report"), full.names = TRUE), ".")
 
-  file.copy(list.files(system_file("report"), full.names = TRUE), ".")
+    rmarkdown::render("summary_report.Rmd", params = list(
+      output_zip = output_zip_path),
+      output_file = report_filename,
+      quiet = quiet
+    )
 
-  rmarkdown::render("summary_report.Rmd", params = list(
-    output_zip = output_zip_path),
-    output_file = report_filename,
-    quiet = quiet
-  )
-
-  file.copy(report_filename, report_path_dir)
+    fs::file_copy(report_filename, report_path_dir, overwrite = TRUE)
+  })
   invisible(report_path)
 }
 
