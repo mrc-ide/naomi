@@ -1,13 +1,57 @@
 ---
 title: District HIV Estimates
-output: html_document
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 fig_width: 5
 fig_height: 5
 params:
   output_zip: NA
+  spectrum_file: NA
+  options: NA
+output:
+  html_document:
+    includes:
+      in_header: header.html
 ---
-  
+
+``` {css, echo = FALSE}
+
+.main-container {
+max-width: 1800px;
+margin-left: 1;
+margin-right: 1;
+}
+
+.banner {
+ background-color: #b5132c;
+  font-weight: 200;
+  position: relative;
+  padding: .5rem 1rem;
+  display: flex;
+max-width: 1600px;
+
+}
+
+.logo_naomi {
+ height: 60px;
+}
+
+.logo_unaids {
+   height: 60px;
+  padding-left: 1200px;
+
+}
+
+.text {
+ padding-left: 10px;
+ padding-top: 10px;
+ color: white;
+font-size: 35px;
+
+}
+
+```
+
+
 ```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
   
 # Read in files from naomi outputs zip
@@ -123,21 +167,12 @@ pop_pyramid_outputs <- function(disag_data,
 
 ```
 
-<style type="text/css">
-.main-container {
-max-width: 1800px;
-margin-left: 10;
-margin-right: 10;
-}
-</style>
-
 
 ``` {r, echo = FALSE, results = 'asis'}
-cat(paste0("#### These  are **", country, "** estimates for **", period, "**."), sep = "\n")
+cat(paste0("This report summarises the **", country, "** results from the Naomi model as of **", period, "**."), sep = "\n")
 ```
 
-
-Naomi combines district-level data about HIV from several sources in a statistical model:
+Further technical information about the Naomi model is available at the end of this document. Naomi combines district-level data about HIV from several sources in a statistical model:
 
 ```{r, echo = FALSE, results = 'asis'}
 text <- tibble::tibble(prefix = c("National Spectrum data from file: ",
@@ -639,3 +674,6 @@ x4 %>% gt::gt(rowname_col = "area_name") %>%
 
 ```
 
+### **Naomi methods**
+
+[place holder text for Naomi methods]

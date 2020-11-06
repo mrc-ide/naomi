@@ -25,6 +25,7 @@ Imports:
     dplyr,
     eppasm,
     forcats,
+    fs,
     ggplot2,
     gridExtra,
     gt,
@@ -42,6 +43,7 @@ Imports:
     tidyr,
     tidyselect (>= 1.0.0),
     traduire,
+    withr,
     yaml,
     zip,
     zoo
@@ -56,8 +58,7 @@ Suggests:
     survey,
     testthat (>= 2.1.0),
     tidyverse,
-    viridis,
-    withr
+    viridis
 VignetteBuilder: knitr
 LinkingTo: 
     RcppEigen,
