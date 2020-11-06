@@ -675,10 +675,11 @@ generate_output_summary_report <- function(report_path,
   report_filename <- basename(report_path)
   report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
   output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
-  ## Render uses relative paths to locate the html file and pacakge author
+  ## Render uses relative paths to locate the html file. The package author
   ## advises against using output_dir see:
   ## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
   ## so set up a temp directory with all report sources and generate from there
+  ## then copy report to destination
   tmpd <- tempfile()
   dir.create(tmpd)
   old <- setwd(tmpd)
