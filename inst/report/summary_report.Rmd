@@ -75,12 +75,19 @@ sf::st_as_sf()
 quarter <- options$calendar_quarter_t2
 iso <- options$area_scope
 period <- outputs$meta_period[outputs$meta_period$calendar_quarter == quarter,]$quarter_label
-country <- paste0(outputs$meta_area[outputs$meta_area$area_id == iso,]$area_name, sep = "", collapse = "")
 level <- as.integer(options$area_level)
-survey_prev = paste0(options$survey_prevalence, sep = " ", collapse = "")
-survey_art = paste0(options$survey_art_coverage, sep = " ", collapse = "")
-survey_recent = paste0(options$survey_recently_infected, sep = " ", collapse = "")
-spectrum_file = paste0(inputs[inputs$role == "pjnz",]$filename)
+survey_prev <- paste0(options$survey_prevalence, sep = " ", collapse = "")
+survey_art <- paste0(options$survey_art_coverage, sep = " ", collapse = "")
+survey_recent <- paste0(options$survey_recently_infected, sep = " ", collapse = "")
+spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
+
+# Identify area_level_label for model estimates
+area_level_map <- outputs$meta_area %>%
+  dplyr::group_by(area_level, area_level_label) %>%
+  dplyr::summarise()
+
+area_level_label <- area_level_map[area_level_map$area_level == level,]$area_level_label
+country <- paste0(outputs$meta_area[outputs$meta_area$area_id == iso,]$area_name, sep = "", collapse = "")
 
 
 # Filter data for area + calendar options selected in model run 
@@ -169,11 +176,28 @@ pop_pyramid_outputs <- function(disag_data,
 ```
 
 ``` {r, echo = FALSE, results = 'asis'}
-cat(paste0("This report summarises the **", country, "** results from the Naomi model as of **", period, "**."), sep = "\n")
+cat(paste0("This report summarises the **", area_level_label, "-level** HIV indicators for **", country,"** from the Naomi model as of **", period, "**."), sep = "\n")
+```
+
+Naomi is a statistical model that uses data from several sources, inlcuding:
+
+```{r, echo = FALSE, results = 'asis'}
+text <- tibble::tibble(prefix = c("National household survey data on HIV prevalence: ", 
+                                  "National household survey data on ART coverage: ", 
+                                  "National household survey data on new HIV infections: "), 
+                       source = c(survey_prev, survey_art, survey_recent))
+text$source <- ifelse(text$source == " ",
+                      "not specified",
+                      text$source)
+
+cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
+
 ```
 
 ```{r, echo = FALSE, results= 'asis'}
-cat(paste0("Naomi is a statistal model that estimates district-level HIV indicators from Spectrum file **", spectrum_file,"**",
+
+
+cat(paste0("and national HIV estimates from Spectrum file **", spectrum_file,"**",
            "\n using calibration options: \n " ))
 ```
 ```{r, echo = FALSE, results = 'asis'}
@@ -196,24 +220,10 @@ cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
 
 ```
 
-and survey data from several sources, inlcuding:
 
-```{r, echo = FALSE, results = 'asis'}
-text <- tibble::tibble(prefix = c("National household survey data on HIV prevalence: ", 
-                                  "National household survey data on ART coverage: ", 
-                                  "National household survey data on new HIV infections: "), 
-                       source = c(survey_prev, survey_art, survey_recent))
-text$source <- ifelse(text$source == " ",
-                      "not specified",
-                      text$source)
+Further technical information about the Naomi model is available at the end of this report.
 
-cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
-
-```
-
-Further techincal information about the Naomi model is available at the end of this report.
-
-### **Geographical distribution of PLHIV**
+### **Geographic distribution of PLHIV**
 
 ```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", results = 'asis' }
 
@@ -264,7 +274,7 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2),
 
 ```
 
-### **Geographical distribution of rates of HIV infection**
+### **Geographic distribution of rates of HIV infection**
 
 ```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", results = 'asis' }
 
@@ -396,11 +406,9 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p7), ggplot2::ggplotGrob(p8),
 
 ```
 
-
-
-
-### **District level HIV trends**
-
+```{r, echo = FALSE, results = 'asis'}
+cat(paste0("### **", area_level_label, "-level HIV trends**"))
+```
 
 ``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = 8, fig.width = 12, align = 'centre'}
 # Check output data for area levels avalible
@@ -627,7 +635,9 @@ if("0" %in% area_levels) {
 ```
 
 
-### **District Level Indicators**
+```{r, echo = FALSE, results = 'asis'}
+cat(paste0("### **", area_level_label, "-level indicators**"))
+```
 
 ``` {r, echo = FALSE, warning = FALSE, results = 'asis'}
 
