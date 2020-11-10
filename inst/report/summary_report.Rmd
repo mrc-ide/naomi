@@ -168,24 +168,50 @@ pop_pyramid_outputs <- function(disag_data,
 
 ```
 
-
 ``` {r, echo = FALSE, results = 'asis'}
 cat(paste0("This report summarises the **", country, "** results from the Naomi model as of **", period, "**."), sep = "\n")
 ```
 
-Further technical information about the Naomi model is available at the end of this document. Naomi combines district-level data about HIV from several sources in a statistical model:
+```{r, echo = FALSE, results= 'asis'}
+cat(paste0("Naomi is a statistal model that estimates district-level HIV indicators from Spectrum file **", spectrum_file,"**",
+           "\n using calibration options: \n " ))
+```
+```{r, echo = FALSE, results = 'asis'}
+text <- tibble::tibble(prefix = c("Population calibration: ",
+                                  "PLHIV calibration level: ", 
+                                  "PLHIV calibration strata: ", 
+                                  "ART number calibration level: ", 
+                                  "ART number calibration strata: ", 
+                                  "New infections calibration strata: "
+                                  ), 
+                       source = c(options$spectrum_population_calibration,
+                                  options$spectrum_plhiv_calibration_level,
+                                  options$spectrum_plhiv_calibration_strat,
+                                  options$spectrum_artnum_calibration_level,
+                                  options$spectrum_artnum_calibration_strat, 
+                                  options$spectrum_infections_calibration_strat
+                                  ))
+
+cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
+
+```
+
+and survey data from several sources, inlcuding:
 
 ```{r, echo = FALSE, results = 'asis'}
-text <- tibble::tibble(prefix = c("National Spectrum data from file: ",
-                                  "National household survey data on HIV prevalence: ", 
+text <- tibble::tibble(prefix = c("National household survey data on HIV prevalence: ", 
                                   "National household survey data on ART coverage: ", 
                                   "National household survey data on new HIV infections: "), 
-                       source = c(spectrum_file, survey_prev, survey_art, survey_recent))
+                       source = c(survey_prev, survey_art, survey_recent))
 text$source <- ifelse(text$source == " ",
                       "not specified",
                       text$source)
+
 cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
+
 ```
+
+Further techincal information about the Naomi model is available at the end of this report.
 
 ### **Geographical distribution of PLHIV**
 
