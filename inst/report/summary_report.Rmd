@@ -65,7 +65,8 @@ options <- yaml::read_yaml(options)
 
 
 indicators <- naomi::add_output_labels(outputs) %>%
-dplyr::left_join(outputs$meta_area %>% dplyr::select(area_level, area_id, center_x, center_y)) %>%
+dplyr::left_join(outputs$meta_area %>% dplyr::select(area_level, area_id, center_x, center_y), 
+                 by = c("area_level", "area_id")) %>%
 sf::st_as_sf()
 
 # Grab inputs and model options from model output zip file
@@ -304,12 +305,12 @@ if("0" %in% area_levels){
 
 age_sex <- indicators %>%
   sf::st_drop_geometry() %>%
-  dplyr::left_join(outputs$meta_age_group) %>%
+  dplyr::left_join(outputs$meta_age_group, by = c("age_group", "age_group_label")) %>%
   dplyr::filter(area_level == area_filter,
                 calendar_quarter == quarter,
                 sex != "both",
                 age_group %in% get_five_year_age_groups()) %>%
-  dplyr::left_join(naomi::get_age_groups()) %>%
+  dplyr::left_join(naomi::get_age_groups(), by = c("age_group", "age_group_label", "age_group_start", "age_group_span", "age_group_sort_order")) %>%
   dplyr::mutate(age_group = forcats::fct_reorder(age_group_label, age_group_sort_order),
                 sex = factor(sex, levels = c("male", "female")) )
 
