@@ -50,14 +50,12 @@ mwi_anc_testing <- mwi_anc_testing %>%
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
 mwi_art_number <- mwi_art_number %>%
-  filter(quarter == 4) %>%
   left_join(
-    mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
+    mwi_area_hierarchy %>%
+    filter(area_level == 4) %>%
+    select(area_name, area_id),
     by = c("district32" = "area_name")
-  ) %>%
-  mutate(district32 = NULL,
-         quarter = NULL) %>%
-  select(area_id, year, everything())
+  ) 
 
 #' Approximate the number on ART age 15+ as 94% of all
 #' Based on Spectrum file outputs, which were triangulated 
@@ -76,9 +74,9 @@ mwi_art_number <- mwi_art_number %>%
     by = "age_group_label"
   ) %>%
   mutate(sex = "both",
-         calendar_quarter = paste0("CY", year, "Q4"),
+         calendar_quarter = paste0("CY", year, "Q", quarter),
          age_group_label = NULL) %>%
-  select(area_id, sex, age_group, year, calendar_quarter, art_current, art_new)
+  select(area_id, sex, age_group, calendar_quarter, art_current, art_new)
 
 usethis::use_data(
            mwi_anc_testing,

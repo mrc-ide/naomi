@@ -1,3 +1,7 @@
+# naomi 2.0.1
+
+* Remove column `year` from ART programme data testing dataset.
+
 # naomi 2.0.0
 
 Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to be backward compatible with 2020 version of Naomi model.
