@@ -43,7 +43,6 @@ Internal changes:
 # naomi 1.0.9
 
 * Add summary_report_path to model run for saving summary report
->>>>>>> master
 
 # naomi 1.0.8
 
