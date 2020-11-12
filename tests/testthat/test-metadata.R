@@ -39,10 +39,10 @@ test_that("can get plot metadata for a country", {
       "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
   expect_true(all(unique(metadata$indicator) %in%
-                  c("art_coverage", "current_art", "receiving_art",
+                  c("art_coverage", "art_current", "receiving_art",
                     "prevalence", "art_number",
                     "incidence", "new_infections", "plhiv", "population",
-                    "recent", "vls",
+                    "recent_infected", "viral_suppression_plhiv",
                     "anc_prevalence", "anc_art_coverage")))
 })
 
@@ -56,17 +56,18 @@ test_that("can get plot metadata for missing country with defaults", {
       "colour", "min", "max", "invert_scale") %in%
       names(metadata$result)))
   expect_true(all(unique(metadata$result$indicator) %in%
-                  c("art_coverage", "current_art", "receiving_art",
+                  c("art_coverage", "art_current", "receiving_art",
                     "prevalence", "art_number",
                     "incidence", "new_infections", "plhiv", "population",
-                    "recent", "vls",
+                    "recent_infected", "viral_suppression_plhiv",
                     "anc_prevalence", "anc_art_coverage")))
 })
 
 test_that("colour scales metadata is well formed", {
   scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
   expect_true(all(scales$indicator %in%
-    c("art_coverage", "current_art", "receiving_art", "prevalence", "vls", "recent",
+    c("art_coverage", "art_current", "receiving_art", "prevalence",
+      "viral_suppression_plhiv", "recent_infected",
       "art_number", "plhiv", "incidence", "population", "new_infections",
       "anc_prevalence", "anc_art_coverage")))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
@@ -89,9 +90,11 @@ test_that("colour scales metadata is well formed", {
 test_that("metadata is well formed", {
   meta <- get_metadata()
   expect_true(all(meta$indicator %in%
-    c("art_coverage", "current_art", "prevalence", "vls", "recent", "plhiv",
-      "incidence", "art_number", "population", "incidence", "new_infections",
-      "receiving_art", "anc_prevalence", "anc_art_coverage")))
+                  c("art_coverage", "art_current", "prevalence",
+                    "viral_suppression_plhiv", "recent_infected", "plhiv",
+                    "incidence", "art_number", "population", "incidence",
+                    "new_infections", "receiving_art", "anc_prevalence",
+                    "anc_art_coverage")))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
@@ -102,11 +105,17 @@ test_that("metadata is well formed", {
                       "New infections", "HIV incidence", "ART number (residents)",
                       "ART number (attending)", "ANC HIV prevalence",
                       "ANC prior ART coverage")))
-  ## No NULLs, NAs or empty strings except for indicator_column and
-  ## indicator_value columns
+  expect_equal(
+    colnames(meta),
+    c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
+      "error_high_column", "indicator_column", "indicator_value", "name",
+      "scale", "accuracy", "format", "indicator_sort_order"))
+  ## No NULLs, NAs or empty strings except for indicator_column,
+  ## indicator_value and accuracy columns
   non_empty_columns <- colnames(
     meta[, !(colnames(meta) %in% c("error_low_column", "error_high_column",
-                                   "indicator_column", "indicator_value"))])
+                                   "indicator_column", "indicator_value",
+                                   "accuracy", "indicator_sort_order"))])
   non_empty <- function(x) {
     !is.null(x) & !is.na(x) & !(x == "")
   }
@@ -119,7 +128,7 @@ test_that("metadata is well formed", {
 test_that("can get 5 year age groups", {
   age_groups <- get_five_year_age_groups()
   expect_length(age_groups, 17)
-  expect_equal(age_groups[1], "00-04")
+  expect_equal(age_groups[1], "Y000_004")
 })
 
 ## !!!! TODO: metadata.csv and the meta_indicator data.frame  should not
@@ -129,13 +138,12 @@ test_that("metadata synced with meta_indicator", {
   metadata <- get_metadata()
 
   check <- metadata %>%
-    dplyr::filter(indicator_column == "indicator_id") %>%
+    dplyr::filter(data_type == "output") %>%
     dplyr::distinct(name, indicator_value) %>%
-    dplyr::mutate(indicator_value = as.integer(indicator_value)) %>%
     dplyr::full_join(
              get_meta_indicator() %>%
-             dplyr::select(indicator_id, indicator_label),
-             by = c("indicator_value" = "indicator_id")
+             dplyr::select(indicator, indicator_label),
+             by = c("indicator_value" = "indicator")
            )
 
   expect_equal(tolower(check$name), tolower(check$indicator_label))

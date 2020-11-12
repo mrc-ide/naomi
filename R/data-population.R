@@ -5,29 +5,9 @@
 #' @return data frame
 #' @export
 get_age_groups <- function() {
-  data.frame(
-    age_group_start = c(0:15*5, 80,
-                        15, 15, 15, 50, 0, 0, 0, 15, 25, 35, 50, 65, 0, 1),
-    age_group_span = c(rep(5, 16), Inf,
-                       35, 50, Inf, Inf, Inf, 65, 15, 10, 10, 15, 15, Inf, 1, 4)
-  ) %>%
-    dplyr::mutate(age_group_id = dplyr::row_number(),
-                  age_group = sprintf("%02.0f-%02.0f", age_group_start, age_group_start + age_group_span - 1) %>%
-                    sub("-Inf", "+", .),
-                  age_group_label = paste0(age_group_start, "-", age_group_start + age_group_span - 1) %>%
-                    sub("-Inf", "+", .) %>%
-                    dplyr::recode("0+" = "all ages",
-                                  "0-0" = "<01",
-                                  "1-4" = "01-04",
-                                  "0-4" = "00-04",
-                                  "5-9" = "05-09"),
-                  age_group_sort_order = c(13:29, 1:12, 30, 31)) %>%
-    dplyr::select(age_group_id,
-                  age_group,
-                  age_group_label,
-                  age_group_start,
-                  age_group_span,
-                  age_group_sort_order)
+
+  naomi_read_csv(system_file("metadata", "meta_age_group.csv"))
+
 }
 
 #' Time period indexing

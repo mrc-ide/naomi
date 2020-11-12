@@ -41,13 +41,18 @@ vignettes/data-model.Rmd: vignettes_src/data-model.Rmd
 	mkdir vignettes/figure
 	./vignettes/script/create_data_model.R
 
-vignettes_install: vignettes/model-workflow.Rmd vignettes/data-model.Rmd
+vignettes/hintr-example.Rmd: vignettes_src/hintr-example.R
+  ${RSCRIPT} -e 'knitr::spin("$<", knit=FALSE)'
+
+vignettes_install: vignettes/model-workflow.Rmd vignettes/data-model.Rmd vignettes/hintr-example.Rmd
 	${RSCRIPT} -e 'tools::buildVignettes(dir = ".")'
 
 vignettes:
 	rm -rf vignettes/figure
 	rm -rf vignettes_src/outputs
 	rm -f vignettes/data-model.Rmd
+	rm -f vignettes/model-workflow.Rmd
+	rm -f vignettes_src/model-workflow.Rmd
 	make vignettes_install
 
 .PHONY: test roxygen install build check check_all pkgdown website vignettes vignettes_rmd vignettes_install

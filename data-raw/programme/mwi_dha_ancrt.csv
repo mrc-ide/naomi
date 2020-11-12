@@ -1,4 +1,4 @@
-district32,year,quarter,anc_clients,ancrt_hiv_status,ancrt_known_pos,ancrt_already_art,ancrt_tested,ancrt_test_pos
+district32,year,quarter,anc_clients,anc_hiv_status,anc_known_pos,anc_already_art,anc_tested,anc_tested_pos
 Balaka,2011,3,4534,3580,98,0,3482,266
 Balaka,2011,4,3905,2993,84,0,2909,256
 Balaka,2012,1,4358,2911,112,0,2799,223

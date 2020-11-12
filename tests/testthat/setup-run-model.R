@@ -47,6 +47,15 @@ a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)
 a_hintr_options_bad <- a_hintr_options
 a_hintr_options_bad$calendar_quarter_t2 <- NULL
 
+a_hintr_calibration_options <- list(
+  spectrum_plhiv_calibration_level = "subnational",
+  spectrum_plhiv_calibration_strat = "sex_age_group",
+  spectrum_artnum_calibration_level = "none",
+  spectrum_artnum_calibration_strat = "age_coarse",
+  spectrum_infections_calibration_level = "none",
+  spectrum_infections_calibration_strat = "age_coarse"
+)
+
 ## Use fit.RDS if it exists locally, otherwise just use the actual functions
 ## fit.RDS not on git because it is pretty massive ~ 220MB
 if (file.exists("testdata/fit.RDS")) {
@@ -108,3 +117,32 @@ MockProgress <- R6::R6Class(
     }
   )
 )
+
+clone_output <- function(output) {
+  output_path <- tempfile()
+  file.copy(output$output_path, output_path)
+  spectrum_path <- tempfile(fileext = ".zip")
+  file.copy(output$spectrum_path, spectrum_path)
+  coarse_output_path <- tempfile(fileext = ".zip")
+  file.copy(output$coarse_output_path, coarse_output_path)
+  summary_report_path <- tempfile(fileext = ".html")
+  file.copy(output$summary_report_path, summary_report_path)
+  calibration_path <- tempfile(fileext = ".rds")
+  file.copy(output$calibration_path, calibration_path)
+  build_hintr_output(output_path, spectrum_path, coarse_output_path,
+                     summary_report_path, calibration_path,
+                     output$metadata)
+}
+
+expect_file_equivalent <- function(path_object, path_expected) {
+  object_md5 <- tools::md5sum(path_object)
+  expected_md5 <- tools::md5sum(path_expected)
+  expect_equal(object_md5, expected_md5, check.attributes = FALSE)
+}
+
+expect_file_different <- function(path_object, path_expected) {
+  object_md5 <- tools::md5sum(path_object)
+  expected_md5 <- tools::md5sum(path_expected)
+  expect_false(isTRUE(all.equal(object_md5, expected_md5,
+                                check.attributes = FALSE)))
+}

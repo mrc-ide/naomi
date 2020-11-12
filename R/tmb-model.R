@@ -79,7 +79,7 @@ prepare_tmb_inputs <- function(naomi_data) {
              reside_area_id,
              attend_area_id,
              sex = "both",
-             age_group = "00+",
+             age_group = "Y000_999",
              artnum_idx = dplyr::row_number()
            ) %>%
     create_artattend_Amat(age_groups = naomi_data$age_groups,
@@ -251,9 +251,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
     ##
     A_artattend_t1 = A_artattend_t1,
-    x_artnum_t1 = naomi_data$artnum_t1_dat$current_art,
+    x_artnum_t1 = naomi_data$artnum_t1_dat$art_current,
     A_artattend_t2 = A_artattend_t2,
-    x_artnum_t2 = naomi_data$artnum_t2_dat$current_art,
+    x_artnum_t2 = naomi_data$artnum_t2_dat$art_current,
     A_artattend_mf = A_artattend_mf,
     A_art_reside_attend = A_art_reside_attend,
     ##
@@ -484,6 +484,10 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
   
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
+
+  to_tape <- TMB:::isNullPointer(fit$obj$env$ADFun$ptr)
+  if (to_tape) 
+    fit$obj$retape(FALSE)
 
   if(!random_only) {
     if(verbose) print("Calculating joint precision")

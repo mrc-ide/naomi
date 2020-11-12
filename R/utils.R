@@ -41,3 +41,7 @@ suppress_one_warning <- function(expr, regexp) {
 `%||%` <- function(a, b) {
   if (is.null(a)) b else a
 }
+
+naomi_translator_unregister <- function() {
+  traduire::translator_unregister()
+}

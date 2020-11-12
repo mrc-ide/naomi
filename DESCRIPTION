@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 1.0.5
+Version: 2.0.1
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -25,20 +25,25 @@ Imports:
     dplyr,
     eppasm,
     forcats,
+    fs,
     ggplot2,
     gridExtra,
+    gt,
     here,
+    knitr,
     magrittr,
     methods,
     mvtnorm,
     readr,
     rlang,
+    rmarkdown,
     sf,
     spdep,
     specio (>= 0.1.2),
     tidyr,
     tidyselect (>= 1.0.0),
     traduire,
+    withr,
     yaml,
     zip,
     zoo
@@ -46,17 +51,14 @@ Suggests:
     DiagrammeR,
     covr,
     datamodelr,
-    knitr,
     lubridate,
     mockery,
     rdhs,
-    rmarkdown,
     scales,
     survey,
     testthat (>= 2.1.0),
     tidyverse,
-    viridis,
-    withr
+    viridis
 VignetteBuilder: knitr
 LinkingTo: 
     RcppEigen,

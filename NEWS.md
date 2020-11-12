@@ -1,9 +1,72 @@
-# naomi 1.0.5
+# naomi 2.0.1
 
 * Remove calibration options from model run options
 
-# naomi 1.0.4
+# naomi 2.0.0
 
+Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to be backward compatible with 2020 version of Naomi model.
+
+* Update age group codes to `YXXX_XXX`.
+* Chage `age_group_label` from 00-04 to 0-4 and 05-09 to 5-9.
+* Remove `age_group_id`, `indicator_id`, and `quarter_id` column from output package.
+* Rename columns in datasets for consistency with Fjelltop UNAIDS data inputs package:
+  - ANC testing dataset: `ancrt_*` changed to `anc_*`.
+  - ART programme data: `current_art` changed to `art_current` and `art_new` column added.
+  - Survey HIV indicators: make several column names more human readable.
+* Add Kish effective sample size approximation (`sum(weights) ^ 2 / sum(weights ^ 2)`) 
+  to survey indicators dataset in field `n_eff_kish`.
+* Harmonise indicator names in survey dataset with outputs (`prevalence`, `art_coverage`).
+* Rename calculated ANC input indicators to `anc_prevalence` and `anc_art_coverage`.
+* Harmonise ART number output indicators with ART input data indicators:
+  - `art_num_attend` becomes `art_current`.
+  - `art_num_residents` becomes `art_current_residents`.
+  
+Internal changes:
+
+* Move several metadata tables to CSV tables saved in `inst/metadata/` rather than
+  scripted functions.
+  - `meta_age_group.csv` accessed by `get_age_groups()`.
+  - `meta_indicator.csv` accessed by `get_meta_indicator()`.
+  - Data Pack ID mapping tables: `datapack_indicator_mapping.csv`, 
+    `datapack_agegroup_mapping.csv`, `datapack_sex_mapping.csv`.
+
+
+# naomi 1.0.11
+
+* Add a basic vignette showing example script for running `hintr_run_model()` 
+  for reproducing web app workflow.
+  
+# naomi 1.0.10
+
+* Edit `summary_report.Rmd` to remove `age_group_id`.
+
+# naomi 1.0.9
+
+* Add summary_report_path to model run for saving summary report
+>>>>>>> master
+
+# naomi 1.0.8
+
+* Avoid segfault in `sample_tmb()` when redoing the sampling with different TMB
+  configuration (different computer/number of set threads) by recreating the
+  pointers if they are missing using `obj$retape()`.
+
+# naomi 1.0.7
+
+* Return indicator formatting metadata in `get_metadata()` and `get_plotting_metadata()`
+
+# naomi 1.0.6
+
+* Import sparse matrix multiplication `%*%` from `Matrix` package.
+
+# naomi 1.0.5
+
+* Add `hintr_calibrate()` which takes output and calibration options and runs
+  calibration and returns in hintr output format
+
+# naomi 1.0.4
+* Rename summary_path in model run args to coarse_output_path to be more
+  representative of actual output (in preparation for adding summary report)
 * Add `get_calibration_options()` to retrieve options for calibration
 
 # naomi 1.0.2
