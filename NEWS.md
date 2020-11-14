@@ -1,3 +1,7 @@
+# naomi 2.0.2
+
+* Patch to `inst/report/summary_report.Rmd` to handle error if `area_name` is not unique.
+
 # naomi 2.0.1
 
 * Remove calibration options from model run options
