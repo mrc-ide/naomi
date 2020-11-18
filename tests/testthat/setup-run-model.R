@@ -26,6 +26,7 @@ a_hintr_options <- list(
   anc_prevalence_year2 = 2018,
   anc_art_coverage_year1 = 2016,
   anc_art_coverage_year2 = 2018,
+  spectrum_population_calibration = "none",
   artattend = "true",
   artattend_t2 = "false",
   artattend_log_gamma_offset = -4L,

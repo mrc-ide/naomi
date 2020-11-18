@@ -73,9 +73,6 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
 
   ## Set default "none" calibration options if missing from options list
-  if (is.null(options$spectrum_population_calibration)) {
-    options$spectrum_population_calibration <- "none"
-  }
    
   if (is.null(options$spectrum_plhiv_calibration_level)) {
     options$spectrum_plhiv_calibration_level  <-  "none"
