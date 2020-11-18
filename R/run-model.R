@@ -71,6 +71,36 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   validate_model_options(data, options)
   progress$complete("validate_options")
 
+
+  ## Set default "none" calibration options if missing from options list
+  if (is.null(options$spectrum_population_calibration)) {
+    options$spectrum_population_calibration <- "none"
+  }
+   
+  if (is.null(options$spectrum_plhiv_calibration_level)) {
+    options$spectrum_plhiv_calibration_level  <-  "none"
+  }
+
+  if (is.null(options$spectrum_plhiv_calibration_strat)) {
+    options$spectrum_plhiv_calibration_strat <- "sex_age_group"
+  }
+
+  if (is.null(options$spectrum_artnum_calibration_level)) {
+    options$spectrum_artnum_calibration_level <- "none"
+  }
+  
+  if (is.null(options$spectrum_artnum_strat)) {
+    options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
+  }
+  
+  if (is.null(options$spectrum_infections_calibration_level)) {
+    options$spectrum_infections_calibration_level <- "none"
+  }
+  
+  if (is.null(options$spectrum_infections_strat)) {
+    options$spectrum_infections_calibration_strat <- "sex_age_coarse"
+  }
+  
   progress$start("prepare_inputs")
   progress$print()
 
