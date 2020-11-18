@@ -1,3 +1,7 @@
+# naomi 2.0.2
+
+* Supply default `"none"` calibration options in `hintr_run_model()` if calibration options are not specified in the options list.
+
 # naomi 2.0.1
 
 * Remove calibration options from model run options
