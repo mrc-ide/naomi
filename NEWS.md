@@ -1,3 +1,8 @@
+# naomi 2.0.3
+
+* Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.
+* Add `area_name` field to survey indicators dataset prepared by `calc_survey_indicators()`.
+
 # naomi 2.0.2
 
 * Supply default `"none"` calibration options in `hintr_run_model()` if calibration options are not specified in the options list.
