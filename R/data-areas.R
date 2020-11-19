@@ -54,7 +54,7 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
   areas_wide$area_id <- areas_wide[[paste0("area_id", max_level)]]
 
   if(!is.null(boundaries))
-    areas_wide <- sf::st_as_sf(dplyr::left_join(areas_wide, boundaries))
+    areas_wide <- sf::st_as_sf(dplyr::left_join(areas_wide, boundaries), by = "area_id")
 
   areas_wide
 }

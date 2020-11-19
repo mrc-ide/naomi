@@ -1,3 +1,7 @@
+# naomi 2.0.4
+
+* Remove survey data preparation functions. Added to `naomi.utils` package.
+
 # naomi 2.0.3
 
 * Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.
