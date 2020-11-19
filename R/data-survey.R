@@ -226,14 +226,20 @@ calc_survey_hiv_indicators <- function(survey_meta,
     stop(paste("Invalid artcov_definition value:", artcov_definition[1]))
   }
 
-
+  ## Rename variables to coutcome indicators
   ind <- ind %>%
     dplyr::rename(prevalence = hivstatus,
                   art_coverage = artcov,
                   viral_suppression_plhiv = vls,
-                  recent_infected = recent) %>%
-    tidyr::gather(indicator, estimate,
-                  prevalence, art_coverage, viral_suppression_plhiv, recent_infected) %>%
+                  recent_infected = recent)
+
+  ## Pivot to long format
+  ind <- ind %>%
+    tidyr::pivot_longer(
+             cols = c(prevalence, art_coverage, viral_suppression_plhiv, recent_infected),
+             names_to = "indicator",
+             values_to = "estimate"
+           ) %>%
     dplyr::filter(!is.na(estimate))
 
   ## 6. Calculate outcomes
@@ -283,8 +289,12 @@ calc_survey_hiv_indicators <- function(survey_meta,
     ) %>%
     dplyr::left_join(
              areas %>%
-             dplyr::select(area_id, area_level, area_sort_order),
+             dplyr::select(area_id, area_name, area_level, area_sort_order),
              by = c("area_id")
+           ) %>%
+    dplyr::left_join(
+             dplyr::select(age_groups, age_group, age_group_sort_order),
+             by = "age_group"
            ) %>%
     dplyr::arrange(
              factor(indicator, c("prevalence", "art_coverage", "viral_suppression_plhiv", "recent_infected")),
@@ -295,20 +305,47 @@ calc_survey_hiv_indicators <- function(survey_meta,
              area_id,
              factor(res_type, c("all", "urban", "rural")),
              factor(sex, c("both", "male", "female")),
-             age_group
+             age_group_sort_order
            ) %>%
     dplyr::select(
-             indicator, survey_id, survey_mid_calendar_quarter, area_id, res_type, sex, age_group,
-             n_clusters, n_observations, n_eff_kish, estimate, std_error) %>%
-    dplyr::distinct() %>%
+             indicator,
+             survey_id,
+             survey_mid_calendar_quarter,
+             area_id,
+             area_name,
+             res_type,
+             sex,
+             age_group,
+             n_clusters,
+             n_observations,
+             n_eff_kish,
+             estimate,
+             std_error
+           ) %>%
+    dplyr::distinct()
+
+  ## Calculate 95% CI on logit scale
+  val <- val %>%
     dplyr::mutate(
-             ci_lower = if_else(!estimate %in% 0:1, stats::plogis(stats::qlogis(estimate) - stats::qnorm(0.975) * std_error / (estimate * (1-estimate))), NA_real_),
-             ci_upper = if_else(!estimate %in% 0:1, stats::plogis(stats::qlogis(estimate) + stats::qnorm(0.975) * std_error / (estimate * (1-estimate))), NA_real_)
+             ci_lower = calc_logit_confint(estimate, std_error, "lower"),
+             ci_upper = calc_logit_confint(estimate, std_error, "upper")
            )
 
   val
 }
 
+calc_logit_confint <- function(estimate, std_error, tail, conf.level = 0.95) {
+
+  stopifnot(length(estimate) == length(std_error))
+  stopifnot(tail %in% c("lower", "upper"))
+  stopifnot(conf.level > 0 & conf.level < 1)
+
+  crit <- qnorm(1 - (1 - conf.level) / 2) * switch(tail, "lower" = -1, "upper" = 1)
+  lest <- stats::qlogis(estimate)
+  lest_se <- std_error / (estimate * (1 - estimate))
+    
+  ifelse(estimate < 1 & estimate > 0, stats::plogis(lest + crit * lest_se), NA_real_)
+}
 
 #' Find Calendar Quarter Midpoint of Two Dates
 #'
