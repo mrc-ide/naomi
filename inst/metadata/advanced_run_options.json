@@ -173,52 +173,37 @@
       ]
     },
     {
-      "label": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL)",
+      "label": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL)",
       "controls": [
         {
-          "name": "artattend_t2",
-          "type": "select",
+          "name": "deff_prev",
+          "type": "number",
           "required": true,
-          "options": [
-            {
-              "id": "false",
-              "label": "t_(OPTIONS_NO_LABEL)"
-            },
-            {
-              "id": "true",
-              "label": "t_(OPTIONS_YES_LABEL)"
-            }
-          ],
-          "value": "true",
-          "helpText": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP)"
+          "value": 1.0,
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
         }
       ]
     },
-          {
-           "label": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
-            "controls": [
+    {
+      "label": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_LABEL)",
+      "controls": [
         {
-          "name": "deff_prev",
-          "label": "t_(HIV_PREVALENCE)",
-          "type": "number",
-          "required": true,
-                    "value": 1.0,
-          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
-        },
-            {
           "name": "deff_artcov",
-          "label": "t_(ART_COVERAGE)",
           "type": "number",
           "required": true,
-                "value": 1.0,
+          "value": 1.0,
           "helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
-        },
-              {
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL)",
+      "controls": [
+        {
           "name": "deff_recent",
-          "label": "t_(PROPORTION_RECENTLY_INFECTED)",
           "type": "number",
           "required": true,
-                "value": 1.0,
+          "value": 1.0,
           "helpText": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP)"
         }
       ]
