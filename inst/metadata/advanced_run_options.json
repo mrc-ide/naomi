@@ -180,7 +180,7 @@
           "type": "number",
           "required": true,
           "value": 1.0,
-          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)"
         }
       ]
     },
