@@ -191,6 +191,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_ancalpha_x = sparse_model_matrix(~0 + area_idf, df),
     A_anc_t1 = A_anc_t1,
     A_anc_t2 = A_anc_t2,
+    log_asfr_t1_offset = log(df$asfr_t1),
+    log_asfr_t2_offset = log(df$asfr_t2),
+    log_asfr_t3_offset = log(df$asfr_t3),
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset * naomi_data$mf_model$bin_rho_model,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
@@ -267,6 +270,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_lambda_t3_offset = df$log_lambda_t3_offset,
     ##
     A_out = naomi_data$A_out,
+    A_anc_out = naomi_data$A_anc_out,
     calc_outputs = 1L
   )
 

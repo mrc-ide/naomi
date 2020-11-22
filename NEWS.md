@@ -4,6 +4,9 @@ This release revises the modelling of ANC prevalence and ART coverage and produc
 outputs for district-level ANC testing cascade.
 
 * Add ANC bias parameters to age-specific prevalence and ART coverage regression equations instead of to aggregate ANC prevalence and ART coverage.
+* ANC prevalence and ANC ART coverage outputs are produced by five-year age group, 15-24, 25-34, 35-49, and all ages.
+* New output indicators for ANC clients (`anc_clients`), number of HIV positive ANC attendess, 
+  (`anc_plhiv`), and number of ANC clients already on ART prior to first ANC visit (`anc_already_art`).
 
 # naomi 2.0.3
 

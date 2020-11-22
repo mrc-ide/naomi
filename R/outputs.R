@@ -100,6 +100,37 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
 
+  indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
+                         "anc_plhiv_t1_out" = "anc_plhiv",
+                         "anc_already_art_t1_out" = "anc_already_art",
+                         "anc_rho_t1_out" = "anc_prevalence",
+                         "anc_alpha_t1_out" = "anc_art_coverage")
+
+  indicators_anc_t2 <- c("anc_clients_t2_out" = "anc_clients",
+                         "anc_plhiv_t2_out" = "anc_plhiv",
+                         "anc_already_art_t2_out" = "anc_already_art",
+                         "anc_rho_t2_out" = "anc_prevalence",
+                         "anc_alpha_t2_out" = "anc_art_coverage")
+  
+  indicators_anc_t3 <- c("anc_clients_t3_out" = "anc_clients",
+                         "anc_plhiv_t3_out" = "anc_plhiv",
+                         "anc_already_art_t3_out" = "anc_already_art",
+                         "anc_rho_t3_out" = "anc_prevalence",
+                         "anc_alpha_t3_out" = "anc_art_coverage")
+
+  
+  indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
+                              naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t2 <- Map(get_est, names(indicators_anc_t2), indicators_anc_t2,
+                              naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t3 <- Map(get_est, names(indicators_anc_t3), indicators_anc_t3,
+                              naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out))
+
+
+  indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
+  indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
+  indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
+
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
@@ -107,12 +138,11 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
   out <- dplyr::bind_rows(
                   indicator_est_t1,
-                  get_est("anc_rho_t1_out", "anc_prevalence", naomi_mf$calendar_quarter1, mf_anc_out),
-                  get_est("anc_alpha_t1_out", "anc_art_coverage", naomi_mf$calendar_quarter1, mf_anc_out),
+                  indicator_anc_est_t1,
                   indicator_est_t2,
-                  get_est("anc_rho_t2_out", "anc_prevalence", naomi_mf$calendar_quarter2, mf_anc_out),
-                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out),
-                  indicator_est_t3
+                  indicator_anc_est_t2,
+                  indicator_est_t3,
+                  indicator_anc_est_t3
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),

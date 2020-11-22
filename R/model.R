@@ -543,7 +543,7 @@ naomi_model_frame <- function(area_merged,
 
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
-            mc_anc_out = anc_outf$mf,
+            mf_anc_out = anc_outf$mf,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
