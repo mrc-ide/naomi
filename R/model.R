@@ -2,15 +2,24 @@
 #'
 #' @param mf_model Model frame
 #' @param area_aggregation data.frame with columns `area_id` and `model_area_id`.
+#' @param age_groups Age groups to include in aggregated outputs.
+#' @param sexes Sexes to include in aggregated outputs.
+#'
+#' @return A list consisting of a data.frame `mf` and a sparse matrix `A`. The
+#'   data frame `mf` provides a model matrix defining the stratifications for
+#'   the outputs. The sparse matrix `A` defines a linear transform to aggregate
+#'   the rows of mf_model to the rows of the output `mf`
 #'
 #' @export
-naomi_output_frame <- function(mf_model, area_aggregation) {
+naomi_output_frame <- function(mf_model,
+                               area_aggregation,
+                               age_groups = unique(mf_model$age_group),
+                               sexes = unique(mf_model$sex)) {
 
-  age_groups <- unique(mf_model$age_group)
-
+  stopifnot(age_groups %in% mf_model$age_group)
+  stopifnot(sexes %in% mf_model$sex)
+  
   model_area_ids <- unique(mf_model$area_id)
-
-  sexes <- unique(mf_model$sex)
   sex_out <- get_sex_out(sexes)
 
   sex_join <- data.frame(sex_out = c("male", "female", "both", "both", "both"),
@@ -40,12 +49,12 @@ naomi_output_frame <- function(mf_model, area_aggregation) {
   )
 
   df_join <- tidyr::crossing(area_aggregation, sex_join, age_group_join) %>%
-    dplyr::full_join(
+    dplyr::left_join(
              mf_model %>%
              dplyr::select("area_id", "sex", "age_group", "idx"),
       by = c("model_area_id" = "area_id",
              "sex", "age_group")) %>%
-    dplyr::full_join(
+    dplyr::right_join(
              mf_out %>%
              dplyr::mutate(out_idx = dplyr::row_number())
             ,
@@ -441,8 +450,15 @@ naomi_model_frame <- function(area_merged,
                                               areas = areas,
                                               drop_partial_areas = TRUE)
   outf <- naomi_output_frame(mf_model, area_aggregation)
-  
 
+  anc_age_groups <- get_age_groups() %>%
+    dplyr::filter(age_group %in% get_five_year_age_groups(),
+                  age_group_start >= 15,
+                  age_group_start + age_group_span <= 50)
+  anc_age_groups <- anc_age_groups$age_group
+  
+  anc_outf <- naomi_output_frame(mf_model, area_aggregation, anc_age_groups, "female")
+  
 
   ## ART attendance model
 
@@ -527,12 +543,14 @@ naomi_model_frame <- function(area_merged,
 
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
+            mc_anc_out = anc_outf$mf,
             mf_areas = mf_areas,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
             rho_paed_x_term = rho_paed_x_term,
             area_aggregation = area_aggregation,
             A_out = outf$A,
+            A_anc_out = anc_outf$A,
             Lproj_hivpop = Lproj$Lproj_hivpop,
             Lproj_incid = Lproj$Lproj_incid,
             Lproj_paed = Lproj$Lproj_paed,
@@ -772,8 +790,9 @@ get_age_group_out <- function(age_groups) {
     dplyr::group_by(age_group) %>%
     dplyr::filter(age_group_start == min(mod_agegr_start)) %>%
     dplyr::ungroup() %>%
-    dplyr::count(age_group, age_group_span, wt = mod_agegr_span) %>%
-    dplyr::filter(age_group_span == n)
+    dplyr::count(age_group, age_group_span, age_group_sort_order, wt = mod_agegr_span) %>%
+    dplyr::filter(age_group_span == n) %>%
+    dplyr::arrange(age_group_sort_order)
 
   v$age_group
 }
