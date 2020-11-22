@@ -60,7 +60,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "prevalence", "art_number",
                     "incidence", "new_infections", "plhiv", "population",
                     "recent_infected", "viral_suppression_plhiv",
-                    "anc_prevalence", "anc_art_coverage")))
+                    "anc_prevalence", "anc_art_coverage",
+                    "anc_clients", "anc_plhiv", "anc_already_art")))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -69,7 +70,8 @@ test_that("colour scales metadata is well formed", {
     c("art_coverage", "art_current", "receiving_art", "prevalence",
       "viral_suppression_plhiv", "recent_infected",
       "art_number", "plhiv", "incidence", "population", "new_infections",
-      "anc_prevalence", "anc_art_coverage")))
+      "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
+      "anc_already_art")))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -94,17 +96,19 @@ test_that("metadata is well formed", {
                     "viral_suppression_plhiv", "recent_infected", "plhiv",
                     "incidence", "art_number", "population", "incidence",
                     "new_infections", "receiving_art", "anc_prevalence",
-                    "anc_art_coverage")))
+                    "anc_art_coverage", "anc_clients", "anc_plhiv", "anc_already_art")))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
   expect_true(all(meta$data_type %in% c("survey", "anc", "programme", "output")))
   expect_true(all(meta$name %in%
-                    c("HIV prevalence", "ART coverage", "Viral load suppression",
-                      "Proportion recently infected", "PLHIV", "Population",
+                  c("HIV prevalence", "ART coverage", "Viral load suppression",
+                    "Proportion recently infected", "PLHIV", "Population",
                       "New infections", "HIV incidence", "ART number (residents)",
-                      "ART number (attending)", "ANC HIV prevalence",
-                      "ANC prior ART coverage")))
+                    "ART number (attending)", "ANC HIV prevalence",
+                    "ANC prior ART coverage", "ANC clients",
+                    "HIV positive ANC attendees",
+                    "ANC attendees already on ART")))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",

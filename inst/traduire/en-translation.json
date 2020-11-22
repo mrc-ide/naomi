@@ -119,7 +119,7 @@
     "INVALID_CALIBRATE_OBJECT": "Can't calibrate this model output please re-run model and try calibration again",
     "ANC_CLIENTS": "ANC clients",
     "ANC_PLHIV": "HIV positive ANC attendees",
-    "ANC_ALREADY_HIV": "ANC attendees already on ART",
+    "ANC_ALREADY_ART": "ANC attendees already on ART",
     "INDICATOR_LABEL_ANC_CLIENTS": "Total number attending first ANC",
     "INDICATOR_LABEL_ANC_PLHIV": "Number of HIV positive women attending ANC",
     "INDICATOR_LABEL_ANC_ALREADY_ART": "Number already on ART prior prior to first ANC"

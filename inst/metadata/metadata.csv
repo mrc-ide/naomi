@@ -29,6 +29,6 @@ output,barchart,incidence,mean,lower,upper,indicator,incidence,t_(INCIDENCE),100
 output,barchart,new_infections,mean,lower,upper,indicator,infections,t_(NEW_INFECTIONS),100,100,0
 output,barchart,anc_prevalence,mean,lower,upper,indicator,anc_prevalence,t_(ANC_HIV_PREVALENCE),1,,0.00%
 output,barchart,anc_art_coverage,mean,lower,upper,indicator,anc_art_coverage,t_(ANC_PRIOR_ART_COVERAGE),1,,0.00%
-output,choropleth,anc_clients,mean,lower,upper,indicator,anc_clients,t_(ANC_CLIENTS),1,100,0
-output,choropleth,anc_plhiv,mean,lower,upper,indicator,anc_plhiv,t_(ANC_PLHIV),1,10,0
-output,choropleth,anc_already_art,mean,lower,upper,indicator,anc_already_art,t_(ANC_ALREADY_ART),1,10,0
+output,barchart,anc_clients,mean,lower,upper,indicator,anc_clients,t_(ANC_CLIENTS),1,100,0
+output,barchart,anc_plhiv,mean,lower,upper,indicator,anc_plhiv,t_(ANC_PLHIV),1,10,0
+output,barchart,anc_already_art,mean,lower,upper,indicator,anc_already_art,t_(ANC_ALREADY_ART),1,10,0
