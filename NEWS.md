@@ -1,3 +1,10 @@
+# naomi 2.1.0 
+
+This release revises the modelling of ANC prevalence and ART coverage and produces
+outputs for district-level ANC testing cascade.
+
+* Add ANC bias parameters to age-specific prevalence and ART coverage regression equations instead of to aggregate ANC prevalence and ART coverage.
+
 # naomi 2.0.3
 
 * Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.
