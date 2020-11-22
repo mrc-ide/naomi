@@ -411,7 +411,7 @@ test_that("model run can be calibrated", {
                         a_hintr_output$output_path)
   indicators_output <- readRDS(calibrated_output$output_path)
   ## Check there is some data
-  expect_equal(nrow(output), 16368 * 3 + 3 * 5 * 22 * 11)
+  expect_equal(nrow(indicators_output), 16368 * 3 + 3 * 5 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output$spectrum_path,
@@ -496,7 +496,7 @@ test_that("model run can be calibrated", {
                         calibrated_output$output_path)
   indicators_output <- readRDS(calibrated_output_2$output_path)
   ## Check there is some data
-  expect_equal(nrow(output), 16368 * 3 + 3 * 5 * 22 * 11)
+  expect_equal(nrow(indicators_output), 16368 * 3 + 3 * 5 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output_2$spectrum_path,
