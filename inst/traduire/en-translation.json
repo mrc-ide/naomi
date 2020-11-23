@@ -105,6 +105,7 @@
     "PROGRESS_FIT_MODEL": "Fitting the model",
     "PROGRESS_UNCERTAINTY": "Generating uncertainty ranges",
     "PROGRESS_PREPARE_OUTPUTS": "Preparing outputs",
+    "PROGRESS_FIT_MODEL_HELP_TEXT": "Iteration {{iteration}} - {{elapsed}} elapsed",
     "NO_ART_DATA_FOR_QUARTER": "No ART data found for quarter {{calendar_quarter}}.\nSet 'Include ART data' to 'No' if you intend to include no ART data.",
     "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "ANC testing on ART greater than ANC testing total positive.",
     "ANC_DATA_MISSING_FOR_YEAR": "ANC testing data not found for year {{missing_year}}.",
