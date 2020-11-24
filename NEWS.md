@@ -1,3 +1,7 @@
+# naomi 2.0.4
+
+* Tidy model options layout and tooltip text
+
 # naomi 2.0.3
 
 * Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.
