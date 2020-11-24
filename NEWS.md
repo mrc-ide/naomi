@@ -1,3 +1,7 @@
+# naomi 2.0.5
+
+* Report iteration number and elapsed time from model fit
+
 # naomi 2.0.4
 
 * Tidy model options layout and tooltip text
