@@ -111,13 +111,14 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$print()
 
   fit <- fit_tmb(tmb_inputs,
-                 outer_verbose = ifelse(is.null(options$outer_verbose), FALSE, options$outer_verbose),
-                 inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose),
-                 max_iter = ifelse(is.null(options$max_iterations), 250, options$max_iterations),
+                 outer_verbose = options$outer_verbose %||% FALSE,
+                 inner_verbose = options$inner_verbose %||%  FALSE,
+                 max_iter = options$max_iterations %||% 250,
                  progress = progress)
 
-  if(fit$convergence != 0 && !permissive)
+  if(fit$convergence != 0 && !permissive) {
     stop(paste("convergence error:", fit$message))
+  }
 
   progress$complete("fit_model")
   progress$start("uncertainty")
