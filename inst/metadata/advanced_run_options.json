@@ -40,7 +40,7 @@
         {
           "name": "calendar_quarter_t3",
           "type": "select",
-          "value": "CY2020Q3",
+          "value": "CY2021Q3",
           "helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
                  "required": true,
                 "options": [
