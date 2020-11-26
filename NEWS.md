@@ -1,3 +1,9 @@
+# naomi 2.0.6
+
+* Updates to 'Model Options' page in Naomi application:
+  * Update default 'current estimates' calendar quarter to December 2020.
+  * Move 'short-term projections' calendar quarter to General options block.
+  
 # naomi 2.0.5
 
 * Report iteration number and elapsed time from model fit
