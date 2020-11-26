@@ -5,6 +5,7 @@
   * Move 'short-term projections' calendar quarter to General options block.
   * Add drop down to select 'number of months' included in ANC testing data reporting.
   * Add select option to use Kish design effect in survey data likelihood.
+  * Select most recent `survey_mid_calendar_quarter` as survey run option.
   
 # naomi 2.0.5
 
