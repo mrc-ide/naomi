@@ -119,5 +119,7 @@
     "SCOPE_AREAS_MISSING_HIERARCHY": "Scope area {{missing_areas}} not found in hierarchy.",
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Scope areas {{missing_areas}} not found in hierarchy.",
     "SHAPE_SPECTRUM_REGION_ALL_NA": "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level.",
-    "INVALID_CALIBRATE_OBJECT": "Can't calibrate this model output please re-run model and try calibration again"
+    "INVALID_CALIBRATE_OBJECT": "Can't calibrate this model output please re-run model and try calibration again",
+    "OPTIONS_ANC_MONTHS_LABEL": "Number months included",
+    "OPTIONS_ANC_MONTHS_HELP": "Number of months included in ANC reporting in this year."
 }

@@ -3,6 +3,7 @@
 * Updates to 'Model Options' page in Naomi application:
   * Update default 'current estimates' calendar quarter to December 2020.
   * Move 'short-term projections' calendar quarter to General options block.
+  * Add drop down to select 'number of months' included in ANC testing data reporting.
   
 # naomi 2.0.5
 
