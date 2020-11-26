@@ -65,3 +65,10 @@ hintr_options <- list(
 hintr_options$outer_verbose <- TRUE
 
 hintr_paths <- hintr_run_model(hintr_data, hintr_options)
+
+
+#' Read output package and generate datapack export
+naomi_output <- read_output_package(hintr_paths$spectrum_path)
+
+datapack_path <- tempfile(fileext = ".csv")
+export_datapack(naomi_output, datapack_path, psnu_level = 3)

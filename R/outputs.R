@@ -1188,7 +1188,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 export_datapack <- function(naomi_output,
                             path,
                             psnu_level = max(naomi_output$meta_area$area_level),
-                            calendar_quarter = max(naomi_output$meta_period$calendar_quarter)) {
+                            calendar_quarter = naomi_output$meta_period$calendar_quarter) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
   stopifnot(psnu_level %in% naomi_output$meta_area$area_level)
@@ -1257,11 +1257,12 @@ export_datapack <- function(naomi_output,
              by = "area_id"
            ) %>%
     dplyr::filter(indicator %in% datapack_indicator_map$indicator,
-                  calendar_quarter == !!calendar_quarter,
+                  calendar_quarter %in% {{ calendar_quarter }},
                   sex %in% datapack_sex_map$sex &
                   age_group %in% datapack_age_group_map$age_group |
                   sex == "both" & age_group == "Y000_999") %>%
-    dplyr::transmute(area_id, indicator, sex, age_group, value = mean, rse = se / mean)
+    dplyr::transmute(area_id, indicator, sex, age_group, calendar_quarter,
+                     value = mean, rse = se / mean)
 
   dat <- dat %>%
     dplyr::filter(age_group != "Y000_999") %>%
@@ -1270,7 +1271,7 @@ export_datapack <- function(naomi_output,
              dplyr::filter(dat, age_group == "Y000_999") %>%
              dplyr::select(-age_group, -sex, -value) %>%
              dplyr::rename(district_rse = rse),
-             by = c("area_id", "indicator")
+             by = c("area_id", "indicator", "calendar_quarter")
            ) %>%
     dplyr::left_join(
              sf::st_drop_geometry(naomi_output$meta_area) %>%
@@ -1286,6 +1287,7 @@ export_datapack <- function(naomi_output,
                   category_2, categoryuid_2,
                   categoryOption_name_1, categoryOption_uid_1.1,
                   categoryOption_name_2, categoryOption_uid_2,
+                  calendar_quarter,
                   value, age_sex_rse, district_rse)
 
   naomi_write_csv(datapack, path)
