@@ -108,7 +108,26 @@
       "label": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL)",
       "controls": [
         {
+          "name": "use_kish_prev",
+          "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
+          "type": "number",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
+        },
+        {
           "name": "deff_prev",
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
           "value": 1.0,
@@ -120,7 +139,26 @@
       "label": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_LABEL)",
       "controls": [
         {
+          "name": "use_kish_artcov",
+          "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
+          "type": "number",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
+        },
+        {
           "name": "deff_artcov",
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",	    
           "type": "number",
           "required": true,
           "value": 1.0,
@@ -131,8 +169,26 @@
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL)",
       "controls": [
+          "name": "use_kish_recent",
+          "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
+          "type": "number",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
+        },
         {
           "name": "deff_recent",
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",	    	    
           "type": "number",
           "required": true,
           "value": 1.0,

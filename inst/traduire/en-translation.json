@@ -78,11 +78,11 @@
     "OPTIONS_ADVANCED_LOGIT_HELP": "Logit offset for odds of obtaining ART in neighbouring district compared to home district",
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Either supply levels, hierarchy, and boundaries, or area_merged",
     "AREAS_LEVEL_NOT_UNIQUE": "Area levels not unique.\nDuplicated level: {{missing_levels}}",
-    "OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL": "Approximate district survey design effect - HIV prevalence",
+    "OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL": "Survey design effect - HIV prevalence",
     "OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP": "Approximate DEFF to scale effective sample size for survey for HIV prevalence observations",
-    "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_LABEL": "Approximate district survey design effect - ART coverage",
+    "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_LABEL": "Survey design effect - ART coverage",
     "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "Approximate DEFF to scale effective sample size for survey for ART coverage",
-    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL": "Approximate district survey design effect - Proportion recently infected",
+    "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL": "Survey design effect - Proportion recently infected",
     "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "Approximate DEFF to scale effective sample size for survey for proportion recently infected amongst HIV positive",
     "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Calendar quarter to generate short-term projection",
     "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Calendar quarter to generate short-term projection. Must be after calendar quarter to generate estimates.",
@@ -121,5 +121,8 @@
     "SHAPE_SPECTRUM_REGION_ALL_NA": "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level.",
     "INVALID_CALIBRATE_OBJECT": "Can't calibrate this model output please re-run model and try calibration again",
     "OPTIONS_ANC_MONTHS_LABEL": "Number months included",
-    "OPTIONS_ANC_MONTHS_HELP": "Number of months included in ANC reporting in this year."
+    "OPTIONS_ANC_MONTHS_HELP": "Number of months included in ANC reporting in this year.",
+    "OPTIONS_ADVANCED_USE_KISH_LABEL": "Use Kish ESS",
+    "OPTIONS_ADVANCED_USE_KISH_HELP": "Use Kish Effective Sample Size (ESS) for survey data likelihood",
+    "OPTIONS_ADVANCED_ESS_SCALING_LABEL": "ESS Scaling Factor"
 }

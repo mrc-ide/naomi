@@ -4,6 +4,7 @@
   * Update default 'current estimates' calendar quarter to December 2020.
   * Move 'short-term projections' calendar quarter to General options block.
   * Add drop down to select 'number of months' included in ANC testing data reporting.
+  * Add select option to use Kish design effect in survey data likelihood.
   
 # naomi 2.0.5
 
