@@ -18,7 +18,7 @@
           "name": "anc_prevalence_year1_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12  
+          "value": 12,
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
@@ -90,7 +90,7 @@
           "name": "anc_prevalence_year2_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12  
+          "value": 12,
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
@@ -162,7 +162,7 @@
           "name": "anc_art_coverage_year1_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12  
+          "value": 12,
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
@@ -234,7 +234,7 @@
           "name": "anc_art_coverage_year2_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12  
+          "value": 12,
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [

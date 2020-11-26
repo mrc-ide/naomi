@@ -29,7 +29,7 @@
       ]
     }
   ]
-},
+}, 
 {
   "label": "t_(OPTIONS_ADVANCED_LABEL)",
   "description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
@@ -168,7 +168,8 @@
     },
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL)",
-      "controls": [
+	"controls": [
+	{
           "name": "use_kish_recent",
           "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
           "type": "number",
