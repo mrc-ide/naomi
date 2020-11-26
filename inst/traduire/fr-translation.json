@@ -84,7 +84,7 @@
     "OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP": "DEFF approximate pour ajuster le taille effective de l'échantillon pour l'enquête survey sur le couverage d'ART",
     "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL": "District approximate enquête design éffet - Proportion de personnes récemment infectées",
     "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "DEFF approximate pour ajuster le taille effective de l'échantillon pour la proportion récemment infectée parmi les séropositifs",
-    "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Trimestre de projection:",
+    "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Trimestre de projection pour générer une projection à court terme",
     "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Trimestre calendaire pour générer une projection à court terme. Doit être après le trimestre calendaire pour générer des estimations",
     "MONTH_MARCH": "Mars",
     "MONTH_JUNE": "Juin",
