@@ -1,3 +1,24 @@
+# naomi 2.0.5
+
+* Report iteration number and elapsed time from model fit
+
+# naomi 2.0.4
+
+* Tidy model options layout and tooltip text
+
+# naomi 2.0.3
+
+* Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.
+* Add `area_name` field to survey indicators dataset prepared by `calc_survey_indicators()`.
+
+# naomi 2.0.2
+
+* Supply default `"none"` calibration options in `hintr_run_model()` if calibration options are not specified in the options list.
+
+# naomi 2.0.1
+
+* Remove calibration options from model run options
+
 # naomi 2.0.0
 
 Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to be backward compatible with 2020 version of Naomi model.

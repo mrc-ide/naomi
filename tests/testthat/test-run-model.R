@@ -211,15 +211,15 @@ test_that("progress messages are printed", {
       hintr_run_model(a_hintr_data, a_hintr_options,
                       output_path, output_spectrum, coarse_output_path))
   })
-  expect_equal(length(model_run$progress), 6)
-  for (step in model_run$progress) {
-    expect_equal(step[[1]]$name, "Validating inputs and options")
-    expect_equal(step[[2]]$name, "Preparing input data")
-    expect_equal(step[[3]]$name, "Fitting the model")
-    expect_equal(step[[4]]$name, "Generating uncertainty ranges")
-    expect_equal(step[[5]]$name, "Preparing outputs")
-  }
+  ## If using mock fit here there will only be 6, if using real
+  ## fit_tmb there will be many more
+  expect_true(length(model_run$progress) >= 6)
   first_message <- model_run$progress[[1]]
+  expect_equal(first_message[[1]]$name, "Validating inputs and options")
+  expect_equal(first_message[[2]]$name, "Preparing input data")
+  expect_equal(first_message[[3]]$name, "Fitting the model")
+  expect_equal(first_message[[4]]$name, "Generating uncertainty ranges")
+  expect_equal(first_message[[5]]$name, "Preparing outputs")
   ## 5 different states
   expect_equal(length(first_message), 5)
   expect_true(first_message[[1]]$started)
@@ -233,6 +233,24 @@ test_that("progress messages are printed", {
   expect_true(second_message[[1]]$complete)
   expect_true(second_message[[2]]$started)
   expect_false(second_message[[2]]$complete)
+
+  skip_if(!all.equal(fit, fit_tmb),
+          "Using mock fit result, skipping progress tests")
+  ## Help text gets printed at some point
+  model_help <- lapply(model_run$progress, function(msg) {
+    msg$fit_model$helpText
+  })
+  have_iteration <- grepl("Iteration \\d+ - [\\d.m]+s elapsed", model_help,
+                          perl = TRUE)
+  expect_true(any(have_iteration))
+  expect_false(all(have_iteration))
+  ## Iteration message updates
+  expect_false(identical(model_help[[which(have_iteration)[1]]],
+                      model_help[[which(have_iteration)[2]]]))
+
+  ## Final messages is cleared of help text
+  final_message <- model_run$progress[[length(model_run$progress)]]
+  expect_true(is.null(final_message$fit_model$helpText))
 })
 
 test_that("model run throws error for invalid inputs", {
@@ -545,4 +563,44 @@ test_that("useful error returned when model output can't be calibrated", {
   expect_error(hintr_calibrate(NULL, list(test = "option")),
                paste0("Can't calibrate this model output please re-run model",
                " and try calibration again"))
+})
+
+test_that("progress can report on model fit", {
+  ## Mock some times for consistent testing of elapsed time, return
+  ## now, in 30s time, in 2 mins time, in 1h 2 mins time and in 1h 5m 8s time
+  now <- round.POSIXt(Sys.time(), units = "mins")
+  mock_sys_time <- mockery::mock(now, now + 30, now + (2 * 60), now + (62 * 60),
+                                 now + (65 * 60) + 8)
+  with_mock("Sys.time" = mock_sys_time, {
+    progress <- MockProgress$new()
+    expect_null(progress$progress$fit_model$helpText)
+    messages1 <- naomi_evaluate_promise(
+      progress$iterate_fit()
+    )
+    messages2 <- naomi_evaluate_promise(
+      progress$iterate_fit()
+    )
+    messages3 <- naomi_evaluate_promise(
+      progress$iterate_fit()
+    )
+    reset <- naomi_set_language("fr")
+    on.exit(reset())
+    messages4 <- naomi_evaluate_promise(
+      progress$iterate_fit()
+    )
+    messages5 <- naomi_evaluate_promise({
+      progress$complete("fit_model")
+      progress$print()
+    })
+  })
+  expect_equal(progress$start_time, now)
+  expect_equal(messages1$progress[[1]]$fit_model$helpText,
+               "Iteration 1 - 30s elapsed")
+  expect_equal(messages2$progress[[1]]$fit_model$helpText,
+               "Iteration 2 - 2m elapsed")
+  expect_equal(messages3$progress[[1]]$fit_model$helpText,
+               "Iteration 3 - 1h 2m elapsed")
+  expect_equal(messages4$progress[[1]]$fit_model$helpText,
+               "Itération 4 - 1h 5m 8s écoulées")
+  expect_null(messages5$progress[[1]]$fit_model$helpText)
 })
