@@ -1,6 +1,7 @@
 # naomi 2.0.7
 
 * Slight text edits to ANC model options block labels.
+* Add `area_name` field to example datasets, conforming to ADR schemas.
 
 # naomi 2.0.6
 

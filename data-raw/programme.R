@@ -39,25 +39,28 @@ data(mwi_area_hierarchy)
 mwi_anc_testing <- read_csv(here("data-raw/programme/mwi_dha_ancrt.csv"))
 
 mwi_anc_testing <- mwi_anc_testing %>%
+  rename(area_name = district32) %>%
   left_join(
-    mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
-    by = c("district32" = "area_name")
+    mwi_area_hierarchy %>%
+    filter(area_level == 4) %>%
+    select(area_name, area_id),
+    by = "area_name"
   ) %>%
   mutate(age_group = "Y015_049") %>%
-  group_by(area_id, age_group, year) %>%
+  group_by(area_id, area_name, age_group, year) %>%
   summarise_at(vars(anc_clients, anc_known_pos, anc_already_art, anc_tested, anc_tested_pos), sum)
 
 mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
 mwi_art_number <- mwi_art_number %>%
+  rename(area_name = district32) %>%
   filter(quarter == 4) %>%
   left_join(
     mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
-    by = c("district32" = "area_name")
+    by = "area_name"
   ) %>%
-  mutate(district32 = NULL,
-         quarter = NULL) %>%
-  select(area_id, year, everything())
+  mutate(quarter = NULL) %>%
+  select(area_id, area_name, year, everything())
 
 #' Approximate the number on ART age 15+ as 94% of all
 #' Based on Spectrum file outputs, which were triangulated 
@@ -78,7 +81,7 @@ mwi_art_number <- mwi_art_number %>%
   mutate(sex = "both",
          calendar_quarter = paste0("CY", year, "Q4"),
          age_group_label = NULL) %>%
-  select(area_id, sex, age_group, year, calendar_quarter, art_current, art_new)
+  select(area_id, area_name, sex, age_group, year, calendar_quarter, art_current, art_new)
 
 usethis::use_data(
            mwi_anc_testing,
