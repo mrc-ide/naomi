@@ -187,4 +187,4 @@ test_that("metadata format column hasn't been messed by Excel", {
   expect_setequal(meta$format[meta$indicator == "anc_prevalence"], "0.0%")
   expect_setequal(meta$format[meta$indicator == "anc_art_coverage"], "0.0%")
   expect_setequal(meta$format[meta$indicator == "recent_infected"], "0.00%")
-}
+})
