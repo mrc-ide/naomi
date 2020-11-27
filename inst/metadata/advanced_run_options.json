@@ -29,7 +29,7 @@
       ]
     }
   ]
-}, 
+},
 {
   "label": "t_(OPTIONS_ADVANCED_LABEL)",
   "description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
@@ -110,7 +110,7 @@
         {
           "name": "use_kish_prev",
           "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
-          "type": "number",
+          "type": "select",
           "required": true,
           "options": [
             {
@@ -141,7 +141,7 @@
         {
           "name": "use_kish_artcov",
           "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
-          "type": "number",
+          "type": "select",
           "required": true,
           "options": [
             {
@@ -158,7 +158,7 @@
         },
         {
           "name": "deff_artcov",
-          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",	    
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
           "value": 1.0,
@@ -172,7 +172,7 @@
 	{
           "name": "use_kish_recent",
           "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
-          "type": "number",
+          "type": "select",
           "required": true,
           "options": [
             {
@@ -189,7 +189,7 @@
         },
         {
           "name": "deff_recent",
-          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",	    	    
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
           "value": 1.0,

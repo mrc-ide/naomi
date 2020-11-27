@@ -161,7 +161,7 @@
         {
           "name": "anc_art_coverage_year1_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
-          "type": "number",
+          "type": "select",
           "value": "12",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
