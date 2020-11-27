@@ -16,9 +16,11 @@ output:
 ``` {css, echo = FALSE}
 
 .main-container {
-max-width: 1800px;
+max-width: 1300px;
 margin-left: 0;
 margin-right: 1;
+text-align: justify;
+text-justify: inter-word;
 }
 
 .banner {
@@ -27,7 +29,7 @@ margin-right: 1;
   position: relative;
   padding: .5rem 1rem;
   display: flex;
-max-width: 1600px;
+max-width: 1300px;
 
 }
 
@@ -711,6 +713,35 @@ x4 %>% gt::gt(rowname_col = "area_name") %>%
 
 ```
 
-### **Naomi methods**
+$~$
 
-[place holder text for Naomi methods]
+### Methods
+
+The [Naomi model](https://github.com/mrc-ide/naomi){target="_blank"} is a small-area estimation model for estimating HIV prevalence and PLHIV, ART coverage, and new HIV infections at district level by sex and five-year age group. The model combines district-level data about multiple outcomes from several sources in a Bayesian statistical model to produce robust indicators of subnational HIV burden.
+
+The model produces estimates at three time points: the year of the most recent population-based survey, the year of the last HIV national estimates round (2020), and short-term one-year ahead projections for HIV programme planning purposes. Subnational population estimates by sex and age group are sourced from consensus sources in each country and adjusted to match the populations used within Spectrum by sex and age group.
+
+_Survey data_
+
+Cross-sectional estimates for HIV prevalence, ART coverage, and HIV incidence are produced at the mid-point of the most recent nationally representative household survey. For HIV prevalence, the model is calibrated to survey data about HIV prevalence by subnational level, sex, and five-year age group from the most recent population-based survey (PHIA or DHS). Since the survey sample size in each district is relatively small, routinely reported data about HIV prevalence among pregnant women attending their first antenatal care visit, extracted from the national health information system, are used to improve estimates of the spatial pattern of HIV. 
+
+_ART coverage_
+
+Antiretroviral therapy coverage by district, age, and sex is estimated from household survey data about the presence of antiretroviral biomarkers in HIV-positive survey respondents. Routinely reported antiretroviral therapy coverage among pregnant women prior to first antenatal care visit is used as a covariate for the spatial pattern of antiretroviral therapy coverage. The antiretroviral therapy coverage and HIV prevalence are also calibrated so that total number on antiretroviral therapy matches that report in the Spectrum national file.  
+
+_ART attendance in neighbouring districts_
+
+A challenge for estimating treatment coverage at district level is that persons may access antiretroviral therapy services in a different district than their residence, for example if facilities are closer or perceived to provide better services. The model allows for a probability that resident people living with HIV access antiretroviral therapy in a neighbouring district. The prior assumption is that the large majority of people living with HIV will access antiretroviral therapy in their district of residence, but this probability can vary based on district data about the number receiving antiretroviral therapy compared to HIV prevalence, antiretroviral therapy coverage and population.
+
+_HIV incidence_
+
+Direct estimates of HIV incidence are not available at subnational levels. While some recent household surveys have measured HIV incidence at the national level based on biomarker measures for recent HIV infections, too few recent infections are observed in any district to make a robust estimate. Therefore, to estimate HIV incidence at the subnational level, the HIV transmission rate from Spectrum estimates is calculated and applied to small area estimates of HIV prevalence and ART coverage in each subnational area.  The sex and age distribution in each subnational area are based on HIV incidence rate ratios from Spectrum applied to the population structure in each area. 
+
+_Projection to March 2020 and 2021_
+
+The project estimates from the most recent household survey to the current period, the model is to conduct a one-step projection of the population March 2020. Population estimates are updated with official population estimates. The number of PLHIV is projected forward based on survival estimates by province, sex, and age group from Spectrum over the same period (which accounts for HIV disease progression and effects of ART scale up on reducing AIDS mortality). Where avalible, ART coverage is updated based on the number on ART in 2020 from service provision data. 
+
+_Version_
+
+Future development of Naomi will extend the model for additional data sources and indicators including the HIV care cascade and prevention indicators.
+
