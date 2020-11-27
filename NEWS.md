@@ -1,3 +1,7 @@
+# naomi 2.0.7
+
+* Slight text edits to ANC model options block labels.
+
 # naomi 2.0.6
 
 * Updates to 'Model Options' page in Naomi application:
