@@ -39,7 +39,7 @@
           "value": "CY2020Q4",
           "required": true
         }
-      }
+      ]
     },
     {
       "label": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL)",
