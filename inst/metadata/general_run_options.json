@@ -49,53 +49,53 @@
           "type": "select",
           "value": "CY2021Q3",
           "helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
-                 "required": true,
-                "options": [
-                     {
+          "required": true,
+          "options": [
+            {
               "id": "CY2020Q1",
               "label": "t_(MONTH_MARCH) 2020"
             },
-                     {
+            {
               "id": "CY2020Q2",
               "label": "t_(MONTH_JUNE) 2020"
             },
-                     {
+            {
               "id": "CY2020Q3",
               "label": "t_(MONTH_SEPTEMBER) 2020"
             },
-                     {
+            {
               "id": "CY2020Q4",
               "label": "t_(MONTH_DECEMBER) 2020"
             },
-                     {
+            {
               "id": "CY2021Q1",
               "label": "t_(MONTH_MARCH) 2021"
             },
-                     {
+            {
               "id": "CY2021Q2",
               "label": "t_(MONTH_JUNE) 2021"
             },
-                     {
+            {
               "id": "CY2021Q3",
               "label": "t_(MONTH_SEPTEMBER) 2021"
             },
-                     {
+            {
               "id": "CY2021Q4",
               "label": "t_(MONTH_DECEMBER) 2021"
             },
-                     {
+            {
               "id": "CY2022Q1",
               "label": "t_(MONTH_MARCH) 2022"
             },
-                     {
+            {
               "id": "CY2022Q2",
               "label": "t_(MONTH_JUNE) 2022"
             },
-                     {
+            {
               "id": "CY2022Q3",
               "label": "t_(MONTH_SEPTEMBER) 2022"
             },
-                     {
+            {
               "id": "CY2022Q4",
               "label": "t_(MONTH_DECEMBER) 2022"
             }

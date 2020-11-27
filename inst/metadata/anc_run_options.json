@@ -18,57 +18,57 @@
           "name": "anc_prevalence_year1_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12,
+          "value": "12",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
             {
-                "id": 12,
-                "label": 12
+                "id": "12",
+                "label": "12 months"
             },
             {
-                "id": 11,
-                "label": 11
+                "id": "11",
+                "label": "11 months"
             },
             {
-                "id": 10,
-                "label": 10
+                "id": "10",
+                "label": "10 months"
             },
             {
-                "id": 9,
-                "label": 9
+                "id": "9",
+                "label": "9 months"
             },
             {
-                "id": 8,
-                "label": 8
+                "id": "8",
+                "label": "8 months"
             },
             {
-                "id": 7,
-                "label": 7
+                "id": "7",
+                "label": "7 months"
             },
             {
-                "id": 6,
-                "label": 6
+                "id": "6",
+                "label": "6 months"
             },
             {
-                "id": 5,
-                "label": 5
+                "id": "5",
+                "label": "5 months"
             },
             {
-                "id": 4,
-                "label": 4
+                "id": "4",
+                "label": "4 months"
             },
             {
-                "id": 3,
-                "label": 3
+                "id": "3",
+                "label": "3 months"
             },
             {
-                "id": 2,
-                "label": 2
+                "id": "2",
+                "label": "2 months"
             },
             {
-                "id": 1,
-                "label": 1
+                "id": "1",
+                "label": "1 months"
             }
           ]
         }
@@ -90,57 +90,57 @@
           "name": "anc_prevalence_year2_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12,
+          "value": "12",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
             {
-                "id": 12,
-                "label": 12
+                "id": "12",
+                "label": "12 months"
             },
             {
-                "id": 11,
-                "label": 11
+                "id": "11",
+                "label": "11 months"
             },
             {
-                "id": 10,
-                "label": 10
+                "id": "10",
+                "label": "10 months"
             },
             {
-                "id": 9,
-                "label": 9
+                "id": "9",
+                "label": "9 months"
             },
             {
-                "id": 8,
-                "label": 8
+                "id": "8",
+                "label": "8 months"
             },
             {
-                "id": 7,
-                "label": 7
+                "id": "7",
+                "label": "7 months"
             },
             {
-                "id": 6,
-                "label": 6
+                "id": "6",
+                "label": "6 months"
             },
             {
-                "id": 5,
-                "label": 5
+                "id": "5",
+                "label": "5 months"
             },
             {
-                "id": 4,
-                "label": 4
+                "id": "4",
+                "label": "4 months"
             },
             {
-                "id": 3,
-                "label": 3
+                "id": "3",
+                "label": "3 months"
             },
             {
-                "id": 2,
-                "label": 2
+                "id": "2",
+                "label": "2 months"
             },
             {
-                "id": 1,
-                "label": 1
+                "id": "1",
+                "label": "1 months"
             }
           ]
         }
@@ -161,58 +161,58 @@
         {
           "name": "anc_art_coverage_year1_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
-          "type": "select",
-          "value": 12,
+          "type": "number",
+          "value": "12",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
             {
-                "id": 12,
-                "label": 12
+                "id": "12",
+                "label": "12 months"
             },
             {
-                "id": 11,
-                "label": 11
+                "id": "11",
+                "label": "11 months"
             },
             {
-                "id": 10,
-                "label": 10
+                "id": "10",
+                "label": "10 months"
             },
             {
-                "id": 9,
-                "label": 9
+                "id": "9",
+                "label": "9 months"
             },
             {
-                "id": 8,
-                "label": 8
+                "id": "8",
+                "label": "8 months"
             },
             {
-                "id": 7,
-                "label": 7
+                "id": "7",
+                "label": "7 months"
             },
             {
-                "id": 6,
-                "label": 6
+                "id": "6",
+                "label": "6 months"
             },
             {
-                "id": 5,
-                "label": 5
+                "id": "5",
+                "label": "5 months"
             },
             {
-                "id": 4,
-                "label": 4
+                "id": "4",
+                "label": "4 months"
             },
             {
-                "id": 3,
-                "label": 3
+                "id": "3",
+                "label": "3 months"
             },
             {
-                "id": 2,
-                "label": 2
+                "id": "2",
+                "label": "2 months"
             },
             {
-                "id": 1,
-                "label": 1
+                "id": "1",
+                "label": "1 months"
             }
           ]
         }
@@ -234,57 +234,57 @@
           "name": "anc_art_coverage_year2_num_months",
           "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
-          "value": 12,
+          "value": "12",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
             {
-                "id": 12,
-                "label": 12
+                "id": "12",
+                "label": "12 months"
             },
             {
-                "id": 11,
-                "label": 11
+                "id": "11",
+                "label": "11 months"
             },
             {
-                "id": 10,
-                "label": 10
+                "id": "10",
+                "label": "10 months"
             },
             {
-                "id": 9,
-                "label": 9
+                "id": "9",
+                "label": "9 months"
             },
             {
-                "id": 8,
-                "label": 8
+                "id": "8",
+                "label": "8 months"
             },
             {
-                "id": 7,
-                "label": 7
+                "id": "7",
+                "label": "7 months"
             },
             {
-                "id": 6,
-                "label": 6
+                "id": "6",
+                "label": "6 months"
             },
             {
-                "id": 5,
-                "label": 5
+                "id": "5",
+                "label": "5 months"
             },
             {
-                "id": 4,
-                "label": 4
+                "id": "4",
+                "label": "4 months"
             },
             {
-                "id": 3,
-                "label": 3
+                "id": "3",
+                "label": "3 months"
             },
             {
-                "id": 2,
-                "label": 2
+                "id": "2",
+                "label": "2 months"
             },
             {
-                "id": 1,
-                "label": 1
+                "id": "1",
+                "label": "1 months"
             }
           ]
         }
