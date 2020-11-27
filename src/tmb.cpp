@@ -648,12 +648,27 @@ Type objective_function<Type>::operator() ()
     vector<Type> anc_clients_t1_out(A_anc_out * anc_clients_t1);
     vector<Type> anc_plhiv_t1_out(A_anc_out * anc_plhiv_t1);
     vector<Type> anc_already_art_t1_out(A_anc_out * anc_already_art_t1);
+
+    // Note: assuming that:
+    //  (1) anc_known_pos is equivalent to anc_already_art
+    //  (2) All ANC attendees are diagnosed and initated on ART.
+    vector<Type> anc_art_new_t1_out(anc_plhiv_t1_out - anc_already_art_t1_out);
+    vector<Type> anc_known_pos_t1_out(anc_already_art_t1_out);    
+    vector<Type> anc_tested_pos_t1_out(anc_plhiv_t1_out - anc_known_pos_t1_out);
+    vector<Type> anc_tested_neg_t1_out(anc_clients_t1_out - anc_plhiv_t1_out);
+    
     vector<Type> anc_rho_t1_out(anc_plhiv_t1_out / anc_clients_t1_out);
     vector<Type> anc_alpha_t1_out(anc_already_art_t1_out / anc_plhiv_t1_out);
 
     vector<Type> anc_clients_t2_out(A_anc_out * anc_clients_t2);
     vector<Type> anc_plhiv_t2_out(A_anc_out * anc_plhiv_t2);
     vector<Type> anc_already_art_t2_out(A_anc_out * anc_already_art_t2);
+
+    vector<Type> anc_art_new_t2_out(anc_plhiv_t2_out - anc_already_art_t2_out);
+    vector<Type> anc_known_pos_t2_out(anc_already_art_t2_out);    
+    vector<Type> anc_tested_pos_t2_out(anc_plhiv_t2_out - anc_known_pos_t2_out);
+    vector<Type> anc_tested_neg_t2_out(anc_clients_t2_out - anc_plhiv_t2_out);
+
     vector<Type> anc_rho_t2_out(anc_plhiv_t2_out / anc_clients_t2_out);
     vector<Type> anc_alpha_t2_out(anc_already_art_t2_out / anc_plhiv_t2_out);
 
@@ -669,6 +684,10 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_clients_t1_out);
     REPORT(anc_plhiv_t1_out);
     REPORT(anc_already_art_t1_out);
+    REPORT(anc_art_new_t1_out);
+    REPORT(anc_known_pos_t1_out);
+    REPORT(anc_tested_pos_t1_out);
+    REPORT(anc_tested_neg_t1_out);
     REPORT(anc_rho_t1_out);
     REPORT(anc_alpha_t1_out);
 
@@ -684,6 +703,10 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_clients_t2_out);
     REPORT(anc_plhiv_t2_out);
     REPORT(anc_already_art_t2_out);
+    REPORT(anc_art_new_t2_out);
+    REPORT(anc_known_pos_t2_out);
+    REPORT(anc_tested_pos_t2_out);
+    REPORT(anc_tested_neg_t2_out);
     REPORT(anc_rho_t2_out);
     REPORT(anc_alpha_t2_out);
 
@@ -753,6 +776,11 @@ Type objective_function<Type>::operator() ()
     vector<Type> anc_clients_t3_out(A_anc_out * anc_clients_t3);
     vector<Type> anc_plhiv_t3_out(A_anc_out * anc_plhiv_t3);
     vector<Type> anc_already_art_t3_out(A_anc_out * anc_already_art_t3);
+    vector<Type> anc_art_new_t3_out(anc_plhiv_t3_out - anc_already_art_t3_out);
+    vector<Type> anc_known_pos_t3_out(anc_already_art_t3_out);    
+    vector<Type> anc_tested_pos_t3_out(anc_plhiv_t3_out - anc_known_pos_t3_out);
+    vector<Type> anc_tested_neg_t3_out(anc_clients_t3_out - anc_plhiv_t3_out);
+
     vector<Type> anc_rho_t3_out(anc_plhiv_t3_out / anc_clients_t3_out);
     vector<Type> anc_alpha_t3_out(anc_already_art_t3_out / anc_plhiv_t3_out);
 
@@ -769,6 +797,10 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_clients_t3_out);
     REPORT(anc_plhiv_t3_out);
     REPORT(anc_already_art_t3_out);
+    REPORT(anc_art_new_t3_out);
+    REPORT(anc_known_pos_t3_out);
+    REPORT(anc_tested_pos_t3_out);
+    REPORT(anc_tested_neg_t3_out);
     REPORT(anc_rho_t3_out);
     REPORT(anc_alpha_t3_out);
   }

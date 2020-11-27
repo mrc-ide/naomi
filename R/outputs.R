@@ -103,18 +103,30 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
                          "anc_already_art_t1_out" = "anc_already_art",
+                         "anc_art_new_t1_out" = "anc_art_new",
+                         "anc_known_pos_t1_out" = "anc_known_pos",
+                         "anc_tested_pos_t1_out" = "anc_tested_pos",
+                         "anc_tested_neg_t1_out" = "anc_tested_neg",
                          "anc_rho_t1_out" = "anc_prevalence",
                          "anc_alpha_t1_out" = "anc_art_coverage")
 
   indicators_anc_t2 <- c("anc_clients_t2_out" = "anc_clients",
                          "anc_plhiv_t2_out" = "anc_plhiv",
                          "anc_already_art_t2_out" = "anc_already_art",
+                         "anc_art_new_t2_out" = "anc_art_new",
+                         "anc_known_pos_t2_out" = "anc_known_pos",
+                         "anc_tested_pos_t2_out" = "anc_tested_pos",
+                         "anc_tested_neg_t2_out" = "anc_tested_neg",
                          "anc_rho_t2_out" = "anc_prevalence",
                          "anc_alpha_t2_out" = "anc_art_coverage")
   
   indicators_anc_t3 <- c("anc_clients_t3_out" = "anc_clients",
                          "anc_plhiv_t3_out" = "anc_plhiv",
                          "anc_already_art_t3_out" = "anc_already_art",
+                         "anc_art_new_t3_out" = "anc_art_new",
+                         "anc_known_pos_t3_out" = "anc_known_pos",
+                         "anc_tested_pos_t3_out" = "anc_tested_pos",
+                         "anc_tested_neg_t3_out" = "anc_tested_neg",
                          "anc_rho_t3_out" = "anc_prevalence",
                          "anc_alpha_t3_out" = "anc_art_coverage")
 
