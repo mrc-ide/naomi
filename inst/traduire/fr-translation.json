@@ -43,6 +43,8 @@
     "OPTIONS_SURVEY_PREVALENCE_LABEL": "Prévalence",
     "OPTIONS_SURVEY_ART_COVERAGE_LABEL": "Couverture ART",
     "OPTIONS_RECENTLY_INFECTED_LABEL": "Proportion de personnes récemment infectées",
+    "OPTIONS_POPULATION_CALIBRATION_LABEL": "Options de calibrage de la population",
+    "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Options de calibrage en fonction de la taille de la population Spectrum. Si le fichier Spectrum est national, les options « National » et « Infranational » donneront le même résultat.",
     "OPTIONS_CALIBRATION_LABEL": "Options de calibrage",
     "OPTIONS_CALIBRATION_DESCRIPTION": "Options de calibrage sur les sorties Spectrum. Si le fichier Spectrum est national, les options « National » et « Infranational » donneront le même résultat. Certains calibrages invalideront l'inférence du modèle par rapport aux données de l'enquête, du programme ART et des tests de la clinique prénatale. Si les ajustements de calibrage sont importants, il est recommandé de vérifier les résultats de Spectrum et les données saisies de Naomi plutôt que d'accepter des ajustements de calibrage importants.",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL": "Ajuster à la taille de la population de Spectrum",
