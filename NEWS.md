@@ -5,9 +5,18 @@ outputs for district-level ANC testing cascade.
 
 * Add ANC bias parameters to age-specific prevalence and ART coverage regression equations instead of to aggregate ANC prevalence and ART coverage.
 * ANC prevalence and ANC ART coverage outputs are produced by five-year age group, 15-24, 25-34, 35-49, and all ages.
-* New output indicators for ANC clients (`anc_clients`), number of HIV positive ANC attendess, 
-  (`anc_plhiv`), and number of ANC clients already on ART prior to first ANC visit (`anc_already_art`).
-
+* New output indicators for ANC testing cascade:
+  * `anc_clients`: Number of ANC1 clients.
+  * `anc_plhiv`: Number of HIV positive ANC attendees.
+  * `anc_already_art`: Number of ANC clients already on ART prior to first ANC visit.
+  * `anc_art_new`: Number of HIV positive ANC attendees initiating ART.
+  * `anc_known_pos`: Number of HIV positive ANC attendees aware of HIV status prior to first ANC.
+  * `anc_tested_pos`: Number of HIV positive ANC attendees tested HIV positive during ANC.
+  * `anc_known_pos`: Number of HIV negative ANC attendees.
+  
+  Currently these indicators are calculated assuming that the number of 'known positive' ANC
+  attendees are the same as the number already on ART.
+  
 # naomi 2.0.3
 
 * Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.

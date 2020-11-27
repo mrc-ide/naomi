@@ -12,3 +12,7 @@ anc_art_coverage,t_(ANC_PRIOR_ART_COVERAGE),t_(INDICATOR_LABEL_ANC_ART_COVERAGE)
 anc_clients,t_(ANC_CLIENTS),t_(INDICATOR_LABEL_ANC_CLIENTS),anc_clients_out,11,,
 anc_plhiv,t_(ANC_PLHIV),t_(INDICATOR_LABEL_ANC_PLHIV),anc_plhiv_out,12,,
 anc_already_art,t_(ANC_ALREADY_ART),t_(INDICATOR_LABEL_ANC_ALREADY_ART),anc_already_art_out,13,,
+anc_art_new,t_(ANC_ART_NEW),t_(INDICATOR_LABEL_ANC_ART_NEW),anc_art_new_out,14,,
+anc_known_pos,t_(ANC_KNOWN_POS),t_(INDICATOR_LABEL_ANC_KNOWN_POS),anc_known_pos_out,15,,
+anc_tested_pos,t_(ANC_TESTED_POS),t_(INDICATOR_LABEL_ANC_TESTED_POS),anc_tested_pos_out,16,,
+anc_tested_neg,t_(ANC_TESTED_NEG),t_(INDICATOR_LABEL_ANC_TESTED_NEG),anc_tested_neg_out,17,,
