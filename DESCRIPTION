@@ -24,6 +24,7 @@ Imports:
     data.tree,
     dplyr,
     eppasm,
+    first90,
     forcats,
     fs,
     ggplot2,
@@ -67,4 +68,5 @@ LinkingTo:
 Remotes:
     bergant/datamodelr,
     mrc-ide/eppasm,
-    reside-ic/traduire
+    reside-ic/traduire,
+    mrc-ide/first90release
