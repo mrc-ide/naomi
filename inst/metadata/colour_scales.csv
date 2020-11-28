@@ -9,6 +9,8 @@ default,population,interpolateViridis,0,20000000,FALSE
 default,plhiv,interpolateMagma,0,10000000,TRUE
 default,incidence,interpolateMagma,0,0.01,TRUE
 default,infections,interpolateMagma,0,40000,TRUE
+default,aware_plhiv_prop,interpolateViridis,0,1,FALSE
+default,unaware_plhiv_num,interpolateViridis,0,80000,TRUE
 default,anc_prevalence,interpolateMagma,0,0.5,TRUE
 default,anc_art_coverage,interpolateViridis,0,1,FALSE
 default,anc_clients,interpolateViridis,0,700000,FALSE

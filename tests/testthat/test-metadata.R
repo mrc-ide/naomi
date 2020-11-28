@@ -60,6 +60,7 @@ test_that("can get plot metadata for missing country with defaults", {
                     "prevalence", 
                     "incidence", "infections", "plhiv", "population",
                     "recent_infected", "viral_suppression_plhiv",
+                    "aware_plhiv_prop", "unaware_plhiv_num",
                     "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos", "anc_tested_pos",
@@ -72,6 +73,7 @@ test_that("colour scales metadata is well formed", {
     c("art_coverage", "art_current", "art_current_residents", "prevalence",
       "viral_suppression_plhiv", "recent_infected",
       "plhiv", "incidence", "population", "infections",
+      "aware_plhiv_prop", "unaware_plhiv_num",
       "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
       "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
       "anc_tested_neg"))
@@ -97,9 +99,11 @@ test_that("metadata is well formed", {
   expect_setequal(meta$indicator,
                   c("art_coverage", "art_current", "art_current_residents", "prevalence",
                     "viral_suppression_plhiv", "recent_infected", "plhiv",
-                    "population", "incidence", "infections", "anc_prevalence",
-                    "anc_art_coverage", "anc_clients", "anc_plhiv", "anc_already_art",
-                    "anc_art_new", "anc_known_pos", "anc_tested_pos", "anc_tested_neg"))
+                    "population", "incidence", "infections",
+                    "aware_plhiv_prop", "unaware_plhiv_num",
+                    "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
+                    "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
+                    "anc_tested_neg"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
@@ -108,7 +112,9 @@ test_that("metadata is well formed", {
                   c("HIV prevalence", "ART coverage", "Viral load suppression",
                     "Proportion recently infected", "PLHIV", "Population",
                     "New infections", "HIV incidence", "ART number (residents)",
-                    "ART number (attending)", "ANC HIV prevalence",
+                    "ART number (attending)",
+                    "Proportion PLHIV aware", "Number PLHIV unaware",
+                    "ANC HIV prevalence",
                     "ANC prior ART coverage", "ANC clients",
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
@@ -195,4 +201,5 @@ test_that("metadata format column hasn't been messed by Excel", {
   expect_setequal(meta$format[meta$indicator == "anc_prevalence"], "0.0%")
   expect_setequal(meta$format[meta$indicator == "anc_art_coverage"], "0.0%")
   expect_setequal(meta$format[meta$indicator == "recent_infected"], "0.00%")
+  expect_setequal(meta$format[meta$indicator == "aware_plhiv_prop"], "0.0%")
 })
