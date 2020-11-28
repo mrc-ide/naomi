@@ -13,34 +13,23 @@ extract_pjnz_naomi <- function(pjnz_list) {
 
   extract_pjnz_one <- function(pjnz) {
     
-    totpop <- specio::read_total_pop(pjnz, TRUE) %>%
-      dplyr::mutate(sex = as.character(sex))
-    hivpop <- specio::read_hiv_pop(pjnz, TRUE) %>%
-      dplyr::mutate(sex = as.character(sex))
-    artpop <- specio::read_art_pop(pjnz, TRUE) %>%
-      dplyr::mutate(sex = as.character(sex))
-
     demp <- eppasm::read_specdp_demog_param(pjnz)
     specres <- eppasm::read_hivproj_output(pjnz)
-    
-    infections <- specres$infections %>%
-      as.data.frame.table(responseName = "infections",
-                          stringsAsFactors = FALSE) %>%
-      utils::type.convert(as.is = TRUE)
 
-    asfr <- demp$asfr %>%
-      as.data.frame.table(responseName = "asfr",
-                        stringsAsFactors = FALSE) %>%
-      utils::type.convert(as.is = TRUE)
+    totpop <- as.data.frame.table(specres$totpop, responseName = "totpop",
+                                  stringsAsFactors = FALSE)
+    hivpop <- as.data.frame.table(specres$hivpop, responseName = "hivpop",
+                                  stringsAsFactors = FALSE)
+    artpop <- as.data.frame.table(specres$artpop, responseName = "artpop",
+                                  stringsAsFactors = FALSE)
+    infections <- as.data.frame.table(specres$infections, responseName = "infections",
+                                      stringsAsFactors = FALSE)
+    asfr <- as.data.frame.table(demp$asfr, responseName = "asfr",
+                                stringsAsFactors = FALSE)
     
     spec <- totpop %>%
       dplyr::left_join(hivpop, by = c("age", "sex", "year")) %>%
       dplyr::left_join(artpop, by = c("age", "sex", "year")) %>%
-      dplyr::rename(
-               totpop = total_pop,
-               hivpop = hiv_pop,
-               artpop = art_pop
-             ) %>%
       dplyr::left_join(infections, by = c("age", "sex", "year")) %>%
       dplyr::left_join(asfr %>% dplyr::mutate(sex = "female"),
                        by = c("age", "sex", "year"))
@@ -54,13 +43,13 @@ extract_pjnz_naomi <- function(pjnz_list) {
   ## * Single file
   ## * Does not contain a .DP or .PJN file
   if(length(pjnz_list) == 1) {
-    file_names <- unzip(pjnz_list, list = TRUE)$Name
+    file_names <- utils::unzip(pjnz_list, list = TRUE)$Name
     exts <- tolower(tools::file_ext(file_names))
     is_pjnz <- any("dp" %in% exts) || any("pjn" %in% exts)
 
     if(!is_pjnz) {
       pjnzdir <- tempfile()
-      unzip(pjnz_list, exdir = pjnzdir)
+      utils::unzip(pjnz_list, exdir = pjnzdir)
       pjnz_list <- list.files(pjnzdir, full.names = TRUE)
     }
   }

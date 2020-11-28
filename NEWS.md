@@ -17,6 +17,10 @@ outputs for district-level ANC testing cascade.
   Currently these indicators are calculated assuming that the number of 'known positive' ANC
   attendees are the same as the number already on ART.
   
+Additional code changes:
+
+* Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and 
+  read .DP file.
 
 # naomi 2.0.6
 
