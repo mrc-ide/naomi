@@ -32,7 +32,8 @@ extract_pjnz_naomi <- function(pjnz_list) {
       dplyr::left_join(artpop, by = c("age", "sex", "year")) %>%
       dplyr::left_join(infections, by = c("age", "sex", "year")) %>%
       dplyr::left_join(asfr %>% dplyr::mutate(sex = "female"),
-                       by = c("age", "sex", "year"))
+                       by = c("age", "sex", "year")) %>%
+      utils::type.convert(as.is = TRUE)
 
     spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
     
