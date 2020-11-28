@@ -194,7 +194,7 @@ test_that("can generate summary report", {
   generate_output_summary_report(t, a_hintr_output$spectrum_path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- readLines(t)
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", content)))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", content)))
   expect_true(any(grepl("mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo_naomi\"", content)))

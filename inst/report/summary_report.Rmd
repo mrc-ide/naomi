@@ -82,9 +82,9 @@ quarter <- options$calendar_quarter_t2
 iso <- options$area_scope
 period <- outputs$meta_period[outputs$meta_period$calendar_quarter == quarter,]$quarter_label
 level <- as.integer(options$area_level)
-survey_prev <- paste0(options$survey_prevalence, sep = " ", collapse = ", ")
-survey_art <- paste0(options$survey_art_coverage, sep = " ", collapse = ", ")
-survey_recent <- paste0(options$survey_recently_infected, sep = " ", collapse = ", ")
+survey_prev <- paste0(options$survey_prevalence, collapse = ", ")
+survey_art <- paste0(options$survey_art_coverage, collapse = ", ")
+survey_recent <- paste0(options$survey_recently_infected, collapse = ", ")
 spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 
 # Identify area_level_label for model estimates
