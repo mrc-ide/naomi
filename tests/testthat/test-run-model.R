@@ -28,7 +28,7 @@ test_that("model can be run", {
                  "mean", "se", "median", "mode", "lower", "upper"))
 
   ## Total population outputs:
-  ## * 29 age groups
+  ## * 31 age groups
   ## * 3 sexes
   ## * 3 output times
   ## * 22 areas
@@ -39,7 +39,7 @@ test_that("model can be run", {
   ## 9 = number of ANC indicators
   ## 22 = number of areas
   ## 11 = number of ANC age groups
-  expect_equal(nrow(output), 29 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -159,7 +159,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_label",
                  "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_equal(nrow(output), 29 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -436,7 +436,7 @@ test_that("model run can be calibrated", {
                         a_hintr_output$output_path)
   indicators_output <- readRDS(calibrated_output$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 29 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output$spectrum_path,
@@ -521,7 +521,7 @@ test_that("model run can be calibrated", {
                         calibrated_output$output_path)
   indicators_output <- readRDS(calibrated_output_2$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 29 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 10 + 3 * 9 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output_2$spectrum_path,
