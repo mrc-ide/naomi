@@ -43,7 +43,7 @@ prepare_tmb_inputs <- function(naomi_data) {
   } else {
     Xgamma_t2 <- sparse_model_matrix(~0, naomi_data$mf_artattend)
   }
-  
+
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
     dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id") %>%
@@ -87,7 +87,7 @@ prepare_tmb_inputs <- function(naomi_data) {
                           area_aggregation = naomi_data$area_aggregation,
                           df_art_attend = df_art_attend,
                           by_residence = TRUE)
-                                          
+
 
   ## Construct TMB data and initial parameter vectors
 
@@ -127,11 +127,11 @@ prepare_tmb_inputs <- function(naomi_data) {
   artnum_t1_dat <- naomi_data$artnum_t1_dat %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
-  
+
   artnum_t2_dat <- naomi_data$artnum_t2_dat %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
-  
+
   has_t1_paed_art <- any(artnum_t1_dat$age_group_end < 15)
   has_t2_paed_art <- any(artnum_t2_dat$age_group_end < 15)
 
@@ -146,7 +146,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_alpha_xat <- ~0 + area_idf
   } else {
     f_alpha_xat <- ~0
-  }    
+  }
 
   ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
@@ -157,7 +157,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_lambda <- ~ 1 + female_15plus
     f_lambda_x <- ~0 + area_idf
   }
-    
+
 
   dtmb <- list(
     population_t1 = df$population_t1,
@@ -371,10 +371,11 @@ sparse_model_matrix <- function(formula, data, binary_interaction = 1,
   mm
 }
 
-make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE) {
+make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
+                         progress = NULL) {
 
   data$calc_outputs <- as.integer(calc_outputs)
-                                 
+
   obj <- TMB::MakeADFun(data = data,
                         parameters = par,
                         DLL = "naomi",
@@ -403,9 +404,21 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE) {
                                    ##
                                    "log_or_gamma", "log_or_gamma_t1t2"))
 
+  if (!is.null(progress)) {
+    obj$fn <- report_progress(obj$fn, progress)
+  }
+
   obj
 }
-  
+
+report_progress <- function(fun, progress) {
+  fun <- match.fun(fun)
+  function(...) {
+    progress$iterate_fit()
+    fun(...)
+  }
+}
+
 
 #' Fit TMB model
 #'
@@ -413,18 +426,21 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE) {
 #' @param outer_verbose If TRUE print function and parameters every iteration
 #' @param inner_verbose If TRUE then disable tracing information from TMB
 #' @param max_iter maximum number of iterations
+#' @param progress Progress printer, if null no progress printed
 #'
 #' @return Fit model.
 #' @export
 fit_tmb <- function(tmb_input,
                     outer_verbose = TRUE,
                     inner_verbose = FALSE,
-                    max_iter = 250
+                    max_iter = 250,
+                    progress = NULL
                     ) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
 
-  obj <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 0L, inner_verbose)
+  obj <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 0L,
+                      inner_verbose, progress)
 
   trace <- if(outer_verbose) 1 else 0
   f <- withCallingHandlers(
@@ -436,19 +452,19 @@ fit_tmb <- function(tmb_input,
         invokeRestart("muffleWarning")
     }
   )
-  
+
   if(f$convergence != 0)
     warning(paste("convergence error:", f$message))
 
   if(outer_verbose)
     message(paste("converged:", f$message))
-  
+
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
 
   objout <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 1L, inner_verbose)
   f$mode <- objout$report(f$par.full)
-    
+
   val <- c(f, obj = list(objout))
   class(val) <- "naomi_fit"
 
@@ -485,12 +501,12 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
                        random_only = TRUE, verbose = FALSE) {
 
   set.seed(rng_seed)
-  
+
   stopifnot(methods::is(fit, "naomi_fit"))
   stopifnot(nsample > 1)
 
   to_tape <- TMB:::isNullPointer(fit$obj$env$ADFun$ptr)
-  if (to_tape) 
+  if (to_tape)
     fit$obj$retape(FALSE)
 
   if(!random_only) {
@@ -545,13 +561,13 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
 
 create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation,
                                   df_art_attend, by_residence = FALSE) {
-  
+
   ## If by_residence = TRUE, merge by reside_area_id, else aggregate over all
   ## reside_area_id
   by_vars <- c("attend_area_id", "sex", "age_group")
   if(by_residence)
     by_vars <- c(by_vars, "reside_area_id")
-  
+
   A_artnum <- artnum_df %>%
     dplyr::select(tidyselect::all_of(by_vars), artnum_idx) %>%
     dplyr::rename(artdat_age_group = age_group,
@@ -592,7 +608,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                   model_area_id = NULL)
 
   ## Check no areas with duplicated reporting
-  art_duplicated_check <- A_artnum %>%  
+  art_duplicated_check <- A_artnum %>%
     dplyr::group_by_at(by_vars) %>%
     dplyr::summarise(n = dplyr::n()) %>%
     dplyr::filter(n > 1)
@@ -609,7 +625,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
       df_art_attend_idx = dplyr::row_number(),
       value = 1
     )
-  
+
   A_artnum <- dplyr::left_join(A_artnum,
                                df_art_attend %>%
                                dplyr::select(tidyselect::all_of(by_vars)) %>%
@@ -617,7 +633,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                                  Aidx = dplyr::row_number(),
                                  value = 1),
                                by = by_vars)
-  
+
   A_artnum <- A_artnum %>%
     {
       Matrix::spMatrix(nrow(artnum_df),
@@ -626,6 +642,6 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                        .$Aidx,
                        .$value)
     }
-  
+
   A_artnum
 }

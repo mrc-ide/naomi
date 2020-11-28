@@ -40,7 +40,7 @@ test_that("can get plot metadata for a country", {
       names(metadata)))
   expect_true(all(unique(metadata$indicator) %in%
                   c("art_coverage", "art_current", "art_current_residents",
-                    "prevalence", "art_number",
+                    "prevalence",
                     "incidence", "infections", "plhiv", "population",
                     "recent_infected", "viral_suppression_plhiv",
                     "anc_prevalence", "anc_art_coverage")))
@@ -174,4 +174,25 @@ test_that("uncertainty metadata set for all model output data", {
   output_meta <- metadata[metadata$data_type == "output", ]
   expect_true(all(!(output_meta$error_low_column == "")))
   expect_true(all(!(output_meta$error_high_column == "")))
+})
+
+
+test_that("metadata format column hasn't been messed by Excel", {
+
+  ## When opening inst/metadata/metadata.csv in MS Excel, the format column is
+  ## 'helpfully' parsed and converts 0.0% to a generic percentage formatted cell.
+  ## The value 0.0% is displayed as 0.00% (perhaps dependent on local settings),
+  ## and when resaved as CSV 0.0% is saved as 0.00%.
+  ##
+  ## This test exist to make sure this hasn't happened inadvertently.
+  ## Be thoughtful before idly updating the values in these tests to make the test
+  ## pass!
+
+  meta <- get_metadata()
+
+  expect_setequal(meta$format[meta$indicator == "prevalence"], "0.0%")
+  expect_setequal(meta$format[meta$indicator == "art_coverage"], "0.0%")
+  expect_setequal(meta$format[meta$indicator == "anc_prevalence"], "0.0%")
+  expect_setequal(meta$format[meta$indicator == "anc_art_coverage"], "0.0%")
+  expect_setequal(meta$format[meta$indicator == "recent_infected"], "0.00%")
 })

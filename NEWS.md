@@ -17,6 +17,24 @@ outputs for district-level ANC testing cascade.
   Currently these indicators are calculated assuming that the number of 'known positive' ANC
   attendees are the same as the number already on ART.
   
+
+# naomi 2.0.6
+
+* Updates to 'Model Options' page in Naomi application:
+  * Update default 'current estimates' calendar quarter to December 2020.
+  * Move 'short-term projections' calendar quarter to General options block.
+  * Add drop down to select 'number of months' included in ANC testing data reporting.
+  * Add select option to use Kish design effect in survey data likelihood.
+  * Select most recent `survey_mid_calendar_quarter` as survey run option.
+  
+# naomi 2.0.5
+
+* Report iteration number and elapsed time from model fit
+
+# naomi 2.0.4
+
+* Tidy model options layout and tooltip text
+
 # naomi 2.0.3
 
 * Remove utility functions for creating area datasets: `check_boundaries()`, `compare_boundaries()`, and `gather_areas()`.

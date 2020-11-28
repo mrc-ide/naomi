@@ -1,6 +1,6 @@
 {
-  "label": "t_(OPTIONS_CALIBRATION_LABEL)",
-  "description": "t_(OPTIONS_CALIBRATION_DESCRIPTION)",
+  "label": "t_(OPTIONS_POPULATION_CALIBRATION_LABEL)",
+  "description": "t_(OPTIONS_POPULATION_CALIBRATION_DESCRIPTION)",
   "controlGroups": [
     {
       "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL)",
@@ -25,74 +25,6 @@
           "value": "national",
           "required": true,
           "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP)"
-        }
-      ]
-    }
-  ]
-},
-{
-  "label": "t_(OPTIONS_OUTPUT_LABEL)",
-  "description": "t_(OPTIONS_OUTPUT_DESCRIPTION)",
-        "controlGroups": [
-        {
-      "label": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL)",
-      "controls": [
-        {
-          "name": "calendar_quarter_t3",
-          "type": "select",
-          "value": "CY2020Q3",
-          "helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
-                 "required": true,
-                "options": [
-                     {
-              "id": "CY2020Q1",
-              "label": "t_(MONTH_MARCH) 2020"
-            },
-                     {
-              "id": "CY2020Q2",
-              "label": "t_(MONTH_JUNE) 2020"
-            },
-                     {
-              "id": "CY2020Q3",
-              "label": "t_(MONTH_SEPTEMBER) 2020"
-            },
-                     {
-              "id": "CY2020Q4",
-              "label": "t_(MONTH_DECEMBER) 2020"
-            },
-                     {
-              "id": "CY2021Q1",
-              "label": "t_(MONTH_MARCH) 2021"
-            },
-                     {
-              "id": "CY2021Q2",
-              "label": "t_(MONTH_JUNE) 2021"
-            },
-                     {
-              "id": "CY2021Q3",
-              "label": "t_(MONTH_SEPTEMBER) 2021"
-            },
-                     {
-              "id": "CY2021Q4",
-              "label": "t_(MONTH_DECEMBER) 2021"
-            },
-                     {
-              "id": "CY2022Q1",
-              "label": "t_(MONTH_MARCH) 2022"
-            },
-                     {
-              "id": "CY2022Q2",
-              "label": "t_(MONTH_JUNE) 2022"
-            },
-                     {
-              "id": "CY2022Q3",
-              "label": "t_(MONTH_SEPTEMBER) 2022"
-            },
-                     {
-              "id": "CY2022Q4",
-              "label": "t_(MONTH_DECEMBER) 2022"
-            }
-          ]
         }
       ]
     }
@@ -173,52 +105,94 @@
       ]
     },
     {
-      "label": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL)",
+      "label": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL)",
       "controls": [
         {
-          "name": "artattend_t2",
+          "name": "use_kish_prev",
+          "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
           "type": "select",
           "required": true,
           "options": [
             {
-              "id": "false",
-              "label": "t_(OPTIONS_NO_LABEL)"
-            },
-            {
               "id": "true",
               "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
           "value": "true",
-          "helpText": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP)"
+          "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
+        },
+        {
+          "name": "deff_prev",
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
+          "type": "number",
+          "required": true,
+          "value": 1.0,
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)"
         }
       ]
     },
-          {
-           "label": "t_(OPTIONS_ADVANCED_APPROX_DEFF_LABEL)",
-            "controls": [
+    {
+      "label": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_LABEL)",
+      "controls": [
         {
-          "name": "deff_prev",
-          "label": "t_(HIV_PREVALENCE)",
-          "type": "number",
+          "name": "use_kish_artcov",
+          "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
+          "type": "select",
           "required": true,
-                    "value": 1.0,
-          "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)."
-        },
+          "options": [
             {
-          "name": "deff_artcov",
-          "label": "t_(ART_COVERAGE)",
-          "type": "number",
-          "required": true,
-                "value": 1.0,
-          "helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
         },
-              {
-          "name": "deff_recent",
-          "label": "t_(PROPORTION_RECENTLY_INFECTED)",
+        {
+          "name": "deff_artcov",
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
-                "value": 1.0,
+          "value": 1.0,
+          "helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL)",
+	"controls": [
+	{
+          "name": "use_kish_recent",
+          "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "true",
+          "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
+        },
+        {
+          "name": "deff_recent",
+          "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
+          "type": "number",
+          "required": true,
+          "value": 1.0,
           "helpText": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP)"
         }
       ]
