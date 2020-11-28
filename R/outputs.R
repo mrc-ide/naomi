@@ -1172,8 +1172,10 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
                        names_from = indicator, values_from = mean) %>%
     dplyr::mutate(prevalence = plhiv / population,
                   art_coverage = art_current_residents / plhiv,
+                  aware_plhiv_prop = (plhiv - unaware_plhiv_num) / plhiv,
                   incidence = infections / (population - plhiv)) %>%
-    tidyr::pivot_longer(c(prevalence, art_coverage, incidence), names_to = "indicator", values_to = "ratio") %>%
+    tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
+                        names_to = "indicator", values_to = "ratio") %>%
     dplyr::select(area_id, sex, calendar_quarter, age_group, indicator, ratio) %>%
     dplyr::left_join(out0to4, by = c("area_id", "sex", "calendar_quarter", "indicator")) %>%
     dplyr::mutate(ratio = dplyr::if_else(mean == 0, 0, ratio / mean)) %>%
