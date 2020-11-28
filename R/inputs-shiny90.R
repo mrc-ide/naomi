@@ -29,7 +29,6 @@
 #'
 #' extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
 #'
-#' @internal
 extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
 
   exdir <- tempfile()

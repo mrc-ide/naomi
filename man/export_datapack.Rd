@@ -8,7 +8,7 @@ export_datapack(
   naomi_output,
   path,
   psnu_level = max(naomi_output$meta_area$area_level),
-  calendar_quarter = max(naomi_output$meta_period$calendar_quarter)
+  calendar_quarter = naomi_output$meta_period$calendar_quarter
 )
 }
 \arguments{

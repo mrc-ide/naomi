@@ -4,7 +4,13 @@
 \alias{fit_tmb}
 \title{Fit TMB model}
 \usage{
-fit_tmb(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE, max_iter = 250)
+fit_tmb(
+  tmb_input,
+  outer_verbose = TRUE,
+  inner_verbose = FALSE,
+  max_iter = 250,
+  progress = NULL
+)
 }
 \arguments{
 \item{tmb_input}{Model input data}
@@ -14,6 +20,8 @@ fit_tmb(tmb_input, outer_verbose = TRUE, inner_verbose = FALSE, max_iter = 250)
 \item{inner_verbose}{If TRUE then disable tracing information from TMB}
 
 \item{max_iter}{maximum number of iterations}
+
+\item{progress}{Progress printer, if null no progress printed}
 }
 \value{
 Fit model.

@@ -68,5 +68,6 @@ LinkingTo:
 Remotes:
     bergant/datamodelr,
     mrc-ide/eppasm,
-    reside-ic/traduire,
-    mrc-ide/first90release
+    mrc-ide/first90release,
+    reside-ic/traduire
+
