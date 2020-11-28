@@ -1,5 +1,5 @@
 ---
-title: District HIV Estimates
+title: Subnational HIV Estimates
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 fig_width: 5
 fig_height: 5
@@ -11,6 +11,7 @@ output:
   html_document:
     includes:
       in_header: header.html
+    anchor_sections: false
 ---
 
 ``` {css, echo = FALSE}
@@ -67,9 +68,12 @@ options <- yaml::read_yaml(options)
 
 
 indicators <- naomi::add_output_labels(outputs) %>%
-dplyr::left_join(outputs$meta_area %>% dplyr::select(area_level, area_id, center_x, center_y), 
-                 by = c("area_level", "area_id")) %>%
-sf::st_as_sf()
+  dplyr::left_join(
+           outputs$meta_area %>%
+           dplyr::select(area_level, area_id, center_x, center_y), 
+           by = c("area_level", "area_id")
+         ) %>%
+  sf::st_as_sf()
 
 # Grab inputs and model options from model output zip file
 # # concatenating strings where more than one option may be selected
@@ -78,24 +82,25 @@ quarter <- options$calendar_quarter_t2
 iso <- options$area_scope
 period <- outputs$meta_period[outputs$meta_period$calendar_quarter == quarter,]$quarter_label
 level <- as.integer(options$area_level)
-survey_prev <- paste0(options$survey_prevalence, sep = " ", collapse = "")
-survey_art <- paste0(options$survey_art_coverage, sep = " ", collapse = "")
-survey_recent <- paste0(options$survey_recently_infected, sep = " ", collapse = "")
+survey_prev <- paste0(options$survey_prevalence, sep = " ", collapse = ", ")
+survey_art <- paste0(options$survey_art_coverage, sep = " ", collapse = ", ")
+survey_recent <- paste0(options$survey_recently_infected, sep = " ", collapse = ", ")
 spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 
 # Identify area_level_label for model estimates
 area_level_map <- outputs$meta_area %>%
   dplyr::group_by(area_level, area_level_label) %>%
-  dplyr::summarise()
+  dplyr::summarise(.groups = "drop")
 
-area_level_label <- area_level_map[area_level_map$area_level == level,]$area_level_label
-country <- paste0(outputs$meta_area[outputs$meta_area$area_id == iso,]$area_name, sep = "", collapse = "")
+area_level_label <- area_level_map$area_level_label[area_level_map$area_level == level]
+country <- paste0(outputs$meta_area$area_name[outputs$meta_area$area_id == iso],
+                  sep = "", collapse = "")
 
 
 # Filter data for area + calendar options selected in model run 
 data <- dplyr::filter(indicators, 
-area_level == level, 
-calendar_quarter == quarter)
+                      area_level == level, 
+                      calendar_quarter == quarter)
 
 ## Legend functions
 
@@ -121,8 +126,7 @@ map_outputs <- function(geom_data,
                                  high = end_colour_scale,
                                  name = legend_title,
                                  guide = "legend", 
-                                 labels = legend_label
-    )+
+                                 labels = legend_label) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom",
                    legend.direction = "vertical", 
@@ -130,12 +134,11 @@ map_outputs <- function(geom_data,
                    legend.text = ggplot2::element_text(size = 8), 
                    legend.title = ggplot2::element_text(size = 8, face = "bold", hjust = 0.5),
                    legend.key.size = ggplot2::unit(0.7, "lines"),
-                   legend.background = ggplot2::element_rect(linetype = "dashed", colour = "black"),
+                   legend.background = ggplot2::element_rect(linetype = "dashed",
+                                                             colour = "black"),
                    legend.title.align = 0.5, 
                    plot.margin = ggplot2::margin(0, 0.4, 0, 0.4, "cm")) +
     ggplot2::ggtitle(fig_title)
-  
-  
 }
 
 ## Pop pyramid
@@ -146,7 +149,8 @@ pop_pyramid_outputs <- function(disag_data,
                                 x_axis_title, 
                                 legend_label = abs, 
                                 fig_title) {
-  # filter data for desired indicator
+
+  ## filter data for desired indicator
   fig_data <- disag_data %>% dplyr::filter(indicator == var) 
   plot <- ggplot2::ggplot(fig_data, ggplot2::aes(x = ifelse(sex == "male", -mean, mean),
                                                  y = age_group,
@@ -171,7 +175,6 @@ pop_pyramid_outputs <- function(disag_data,
                    plot.margin = ggplot2::margin(0.5, 0.3, 0.5, 0.3, "cm")) +
     ggplot2::ylab("Age Group") +
     ggplot2::ggtitle(fig_title)
-  
 }
 
 
@@ -197,8 +200,6 @@ cat(paste0("* ", text$prefix, "**", text$source, "**"), sep = "\n")
 ```
 
 ```{r, echo = FALSE, results= 'asis'}
-
-
 cat(paste0("and national HIV estimates from Spectrum file **", spectrum_file,"**",
            "\n using calibration options: \n " ))
 ```
@@ -347,10 +348,11 @@ age_sex <- indicators %>%
   dplyr::filter(area_level == area_filter,
                 calendar_quarter == quarter,
                 sex != "both",
-                age_group %in% get_five_year_age_groups()) %>%
-  dplyr::left_join(naomi::get_age_groups(), by = c("age_group", "age_group_label", "age_group_start", "age_group_span", "age_group_sort_order")) %>%
-  dplyr::mutate(age_group = forcats::fct_reorder(age_group_label, age_group_sort_order),
-                sex = factor(sex, levels = c("male", "female")) )
+                age_group_span == 5) %>%
+  dplyr::mutate(
+           age_group = forcats::fct_reorder(age_group_label, age_group_sort_order),
+           sex = factor(sex, levels = c("male", "female"))
+         )
 
 
 #-------------------------------------------------------------------------------
@@ -641,46 +643,105 @@ if("0" %in% area_levels) {
 cat(paste0("### **", area_level_label, "-level indicators**"))
 ```
 
-``` {r, echo = FALSE, warning = FALSE, results = 'asis'}
+``` {r summary_table, echo = FALSE, warning = FALSE, results = 'asis'}
 
 
 # # Format data for table
 percent_indicators <- c("prevalence", "art_coverage")
 whole_indicators <- c("plhiv", "infections", "art_current", "art_current_residents")
 
+## Scaling factor
+display_scale <- c("prevalence" = 100,
+                   "art_coverage" = 100,
+                   "incidence" = 1000,
+                   "plhiv" = 1,
+                   "infections" = 1,
+                   "art_current" = 1,
+                   "art_current_residents" = 1)
+                   
+## Number of digits to round by; applied after scaling.
+display_digits <- c("prevalence" = 1,
+                    "art_coverage" = 1,
+                    "incidence" = 1,
+                    "plhiv" = -2,
+                    "infections" = -1,
+                    "art_current" = -2,
+                    "art_current_residents" = -2)
+
+display_suffix <- c("prevalence" = "%",
+                    "art_coverage" = "%",
+                    "incidence" = "",
+                    "plhiv" = "",
+                    "infections" = "",
+                    "art_current" = "",
+                    "art_current_residents" = "")
+
+## This controls whether uncertainty range is shown
+display_fmt <- c("prevalence" = "%s%s (%s-%s%s)",
+                 "art_coverage" = "%s%s (%s-%s%s)",
+                 "incidence" = "%s%s (%s-%s%s)",
+                 "plhiv" = "%s%s (%s-%s%s)",
+                 "infections" = "%s%s (%s-%s%s)",
+                 "art_current_residents" = "%s%s (%s-%s%s)",
+                 "art_current" = "%s%s")
+
+indicators_15to49 <- c("prevalence", "incidence")
+indicators_15plus <- c("art_coverage", "plhiv", "infections",
+                       "art_current", "art_current_residents")
+
+
 x1 <- data %>%
-  sf::st_drop_geometry() %>%
-  dplyr::filter(age_group == "Y015_049",
-                sex == "both") %>%
-  dplyr::select(area_name, mean, lower, upper, indicator)
+  sf::st_drop_geometry() %>%           
+  dplyr::filter(
+           sex == "both",
+           age_group == "Y015_049" & indicator %in% indicators_15to49 |
+           age_group == "Y015_999" & indicator %in% indicators_15plus
+         ) %>%
+  dplyr::left_join(
+           sf::st_drop_geometry(outputs$meta_area) %>%
+           dplyr::select(area_id, area_sort_order),
+           by = "area_id"
+         ) %>%
+  dplyr::mutate(area_id = forcats::fct_reorder(area_id, area_sort_order)) %>%
+  dplyr::select(area_id, area_name, mean, lower, upper, indicator)
 
-# Format indicators
-x2 <- x1 %>%
-  dplyr::mutate_if(~is.numeric(.),
-                   ~dplyr::if_else(indicator %in% percent_indicators,
-                                   round(. *100, 2),
-                                   dplyr::if_else(indicator == "incidence", 
-                                                  round(.*1000, 2), 
-                                                  ceiling(.))))
+## Format values
+format_value <- function(x, indicator) {
+  val <- round(x * display_scale[indicator], display_digits[indicator])
+  mapply(format, val, trim = TRUE, scientific = FALSE,
+         nsmall = pmax(display_digits[indicator], 0), big.mark = ",")
+}
 
-x3 <- x2  %>% dplyr::mutate(val = ifelse(indicator %in% percent_indicators,
-                                         paste0(mean,"%"," (",lower,"-",upper,"%)"),
-                                         paste0(mean," (",lower,"-",upper,")")),)
+x1$mean <- format_value(x1$mean, x1$indicator)
+x1$lower <- format_value(x1$lower, x1$indicator)
+x1$upper <- format_value(x1$upper, x1$indicator)
+x1$suffix <- display_suffix[x1$indicator]
+x1$fmt <- display_fmt[x1$indicator]
+
+x1$val <- sprintf(x1$fmt, x1$mean, x1$suffix, x1$lower, x1$upper, x1$suffix)
+
 # Melt data in table 
-x4 <- x3 %>% 
-  dplyr::select(area_name, val, indicator) %>%
+x4 <- x1 %>% 
+  dplyr::select(area_id, area_name, val, indicator) %>%
   tidyr::spread(indicator, val) %>%
-  dplyr::select(area_name, plhiv, prevalence, infections, incidence,
-                art_coverage, art_current_residents,
-                art_current)
-
+  dplyr::select(
+           area_name,
+           plhiv,
+           prevalence,
+           infections,
+           incidence,
+           art_coverage,
+           art_current_residents,
+           art_current
+         )
 
 # #-------------------------------------------------------------------------------
 # # Table: ART
 # # # By lowest area_level, indicators defined above
 # #------------------------------------------------------------------------------
 
-x4 %>% gt::gt(rowname_col = "area_name") %>%
+x4 %>%
+  gt::gt(rowname_col = "area_name") %>%
   gt::tab_stubhead(label = gt::md("**Area**")) %>%
   gt::tab_options(
     table.align = "left",
@@ -700,13 +761,13 @@ x4 %>% gt::gt(rowname_col = "area_name") %>%
     label = gt::md("**Antiretroviral Treatment**"),
     columns = gt::vars('art_coverage', 'art_current_residents', 'art_current')) %>%
   gt::cols_label(
-    plhiv = gt::md("**PLHIV**"),
-    prevalence = gt::md("**HIV prevalence**"),
-    infections = gt::md("**New infections**"),
-    incidence = gt::md("**Incidence (per 1000)**"),
-    art_coverage = gt::md("**ART coverage**"),
-    art_current = gt::md("**Number residents receiving treatment**"),
-    art_current_residents = gt::md("**Number total clients receiving treatment**")
+    plhiv = gt::md("**PLHIV 15+**"),
+    prevalence = gt::md("**HIV prevalence 15-49**"),
+    infections = gt::md("**New infections 15+**"),
+    incidence = gt::md("**Incidence 15-49 (per 1000)**"),
+    art_coverage = gt::md("**ART coverage 15+**"),
+    art_current = gt::md("**Number clients receiving ART 15+**"),
+    art_current_residents = gt::md("**Number residents on ART 15+**")
   ) %>%
   gt::cols_align(align = "center") %>%
   gt::cols_width(everything()~ px(150))
@@ -717,13 +778,13 @@ $~$
 
 ### Methods
 
-The [Naomi model](https://github.com/mrc-ide/naomi){target="_blank"} is a small-area estimation model for estimating HIV prevalence and PLHIV, ART coverage, and new HIV infections at district level by sex and five-year age group. The model combines district-level data about multiple outcomes from several sources in a Bayesian statistical model to produce robust indicators of subnational HIV burden.
+[Naomi](https://github.com/mrc-ide/naomi){target="_blank"} is a small-area estimation model for estimating HIV prevalence and PLHIV, ART coverage, and new HIV infections at district level by sex and five-year age group. The model combines district-level data about multiple outcomes from several sources in a Bayesian statistical model to produce robust indicators of subnational HIV burden.
 
-The model produces estimates at three time points: the year of the most recent population-based survey, the year of the last HIV national estimates round (2020), and short-term one-year ahead projections for HIV programme planning purposes. Subnational population estimates by sex and age group are sourced from consensus sources in each country and adjusted to match the populations used within Spectrum by sex and age group.
+The model produces estimates at three time points: the year of the most recent population-based survey, the current period at which the most recent ART and ANC programme data are available, and short-term one-year ahead projections for HIV programme planning purposes. Subnational population estimates by sex and age group are sourced from consensus sources in each country and adjusted to match the populations used within Spectrum by sex and age group.
 
 _Survey data_
 
-Cross-sectional estimates for HIV prevalence, ART coverage, and HIV incidence are produced at the mid-point of the most recent nationally representative household survey. For HIV prevalence, the model is calibrated to survey data about HIV prevalence by subnational level, sex, and five-year age group from the most recent population-based survey (PHIA or DHS). Since the survey sample size in each district is relatively small, routinely reported data about HIV prevalence among pregnant women attending their first antenatal care visit, extracted from the national health information system, are used to improve estimates of the spatial pattern of HIV. 
+Cross-sectional estimates for HIV prevalence, ART coverage, and HIV incidence are produced at the mid-point of the most recent nationally representative household survey. For HIV prevalence, the model is calibrated to survey data about HIV prevalence by subnational level, sex, and five-year age group from the most recent population-based survey (for example [Population HIV Impact Assessment survey](https://phia.icap.columbia.edu/) or [Demographic and Health Survey](https://dhsprogram.com/)). Since the survey sample size in each district is relatively small, routinely reported data about HIV prevalence among pregnant women attending their first antenatal care visit, extracted from the national health information system, are used to improve estimates of the spatial pattern of HIV. 
 
 _ART coverage_
 
@@ -737,11 +798,12 @@ _HIV incidence_
 
 Direct estimates of HIV incidence are not available at subnational levels. While some recent household surveys have measured HIV incidence at the national level based on biomarker measures for recent HIV infections, too few recent infections are observed in any district to make a robust estimate. Therefore, to estimate HIV incidence at the subnational level, the HIV transmission rate from Spectrum estimates is calculated and applied to small area estimates of HIV prevalence and ART coverage in each subnational area.  The sex and age distribution in each subnational area are based on HIV incidence rate ratios from Spectrum applied to the population structure in each area. 
 
-_Projection to March 2020 and 2021_
+_Current estimates and one-year ahead projection_
 
-The project estimates from the most recent household survey to the current period, the model is to conduct a one-step projection of the population March 2020. Population estimates are updated with official population estimates. The number of PLHIV is projected forward based on survival estimates by province, sex, and age group from Spectrum over the same period (which accounts for HIV disease progression and effects of ART scale up on reducing AIDS mortality). Where avalible, ART coverage is updated based on the number on ART in 2020 from service provision data. 
+The update estimates from the most recent household survey to the current period, the model conducts a one-step projection of the population the most recent survey to the current period. Population estimates are updated with official population estimates. The number of PLHIV is projected forward based on survival estimates by province, sex, and age group from Spectrum over the same period (which accounts for HIV disease progression and effects of ART scale up on reducing AIDS mortality). ART coverage is updated based on the number currently reported on ART from service provision data.
+
+To extrapolate estimates a further one-year ahead for HIV planning purposes, the number of new infections and PLHIV are calculated based on the transmission rate from national or subnational Spectrum estimates. The number on ART are projected by calculating the increased in odds of ART coverage by age and sex based on ART projections input to Spectrum and applying this change in odds to each subnational area.
 
 _Version_
 
-Future development of Naomi will extend the model for additional data sources and indicators including the HIV care cascade and prevention indicators.
-
+The Naomi model is supported by UNAIDS and developed and maintained by the [MRC Centre for Global Infectious Disease Analysis](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis) at Imperial College London. The model receives technical guidance from the [UNAIDS Reference Group on Estimates, Modelling, and Projections](http://epidem.org/). The model was first used in 2020 and continues to be developed responsive to new data and HIV strategic information needs.
