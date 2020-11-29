@@ -881,8 +881,9 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
     ## No ANC prevalence data used
     anc_prev_dat <- data.frame(
       area_id = character(0),
-      sex = character(0),
+      sex = character(0),      
       age_group = character(0),
+      obs_idx = integer(0),
       anc_prev_x = integer(0),
       anc_prev_n = integer(0),
       stringsAsFactors = FALSE
@@ -936,6 +937,7 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       area_id = character(0),
       sex = character(0),
       age_group = character(0),
+      obs_idx = integer(0),
       anc_artcov_x = integer(0),
       anc_artcov_n = integer(0),
       stringsAsFactors = FALSE
