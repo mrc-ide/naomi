@@ -127,7 +127,7 @@
     "OPTIONS_ANC_MONTHS_HELP": "Nombre de mois inclus dans reportage des cliniques prénatales cette année",
     "OPTIONS_ADVANCED_USE_KISH_LABEL": "Utiliser ESS Kish",
     "OPTIONS_ADVANCED_USE_KISH_HELP": "Utiliser taille effective de l'échantillon (ESS) Kish pour la probabilité des données d'enquête",
-    "OPTIONS_ADVANCED_ESS_SCALING_LABEL": "Facteur d'échelle ESS"
+    "OPTIONS_ADVANCED_ESS_SCALING_LABEL": "Facteur d'échelle ESS",
     "ANC_CLIENTS": "Clients de la CPN",
     "ANC_PLHIV": "Participants séropositifs aux CPN",
     "ANC_ALREADY_ART": "Les participants à l'CPN déjà sur ART",
