@@ -62,6 +62,14 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(log_asfr_t2_offset);
   DATA_VECTOR(log_asfr_t3_offset);
 
+  DATA_VECTOR(logit_anc_rho_t1_offset);
+  DATA_VECTOR(logit_anc_rho_t2_offset);
+  DATA_VECTOR(logit_anc_rho_t3_offset);
+
+  DATA_VECTOR(logit_anc_alpha_t1_offset);
+  DATA_VECTOR(logit_anc_alpha_t2_offset);
+  DATA_VECTOR(logit_anc_alpha_t3_offset);
+
   DATA_SPARSE_MATRIX(A_anc_t1);
   DATA_SPARSE_MATRIX(A_anc_t2);
 
@@ -513,11 +521,13 @@ Type objective_function<Type>::operator() ()
   //       meaningfully more efficient.
 
   vector<Type> mu_anc_rho_t1(mu_rho +
+			     logit_anc_rho_t1_offset + 
 			     X_ancrho * beta_anc_rho +
 			     Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x);
   vector<Type> anc_rho_t1(invlogit(mu_anc_rho_t1));
   
   vector<Type> mu_anc_alpha_t1(mu_alpha +
+			       logit_anc_alpha_t1_offset + 
 			       X_ancalpha * beta_anc_alpha +
 			       Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x);
   vector<Type> anc_alpha_t1(invlogit(mu_anc_alpha_t1));
@@ -539,11 +549,13 @@ Type objective_function<Type>::operator() ()
                          mu_anc_alpha_aggr_t1[idx_anc_artcov_t1[i]], true);
 
   vector<Type> mu_anc_rho_t2(logit(rho_t2) +
+			     logit_anc_rho_t2_offset + 
 			     X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
 			     Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
   vector<Type> anc_rho_t2(invlogit(mu_anc_rho_t2));
 
   vector<Type> mu_anc_alpha_t2(mu_alpha_t2 +
+			       logit_anc_alpha_t2_offset + 
 			       X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
 			       Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
   vector<Type> anc_alpha_t2(invlogit(mu_anc_alpha_t2));
@@ -745,11 +757,13 @@ Type objective_function<Type>::operator() ()
 
     // Note: currently assuming same district effects parameters from t2 for t3
     vector<Type> mu_anc_rho_t3(logit(rho_t3) +
+			       logit_anc_rho_t2_offset + 
 			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
 			       Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
     vector<Type> anc_rho_t3(invlogit(mu_anc_rho_t3));
     
     vector<Type> mu_anc_alpha_t3(mu_alpha_t3 +
+				 logit_anc_alpha_t3_offset + 
 				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
 				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
     vector<Type> anc_alpha_t3(invlogit(mu_anc_alpha_t3));

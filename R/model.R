@@ -203,10 +203,18 @@ naomi_model_frame <- function(area_merged,
 
   spec_aggr <- spec %>%
     dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id3) + 2)) %>%
-    dplyr::mutate(age_group = cut_naomi_age_group(age),
-                  births = dplyr::if_else(is.na(asfr), 0, asfr * totpop)) %>%
+    dplyr::mutate(
+             age_group = cut_naomi_age_group(age),
+             births = dplyr::if_else(is.na(asfr), 0, asfr * totpop),
+             births_hivpop = dplyr::if_else(is.na(asfr), 0, pregprev * births),
+             births_artpop = dplyr::if_else(is.na(asfr), 0, pregartcov * births_hivpop)
+           ) %>%
     dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
-    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, births), sum) %>%
+    dplyr::summarise_at(
+             dplyr::vars(totpop, hivpop, artpop, infections,
+                         births, births_hivpop, births_artpop),
+             sum
+           ) %>%
     dplyr::ungroup()
 
   ## Add number susceptible in previous year for Spectrum incidence calculation
@@ -235,12 +243,15 @@ naomi_model_frame <- function(area_merged,
     dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id3) + 2),
                   age %in% 0:4) %>%
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
-                  sex = "both",
-                  births = 0,
-                  susc_previous_year = 0) %>%
+                  sex = "both") %>%
     dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
     dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections), sum) %>%
-    dplyr::mutate(births = 0, susc_previous_year = 0) %>%
+    dplyr::mutate(
+             births = 0,
+             births_hivpop= 0,
+             births_artpop = 0,
+             susc_previous_year = 0
+           ) %>%
     dplyr::ungroup()
 
   spectrum_0to4distribution <- dplyr::bind_rows(
@@ -376,7 +387,13 @@ naomi_model_frame <- function(area_merged,
              prevalence = plhiv_spectrum / population_spectrum,
              art_coverage = pmax(pmin(art_current_spectrum / plhiv_spectrum, 0.999), 0.001),
              incidence = infections_spectrum / susc_previous_year_spectrum,
-             asfr = births_spectrum / population_spectrum
+             asfr = births_spectrum / population_spectrum,
+             frr_plhiv = (births_hivpop_spectrum / plhiv_spectrum) /
+               ((births_spectrum - births_hivpop_spectrum) / (population_spectrum - plhiv_spectrum)),
+             frr_plhiv = tidyr::replace_na(frr_plhiv, 1.0),
+             frr_already_art = (births_artpop_spectrum / art_current_spectrum) /
+               ((births_hivpop_spectrum - births_artpop_spectrum) / (plhiv_spectrum - art_current_spectrum)),
+             frr_already_art = tidyr::replace_na(frr_already_art, 1.0)
            )
 
   mf_model <- mf_model %>%
@@ -390,7 +407,9 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t1 = prevalence,
                       spec_incid_t1 = incidence,
                       spec_artcov_t1 = art_coverage,
-                      asfr_t1 = asfr
+                      asfr_t1 = asfr,
+                      frr_plhiv_t1 = frr_plhiv,
+                      frr_already_art_t1 = frr_already_art
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
            ) %>%
@@ -404,7 +423,9 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t2 = prevalence,
                       spec_incid_t2 = incidence,
                       spec_artcov_t2 = art_coverage,
-                      asfr_t2 = asfr
+                      asfr_t2 = asfr,
+                      frr_plhiv_t2 = frr_plhiv,
+                      frr_already_art_t2 = frr_already_art                      
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
            ) %>%
@@ -418,11 +439,12 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t3 = prevalence,
                       spec_incid_t3 = incidence,
                       spec_artcov_t3 = art_coverage,
-                      asfr_t3 = asfr
+                      asfr_t3 = asfr,
+                      frr_plhiv_t3 = frr_plhiv,
+                      frr_already_art_t3 = frr_already_art
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
            )
-
 
 
   ## Projection matrix

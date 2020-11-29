@@ -16,6 +16,12 @@ outputs for district-level ANC testing cascade.
   
   Currently these indicators are calculated assuming that the number of 'known positive' ANC
   attendees are the same as the number already on ART.
+
+* Age-specific fertility rate ratios (FRR) for HIV positive relative to HIV 
+  negative pregnant women and women already on ART relative to untreated HIV 
+  positive women are calculated from Spectrum model outputs (using EPP-ASM 
+  simulation) and included in regression equations for ANC prevalence and ANC
+  ART coverage, respectively.
   
 Additional code changes:
 
