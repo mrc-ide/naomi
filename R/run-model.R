@@ -323,38 +323,42 @@ naomi_prepare_data <- function(data, options) {
     options["anc_art_coverage_year2"] <- list(NULL)
 
   naomi_mf <- naomi_model_frame(
-    area_merged,
-    population,
-    spec,
+    area_merged = area_merged,
+    population_agesex = population,
+    spec = spec,
     scope = scope,
     level = level,
-    calendar_quarter_t1,
-    calendar_quarter_t2,
-    calendar_quarter_t3,
+    calendar_quarter1 = calendar_quarter_t1,
+    calendar_quarter2 = calendar_quarter_t2,
+    calendar_quarter3 = calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
   )
 
-  naomi_data <- select_naomi_data(naomi_mf,
-                                  survey,
-                                  anc_testing,
-                                  art_number,
-                                  prev_survey_ids,
-                                  artcov_survey_ids,
-                                  recent_survey_ids,
-                                  vls_survey_ids,
-                                  artnum_calendar_quarter1,
-                                  artnum_calendar_quarter2,
-                                  options$anc_prevalence_year1,
-                                  options$anc_prevalence_year2,
-                                  options$anc_art_coverage_year1,
-                                  options$anc_art_coverage_year2,
-                                  deff_prev = options$deff_prev,
-                                  deff_artcov = options$deff_artcov,
-                                  deff_recent = options$deff_recent,
-                                  deff_vls = options$deff_vls)
+  naomi_data <- select_naomi_data(
+    naomi_mf = naomi_mf,
+    survey_hiv_indicators = survey,
+    anc_testing = anc_testing,
+    art_number = art_number,
+    prev_survey_ids = prev_survey_ids,
+    artcov_survey_ids = artcov_survey_ids,
+    recent_survey_ids = recent_survey_ids,
+    vls_survey_ids = vls_survey_ids,
+    artnum_calendar_quarter_t1 = artnum_calendar_quarter1,
+    artnum_calendar_quarter_t2 = artnum_calendar_quarter2,
+    anc_clients_year_t2 = options$anc_clients_year2,
+    anc_clients_year_t2_num_months = options$anc_clients_year2_num_months,
+    anc_prev_year_t1 = options$anc_prevalence_year1,
+    anc_prev_year_t2 = options$anc_prevalence_year2,
+    anc_artcov_year_t1 = options$anc_art_coverage_year1,
+    anc_artcov_year_t2 = options$anc_art_coverage_year2,
+    deff_prev = options$deff_prev,
+    deff_artcov = options$deff_artcov,
+    deff_recent = options$deff_recent,
+    deff_vls = options$deff_vls
+  )
 
   return(naomi_data)
 }
