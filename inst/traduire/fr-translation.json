@@ -138,6 +138,7 @@
     "INDICATOR_LABEL_ANC_CLIENTS": "Nombre total de participants au premier CPN",
     "INDICATOR_LABEL_ANC_PLHIV": "Nombre de femmes séropositives fréquentant les CPN",
     "INDICATOR_LABEL_ANC_ALREADY_ART": "Nombre déjà sous TAR avant la première visite prénatale",
+    "INDICATOR_LABEL_ANC_ART_NEW": "Nombre de femmes enceintes initiées sous TAR au CPN",
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Nombre de participants prénatals séropositifs au courant de leur statut avant la première visite prénatale",
     "INDICATOR_LABEL_ANC_TESTED_POS": "Nombre de participants séropositifs aux CPN testés aux CPN",
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Nombre de participants aux CPN séronégatifs testés aux CPN"

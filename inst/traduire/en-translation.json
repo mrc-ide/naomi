@@ -138,6 +138,7 @@
     "INDICATOR_LABEL_ANC_CLIENTS": "Total number attending first ANC",
     "INDICATOR_LABEL_ANC_PLHIV": "Number of HIV positive women attending ANC",
     "INDICATOR_LABEL_ANC_ALREADY_ART": "Number already on ART prior prior to first ANC visit",
+    "INDICATOR_LABEL_ANC_ART_NEW": "Number of pregnant women initiated on ART at ANC",
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
     "INDICATOR_LABEL_ANC_TESTED_POS": "Number of HIV positive ANC attendees tested at ANC",
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC"
