@@ -2,6 +2,7 @@
 
 * Slight text edits to ANC model options block labels.
 * Add `area_name` field to example datasets, conforming to ADR schemas.
+* Remove survey data preparation functions. Added to `naomi.utils` package.
 
 # naomi 2.0.6
 
