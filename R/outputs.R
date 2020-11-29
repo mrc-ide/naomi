@@ -951,8 +951,8 @@ calibrate_outputs <- function(output,
                       art_current_residents = art_current_calibration,
                       infections = infections_calibration
                     ) %>%
-             tidyr::gather(indicator, calibration,
-                           plhiv, art_current_residents, infections),
+             tidyr::pivot_longer(cols = c(plhiv, art_current_residents, infections),
+                                 names_to = "indicator", values_to = "calibration"),
              by = c("indicator", group_vars)
            ) %>%
     dplyr::mutate(adjusted = mean * calibration)
@@ -1216,72 +1216,60 @@ export_datapack <- function(naomi_output,
 
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
-             dataelement = datapack_indicator_label,
+             dataelement = datapack_indicator_code,
              dataelementuid = datapack_indicator_id
            ) %>%
     dplyr::select(indicator, dataelement, dataelementuid)
 
 
   datapack_age_group_map <- datapack_age_group_map %>%
-    dplyr::rename(
-             categoryOption_name_1 = datapack_age_group_label,
-             categoryOption_uid_1.1 = datapack_age_group_id
-           ) %>%
-    dplyr::mutate(
-             category_1 = "Age (<1-50+, 12)",
-             categoryOption_uid_1 = "HoZv6qBZvE7",
-             categoryOption_name_1 = paste0("\"", categoryOption_name_1, "\"")
-           ) %>%
-    dplyr::select(
+    dplyr::transmute(
              age_group,
-             categoryOption_uid_1,
-             category_1,
-             categoryOption_uid_1.1,
-             categoryOption_name_1
+             age = paste0("\"", datapack_age_group_label, "\""),
+             age_uid = datapack_age_group_id
            )
 
   datapack_sex_map <- datapack_sex_map %>%
     dplyr::rename(
-             categoryOption_name_2 = datapack_sex_label,
-             categoryOption_uid_2 = datapack_sex_id
-           ) %>%
-    dplyr::mutate(
-             category_2 = "Sex",
-             categoryuid_2 = "SEOZOio7f7o"
-           ) %>%
-    dplyr::select(
-             sex,
-             categoryuid_2,
-             category_2,
-             categoryOption_uid_2,
-             categoryOption_name_2
-           )
-
+             sex_naomi = sex,
+             sex_datapack = datapack_sex_label,
+             sex_uid = datapack_sex_id
+           ) 
 
   strat <-  datapack_indicator_map %>%
     tidyr::expand_grid(datapack_age_group_map) %>%
     tidyr::expand_grid(datapack_sex_map)
-
+    
   dat <- naomi_output$indicators %>%
+    dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
              naomi_output$meta_area %>%
              dplyr::filter(area_level == psnu_level),
              by = "area_id"
            ) %>%
-    dplyr::filter(indicator %in% datapack_indicator_map$indicator,
-                  calendar_quarter %in% {{ calendar_quarter }},
-                  sex %in% datapack_sex_map$sex &
-                  age_group %in% datapack_age_group_map$age_group |
-                  sex == "both" & age_group == "Y000_999") %>%
-    dplyr::transmute(area_id, indicator, sex, age_group, calendar_quarter,
-                     value = mean, rse = se / mean)
+    dplyr::filter(
+             indicator %in% datapack_indicator_map$indicator,
+             calendar_quarter %in% {{ calendar_quarter }},
+             (sex_naomi %in% datapack_sex_map$sex_naomi &
+              age_group %in% datapack_age_group_map$age_group |
+              sex_naomi == "both" & age_group == "Y000_999")
+           )%>%
+    dplyr::transmute(
+             area_id,
+             indicator,
+             sex_naomi,
+             age_group,
+             calendar_quarter,
+             value = mean,
+             rse = se / mean
+           )
 
   dat <- dat %>%
     dplyr::filter(age_group != "Y000_999") %>%
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
              dplyr::filter(dat, age_group == "Y000_999") %>%
-             dplyr::select(-age_group, -sex, -value) %>%
+             dplyr::select(-age_group, -sex_naomi, -value) %>%
              dplyr::rename(district_rse = rse),
              by = c("area_id", "indicator", "calendar_quarter")
            ) %>%
@@ -1290,17 +1278,26 @@ export_datapack <- function(naomi_output,
              dplyr::select(psnu = area_name, area_id),
              by = "area_id"
            ) %>%
-    dplyr::arrange(indicator, area_id, sex, age_group)
+    dplyr::arrange(calendar_quarter, indicator, area_id, sex_naomi, age_group)
 
   datapack <- dat %>%
-    dplyr::left_join(strat, by = c("indicator", "age_group", "sex")) %>%
-    dplyr::select(psnu, area_id, dataelement, dataelementuid,
-                  category_1, categoryOption_uid_1,
-                  category_2, categoryuid_2,
-                  categoryOption_name_1, categoryOption_uid_1.1,
-                  categoryOption_name_2, categoryOption_uid_2,
-                  calendar_quarter,
-                  value, age_sex_rse, district_rse)
+    dplyr::left_join(strat, by = c("indicator", "age_group", "sex_naomi")) %>%
+    dplyr::mutate(psnuid = NA) %>%
+    dplyr::select(
+             psnu,
+             psnuid,
+             area_id,
+             dataelement,
+             dataelementuid,
+             age,
+             age_uid,
+             sex = sex_datapack,
+             sex_uid,
+             calendar_quarter,
+             value,
+             age_sex_rse,
+             district_rse
+           )
 
   naomi_write_csv(datapack, path)
 

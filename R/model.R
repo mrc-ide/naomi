@@ -266,7 +266,8 @@ naomi_model_frame <- function(area_merged,
                      art_current = art_current_spectrum / sum(art_current_spectrum),
                      art_current_residents = art_current,
                      infections = infections_spectrum / sum(infections_spectrum)) %>%
-    tidyr::gather(indicator, distribution, population, plhiv, art_current, art_current_residents, infections) %>%
+    tidyr::pivot_longer(cols = c(population, plhiv, art_current, art_current_residents, infections),
+                        names_to = "indicator", values_to = "distribution") %>%
     dplyr::ungroup()
 
 
