@@ -881,6 +881,8 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
     ## No ANC prevalence data used
     anc_prev_dat <- data.frame(
       area_id = character(0),
+      sex = character(0),
+      age_group = character(0),
       anc_prev_x = integer(0),
       anc_prev_n = integer(0),
       stringsAsFactors = FALSE
@@ -903,11 +905,14 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                !is.na(anc_tested_pos),
                !is.na(anc_tested)
              ) %>%
-      dplyr::group_by(area_id) %>%
+      dplyr::group_by(area_id, age_group) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested), sum) %>%
       dplyr::ungroup() %>%
       dplyr::transmute(
                area_id,
+               sex = "female",
+               age_group,
+               obs_idx = dplyr::row_number(),
                anc_prev_x = anc_known_pos + anc_tested_pos,
                anc_prev_n = anc_known_pos + anc_tested
              )
@@ -916,14 +921,6 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
 
   }
-
-  ## Add area index
-  anc_prev_dat <- anc_prev_dat %>%
-    dplyr::left_join(
-             dplyr::select(naomi_mf$mf_areas, area_id, area_idx),
-             by = "area_id"
-           ) %>%
-    dplyr::select(area_id, area_idx, anc_prev_x, anc_prev_n)
 
   anc_prev_dat
 }
@@ -937,6 +934,8 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
     ## No ANC ART coverage data used
     anc_artcov_dat <- data.frame(
       area_id = character(0),
+      sex = character(0),
+      age_group = character(0),
       anc_artcov_x = integer(0),
       anc_artcov_n = integer(0),
       stringsAsFactors = FALSE
@@ -959,12 +958,15 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
                !is.na(anc_tested_pos),
                !is.na(anc_already_art)
              )  %>%
-      dplyr::group_by(area_id) %>%
+      dplyr::group_by(area_id, age_group) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_already_art), sum) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(anc_total_pos = anc_known_pos + anc_tested_pos) %>%
       dplyr::transmute(
                area_id,
+               sex = "female",
+               age_group,
+               obs_idx = dplyr::row_number(),
                anc_artcov_x = anc_already_art,
                anc_artcov_n = anc_total_pos
              )
@@ -974,15 +976,6 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
     }
 
   }
-
-  ## Add area index
-  anc_artcov_dat <- anc_artcov_dat %>%
-    dplyr::left_join(
-             dplyr::select(naomi_mf$mf_areas, area_id, area_idx),
-             by = "area_id"
-           ) %>%
-    dplyr::select(area_id, area_idx, anc_artcov_x, anc_artcov_n)
-
 
   anc_artcov_dat
 }

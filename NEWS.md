@@ -4,7 +4,9 @@ This release revises the modelling of ANC prevalence and ART coverage and produc
 outputs for district-level ANC testing cascade.
 
 * Add ANC bias parameters to age-specific prevalence and ART coverage regression equations instead of to aggregate ANC prevalence and ART coverage.
+
 * ANC prevalence and ANC ART coverage outputs are produced by five-year age group, 15-24, 25-34, 35-49, and all ages.
+
 * New output indicators for ANC testing cascade:
   * `anc_clients`: Number of ANC1 clients.
   * `anc_plhiv`: Number of HIV positive ANC attendees.
@@ -23,10 +25,19 @@ outputs for district-level ANC testing cascade.
   simulation) and included in regression equations for ANC prevalence and ANC
   ART coverage, respectively.
   
+* Aggregation of ANC testing data observations generalized using same approach as aggregation
+  of number currently on ART observations. This means that:
+  - ANC testing observations can be input for coarser areas, for example admin 1.
+  - Age-stratified ANC testing data can be input, for example 5-year age groups.
+
+  Age-stratified ANC testing do not yet inform national or district level estimates for 
+  age-specific fertility or HIV/ART fertility rate ratios.
+  
 Additional code changes:
 
 * Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and 
-  read .DP file.
+  read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was 
+  utilised; remove dependency on `specio`.
 
 # naomi 2.0.6
 

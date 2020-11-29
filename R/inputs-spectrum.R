@@ -464,7 +464,7 @@ log_lin_approx <- function(x, y, xout, replace_na_value = 0){
 #' 
 #' @details
 #'
-#' This is a wrapper for [`eppasm::agepregpregprev()`] and [`eppasm::agepregartcov()`].
+#' This is a wrapper for [`eppasm::agepregprev()`] and [`eppasm::agepregartcov()`].
 #' The code in these two functions is almost entirely duplicated, so this function
 #' could be roughly reduced by half by refactoring this to one function call.
 #'
