@@ -18,6 +18,19 @@ outputs for district-level ANC testing cascade.
   
   Currently these indicators are calculated assuming that the number of 'known positive' ANC
   attendees are the same as the number already on ART.
+  
+* Added a likelihood for the number of ANC clients observed in current year as a 
+  function of district population size, age-specific ferility rate (fixed inputs),
+  and a district-level random effect to scale overall fertility rate.
+  * The number of months reflected in ANC client reporting is used as an offset
+    for the number of clients such that predicted number of clients are projected
+	annual total.
+  * Results explicitly represent __number of ANC clients__, calibrated based on the number 
+    in the current year data. No distinction between number of births versus ANC clients
+	are made. Results should not be used for estimating PMTCT coverage (for example).
+  * Currently only a single time point is used for ANC clients estimates and projections.
+    The future projection is closely linked to the accuracy of current year data; 
+	uncertainty around the estimate and projection are not appropriately quantified.
 
 * Age-specific fertility rate ratios (FRR) for HIV positive relative to HIV 
   negative pregnant women and women already on ART relative to untreated HIV 

@@ -616,6 +616,8 @@ naomi_model_frame <- function(area_merged,
 #' @param vls_survey_ids A character vector of `survey_id`s for survey VLS among all HIV+ persons.
 #' @param artnum_calendar_quarter_t1 Calendar quarter for first time point for number on ART.
 #' @param artnum_calendar_quarter_t2 Calendar quarter for second time point for number on ART.
+#' @param anc_clients_year_t2 Calendar year (possibly multiple) for number of ANC clients at year 2.
+#' @param anc_clients_year_t2_num_monhts Number of months of reporting reflected in the year(s) recorded in `anc_clients_year_t2`.
 #' @param anc_prev_year_t1 Calendar year (possibly multiple) for first time point for ANC prevalence.
 #' @param anc_prev_year_t2 Calendar year (possibly multiple) for second time point for ANC prevalence.
 #' @param anc_artcov_year_t1 Calendar year (possibly multiple) for first time point for ANC ART coverage.
@@ -649,6 +651,8 @@ select_naomi_data <- function(naomi_mf,
                               vls_survey_ids = NULL,
                               artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
                               artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
+                              anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+                              anc_clients_year_t2_num_months = 12,
                               anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
                               anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
                               anc_artcov_year_t1 = anc_prev_year_t1,
@@ -676,6 +680,8 @@ select_naomi_data <- function(naomi_mf,
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
 
+  naomi_mf$anc_clients_t2_dat <- anc_testing_clients_mf(anc_clients_year_t2, anc_testing, naomi_mf,
+                                                        anc_clients_year_t2_num_months)
   naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_testing, naomi_mf)
 
@@ -897,11 +903,16 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
               count = length(missing_years)))
     }
 
+    ## Filter observations contained in model scope
+    anc_prev_dat <- dplyr::semi_join(
+                             anc_testing,
+                             naomi_mf$area_aggregation,
+                             by = "area_id"
+                           )
     ## Drop any observations with NA in required columns
-    anc_prev_dat <- anc_testing %>%
+    anc_prev_dat <- anc_prev_dat %>%
       dplyr::filter(
                year %in% !!year,
-               area_id %in% naomi_mf$mf_model$area_id,
                !is.na(anc_known_pos),
                !is.na(anc_tested_pos),
                !is.na(anc_tested)
@@ -951,11 +962,16 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
               count = length(missing_years)))
     }
 
+    ## Filter observations contained in model scope
+    anc_artcov_dat <- dplyr::semi_join(
+                               anc_testing,
+                               naomi_mf$area_aggregation,
+                               by = "area_id"
+                             )
     ## Drop any observations with NA in required columns
-    anc_artcov_dat <- anc_testing %>%
+    anc_artcov_dat <- anc_artcov_dat %>%
       dplyr::filter(
                year %in% !!year,
-               area_id %in% naomi_mf$mf_model$area_id,
                !is.na(anc_known_pos),
                !is.na(anc_tested_pos),
                !is.na(anc_already_art)
@@ -980,6 +996,58 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
   }
 
   anc_artcov_dat
+}
+
+#' @rdname anc_testing_prev_mf
+#' @export
+anc_testing_clients_mf <- function(year, anc_testing, naomi_mf, num_months) {
+
+  if(is.null(anc_testing) || is.null(year)) {
+    ## No data on number of ANC clients used 
+    anc_clients_dat <- data.frame(
+      area_id = character(0),
+      sex = character(0),
+      age_group = character(0),
+      obs_idx = integer(0),
+      anc_clients_x = integer(0),
+      anc_clients_pys_offset = numeric(0),
+      stringsAsFactors = FALSE
+    )
+  } else {
+
+    if (!all(year %in% anc_testing$year)) {
+      missing_years <- setdiff(year, anc_testing$year)
+      stop(t_("ANC_DATA_MISSING_FOR_YEAR",
+              list(missing_year = paste(missing_years, collapse = ", ")),
+              count = length(missing_years)))
+    }
+
+    ## Filter observations contained in model scope
+    anc_clients_dat <- dplyr::semi_join(
+                                anc_testing,
+                                naomi_mf$area_aggregation,
+                                by = "area_id"
+                              )
+    ## Drop any observations with NA in required columns
+    anc_clients_dat <- anc_clients_dat %>%
+      dplyr::filter(
+               year %in% !!year,
+               !is.na(anc_clients)
+             )  %>%
+      dplyr::group_by(area_id, age_group) %>%
+      dplyr::summarise_at(dplyr::vars(anc_clients), sum) %>%
+      dplyr::ungroup() %>%
+      dplyr::transmute(
+               area_id,
+               sex = "female",
+               age_group,
+               obs_idx = dplyr::row_number(),
+               anc_clients_x = anc_clients,
+               anc_clients_pys_offset = log(num_months / 12),
+               )
+  }
+  
+  anc_clients_dat
 }
 
 

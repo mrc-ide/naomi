@@ -34,6 +34,7 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(X_alpha_t2);
   DATA_MATRIX(X_lambda);
 
+  DATA_MATRIX(X_asfr);
   DATA_MATRIX(X_ancrho);
   DATA_MATRIX(X_ancalpha);
 
@@ -70,6 +71,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(logit_anc_alpha_t2_offset);
   DATA_VECTOR(logit_anc_alpha_t3_offset);
 
+  DATA_SPARSE_MATRIX(Z_asfr_x);
   DATA_SPARSE_MATRIX(Z_ancrho_x);
   DATA_SPARSE_MATRIX(Z_ancalpha_x);
 
@@ -92,6 +94,10 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(idx_recent);
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
+
+  DATA_VECTOR(x_anc_clients_t2);
+  DATA_VECTOR(offset_anc_clients_t2);
+  DATA_SPARSE_MATRIX(A_anc_clients_t2);
 
   DATA_VECTOR(n_anc_prev_t1);
   DATA_VECTOR(x_anc_prev_t1);
@@ -170,6 +176,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(beta_lambda);
   val -= dnorm(beta_lambda, 0.0, 5.0, true).sum();
+
+  PARAMETER_VECTOR(beta_asfr);
+  val -= dnorm(beta_asfr, 0.0, 5.0, true).sum();
 
   PARAMETER_VECTOR(beta_anc_rho);
   val -= dnorm(beta_anc_rho, 0.0, 5.0, true).sum();
@@ -361,6 +370,15 @@ Type objective_function<Type>::operator() ()
 
   // * ANC testing model *
 
+  // district ASFR random effects
+  PARAMETER(log_sigma_asfr_x);
+  Type sigma_asfr_x(exp(log_sigma_asfr_x));
+  val -= dnorm(sigma_asfr_x, Type(0.0), Type(2.5), true) + log_sigma_asfr_x;
+
+  PARAMETER_VECTOR(ui_asfr_x);
+  val -= sum(dnorm(ui_asfr_x, 0.0, 1.0, true));
+
+  // ANC prevalence and ART coverage random effects
   PARAMETER(log_sigma_ancrho_x);
   Type sigma_ancrho_x(exp(log_sigma_ancrho_x));
   val -= dnorm(sigma_ancrho_x, Type(0.0), Type(2.5), true) + log_sigma_ancrho_x;
@@ -517,6 +535,9 @@ Type objective_function<Type>::operator() ()
   //       of female age 15-49 age groups. But I don't know if it would be
   //       meaningfully more efficient.
 
+  vector<Type> mu_asfr(X_asfr * beta_asfr +
+		       Z_asfr_x * ui_asfr_x * sigma_asfr_x);
+		       
   vector<Type> mu_anc_rho_t1(mu_rho +
 			     logit_anc_rho_t1_offset + 
 			     X_ancrho * beta_anc_rho +
@@ -529,7 +550,7 @@ Type objective_function<Type>::operator() ()
 			       Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x);
   vector<Type> anc_alpha_t1(invlogit(mu_anc_alpha_t1));
   
-  vector<Type> anc_clients_t1(population_t1 * exp(log_asfr_t1_offset));
+  vector<Type> anc_clients_t1(population_t1 * exp(log_asfr_t1_offset + mu_asfr));
   vector<Type> anc_plhiv_t1(anc_clients_t1 * anc_rho_t1);
   vector<Type> anc_already_art_t1(anc_plhiv_t1 * anc_alpha_t1);
 
@@ -545,12 +566,15 @@ Type objective_function<Type>::operator() ()
 			       Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
   vector<Type> anc_alpha_t2(invlogit(mu_anc_alpha_t2));
 
-  vector<Type> anc_clients_t2(population_t2 * exp(log_asfr_t2_offset));
+  vector<Type> anc_clients_t2(population_t2 * exp(log_asfr_t2_offset + mu_asfr));
   vector<Type> anc_plhiv_t2(anc_clients_t2 * anc_rho_t2);
   vector<Type> anc_already_art_t2(anc_plhiv_t2 * anc_alpha_t2);
 
   // likelihood for ANC testing observations
 
+  vector<Type> anc_clients_obs_t2((A_anc_clients_t2 * anc_clients_t2) * exp(offset_anc_clients_t2));
+  val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
+	       
   vector<Type> anc_rho_obs_t1(A_anc_prev_t1 * anc_plhiv_t1 / (A_anc_prev_t1 * anc_clients_t1));
   val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
 
@@ -753,7 +777,7 @@ Type objective_function<Type>::operator() ()
 				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
     vector<Type> anc_alpha_t3(invlogit(mu_anc_alpha_t3));
     
-    vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset));
+    vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset + mu_asfr));
     vector<Type> anc_plhiv_t3(anc_clients_t3 * anc_rho_t3);
     vector<Type> anc_already_art_t3(anc_plhiv_t3 * anc_alpha_t3);
 
