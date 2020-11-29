@@ -11,56 +11,17 @@
 #' @export
 extract_pjnz_naomi <- function(pjnz_list) {
 
-  extract_pjnz_one <- function(pjnz) {
-    
-    totpop <- specio::read_total_pop(pjnz, TRUE) %>%
-      dplyr::mutate(sex = as.character(sex))
-    hivpop <- specio::read_hiv_pop(pjnz, TRUE) %>%
-      dplyr::mutate(sex = as.character(sex))
-    artpop <- specio::read_art_pop(pjnz, TRUE) %>%
-      dplyr::mutate(sex = as.character(sex))
-
-    demp <- eppasm::read_specdp_demog_param(pjnz)
-    specres <- eppasm::read_hivproj_output(pjnz)
-    
-    infections <- specres$infections %>%
-      as.data.frame.table(responseName = "infections",
-                          stringsAsFactors = FALSE) %>%
-      utils::type.convert(as.is = TRUE)
-
-    asfr <- demp$asfr %>%
-      as.data.frame.table(responseName = "asfr",
-                        stringsAsFactors = FALSE) %>%
-      utils::type.convert(as.is = TRUE)
-    
-    spec <- totpop %>%
-      dplyr::left_join(hivpop, by = c("age", "sex", "year")) %>%
-      dplyr::left_join(artpop, by = c("age", "sex", "year")) %>%
-      dplyr::rename(
-               totpop = total_pop,
-               hivpop = hiv_pop,
-               artpop = art_pop
-             ) %>%
-      dplyr::left_join(infections, by = c("age", "sex", "year")) %>%
-      dplyr::left_join(asfr %>% dplyr::mutate(sex = "female"),
-                       by = c("age", "sex", "year"))
-
-    spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
-    
-    spec
-  }
-
   ## If meets conditions, treat as zipped list of PJNZ.
   ## * Single file
   ## * Does not contain a .DP or .PJN file
   if(length(pjnz_list) == 1) {
-    file_names <- unzip(pjnz_list, list = TRUE)$Name
+    file_names <- utils::unzip(pjnz_list, list = TRUE)$Name
     exts <- tolower(tools::file_ext(file_names))
     is_pjnz <- any("dp" %in% exts) || any("pjn" %in% exts)
 
     if(!is_pjnz) {
       pjnzdir <- tempfile()
-      unzip(pjnz_list, exdir = pjnzdir)
+      utils::unzip(pjnz_list, exdir = pjnzdir)
       pjnz_list <- list.files(pjnzdir, full.names = TRUE)
     }
   }
@@ -72,6 +33,54 @@ extract_pjnz_naomi <- function(pjnz_list) {
   
   spec
 }
+
+extract_pjnz_one <- function(pjnz) {
+
+  ## Code extracted from eppasm:::create_specfp()
+  demp <- eppasm::read_specdp_demog_param(pjnz)
+  projp <- eppasm::read_hivproj_param(pjnz)
+  specres <- eppasm::read_hivproj_output(pjnz)
+
+  specfp <- eppasm:::create_spectrum_fixpar(projp, demp)
+  specfp$eppmod <- "directincid"
+  specfp$incidinput <- eppasm::incid(specres)
+  specfp$incidpopage <- 0L  ## age 15-49
+
+  mod <- eppasm::simmod(specfp)
+
+  
+  totpop <- as.data.frame.table(specres$totpop, responseName = "totpop",
+                                stringsAsFactors = FALSE)
+  hivpop <- as.data.frame.table(specres$hivpop, responseName = "hivpop",
+                                stringsAsFactors = FALSE)
+  artpop <- as.data.frame.table(specres$artpop, responseName = "artpop",
+                                stringsAsFactors = FALSE)
+  infections <- as.data.frame.table(specres$infections, responseName = "infections",
+                                    stringsAsFactors = FALSE)
+  asfr <- as.data.frame.table(demp$asfr, responseName = "asfr",
+                              stringsAsFactors = FALSE)
+  asfr$sex <- "female"
+  
+  spec <- totpop %>%
+    dplyr::left_join(hivpop, by = c("age", "sex", "year")) %>%
+    dplyr::left_join(artpop, by = c("age", "sex", "year")) %>%
+    dplyr::left_join(infections, by = c("age", "sex", "year")) %>%
+    dplyr::left_join(asfr, by = c("age", "sex", "year")) %>%
+    utils::type.convert(as.is = TRUE)
+
+  pregprev <- extract_eppasm_pregprev(mod, specfp)
+  spec <- dplyr::left_join(spec, pregprev, by = c("age", "sex", "year"))
+
+  spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
+  
+  spec
+}
+
+add_pjnz_aware <- function(spec, pjnz) {
+
+  
+}
+
 
 #' Read Subnational Region Code from Spectrum PJNZ
 #'
@@ -417,7 +426,9 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
              art_current_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
              infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
              susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
-             births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out)
+             births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out),
+             births_hivpop_spectrum = log_lin_approx(quarter_id, births_hivpop, quarter_id_out),
+             births_artpop_spectrum = log_lin_approx(quarter_id, births_artpop, quarter_id_out)
            ) %>%
     dplyr::ungroup()
 
@@ -429,11 +440,59 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
                 art_current_spectrum,
                 infections_spectrum,
                 susc_previous_year_spectrum,
-                births_spectrum)
+                births_spectrum,
+                births_hivpop_spectrum,
+                births_artpop_spectrum)
 }
 
 log_lin_approx <- function(x, y, xout, replace_na_value = 0){
   v <- exp(stats::approx(x, log(y), xout)$y)
   v <- tidyr::replace_na(v, replace_na_value)
   v
+}
+
+
+
+#' Number of births by HIV status from EPP-ASM model
+#'
+#' @param mod EPP-ASM model simulation, returned by [`eppasm::simmod()`].
+#' @param fp  EPP-ASM fixed parameters corresponding to `mod`.
+#' @param years Years for which to calculate number of births.
+#'
+#' @return Data frame of HIV prevalence and ART coverage among pregnant women
+#'   by single-year of age.
+#' 
+#' @details
+#'
+#' This is a wrapper for [`eppasm::agepregprev()`] and [`eppasm::agepregartcov()`].
+#' The code in these two functions is almost entirely duplicated, so this function
+#' could be roughly reduced by half by refactoring this to one function call.
+#'
+#' @noRd
+extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
+
+  proj_years <- fp$ss$proj_start + seq_len(fp$ss$PROJ_YEARS) - 1L
+  
+  if (is.null(years)) {
+    years <- proj_years
+  }
+  
+  if (!all(years %in% proj_years)) {
+    stop("Ouput years not contained in shiny90 projection: ",
+         paste0(setdiff(years, proj_years), collapse = ", "))
+  }
+
+  df <- expand.grid(age = fp$ss$AGE_START + fp$ss$p.fert.idx - 1L,
+                    sex = "female",
+                    year = years)
+
+  idx <- df
+  idx$aidx  <- idx$age - fp$ss$AGE_START+1L
+  idx$agspan <- 1
+  idx$yidx <- idx$year - fp$ss$proj_start + 1
+
+  df$pregprev <- eppasm::agepregprev(mod, fp, idx$aidx, idx$yidx, idx$agspan)
+  df$pregartcov <- eppasm::agepregartcov(mod, fp, idx$aidx, idx$yidx, idx$agspan)
+  
+  df
 }

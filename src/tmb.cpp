@@ -34,6 +34,7 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(X_alpha_t2);
   DATA_MATRIX(X_lambda);
 
+  DATA_MATRIX(X_asfr);
   DATA_MATRIX(X_ancrho);
   DATA_MATRIX(X_ancalpha);
 
@@ -62,9 +63,15 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(log_asfr_t2_offset);
   DATA_VECTOR(log_asfr_t3_offset);
 
-  DATA_SPARSE_MATRIX(A_anc_t1);
-  DATA_SPARSE_MATRIX(A_anc_t2);
+  DATA_VECTOR(logit_anc_rho_t1_offset);
+  DATA_VECTOR(logit_anc_rho_t2_offset);
+  DATA_VECTOR(logit_anc_rho_t3_offset);
 
+  DATA_VECTOR(logit_anc_alpha_t1_offset);
+  DATA_VECTOR(logit_anc_alpha_t2_offset);
+  DATA_VECTOR(logit_anc_alpha_t3_offset);
+
+  DATA_SPARSE_MATRIX(Z_asfr_x);
   DATA_SPARSE_MATRIX(Z_ancrho_x);
   DATA_SPARSE_MATRIX(Z_ancalpha_x);
 
@@ -88,21 +95,25 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
 
-  DATA_IVECTOR(idx_anc_prev_t1);
+  DATA_VECTOR(x_anc_clients_t2);
+  DATA_VECTOR(offset_anc_clients_t2);
+  DATA_SPARSE_MATRIX(A_anc_clients_t2);
+
   DATA_VECTOR(n_anc_prev_t1);
   DATA_VECTOR(x_anc_prev_t1);
+  DATA_SPARSE_MATRIX(A_anc_prev_t1);
 
-  DATA_IVECTOR(idx_anc_artcov_t1);
   DATA_VECTOR(n_anc_artcov_t1);
   DATA_VECTOR(x_anc_artcov_t1);
+  DATA_SPARSE_MATRIX(A_anc_artcov_t1);
 
-  DATA_IVECTOR(idx_anc_prev_t2);
   DATA_VECTOR(n_anc_prev_t2);
   DATA_VECTOR(x_anc_prev_t2);
+  DATA_SPARSE_MATRIX(A_anc_prev_t2);
 
-  DATA_IVECTOR(idx_anc_artcov_t2);
   DATA_VECTOR(n_anc_artcov_t2);
   DATA_VECTOR(x_anc_artcov_t2);
+  DATA_SPARSE_MATRIX(A_anc_artcov_t2);
 
   DATA_SPARSE_MATRIX(A_artattend_t1);
   DATA_VECTOR(x_artnum_t1);
@@ -165,6 +176,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(beta_lambda);
   val -= dnorm(beta_lambda, 0.0, 5.0, true).sum();
+
+  PARAMETER_VECTOR(beta_asfr);
+  val -= dnorm(beta_asfr, 0.0, 5.0, true).sum();
 
   PARAMETER_VECTOR(beta_anc_rho);
   val -= dnorm(beta_anc_rho, 0.0, 5.0, true).sum();
@@ -356,6 +370,15 @@ Type objective_function<Type>::operator() ()
 
   // * ANC testing model *
 
+  // district ASFR random effects
+  PARAMETER(log_sigma_asfr_x);
+  Type sigma_asfr_x(exp(log_sigma_asfr_x));
+  val -= dnorm(sigma_asfr_x, Type(0.0), Type(2.5), true) + log_sigma_asfr_x;
+
+  PARAMETER_VECTOR(ui_asfr_x);
+  val -= sum(dnorm(ui_asfr_x, 0.0, 1.0, true));
+
+  // ANC prevalence and ART coverage random effects
   PARAMETER(log_sigma_ancrho_x);
   Type sigma_ancrho_x(exp(log_sigma_ancrho_x));
   val -= dnorm(sigma_ancrho_x, Type(0.0), Type(2.5), true) + log_sigma_ancrho_x;
@@ -512,59 +535,57 @@ Type objective_function<Type>::operator() ()
   //       of female age 15-49 age groups. But I don't know if it would be
   //       meaningfully more efficient.
 
+  vector<Type> mu_asfr(X_asfr * beta_asfr +
+		       Z_asfr_x * ui_asfr_x * sigma_asfr_x);
+		       
   vector<Type> mu_anc_rho_t1(mu_rho +
+			     logit_anc_rho_t1_offset + 
 			     X_ancrho * beta_anc_rho +
 			     Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x);
   vector<Type> anc_rho_t1(invlogit(mu_anc_rho_t1));
   
   vector<Type> mu_anc_alpha_t1(mu_alpha +
+			       logit_anc_alpha_t1_offset + 
 			       X_ancalpha * beta_anc_alpha +
 			       Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x);
   vector<Type> anc_alpha_t1(invlogit(mu_anc_alpha_t1));
   
-  vector<Type> anc_clients_t1(population_t1 * exp(log_asfr_t1_offset));
+  vector<Type> anc_clients_t1(population_t1 * exp(log_asfr_t1_offset + mu_asfr));
   vector<Type> anc_plhiv_t1(anc_clients_t1 * anc_rho_t1);
   vector<Type> anc_already_art_t1(anc_plhiv_t1 * anc_alpha_t1);
 
-  vector<Type> anc_rho_aggr_t1(A_anc_t1 * anc_rho_t1 / (A_anc_t1 * ones));
-  vector<Type> mu_anc_rho_aggr_t1(logit(anc_rho_aggr_t1));
-  for(int i = 0; i < idx_anc_prev_t1.size(); i++)
-    val -= dbinom_robust(x_anc_prev_t1[i], n_anc_prev_t1[i],
-                         mu_anc_rho_aggr_t1[idx_anc_prev_t1[i]], true);
-
-  vector<Type> anc_alpha_aggr_t1(A_anc_t1 * vector<Type>(anc_rho_t1 * anc_alpha_t1) / (A_anc_t1 * anc_rho_t1));
-  vector<Type> mu_anc_alpha_aggr_t1(logit(anc_alpha_aggr_t1));
-  for(int i = 0; i < idx_anc_artcov_t1.size(); i++)
-    val -= dbinom_robust(x_anc_artcov_t1[i], n_anc_artcov_t1[i],
-                         mu_anc_alpha_aggr_t1[idx_anc_artcov_t1[i]], true);
-
   vector<Type> mu_anc_rho_t2(logit(rho_t2) +
+			     logit_anc_rho_t2_offset + 
 			     X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
 			     Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
   vector<Type> anc_rho_t2(invlogit(mu_anc_rho_t2));
 
   vector<Type> mu_anc_alpha_t2(mu_alpha_t2 +
+			       logit_anc_alpha_t2_offset + 
 			       X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
 			       Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
   vector<Type> anc_alpha_t2(invlogit(mu_anc_alpha_t2));
 
-  vector<Type> anc_clients_t2(population_t2 * exp(log_asfr_t2_offset));
+  vector<Type> anc_clients_t2(population_t2 * exp(log_asfr_t2_offset + mu_asfr));
   vector<Type> anc_plhiv_t2(anc_clients_t2 * anc_rho_t2);
   vector<Type> anc_already_art_t2(anc_plhiv_t2 * anc_alpha_t2);
 
+  // likelihood for ANC testing observations
 
-  vector<Type> anc_rho_aggr_t2(A_anc_t2 * anc_rho_t2 / (A_anc_t2 * ones));
-  vector<Type> mu_anc_rho_aggr_t2(logit(anc_rho_aggr_t2));
-  for(int i = 0; i < idx_anc_prev_t2.size(); i++)
-    val -= dbinom_robust(x_anc_prev_t2[i], n_anc_prev_t2[i],
-                         mu_anc_rho_aggr_t2[idx_anc_prev_t2[i]], true);
+  vector<Type> anc_clients_obs_t2((A_anc_clients_t2 * anc_clients_t2) * exp(offset_anc_clients_t2));
+  val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
+	       
+  vector<Type> anc_rho_obs_t1(A_anc_prev_t1 * anc_plhiv_t1 / (A_anc_prev_t1 * anc_clients_t1));
+  val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
 
-  
-  vector<Type> anc_alpha_aggr_t2(A_anc_t2 * vector<Type>(anc_rho_t2 * anc_alpha_t2) / (A_anc_t2 * anc_rho_t2));
-  vector<Type> mu_anc_alpha_aggr_t2(logit(anc_alpha_aggr_t2));
-  for(int i = 0; i < idx_anc_artcov_t2.size(); i++)
-    val -= dbinom_robust(x_anc_artcov_t2[i], n_anc_artcov_t2[i],
-                         mu_anc_alpha_aggr_t2[idx_anc_artcov_t2[i]], true);
+  vector<Type> anc_alpha_obs_t1(A_anc_artcov_t1 * anc_already_art_t1 / (A_anc_artcov_t1 * anc_plhiv_t1));
+  val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
+
+  vector<Type> anc_rho_obs_t2(A_anc_prev_t2 * anc_plhiv_t2 / (A_anc_prev_t2 * anc_clients_t2));
+  val -= dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true).sum();
+
+  vector<Type> anc_alpha_obs_t2(A_anc_artcov_t2 * anc_already_art_t2 / (A_anc_artcov_t2 * anc_plhiv_t2));
+  val -= dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true).sum();
 
   
   // * ART attendance model *
@@ -763,16 +784,18 @@ Type objective_function<Type>::operator() ()
 
     // Note: currently assuming same district effects parameters from t2 for t3
     vector<Type> mu_anc_rho_t3(logit(rho_t3) +
+			       logit_anc_rho_t2_offset + 
 			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
 			       Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
     vector<Type> anc_rho_t3(invlogit(mu_anc_rho_t3));
     
     vector<Type> mu_anc_alpha_t3(mu_alpha_t3 +
+				 logit_anc_alpha_t3_offset + 
 				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
 				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
     vector<Type> anc_alpha_t3(invlogit(mu_anc_alpha_t3));
     
-    vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset));
+    vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset + mu_asfr));
     vector<Type> anc_plhiv_t3(anc_clients_t3 * anc_rho_t3);
     vector<Type> anc_already_art_t3(anc_plhiv_t3 * anc_alpha_t3);
 

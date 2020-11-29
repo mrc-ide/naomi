@@ -41,7 +41,6 @@ Imports:
     rmarkdown,
     sf,
     spdep,
-    specio (>= 0.1.2),
     tidyr,
     tidyselect (>= 1.0.0),
     traduire,
@@ -57,7 +56,6 @@ Suggests:
     mockery,
     rdhs,
     scales,
-    survey,
     testthat (>= 2.1.0),
     tidyverse,
     viridis

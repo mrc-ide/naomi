@@ -31,8 +31,42 @@ prepare_tmb_inputs <- function(naomi_data) {
     A
   }
 
-  A_anc_t1 <- create_anc_Amat(naomi_data, "asfr_t1", "population_t1")
-  A_anc_t2 <- create_anc_Amat(naomi_data, "asfr_t2", "population_t2")
+  ## ANC observation aggregation matrices
+  ##
+  ## TODO: Refactor code to make the function create_artattend_Amat() more generic.
+  ##       Should not refer to 'ART' specific; also useful for ANC attendance,
+  ##       fertility, etc.
+
+  create_anc_Amat <- function(anc_obs_dat) {
+    
+    df_attend_anc <- naomi_data$mf_model %>%
+    dplyr::select(reside_area_id = area_id,
+                  attend_area_id = area_id,
+                  sex,
+                  age_group,
+                  idx)
+
+    dat <- dplyr::rename(anc_obs_dat,
+                         attend_area_id = area_id,
+                         artnum_idx = obs_idx)
+    
+    Amat <- create_artattend_Amat(
+      dat,
+      age_groups = naomi_data$age_groups,
+      sexes = naomi_data$sexes,
+      area_aggregation = naomi_data$area_aggregation,
+      df_art_attend = df_attend_anc,
+      by_residence = FALSE
+    )
+
+    Amat
+  }
+
+  A_anc_clients_t2 <- create_anc_Amat(naomi_data$anc_clients_t2_dat)
+  A_anc_prev_t1 <- create_anc_Amat(naomi_data$anc_prev_t1_dat)
+  A_anc_prev_t2 <- create_anc_Amat(naomi_data$anc_prev_t2_dat)
+  A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat)
+  A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat)
 
   ## ART attendance aggregation
 
@@ -170,6 +204,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_alpha = stats::model.matrix(~female_15plus, df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
     X_lambda = stats::model.matrix(f_lambda, df),
+    X_asfr = stats::model.matrix(~1, df),
     X_ancrho = stats::model.matrix(~1, df),
     X_ancalpha = stats::model.matrix(~1, df),
     Z_x = sparse_model_matrix(~0 + area_idf, df),
@@ -187,13 +222,18 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_alpha_xat = sparse_model_matrix(f_alpha_xat, df, "age_below15"),
     Z_lambda_x = sparse_model_matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
+    Z_asfr_x = sparse_model_matrix(~0 + area_idf, df),
     Z_ancrho_x = sparse_model_matrix(~0 + area_idf, df),
     Z_ancalpha_x = sparse_model_matrix(~0 + area_idf, df),
-    A_anc_t1 = A_anc_t1,
-    A_anc_t2 = A_anc_t2,
     log_asfr_t1_offset = log(df$asfr_t1),
     log_asfr_t2_offset = log(df$asfr_t2),
     log_asfr_t3_offset = log(df$asfr_t3),
+    logit_anc_rho_t1_offset = log(df$frr_plhiv_t1),
+    logit_anc_rho_t2_offset = log(df$frr_plhiv_t2),
+    logit_anc_rho_t3_offset = log(df$frr_plhiv_t3),
+    logit_anc_alpha_t1_offset = log(df$frr_already_art_t1),
+    logit_anc_alpha_t2_offset = log(df$frr_already_art_t2),
+    logit_anc_alpha_t3_offset = log(df$frr_already_art_t3),
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset * naomi_data$mf_model$bin_rho_model,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
@@ -232,6 +272,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_paed_rho_ratio = X_paed_rho_ratio,
     paed_rho_ratio_offset = paed_rho_ratio_offset,
     ##
+    ## Household survey input data
     idx_prev = naomi_data$prev_dat$idx - 1L,
     x_prev = naomi_data$prev_dat$x_eff,
     n_prev = naomi_data$prev_dat$n_eff,
@@ -245,19 +286,24 @@ prepare_tmb_inputs <- function(naomi_data) {
     x_recent = naomi_data$recent_dat$x_eff,
     n_recent = naomi_data$recent_dat$n_eff,
     ##
-    idx_anc_prev_t1 = naomi_data$anc_prev_t1_dat$area_idx - 1L,
+    ## ANC testing input data
+    x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,
+    offset_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_pys_offset,
+    A_anc_clients_t2 = A_anc_clients_t2,
     x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_x,
     n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_n,
-    idx_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$area_idx - 1L,
+    A_anc_prev_t1 = A_anc_prev_t1,
     x_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_x,
     n_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_n,
-    idx_anc_prev_t2 = naomi_data$anc_prev_t2_dat$area_idx - 1L,
+    A_anc_artcov_t1 = A_anc_artcov_t1,
     x_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_x,
     n_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_n,
-    idx_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$area_idx - 1L,
+    A_anc_prev_t2 = A_anc_prev_t2,
     x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_x,
     n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
+    A_anc_artcov_t2 = A_anc_artcov_t2,
     ##
+    ## Number on ART input data
     A_artattend_t1 = A_artattend_t1,
     x_artnum_t1 = naomi_data$artnum_t1_dat$art_current,
     A_artattend_t2 = A_artattend_t2,
@@ -285,6 +331,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     beta_alpha = numeric(ncol(dtmb$X_alpha)),
     beta_alpha_t2 = numeric(ncol(dtmb$X_alpha_t2)),
     beta_lambda = numeric(ncol(dtmb$X_lambda)),
+    beta_asfr = numeric(1),
     beta_anc_rho = numeric(1),
     beta_anc_alpha = numeric(1),
     beta_anc_rho_t2 = numeric(1),
@@ -296,6 +343,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     u_rho_a = numeric(ncol(dtmb$Z_rho_a)),
     u_rho_as = numeric(ncol(dtmb$Z_rho_as)),
     u_rho_xa = numeric(ncol(dtmb$Z_rho_xa)),
+    ui_asfr_x = numeric(ncol(dtmb$Z_asfr_x)),
     ui_anc_rho_x = numeric(ncol(dtmb$Z_ancrho_x)),
     ui_anc_alpha_x = numeric(ncol(dtmb$Z_ancalpha_x)),
     ui_anc_rho_xt = numeric(ncol(dtmb$Z_ancrho_x)),
@@ -340,6 +388,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_betaT = 0,
     logit_nu_raw = 0,
     ##
+    log_sigma_asfr_x = log(0.5),
     log_sigma_ancrho_x = log(2.5),
     log_sigma_ancalpha_x = log(2.5),
     log_sigma_ancrho_xt = log(2.5),
@@ -388,6 +437,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                         random = c("beta_rho",
                                    "beta_alpha", "beta_alpha_t2",
                                    "beta_lambda",
+                                   "beta_asfr",
                                    "beta_anc_rho", "beta_anc_alpha",
                                    "beta_anc_rho_t2", "beta_anc_alpha_t2",
                                    "us_rho_x", "ui_rho_x",
@@ -404,6 +454,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "ui_lambda_x",
                                    "logit_nu_raw",
                                    ##
+                                   "ui_asfr_x",
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    "ui_anc_rho_xt", "ui_anc_alpha_xt",
                                    ##
@@ -619,7 +670,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
     dplyr::filter(n > 1)
 
   if (nrow(art_duplicated_check)) {
-    stop(paste("ART data multiply reported for some age/sex strata in areas:",
+    stop(paste("ART or ANC data multiply reported for some age/sex strata in areas:",
                paste(unique(art_duplicated_check$attend_area_id), collapse = ", ")))
   }
 

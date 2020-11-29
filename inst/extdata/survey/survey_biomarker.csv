@@ -1,1 +1,1 @@
-survey_id,cluster_id,household,line,hivweight,hivstatus,arv,artself,vls,cd4,recent
+survey_id,individual_id,hivweight,hivstatus,arv,artself,vls,cd4,recent
