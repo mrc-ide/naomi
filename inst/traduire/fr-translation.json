@@ -24,6 +24,7 @@
     "OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL": "Trimestre calendaire pour générer des estimations",
     "OPTIONS_ANC_LABEL": "Clinique prénatale",
     "OPTIONS_ANC_DESCRIPTION": "Sélectionner facultativement le trimestre de données à utiliser aux points temporels 1 et 2",
+    "OPTIONS_ANC_CLIENTS_LABEL": "Nombre de clients de la CPN",
     "OPTIONS_ANC_PREVALENCE_LABEL": "Prévalence du VIH dans les CPN",
     "OPTIONS_ANC_COVERAGE_LABEL": "Couverture ART avant la première CPN",
     "OPTIONS_ART_LABEL": "ART",
