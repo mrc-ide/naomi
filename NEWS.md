@@ -39,6 +39,12 @@ Additional code changes:
   read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was 
   utilised; remove dependency on `specio`.
 
+# naomi 2.0.7
+
+* Slight text edits to ANC model options block labels.
+* Add `area_name` field to example datasets, conforming to ADR schemas.
+* Remove survey data preparation functions. Added to `naomi.utils` package.
+
 # naomi 2.0.6
 
 * Updates to 'Model Options' page in Naomi application:
