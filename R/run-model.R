@@ -73,7 +73,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
 
 
   ## Set default "none" calibration options if missing from options list
-   
+
   if (is.null(options$spectrum_plhiv_calibration_level)) {
     options$spectrum_plhiv_calibration_level  <-  "none"
   }
@@ -85,19 +85,19 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   if (is.null(options$spectrum_artnum_calibration_level)) {
     options$spectrum_artnum_calibration_level <- "none"
   }
-  
+
   if (is.null(options$spectrum_artnum_strat)) {
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
   }
-  
+
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
-  
+
   if (is.null(options$spectrum_infections_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
-  
+
   progress$start("prepare_inputs")
   progress$print()
 
@@ -111,12 +111,14 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$print()
 
   fit <- fit_tmb(tmb_inputs,
-                 outer_verbose = ifelse(is.null(options$outer_verbose), FALSE, options$outer_verbose),
-                 inner_verbose = ifelse(is.null(options$inner_verbose), FALSE, options$inner_verbose),
-                 max_iter = ifelse(is.null(options$max_iterations), 250, options$max_iterations))
+                 outer_verbose = options$outer_verbose %||% FALSE,
+                 inner_verbose = options$inner_verbose %||%  FALSE,
+                 max_iter = options$max_iterations %||% 250,
+                 progress = progress)
 
-  if(fit$convergence != 0 && !permissive)
+  if(fit$convergence != 0 && !permissive) {
     stop(paste("convergence error:", fit$message))
+  }
 
   progress$complete("fit_model")
   progress$start("uncertainty")
@@ -362,8 +364,12 @@ new_progress <- function() {
 }
 
 Progress <- R6::R6Class("Progress", list(
-  progress = NULL,
   cloneable = FALSE,
+  progress = NULL,
+  iteration = 0,
+  start_time = NULL,
+  elapsed = NULL,
+
   initialize = function() {
     self$progress <-
       list(
@@ -380,7 +386,8 @@ Progress <- R6::R6Class("Progress", list(
         fit_model = list(
           started = FALSE,
           complete = FALSE,
-          name = t_("PROGRESS_FIT_MODEL")
+          name = t_("PROGRESS_FIT_MODEL"),
+          helpText = NULL
         ),
         uncertainty = list(
           started = FALSE,
@@ -394,20 +401,41 @@ Progress <- R6::R6Class("Progress", list(
         )
       )
   },
+
   start = function(step_name) {
     self$step_exists(step_name)
     self$progress[[step_name]]$started <- TRUE
   },
+
   complete = function(step_name) {
     self$step_exists(step_name)
+    self$progress[[step_name]]$helpText <- NULL
     self$progress[[step_name]]$complete <- TRUE
   },
+
   step_exists = function(step_name) {
     self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
   },
+
   print = function() {
     signalCondition(structure(self$progress,
                               class = c("progress", "condition")))
+  },
+
+  set_start_time = function() {
+    self$start_time <- Sys.time()
+  },
+
+  iterate_fit = function() {
+    if (is.null(self$start_time)) {
+      self$set_start_time()
+    }
+    self$iteration <- self$iteration + 1
+    self$elapsed <- Sys.time() - self$start_time
+    self$progress$fit_model$helpText <- t_("PROGRESS_FIT_MODEL_HELP_TEXT",
+      list(iteration = self$iteration,
+           elapsed = prettyunits::pretty_dt(self$elapsed)))
+    self$print()
   }
 ))
 
