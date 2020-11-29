@@ -24,7 +24,7 @@
     "OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL": "Calendar quarter to generate estimates",
     "OPTIONS_ANC_LABEL": "ANC",
     "OPTIONS_ANC_DESCRIPTION": "Optionally select which quarter of data to use at time point 1 and 2",
-    "OPTIONS_ANC_PREVALENCE_LABEL": "Number of ANC clients",
+    "OPTIONS_ANC_CLIENTS_LABEL": "Number of ANC clients",
     "OPTIONS_ANC_PREVALENCE_LABEL": "Prevalence among ANC attendees",
     "OPTIONS_ANC_COVERAGE_LABEL": "ART coverage prior to first ANC",
     "OPTIONS_ART_LABEL": "ART",
