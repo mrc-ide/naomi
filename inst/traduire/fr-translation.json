@@ -141,5 +141,11 @@
     "INDICATOR_LABEL_ANC_ART_NEW": "Nombre de femmes enceintes initiées sous TAR au CPN",
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Nombre de participants prénatals séropositifs au courant de leur statut avant la première visite prénatale",
     "INDICATOR_LABEL_ANC_TESTED_POS": "Nombre de participants séropositifs aux CPN testés aux CPN",
-    "INDICATOR_LABEL_ANC_TESTED_NEG": "Nombre de participants aux CPN séronégatifs testés aux CPN"
+    "INDICATOR_LABEL_ANC_TESTED_NEG": "Nombre de participants aux CPN séronégatifs testés aux CPN",
+    "UNTREATED_PLHIV_NUM": "PVVIH non sous TAR",
+    "AWARE_PLHIV_PROP": "Proportion de PVVIH conscients",
+    "UNAWARE_PLHIV_NUM": "Nombre de PVVIH non informés",
+    "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Nombre de PVVIH non sous TAR",
+    "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion de PVVIH conscients de leur statut VIH positif",
+    "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Nombre de PVVIH non informés de leur statut VIH positif"    
 }

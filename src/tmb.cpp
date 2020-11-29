@@ -655,6 +655,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> alpha_t1_out(artnum_t1_out / plhiv_t1_out);
     vector<Type> artattend_t1_out(A_out * (A_artattend_mf * artnum_ij_t1));
     vector<Type> artattend_ij_t1_out(A_art_reside_attend * artnum_ij_t1);
+    vector<Type> untreated_plhiv_num_t1_out(plhiv_t1_out - artnum_t1_out);
 
     vector<Type> unaware_plhiv_num_t1((plhiv_t1 - artnum_t1) * unaware_untreated_prop_t1);
     vector<Type> unaware_plhiv_num_t1_out(A_out * unaware_plhiv_num_t1);
@@ -672,6 +673,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> alpha_t2_out(artnum_t2_out / plhiv_t2_out);
     vector<Type> artattend_t2_out(A_out * (A_artattend_mf * artnum_ij_t2));
     vector<Type> artattend_ij_t2_out(A_art_reside_attend * artnum_ij_t2);
+    vector<Type> untreated_plhiv_num_t2_out(plhiv_t2_out - artnum_t2_out);
 
     vector<Type> unaware_plhiv_num_t2((plhiv_t2 - artnum_t2) * unaware_untreated_prop_t2);
     vector<Type> unaware_plhiv_num_t2_out(A_out * unaware_plhiv_num_t2);
@@ -714,6 +716,7 @@ Type objective_function<Type>::operator() ()
     REPORT(artnum_t1_out);
     REPORT(artattend_t1_out);
     REPORT(artattend_ij_t1_out);
+    REPORT(untreated_plhiv_num_t1_out);
     REPORT(aware_plhiv_prop_t1_out);
     REPORT(unaware_plhiv_num_t1_out);
     REPORT(lambda_t1_out);
@@ -735,6 +738,7 @@ Type objective_function<Type>::operator() ()
     REPORT(artnum_t2_out);
     REPORT(artattend_t2_out);
     REPORT(artattend_ij_t2_out);
+    REPORT(untreated_plhiv_num_t2_out);
     REPORT(aware_plhiv_prop_t2_out);
     REPORT(unaware_plhiv_num_t2_out);
     REPORT(lambda_t2_out);
@@ -811,6 +815,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> alpha_t3_out(artnum_t3_out / plhiv_t3_out);
     vector<Type> artattend_t3_out(A_out * (A_artattend_mf * artnum_ij_t3));
     vector<Type> artattend_ij_t3_out(A_art_reside_attend * artnum_ij_t3);
+    vector<Type> untreated_plhiv_num_t3_out(plhiv_t3_out - artnum_t3_out);
 
     vector<Type> unaware_plhiv_num_t3((plhiv_t3 - artnum_t3) * unaware_untreated_prop_t3);
     vector<Type> unaware_plhiv_num_t3_out(A_out * unaware_plhiv_num_t3);
@@ -838,6 +843,7 @@ Type objective_function<Type>::operator() ()
     REPORT(artnum_t3_out);
     REPORT(artattend_t3_out);
     REPORT(artattend_ij_t3_out);
+    REPORT(untreated_plhiv_num_t3_out);
     REPORT(aware_plhiv_prop_t3_out);
     REPORT(unaware_plhiv_num_t3_out);
     REPORT(lambda_t3_out);

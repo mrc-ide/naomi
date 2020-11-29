@@ -3,6 +3,8 @@
 This release revises the modelling of ANC prevalence and ART coverage and produces
 outputs for district-level ANC testing cascade.
 
+### ANC testing cascade
+
 * Add ANC bias parameters to age-specific prevalence and ART coverage regression equations instead of to aggregate ANC prevalence and ART coverage.
 
 * ANC prevalence and ANC ART coverage outputs are produced by five-year age group, 15-24, 25-34, 35-49, and all ages.
@@ -45,6 +47,16 @@ outputs for district-level ANC testing cascade.
 
   Age-stratified ANC testing do not yet inform national or district level estimates for 
   age-specific fertility or HIV/ART fertility rate ratios.
+  
+### Awareness of HIV status
+
+* < Description of Shiny90 integration >
+* < Description of modelling approach > 
+
+* New output indicators for awarness of HIV status:
+  * `untreated_plhiv_num`: Number of untreated PLHIV (the 'treatment gap').
+  * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
+  * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
   
 Additional code changes:
 
