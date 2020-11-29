@@ -1247,12 +1247,18 @@ export_datapack <- function(naomi_output,
              dplyr::filter(area_level == psnu_level),
              by = "area_id"
            ) %>%
+    dplyr::left_join(
+             dplyr::select(naomi_output$meta_indicator,
+                           indicator, anc_indicator),
+             by = "indicator"
+           ) %>%
     dplyr::filter(
              indicator %in% datapack_indicator_map$indicator,
              calendar_quarter %in% {{ calendar_quarter }},
              (sex_naomi %in% datapack_sex_map$sex_naomi &
               age_group %in% datapack_age_group_map$age_group |
-              sex_naomi == "both" & age_group == "Y000_999")
+              sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
+              sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
            )%>%
     dplyr::transmute(
              area_id,
@@ -1265,10 +1271,10 @@ export_datapack <- function(naomi_output,
            )
 
   dat <- dat %>%
-    dplyr::filter(age_group != "Y000_999") %>%
+    dplyr::filter(!age_group %in% c("Y000_999", "Y015_049")) %>%
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
-             dplyr::filter(dat, age_group == "Y000_999") %>%
+             dplyr::filter(dat, age_group %in% c("Y000_999", "Y015_049")) %>%
              dplyr::select(-age_group, -sex_naomi, -value) %>%
              dplyr::rename(district_rse = rse),
              by = c("area_id", "indicator", "calendar_quarter")
