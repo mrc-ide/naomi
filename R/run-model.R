@@ -286,6 +286,18 @@ naomi_prepare_data <- function(data, options) {
   if(is.null(options$deff_vls))
     options$deff_vls <- 1.0
 
+  if(is.null(options$use_kish_prev))
+    options$use_kish_prev <- "true"
+  
+  if(is.null(options$use_kish_artcov))
+    options$use_kish_artcov <- "true"
+  
+  if(is.null(options$use_kish_recent))
+    options$use_kish_recent <- "true"
+  
+  if(is.null(options$use_kish_vls))
+    options$use_kish_vls <- "true"
+
 
   ## Get from the options
   scope <- options$area_scope
@@ -354,9 +366,13 @@ naomi_prepare_data <- function(data, options) {
     anc_prev_year_t2 = options$anc_prevalence_year2,
     anc_artcov_year_t1 = options$anc_art_coverage_year1,
     anc_artcov_year_t2 = options$anc_art_coverage_year2,
+    use_kish_prev = options$use_kish_prev,
     deff_prev = options$deff_prev,
+    use_kish_artcov = options$use_kish_artcov,
     deff_artcov = options$deff_artcov,
+    use_kish_recent = options$use_kish_recent,
     deff_recent = options$deff_recent,
+    use_kish_vls = options$use_kish_vls,
     deff_vls = options$deff_vls
   )
 

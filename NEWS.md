@@ -48,6 +48,8 @@ outputs for district-level ANC testing cascade.
   
 Additional code changes:
 
+* Use Kish effective sample size in likelihood for household survey data.
+
 * Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and 
   read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was 
   utilised; remove dependency on `specio`.
