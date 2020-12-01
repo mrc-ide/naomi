@@ -361,7 +361,7 @@ naomi_prepare_data <- function(data, options) {
     artnum_calendar_quarter_t1 = artnum_calendar_quarter1,
     artnum_calendar_quarter_t2 = artnum_calendar_quarter2,
     anc_clients_year_t2 = options$anc_clients_year2,
-    anc_clients_year_t2_num_months = options$anc_clients_year2_num_months,
+    anc_clients_year_t2_num_months = as.numeric(options$anc_clients_year2_num_months),
     anc_prev_year_t1 = options$anc_prevalence_year1,
     anc_prev_year_t2 = options$anc_prevalence_year2,
     anc_artcov_year_t1 = options$anc_art_coverage_year1,
