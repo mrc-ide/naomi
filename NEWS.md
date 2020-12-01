@@ -58,7 +58,11 @@ outputs for district-level ANC testing cascade.
   * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
   * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
   
-Additional code changes:
+Additional changes:
+
+* Use Kish effective sample size in likelihood for household survey data.
+
+* Update summary report with additional styling, number formatting, and methods overview.
 
 * Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and 
   read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was 

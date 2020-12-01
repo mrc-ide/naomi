@@ -663,9 +663,13 @@ select_naomi_data <- function(naomi_mf,
                               anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
                               anc_artcov_year_t1 = anc_prev_year_t1,
                               anc_artcov_year_t2 = anc_prev_year_t2,
+                              use_kish_prev = TRUE,
                               deff_prev = 1.0,
+                              use_kish_artcov = TRUE,
                               deff_artcov = 1.0,
+                              use_kish_recent = TRUE,
                               deff_recent = 1.0,
+                              use_kish_vls = TRUE,
                               deff_vls = 1.0) {
 
   stopifnot(is(naomi_mf, "naomi_mf"))
@@ -677,11 +681,35 @@ select_naomi_data <- function(naomi_mf,
             count = length(common_surveys)))
   }
 
-  naomi_mf$prev_dat <- survey_mf(prev_survey_ids, "prevalence", survey_hiv_indicators, naomi_mf, deff = deff_prev)
-  naomi_mf$artcov_dat <- survey_mf(artcov_survey_ids, "art_coverage", survey_hiv_indicators, naomi_mf, deff = deff_artcov)
-  naomi_mf$recent_dat <- survey_mf(recent_survey_ids, "recent_infected", survey_hiv_indicators, naomi_mf,
-                                   deff = deff_recent, min_age = 15, max_age = 80)
-  naomi_mf$vls_dat <- survey_mf(vls_survey_ids, "viral_suppression_plhiv", survey_hiv_indicators, naomi_mf, deff = deff_vls)
+  naomi_mf$prev_dat <- survey_mf(survey_ids = prev_survey_ids,
+                                 indicator = "prevalence",
+                                 survey_hiv_indicators = survey_hiv_indicators,,
+                                 naomi_mf = naomi_mf,
+                                 use_kish = use_kish_prev,
+                                 deff = deff_prev)
+
+  naomi_mf$artcov_dat <- survey_mf(survey_ids = artcov_survey_ids,
+                                   indicator = "art_coverage",
+                                   survey_hiv_indicators = survey_hiv_indicators,,
+                                   naomi_mf = naomi_mf,
+                                   use_kish = use_kish_artcov,
+                                   deff = deff_artcov)
+
+  naomi_mf$recent_dat <- survey_mf(survey_ids = recent_survey_ids,
+                                   indicator = "recent_infected",
+                                   survey_hiv_indicators = survey_hiv_indicators,
+                                   naomi_mf = naomi_mf,
+                                   use_kish = use_kish_recent,
+                                   deff = deff_recent,
+                                   min_age = 15,
+                                   max_age = 80)
+
+  naomi_mf$vls_dat <- survey_mf(survey_ids = vls_survey_ids,
+                                indicator = "viral_suppression_plhiv",
+                                survey_hiv_indicators = survey_hiv_indicators,
+                                naomi_mf = naomi_mf,
+                                use_kish = use_kish_vls,
+                                deff = deff_vls)
 
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
@@ -849,15 +877,20 @@ get_sex_out <- function(sexes) {
 #' @param indicator Indicator to filter, character string
 #' @param survey_hiv_indicators Survey HIV indicators
 #' @param naomi_mf Naomi model frame
+#' @param use_kish Logical whether to use Kish effective sample size
 #' @param deff Assumed design effect for scaling effective sample size
 #' @param min_age Min age for calculating recent infection
 #' @param max_age Max age for calculating recent infection
 #'
 #' @export
-survey_mf <- function(survey_ids, indicator,
-                      survey_hiv_indicators, naomi_mf,
+survey_mf <- function(survey_ids,
+                      indicator,
+                      survey_hiv_indicators,
+                      naomi_mf,
+                      use_kish = TRUE,
                       deff = 1.0,
-                      min_age = 0, max_age = 80) {
+                      min_age = 0,
+                      max_age = 80) {
 
   dat <- naomi_mf$mf_model %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
@@ -870,7 +903,8 @@ survey_mf <- function(survey_ids, indicator,
              by = c("area_id", "sex", "age_group")
            ) %>%
     dplyr::mutate(n = n_observations,
-                  n_eff = n / deff,
+                  n_eff = if(use_kish) n_eff_kish else n,
+                  n_eff = n_eff / deff,
                   x_eff = n_eff * estimate) %>%
     dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
 

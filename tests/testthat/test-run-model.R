@@ -100,7 +100,7 @@ coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y0
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_path))))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_path))))
   expect_true(any(grepl(basename(a_hintr_data$pjnz), readLines(summary_report_path))))
   expect_true(any(grepl("Central", readLines(summary_report_path))))
 
@@ -471,7 +471,7 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report))))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report))))
   expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
@@ -543,7 +543,7 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report_2)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_2))))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_2))))
   expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged

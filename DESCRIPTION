@@ -54,7 +54,6 @@ Suggests:
     datamodelr,
     lubridate,
     mockery,
-    rdhs,
     scales,
     testthat (>= 2.1.0),
     tidyverse,
