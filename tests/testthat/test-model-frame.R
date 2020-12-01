@@ -128,8 +128,8 @@ test_that("population calibration options", {
 
 test_that("survey design effect scales effect sample size", {
 
-  mf1 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, deff = 1.0)
-  mf2 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, deff = 2.5)
+  mf1 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, use_kish = FALSE, deff = 1.0,)
+  mf2 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, use_kish = FALSE, deff = 2.5)
 
   expect_equal(mf1$n, mf1$n_eff)
   expect_equal(mf2$n, mf2$n_eff * 2.5)
