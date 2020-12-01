@@ -46,9 +46,11 @@ outputs for district-level ANC testing cascade.
   Age-stratified ANC testing do not yet inform national or district level estimates for 
   age-specific fertility or HIV/ART fertility rate ratios.
   
-Additional code changes:
+Additional changes:
 
 * Use Kish effective sample size in likelihood for household survey data.
+
+* Update summary report with additional styling, number formatting, and methods overview.
 
 * Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and 
   read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was 
