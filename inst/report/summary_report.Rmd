@@ -770,11 +770,10 @@ x4 %>%
     art_current_residents = gt::md("**Number residents on ART 15+**")
   ) %>%
   gt::cols_align(align = "center") %>%
-  gt::cols_width(everything()~ px(150))
+  gt::cols_width(everything()~ px(155))
 
 ```
 
-$~$
 
 ### Methods
 
