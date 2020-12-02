@@ -115,7 +115,7 @@
           "required": false
         }
       ]
-    }      
+    },
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL)",
       "controls": [
@@ -180,8 +180,8 @@
     },
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL)",
-	"controls": [
-	{
+	    "controls": [
+	      {
           "name": "use_kish_recent",
           "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
           "type": "select",
