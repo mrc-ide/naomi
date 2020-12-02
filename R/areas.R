@@ -245,7 +245,7 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
 #'
 #' @examples
 #'
-#' area_merged <- read_area_merged(system.file("extdata/data_areas.geojson", package = "naomi"))
+#' area_merged <- read_area_merged(system.file("extdata/demo_areas.geojson", package = "naomi"))
 #' areas <- create_areas(area_merged = area_merged)
 #' model_area_ids <- area_merged$area_id[area_merged$area_level == 4]
 #'
