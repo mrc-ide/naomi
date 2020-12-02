@@ -20,11 +20,11 @@ test_that("scale_gmrf_precision() returns expected values", {
 
 test_that("create adjacency matrix from shapefile", {
 
-  mwi_areas2 <- dplyr::filter(mwi_area_hierarchy, area_level == 2)
-  mwi_areas2 <- dplyr::left_join(mwi_areas2, mwi_area_boundaries, by = "area_id")
-  mwi_areas2 <- sf::st_as_sf(mwi_areas2)
+  demo_areas2 <- dplyr::filter(demo_area_hierarchy, area_level == 2)
+  demo_areas2 <- dplyr::left_join(demo_areas2, demo_area_boundaries, by = "area_id")
+  demo_areas2 <- sf::st_as_sf(demo_areas2)
 
-  adj2 <- create_adj_matrix(mwi_areas2)
+  adj2 <- create_adj_matrix(demo_areas2)
 
   edges <- cbind(c(1, 2, 2, 3, 3, 3, 4, 4, 5, 5),
                  c(2, 1, 3, 2, 4, 5, 3, 5, 3, 4))

@@ -639,7 +639,7 @@ naomi_model_frame <- function(area_merged,
 #' observations. Stratified design effects are will not be the same as full survey DEFF and there is not
 #' a straightforward way to approximate these.
 #'
-#' @seealso [mwi_survey_hiv_indicators], [mwi_anc_testing], [mwi_art_number], [convert_quarter_id]
+#' @seealso [demo_survey_hiv_indicators], [demo_anc_testing], [demo_art_number], [convert_quarter_id]
 #'
 #' @export
 select_naomi_data <- function(naomi_mf,

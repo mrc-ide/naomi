@@ -31,7 +31,7 @@ test_that("exceeding maximum iterations throws a warning", {
 
 test_that("model fits with differing number of ANC observations T1 and T2", {
 
-  ancdat <- mwi_anc_testing %>%
+  ancdat <- demo_anc_testing %>%
     dplyr::filter(area_id %in% a_naomi_mf$mf_areas$area_id) %>%
     dplyr::group_by(year) %>%
     dplyr::filter(year == 2016 |
@@ -39,12 +39,12 @@ test_that("model fits with differing number of ANC observations T1 and T2", {
     dplyr::ungroup()
 
   naomi_data <- select_naomi_data(a_naomi_mf,
-                                  mwi_survey_hiv_indicators,
+                                  demo_survey_hiv_indicators,
                                   anc_testing = ancdat,
-                                  mwi_art_number,
-                                  prev_survey_ids = c("MWI2016PHIA", "MWI2015DHS"),
-                                  artcov_survey_ids = "MWI2016PHIA",
-                                  recent_survey_ids = "MWI2016PHIA",
+                                  demo_art_number,
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                  artcov_survey_ids = "DEMO2016PHIA",
+                                  recent_survey_ids = "DEMO2016PHIA",
                                   anc_prev_year_t1 = 2016,
                                   anc_prev_year_t2 = 2018,
                                   anc_artcov_year_t1 = 2016,
@@ -60,12 +60,12 @@ test_that("model fits with differing number of ANC observations T1 and T2", {
 test_that("model fit with no ART data at T2", {
 
     naomi_data <- select_naomi_data(a_naomi_mf,
-                                    mwi_survey_hiv_indicators,
-                                    anc_testing = mwi_anc_testing,
-                                    mwi_art_number,
-                                    prev_survey_ids = c("MWI2016PHIA", "MWI2015DHS"),
-                                    artcov_survey_ids = "MWI2016PHIA",
-                                    recent_survey_ids = "MWI2016PHIA",
+                                    demo_survey_hiv_indicators,
+                                    anc_testing = demo_anc_testing,
+                                    demo_art_number,
+                                    prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                    artcov_survey_ids = "DEMO2016PHIA",
+                                    recent_survey_ids = "DEMO2016PHIA",
                                     anc_prev_year_t1 = 2016,
                                     anc_prev_year_t2 = 2018,
                                     anc_artcov_year_t1 = 2016,

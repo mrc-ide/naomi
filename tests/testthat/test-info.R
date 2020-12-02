@@ -15,14 +15,14 @@ test_that("naomi package info", {
 test_that("naomi_info_input contains filename and hash info", {
   data <- list(
     pjnz = list(
-      path = system_file("extdata/mwi2019.PJNZ"),
+      path = system_file("extdata/demo_mwi2019.PJNZ"),
       hash = "pjnz_hash",
-      filename = "mwi2019.PJNZ"
+      filename = "demo_mwi2019.PJNZ"
     ),
     population = list(
-      path = system_file("extdata/population/population_agesex.csv"),
+      path = system_file("extdata/demo_population_agesex.csv"),
       hash = "population_hash",
-      filename = "population_agesex.csv"
+      filename = "demo_population_agesex.csv"
     ),
     art = NULL
   )
@@ -32,7 +32,7 @@ test_that("naomi_info_input contains filename and hash info", {
   expect_equal(nrow(info), 3)
   expect_equal(info, data.frame(
     role = c("pjnz", "population", "art"),
-    filename = c("mwi2019.PJNZ", "population_agesex.csv", NA),
+    filename = c("demo_mwi2019.PJNZ", "demo_population_agesex.csv", NA),
     md5sum = c("pjnz_hash", "population_hash", NA),
     stringsAsFactors = FALSE
   ))

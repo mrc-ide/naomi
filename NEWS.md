@@ -1,3 +1,8 @@
+# naomi 2.1.1
+
+* Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
+  affix `_demo` to the end of the area IDs.
+
 # naomi 2.1.0 
 
 This release revises the modelling of ANC prevalence and ART coverage and produces
