@@ -10,10 +10,18 @@
   * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
   * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
 
+
+### PEPFAR Data Pack
+
+* Update PEFPAR datapack export to conform to 2021 Data Pack specification.
+
+
 ### Additional changes
 
 * Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
   affix `_demo` to the end of the area IDs.
+  
+
 
 
 # naomi 2.1.0 
