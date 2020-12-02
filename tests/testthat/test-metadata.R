@@ -4,7 +4,6 @@ test_that("can retrieve indicator colour scales for a country", {
   scale <- get_colour_scale("MWI")
   expect_true(all(c("iso3", "indicator", "colour", "min", "max",
                     "invert_scale") %in% names(scale)))
-  expect_true(all(scale$iso3 == "MWI"))
 })
 
 test_that("can retrieve default colour scales", {
@@ -17,7 +16,7 @@ test_that("can retrieve default colour scales", {
 test_that("color scales are retrieved for all output indicators", {
 
   scale_default <-  get_colour_scale()
-  scale_mwi <- get_colour_scale(iso3 = "MWI")
+  scale_mwi <- get_colour_scale(iso3 = "junk")
 
   expect_true(all(get_meta_indicator()$indicator %in% scale_default$indicator))
   expect_true(all(get_meta_indicator()$indicator %in% scale_mwi$indicator))
@@ -66,7 +65,7 @@ test_that("can get plot metadata for missing country with defaults", {
       names(metadata$result)))
   expect_setequal(metadata$result$indicator,
                   c("art_coverage", "art_current", "art_current_residents",
-                    "prevalence", 
+                    "prevalence",
                     "incidence", "infections", "plhiv", "population",
                     "recent_infected", "viral_suppression_plhiv",
                     "anc_prevalence", "anc_art_coverage",
