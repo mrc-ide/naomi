@@ -9,7 +9,7 @@ library(here)
 library(zip)
 
 raw <- "~/Data/Spectrum files/2019 final shared/SSA/Malawi_2019_v22_MM_BF.PJNZ"
-path <- here("inst/extdata/mwi2019.PJNZ")
+path <- here("inst/extdata/demo_mwi2019.PJNZ")
 
 file.copy(raw, path)
 zip_list(path)

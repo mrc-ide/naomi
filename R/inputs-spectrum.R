@@ -5,7 +5,7 @@
 #' @return A `data.frame` with Spectrum indicators.
 #'
 #' @examples
-#' pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' spec <- extract_pjnz_naomi(pjnz)
 #'
 #' @export
@@ -92,7 +92,7 @@ add_pjnz_aware <- function(spec, pjnz) {
 #' The region code is 0 if a national Spectrum file.
 #'
 #' @examples
-#' pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' read_spectrum_region_code(pjnz)
 #' 
 #' @export

@@ -19,19 +19,19 @@ devtools::load_all()
 
 #' ## Load datasets
 
-data(mwi_area_hierarchy)
-data(mwi_area_boundaries)
+data(demo_area_hierarchy)
+data(demo_area_boundaries)
 
-areas_wide <- spread_areas(mwi_area_hierarchy)
+areas_wide <- spread_areas(demo_area_hierarchy)
 
-data(mwi_population_agesex)
+data(demo_population_agesex)
 
 
 #' ## DHS
 
 surveys <- dhs_surveys(countryIds = "MW") %>%
   mutate(iso3 = "MWI",
-         survey_id = sub("^MW", "MWI", SurveyId))
+         survey_id = sub("^MW", "DEMO", SurveyId))
 
 #' DHS survey boundaries dataset
 #' * DHS survey boundary shapefiles: https://spatialdata.dhsprogram.com/boundaries/#view=table&countryId=MW
@@ -78,7 +78,7 @@ geom <- geom %>%
 dhs_areas_wide <- surveys %>%
   select(iso3, survey_id) %>%
   inner_join(areas_wide %>% mutate(iso3 = "MWI")) %>%
-  left_join(mwi_area_boundaries) %>%
+  left_join(demo_area_boundaries) %>%
   st_as_sf %>%
   rmapshaper::ms_simplify(1.0) %>%
   split(.$survey_id, drop = TRUE)
@@ -114,23 +114,23 @@ check %>% filter(is.na(area_id0))
 
 
 #' MW2015DHS HR dataset has four city REGCODES that do not appear in boundaries:
-#' * 107: mzuzu city     [MWI_4_4]
-#' * 210: lilongwe city  [MWI_4_14]
-#' * 314: zomba city     [MWI_4_21]
-#' * 315: blantyre city  [MWI_4_29]
+#' * 107: mzuzu city     [MWI_4_4_demo]
+#' * 210: lilongwe city  [MWI_4_14_demo]
+#' * 314: zomba city     [MWI_4_21_demo]
+#' * 315: blantyre city  [MWI_4_29_demo]
 
 areas_survey_region <- areas_survey_region %>%
   mutate(REGCODE = case_when(
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_4" ~ 107,
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_14" ~ 210,
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_21" ~ 314,
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_29" ~ 315,
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_4_demo" ~ 107,
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_14_demo" ~ 210,
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_21_demo" ~ 314,
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_29_demo" ~ 315,
            TRUE ~ REGCODE),
          REGNAME = case_when(
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_4" ~ "Mzuzu City",
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_14" ~ "Lilongwe City",
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_21" ~ "Zomba City",
-           survey_id == "MWI2015DHS" & area_id4 == "MWI_4_29" ~ "Blantyre City",
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_4_demo" ~ "Mzuzu City",
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_14_demo" ~ "Lilongwe City",
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_21_demo" ~ "Zomba City",
+           survey_id == "DEMO2015DHS" & area_id4 == "MWI_4_29_demo" ~ "Blantyre City",
            TRUE ~ as.character(REGNAME)))
 
 
@@ -270,7 +270,7 @@ clusters <- clusters %>%
   left_join(
     areas_survey_region %>%
     select(survey_id, regcode_match = REGCODE, area_id) %>%
-    left_join(mwi_area_boundaries) %>%
+    left_join(demo_area_boundaries) %>%
     rename(geometry_area = geometry)
   ) %>%
   mutate(distance = Map(st_distance, geometry, geometry_area) %>% unlist)
@@ -461,12 +461,12 @@ chind <- file.path(mphia_path, "05_MPHIA 2015-2016 Child Interview Dataset (DTA)
 
 phia <- bio %>%
   left_join(ind %>% select(personid, zone, urban, surveystdt, intwt0)) %>%
-  mutate(survey_id = "MWI2016PHIA",
+  mutate(survey_id = "DEMO2016PHIA",
          cluster_id = paste(varstrat, varunit))
 
 chphia <- chbio %>%
   left_join(chind %>% select(personid, zone, urban, surveystdt, intwt0)) %>%
-  mutate(survey_id = "MWI2016PHIA",
+  mutate(survey_id = "DEMO2016PHIA",
          cluster_id = paste(varstrat, varunit))
 
 mphia_zone_labels <- c("Northern" = 1L,
@@ -483,9 +483,9 @@ mphia_zone_labels <- c("Northern" = 1L,
 #'       In MPHIA, it is allocated to South-West Zone.
 #' 
 
-mwi_area_survey_region <- areas_wide %>%
+demo_area_survey_region <- areas_wide %>%
   mutate(
-    survey_id = "MWI2016PHIA",
+    survey_id = "DEMO2016PHIA",
     survey_region_name = case_when(
       area_name4 %in% c("Lilongwe City", "Blantyre City") ~ area_name4,
       area_name3 == "Mulanje" ~ "South-West",
@@ -498,11 +498,11 @@ mwi_area_survey_region <- areas_wide %>%
     by = "survey_region_name"
   )
 
-mwi_area_survey_region %>% filter(is.na(survey_region_id))
+demo_area_survey_region %>% filter(is.na(survey_region_id))
 
 #' Lowest area containing each survey region
 
-phia_regions <- mwi_area_survey_region %>%
+phia_regions <- demo_area_survey_region %>%
   group_by(survey_id, survey_region_id, survey_region_name) %>%
   mutate(
     survey_region_area_id = case_when(
@@ -539,7 +539,7 @@ ge <- bind_rows(
 
 #' Aggregate area_ids and population size by survey regions
 
-area_sample <- mwi_population_agesex %>%
+area_sample <- demo_population_agesex %>%
   filter(source == "Census 2018") %>%
   interpolate_population_agesex(calendar_quarters = "CY2016Q1") %>%
   inner_join(
@@ -547,7 +547,7 @@ area_sample <- mwi_population_agesex %>%
     filter(age_group_start >= 15,
            age_group_start + age_group_span < 65)
   ) %>%
-  left_join(mwi_area_survey_region %>%
+  left_join(demo_area_survey_region %>%
             select(area_id, survey_id, survey_region_id)) %>%
   count(area_id, survey_id, survey_region_id, wt = population, name = "pop15to64") %>%
   group_by(survey_id, survey_region_id) %>%
@@ -586,7 +586,7 @@ phia_clusters %>%
   count(survey_region_id, geoloc_area_id) %>%
   arrange(n) %>%
   as.data.frame %>%
-  left_join(mwi_area_hierarchy %>% select(area_id, area_name),
+  left_join(demo_area_hierarchy %>% select(area_id, area_name),
             by = c("geoloc_area_id" = "area_id"))
 
 
@@ -673,7 +673,7 @@ phia_meta <- phia_individuals %>%
             female_age_max = max(if_else(sex == "female", age, NA_integer_), na.rm=TRUE),
             male_age_min = min(if_else(sex == "male", age, NA_integer_), na.rm=TRUE),
             male_age_max = max(if_else(sex == "male", age, NA_integer_), na.rm=TRUE)) %>%
-  mutate(iso3 = substr(survey_id, 1, 3),
+  mutate(iso3 = "MWI",
          country = "Malawi",
          survey_type = "PHIA",
          survey_mid_calendar_quarter = recode(iso3, "MWI" = "CY2016Q1"),
@@ -706,7 +706,8 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_clusters,
   survey_individuals,
   survey_biomarker,
-  mwi_area_hierarchy)
+  demo_area_hierarchy)
+
   
 #' ## Save datasets
 #'
@@ -714,29 +715,31 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
 #' Consequently, save only empty data frames to show data structure.
 #' Users may request data access and use this script to reproduce the datasets.
 
-mwi_survey_meta <- survey_meta
-mwi_survey_regions <- survey_regions
-mwi_survey_clusters <- survey_clusters[NULL,]
-mwi_survey_individuals <- survey_individuals[NULL,]
-mwi_survey_biomarker <- survey_biomarker[NULL,]
-mwi_survey_hiv_indicators <- survey_hiv_indicators
+demo_survey_meta <- survey_meta
+demo_survey_regions <- survey_regions
+demo_survey_clusters <- survey_clusters[NULL,]
+demo_survey_individuals <- survey_individuals[NULL,]
+demo_survey_biomarker <- survey_biomarker[NULL,]
+demo_survey_hiv_indicators <- survey_hiv_indicators
 
 usethis::use_data(
-           mwi_survey_meta,
-           mwi_survey_regions,
-           mwi_survey_clusters,
-           mwi_survey_individuals,
-           mwi_survey_biomarker,
-           mwi_survey_hiv_indicators,
+           demo_survey_meta,
+           demo_survey_regions,
+           demo_survey_clusters,
+           demo_survey_individuals,
+           demo_survey_biomarker,
+           demo_survey_hiv_indicators,
            overwrite = TRUE
          )
 
 
 dir.create(here("inst/extdata/survey/"))
            
-write_csv(mwi_survey_meta, here("inst/extdata/survey/survey_meta.csv"))
-write_csv(mwi_survey_regions, here("inst/extdata/survey/survey_regions.csv"))
-write_csv(mwi_survey_clusters, here("inst/extdata/survey/survey_clusters.csv"))
-write_csv(mwi_survey_individuals, here("inst/extdata/survey/survey_individuals.csv"))
-write_csv(mwi_survey_biomarker, here("inst/extdata/survey/survey_biomarker.csv"))
-write_csv(mwi_survey_hiv_indicators, here("inst/extdata/survey/survey_hiv_indicators.csv"))
+write_csv(demo_survey_meta, here("inst/extdata/survey/demo_survey_meta.csv"))
+write_csv(demo_survey_regions, here("inst/extdata/survey/demo_survey_regions.csv"))
+write_csv(demo_survey_clusters, here("inst/extdata/survey/demo_survey_clusters.csv"))
+write_csv(demo_survey_individuals, here("inst/extdata/survey/demo_survey_individuals.csv"))
+write_csv(demo_survey_biomarker, here("inst/extdata/survey/demo_survey_biomarker.csv"))
+
+
+write_csv(demo_survey_hiv_indicators, here("inst/extdata/demo_survey_hiv_indicators.csv"))

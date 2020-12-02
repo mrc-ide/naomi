@@ -1,3 +1,21 @@
+# naomi 2.1.1
+
+### Awareness of HIV status
+
+* < Description of Shiny90 integration >
+* < Description of modelling approach > 
+
+* New output indicators for awarness of HIV status:
+  * `untreated_plhiv_num`: Number of untreated PLHIV (the 'treatment gap').
+  * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
+  * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
+
+### Additional changes
+
+* Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
+  affix `_demo` to the end of the area IDs.
+
+
 # naomi 2.1.0 
 
 This release revises the modelling of ANC prevalence and ART coverage and produces
@@ -47,17 +65,7 @@ outputs for district-level ANC testing cascade.
 
   Age-stratified ANC testing do not yet inform national or district level estimates for 
   age-specific fertility or HIV/ART fertility rate ratios.
-  
-### Awareness of HIV status
-
-* < Description of Shiny90 integration >
-* < Description of modelling approach > 
-
-* New output indicators for awarness of HIV status:
-  * `untreated_plhiv_num`: Number of untreated PLHIV (the 'treatment gap').
-  * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
-  * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
-  
+    
 Additional changes:
 
 * Use Kish effective sample size in likelihood for household survey data.

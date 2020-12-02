@@ -27,11 +27,11 @@ An object of class \code{naomi_areas}
 Constructs and validates an areas object as an S3 class.
 }
 \examples{
-data(mwi_area_levels)
-data(mwi_area_hierarchy)
-data(mwi_area_boundaries)
+data(demo_area_levels)
+data(demo_area_hierarchy)
+data(demo_area_boundaries)
 
-areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
+areas <- create_areas(demo_area_levels, demo_area_hierarchy, demo_area_boundaries)
 areas
 
 }

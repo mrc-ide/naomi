@@ -1,9 +1,9 @@
 
-data(mwi_area_levels)
-data(mwi_area_hierarchy)
-data(mwi_area_boundaries)
+data(demo_area_levels)
+data(demo_area_hierarchy)
+data(demo_area_boundaries)
 
-data(mwi_population_agesex)
-data(mwi_survey_hiv_indicators)
-data(mwi_anc_testing)
-data(mwi_art_number)
+data(demo_population_agesex)
+data(demo_survey_hiv_indicators)
+data(demo_anc_testing)
+data(demo_art_number)

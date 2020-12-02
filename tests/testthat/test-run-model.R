@@ -96,11 +96,11 @@ coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y0
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   ## Metadata has been saved
-  expect_equal(model_run$metadata$areas, "MWI_1_2")
+  expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_path))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report_path))))
   expect_true(any(grepl(basename(a_hintr_data$pjnz), readLines(summary_report_path))))
   expect_true(any(grepl("Central", readLines(summary_report_path))))
 
@@ -122,14 +122,14 @@ test_that("model can be run without programme data", {
   data$anc_testing <- NULL
 
   options <- list(
-    area_scope = "MWI_1_2",
+    area_scope = "MWI_1_2_demo",
     area_level = "4",
     calendar_quarter_t1 = "CY2016Q1",
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
+    survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
+    survey_art_coverage = "DEMO2016PHIA",
+    survey_recently_infected = "DEMO2016PHIA",
     spectrum_population_calibration = "national",
     spectrum_plhiv_calibration_level = "subnational",
     spectrum_plhiv_calibration_strat = "sex_age_group",
@@ -283,8 +283,8 @@ test_that("setting rng_seed returns same output", {
   data <- a_hintr_data
 
   options <- a_hintr_options
-  options$survey_prevalence = "MWI2016PHIA"
-  options$survey_art_coverage <- "MWI2016PHIA"
+  options$survey_prevalence = "DEMO2016PHIA"
+  options$survey_art_coverage <- "DEMO2016PHIA"
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
@@ -337,7 +337,7 @@ test_that("exceeding max_iterations convergence error or warning", {
   data <- a_hintr_data
 
   options <- a_hintr_options
-  options$survey_prevalence = "MWI2016PHIA"
+  options$survey_prevalence = "DEMO2016PHIA"
   options$survey_art_coverage <- NULL
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
@@ -471,8 +471,8 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report))))
-  expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report))))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output$calibration_path,
@@ -543,8 +543,8 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report_2)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_2))))
-  expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report_2))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report_2))))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,

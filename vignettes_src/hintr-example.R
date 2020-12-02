@@ -23,12 +23,12 @@ library(naomi)
 
 ##+ fit model
 hintr_data <- list(
-  pjnz = system.file("extdata/mwi2019.PJNZ", package = "naomi"),
-  population = system.file("extdata/population/population_agesex.csv", package = "naomi"),
-  shape = system.file("extdata/areas/area_merged.geojson", package = "naomi"),
-  survey = system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"),
-  art_number = system.file("extdata/programme/art_number.csv", package = "naomi"),
-  anc_testing = system.file("extdata/programme/anc_testing.csv", package = "naomi")
+  pjnz = system.file("extdata/demo_mwi2019.PJNZ", package = "naomi"),
+  population = system.file("extdata/demo_population_agesex.csv", package = "naomi"),
+  shape = system.file("extdata/demo_areas.geojson", package = "naomi"),
+  survey = system.file("extdata/demo_survey_hiv_indicators.csv", package = "naomi"),
+  art_number = system.file("extdata/demo_art_number.csv", package = "naomi"),
+  anc_testing = system.file("extdata/demo_anc_testing.csv", package = "naomi")
 )
 
 hintr_options <- list(
