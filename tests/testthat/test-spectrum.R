@@ -1,10 +1,10 @@
 test_that("extract_shiny90_age_sex() returns expected results", {
 
-  pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
+  pjnz <- system_file("extdata/mwi2019.PJNZ")
   shiny90dir <- tempfile()
   utils::unzip(pjnz, exdir = shiny90dir)
   shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
-  
+
   res1 <- extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
 
   expect_named(res1, c("area", "year", "sex", "agegr", "hivstatus",
@@ -12,7 +12,7 @@ test_that("extract_shiny90_age_sex() returns expected results", {
   expect_setequal(res1$area, "Malawi")
   expect_setequal(res1$year, 2010:2019)
   expect_setequal(res1$sex, c("male", "female"))
-  expect_setequal(res1$agegr, c("15-19", "20-24", "25-29", "30-34", 
+  expect_setequal(res1$agegr, c("15-19", "20-24", "25-29", "30-34",
                                 "35-39", "40-44", "45-49", "50-99"))
   expect_setequal(res1$hivstatus, "positive")
   expect_true(all(res1$plhiv > res1$aware))
