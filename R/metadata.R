@@ -34,7 +34,24 @@ get_plotting_metadata <- function(iso3) {
 #' @keywords internal
 get_colour_scale <- function(iso3 = "default") {
   scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
-  data <- scales[tolower(scales$iso3) == tolower(iso3), ]
+  data <- scales[tolower(scales$iso3) == "default", ]
+  custom <- scales[tolower(scales$iso3) == tolower(iso3), ]
+
+  custom_idx <- match(custom$indicator, data$indicator)
+
+  if (any(is.na(custom_idx))) {
+    stop("Custom colour scale found but no default colour scale found for indicator: ",
+         paste0(data$indicator[is.na(custom_idx)], collapse = ", "))
+  }
+
+  if (any(duplicated(custom_idx))) {
+    dup_idx <- unique(custom_idx[duplicated(custom_idx)])
+    stop("Multiple custom colour scales found for indicator: ",
+         paste0(data$indicator[dup_idx], collapse = ", "))
+  }
+
+  data[custom_idx, ]  <- custom
+
   if (nrow(data) == 0 && iso3 == "default") {
     stop(sprintf("Can't retrieve default colour scale. Check configuration."))
   }
