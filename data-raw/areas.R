@@ -4,6 +4,7 @@
 library(tidyverse)
 library(sf)
 library(here)
+library(naomi.utils)
 
 devtools::load_all()
 
@@ -12,7 +13,7 @@ tmp <- tempfile()
 download.file("https://biogeo.ucdavis.edu/data/gadm3.6/Rsf/gadm36_MWI_2_sf.rds", tmp)
 sh2 <- readRDS(tmp)
 
-#' ## Malawi (MWI)
+#' ## Malawi - Demo (DEMO)
 #' Source: GADM Level 2 (https://biogeo.ucdavis.edu/data/gadm3.6/Rsf/gadm36_MWI_2_sf.rds)
 #' Levels:
 #'   * 1: Region
@@ -25,7 +26,7 @@ sh2 <- readRDS(tmp)
 #' PEPFPAR PSNU: District (level 3)
 
 
-mwi_wide <- sh2 %>%
+demo_wide <- sh2 %>%
   filter(TYPE_2 != "Water body" | NAME_1 == "Likoma") %>%
   mutate(district = NAME_1,
          district32 = case_when(TYPE_2 == "City" ~ NAME_2,
@@ -46,39 +47,39 @@ mwi_wide <- sh2 %>%
   ungroup %>%
   arrange(region, zone, -map_dbl(geometry, ~st_centroid(.x)[[2]])) %>%
   transmute(
-    name0 = "Malawi",
+    name0 = "Malawi - Demo",
     id0 = "MWI",
     name1 = region,
-    id1 = paste0("MWI_1_", as.integer(as_factor(name1))),
+    id1 = paste0("MWI_1_", as.integer(as_factor(name1)), "_demo"),
     name2 = zone,
-    id2 = paste0("MWI_2_", as.integer(as_factor(name2))),
+    id2 = paste0("MWI_2_", as.integer(as_factor(name2)), "_demo"),
     name3 = district,
-    id3 = paste0("MWI_3_", as.integer(as_factor(name3))),
+    id3 = paste0("MWI_3_", as.integer(as_factor(name3)), "_demo"),
     name4 = district32,
-    id4 = paste0("MWI_4_", as.integer(as_factor(name4))),
+    id4 = paste0("MWI_4_", as.integer(as_factor(name4)), "_demo"),
     spectrum_region_code = 0
   )
 
-mwi_simple <- mwi_wide %>% rmapshaper::ms_simplify(0.1)
+demo_simple <- demo_wide %>% rmapshaper::ms_simplify(0.1)
 
-check_boundaries(mwi_wide, mwi_simple)
-pryr::object_size(mwi_wide %>% select)
-pryr::object_size(mwi_simple %>% select)
+check_boundaries(demo_wide, demo_simple)
+pryr::object_size(demo_wide %>% select)
+pryr::object_size(demo_simple %>% select)
 
 
-mwi <- gather_areas(mwi_simple) %>%
+demo <- gather_areas(demo_simple) %>%
   mutate(area_sort_order = row_number(),
          area_level = as.integer(area_level))
 
-area_hierarchy <- mwi %>%
-  mutate(center = st_point_on_surface(mwi$geometry),
+area_hierarchy <- demo %>%
+  mutate(center = st_point_on_surface(geometry),
          center_x = st_coordinates(center)[,1],
          center_y = st_coordinates(center)[,2],
          center = NULL) %>%
   as.data.frame %>%
   select(-geometry)
 
-areas <- mwi %>%
+areas <- demo %>%
   select(-area_level, -parent_area_id, -area_sort_order) %>%
   group_by(area_id) %>%
   filter(row_number() == 1) %>%
@@ -89,10 +90,10 @@ areas <- mwi %>%
   ) %>%
   ungroup
 
-area_boundaries <- mwi %>%
+area_boundaries <- demo %>%
   select(area_id, geometry)
 
-area_levels <- mwi %>%
+area_levels <- demo %>%
   as.data.frame() %>%
   count(area_level, name = "n_areas") %>%
   arrange(area_level) %>%
@@ -117,16 +118,9 @@ area_hierarchy %>%
 
 #' ## Save datasets
 
-mwi_area_levels <- area_levels
-mwi_area_hierarchy <- area_hierarchy
-mwi_area_boundaries <- area_boundaries
-
-usethis::use_data(
-           mwi_area_levels,
-           mwi_area_hierarchy,
-           mwi_area_boundaries,
-           overwrite = TRUE
-         )
+demo_area_levels <- area_levels
+demo_area_hierarchy <- area_hierarchy
+demo_area_boundaries <- area_boundaries
 
 dir.create(here("inst/extdata/areas"))
 
@@ -148,8 +142,19 @@ area_merged <- area_hierarchy %>%
     area_boundaries
   )
 
+demo_areas <- area_merged
+
 ##+ message = FALSE
-st_write(area_merged, here("inst/extdata/areas/area_merged.geojson"), delete_dsn = TRUE)
+st_write(area_merged, here("inst/extdata/demo_areas.geojson"), delete_dsn = TRUE)
+
+usethis::use_data(
+           demo_area_levels,
+           demo_area_hierarchy,
+           demo_area_boundaries,
+           demo_areas,
+           overwrite = TRUE
+         )
+
 
 
 #' ## Table schema

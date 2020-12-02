@@ -3,7 +3,7 @@ library(here)
 
 devtools::load_all()
 
-data(mwi_area_hierarchy)
+data(demo_area_hierarchy)
 
 
 #' ## Data sources
@@ -34,7 +34,7 @@ a3 <- readxl::read_excel(here("data-raw/population", "Series A. Population Table
                            TRUE ~ 4),
     area_name = name
   ) %>%
-  left_join(mwi_area_hierarchy %>% filter(area_level %in% c(0, 1, 4))) %>%
+  left_join(demo_area_hierarchy %>% filter(area_level %in% c(0, 1, 4))) %>%
   gather(sex, pop_a3, male, female)
 
 a3 %>% count(sex, area_level, wt = pop_a3)
@@ -53,7 +53,7 @@ a5 <- Map(readxl::read_excel,
   Map(mutate, ., area_name = list("Malawi", "Northern", "Central", "Southern")) %>%
   bind_rows %>%
   gather(sex, pop_a5, male, female) %>%
-  left_join(mwi_area_hierarchy %>% filter(area_level %in% 0:1))
+  left_join(demo_area_hierarchy %>% filter(area_level %in% 0:1))
 
 a5aggr <- a5 %>%
   filter(age != "Total") %>%
@@ -76,11 +76,11 @@ a6 <- Map(readxl::read_excel,
   bind_rows() %>%
   mutate(area_name = sub(" Total", "", name) %>%
            recode("Nklhotakota" = "Nkhotakota")) %>%
-  left_join(mwi_area_hierarchy %>% filter(area_level %in% c(1, 4))) 
+  left_join(demo_area_hierarchy %>% filter(area_level %in% c(1, 4))) 
 
 
 #' Initial population: district by age disaggregated by region sex ratio by age
-cens18 <- spread_areas(mwi_area_hierarchy) %>%
+cens18 <- spread_areas(demo_area_hierarchy) %>%
   left_join(
     a6 %>%
     filter(area_level == 4, age_group != "Total") %>%
@@ -149,7 +149,7 @@ nso <- here::here("data-raw", "population", "Pop projections  2008-2030 Master f
          sex != "total") %>%
   left_join(get_age_groups() %>% select(age_group, age_group_label)) %>%
   left_join(
-    mwi_area_hierarchy %>%
+    demo_area_hierarchy %>%
     filter(area_level == 4) %>%
     select(area_id, area_name)
   ) %>%
@@ -190,7 +190,7 @@ cens18adj <- nso %>%
 #' - Age 0-4 population much smaller: probably a combination of lower than
 #'   projected fertility and undercount of U5 population.
 cens18adj %>%  
-  left_join(mwi_area_hierarchy %>% select(area_id, area_name, area_sort_order)) %>%
+  left_join(demo_area_hierarchy %>% select(area_id, area_name, area_sort_order)) %>%
   left_join(get_age_groups() %>% select(age_group, age_group_label, age_group_sort_order)) %>%
   mutate(area = fct_reorder(area_name, area_sort_order),
          age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
@@ -205,7 +205,7 @@ cens18adj %>%
         axis.text.x = element_text(hjust = 1.0, angle = 90)) +
   ggtitle("Ratio of 2018 Census to 2008 population projections")
 
-## ggsave("mwi_census2018_projections2008_comparison.pdf", h=8.5, w=16)
+## ggsave("demo_census2018_projections2008_comparison.pdf", h=8.5, w=16)
 
 
 population_agesex <- nso %>%
@@ -222,11 +222,11 @@ population_agesex <- nso %>%
 
 #' ## Add ASFR column
 
-asfr <- read_csv(here("data-raw/population/mwi-asfr.csv"))
+asfr <- read_csv(here("data-raw/population/mwi-demo-asfr.csv"))
 
 population_agesex  <- population_agesex %>%
   left_join(
-    mwi_area_hierarchy %>%
+    demo_area_hierarchy %>%
     select(area_id, area_name)
   ) %>%
   left_join(
@@ -245,9 +245,8 @@ population_agesex  <- population_agesex %>%
 
 #' ## Save datasets
 
-mwi_population_agesex <- population_agesex
+demo_population_agesex <- population_agesex
 
-usethis::use_data(mwi_population_agesex, overwrite=TRUE)
+usethis::use_data(demo_population_agesex, overwrite=TRUE)
 
-dir.create(here("inst/extdata/population"))
-write_csv(population_agesex, here("inst/extdata/population/population_agesex.csv"), na = "")
+write_csv(population_agesex, here("inst/extdata/demo_population_agesex.csv"), na = "")
