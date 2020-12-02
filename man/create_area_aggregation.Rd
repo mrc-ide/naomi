@@ -19,7 +19,7 @@ Long data frame mapping area hierarchy areas to model level areas
 }
 \examples{
 
-area_merged <- read_area_merged(system.file("extdata/data_areas.geojson", package = "naomi"))
+area_merged <- read_area_merged(system.file("extdata/demo_areas.geojson", package = "naomi"))
 areas <- create_areas(area_merged = area_merged)
 model_area_ids <- area_merged$area_id[area_merged$area_level == 4]
 
