@@ -16,10 +16,26 @@ test_that("can retrieve default colour scales", {
 test_that("color scales are retrieved for all output indicators", {
 
   scale_default <-  get_colour_scale()
-  scale_mwi <- get_colour_scale(iso3 = "junk")
+
+  ## Add a test country to metadata
+  meta <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
+  meta <- rbind(meta, data.frame(iso3 = rep("test", 2),
+                                 indicator = c("art_current", "prevalence"),
+                                 colour = rep("colour", 2),
+                                 min = rep(0, 2),
+                                 max = rep(100, 2),
+                                 invert_scale = rep(FALSE, 2),
+                                 stringsAsFactors = FALSE))
+  mockery::stub(get_colour_scale, "naomi_read_csv", meta)
+
+  scale_test <- get_colour_scale(iso3 = "TEST")
 
   expect_true(all(get_meta_indicator()$indicator %in% scale_default$indicator))
-  expect_true(all(get_meta_indicator()$indicator %in% scale_mwi$indicator))
+  expect_true(all(get_meta_indicator()$indicator %in% scale_test$indicator))
+
+  ## colour scale uses default when indicator missing
+  expect_equal(sum(scale_test$iso3 == "test"), 2)
+  expect_equal(sum(scale_test$iso3 == "default"), nrow(scale_test) - 2)
 })
 
 test_that("getting scale for missing country returns error empty data", {
