@@ -1,6 +1,6 @@
 test_that("extract_shiny90_age_sex() returns expected results", {
 
-  pjnz <- system_file("extdata/mwi2019.PJNZ")
+  pjnz <- system_file("extdata/demo_mwi2019.PJNZ")
   shiny90dir <- tempfile()
   utils::unzip(pjnz, exdir = shiny90dir)
   shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
