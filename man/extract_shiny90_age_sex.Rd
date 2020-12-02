@@ -30,7 +30,7 @@ ART coverage.
 }
 \examples{
 
-pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
+pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
 shiny90dir <- tempfile()
 utils::unzip(pjnz, exdir = shiny90dir)
 shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
