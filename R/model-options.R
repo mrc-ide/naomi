@@ -45,6 +45,20 @@ get_model_calibration_options <- function() {
   read_options("calibration")
 }
 
+
+#' Map calibration option ID to JSON calibration option labels
+#'
+#'
+#' @param options Key-value (calibration option ID) list of model options
+#'
+#' @return map key-value (calibration options label) list of model options
+
+get_calibration_option_labels <- function(options) {
+
+  calibration <- get_model_calibration_options()
+
+}
+
 #' Validate a set of model options
 #'
 #' This validates that a set of model options can be used to run the model
@@ -150,3 +164,5 @@ validate_model_options <- function(data, options) {
 
   TRUE
 }
+
+#'
