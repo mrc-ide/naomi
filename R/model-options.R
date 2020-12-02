@@ -54,9 +54,23 @@ get_model_calibration_options <- function() {
 #' @return map key-value (calibration options label) list of model options
 
 get_calibration_option_labels <- function(options) {
-
-  calibration <- get_model_calibration_options()
-
+  calibration_json <- get_model_calibration_options()
+  calibration <- jsonlite::fromJSON(calibration_json)
+  advanced_json <- read_options("advanced")
+  advanced <- jsonlite::fromJSON(advanced_json)
+  controls <- do.call(rbind, list(calibration$controlGroups$controls,
+                                  advanced$controlGroups$controls))
+  map_option <- function(option_name) {
+    id_label_map <- controls[controls$name == option_name, "options"]
+    if (length(id_label_map) != 1) {
+      stop(paste0("Failed to find control with name ", option_name))
+    }
+    option_id <- options[[option_name]]
+    id_label_map <- id_label_map[[1]]
+    label <- id_label_map[id_label_map$id == option_id, "label"]
+    label
+  }
+  lapply(names(options), map_option)
 }
 
 #' Validate a set of model options
