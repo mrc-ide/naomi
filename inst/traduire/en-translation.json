@@ -43,7 +43,7 @@
     "OPTIONS_SURVEY_DESCRIPTION": "Select which survey to use for each indicator and whether to run the model with survey ART coverage or VLS.",
     "OPTIONS_SURVEY_PREVALENCE_LABEL": "Prevalence",
     "OPTIONS_SURVEY_ART_COVERAGE_LABEL": "ART coverage",
-    "OPTIONS_RECENTLY_INFECTED_LABEL": "Proportion recently infected",
+    "OPTIONS_RECENTLY_INFECTED_LABEL": "Use survey data on proportion recently infected",
     "OPTIONS_POPULATION_CALIBRATION_LABEL": "Population calibration options",
     "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum population size. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Calibration to Spectrum population is completed before model fitting.",
     "OPTIONS_CALIBRATION_LABEL": "Calibration options",

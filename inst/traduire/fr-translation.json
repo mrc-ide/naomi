@@ -43,7 +43,7 @@
     "OPTIONS_SURVEY_DESCRIPTION": "Sélectionnez l'enquête à utiliser pour chaque indicateur et si vous voulez exécuter le modèle avec la couverture ART de l'enquête ou la suppression de la charge virale.",
     "OPTIONS_SURVEY_PREVALENCE_LABEL": "Prévalence",
     "OPTIONS_SURVEY_ART_COVERAGE_LABEL": "Couverture ART",
-    "OPTIONS_RECENTLY_INFECTED_LABEL": "Proportion de personnes récemment infectées",
+    "OPTIONS_RECENTLY_INFECTED_LABEL": "Utilisez les données d'enquête sur la proportion de personnes récemment infectée",
     "OPTIONS_POPULATION_CALIBRATION_LABEL": "Options de calibrage de la population",
     "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Options de calibrage en fonction de la taille de la population Spectrum. Si le fichier Spectrum est national, les options « National » et « Infranational » donneront le même résultat.",
     "OPTIONS_CALIBRATION_LABEL": "Options de calibrage",
