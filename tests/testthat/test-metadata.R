@@ -38,11 +38,11 @@ test_that("color scales are retrieved for all output indicators", {
   expect_equal(sum(scale_test$iso3 == "default"), nrow(scale_test) - 2)
 })
 
-test_that("getting scale for missing country returns error empty data", {
+test_that("getting scale for missing country returns default data", {
   missing <- get_colour_scale("missing")
   expect_equal(names(missing),
                c("iso3", "indicator", "colour", "min", "max","invert_scale"))
-  expect_equal(nrow(missing), 0)
+  expect_equal(missing, get_colour_scale("default"))
 })
 
 test_that("default configuration missing throws an error", {
@@ -62,18 +62,12 @@ test_that("can get plot metadata for a country", {
       "error_high_column", "indicator_column", "indicator_value", "name",
       "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
-  expect_true(all(unique(metadata$indicator) %in%
-                  c("art_coverage", "art_current", "art_current_residents",
-                    "prevalence",
-                    "incidence", "infections", "plhiv", "population",
-                    "recent_infected", "viral_suppression_plhiv",
-                    "anc_prevalence", "anc_art_coverage")))
+  expect_true(all(metadata$indicator %in% get_metadata()$indicator))
+  expect_true(all(get_meta_indicator()$indicator %in% metadata$indicator))
 })
 
 test_that("can get plot metadata for missing country with defaults", {
   metadata <- testthat::evaluate_promise(get_plotting_metadata("missing"))
-  expect_equal(metadata$messages,
-    "Country with iso3 code missing not in metadata - returning default colour scales.\n")
   expect_true(all(
     c("indicator", "data_type", "plot_type", "value_column", "error_low_column",
       "error_high_column", "indicator_column", "indicator_value", "name",
