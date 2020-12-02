@@ -12,13 +12,13 @@ test_that("traidure hooks work in model outputs", {
   reset <- naomi_set_language("fr")
   on.exit(reset())
 
-  ## !!! TODO test need updating with French strings
   out_fr <- output_package(a_fit_sample, a_naomi_mf)
-  ## expect_setequal(out_fr$meta_period$quarter_label, c("<...> 2016", "<...> 2018", "<...> 2020"))
+  expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Septembre 2018", "Juin 2019"))
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Prévalence du VIH", "Couverture ART"))
-  ## expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
-  ##                 c("<...>", "<...>"))
+  expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
+                  c("Proportion de la population totale séropositif",
+                    "Proportion de PLHIV sur ART (résidents)"))
 })
 
 
@@ -38,7 +38,7 @@ test_that("datapack export writes a csv", {
   datapack <- readr_read_csv(res)
 
   expect_equal(tmpf, res)
-  expect_true(!any(is.na(datapack)))
+  expect_true(!any(is.na(datapack[!names(datapack) == "psnuid"])))
 })
 
 test_that("write and read hintr outputs returns same thing", {
@@ -194,7 +194,7 @@ test_that("can generate summary report", {
   generate_output_summary_report(t, a_hintr_output$spectrum_path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- readLines(t)
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", content)))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", content)))
   expect_true(any(grepl("mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo_naomi\"", content)))

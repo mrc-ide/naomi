@@ -1,7 +1,7 @@
-library(survey)
 library(tidyverse)
 library(sf)
 library(rdhs)
+library(naomi.utils)
 library(here)
 
 devtools::load_all()
@@ -349,6 +349,7 @@ extract_dhs <- function(SurveyId){
 
   dat <- ir %>%
     transmute(cluster_id = v001,
+              individual_id = caseid,
               household = v002,
               line = v003,
               interview_cmc = v008,
@@ -367,6 +368,7 @@ extract_dhs <- function(SurveyId){
       bind_rows(
         mr %>%
         transmute(cluster_id = mv001,
+                  individual_id = mcaseid,
                   household = mv002,
                   line = mv003,
                   interview_cmc = mv008,
@@ -431,12 +433,13 @@ dhs_clusters <- clusters %>%
 
 dhs_individuals <- individual %>%
   left_join(surveys %>% select(survey_id, SurveyId)) %>%
-  select(survey_id, cluster_id, household, line, interview_cmc, sex, age, dob_cmc, indweight)
+  select(survey_id, cluster_id, individual_id, household, line,
+         interview_cmc, sex, age, dob_cmc, indweight)
 
 dhs_biomarker <- individual %>%
   filter(!is.na(hivstatus)) %>%
   left_join(surveys %>% select(survey_id, SurveyId)) %>%
-  select(survey_id, cluster_id, household, line, hivweight, hivstatus)
+  select(survey_id, individual_id, hivweight, hivstatus)
 
 #' ## MPHIA 2015-16
 
@@ -511,7 +514,7 @@ phia_regions <- mwi_area_survey_region %>%
     )
   ) %>%
   distinct(survey_id, survey_region_id, survey_region_name, survey_region_area_id) %>%
-  ungroup
+  ungroup()
 
 
 #' ### Survey cluster dataset
@@ -595,6 +598,7 @@ phia_individuals <-
     transmute(
       survey_id,
       cluster_id,
+      individual_id = personid,
       household = householdid,
       line = personid,
       interview_cmc = cmc_date(surveystdt),
@@ -607,6 +611,7 @@ phia_individuals <-
     transmute(
       survey_id,
       cluster_id,
+      individual_id = personid,
       household = householdid,
       line = personid,
       interview_cmc = cmc_date(surveystdt),
@@ -625,9 +630,7 @@ phia_biomarker <-
     filter(!is.na(hivstatusfinal)) %>%
     transmute(
       survey_id,
-      cluster_id,
-      household = householdid,
-      line = personid,
+      individual_id = personid,
       hivweight = btwt0,
       hivstatus = case_when(hivstatusfinal == 1 ~ 1,
                             hivstatusfinal == 2 ~ 0),
@@ -646,9 +649,7 @@ phia_biomarker <-
     filter(!is.na(hivstatusfinal)) %>%
     transmute(
       survey_id,
-      cluster_id,
-      household = householdid,
-      line = personid,
+      individual_id = personid,
       hivweight = btwt0,
       hivstatus = case_when(hivstatusfinal == 1 ~ 1,
                             hivstatusfinal == 2 ~ 0),
@@ -690,10 +691,10 @@ survey_clusters <- bind_rows(
   phia_clusters
 )
 survey_individuals <- bind_rows(
-  dhs_individuals %>% mutate_at(vars(cluster_id, household, line), as.character),
+  dhs_individuals %>% mutate_at(vars(cluster_id, individual_id, household, line), as.character),
   phia_individuals)
 survey_biomarker <- bind_rows(
-  dhs_biomarker %>% mutate_at(vars(cluster_id, household, line), as.character),
+  dhs_biomarker %>% mutate_at(vars(individual_id), as.character),
   phia_biomarker)
 
 

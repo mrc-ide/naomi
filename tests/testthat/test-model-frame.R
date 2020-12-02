@@ -128,13 +128,48 @@ test_that("population calibration options", {
 
 test_that("survey design effect scales effect sample size", {
 
-  mf1 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, deff = 1.0)
-  mf2 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, deff = 2.5)
+  mf1 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, use_kish = FALSE, deff = 1.0,)
+  mf2 <- survey_mf("MWI2016PHIA", "prevalence", mwi_survey_hiv_indicators, a_naomi_mf, use_kish = FALSE, deff = 2.5)
 
   expect_equal(mf1$n, mf1$n_eff)
   expect_equal(mf2$n, mf2$n_eff * 2.5)
   expect_equal(mf1$n_eff, 2.5 * mf2$n_eff)
   expect_equal(mf1$x_eff, 2.5 * mf2$x_eff)
+})
+
+test_that("use_kish returns Kish effective sample size", {
+
+  mf_default <- survey_mf("MWI2016PHIA",
+                          "prevalence",
+                          mwi_survey_hiv_indicators,
+                          a_naomi_mf)
+
+  mf_srs <- survey_mf("MWI2016PHIA",
+                          "prevalence",
+                          mwi_survey_hiv_indicators,
+                          a_naomi_mf,
+                          use_kish = FALSE)
+  
+  mf_kish <- survey_mf("MWI2016PHIA",
+                       "prevalence",
+                       mwi_survey_hiv_indicators,
+                       a_naomi_mf,
+                       use_kish = TRUE)
+
+  mf_kish_scaled <- survey_mf("MWI2016PHIA",
+                              "prevalence",
+                              mwi_survey_hiv_indicators,
+                              a_naomi_mf,
+                              use_kish = TRUE,
+                              deff = 2.5)
+
+  expect_equal(mf_default$n_eff, mf_kish$n_eff)
+  expect_true(all(mf_kish$n_eff < mf_srs$n_eff | mf_srs$n_eff == 1))
+  expect_equal(mf_kish_scaled$n_eff * 2.5, mf_kish$n_eff)
+  
+  expect_equal(mf_default$x_eff, mf_kish$x_eff)
+  expect_true(all(mf_kish$x_eff < mf_srs$x_eff | mf_srs$x_eff == 0))
+  expect_equal(mf_kish_scaled$x_eff * 2.5, mf_kish$x_eff)
 })
 
 test_that("select_naomi_data() returns expected stratifications", {

@@ -22,6 +22,8 @@ a_hintr_options <- list(
   survey_recently_infected = "MWI2016PHIA",
   include_art_t1 = "true",
   include_art_t2 = "true",
+  anc_clients_year2 = 2018,
+  anc_clients_year2_num_months = "9",
   anc_prevalence_year1 = 2016,
   anc_prevalence_year2 = 2018,
   anc_art_coverage_year1 = 2016,

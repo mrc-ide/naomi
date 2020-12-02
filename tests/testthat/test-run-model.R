@@ -26,7 +26,13 @@ test_that("model can be run", {
                  "calendar_quarter", "quarter_label",
                  "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 16368 * 3 + 2*2*10)
+
+  ## 16363 = number of non ANC outputs per time
+  ## 3 = number or output times
+  ## 9 = number of ANC indicators
+  ## 22 = number of areas
+  ## 11 = number of ANC age groups
+  expect_equal(nrow(output), 16368 * 3 + 3 * 9 * 22 * 11)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -87,7 +93,7 @@ coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y0
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_path))))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_path))))
   expect_true(any(grepl(basename(a_hintr_data$pjnz), readLines(summary_report_path))))
   expect_true(any(grepl("Central", readLines(summary_report_path))))
 
@@ -146,7 +152,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_label",
                  "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) == 16368 * 3 + 2*2*10)
+  expect_equal(nrow(output), 16368 * 3 + 3 * 9 * 22 * 11)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -423,7 +429,7 @@ test_that("model run can be calibrated", {
                         a_hintr_output$output_path)
   indicators_output <- readRDS(calibrated_output$output_path)
   ## Check there is some data
-  expect_true(nrow(indicators_output) == 16368 * 3 + 2*2*10)
+  expect_equal(nrow(indicators_output), 16368 * 3 + 3 * 9 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output$spectrum_path,
@@ -458,7 +464,7 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report))))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report))))
   expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
@@ -508,7 +514,7 @@ test_that("model run can be calibrated", {
                         calibrated_output$output_path)
   indicators_output <- readRDS(calibrated_output_2$output_path)
   ## Check there is some data
-  expect_true(nrow(indicators_output) == 16368 * 3 + 2*2*10)
+  expect_equal(nrow(indicators_output), 16368 * 3 + 3 * 9 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output_2$spectrum_path,
@@ -530,7 +536,7 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report_2)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA MWI2015DHS", readLines(summary_report_2))))
+  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_2))))
   expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged
