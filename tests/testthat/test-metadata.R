@@ -14,6 +14,15 @@ test_that("can retrieve default colour scales", {
   expect_true(all(scale$iso3 == "default"))
 })
 
+test_that("color scales are retrieved for all output indicators", {
+
+  scale_default <-  get_colour_scale()
+  scale_mwi <- get_colour_scale(iso3 = "MWI")
+
+  expect_true(all(get_meta_indicator()$indicator %in% scale_default$indicator))
+  expect_true(all(get_meta_indicator()$indicator %in% scale_mwi$indicator))
+})
+
 test_that("getting scale for missing country returns error empty data", {
   missing <- get_colour_scale("missing")
   expect_equal(names(missing),
@@ -175,7 +184,6 @@ test_that("uncertainty metadata set for all model output data", {
   expect_true(all(!(output_meta$error_low_column == "")))
   expect_true(all(!(output_meta$error_high_column == "")))
 })
-
 
 test_that("metadata format column hasn't been messed by Excel", {
 
