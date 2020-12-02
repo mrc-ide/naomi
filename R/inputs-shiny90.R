@@ -10,7 +10,7 @@
 #' @return A data frame consisting of the number of PLHIV, aware of status
 #'   and on ART by sex and five year age group 15-49 and age 50+ for
 #'   specified `years`.
-#' 
+#'
 #'
 #' @details
 #'
@@ -22,7 +22,7 @@
 #'
 #' @examples
 #'
-#' pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
+#' pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
 #' shiny90dir <- tempfile()
 #' utils::unzip(pjnz, exdir = shiny90dir)
 #' shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
@@ -30,12 +30,12 @@
 #' extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
 #'
 #' @export
-#' 
+#'
 extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
 
   tmpd <- tempfile()
   on.exit(unlink(tmpd))
-  
+
   utils::unzip(shiny90_path, exdir = tmpd)
 
   name <- readLines(file.path(tmpd, "country.txt"))[1]
@@ -50,12 +50,12 @@ extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
   if (is.null(years)) {
     years <- proj_years
   }
-  
+
   if (!all(years %in% proj_years)) {
     stop("Ouput years not contained in shiny90 projection: ",
          paste0(setdiff(years, proj_years), collapse = ", "))
   }
-    
+
   par <- readRDS(file.path(tmpd, "model_outputs/par.rds"))
 
   fpsim <- first90::create_hts_param(par, fp)
