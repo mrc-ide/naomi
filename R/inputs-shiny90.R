@@ -24,7 +24,7 @@
 #'
 #' pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
 #' shiny90dir <- tempfile()
-#' utils::unzip(pjnz, "malawi.zip.shiny90", exdir = shiny90dir)
+#' utils::unzip(pjnz, exdir = shiny90dir)
 #' shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
 #'
 #' extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
@@ -33,11 +33,13 @@
 #' 
 extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
 
-  exdir <- tempfile()
-  utils::unzip(shiny90_path, exdir = exdir)
+  tmpd <- tempfile()
+  on.exit(unlink(tmpd))
+  
+  utils::unzip(shiny90_path, exdir = tmpd)
 
-  name <- readLines(file.path(exdir, "country.txt"))[1]
-  spectrum_data <- list.files(file.path(exdir, "spectrum_data"), "rds$", full.names = TRUE)
+  name <- readLines(file.path(tmpd, "country.txt"))[1]
+  spectrum_data <- list.files(file.path(tmpd, "spectrum_data"), "rds$", full.names = TRUE)
   spec <- lapply(spectrum_data, readRDS)
   spec <- lapply(spec, "[[", "data")
   fp <- first90::prepare_inputs_from_extracts(spec)
@@ -54,7 +56,7 @@ extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
          paste0(setdiff(years, proj_years), collapse = ", "))
   }
     
-  par <- readRDS(file.path(exdir, "model_outputs/par.rds"))
+  par <- readRDS(file.path(tmpd, "model_outputs/par.rds"))
 
   fpsim <- first90::create_hts_param(par, fp)
   mod <- first90::simmod(fpsim)
