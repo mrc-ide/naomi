@@ -32,7 +32,7 @@ ART coverage.
 
 pjnz <- system.file("extdata/mwi2019.pjnz", package = "naomi")
 shiny90dir <- tempfile()
-utils::unzip(pjnz, "malawi.zip.shiny90", exdir = shiny90dir)
+utils::unzip(pjnz, exdir = shiny90dir)
 shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
 
 extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
