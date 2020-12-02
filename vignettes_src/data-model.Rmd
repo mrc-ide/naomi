@@ -19,6 +19,7 @@ library(dplyr)
 library(forcats)
 library(ggplot2)
 library(sf)
+library(naomi)
 ```
 
 ```{r load_datasets, message = FALSE, include = FALSE}
