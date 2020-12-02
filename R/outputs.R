@@ -71,6 +71,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "alpha_t1_out" = "art_coverage",
                      "artnum_t1_out" = "art_current_residents",
                      "artattend_t1_out" = "art_current",
+                     "untreated_plhiv_num_t1_out" = "untreated_plhiv_num",
+                     "aware_plhiv_prop_t1_out" = "aware_plhiv_prop",
+                     "unaware_plhiv_num_t1_out" = "unaware_plhiv_num",
                      "lambda_t1_out" = "incidence",
                      "infections_t1_out" = "infections")
 
@@ -80,6 +83,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "alpha_t2_out" = "art_coverage",
                      "artnum_t2_out" = "art_current_residents",
                      "artattend_t2_out" = "art_current",
+                     "untreated_plhiv_num_t2_out" = "untreated_plhiv_num",
+                     "aware_plhiv_prop_t2_out" = "aware_plhiv_prop",
+                     "unaware_plhiv_num_t2_out" = "unaware_plhiv_num",
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
@@ -89,6 +95,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "alpha_t3_out" = "art_coverage",
                      "artnum_t3_out" = "art_current_residents",
                      "artattend_t3_out" = "art_current",
+                     "untreated_plhiv_num_t3_out" = "untreated_plhiv_num",
+                     "aware_plhiv_prop_t3_out" = "aware_plhiv_prop",
+                     "unaware_plhiv_num_t3_out" = "unaware_plhiv_num",
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
@@ -1166,8 +1175,10 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
                        names_from = indicator, values_from = mean) %>%
     dplyr::mutate(prevalence = plhiv / population,
                   art_coverage = art_current_residents / plhiv,
+                  aware_plhiv_prop = (plhiv - unaware_plhiv_num) / plhiv,
                   incidence = infections / (population - plhiv)) %>%
-    tidyr::pivot_longer(c(prevalence, art_coverage, incidence), names_to = "indicator", values_to = "ratio") %>%
+    tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
+                        names_to = "indicator", values_to = "ratio") %>%
     dplyr::select(area_id, sex, calendar_quarter, age_group, indicator, ratio) %>%
     dplyr::left_join(out0to4, by = c("area_id", "sex", "calendar_quarter", "indicator")) %>%
     dplyr::mutate(ratio = dplyr::if_else(mean == 0, 0, ratio / mean)) %>%

@@ -13,10 +13,14 @@
           "options":
             <+anc_prevalence_year2_options+>,
           "required": false
-        },
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
+      "controls": [
         {
           "name": "anc_clients_year2_num_months",
-          "label": "t_(OPTIONS_ANC_MONTHS_LABEL)",
           "type": "select",
           "value": "12",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
