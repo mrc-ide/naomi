@@ -38,18 +38,6 @@
           "required": false
         }
       ]
-    },
-    {
-      "label": "t_(OPTIONS_RECENTLY_INFECTED_LABEL)",
-      "controls": [
-        {
-          "name": "survey_recently_infected",
-          "type": "multiselect",
-          "options":
-            <+survey_recently_infected_options+>,
-          "required": false
-        }
-      ]
     }
   ]
 }
