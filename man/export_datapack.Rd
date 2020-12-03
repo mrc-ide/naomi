@@ -29,4 +29,11 @@ irrespective of whether a Datim map_id is available.
 
 If a datim ID is available, the Datim map_name will be used in the column
 \code{psnu}. Otherwise the Naomi \code{area_name} will be used for the column \code{psnu}.
+
+PEPFAR indicator codes for Data Pack are in this Datim view:
+https://www.datim.org/api/sqlViews/DotdxKrNZxG/data.html+css?var=dataSets:j7jzezIhgPj
+
+PEPFAR PSNU UIDs are in this Datim view: https://www.datim.org/api/sqlViews/gsaaxFM8ZN0/data.html+css
+
+(Replace the extensions \code{.html+css} with \code{.csv} to download tables as CSV.)
 }

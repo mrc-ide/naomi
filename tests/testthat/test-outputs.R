@@ -31,16 +31,6 @@ test_that("all output stratifications are included in metatdata", {
 
 })
 
-test_that("datapack export writes a csv", {
-
-  tmpf <- tempfile(fileext = ".csv")
-  res <- export_datapack(a_output_full, tmpf)
-  datapack <- readr_read_csv(res)
-
-  expect_equal(tmpf, res)
-  expect_true(!any(is.na(datapack[!names(datapack) == "psnuid"])))
-})
-
 test_that("write and read hintr outputs returns same thing", {
 
   read1 <- read_output_package(a_hintr_output$spectrum_path)

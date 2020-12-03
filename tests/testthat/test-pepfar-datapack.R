@@ -11,6 +11,16 @@ test_that("datapack_psnu_area_id_map is well formed", {
   expect_true(all(grepl("^[A-Z]{3}$", psnu_map$iso3)))
 })
 
+test_that("datapack_psnu_area_level is well formed", {
+
+  psnu_level <- naomi_read_csv(system_file("datapack/datapack_psnu_area_level.csv"))
+
+  expect_equal(names(psnu_level), c("iso3", "psnu_area_level"))
+  expect_equal(anyDuplicated(psnu_level$iso3), 0)
+  expect_true(all(!is.na(psnu_level$psnu_area_level)))
+  expect_is(psnu_level$psnu_area_level, "integer")
+})
+
 test_that("datapack_indicator_map is well formed", {
   
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
@@ -29,4 +39,14 @@ test_that("datapack_age_group_map is well formed", {
   expect_true(all(datapack_age_group_map$age_group %in% get_age_groups()$age_group))
   expect_equal(anyDuplicated(datapack_age_group_map$age_group), 0)
   expect_equal(anyDuplicated(datapack_age_group_map$datapack_age_group_label), 0)
+})
+
+
+test_that("datapack export writes a csv", {
+
+  tmpf <- tempfile(fileext = ".csv")
+  res <- export_datapack(a_output_full, tmpf, psnu_level = 3)
+  datapack <- readr_read_csv(res)
+  expect_equal(tmpf, res)
+  expect_true(!any(is.na(datapack)))
 })
