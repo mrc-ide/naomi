@@ -49,6 +49,7 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -59,6 +60,7 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -170,6 +172,7 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -182,6 +185,7 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -449,7 +453,9 @@ test_that("model run can be calibrated", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
+      "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
+      "info/", "info/calibration_options.yml", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
@@ -461,7 +467,9 @@ test_that("model run can be calibrated", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
+      "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
+      "info/", "info/calibration_options.yml", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 

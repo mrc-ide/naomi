@@ -45,11 +45,17 @@ test_that("datapack_age_group_map is well formed", {
 })
 
 
-test_that("datapack export writes a csv", {
+test_that("datapack export writes correct psnu_level", {
 
   tmpf <- tempfile(fileext = ".csv")
-  res <- export_datapack(a_output_full, tmpf, psnu_level = 3)
-  datapack <- readr_read_csv(res)
+  tmpf3 <- tempfile(fileext = ".csv")
+  res <- write_datapack_csv(a_output_full, tmpf)
+  res3 <- write_datapack_csv(a_output_full, tmpf3, psnu_level = 3)
   expect_equal(tmpf, res)
+
+  datapack <- readr_read_csv(res)
+  datapack3 <- readr_read_csv(res3)
+  
   expect_true(!any(is.na(datapack)))
+  expect_equal(datapack, datapack3)
 })

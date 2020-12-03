@@ -2,7 +2,9 @@
 #'
 #' @param naomi_output a naomi_output object.
 #' @param path path to save Data Pack CSV.
-#' @param psnu_level area_level for PEPFAR PSNU to export.
+#' @param psnu_level area_level for PEPFAR PSNU to export. If NULL,
+#'    first looks in lookup table for the correct area_level, and
+#'    if not defaults to the highest level of the area hierarchy.
 #' @param calendar_quarter calendar_quarter to export estimates.
 #'
 #' @details
@@ -21,28 +23,42 @@
 #' (Replace the extensions `.html+css` with `.csv` to download tables as CSV.)
 #'
 #' @export
-export_datapack <- function(naomi_output,
-                            path,
-                            psnu_level = max(naomi_output$meta_area$area_level),
-                            calendar_quarter = naomi_output$meta_period$calendar_quarter) {
-
+write_datapack_csv <- function(naomi_output,
+                               path,
+                               psnu_level = NULL,
+                               calendar_quarter = naomi_output$meta_period$calendar_quarter) {
+  
   stopifnot(inherits(naomi_output, "naomi_output"))
   stopifnot(psnu_level %in% naomi_output$meta_area$area_level)
   stopifnot(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
-
+  
   if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
     path <- paste0(path, ".csv")
   }
-
+  
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
   datapack_age_group_map <- naomi_read_csv(system_file("datapack", "datapack_age_group_mapping.csv"))
   datapack_sex_map <- naomi_read_csv(system_file("datapack", "datapack_sex_mapping.csv"))
   datapack_psnu_map <- naomi_read_csv(system_file("datapack/datapack_psnu_area_id_map.csv"))
+  datapack_psnu_level <- naomi_read_csv(system_file("datapack/datapack_psnu_area_level.csv"))
 
+  if (is.null(psnu_level)) {
+    iso3 <- get_iso3(naomi_output$meta_area$area_id)
+    if (iso3 %in% datapack_psnu_level$iso3) {
+      psnu_level <- datapack_psnu_level$psnu_area_level[datapack_psnu_level$iso3 == iso3]
+    } else {
+      psnu_level <- max(naomi_output$meta_area$area_level)
+    }
+  }
+
+  if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
+    stop("PSNU level ", psnu_level, " not included in model outputs.")
+  }
+  
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
              indicator_code = datapack_indicator_code,
-           ) %>%
+             ) %>%
     dplyr::select(indicator, indicator_code, is_integer)
 
 

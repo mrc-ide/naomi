@@ -596,6 +596,7 @@ subset_naomi_output <- function(naomi_output,
 #' or shape format
 #' @param single_csv If TRUE only output the csv of indicators, otherwise save
 #' the metadata too
+#' @param export_datapack If TRUE save CSV of PEPFAR datapack indicators.
 #'
 #' @return Path to created zip file
 #' @export
@@ -605,10 +606,11 @@ save_output_package <- function(naomi_output,
                                 overwrite = FALSE,
                                 with_labels = FALSE,
                                 boundary_format = "geojson",
-                                single_csv = FALSE) {
+                                single_csv = FALSE,
+                                export_datapack = !single_csv) {
 
   save_output(filename, dir, naomi_output, overwrite,
-              with_labels, boundary_format, single_csv)
+              with_labels, boundary_format, single_csv, export_datapack)
 }
 
 save_output_coarse_age_groups <- function(path, naomi_output,
@@ -620,13 +622,15 @@ save_output_coarse_age_groups <- function(path, naomi_output,
 
   save_output(basename(path), dirname(path), naomi_output_sub,
               overwrite = overwrite, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+              boundary_format = "geojson", single_csv = FALSE,
+              export_datapack = TRUE)
 }
 
 save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output,
               overwrite = overwrite, with_labels = TRUE,
-              boundary_format = "geojson", single_csv = FALSE)
+              boundary_format = "geojson", single_csv = FALSE,
+              export_datapack = TRUE)
 }
 
 save_output <- function(filename, dir,
@@ -634,7 +638,9 @@ save_output <- function(filename, dir,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
-                        single_csv = FALSE) {
+                        single_csv = FALSE,
+                        export_datapack = !single_csv) {
+
   dir <- normalizePath(dir, mustWork = TRUE)
   if(!file.access(dir, 2) == 0) {
     stop(paste("Directory", dir, "is not writable."))
@@ -687,6 +693,10 @@ save_output <- function(filename, dir,
                    "Please select 'geojson', 'shp', or NA to not save boundaries."))
       }
     }
+  }
+
+  if (export_datapack) {
+    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2021.csv")
   }
 
   info <- attr(naomi_output, "info")
