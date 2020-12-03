@@ -1,6 +1,4 @@
 ---
-title: Subnational HIV Estimates
-date: '`r format(Sys.Date(), "%B %d, %Y")`'
 fig_width: 5
 fig_height: 5
 params:
@@ -56,7 +54,6 @@ font-size: 35px;
 
 
 ```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
-  
 # Read in files from naomi outputs zip
 output_zip <- params$output_zip
 
@@ -65,7 +62,6 @@ inputs <- unz(output_zip, "info/inputs.csv")
 inputs <- read.csv(inputs)
 options <- unz(output_zip, "info/options.yml")
 options <- yaml::read_yaml(options)
-
 
 indicators <- naomi::add_output_labels(outputs) %>%
   dplyr::left_join(
@@ -77,7 +73,7 @@ indicators <- naomi::add_output_labels(outputs) %>%
 
 # Grab inputs and model options from model output zip file
 # # concatenating strings where more than one option may be selected
-
+report_date <- format(Sys.Date(), "%B %d, %Y")
 t1 <- options$calendar_quarter_t1
 t2 <- options$calendar_quarter_t2
 iso <- options$area_scope
@@ -99,8 +95,7 @@ include <- tibble::tibble(
   anc_prev = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
 ) 
 
-# # Select years where ART programme data is included
-
+# Select years where ART programme data is included
 if("true" %in% include$art ) {
   df <- include %>% dplyr::filter(art == "true")
   art_year <- paste0(df$art_year, sep = "", collapse = " and ")
@@ -108,8 +103,7 @@ if("true" %in% include$art ) {
   art_year <- " "
 }
 
-# # Select years where ART programme data is included
-
+# Select years where ART attendance reallocation is implemented
 if("true" %in% include$art_attend ) {
   df <- include %>% dplyr::filter(art_attend == "true")
   art_attend <- paste0(df$art_year, sep = "", collapse = " and ")
@@ -117,21 +111,18 @@ if("true" %in% include$art_attend ) {
   art_attend <- " "
 }
 
-
-# # select years where ANC ART programme data is included
+# Select years where ANC ART programme data is included
 if(sum(lengths(include$anc_art)) > 0) {
   df <- include %>% dplyr::filter(anc_art != "NULL")
   anc_art <- paste0(df$anc_art, sep = "", collapse = " and ")
-
 } else {
   anc_art <- " "
 }
 
-# # select years where ANC prev programme data is included
+# Select years where ANC prev programme data is included
 if(sum(lengths(include$anc_prev)) > 0) {
   df <- include %>% dplyr::filter(anc_prev != "NULL")
   anc_prev <- paste0(df$anc_prev, sep = "", collapse = " and ")
-
 } else {
   anc_prev <- " "
 }
@@ -152,9 +143,13 @@ data <- dplyr::filter(indicators,
                       area_level == level, 
                       calendar_quarter == t2)
 
-## Legend functions
+# Determine number of districts in lowest area level
+district_count <- length(levels(as.factor(data$area_name)))
 
-## Map Figure
+# Legend functions
+#-------------------------------------------------------------------------------
+# Map Figure
+#-------------------------------------------------------------------------------
 map_outputs <- function(geom_data,
                         var,
                         age, 
@@ -164,6 +159,7 @@ map_outputs <- function(geom_data,
                         legend_title, 
                         legend_label = ggplot2::waiver(), 
                         fig_title) {
+  
   # filter data for desired indicator
   fig_data <- geom_data %>% dplyr::filter(indicator == var, 
                                           age_group == age,
@@ -191,7 +187,9 @@ map_outputs <- function(geom_data,
     ggplot2::ggtitle(fig_title)
 }
 
-## Pop pyramid
+#-------------------------------------------------------------------------------
+# Pop pyramid
+#-------------------------------------------------------------------------------
 pop_pyramid_outputs <- function(disag_data,
                                 var,
                                 left_colour, 
@@ -202,6 +200,7 @@ pop_pyramid_outputs <- function(disag_data,
 
   ## filter data for desired indicator
   fig_data <- disag_data %>% dplyr::filter(indicator == var) 
+  
   plot <- ggplot2::ggplot(fig_data, ggplot2::aes(x = ifelse(sex == "male", -mean, mean),
                                                  y = age_group,
                                                  ymin = lower,
@@ -227,14 +226,110 @@ pop_pyramid_outputs <- function(disag_data,
     ggplot2::ggtitle(fig_title)
 }
 
+#-------------------------------------------------------------------------------
+# District Barplot + National indicator
+#-------------------------------------------------------------------------------
+  
+ national_district_bar_plot <- function(district_data, 
+                               var, 
+                               age_disag, 
+                               sex_disag = "both",
+                               national_indicator,
+                               label_format,
+                               x_axis_title, 
+                               fig_title) {
+   
+   # Filter data for desired indicator and disag
+   # # assign categories based on national level indicator 
+   fig_data <- data %>% sf::st_drop_geometry() %>%
+     dplyr::filter(indicator == var, 
+                   age_group == age_disag,
+                   sex == sex_disag, 
+     )%>%
+     dplyr::mutate(threshold = ifelse(mean > national_indicator,"above", "below"),
+                   threshold = as.factor(threshold))
+   
+   #Plot figure
+   ggplot2::ggplot(fig_data, ggplot2::aes(reorder(area_name, mean),
+                                                mean,
+                                                ymin = lower,
+                                                ymax = upper,
+                                                fill = threshold)) +
+     ggplot2::theme_classic() +
+     ggplot2::geom_col(position = "dodge") +
+     ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
+     ggplot2::scale_y_continuous(labels = label_format) +
+     ggplot2::theme(
+       axis.text.x = ggplot2::element_text(size = 8),
+       legend.background = ggplot2::element_rect(linetype = "dashed", colour = "black"),
+       legend.text = ggplot2::element_text(size = 8), 
+       legend.position = "bottom",
+       legend.direction = "vertical", 
+       legend.title = ggplot2::element_text(size = 8, face = "bold"), 
+       axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
+       axis.title.y = ggplot2::element_blank()) +
+     ggplot2::ylab(x_axis_title) +
+     ggplot2::geom_hline(yintercept= national_indicator, linetype="dashed", color = "black")+
+     
+     ggplot2::ggtitle(fig_title) + 
+     ggplot2::coord_flip()
+   
+ }
 
+#------------------------------------------------------------------------------- 
+# District Barplot (no national indicator)
+#-------------------------------------------------------------------------------  
+district_bar_plot <- function(district_data, 
+                               var, 
+                               age_disag, 
+                              colour,
+                               sex_disag = "both",
+                              label_format,
+                               x_axis_title, 
+                               fig_title) {
+   
+   # Filter data for desired indicator and disag
+   # # assign categories based on national level indicator 
+   fig_data <- data %>% sf::st_drop_geometry() %>%
+     dplyr::filter(indicator == var, 
+                   age_group == age_disag,
+                   sex == sex_disag)
+   
+   #Plot figure
+   ggplot2::ggplot(fig_data, ggplot2::aes(reorder(area_name, mean),
+                                                mean,
+                                                ymin = lower,
+                                                ymax = upper)) +
+     ggplot2::theme_classic() +
+     ggplot2::geom_col(position = "dodge", fill = colour) +
+     ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
+     ggplot2::scale_y_continuous(labels = label_format) +
+     ggplot2::theme(
+       axis.text.x = ggplot2::element_text(size = 8),
+       axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
+       axis.title.y = ggplot2::element_blank()) +
+     ggplot2::ylab(x_axis_title) +
+     ggplot2::ggtitle(fig_title) + 
+     ggplot2::coord_flip()
+   
+ }
+ 
+```
+
+```{r, echo = FALSE, results = 'asis'}
+
+cat(paste0("# ", country, " Subnational HIV Estimates \n"))
+
+cat(paste0("### **", quarter_t2, "** (report ", report_date, ")"))
 ```
 
 ``` {r, echo = FALSE, results = 'asis'}
-cat(paste0("This report summarises the **", area_level_label, "-level** HIV indicators for **", country,"** from the Naomi model as of **", quarter_t2, "**."), sep = "\n")
+cat(paste0("This report summarises the **", area_level_label, "-level** HIV indicators for **", country,"** from the Naomi model", sep = "\n"))
 ```
 
-Naomi is a statistical model that uses data from several sources, including:
+Naomi is a statistical model that uses data from several sources, including:  
+
+National survey data:   
 
 ```{r, echo = FALSE, results = 'asis'}
 text1 <- tibble::tibble(prefix = c("National household survey data on new HIV infections from ",
@@ -243,13 +338,13 @@ text1 <- tibble::tibble(prefix = c("National household survey data on new HIV in
                         source = c(survey_recent,
                                    survey_prev,
                                    survey_art)) %>%
-  dplyr::filter(source != " ")
+  dplyr::filter(source != "")
 
 
 cat(paste0("* ", text1$prefix, "_", text1$source, "_"), sep = "\n")
 ```
   
-# 
+Operational programme data:  
   
 ```{r, echo = FALSE, results= 'asis'}
 text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for ",
@@ -259,7 +354,7 @@ text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for 
                        source = c(art_year,
                                   anc_prev, 
                                   anc_art)) %>%
-  dplyr::filter(source != " ")
+  dplyr::filter(source != "")
 
 
 cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
@@ -319,8 +414,6 @@ p1 <- map_outputs(geom_data = data,
                   end_colour_scale = "red4", 
                   fig_title = "People living with HIV (15-49)",
                   legend_title = "PLHIV")
-
-
 #-------------------------------------------------------------------------------
 # Map: on ART
 # # By lowest area_level
@@ -356,7 +449,7 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2),
 
 ### **Geographic distribution of rates of HIV infection**
 
-```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", results = 'asis' }
+```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", out.height=  "100%", results = 'asis' }
 
 #-------------------------------------------------------------------------------
 # Map: PLHIV (mean)
@@ -491,15 +584,26 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p7), ggplot2::ggplotGrob(p8),
 cat(paste0("### **", area_level_label, "-level HIV trends**"))
 ```
 
-``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = 8, fig.width = 12, align = 'centre'}
+```{r, echo = FALSE}
+## Dynamicaly size plot based on number of districts
+
+if(district_count <= 35){height <- 8}
+if(district_count > 35 && district_count <= 65){height <- 10}
+if(district_count > 65 && district_count <= 125){height <- 14}
+if(district_count > 125 && district_count <= 160){height <- 20}
+if(district_count > 180){fig_height <- 24}
+
+```
+
+``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = height, fig.width = 10}
 # Check output data for area levels avalible
 ## If national level data is present, generate figure comparing district level 
 ## indicator to national level otherwise generate district level figure
 
 
 if("0" %in% area_levels) {
-  
-  # Define National level indicators
+  # If national level indicator is present:
+  # # define National level indicators
   
   national <- indicators %>% 
     sf::st_drop_geometry() %>%
@@ -516,37 +620,19 @@ if("0" %in% area_levels) {
   # Barplot: Preavalence
   # # By lowest area_level, descending, compared to national indicator
   #-----------------------------------------------------------------------------
-  p13 <- data %>% sf::st_drop_geometry() %>%
-    dplyr::filter(indicator == "prevalence", 
-                  age_group == "Y015_049",
-                  sex == "both", 
-    )%>%
-    dplyr::mutate(threshold = ifelse(mean > national_prev,"above", "below"),
-                  threshold = as.factor(threshold)) %>%
-    ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
-                                 mean,
-                                 ymin = lower,
-                                 ymax = upper,
-                                 fill = threshold)) +
-    ggplot2::theme_classic() +
-    ggplot2::geom_col(position = "dodge") +
-    ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
-    ggplot2::scale_y_continuous(labels = scales::percent_format(1)) +
-    ggplot2::theme(
-      axis.text.x = ggplot2::element_text(size = 8),
-      legend.background = ggplot2::element_rect(linetype = "dashed", colour = "black"),
-      legend.text = ggplot2::element_text(size = 8), 
-      legend.position = "bottom",
-      legend.direction = "vertical", 
-      legend.title = ggplot2::element_text(size = 8, face = "bold"), 
-      axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
-      axis.title.y = ggplot2::element_blank()) +
-    ggplot2::ylab("Prevalence") +
-    ggplot2::geom_hline(yintercept= national_prev, linetype="dashed", color = "black")+
-    ggplot2::scale_fill_manual(name = paste0("National HIV Prevalence: \n ", round(national_prev*100, 2),"%"),
-                               values = c("above" = "red4", "below" = "mistyrose2")) +
-    ggplot2::ggtitle("HIV Prevalence") + 
-    ggplot2::coord_flip()
+  p13 <- national_district_bar_plot(district_data = data, 
+                                    var = "prevalence", 
+                                    age_disag = "Y015_049", 
+                                    national_indicator = national_prev, 
+                                    label_format = scales::percent_format(1),
+                                    x_axis_title = "HIV Prevalence", 
+                                    fig_title = "HIV Prevalence (15-49)")
+  
+  
+  p13 <- p13 + ggplot2::scale_fill_manual(name = paste0("National HIV Prevalence: \n ",
+                                                        round(national_prev*100, 2),"%"),
+                                          values = c("above" = "red4", 
+                                                     "below" = "mistyrose2"))
   
   
   #-------------------------------------------------------------------------------
@@ -554,164 +640,91 @@ if("0" %in% area_levels) {
   # # By lowest area_level, descending, compared to national indicator
   #--------------------------------------------------------------------------------
   
-  art_colours_2 <- c(">80%" = "olivedrab4", 
-                     "70-80%" = "#688C2192", 
-                     "<70%" = "#688C2133")
+  p14 <- national_district_bar_plot(district_data = data, 
+                                    var = "art_coverage", 
+                                    age_disag = "Y015_999", 
+                                    national_indicator = national_art, 
+                                    label_format = scales::percent_format(1),
+                                    x_axis_title = "ART_coverage", 
+                                    fig_title = "Proportion PLHIV on ART (15+)")
   
-  ## assign ART coverage categories 
-  art_data <- data %>% 
-    dplyr::filter(indicator == "art_coverage", 
-                  age_group == "Y015_999",
-                  sex == "both") %>%
-    dplyr::mutate(mean = round(mean, 2), 
-                  threshold = dplyr::case_when(mean >= 0.8 ~ ">80%", 
-                                               dplyr::between(mean, 0.7,0.8) ~ "70-80%", 
-                                               mean < 0.7 ~ "<70%"), 
-                  threshold = factor(threshold, levels = c(">80%", "70-80%", "<70%")))
   
-  p14 <- art_data %>% sf::st_drop_geometry() %>%
-    dplyr::filter(indicator == "art_coverage") %>%
-    ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
-                                 mean,
-                                 ymin = lower,
-                                 ymax = upper,
-                                 fill = threshold)) +
-    ggplot2::theme_classic() +
-    ggplot2::geom_col(position = "dodge") +
-    ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
-    ggplot2::scale_y_continuous(labels = scales::percent_format(1)) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8),
-                   legend.background = ggplot2::element_rect(linetype = "dashed", colour = "black"),
-                   legend.text = ggplot2::element_text(size = 8), 
-                   legend.position = "bottom",
-                   legend.direction = "vertical", 
-                   legend.title = ggplot2::element_text(size = 8, , face = "bold"), 
-                   axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
-                   axis.title.y = ggplot2::element_blank()) +
-    ggplot2::ylab("ART Coverage") +
-    ggplot2::geom_hline(yintercept= national_art, linetype="dashed", color = "black")+
-    ggplot2::scale_fill_manual(name = paste0("National ART Coverage:\n ", round(national_art*100, 2),"%"),
-                               values = art_colours_2) +
-    ggplot2::ggtitle("Proportion PLHIV on ART") +
-    ggplot2::coord_flip()
-  
+  p14 <- p14 + ggplot2::scale_fill_manual(name = paste0("National ART Coverage:\n ", 
+                                                        round(national_art*100, 2),"%"),
+                                          values = c("above" = "olivedrab4",
+                                                     "below" = "honeydew3"))
+   
   
   #-----------------------------------------------------------------------------
   # Barplot: Incidence per 1000
   # # By lowest area_level, descending, compared to national indicator
   #-----------------------------------------------------------------------------
-  p15 <- data %>% dplyr::filter(indicator == "incidence", 
-                                age_group == "Y015_049",
-                                sex == "both") %>%
-    dplyr::mutate(threshold = ifelse(mean > national_inc,"above", "below"),
-                  threshold = as.factor(threshold)) %>%
-    ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
-                                 mean,
-                                 ymin = lower,
-                                 ymax = upper,
-                                 fill = threshold)) +
-    ggplot2::theme_classic() +
-    ggplot2::geom_col(position = "dodge") +
-    ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
-    ggplot2::scale_y_continuous(labels = scales::label_number(0.01, 1000)) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8),
-                   legend.background = ggplot2::element_rect(linetype = "dashed", colour = "black"),
-                   legend.text = ggplot2::element_text(size = 8), 
-                   legend.position = "bottom",
-                   legend.direction = "vertical", 
-                   legend.title = ggplot2::element_text(size = 8, face = "bold"), 
-                   axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
-                   axis.title.y = ggplot2::element_blank()) +
-    ggplot2::ylab("HIV Incidence (per 1000 population)") +
-    ggplot2::geom_hline(yintercept= national_inc, linetype="dashed", 
-                        color = "black") +
-    ggplot2::scale_fill_manual(name = paste0("National HIV Incidence\n per 1000 population: ", round(national_inc*1000, 2)),
-                               values = c("above" = "skyblue4", "below" = "slategray3")) +
-    ggplot2::ggtitle("Rate of HIV infection") +
-    ggplot2::coord_flip()
+   
+  p15 <- national_district_bar_plot(district_data = data, 
+                                    var = "incidence", 
+                                    age_disag = "Y015_049", 
+                                    national_indicator = national_inc, 
+                                    label_format = scales::label_number(0.01, 1000),
+                                    x_axis_title = "Rate of HIV infection (15-49)", 
+                                    fig_title = "HIV Incidence per 1000 population")
+   
+   
+  p15 <- p15 + ggplot2::scale_fill_manual(name = paste0("National HIV Incidence\n per 1000 population: ",    
+                                                         round(national_inc*1000, 2)),
+                                               values = c("above" = "skyblue4", 
+                                                          "below" = "slategray3")) 
+   
   
-  # Plot figs together 
-  grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14), 
+  # Plot figs together
+  bar_plot <- grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14),
                         ggplot2::ggplotGrob(p15)))
   
 } else {
   
+  # If no national level indicator is present:
+  
   #-----------------------------------------------------------------------------
   # Barplot: Preavalence
-  # # By lowest area_level, descending, compared to national indicator
+  # # By lowest area_level, descending
   #-----------------------------------------------------------------------------
-  p13 <- data %>% sf::st_drop_geometry() %>%
-    dplyr::filter(indicator == "prevalence", 
-                  age_group == "Y015_049",
-                  sex == "both", 
-    )%>%
-    ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
-                                 mean,
-                                 ymin = lower,
-                                 ymax = upper)) +
-    ggplot2::theme_classic() +
-    ggplot2::geom_col(position = "dodge", fill = "red4") +
-    ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
-    ggplot2::scale_y_continuous(labels = scales::percent_format(1)) +
-    ggplot2::theme(
-      axis.text.x = ggplot2::element_text(size = 8),
-      axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
-      axis.title.y = ggplot2::element_blank()) +
-    ggplot2::ylab("Prevalence") +
-    ggplot2::ggtitle("HIV Prevalence") + 
-    ggplot2::coord_flip()
+  p13 <- district_bar_plot(district_data = data, 
+                           var = "prevalence", 
+                           age_disag = "Y015_049", 
+                           colour = "red4", 
+                           label_format = scales::percent_format(1),
+                           x_axis_title = "HIV Prevalence", 
+                           fig_title = "HIV Prevalence (15-49)")
   
   #-----------------------------------------------------------------------------
   # Barplot: ART coverage
-  # # By lowest area_level, descending, compared to national indicator
+  # # By lowest area_level, descending
   #-----------------------------------------------------------------------------
   
-  p14 <- data %>% sf::st_drop_geometry() %>%
-    dplyr::filter(indicator == "art_coverage") %>%
-    ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
-                                 mean,
-                                 ymin = lower,
-                                 ymax = upper)) +
-    ggplot2::theme_classic() +
-    ggplot2::geom_col(position = "dodge", fill = "olivedrab4") +
-    ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
-    ggplot2::scale_y_continuous(labels = scales::percent_format(1)) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8),, 
-                   axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
-                   axis.title.y = ggplot2::element_blank()) +
-    ggplot2::ylab("ART Coverage") +
-    ggplot2::ggtitle("Proportion PLHIV on ART") +
-    ggplot2::coord_flip()
+  p14 <- district_bar_plot(district_data = data, 
+                                    var = "art_coverage", 
+                                    age_disag = "Y015_999", 
+                                    colour = "olivedrab4", 
+                                    label_format = scales::percent_format(1),
+                                    x_axis_title = "ART_coverage", 
+                                    fig_title = "Proportion PLHIV on ART (15+)")
   
   #-----------------------------------------------------------------------------
   # Barplot: Incidence per 1000
-  # # By lowest area_level, descending, compared to national indicator
+  # # By lowest area_level, descending
   #-----------------------------------------------------------------------------
-  p15 <- data %>%
-    dplyr::filter(indicator == "incidence", 
-                  age_group == "Y015_049",
-                  sex == "both") %>%
-    ggplot2::ggplot(ggplot2::aes(reorder(area_name, mean),
-                                 mean,
-                                 ymin = lower,
-                                 ymax = upper)) +
-    ggplot2::theme_classic() +
-    ggplot2::geom_col(position = "dodge", fill = "skyblue4" ) +
-    ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
-    ggplot2::scale_y_continuous(labels = scales::label_number(0.01, 1000)) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8),
-                   axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
-                   axis.title.y = ggplot2::element_blank()) +
-    ggplot2::ylab("HIV Incidence (per 1000 population)") +
-    ggplot2::ggtitle("Rate of HIV infection") +
-    ggplot2::coord_flip()
+  p15 <- district_bar_plot(district_data = data, 
+                                    var = "incidence", 
+                                    age_disag = "Y015_049", 
+                                    colour = "skyblue4", 
+                                    label_format = scales::label_number(0.01, 1000),
+                                    x_axis_title = "Rate of HIV infection (15-49)", 
+                                    fig_title = "HIV Incidence per 1000 population")
   
-  # Plot figs together 
-  grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14), 
+  # Plot figs together
+  bar_plot <- grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14),
                         ggplot2::ggplotGrob(p15)))
   
 }
-
 
 ```
 
