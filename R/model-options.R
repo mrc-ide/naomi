@@ -48,15 +48,35 @@ get_model_calibration_options <- function() {
 
 #' Map calibration option ID to JSON calibration option labels
 #'
+#' @param options Key-value (calibration option name - calibration option ID)
+#' list of model options to be mapped.
 #'
-#' @param options Key-value (calibration option ID) list of model options
-#'
-#' @return map key-value (calibration options label) list of model options
-
+#' @return Mapped key-value (calibration option name - calibration option label)
+#' list of model options
 get_calibration_option_labels <- function(options) {
-
-  calibration <- get_model_calibration_options()
-
+  ## This is not ideal that we are maintaining this list here and in the
+  ## calibration options themselves but the alternative of parsing this
+  ## from the calibration json is far worse
+  ## TODO: Improve how this is being built see mrc-2022
+  calibration_option_map <- list(
+    none = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)",
+    national= "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)",
+    subnational = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)",
+    age_coarse = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)",
+    sex_age_coarse = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)",
+    age_group = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)",
+    sex_age_group = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
+  )
+  calibration_option_map <- traduire::translator()$replace(
+    calibration_option_map)
+  map_option <- function(option_name) {
+    if (!(options[[option_name]]) %in% names(calibration_option_map)) {
+      stop(sprintf("Failed to find calibration option for name %s and id %s",
+                   option_name, options[[option_name]]))
+    }
+    calibration_option_map[[options[[option_name]]]]
+  }
+  as.list(vapply(names(options), map_option, character(1), USE.NAMES = TRUE))
 }
 
 #' Validate a set of model options

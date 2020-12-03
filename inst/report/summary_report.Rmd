@@ -1,4 +1,5 @@
 ---
+title: "&nbsp;"
 fig_width: 5
 fig_height: 5
 params:
@@ -363,20 +364,23 @@ cat(paste0("\n and national HIV estimates from Spectrum file _", spectrum_file,"
            "\n using calibration options: \n " ))
 ```
 ```{r, echo = FALSE, results = 'asis'}
+
+# Translate calibration options to human readable
+calibration_options <- options[grep("calibration", names(options))]
+calibration_options <- get_calibration_option_labels(calibration_options)
+
 text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "PLHIV calibration level: ", 
                                   "PLHIV calibration strata: ", 
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
-                                  "New infections calibration strata: "
-                                  ), 
-                       source = c(options$spectrum_population_calibration,
-                                  options$spectrum_plhiv_calibration_level,
-                                  options$spectrum_plhiv_calibration_strat,
-                                  options$spectrum_artnum_calibration_level,
-                                  options$spectrum_artnum_calibration_strat, 
-                                  options$spectrum_infections_calibration_strat
-                                  ))
+                                  "New infections calibration strata: "), 
+                       source = c(calibration_options$spectrum_population_calibration,
+                                  calibration_options$spectrum_plhiv_calibration_level,
+                                  calibration_options$spectrum_plhiv_calibration_strat,
+                                  calibration_options$spectrum_artnum_calibration_level,
+                                  calibration_options$spectrum_artnum_calibration_strat, 
+                                  calibration_options$spectrum_infections_calibration_strat))
 
 cat(paste0("* ", text$prefix, "_", text$source, "_"), sep = "\n")
 
