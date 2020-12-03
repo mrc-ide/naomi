@@ -38,7 +38,7 @@ test_that("datapack export writes a csv", {
   datapack <- readr_read_csv(res)
 
   expect_equal(tmpf, res)
-  expect_true(!any(is.na(datapack)))
+  expect_true(!any(is.na(datapack[!names(datapack) == "psnuid"])))
 })
 
 test_that("write and read hintr outputs returns same thing", {

@@ -100,6 +100,49 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
 
+  indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
+                         "anc_plhiv_t1_out" = "anc_plhiv",
+                         "anc_already_art_t1_out" = "anc_already_art",
+                         "anc_art_new_t1_out" = "anc_art_new",
+                         "anc_known_pos_t1_out" = "anc_known_pos",
+                         "anc_tested_pos_t1_out" = "anc_tested_pos",
+                         "anc_tested_neg_t1_out" = "anc_tested_neg",
+                         "anc_rho_t1_out" = "anc_prevalence",
+                         "anc_alpha_t1_out" = "anc_art_coverage")
+
+  indicators_anc_t2 <- c("anc_clients_t2_out" = "anc_clients",
+                         "anc_plhiv_t2_out" = "anc_plhiv",
+                         "anc_already_art_t2_out" = "anc_already_art",
+                         "anc_art_new_t2_out" = "anc_art_new",
+                         "anc_known_pos_t2_out" = "anc_known_pos",
+                         "anc_tested_pos_t2_out" = "anc_tested_pos",
+                         "anc_tested_neg_t2_out" = "anc_tested_neg",
+                         "anc_rho_t2_out" = "anc_prevalence",
+                         "anc_alpha_t2_out" = "anc_art_coverage")
+  
+  indicators_anc_t3 <- c("anc_clients_t3_out" = "anc_clients",
+                         "anc_plhiv_t3_out" = "anc_plhiv",
+                         "anc_already_art_t3_out" = "anc_already_art",
+                         "anc_art_new_t3_out" = "anc_art_new",
+                         "anc_known_pos_t3_out" = "anc_known_pos",
+                         "anc_tested_pos_t3_out" = "anc_tested_pos",
+                         "anc_tested_neg_t3_out" = "anc_tested_neg",
+                         "anc_rho_t3_out" = "anc_prevalence",
+                         "anc_alpha_t3_out" = "anc_art_coverage")
+
+  
+  indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
+                              naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t2 <- Map(get_est, names(indicators_anc_t2), indicators_anc_t2,
+                              naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t3 <- Map(get_est, names(indicators_anc_t3), indicators_anc_t3,
+                              naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out))
+
+
+  indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
+  indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
+  indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
+
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
@@ -107,12 +150,11 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
   out <- dplyr::bind_rows(
                   indicator_est_t1,
-                  get_est("anc_rho_t1_out", "anc_prevalence", naomi_mf$calendar_quarter1, mf_anc_out),
-                  get_est("anc_alpha_t1_out", "anc_art_coverage", naomi_mf$calendar_quarter1, mf_anc_out),
+                  indicator_anc_est_t1,
                   indicator_est_t2,
-                  get_est("anc_rho_t2_out", "anc_prevalence", naomi_mf$calendar_quarter2, mf_anc_out),
-                  get_est("anc_alpha_t2_out", "anc_art_coverage", naomi_mf$calendar_quarter2, mf_anc_out),
-                  indicator_est_t3
+                  indicator_anc_est_t2,
+                  indicator_est_t3,
+                  indicator_anc_est_t3
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -909,8 +951,8 @@ calibrate_outputs <- function(output,
                       art_current_residents = art_current_calibration,
                       infections = infections_calibration
                     ) %>%
-             tidyr::gather(indicator, calibration,
-                           plhiv, art_current_residents, infections),
+             tidyr::pivot_longer(cols = c(plhiv, art_current_residents, infections),
+                                 names_to = "indicator", values_to = "calibration"),
              by = c("indicator", group_vars)
            ) %>%
     dplyr::mutate(adjusted = mean * calibration)
@@ -1158,7 +1200,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 export_datapack <- function(naomi_output,
                             path,
                             psnu_level = max(naomi_output$meta_area$area_level),
-                            calendar_quarter = max(naomi_output$meta_period$calendar_quarter)) {
+                            calendar_quarter = naomi_output$meta_period$calendar_quarter) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
   stopifnot(psnu_level %in% naomi_output$meta_area$area_level)
@@ -1174,89 +1216,94 @@ export_datapack <- function(naomi_output,
 
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
-             dataelement = datapack_indicator_label,
+             dataelement = datapack_indicator_code,
              dataelementuid = datapack_indicator_id
            ) %>%
     dplyr::select(indicator, dataelement, dataelementuid)
 
 
   datapack_age_group_map <- datapack_age_group_map %>%
-    dplyr::rename(
-             categoryOption_name_1 = datapack_age_group_label,
-             categoryOption_uid_1.1 = datapack_age_group_id
-           ) %>%
-    dplyr::mutate(
-             category_1 = "Age (<1-50+, 12)",
-             categoryOption_uid_1 = "HoZv6qBZvE7",
-             categoryOption_name_1 = paste0("\"", categoryOption_name_1, "\"")
-           ) %>%
-    dplyr::select(
+    dplyr::transmute(
              age_group,
-             categoryOption_uid_1,
-             category_1,
-             categoryOption_uid_1.1,
-             categoryOption_name_1
+             age = paste0("\"", datapack_age_group_label, "\""),
+             age_uid = datapack_age_group_id
            )
 
   datapack_sex_map <- datapack_sex_map %>%
     dplyr::rename(
-             categoryOption_name_2 = datapack_sex_label,
-             categoryOption_uid_2 = datapack_sex_id
-           ) %>%
-    dplyr::mutate(
-             category_2 = "Sex",
-             categoryuid_2 = "SEOZOio7f7o"
-           ) %>%
-    dplyr::select(
-             sex,
-             categoryuid_2,
-             category_2,
-             categoryOption_uid_2,
-             categoryOption_name_2
-           )
-
+             sex_naomi = sex,
+             sex_datapack = datapack_sex_label,
+             sex_uid = datapack_sex_id
+           ) 
 
   strat <-  datapack_indicator_map %>%
     tidyr::expand_grid(datapack_age_group_map) %>%
     tidyr::expand_grid(datapack_sex_map)
-
+    
   dat <- naomi_output$indicators %>%
+    dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
              naomi_output$meta_area %>%
              dplyr::filter(area_level == psnu_level),
              by = "area_id"
            ) %>%
-    dplyr::filter(indicator %in% datapack_indicator_map$indicator,
-                  calendar_quarter == !!calendar_quarter,
-                  sex %in% datapack_sex_map$sex &
-                  age_group %in% datapack_age_group_map$age_group |
-                  sex == "both" & age_group == "Y000_999") %>%
-    dplyr::transmute(area_id, indicator, sex, age_group, value = mean, rse = se / mean)
+    dplyr::left_join(
+             dplyr::select(naomi_output$meta_indicator,
+                           indicator, anc_indicator),
+             by = "indicator"
+           ) %>%
+    dplyr::filter(
+             indicator %in% datapack_indicator_map$indicator,
+             calendar_quarter %in% {{ calendar_quarter }},
+             (sex_naomi %in% datapack_sex_map$sex_naomi &
+              age_group %in% datapack_age_group_map$age_group |
+              sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
+              sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
+           )%>%
+    dplyr::transmute(
+             area_id,
+             indicator,
+             sex_naomi,
+             age_group,
+             calendar_quarter,
+             value = mean,
+             rse = se / mean
+           )
 
   dat <- dat %>%
-    dplyr::filter(age_group != "Y000_999") %>%
+    dplyr::filter(!age_group %in% c("Y000_999", "Y015_049")) %>%
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
-             dplyr::filter(dat, age_group == "Y000_999") %>%
-             dplyr::select(-age_group, -sex, -value) %>%
+             dplyr::filter(dat, age_group %in% c("Y000_999", "Y015_049")) %>%
+             dplyr::select(-age_group, -sex_naomi, -value) %>%
              dplyr::rename(district_rse = rse),
-             by = c("area_id", "indicator")
+             by = c("area_id", "indicator", "calendar_quarter")
            ) %>%
     dplyr::left_join(
              sf::st_drop_geometry(naomi_output$meta_area) %>%
              dplyr::select(psnu = area_name, area_id),
              by = "area_id"
            ) %>%
-    dplyr::arrange(indicator, area_id, sex, age_group)
+    dplyr::arrange(calendar_quarter, indicator, area_id, sex_naomi, age_group)
 
   datapack <- dat %>%
-    dplyr::left_join(strat, by = c("indicator", "age_group", "sex")) %>%
-    dplyr::select(psnu, area_id, dataelement, dataelementuid,
-                  category_1, categoryOption_uid_1,
-                  category_2, categoryuid_2,
-                  categoryOption_name_1, categoryOption_uid_1.1,
-                  categoryOption_name_2, categoryOption_uid_2,
-                  value, age_sex_rse, district_rse)
+    dplyr::left_join(strat, by = c("indicator", "age_group", "sex_naomi")) %>%
+    dplyr::mutate(psnuid = NA) %>%
+    dplyr::select(
+             psnu,
+             psnuid,
+             area_id,
+             dataelement,
+             dataelementuid,
+             age,
+             age_uid,
+             sex = sex_datapack,
+             sex_uid,
+             calendar_quarter,
+             value,
+             age_sex_rse,
+             district_rse
+           )
 
   naomi_write_csv(datapack, path)
 

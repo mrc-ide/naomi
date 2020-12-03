@@ -1,1 +1,1 @@
-survey_id,cluster_id,household,line,interview_cmc,sex,age,dob_cmc,indweight
+survey_id,cluster_id,individual_id,household,line,interview_cmc,sex,age,dob_cmc,indweight

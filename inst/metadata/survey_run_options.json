@@ -10,6 +10,7 @@
           "type": "select",
           "options":
             <+calendar_quarter_t1_options+>,
+          "value": <+calendar_quarter_t1_default+>,
           "required": true
         }
       ]
@@ -34,18 +35,6 @@
           "type": "multiselect",
           "options":
             <+survey_art_coverage_options+>,
-          "required": false
-        }
-      ]
-    },
-    {
-      "label": "t_(OPTIONS_RECENTLY_INFECTED_LABEL)",
-      "controls": [
-        {
-          "name": "survey_recently_infected",
-          "type": "multiselect",
-          "options":
-            <+survey_recently_infected_options+>,
           "required": false
         }
       ]

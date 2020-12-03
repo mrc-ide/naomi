@@ -4,12 +4,27 @@
 \alias{naomi_output_frame}
 \title{Model Frame and Linear Transform for Aggregated Model Outputs}
 \usage{
-naomi_output_frame(mf_model, area_aggregation)
+naomi_output_frame(
+  mf_model,
+  area_aggregation,
+  age_groups = unique(mf_model$age_group),
+  sexes = unique(mf_model$sex)
+)
 }
 \arguments{
 \item{mf_model}{Model frame}
 
 \item{area_aggregation}{data.frame with columns \code{area_id} and \code{model_area_id}.}
+
+\item{age_groups}{Age groups to include in aggregated outputs.}
+
+\item{sexes}{Sexes to include in aggregated outputs.}
+}
+\value{
+A list consisting of a data.frame \code{mf} and a sparse matrix \code{A}. The
+data frame \code{mf} provides a model matrix defining the stratifications for
+the outputs. The sparse matrix \code{A} defines a linear transform to aggregate
+the rows of mf_model to the rows of the output \code{mf}
 }
 \description{
 Model Frame and Linear Transform for Aggregated Model Outputs

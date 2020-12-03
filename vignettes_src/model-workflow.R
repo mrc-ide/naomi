@@ -120,6 +120,9 @@ recent_survey_ids <- "MWI2016PHIA"
 artnum_calendar_quarter_t1 <- "CY2016Q1"
 artnum_calendar_quarter_t2 <- "CY2018Q3"
 
+anc_clients_year2 <- 2018
+anc_clients_year2_num_months <- 9
+
 anc_prevalence_year1 <- 2016
 anc_prevalence_year2 <- 2018
 

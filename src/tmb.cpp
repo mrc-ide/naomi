@@ -34,6 +34,7 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(X_alpha_t2);
   DATA_MATRIX(X_lambda);
 
+  DATA_MATRIX(X_asfr);
   DATA_MATRIX(X_ancrho);
   DATA_MATRIX(X_ancalpha);
 
@@ -58,9 +59,19 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(logit_alpha_offset);
   DATA_VECTOR(logit_alpha_t1t2_offset);
 
-  DATA_SPARSE_MATRIX(A_anc_t1);
-  DATA_SPARSE_MATRIX(A_anc_t2);
+  DATA_VECTOR(log_asfr_t1_offset);
+  DATA_VECTOR(log_asfr_t2_offset);
+  DATA_VECTOR(log_asfr_t3_offset);
 
+  DATA_VECTOR(logit_anc_rho_t1_offset);
+  DATA_VECTOR(logit_anc_rho_t2_offset);
+  DATA_VECTOR(logit_anc_rho_t3_offset);
+
+  DATA_VECTOR(logit_anc_alpha_t1_offset);
+  DATA_VECTOR(logit_anc_alpha_t2_offset);
+  DATA_VECTOR(logit_anc_alpha_t3_offset);
+
+  DATA_SPARSE_MATRIX(Z_asfr_x);
   DATA_SPARSE_MATRIX(Z_ancrho_x);
   DATA_SPARSE_MATRIX(Z_ancalpha_x);
 
@@ -84,21 +95,25 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
 
-  DATA_IVECTOR(idx_anc_prev_t1);
+  DATA_VECTOR(x_anc_clients_t2);
+  DATA_VECTOR(offset_anc_clients_t2);
+  DATA_SPARSE_MATRIX(A_anc_clients_t2);
+
   DATA_VECTOR(n_anc_prev_t1);
   DATA_VECTOR(x_anc_prev_t1);
+  DATA_SPARSE_MATRIX(A_anc_prev_t1);
 
-  DATA_IVECTOR(idx_anc_artcov_t1);
   DATA_VECTOR(n_anc_artcov_t1);
   DATA_VECTOR(x_anc_artcov_t1);
+  DATA_SPARSE_MATRIX(A_anc_artcov_t1);
 
-  DATA_IVECTOR(idx_anc_prev_t2);
   DATA_VECTOR(n_anc_prev_t2);
   DATA_VECTOR(x_anc_prev_t2);
+  DATA_SPARSE_MATRIX(A_anc_prev_t2);
 
-  DATA_IVECTOR(idx_anc_artcov_t2);
   DATA_VECTOR(n_anc_artcov_t2);
   DATA_VECTOR(x_anc_artcov_t2);
+  DATA_SPARSE_MATRIX(A_anc_artcov_t2);
 
   DATA_SPARSE_MATRIX(A_artattend_t1);
   DATA_VECTOR(x_artnum_t1);
@@ -161,6 +176,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(beta_lambda);
   val -= dnorm(beta_lambda, 0.0, 5.0, true).sum();
+
+  PARAMETER_VECTOR(beta_asfr);
+  val -= dnorm(beta_asfr, 0.0, 5.0, true).sum();
 
   PARAMETER_VECTOR(beta_anc_rho);
   val -= dnorm(beta_anc_rho, 0.0, 5.0, true).sum();
@@ -352,6 +370,15 @@ Type objective_function<Type>::operator() ()
 
   // * ANC testing model *
 
+  // district ASFR random effects
+  PARAMETER(log_sigma_asfr_x);
+  Type sigma_asfr_x(exp(log_sigma_asfr_x));
+  val -= dnorm(sigma_asfr_x, Type(0.0), Type(2.5), true) + log_sigma_asfr_x;
+
+  PARAMETER_VECTOR(ui_asfr_x);
+  val -= sum(dnorm(ui_asfr_x, 0.0, 1.0, true));
+
+  // ANC prevalence and ART coverage random effects
   PARAMETER(log_sigma_ancrho_x);
   Type sigma_ancrho_x(exp(log_sigma_ancrho_x));
   val -= dnorm(sigma_ancrho_x, Type(0.0), Type(2.5), true) + log_sigma_ancrho_x;
@@ -397,6 +424,11 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(log_or_gamma_t1t2);
   val -= dnorm(log_or_gamma_t1t2, 0.0, 1.0, true).sum();
 
+
+  // *** Process model ***
+
+  // HIV prevalence time 1
+  
   vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
   vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
   vector<Type> mu_rho(X_rho * beta_rho +
@@ -417,6 +449,8 @@ Type objective_function<Type>::operator() ()
   mu_rho_paed = logit(mu_rho_paed);
   mu_rho += mu_rho_paed;
 
+  // ART coverage time 1
+  
   vector<Type> u_alpha_x(sqrt(phi_alpha_x) * us_alpha_x + sqrt(1 - phi_alpha_x) * ui_alpha_x);
   vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);
   vector<Type> mu_alpha(X_alpha * beta_alpha +
@@ -474,7 +508,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> lambda_t2(exp(mu_lambda_t2));
   vector<Type> infections_t2(lambda_t2 * (population_t2 - plhiv_t2));
 
-  // likelihood
+  // likelihood for household survey data
 
   for(int i = 0; i < idx_prev.size(); i++)
     val -= dbinom_robust(x_prev[i], n_prev[i], mu_rho[idx_prev[i]], true);
@@ -493,36 +527,67 @@ Type objective_function<Type>::operator() ()
     val -= dbinom(x_recent[i], n_recent[i], pR, true);
   }
 
-  vector<Type> mu_anc_rho_t1(A_anc_t1 * rho_t1 / (A_anc_t1 * ones));
-  mu_anc_rho_t1 = logit(mu_anc_rho_t1) + X_ancrho * beta_anc_rho + Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x;
-  for(int i = 0; i < idx_anc_prev_t1.size(); i++)
-    val -= dbinom_robust(x_anc_prev_t1[i], n_anc_prev_t1[i],
-                         mu_anc_rho_t1[idx_anc_prev_t1[i]], true);
 
-  vector<Type> mu_anc_alpha_t1(A_anc_t1 * vector<Type>(rho_t1 * alpha_t1) / (A_anc_t1 * rho_t1));
-  mu_anc_alpha_t1 = logit(mu_anc_alpha_t1) + X_ancalpha * beta_anc_alpha + Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x;
-  for(int i = 0; i < idx_anc_artcov_t1.size(); i++)
-    val -= dbinom_robust(x_anc_artcov_t1[i], n_anc_artcov_t1[i],
-                         mu_anc_alpha_t1[idx_anc_artcov_t1[i]], true);
+  // ANC prevalence and ART coverage model
+  // Note: currently this operates on the entire population vector, producing 
+  //       lots of zeros for males and female age groups not exposed to fertility.
+  //       It would be more computationally efficient to project this to subset 
+  //       of female age 15-49 age groups. But I don't know if it would be
+  //       meaningfully more efficient.
 
+  vector<Type> mu_asfr(X_asfr * beta_asfr +
+		       Z_asfr_x * ui_asfr_x * sigma_asfr_x);
+		       
+  vector<Type> mu_anc_rho_t1(mu_rho +
+			     logit_anc_rho_t1_offset + 
+			     X_ancrho * beta_anc_rho +
+			     Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x);
+  vector<Type> anc_rho_t1(invlogit(mu_anc_rho_t1));
+  
+  vector<Type> mu_anc_alpha_t1(mu_alpha +
+			       logit_anc_alpha_t1_offset + 
+			       X_ancalpha * beta_anc_alpha +
+			       Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x);
+  vector<Type> anc_alpha_t1(invlogit(mu_anc_alpha_t1));
+  
+  vector<Type> anc_clients_t1(population_t1 * exp(log_asfr_t1_offset + mu_asfr));
+  vector<Type> anc_plhiv_t1(anc_clients_t1 * anc_rho_t1);
+  vector<Type> anc_already_art_t1(anc_plhiv_t1 * anc_alpha_t1);
 
-  vector<Type> mu_anc_rho_t2(A_anc_t2 * rho_t2 / (A_anc_t2 * ones));
-  mu_anc_rho_t2 = logit(mu_anc_rho_t2) +
-    X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-    Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt);
-  for(int i = 0; i < idx_anc_prev_t2.size(); i++)
-    val -= dbinom_robust(x_anc_prev_t2[i], n_anc_prev_t2[i],
-                         mu_anc_rho_t2[idx_anc_prev_t2[i]], true);
+  vector<Type> mu_anc_rho_t2(logit(rho_t2) +
+			     logit_anc_rho_t2_offset + 
+			     X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
+			     Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
+  vector<Type> anc_rho_t2(invlogit(mu_anc_rho_t2));
 
-  vector<Type> mu_anc_alpha_t2(A_anc_t2 * vector<Type>(rho_t2 * alpha_t2) / (A_anc_t2 * rho_t2));
-  mu_anc_alpha_t2 = logit(mu_anc_alpha_t2) +
-    X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-    Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt);
-  for(int i = 0; i < idx_anc_artcov_t2.size(); i++)
-    val -= dbinom_robust(x_anc_artcov_t2[i], n_anc_artcov_t2[i],
-                         mu_anc_alpha_t2[idx_anc_artcov_t2[i]], true);
+  vector<Type> mu_anc_alpha_t2(mu_alpha_t2 +
+			       logit_anc_alpha_t2_offset + 
+			       X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
+			       Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
+  vector<Type> anc_alpha_t2(invlogit(mu_anc_alpha_t2));
 
+  vector<Type> anc_clients_t2(population_t2 * exp(log_asfr_t2_offset + mu_asfr));
+  vector<Type> anc_plhiv_t2(anc_clients_t2 * anc_rho_t2);
+  vector<Type> anc_already_art_t2(anc_plhiv_t2 * anc_alpha_t2);
 
+  // likelihood for ANC testing observations
+
+  vector<Type> anc_clients_obs_t2((A_anc_clients_t2 * anc_clients_t2) * exp(offset_anc_clients_t2));
+  val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
+	       
+  vector<Type> anc_rho_obs_t1(A_anc_prev_t1 * anc_plhiv_t1 / (A_anc_prev_t1 * anc_clients_t1));
+  val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
+
+  vector<Type> anc_alpha_obs_t1(A_anc_artcov_t1 * anc_already_art_t1 / (A_anc_artcov_t1 * anc_plhiv_t1));
+  val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
+
+  vector<Type> anc_rho_obs_t2(A_anc_prev_t2 * anc_plhiv_t2 / (A_anc_prev_t2 * anc_clients_t2));
+  val -= dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true).sum();
+
+  vector<Type> anc_alpha_obs_t2(A_anc_artcov_t2 * anc_already_art_t2 / (A_anc_artcov_t2 * anc_plhiv_t2));
+  val -= dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true).sum();
+
+  
   // * ART attendance model *
 
   vector<Type> gamma_art(exp(Xgamma * log_or_gamma * sigma_or_gamma + log_gamma_offset));
@@ -570,6 +635,7 @@ Type objective_function<Type>::operator() ()
   // Calculate model outputs
 
   DATA_SPARSE_MATRIX(A_out);
+  DATA_SPARSE_MATRIX(A_anc_out);
   DATA_INTEGER(calc_outputs);
 
   if(calc_outputs) {
@@ -587,7 +653,6 @@ Type objective_function<Type>::operator() ()
     vector<Type> infections_t1_out(A_out * infections_t1);
     vector<Type> lambda_t1_out(infections_t1_out / (population_t1_out - plhiv_t1_out));
 
-
     vector<Type> population_t2_out(A_out * population_t2);
 
     vector<Type> plhiv_t2_out(A_out * plhiv_t2);
@@ -601,11 +666,32 @@ Type objective_function<Type>::operator() ()
     vector<Type> infections_t2_out(A_out * infections_t2);
     vector<Type> lambda_t2_out(infections_t2_out / (population_t2_out - plhiv_t2_out));
 
-    vector<Type> anc_rho_t1_out(invlogit(mu_anc_rho_t1));
-    vector<Type> anc_rho_t2_out(invlogit(mu_anc_rho_t2));
+    vector<Type> anc_clients_t1_out(A_anc_out * anc_clients_t1);
+    vector<Type> anc_plhiv_t1_out(A_anc_out * anc_plhiv_t1);
+    vector<Type> anc_already_art_t1_out(A_anc_out * anc_already_art_t1);
 
-    vector<Type> anc_alpha_t1_out(invlogit(mu_anc_alpha_t1));
-    vector<Type> anc_alpha_t2_out(invlogit(mu_anc_alpha_t2));
+    // Note: assuming that:
+    //  (1) anc_known_pos is equivalent to anc_already_art
+    //  (2) All ANC attendees are diagnosed and initated on ART.
+    vector<Type> anc_art_new_t1_out(anc_plhiv_t1_out - anc_already_art_t1_out);
+    vector<Type> anc_known_pos_t1_out(anc_already_art_t1_out);    
+    vector<Type> anc_tested_pos_t1_out(anc_plhiv_t1_out - anc_known_pos_t1_out);
+    vector<Type> anc_tested_neg_t1_out(anc_clients_t1_out - anc_plhiv_t1_out);
+    
+    vector<Type> anc_rho_t1_out(anc_plhiv_t1_out / anc_clients_t1_out);
+    vector<Type> anc_alpha_t1_out(anc_already_art_t1_out / anc_plhiv_t1_out);
+
+    vector<Type> anc_clients_t2_out(A_anc_out * anc_clients_t2);
+    vector<Type> anc_plhiv_t2_out(A_anc_out * anc_plhiv_t2);
+    vector<Type> anc_already_art_t2_out(A_anc_out * anc_already_art_t2);
+
+    vector<Type> anc_art_new_t2_out(anc_plhiv_t2_out - anc_already_art_t2_out);
+    vector<Type> anc_known_pos_t2_out(anc_already_art_t2_out);    
+    vector<Type> anc_tested_pos_t2_out(anc_plhiv_t2_out - anc_known_pos_t2_out);
+    vector<Type> anc_tested_neg_t2_out(anc_clients_t2_out - anc_plhiv_t2_out);
+
+    vector<Type> anc_rho_t2_out(anc_plhiv_t2_out / anc_clients_t2_out);
+    vector<Type> anc_alpha_t2_out(anc_already_art_t2_out / anc_plhiv_t2_out);
 
     REPORT(population_t1_out);
     REPORT(rho_t1_out);
@@ -616,6 +702,15 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_ij_t1_out);
     REPORT(lambda_t1_out);
     REPORT(infections_t1_out);
+    REPORT(anc_clients_t1_out);
+    REPORT(anc_plhiv_t1_out);
+    REPORT(anc_already_art_t1_out);
+    REPORT(anc_art_new_t1_out);
+    REPORT(anc_known_pos_t1_out);
+    REPORT(anc_tested_pos_t1_out);
+    REPORT(anc_tested_neg_t1_out);
+    REPORT(anc_rho_t1_out);
+    REPORT(anc_alpha_t1_out);
 
     REPORT(population_t2_out);
     REPORT(rho_t2_out);
@@ -626,12 +721,17 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_ij_t2_out);
     REPORT(lambda_t2_out);
     REPORT(infections_t2_out);
-
-    REPORT(anc_rho_t1_out);
-    REPORT(anc_alpha_t1_out);
+    REPORT(anc_clients_t2_out);
+    REPORT(anc_plhiv_t2_out);
+    REPORT(anc_already_art_t2_out);
+    REPORT(anc_art_new_t2_out);
+    REPORT(anc_known_pos_t2_out);
+    REPORT(anc_tested_pos_t2_out);
+    REPORT(anc_tested_neg_t2_out);
     REPORT(anc_rho_t2_out);
     REPORT(anc_alpha_t2_out);
 
+    
     // Projection to time 3
     // No data involved, so calculated after likelihood
 
@@ -663,6 +763,25 @@ Type objective_function<Type>::operator() ()
     
     vector<Type> infections_t3(exp(mu_lambda_t3) * (population_t3 - plhiv_t3));
 
+
+    // Note: currently assuming same district effects parameters from t2 for t3
+    vector<Type> mu_anc_rho_t3(logit(rho_t3) +
+			       logit_anc_rho_t2_offset + 
+			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
+    vector<Type> anc_rho_t3(invlogit(mu_anc_rho_t3));
+    
+    vector<Type> mu_anc_alpha_t3(mu_alpha_t3 +
+				 logit_anc_alpha_t3_offset + 
+				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
+    vector<Type> anc_alpha_t3(invlogit(mu_anc_alpha_t3));
+    
+    vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset + mu_asfr));
+    vector<Type> anc_plhiv_t3(anc_clients_t3 * anc_rho_t3);
+    vector<Type> anc_already_art_t3(anc_plhiv_t3 * anc_alpha_t3);
+
+    
     vector<Type> prop_art_ij_t3((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art_t2));  // Note: using same ART attendance as T2
     vector<Type> population_ij_t3(Xart_idx * population_t3);
     vector<Type> artnum_ij_t3(population_ij_t3 * prop_art_ij_t3);
@@ -676,6 +795,18 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_ij_t3_out(A_art_reside_attend * artnum_ij_t3);
     vector<Type> infections_t3_out(A_out * infections_t3);
     vector<Type> lambda_t3_out(infections_t3_out / (population_t3_out - plhiv_t3_out));
+
+    vector<Type> anc_clients_t3_out(A_anc_out * anc_clients_t3);
+    vector<Type> anc_plhiv_t3_out(A_anc_out * anc_plhiv_t3);
+    vector<Type> anc_already_art_t3_out(A_anc_out * anc_already_art_t3);
+    vector<Type> anc_art_new_t3_out(anc_plhiv_t3_out - anc_already_art_t3_out);
+    vector<Type> anc_known_pos_t3_out(anc_already_art_t3_out);    
+    vector<Type> anc_tested_pos_t3_out(anc_plhiv_t3_out - anc_known_pos_t3_out);
+    vector<Type> anc_tested_neg_t3_out(anc_clients_t3_out - anc_plhiv_t3_out);
+
+    vector<Type> anc_rho_t3_out(anc_plhiv_t3_out / anc_clients_t3_out);
+    vector<Type> anc_alpha_t3_out(anc_already_art_t3_out / anc_plhiv_t3_out);
+
     
     REPORT(population_t3_out);
     REPORT(rho_t3_out);
@@ -686,6 +817,15 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_ij_t3_out);
     REPORT(lambda_t3_out);
     REPORT(infections_t3_out);
+    REPORT(anc_clients_t3_out);
+    REPORT(anc_plhiv_t3_out);
+    REPORT(anc_already_art_t3_out);
+    REPORT(anc_art_new_t3_out);
+    REPORT(anc_known_pos_t3_out);
+    REPORT(anc_tested_pos_t3_out);
+    REPORT(anc_tested_neg_t3_out);
+    REPORT(anc_rho_t3_out);
+    REPORT(anc_alpha_t3_out);
   }
   
   return val;

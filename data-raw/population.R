@@ -239,8 +239,8 @@ population_agesex  <- population_agesex %>%
            lower = NULL,
            upper = NULL)
   ) %>%
-  mutate(area_name = NULL,
-         area_level = NULL)
+  mutate(area_level = NULL)
+         
 
 
 #' ## Save datasets
