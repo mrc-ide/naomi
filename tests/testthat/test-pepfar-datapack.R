@@ -5,7 +5,10 @@ test_that("datapack_psnu_area_id_map is well formed", {
   expect_true(all(c("iso3", "area_id", "map_id", "map_name", "map_source") %in%
                   names(psnu_map)))
   expect_equal(anyDuplicated(psnu_map$area_id), 0)
-  expect_equal(anyDuplicated(psnu_map$map_id), 0)
+
+  ## Remove _demo area_id. map_id included twice for these cases
+  expect_equal(anyDuplicated(psnu_map$map_id[!grepl("_demo$", psnu_map$area_id)]), 0)
+
   expect_true(all(psnu_map$map_source == "Datim"))
   expect_true(all(!is.na(psnu_map$map_name)))
   expect_true(all(grepl("^[A-Z]{3}$", psnu_map$iso3)))
