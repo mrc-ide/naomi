@@ -73,4 +73,4 @@ hintr_paths <- hintr_run_model(hintr_data, hintr_options)
 naomi_output <- read_output_package(hintr_paths$spectrum_path)
 
 datapack_path <- tempfile(fileext = ".csv")
-write_datapack_csv(naomi_output, datapack_path, psnu_level = 3)
+write_datapack_csv(naomi_output, datapack_path)

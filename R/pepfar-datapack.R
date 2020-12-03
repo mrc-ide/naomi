@@ -52,7 +52,7 @@ write_datapack_csv <- function(naomi_output,
   }
 
   if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
-    stop("PSNU level ", psnu_level, " not included in model outputs.")
+    warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
   
   datapack_indicator_map <- datapack_indicator_map %>%

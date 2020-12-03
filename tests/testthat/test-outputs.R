@@ -138,13 +138,16 @@ test_that("subset_output_package() saves expected output package", {
 
   sub_keep_file <- tempfile(fileext = ".zip")
 
-  sub_keep_return <- subset_output_package(a_hintr_output$spectrum_path,
-                                           sub_keep_file,
-                                           area_id = area_id_sub,
-                                           sex = sex_sub,
-                                           age_group = age_group_sub,
-                                           calendar_quarter = calendar_quarter_sub,
-                                           indicator = indicator_sub)
+  sub_keep_return <- expect_warning(
+    subset_output_package(a_hintr_output$spectrum_path,
+                          sub_keep_file,
+                          area_id = area_id_sub,
+                          sex = sex_sub,
+                          age_group = age_group_sub,
+                          calendar_quarter = calendar_quarter_sub,
+                          indicator = indicator_sub),
+    "PSNU level 3 not included in model outputs"
+  )
 
   sub_keep_out <- read_output_package(sub_keep_file)
 
