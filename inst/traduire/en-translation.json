@@ -142,4 +142,13 @@
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
     "INDICATOR_LABEL_ANC_TESTED_POS": "Number of HIV positive ANC attendees tested at ANC",
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC"
+    "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC",
+    "UNTREATED_PLHIV_NUM": "PLHIV not on ART",
+    "AWARE_PLHIV_PROP": "Proportion PLHIV aware",
+    "UNAWARE_PLHIV_NUM": "Number PLHIV unaware",
+    "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Number of PLHIV not on ART",
+    "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion of PLHIV aware of HIV positive status",
+    "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Number PLHIV unaware of HIV positive status",
+    "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL" = "Output 'awareness of HIV status' indicators",
+    "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP" = "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting."
 }
