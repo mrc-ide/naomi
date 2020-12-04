@@ -105,7 +105,6 @@
     "INDICATOR_LABEL_ANC_ART_COVERAGE": "Couverture ART antérieure dans les cliniques prénatales",
     "OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL": "Assiduité du ART des districts  voisinant variable avec le temps",
     "OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP": "Permettre la probabilité de demander un traitement dans des districts voisinant à changer avec le temps",
-    "PROGRESS_VALIDATE_OPTIONS": "Validation des entrées et des options",
     "PROGRESS_PREPARE_INPUTS": "Préparation des données d'entrée",
     "PROGRESS_FIT_MODEL": "Ajustement du modèle",
     "PROGRESS_UNCERTAINTY": "Génération de fourchettes d'incertitude",

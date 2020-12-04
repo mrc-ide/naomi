@@ -219,22 +219,21 @@ test_that("progress messages are printed", {
   })
   ## If using mock fit here there will only be 6, if using real
   ## fit_tmb there will be many more
-  expect_true(length(model_run$progress) >= 6)
+  expect_true(length(model_run$progress) >= 5)
   first_message <- model_run$progress[[1]]
-  expect_equal(first_message[[1]]$name, "Validating inputs and options")
-  expect_equal(first_message[[2]]$name, "Preparing input data")
-  expect_equal(first_message[[3]]$name, "Fitting the model")
-  expect_equal(first_message[[4]]$name, "Generating uncertainty ranges")
-  expect_equal(first_message[[5]]$name, "Preparing outputs")
+  expect_equal(first_message[[1]]$name, "Preparing input data")
+  expect_equal(first_message[[2]]$name, "Fitting the model")
+  expect_equal(first_message[[3]]$name, "Generating uncertainty ranges")
+  expect_equal(first_message[[4]]$name, "Preparing outputs")
   ## 5 different states
-  expect_equal(length(first_message), 5)
+  expect_equal(length(first_message), 4)
   expect_true(first_message[[1]]$started)
   expect_false(first_message[[1]]$complete)
   expect_false(first_message[[2]]$started)
   expect_false(first_message[[2]]$complete)
 
   second_message <- model_run$progress[[2]]
-  expect_equal(length(second_message), 5)
+  expect_equal(length(second_message), 4)
   expect_true(second_message[[1]]$started)
   expect_true(second_message[[1]]$complete)
   expect_true(second_message[[2]]$started)
@@ -610,3 +609,27 @@ test_that("progress can report on model fit", {
                "Itération 4 - 1h 5m 8s écoulées")
   expect_null(messages5$progress[[1]]$fit_model$helpText)
 })
+
+test_that("hintr_run_model can skip validation", {
+  options <- a_hintr_options
+  options$area_scope <- "MWI"
+  options$area_level <- 0
+
+  mock_validate_model_options <- mockery::mock(TRUE)
+
+  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+    ## Don't really care about result here, just using some test that will
+    ## complete relatively quickly so we can test model validation is skipped
+    expect_error(hintr_run_model(format_data_input(a_hintr_data), options,
+                                 validate = FALSE))
+  })
+  mockery::expect_called(mock_validate_model_options, 0)
+
+  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+    ## Don't really care about result here, just using some test that will
+    ## complete relatively quickly so we can test model validation is skipped
+    expect_error(hintr_run_model(format_data_input(a_hintr_data), options))
+  })
+  mockery::expect_called(mock_validate_model_options, 1)
+})
+

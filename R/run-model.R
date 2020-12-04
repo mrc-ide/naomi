@@ -10,6 +10,7 @@
 #' @param coarse_output_path Path to store coarse age group output zip file at.
 #' @param summary_report_path Path to store summary report at.
 #' @param calibration_path Path to store data required for calibrating model.
+#' @param validate If FALSE validation of inputs & data will be skipped.
 #'
 #' @details
 #'
@@ -55,55 +56,45 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
                             coarse_output_path = tempfile(fileext = ".zip"),
                             summary_report_path = tempfile(fileext = ".html"),
-                            calibration_path = tempfile(fileext = ".rds")) {
+                            calibration_path = tempfile(fileext = ".rds"),
+                            validate = TRUE) {
   progress <- new_progress()
-
-  progress$start("validate_options")
+  progress$start("prepare_inputs")
   progress$print()
 
   data <- format_data_input(data)
+
+  if (validate) {
+    validate_model_options(data, options)
+  }
 
   if(is.null(options$permissive))
     permissive <- FALSE
   else
     permissive <- as.logical(options$permissive)
 
-  validate_model_options(data, options)
-  progress$complete("validate_options")
-
-
   ## Set default "none" calibration options if missing from options list
 
   if (is.null(options$spectrum_plhiv_calibration_level)) {
     options$spectrum_plhiv_calibration_level  <-  "none"
   }
-
   if (is.null(options$spectrum_plhiv_calibration_strat)) {
     options$spectrum_plhiv_calibration_strat <- "sex_age_group"
   }
-
   if (is.null(options$spectrum_artnum_calibration_level)) {
     options$spectrum_artnum_calibration_level <- "none"
   }
-
   if (is.null(options$spectrum_artnum_strat)) {
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
   }
-
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
-
   if (is.null(options$spectrum_infections_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
 
-  progress$start("prepare_inputs")
-  progress$print()
-
-
   naomi_data <- naomi_prepare_data(data, options)
-
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
   progress$complete("prepare_inputs")
@@ -288,13 +279,13 @@ naomi_prepare_data <- function(data, options) {
 
   if(is.null(options$use_kish_prev))
     options$use_kish_prev <- "true"
-  
+
   if(is.null(options$use_kish_artcov))
     options$use_kish_artcov <- "true"
-  
+
   if(is.null(options$use_kish_recent))
     options$use_kish_recent <- "true"
-  
+
   if(is.null(options$use_kish_vls))
     options$use_kish_vls <- "true"
 
@@ -393,11 +384,6 @@ Progress <- R6::R6Class("Progress", list(
   initialize = function() {
     self$progress <-
       list(
-        validate_options = list(
-          started = FALSE,
-          complete = FALSE,
-          name = t_("PROGRESS_VALIDATE_OPTIONS")
-        ),
         prepare_inputs = list(
           started = FALSE,
           complete = FALSE,
