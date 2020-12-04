@@ -11,6 +11,17 @@
 #' @export
 extract_pjnz_naomi <- function(pjnz_list) {
 
+  pjnz_list <- unroll_pjnz(pjnz_list)    
+  
+  spec <- lapply(pjnz_list, extract_pjnz_one) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+  
+  spec
+}
+
+unroll_pjnz <-  function(pjnz_list) {
+
   ## If meets conditions, treat as zipped list of PJNZ.
   ## * Single file
   ## * Does not contain a .DP or .PJN file
@@ -25,14 +36,10 @@ extract_pjnz_naomi <- function(pjnz_list) {
       pjnz_list <- list.files(pjnzdir, full.names = TRUE)
     }
   }
-    
-  
-  spec <- lapply(pjnz_list, extract_pjnz_one) %>%
-    dplyr::bind_rows() %>%
-    dplyr::select(spectrum_region_code, dplyr::everything())
-  
-  spec
+
+  pjnz_list
 }
+
 
 extract_pjnz_one <- function(pjnz) {
 
