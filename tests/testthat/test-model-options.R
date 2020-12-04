@@ -223,3 +223,22 @@ test_that("can get model calibration options label from ID", {
     spectrum_artnum_calibration_strat = "None",
     spectrum_infections_calibration_strat ="Age <15 / 15+"))
 })
+
+test_that("validate_model_options() returns error if missing .shiny90", {
+
+  temp_pjnz <- tempfile(fileext = ".pjnz")
+  file.copy(a_hintr_data$pjnz, temp_pjnz)
+  utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
+  expect_false(assert_pjnz_shiny90(temp_pjnz))
+  
+  bad_data <- a_hintr_data
+  bad_data$pjnz <- temp_pjnz
+  bad_data <- format_data_input(bad_data)
+
+  expect_error(validate_model_options(bad_data, a_hintr_options),
+               "^\\.shiny90 file is not present for the following projection\\(s\\)")
+
+  opts <- a_hintr_options
+  opts$output_aware_plhiv <- "false"
+  expect_true(validate_model_options(bad_data, opts))
+})

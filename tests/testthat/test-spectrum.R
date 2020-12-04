@@ -25,3 +25,32 @@ test_that("extract_shiny90_age_sex() returns expected results", {
   expect_error(extract_shiny90_age_sex(shiny90_path, year = c(2010:2013, 2035, 2038)),
                "Ouput years not contained in shiny90 projection: 2035, 2038")
 })
+
+
+test_that("assert_pjnz_shiny90 validates shiny90 case-insensitively", {
+
+  pjnz <- system_file("extdata/demo_mwi2019.PJNZ")
+  expect_true(assert_pjnz_shiny90(pjnz))
+
+  ## Zip does not contain .shiny90
+  tmp_not_shiny90 <- tempfile(fileext = ".anything")
+  file.create(tmp_not_shiny90)
+  tmp_not_shiny90z <- tempfile(fileext = ".PJNZ")
+  utils::zip(tmp_not_shiny90z, tmp_not_shiny90, extras = "-jq")
+
+  expect_false(assert_pjnz_shiny90(tmp_not_shiny90z))
+
+  ## Case insensitive 
+  tmp_shiny90 <- tempfile(fileext = ".sHiNy90")
+  file.create(tmp_shiny90)
+  tmp_shiny90z <- tempfile(fileext = ".PJNZ")
+  utils::zip(tmp_shiny90z, tmp_shiny90, extras = "-jq")
+
+  expect_true(assert_pjnz_shiny90(tmp_shiny90z))
+})
+
+test_that("read_spectrum_projection_name() returns projection name", {
+
+  pjnz <- system_file("extdata/demo_mwi2019.PJNZ")
+  expect_equal(read_spectrum_projection_name(pjnz), "Malawi_2019_v22_MM_BF")
+})

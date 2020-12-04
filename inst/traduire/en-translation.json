@@ -149,5 +149,7 @@
     "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion of PLHIV aware of HIV positive status",
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Number PLHIV unaware of HIV positive status",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL": "Output 'awareness of HIV status' indicators",
-    "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting."
+    "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting.",
+    "ERROR_SHINY90_MISSING_1": ".shiny90 file is not present for the following projection(s)",
+    "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\"."
 }

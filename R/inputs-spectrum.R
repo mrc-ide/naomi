@@ -109,6 +109,35 @@ read_spectrum_region_code <- function(pjnz) {
   as.integer(region_code)
 }
 
+#' Read Spectrum Projection Name from Spectrum PJNZ
+#'
+#' @param pjnz file path to Spectrum PJNZ file.
+#'
+#' @return Spectrum projection name as character string.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' read_spectrum_proj_name(pjnz)
+#' 
+#' @export
+read_spectrum_projection_name <- function(pjnz) {
+  pjn <- eppasm::read_pjn(pjnz)
+  projname <- pjn[which(pjn[, 1] == "<Projection Name>") + 2, 4]
+  trimws(projname)
+}
+
+
+#' Check whether PJNZ contains .shiny90 file
+#'
+#' @param pjnz file path to PJNZ
+#'
+#' @return Logical whether PJNZ file contains a .shiny90 file
+#'
+assert_pjnz_shiny90 <- function(pjnz) {
+  files <- utils::unzip(pjnz, list = TRUE)$Name
+  any(grepl("\\.shiny90$", tolower(files)))
+}
+
 #' Cut Five Year Age Groups
 #'
 #' Wrapper for `[cut()]` to return five year age groups with 
