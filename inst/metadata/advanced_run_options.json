@@ -43,7 +43,7 @@
           "name": "output_aware_plhiv",
           "label": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL)",
           "type": "select",
-          "value" = "true", 
+          "value": "true",
           "helpText": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_HELP)",
           "options": [
             {
