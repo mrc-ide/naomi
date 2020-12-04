@@ -1,3 +1,9 @@
+# naomi 2.1.1
+
+* Make 'Advanced Options' panel on model options page collapsible by default
+* Add option for outputting awareness of HIV status in 'Advanced options'.
+* Change "Population calibration options" to "Population calibration" for consistent with other block labels.
+
 # naomi 2.1.0 
 
 This release revises the modelling of ANC prevalence and ART coverage and produces
