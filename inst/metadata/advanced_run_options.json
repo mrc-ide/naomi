@@ -33,6 +33,8 @@
 {
   "label": "t_(OPTIONS_ADVANCED_LABEL)",
   "description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
+  "collapsible": true,
+  "collapsed": true,
   "controlGroups": [
     {
       "label": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_LABEL)",
