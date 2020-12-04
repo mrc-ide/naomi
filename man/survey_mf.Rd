@@ -9,6 +9,7 @@ survey_mf(
   indicator,
   survey_hiv_indicators,
   naomi_mf,
+  use_kish = TRUE,
   deff = 1,
   min_age = 0,
   max_age = 80
@@ -22,6 +23,8 @@ survey_mf(
 \item{survey_hiv_indicators}{Survey HIV indicators}
 
 \item{naomi_mf}{Naomi model frame}
+
+\item{use_kish}{Logical whether to use Kish effective sample size}
 
 \item{deff}{Assumed design effect for scaling effective sample size}
 

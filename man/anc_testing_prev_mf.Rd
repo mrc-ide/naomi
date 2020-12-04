@@ -3,12 +3,15 @@
 \name{anc_testing_prev_mf}
 \alias{anc_testing_prev_mf}
 \alias{anc_testing_artcov_mf}
+\alias{anc_testing_clients_mf}
 \alias{artnum_mf}
 \title{Prepare Model Frames for Programme Datasets}
 \usage{
 anc_testing_prev_mf(year, anc_testing, naomi_mf)
 
 anc_testing_artcov_mf(year, anc_testing, naomi_mf)
+
+anc_testing_clients_mf(year, anc_testing, naomi_mf, num_months)
 
 artnum_mf(calendar_quarter, art_number, naomi_mf)
 }
