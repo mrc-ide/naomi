@@ -1,4 +1,4 @@
-# naomi 2.1.1
+# naomi 2.1.2
 
 ### Awareness of HIV status
 
@@ -20,9 +20,13 @@
 
 * Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
   affix `_demo` to the end of the area IDs.
-  
 
 
+# naomi 2.1.1
+
+* Make 'Advanced Options' panel on model options page collapsible by default
+* Add option for outputting awareness of HIV status in 'Advanced options'.
+* Change "Population calibration options" to "Population calibration" for consistent with other block labels.
 
 # naomi 2.1.0 
 

@@ -33,15 +33,16 @@
 {
   "label": "t_(OPTIONS_ADVANCED_LABEL)",
   "description": "t_(OPTIONS_ADVANCED_DESCRIPTION)",
+  "collapsible": true,
+  "collapsed": true,
   "controlGroups": [
     {
-      "label": "t_(OPTIONS_ADVANCED_AWARE_STATUS_LABEL)",
+      "label": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL)",
       "controls": [
         {
           "name": "output_aware_plhiv",
-          "label": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL)",
           "type": "select",
-          "value" = "true", 
+          "value": "true",
           "helpText": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_HELP)",
           "options": [
             {
@@ -56,7 +57,8 @@
           "required": true
         }
       ]
-    },    {
+    },
+    {
       "label": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_LABEL)",
       "controls": [
         {
@@ -202,8 +204,8 @@
     },
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL)",
-	    "controls": [
-	      {
+      "controls": [
+        {
           "name": "use_kish_recent",
           "label": "t_(OPTIONS_ADVANCED_USE_KISH_LABEL)",
           "type": "select",

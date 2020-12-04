@@ -2,7 +2,7 @@ iso3,indicator,colour,min,max,invert_scale
 default,art_current,interpolateViridis,0,80000,TRUE
 default,prevalence,interpolateMagma,0,0.5,TRUE
 default,art_coverage,interpolateViridis,0,1,FALSE
-default,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+default,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 default,recent_infected,interpolatePlasma,0,0.6,TRUE
 default,art_current_residents,interpolateViridis,0,70000,TRUE
 default,population,interpolateViridis,0,20000000,FALSE
@@ -24,7 +24,7 @@ default,anc_tested_neg,interpolateViridis,0,700000,FALSE
 MWI,art_current,interpolateViridis,0,80000,FALSE
 MWI,prevalence,interpolateMagma,0,0.5,TRUE
 MWI,art_coverage,interpolateViridis,0,1,FALSE
-MWI,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+MWI,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 MWI,recent_infected,interpolatePlasma,0,0.6,TRUE
 MWI,art_current_residents,interpolateViridis,0,70000,FALSE
 MWI,population,interpolateViridis,0,20000000,FALSE
@@ -36,7 +36,7 @@ MWI,anc_art_coverage,interpolateViridis,0,1,FALSE
 MOZ,art_current,interpolateViridis,0,80000,TRUE
 MOZ,prevalence,interpolateMagma,0,0.5,TRUE
 MOZ,art_coverage,interpolateViridis,0,1,FALSE
-MOZ,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+MOZ,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 MOZ,recent_infected,interpolatePlasma,0,0.6,TRUE
 MOZ,art_current_residents,interpolateViridis,0,70000,TRUE
 MOZ,population,interpolateViridis,0,20000000,FALSE
@@ -48,7 +48,7 @@ MOZ,anc_art_coverage,interpolateViridis,0,1,FALSE
 BDI,art_current,interpolateViridis,0,12000,TRUE
 BDI,prevalence,interpolateMagma,0,0.075,TRUE
 BDI,art_coverage,interpolateViridis,0,1,FALSE
-BDI,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+BDI,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 BDI,recent_infected,interpolatePlasma,0,0.6,TRUE
 BDI,art_current_residents,interpolateViridis,0,10500,TRUE
 BDI,population,interpolateViridis,0,20000000,FALSE
@@ -60,7 +60,7 @@ BDI,anc_art_coverage,interpolateViridis,0,1,FALSE
 BEN,art_current,interpolateViridis,0,12000,TRUE
 BEN,prevalence,interpolateMagma,0,0.075,TRUE
 BEN,art_coverage,interpolateViridis,0,1,FALSE
-BEN,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+BEN,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 BEN,recent_infected,interpolatePlasma,0,0.6,TRUE
 BEN,art_current_residents,interpolateViridis,0,10500,TRUE
 BEN,population,interpolateViridis,0,20000000,FALSE
@@ -72,7 +72,7 @@ BEN,anc_art_coverage,interpolateViridis,0,1,FALSE
 BFA,art_current,interpolateViridis,0,12000,TRUE
 BFA,prevalence,interpolateMagma,0,0.075,TRUE
 BFA,art_coverage,interpolateViridis,0,1,FALSE
-BFA,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+BFA,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 BFA,recent_infected,interpolatePlasma,0,0.6,TRUE
 BFA,art_current_residents,interpolateViridis,0,10500,TRUE
 BFA,population,interpolateViridis,0,20000000,FALSE
@@ -84,7 +84,7 @@ BFA,anc_art_coverage,interpolateViridis,0,1,FALSE
 CIV,art_current,interpolateViridis,0,12000,TRUE
 CIV,prevalence,interpolateMagma,0,0.075,TRUE
 CIV,art_coverage,interpolateViridis,0,1,FALSE
-CIV,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+CIV,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 CIV,recent_infected,interpolatePlasma,0,0.6,TRUE
 CIV,art_current_residents,interpolateViridis,0,10500,TRUE
 CIV,population,interpolateViridis,0,3000000,FALSE
@@ -96,7 +96,7 @@ CIV,anc_art_coverage,interpolateViridis,0,1,FALSE
 CMR,art_current,interpolateViridis,0,12000,TRUE
 CMR,prevalence,interpolateMagma,0,0.075,TRUE
 CMR,art_coverage,interpolateViridis,0,1,FALSE
-CMR,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+CMR,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 CMR,recent_infected,interpolatePlasma,0,0.6,TRUE
 CMR,art_current_residents,interpolateViridis,0,10500,TRUE
 CMR,population,interpolateViridis,0,20000000,FALSE
@@ -108,7 +108,7 @@ CMR,anc_art_coverage,interpolateViridis,0,1,FALSE
 COD,art_current,interpolateViridis,0,12000,TRUE
 COD,prevalence,interpolateMagma,0,0.075,TRUE
 COD,art_coverage,interpolateViridis,0,1,FALSE
-COD,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+COD,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 COD,recent_infected,interpolatePlasma,0,0.6,TRUE
 COD,art_current_residents,interpolateViridis,0,10500,TRUE
 COD,population,interpolateViridis,0,20000000,FALSE
@@ -120,7 +120,7 @@ COD,anc_art_coverage,interpolateViridis,0,1,FALSE
 HTI,art_current,interpolateViridis,0,12000,TRUE
 HTI,prevalence,interpolateMagma,0,0.075,TRUE
 HTI,art_coverage,interpolateViridis,0,1,FALSE
-HTI,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+HTI,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 HTI,recent_infected,interpolatePlasma,0,0.6,TRUE
 HTI,art_current_residents,interpolateViridis,0,10500,TRUE
 HTI,population,interpolateViridis,0,20000000,FALSE
@@ -132,7 +132,7 @@ HTI,anc_art_coverage,interpolateViridis,0,1,FALSE
 NGA,art_current,interpolateViridis,0,12000,TRUE
 NGA,prevalence,interpolateMagma,0,0.075,TRUE
 NGA,art_coverage,interpolateViridis,0,1,FALSE
-NGA,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+NGA,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 NGA,recent_infected,interpolatePlasma,0,0.6,TRUE
 NGA,art_current_residents,interpolateViridis,0,10500,TRUE
 NGA,population,interpolateViridis,0,20000000,FALSE
@@ -144,7 +144,7 @@ NGA,anc_art_coverage,interpolateViridis,0,1,FALSE
 RWA,art_current,interpolateViridis,0,12000,TRUE
 RWA,prevalence,interpolateMagma,0,0.075,TRUE
 RWA,art_coverage,interpolateViridis,0,1,FALSE
-RWA,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+RWA,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 RWA,recent_infected,interpolatePlasma,0,0.6,TRUE
 RWA,art_current_residents,interpolateViridis,0,10500,TRUE
 RWA,population,interpolateViridis,0,20000000,FALSE
@@ -156,7 +156,7 @@ RWA,anc_art_coverage,interpolateViridis,0,1,FALSE
 TGO,art_current,interpolateViridis,0,12000,TRUE
 TGO,prevalence,interpolateMagma,0,0.075,TRUE
 TGO,art_coverage,interpolateViridis,0,1,FALSE
-TGO,viral_suppression_plhiv,interpolateWarm,0,1,FALSE
+TGO,viral_suppression_plhiv,interpolateViridis,0,1,FALSE
 TGO,recent_infected,interpolatePlasma,0,0.6,TRUE
 TGO,art_current_residents,interpolateViridis,0,10500,TRUE
 TGO,population,interpolateViridis,0,20000000,FALSE
