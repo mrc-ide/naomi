@@ -141,7 +141,6 @@
     "INDICATOR_LABEL_ANC_ART_NEW": "Number of pregnant women initiated on ART at ANC",
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
     "INDICATOR_LABEL_ANC_TESTED_POS": "Number of HIV positive ANC attendees tested at ANC",
-    "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC"
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC",
     "UNTREATED_PLHIV_NUM": "PLHIV not on ART",
     "AWARE_PLHIV_PROP": "Proportion PLHIV aware",
