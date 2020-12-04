@@ -44,7 +44,7 @@
     "OPTIONS_SURVEY_PREVALENCE_LABEL": "Prevalence",
     "OPTIONS_SURVEY_ART_COVERAGE_LABEL": "ART coverage",
     "OPTIONS_RECENTLY_INFECTED_LABEL": "Use survey data on proportion recently infected",
-    "OPTIONS_POPULATION_CALIBRATION_LABEL": "Population calibration options",
+    "OPTIONS_POPULATION_CALIBRATION_LABEL": "Population calibration",
     "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum population size. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Calibration to Spectrum population is completed before model fitting.",
     "OPTIONS_CALIBRATION_LABEL": "Calibration options",
     "OPTIONS_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
@@ -141,5 +141,13 @@
     "INDICATOR_LABEL_ANC_ART_NEW": "Number of pregnant women initiated on ART at ANC",
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
     "INDICATOR_LABEL_ANC_TESTED_POS": "Number of HIV positive ANC attendees tested at ANC",
-    "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC"
+    "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC",
+    "UNTREATED_PLHIV_NUM": "PLHIV not on ART",
+    "AWARE_PLHIV_PROP": "Proportion PLHIV aware",
+    "UNAWARE_PLHIV_NUM": "Number PLHIV unaware",
+    "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Number of PLHIV not on ART",
+    "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion of PLHIV aware of HIV positive status",
+    "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Number PLHIV unaware of HIV positive status",
+    "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL": "Output 'awareness of HIV status' indicators",
+    "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting."
 }
