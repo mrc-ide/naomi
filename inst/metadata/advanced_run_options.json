@@ -37,11 +37,10 @@
   "collapsed": true,
   "controlGroups": [
     {
-      "label": "t_(OPTIONS_ADVANCED_AWARE_STATUS_LABEL)",
+      "label": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL)",
       "controls": [
         {
           "name": "output_aware_plhiv",
-          "label": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL)",
           "type": "select",
           "value": "true",
           "helpText": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_HELP)",
