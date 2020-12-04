@@ -204,3 +204,22 @@ test_that("can get model calibration options", {
   expect_length(options, 1)
   expect_true(any(grepl("Calibration options", options)))
 })
+
+test_that("can get model calibration options label from ID", {
+  options <- list(spectrum_population_calibration = "subnational",
+                  spectrum_plhiv_calibration_level = "sex_age_group" ,
+                  spectrum_plhiv_calibration_strat = "none",
+                  spectrum_artnum_calibration_level = "age_coarse",
+                  spectrum_artnum_calibration_strat = "none",
+                  spectrum_infections_calibration_strat ="age_coarse")
+  options_map <- get_calibration_option_labels(options)
+
+  expect_length(options_map, length(options))
+  expect_equal(options_map, list(
+    spectrum_population_calibration = "Subnational",
+    spectrum_plhiv_calibration_level = "Sex and 5-year age group",
+    spectrum_plhiv_calibration_strat = "None",
+    spectrum_artnum_calibration_level = "Age <15 / 15+",
+    spectrum_artnum_calibration_strat = "None",
+    spectrum_infections_calibration_strat ="Age <15 / 15+"))
+})
