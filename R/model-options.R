@@ -137,12 +137,13 @@ validate_model_options <- function(data, options) {
     stop(t_("SHAPE_SPECTRUM_REGION_ALL_NA"))
   }
 
-  ## !! TODO: naomi::extract_pjnz_naomi() should be replaced with function that only extracts regions code
-  spec <- naomi::extract_pjnz_naomi(data$pjnz$path)
-
-  missing_spectrum_regions <-
-    !all(is.na(area_merged$spectrum_region_code) |
-        area_merged$spectrum_region_code %in% spec$spectrum_region_code)
+  ## ## Validate PJNZ
+  
+  pjnz_list <- unroll_pjnz(data$pjnz$path)
+  spectrum_region_codes <- vapply(pjnz_list, read_spectrum_region_code, integer(1))
+  
+  missing_spectrum_regions <- !all(is.na(area_merged$spectrum_region_code) |
+                                   area_merged$spectrum_region_code %in% spectrum_region_codes)
   ## !! TODO: return names and codes of missing regions
   if (missing_spectrum_regions) {
     stop(t_("PJNZ_SHAPE_CODE_MISMATCH"))
