@@ -11,6 +11,8 @@ calibrate_outputs(
   spectrum_plhiv_calibration_strat,
   spectrum_artnum_calibration_level,
   spectrum_artnum_calibration_strat,
+  spectrum_aware_calibration_level,
+  spectrum_aware_calibration_strat,
   spectrum_infections_calibration_level,
   spectrum_infections_calibration_strat
 )
