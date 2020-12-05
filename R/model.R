@@ -133,7 +133,8 @@ naomi_model_frame <- function(area_merged,
                               rho_paed_x_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
-                              spectrum_population_calibration = "national") {
+                              spectrum_population_calibration = "national",
+                              output_aware_plhiv = TRUE) {
 
   ## Create area tree
   ## TODO: Get rid of reliance on data.tree
@@ -603,6 +604,7 @@ naomi_model_frame <- function(area_merged,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
             spectrum_0to4distribution = spectrum_0to4distribution,
+            output_aware_plhiv = output_aware_plhiv,
             omega = omega,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,

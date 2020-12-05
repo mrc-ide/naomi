@@ -72,8 +72,6 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "artnum_t1_out" = "art_current_residents",
                      "artattend_t1_out" = "art_current",
                      "untreated_plhiv_num_t1_out" = "untreated_plhiv_num",
-                     "aware_plhiv_prop_t1_out" = "aware_plhiv_prop",
-                     "unaware_plhiv_num_t1_out" = "unaware_plhiv_num",
                      "lambda_t1_out" = "incidence",
                      "infections_t1_out" = "infections")
 
@@ -84,8 +82,6 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "artnum_t2_out" = "art_current_residents",
                      "artattend_t2_out" = "art_current",
                      "untreated_plhiv_num_t2_out" = "untreated_plhiv_num",
-                     "aware_plhiv_prop_t2_out" = "aware_plhiv_prop",
-                     "unaware_plhiv_num_t2_out" = "unaware_plhiv_num",
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
@@ -96,11 +92,22 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                      "artnum_t3_out" = "art_current_residents",
                      "artattend_t3_out" = "art_current",
                      "untreated_plhiv_num_t3_out" = "untreated_plhiv_num",
-                     "aware_plhiv_prop_t3_out" = "aware_plhiv_prop",
-                     "unaware_plhiv_num_t3_out" = "unaware_plhiv_num",
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
+  if (naomi_mf$output_aware_plhiv) {
+
+    indicators_t1 <- c(indicators_t1,
+                       "aware_plhiv_prop_t1_out" = "aware_plhiv_prop",
+                       "unaware_plhiv_num_t1_out" = "unaware_plhiv_num")
+    indicators_t2 <- c(indicators_t2,
+                       "aware_plhiv_prop_t2_out" = "aware_plhiv_prop",
+                       "unaware_plhiv_num_t2_out" = "unaware_plhiv_num")
+    indicators_t3 <- c(indicators_t3,
+                       "aware_plhiv_prop_t3_out" = "aware_plhiv_prop",
+                       "unaware_plhiv_num_t3_out" = "unaware_plhiv_num")
+  }
+  
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
@@ -841,6 +848,8 @@ calibrate_outputs <- function(output,
                               spectrum_plhiv_calibration_strat,
                               spectrum_artnum_calibration_level,
                               spectrum_artnum_calibration_strat,
+                              spectrum_aware_calibration_level,
+                              spectrum_aware_calibration_strat,
                               spectrum_infections_calibration_level,
                               spectrum_infections_calibration_strat) {
 
@@ -868,7 +877,8 @@ calibrate_outputs <- function(output,
   ## Subset to most granular estimates in model frame.
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
-    dplyr::filter(indicator %in% c("plhiv", "art_current_residents", "infections")) %>%
+    dplyr::filter(indicator %in%
+                  c("plhiv", "art_current_residents", "unaware_plhiv_num", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
@@ -895,6 +905,13 @@ calibrate_outputs <- function(output,
              dplyr::rename(art_current_raw = est_raw),
              by = group_vars
            ) %>%
+    dplyr::left_join(
+             val_aggr %>%
+             dplyr::filter(indicator == "unaware_plhiv_num") %>%
+             dplyr::select(-indicator) %>%
+             dplyr::rename(unaware_raw = est_raw),
+             by = group_vars
+           ) %>%    
     dplyr::left_join(
              val_aggr %>%
              dplyr::filter(indicator == "infections") %>%
@@ -933,6 +950,20 @@ calibrate_outputs <- function(output,
     spectrum_calibration$art_current_calibration <- 1.0
   }
 
+  aware_aggr_var <- get_spectrum_aggr_var(spectrum_aware_calibration_level,
+                                           spectrum_aware_calibration_strat)
+
+  if(length(aware_aggr_var) > 0L) {
+
+    spectrum_calibration <- spectrum_calibration %>%
+      dplyr::group_by_at(aware_aggr_var) %>%
+      dplyr::mutate(unaware_calibration = sum(unaware_spectrum) / sum(unaware_raw)) %>%
+      dplyr::ungroup()
+
+  } else {
+    spectrum_calibration$unaware_calibration <- 1.0
+  }
+
 
   infections_aggr_var <- get_spectrum_aggr_var(spectrum_infections_calibration_level,
                                                spectrum_infections_calibration_strat)
@@ -947,15 +978,22 @@ calibrate_outputs <- function(output,
   } else {
     spectrum_calibration$infections_calibration <- 1.0
   }
-
+  
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::mutate(plhiv_final = plhiv_raw * plhiv_calibration,
                   art_current_final = art_current_raw * art_current_calibration,
-                  infections_final = infections_raw * infections_calibration) %>%
+                  infections_final = infections_raw * infections_calibration)
+
+  ## Will be NA if output_aware_plhiv = FALSE
+  spectrum_calibration$unaware_final <- spectrum_calibration$unaware_raw * spectrum_calibration$unaware_calibration
+    
+
+  spectrum_calibration <- spectrum_calibration %>%
     dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
                   population_spectrum, population_raw, population_calibration, population_final = population,
                   plhiv_spectrum, plhiv_raw, plhiv_calibration, plhiv_final,
                   art_current_spectrum, art_current_raw, art_current_calibration, art_current_final,
+                  unaware_spectrum, unaware_raw, unaware_calibration, unaware_final,
                   infections_spectrum, infections_raw, infections_calibration, infections_final)
 
 
@@ -968,9 +1006,10 @@ calibrate_outputs <- function(output,
                       tidyselect::all_of(group_vars),
                       plhiv = plhiv_calibration,
                       art_current_residents = art_current_calibration,
+                      unaware_plhiv_num = unaware_calibration,
                       infections = infections_calibration
                     ) %>%
-             tidyr::pivot_longer(cols = c(plhiv, art_current_residents, infections),
+             tidyr::pivot_longer(cols = c(plhiv, art_current_residents, unaware_plhiv_num, infections),
                                  names_to = "indicator", values_to = "calibration"),
              by = c("indicator", group_vars)
            ) %>%
@@ -998,6 +1037,9 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter1, "art_current_residents"),
                   .expand(naomi_mf$calendar_quarter2, "art_current_residents"),
                   .expand(naomi_mf$calendar_quarter3, "art_current_residents"),
+                  .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
+                  .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
+                  .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),                  
                   .expand(naomi_mf$calendar_quarter1, "infections"),
                   .expand(naomi_mf$calendar_quarter2, "infections"),
                   .expand(naomi_mf$calendar_quarter3, "infections")
@@ -1005,7 +1047,7 @@ calibrate_outputs <- function(output,
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
 
-  adj <- dplyr::inner_join(
+  adj <- dplyr::right_join(
                   dplyr::select(indicators, tidyselect::all_of(byv), mean),
                   dplyr::select(adj, tidyselect::all_of(byv), adjusted),
                   by = byv
@@ -1018,8 +1060,8 @@ calibrate_outputs <- function(output,
     tidyr::spread(indicator, ratio) %>%
     dplyr::rename(plhiv_calib = plhiv,
                   artnum_calib = art_current_residents,
+                  unaware_calib = unaware_plhiv_num,
                   infections_calib = infections)
-
 
   out <- indicators %>%
     dplyr::left_join(adj, by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
@@ -1038,10 +1080,10 @@ calibrate_outputs <- function(output,
              mode = mode * calibration,
              lower = lower * calibration,
              upper = upper * calibration
-           ) %>%
-    dplyr::select(names(output$indicators))
-
-
+           )
+  
+  out <- dplyr::select(out, names(output$indicators))
+  
   incidence_calibration <- out %>%
     dplyr::filter(indicator %in% c("population", "plhiv", "infections", "incidence")) %>%
     tidyr::pivot_wider(
@@ -1069,6 +1111,39 @@ calibrate_outputs <- function(output,
            ) %>%
     dplyr::select(names(output$indicators))
 
+
+  if (naomi_mf$output_aware_plhiv) {
+    
+    aware_calibration <- out %>%
+      dplyr::filter(
+               indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop")
+             ) %>%
+      tidyr::pivot_wider(
+               id_cols = c(area_id, sex, age_group, calendar_quarter),
+               names_from = indicator,
+               values_from = mean
+             ) %>%
+      dplyr::mutate(
+               aware_new = 1 - unaware_plhiv_num / plhiv,
+               aware_calibration = dplyr::if_else(aware_new == 0, 0, aware_new / aware_plhiv_prop)
+             ) %>%
+      dplyr::select(area_id, sex, age_group, calendar_quarter, aware_calibration)
+    
+    out <- out %>%
+      dplyr::left_join(aware_calibration,
+                       by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
+      dplyr::mutate(
+               calibration = dplyr::if_else(indicator == "aware_plhiv_prop", aware_calibration, 1.0),
+               mean = mean * calibration,
+               se = se * calibration,
+               median = median * calibration,
+               mode = mode * calibration,
+               lower = lower * calibration,
+               upper = upper * calibration
+             ) %>%
+      dplyr::select(names(output$indicators))
+  } 
+
   ## Save calibration options
 
   calibration_options <- c(output$fit$calibration_options,
@@ -1076,6 +1151,8 @@ calibrate_outputs <- function(output,
                                 spectrum_plhiv_calibration_strat  = spectrum_plhiv_calibration_strat,
                                 spectrum_artnum_calibration_level = spectrum_artnum_calibration_level,
                                 spectrum_artnum_calibration_strat = spectrum_artnum_calibration_strat,
+                                spectrum_aware_calibration_level = spectrum_aware_calibration_level,
+                                spectrum_aware_calibration_strat = spectrum_aware_calibration_strat,
                                 spectrum_infections_calibration_level = spectrum_infections_calibration_level,
                                 spectrum_infections_calibration_strat = spectrum_infections_calibration_strat)
                            )
@@ -1182,15 +1259,24 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   out_0to4strat_rates <- out_0to4strat_counts %>%
     tidyr::pivot_wider(c("area_id", "sex", "calendar_quarter", "age_group"),
-                       names_from = indicator, values_from = mean) %>%
+                       names_from = indicator, values_from = mean)
+
+  out_0to4strat_rates <- out_0to4strat_rates %>%
     dplyr::mutate(prevalence = plhiv / population,
                   art_coverage = art_current_residents / plhiv,
-                  aware_plhiv_prop = (plhiv - unaware_plhiv_num) / plhiv,
-                  incidence = infections / (population - plhiv)) %>%
+                  incidence = infections / (population - plhiv))
+
+  if (naomi_mf$output_aware_plhiv) {
+    out_0to4strat_rates$aware_plhiv_prop = 1.0 - out_0to4strat_rates$unaware_plhiv_num / out_0to4strat_rates$plhiv
+  } else {
+    out_0to4strat_rates$aware_plhiv_prop <- NA_real_
+  }
+
+  out_0to4strat_rates <- out_0to4strat_rates %>%
     tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
                         names_to = "indicator", values_to = "ratio") %>%
     dplyr::select(area_id, sex, calendar_quarter, age_group, indicator, ratio) %>%
-    dplyr::left_join(out0to4, by = c("area_id", "sex", "calendar_quarter", "indicator")) %>%
+    dplyr::inner_join(out0to4, by = c("area_id", "sex", "calendar_quarter", "indicator")) %>%
     dplyr::mutate(ratio = dplyr::if_else(mean == 0, 0, ratio / mean)) %>%
     tidyr::pivot_longer(c(mean, se, median, mode, lower, upper)) %>%
     dplyr::mutate(value = value * ratio,

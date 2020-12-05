@@ -2,13 +2,22 @@
 
 ### Awareness of HIV status
 
-* < Description of Shiny90 integration >
-* < Description of modelling approach > 
+* If a .shiny90 file is included, the _first90_ package is used to calculate the 
+  proportion of untreated PLHIV who are aware of their HIV status by sex and age
+  group.
+* To estimate the proportion aware of status at the district, this proportion 
+  is applied to the estimated untreated population in each district. This is 
+  added to the ART coverage to estimate the total proportion aware of status at
+  district level by age and sex.
 
 * New output indicators for awarness of HIV status:
   * `untreated_plhiv_num`: Number of untreated PLHIV (the 'treatment gap').
   * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
   * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
+  
+* Add model option `output_aware_plhiv` in 'Advanced options'. If no `.shiny90` file is present 
+  in the PJNZ, this must be set to `FALSE`. An error is raised by `validate_model_options()` 
+  prompting this if no `.shiny90` file is found inside the PJNZ.
 
 
 ### PEPFAR Data Pack

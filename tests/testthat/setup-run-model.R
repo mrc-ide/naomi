@@ -47,9 +47,9 @@ a_hintr_options_bad$calendar_quarter_t2 <- NULL
 a_hintr_calibration_options <- list(
   spectrum_plhiv_calibration_level = "subnational",
   spectrum_plhiv_calibration_strat = "sex_age_group",
-  spectrum_artnum_calibration_level = "none",
+  spectrum_artnum_calibration_level = "national",
   spectrum_artnum_calibration_strat = "age_coarse",
-  spectrum_aware_calibration_level = "none",
+  spectrum_aware_calibration_level = "national",
   spectrum_aware_calibration_strat = "age_coarse",
   spectrum_infections_calibration_level = "none",
   spectrum_infections_calibration_strat = "age_coarse"
