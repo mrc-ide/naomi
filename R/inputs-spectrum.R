@@ -154,7 +154,7 @@ read_spectrum_region_code <- function(pjnz) {
 #'
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
-#' read_spectrum_proj_name(pjnz)
+#' read_spectrum_projection_name(pjnz)
 #' 
 #' @export
 read_spectrum_projection_name <- function(pjnz) {
