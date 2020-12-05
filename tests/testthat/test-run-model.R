@@ -123,27 +123,18 @@ test_that("model can be run without programme data", {
   data$art_number <- NULL
   data$anc_testing <- NULL
 
-  options <- list(
-    area_scope = "MWI_1_2_demo",
-    area_level = "4",
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    calendar_quarter_t3 = "CY2019Q2",
-    survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
-    survey_art_coverage = "DEMO2016PHIA",
-    survey_recently_infected = "DEMO2016PHIA",
-    spectrum_population_calibration = "national",
-    spectrum_plhiv_calibration_level = "subnational",
-    spectrum_plhiv_calibration_strat = "sex_age_group",
-    spectrum_artnum_calibration_level = "national",
-    spectrum_artnum_calibration_strat = "age_coarse",
-    spectrum_infections_calibration_level = "national",
-    spectrum_infections_calibration_strat = "age_coarse",
-    rng_seed = 17,
-    no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
-  )
+  options <- a_hintr_options
+  options$include_art_t1 <- NULL
+  options$include_art_t2 <- NULL
+  options$anc_clients_year2 <- NULL
+  options$anc_clients_year2_num_months <- NULL
+  options$anc_prevalence_year1 <- NULL
+  options$anc_prevalence_year2 <- NULL
+  options$anc_art_coverage_year1 <- NULL
+  options$anc_art_coverage_year2 <- NULL
+  options$artattend <- NULL
+  options$artattend_t2 <- NULL
+  options$artattend_log_gamma_offset <- NULL
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
