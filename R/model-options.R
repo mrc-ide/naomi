@@ -97,6 +97,8 @@ validate_model_options <- function(data, options) {
                         "calendar_quarter_t3",
                         "survey_prevalence")
 
+  data <- format_data_input(data)
+  
   if(!all(required_options %in% names(options)))
     stop(t_("MISSING_OPTIONS", list(missing_options =
       paste(setdiff(required_options, names(options)), collapse = ", "))))
