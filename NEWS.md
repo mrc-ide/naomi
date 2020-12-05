@@ -20,6 +20,8 @@
 
 * Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
   affix `_demo` to the end of the area IDs.
+* Add argument `quantile(..., names = FALSE)` in the funciton `add_stats()` for computation 
+  of posterior quantiles. This gives a decent speedup in producing the outptus package.
 
 
 # naomi 2.1.1

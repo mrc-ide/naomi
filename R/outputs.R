@@ -31,7 +31,7 @@ add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
   }
 
   if(!is.null(sample)) {
-    qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975))
+    qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975), names = FALSE)
     v[[paste0(prefix, "mean")]] <- rowMeans(sample)
     v[[paste0(prefix, "se")]] <- sqrt(rowSums((sample - v[[paste0(prefix, "mean")]])^2) / (max(ncol(sample), 2) - 1))
     v[[paste0(prefix, "median")]] <- qtl[1,]
