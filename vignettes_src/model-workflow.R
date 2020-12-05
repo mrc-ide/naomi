@@ -223,6 +223,8 @@ outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_strat = "sex_age_coarse",
                                    spectrum_artnum_calibration_level = "national", 
                                    spectrum_artnum_calibration_strat = "sex_age_coarse",
+                                   spectrum_aware_calibration_level = "national", 
+                                   spectrum_aware_calibration_strat = "sex_age_coarse",
                                    spectrum_infections_calibration_level = "national", 
                                    spectrum_infections_calibration_strat = "sex_age_coarse")
 

@@ -63,6 +63,8 @@
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL": "Sexe et groupe d'âge de 5 années",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL": "Ajustement aux chiffres relatifs à l’ART de Spectrum",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP": "Étalonner sur la moyenne totale de Spectrum relative à l’ART",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_LABEL": "Ajustement au nombre conscients de leur statut VIH de Spectrum",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_HELP": "Étalonner sur la moyenne totale de Spectrum conscients de leur statut VIH",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_LABEL": "Ajuster au nombre des nouvelles infections de Spectrum",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP": "Étalonner sur la moyenne nombre des nouvelles infections de Spectrum",
     "OPTIONS_OUTPUT_LABEL": "Options de sortie",

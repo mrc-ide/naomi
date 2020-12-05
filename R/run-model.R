@@ -90,6 +90,14 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
   }
 
+  if (is.null(options$spectrum_aware_calibration_level)) {
+    options$spectrum_aware_calibration_level <- "none"
+  }
+
+  if (is.null(options$spectrum_aware_strat)) {
+    options$spectrum_aware_calibration_strat <- "sex_age_coarse"
+  }
+  
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }

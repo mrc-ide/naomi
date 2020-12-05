@@ -286,6 +286,7 @@ test_that("setting rng_seed returns same output", {
   options$artattend <- "false"
   options$spectrum_plhiv_calibration_level <- "none"
   options$spectrum_artnum_calibration_level <- "none"
+  options$spectrum_aware_calibration_level <- "none"
   options$spectrum_infections_calibration_level <- "none"
 
   output_path <- tempfile()
@@ -506,6 +507,8 @@ test_that("model run can be calibrated", {
     spectrum_plhiv_calibration_strat = "sex_age_coarse",
     spectrum_artnum_calibration_level = "subnational",
     spectrum_artnum_calibration_strat = "age_coarse",
+    spectrum_aware_calibration_level = "subnational",
+    spectrum_aware_calibration_strat = "age_coarse",
     spectrum_infections_calibration_level = "none",
     spectrum_infections_calibration_strat = "age_coarse"
   )
