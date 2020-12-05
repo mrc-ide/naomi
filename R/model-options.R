@@ -189,9 +189,9 @@ validate_model_options <- function(data, options) {
     has_shiny90 <- vapply(pjnz_list, assert_pjnz_shiny90, logical(1))
     if (any(!has_shiny90)) {
       projname <- vapply(pjnz_list[!has_shiny90], read_spectrum_projection_name, character(1))
-      stop(t_("ERROR_SHINY90_MISSING_1"), ":\n",
-           paste0("   - ", projname, collapse = "\n"),
-           "\n  ", t_("ERROR_SHINY90_MISSING_2"))
+      stop(t_("ERROR_SHINY90_MISSING_1"), ": ",
+           paste0(projname, collapse = ", "),
+           ". ", t_("ERROR_SHINY90_MISSING_2"))
     }
   }
 
