@@ -211,7 +211,7 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
     dplyr::summarise_at(
-             dplyr::vars(totpop, hivpop, artpop, infections,
+             dplyr::vars(totpop, hivpop, artpop, infections, unaware,
                          births, births_hivpop, births_artpop),
              sum
            ) %>%
@@ -245,7 +245,7 @@ naomi_model_frame <- function(area_merged,
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
     dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
-    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections), sum) %>%
+    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, unaware), sum) %>%
     dplyr::mutate(
              births = 0,
              births_hivpop= 0,
@@ -267,7 +267,7 @@ naomi_model_frame <- function(area_merged,
                      art_current_residents = art_current,
                      untreated_plhiv_num = (plhiv_spectrum - art_current_spectrum) /
                        sum(plhiv_spectrum - art_current_spectrum),
-                     unaware_plhiv_num = untreated_plhiv_num,
+                     unaware_plhiv_num = unaware_spectrum / sum(unaware_spectrum),
                      infections = infections_spectrum / sum(infections_spectrum)) %>%
     tidyr::pivot_longer(cols = c(population, plhiv, art_current,
                                  art_current_residents,
@@ -393,6 +393,7 @@ naomi_model_frame <- function(area_merged,
              prevalence = plhiv_spectrum / population_spectrum,
              art_coverage = pmax(pmin(art_current_spectrum / plhiv_spectrum, 0.999), 0.001),
              incidence = infections_spectrum / susc_previous_year_spectrum,
+             unaware_untreated_prop = unaware_spectrum / (plhiv_spectrum - art_current_spectrum),
              asfr = births_spectrum / population_spectrum,
              frr_plhiv = (births_hivpop_spectrum / plhiv_spectrum) /
                ((births_spectrum - births_hivpop_spectrum) / (population_spectrum - plhiv_spectrum)),
@@ -413,6 +414,7 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t1 = prevalence,
                       spec_incid_t1 = incidence,
                       spec_artcov_t1 = art_coverage,
+                      spec_unaware_untreated_prop_t1 = unaware_untreated_prop,
                       asfr_t1 = asfr,
                       frr_plhiv_t1 = frr_plhiv,
                       frr_already_art_t1 = frr_already_art
@@ -429,6 +431,7 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t2 = prevalence,
                       spec_incid_t2 = incidence,
                       spec_artcov_t2 = art_coverage,
+                      spec_unaware_untreated_prop_t2 = unaware_untreated_prop,
                       asfr_t2 = asfr,
                       frr_plhiv_t2 = frr_plhiv,
                       frr_already_art_t2 = frr_already_art                      
@@ -445,6 +448,7 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t3 = prevalence,
                       spec_incid_t3 = incidence,
                       spec_artcov_t3 = art_coverage,
+                      spec_unaware_untreated_prop_t3 = unaware_untreated_prop,
                       asfr_t3 = asfr,
                       frr_plhiv_t3 = frr_plhiv,
                       frr_already_art_t3 = frr_already_art

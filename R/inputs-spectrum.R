@@ -78,14 +78,51 @@ extract_pjnz_one <- function(pjnz) {
   pregprev <- extract_eppasm_pregprev(mod, specfp)
   spec <- dplyr::left_join(spec, pregprev, by = c("age", "sex", "year"))
 
+  spec <- add_shiny90_unaware(spec, pjnz)
+
   spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
   
   spec
 }
 
-add_pjnz_aware <- function(spec, pjnz) {
+add_shiny90_unaware <- function(spec, pjnz) {
 
-  
+  if (assert_pjnz_shiny90(pjnz)) {
+    shiny90_dir <- tempfile()
+    on.exit(unlink(shiny90_dir, recursive = TRUE))
+
+    shiny90_name <- get_pjnz_shiny90_filename(pjnz)
+    utils::unzip(pjnz, shiny90_name, exdir = shiny90_dir)
+    
+    df <- extract_shiny90_age_sex(file.path(shiny90_dir, shiny90_name),
+                                  years = unique(spec$year))
+    df$unaware_untreated_prop <- (df$plhiv - df$aware) / (df$plhiv - df$artnum)
+    df <- df[c("year", "sex", "agegr", "unaware_untreated_prop")]
+
+    ## NOTE: Shiny90 age groups hard coded here.
+    ##   15-19, 20-24, ..., 45-49, 50-99
+    age_cut <- c(seq(0, 50, 5), 100)
+    age_lab <- paste0(age_cut[-length(age_cut)], "-", age_cut[-1] - 1)
+    spec$agegr <- cut(spec$age, age_cut, age_lab, right = FALSE)
+
+    spec <- dplyr::left_join(spec, df, by = c("year", "sex", "agegr"))
+
+    ## For children, assume all untreated are unaware. This is the current
+    ## assumption in Spectrum.
+    spec$unaware_untreated_prop[is.na(spec$unaware_untreated_prop)] <- 1.0
+
+    spec$unaware <- (spec$hivpop - spec$artpop) * spec$unaware_untreated_prop
+    spec$agegr <- NULL
+    spec$unaware_untreated_prop <- NULL
+
+  } else {
+
+    ## If no .shiny90 estimates available, assume all untreated PLHIV are
+    ## unaware
+    spec$unaware <- spec$hivpop - spec$artpop
+  }
+
+  spec
 }
 
 
@@ -126,6 +163,10 @@ read_spectrum_projection_name <- function(pjnz) {
   trimws(projname)
 }
 
+get_pjnz_shiny90_filename <- function(pjnz) {
+  files <- utils::unzip(pjnz, list = TRUE)$Name
+  grep("\\.shiny90$", files, ignore.case = TRUE, value = TRUE)
+}
 
 #' Check whether PJNZ contains .shiny90 file
 #'
@@ -134,8 +175,7 @@ read_spectrum_projection_name <- function(pjnz) {
 #' @return Logical whether PJNZ file contains a .shiny90 file
 #'
 assert_pjnz_shiny90 <- function(pjnz) {
-  files <- utils::unzip(pjnz, list = TRUE)$Name
-  any(grepl("\\.shiny90$", tolower(files)))
+  as.logical(length(get_pjnz_shiny90_filename(pjnz)))
 }
 
 #' Cut Five Year Age Groups
@@ -462,6 +502,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
              art_current_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
              infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
              susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
+             unaware_spectrum = log_lin_approx(quarter_id, unaware, quarter_id_out),
              births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out),
              births_hivpop_spectrum = log_lin_approx(quarter_id, births_hivpop, quarter_id_out),
              births_artpop_spectrum = log_lin_approx(quarter_id, births_artpop, quarter_id_out)
@@ -476,6 +517,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
                 art_current_spectrum,
                 infections_spectrum,
                 susc_previous_year_spectrum,
+                unaware_spectrum,
                 births_spectrum,
                 births_hivpop_spectrum,
                 births_artpop_spectrum)
