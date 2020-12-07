@@ -1,3 +1,7 @@
+# naomi 2.1.2
+
+* Make running input validation during model run optional
+
 # naomi 2.1.1
 
 * Make 'Advanced Options' panel on model options page collapsible by default

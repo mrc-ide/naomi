@@ -16,14 +16,21 @@ select_naomi_data(
   artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
   artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
  
+    anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+  anc_clients_year_t2_num_months = 12,
+ 
     anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
  
     anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
   anc_artcov_year_t1 = anc_prev_year_t1,
   anc_artcov_year_t2 = anc_prev_year_t2,
+  use_kish_prev = TRUE,
   deff_prev = 1,
+  use_kish_artcov = TRUE,
   deff_artcov = 1,
+  use_kish_recent = TRUE,
   deff_recent = 1,
+  use_kish_vls = TRUE,
   deff_vls = 1
 )
 }
@@ -48,6 +55,8 @@ select_naomi_data(
 
 \item{artnum_calendar_quarter_t2}{Calendar quarter for second time point for number on ART.}
 
+\item{anc_clients_year_t2}{Calendar year (possibly multiple) for number of ANC clients at year 2.}
+
 \item{anc_prev_year_t1}{Calendar year (possibly multiple) for first time point for ANC prevalence.}
 
 \item{anc_prev_year_t2}{Calendar year (possibly multiple) for second time point for ANC prevalence.}
@@ -63,6 +72,8 @@ select_naomi_data(
 \item{deff_recent}{Approximate design effect for survey proportion recently infected.}
 
 \item{deff_vls}{Approximate design effect for survey viral load suppression.}
+
+\item{anc_clients_year_t2_num_monhts}{Number of months of reporting reflected in the year(s) recorded in \code{anc_clients_year_t2}.}
 }
 \description{
 Select data for model fitting

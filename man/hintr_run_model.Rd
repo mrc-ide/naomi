@@ -11,7 +11,8 @@ hintr_run_model(
   spectrum_path = tempfile(fileext = ".zip"),
   coarse_output_path = tempfile(fileext = ".zip"),
   summary_report_path = tempfile(fileext = ".html"),
-  calibration_path = tempfile(fileext = ".rds")
+  calibration_path = tempfile(fileext = ".rds"),
+  validate = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ hintr_run_model(
 \item{summary_report_path}{Path to store summary report at.}
 
 \item{calibration_path}{Path to store data required for calibrating model.}
+
+\item{validate}{If FALSE validation of inputs & data will be skipped.}
 }
 \value{
 Paths to 4 output files.

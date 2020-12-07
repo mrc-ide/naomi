@@ -105,7 +105,6 @@
     "INDICATOR_LABEL_ANC_ART_COVERAGE": "Couverture ART antérieure dans les cliniques prénatales",
     "OPTIONS_ART_TIME_VARYING_ART_ATTEND_LABEL": "Assiduité du ART des districts  voisinant variable avec le temps",
     "OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP": "Permettre la probabilité de demander un traitement dans des districts voisinant à changer avec le temps",
-    "PROGRESS_VALIDATE_OPTIONS": "Validation des entrées et des options",
     "PROGRESS_PREPARE_INPUTS": "Préparation des données d'entrée",
     "PROGRESS_FIT_MODEL": "Ajustement du modèle",
     "PROGRESS_UNCERTAINTY": "Génération de fourchettes d'incertitude",
@@ -149,5 +148,6 @@
     "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion de PVVIH conscients de leur statut VIH positif",
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Nombre de PVVIH non informés de leur statut VIH positif",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL": "Indicateurs de sortie 'sensibilisation à la séropositivité'",
-    "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Le calcul de la connaissance des indicateurs de statut VIH nécessite l'inclusion de fichiers .shiny90 dans chaque PJNZ. Si les fichiers .shiny90 ne sont pas disponibles, sélectionnez «Non» pour procéder à l'ajustement du modèle."
+    "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Le calcul de la connaissance des indicateurs de statut VIH nécessite l'inclusion de fichiers .shiny90 dans chaque PJNZ. Si les fichiers .shiny90 ne sont pas disponibles, sélectionnez «Non» pour procéder à l'ajustement du modèle.",
+    "POPULATION_REQUIRED_COLUMNS_MISSING": "Colonnes obligatoires introuvables: {{cols}}"
 }
