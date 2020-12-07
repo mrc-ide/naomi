@@ -3,23 +3,23 @@
 ## for every test.
 
 a_hintr_data <- list(
-  pjnz = system_file("extdata/mwi2019.PJNZ"),
-  population = system_file("extdata/population/population_agesex.csv"),
-  shape = system_file("extdata/areas/area_merged.geojson"),
-  survey = system_file("extdata/survey/survey_hiv_indicators.csv"),
-  art_number = system_file("extdata/programme/art_number.csv"),
-  anc_testing = system_file("extdata/programme/anc_testing.csv")
+  pjnz = system_file("extdata/demo_mwi2019.PJNZ"),
+  population = system_file("extdata/demo_population_agesex.csv"),
+  shape = system_file("extdata/demo_areas.geojson"),
+  survey = system_file("extdata/demo_survey_hiv_indicators.csv"),
+  art_number = system_file("extdata/demo_art_number.csv"),
+  anc_testing = system_file("extdata/demo_anc_testing.csv")
 )
 
 a_hintr_options <- list(
-  area_scope = "MWI_1_2",
+  area_scope = "MWI_1_2_demo",
   area_level = "4",
   calendar_quarter_t1 = "CY2016Q1",
   calendar_quarter_t2 = "CY2018Q3",
   calendar_quarter_t3 = "CY2019Q2",
-  survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-  survey_art_coverage = "MWI2016PHIA",
-  survey_recently_infected = "MWI2016PHIA",
+  survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
+  survey_art_coverage = "DEMO2016PHIA",
+  survey_recently_infected = "DEMO2016PHIA",
   include_art_t1 = "true",
   include_art_t2 = "true",
   anc_clients_year2 = 2018,
@@ -47,8 +47,10 @@ a_hintr_options_bad$calendar_quarter_t2 <- NULL
 a_hintr_calibration_options <- list(
   spectrum_plhiv_calibration_level = "subnational",
   spectrum_plhiv_calibration_strat = "sex_age_group",
-  spectrum_artnum_calibration_level = "none",
+  spectrum_artnum_calibration_level = "national",
   spectrum_artnum_calibration_strat = "age_coarse",
+  spectrum_aware_calibration_level = "national",
+  spectrum_aware_calibration_strat = "age_coarse",
   spectrum_infections_calibration_level = "none",
   spectrum_infections_calibration_strat = "age_coarse"
 )

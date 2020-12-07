@@ -26,7 +26,8 @@ naomi_model_frame(
   rho_paed_x_term = FALSE,
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
-  spectrum_population_calibration = "national"
+  spectrum_population_calibration = "national",
+  output_aware_plhiv = TRUE
 )
 }
 \arguments{

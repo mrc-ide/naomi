@@ -239,6 +239,10 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
     logit_alpha_t1t2_offset = logit_alpha_t1t2_offset,
     ##
+    unaware_untreated_prop_t1 = df$spec_unaware_untreated_prop_t1,
+    unaware_untreated_prop_t2 = df$spec_unaware_untreated_prop_t2,
+    unaware_untreated_prop_t3 = df$spec_unaware_untreated_prop_t3,
+    ##
     Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
     n_nb = naomi_data$mf_areas$n_neighbors,
     adj_i = naomi_data$mf_artattend$reside_area_idx - 1L,

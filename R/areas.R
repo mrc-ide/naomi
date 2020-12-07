@@ -9,11 +9,11 @@
 #' @return An object of class `naomi_areas`
 #'
 #' @examples
-#' data(mwi_area_levels)
-#' data(mwi_area_hierarchy)
-#' data(mwi_area_boundaries)
+#' data(demo_area_levels)
+#' data(demo_area_hierarchy)
+#' data(demo_area_boundaries)
 #'
-#' areas <- create_areas(mwi_area_levels, mwi_area_hierarchy, mwi_area_boundaries)
+#' areas <- create_areas(demo_area_levels, demo_area_hierarchy, demo_area_boundaries)
 #' areas
 #'
 #' @export
@@ -193,12 +193,12 @@ print.naomi_areas <- function(areas) {
 #' area_level `level`, nothing is returned. An error is thrown if any `area_scope`
 #' are not recognized.
 #'
-#' TODO: Should be an example - where is mwi_areas, mwi_area_geom?
-#' data(mwi_areas, mwi_area_geom)
+#' TODO: Should be an example - where is demo_areas, demo_area_geom?
+#' data(demo_areas, demo_area_geom)
 #'
-#' areas <- get_area_collection(mwi_areas, level = 3, area_scope = c("MWI.1", "MWI.3.5"))
+#' areas <- get_area_collection(demo_areas, level = 3, area_scope = c("MWI.1", "MWI.3.5"))
 #' areas %>%
-#'   left_join(mwi_area_geom %>% filter(type == "boundary")) %>%
+#'   left_join(demo_area_geom %>% filter(type == "boundary")) %>%
 #'   sf::st_as_sf() %>%
 #'   ggplot() + geom_sf()
 #'
@@ -245,7 +245,7 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
 #'
 #' @examples
 #'
-#' area_merged <- read_area_merged(system.file("extdata/areas/area_merged.geojson", package = "naomi"))
+#' area_merged <- read_area_merged(system.file("extdata/demo_areas.geojson", package = "naomi"))
 #' areas <- create_areas(area_merged = area_merged)
 #' model_area_ids <- area_merged$area_id[area_merged$area_level == 4]
 #'

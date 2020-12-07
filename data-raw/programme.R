@@ -3,7 +3,7 @@ library(tidyverse)
 library(here)
 
 devtools::load_all()
-data(mwi_area_hierarchy)
+data(demo_area_hierarchy)
 
 #' ## Malawi HIV Programme data
 #'
@@ -36,12 +36,12 @@ data(mwi_area_hierarchy)
 #' Written approval for inclusion in naomi R package provided by Thoko Kalua via email
 #' on 4 September 2019.
 
-mwi_anc_testing <- read_csv(here("data-raw/programme/mwi_dha_ancrt.csv"))
+demo_anc_testing <- read_csv(here("data-raw/programme/mwi_dha_ancrt.csv"))
 
-mwi_anc_testing <- mwi_anc_testing %>%
+demo_anc_testing <- demo_anc_testing %>%
   rename(area_name = district32) %>%
   left_join(
-    mwi_area_hierarchy %>%
+    demo_area_hierarchy %>%
     filter(area_level == 4) %>%
     select(area_name, area_id),
     by = "area_name"
@@ -50,13 +50,13 @@ mwi_anc_testing <- mwi_anc_testing %>%
   group_by(area_id, area_name, age_group, year) %>%
   summarise_at(vars(anc_clients, anc_known_pos, anc_already_art, anc_tested, anc_tested_pos), sum)
 
-mwi_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
+demo_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 
-mwi_art_number <- mwi_art_number %>%
+demo_art_number <- demo_art_number %>%
   rename(area_name = district32) %>%
   filter(quarter == 4) %>%
   left_join(
-    mwi_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
+    demo_area_hierarchy %>% filter(area_level == 4) %>% select(area_name, area_id),
     by = "area_name"
   ) %>%
   mutate(quarter = NULL) %>%
@@ -65,7 +65,7 @@ mwi_art_number <- mwi_art_number %>%
 #' Approximate the number on ART age 15+ as 94% of all
 #' Based on Spectrum file outputs, which were triangulated 
 
-mwi_art_number <- mwi_art_number %>%
+demo_art_number <- demo_art_number %>%
   crossing(age_group_label = c("0-14", "15+")) %>%
   mutate(art_prop = case_when(age_group_label == "0-14" ~ 0.06,
                               age_group_label == "15+" ~ 0.94),
@@ -84,12 +84,10 @@ mwi_art_number <- mwi_art_number %>%
   select(area_id, area_name, sex, age_group, year, calendar_quarter, art_current, art_new)
 
 usethis::use_data(
-           mwi_anc_testing,
-           mwi_art_number,
+           demo_anc_testing,
+           demo_art_number,
            overwrite = TRUE
          )
 
-dir.create(here("inst/extdata/programme/"))
-
-write_csv(mwi_anc_testing, here("inst/extdata/programme/anc_testing.csv"), na = "")
-write_csv(mwi_art_number, here("inst/extdata/programme/art_number.csv"), na = "")
+write_csv(demo_anc_testing, here("inst/extdata/demo_anc_testing.csv"), na = "")
+write_csv(demo_art_number, here("inst/extdata/demo_art_number.csv"), na = "")

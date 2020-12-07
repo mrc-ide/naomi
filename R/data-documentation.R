@@ -7,10 +7,10 @@
 #'
 #' @format
 #'
-#'  TODO: Link to mwi_areas dataset
-#'  `mwi_art_number` is a dataset with 2042 observations on the following 5 variables:
+#'  TODO: Link to demo_areas dataset
+#'  `demo_art_number` is a dataset with 2042 observations on the following 5 variables:
 #'  \describe{
-#'    \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
+#'    \item{\code{area_id}}{District area id -- see demo_areas dataset.}
 #'    \item{\code{sex}}{Sex as a character vector -- all values are "both".}
 #'    \item{\code{age_group}}{Value "Y015_999" is age 15+, "Y000_014" is age 0-14.}
 #'    \item{\code{calendar_quarter}}{Calendar quarter.}
@@ -18,10 +18,10 @@
 #'    \item{\code{art_new}}{Number newly initiated ART during the quarter.}
 #'   }
 #'
-#'  TODO: Link to mwi_areas dataset
-#'  `mwi_anc_testing` is a dataset with 923 observations on the following 8 variables:
+#'  TODO: Link to demo_areas dataset
+#'  `demo_anc_testing` is a dataset with 923 observations on the following 8 variables:
 #'  \describe{
-#'    \item{\code{area_id}}{District area id -- see mwi_areas dataset.}
+#'    \item{\code{area_id}}{District area id -- see demo_areas dataset.}
 #'    \item{\code{quarter_id}}{Quarter ID (integer).}
 #'    \item{\code{anc_clients}}{Number of unique ANC clients during quarter.}
 #'    \item{\code{anc_known_pos}}{Number of ANC clients already known to be HIV positive prior to first ANC visit and not tested for HIV.}
@@ -76,7 +76,7 @@
 #'
 #' @seealso \code{\link{quarter_labels}}, \code{\link{get_age_groups}}.
 #'
-"mwi_anc_testing"
+"demo_anc_testing"
 
-#' @rdname mwi_anc_testing
-"mwi_art_number"
+#' @rdname demo_anc_testing
+"demo_art_number"

@@ -90,5 +90,5 @@ observations. Stratified design effects are will not be the same as full survey 
 a straightforward way to approximate these.
 }
 \seealso{
-\link{mwi_survey_hiv_indicators}, \link{mwi_anc_testing}, \link{mwi_art_number}, \link{convert_quarter_id}
+\link{demo_survey_hiv_indicators}, \link{demo_anc_testing}, \link{demo_art_number}, \link{convert_quarter_id}
 }

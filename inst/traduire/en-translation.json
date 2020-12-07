@@ -63,6 +63,8 @@
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL": "Sex and 5-year age group",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_LABEL": "Adjust to Spectrum number on ART",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_ART_HELP": "Calibrate to Spectrum mean total on ART",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_LABEL": "Adjust to Spectrum number aware of HIV status",
+    "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_HELP": "Calibrate to Spectrum mean total number aware of HIV status from Shiny90",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_LABEL": "Adjust to Spectrum number of new infections",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP": "Calibrate to Spectrum mean total new infections",
     "OPTIONS_OUTPUT_LABEL": "Output options",
@@ -149,5 +151,7 @@
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Number PLHIV unaware of HIV positive status",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL": "Output 'awareness of HIV status' indicators",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting.",
-    "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}"
+    "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}",    
+    "ERROR_SHINY90_MISSING_1": ".shiny90 file is not present for the following projection(s)",
+    "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\"."
 }

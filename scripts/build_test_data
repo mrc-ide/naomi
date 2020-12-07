@@ -8,24 +8,24 @@ if (file.exists("tests/testthat/testdata/fit.RDS")) {
 }
 
 data <- list(
-  pjnz = system.file("extdata/mwi2019.PJNZ", package = "naomi"),
-  population = system.file("extdata/population/population_agesex.csv",
+  pjnz = system.file("extdata/demo_mwi2019.PJNZ", package = "naomi"),
+  population = system.file("extdata/demo_population_agesex.csv",
     package = "naomi"),
   shape = file.path("tests/testthat/testdata/malawi.geojson"),
   survey = system.file("extdata/survey/survey_hiv_indicators.csv",
     package = "naomi"),
-  art = system.file("extdata/programme/art_number.csv", package = "naomi"),
-  anc = system.file("extdata/programme/anc_testing.csv", package = "naomi")
+  art = system.file("extdata/demo_art_number.csv", package = "naomi"),
+  anc = system.file("extdata/demo_anc_testing.csv", package = "naomi")
 )
 options <- list(
   area_scope = "MWI",
   area_level = 4,
   t1 = 465,
   t2 = 475,
-  survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-  survey_art_coverage = "MWI2016PHIA",
+  survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
+  survey_art_coverage = "DEMO2016PHIA",
   survey_vls = NULL,
-  survey_recently_infected = "MWI2016PHIA",
+  survey_recently_infected = "DEMO2016PHIA",
   survey_art_or_vls = "art_coverage",
   art_t1 = 465,
   art_t2 = 475,

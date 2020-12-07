@@ -87,6 +87,15 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   if (is.null(options$spectrum_artnum_strat)) {
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
   }
+
+  if (is.null(options$spectrum_aware_calibration_level)) {
+    options$spectrum_aware_calibration_level <- "none"
+  }
+
+  if (is.null(options$spectrum_aware_strat)) {
+    options$spectrum_aware_calibration_strat <- "sex_age_coarse"
+  }
+  
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
@@ -140,6 +149,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                options$spectrum_plhiv_calibration_strat,
                                options$spectrum_artnum_calibration_level,
                                options$spectrum_artnum_calibration_strat,
+                               options$spectrum_aware_calibration_level,
+                               options$spectrum_aware_calibration_strat,
                                options$spectrum_infections_calibration_level,
                                options$spectrum_infections_calibration_strat)
 
@@ -205,16 +216,20 @@ hintr_calibrate <- function(output, calibration_options) {
   }
   calibration_data <- readRDS(calibration_path)
   calibrated_output <- calibrate_outputs(
-    calibration_data$output_package, calibration_data$naomi_data,
-    calibration_options$spectrum_plhiv_calibration_level,
-    calibration_options$spectrum_plhiv_calibration_strat,
-    calibration_options$spectrum_artnum_calibration_level,
-    calibration_options$spectrum_artnum_calibration_strat,
-    calibration_options$spectrum_infections_calibration_level,
-    calibration_options$spectrum_infections_calibration_strat)
-
-  calibrated_output <- disaggregate_0to4_outputs(calibrated_output,
-                                                 calibration_data$naomi_data)
+    output = calibration_data$output_package,
+    naomi_mf = calibration_data$naomi_data,
+    spectrum_plhiv_calibration_level = calibration_options$spectrum_plhiv_calibration_level,
+    spectrum_plhiv_calibration_strat = calibration_options$spectrum_plhiv_calibration_strat,
+    spectrum_artnum_calibration_level = calibration_options$spectrum_artnum_calibration_level,
+    spectrum_artnum_calibration_strat = calibration_options$spectrum_artnum_calibration_strat,
+    spectrum_aware_calibration_level = calibration_options$spectrum_aware_calibration_level,
+    spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
+    spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
+    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
+  )
+  
+  calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
+                                                 naomi_mf = calibration_data$naomi_data)
 
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
@@ -335,6 +350,7 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter2 = calendar_quarter_t2,
     calendar_quarter3 = calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
+    output_aware_plhiv = as.logical(options$output_aware_plhiv),
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)

@@ -1,3 +1,38 @@
+# naomi 2.1.3
+
+### Awareness of HIV status
+
+* If a .shiny90 file is included, the _first90_ package is used to calculate the 
+  proportion of untreated PLHIV who are aware of their HIV status by sex and age
+  group.
+* To estimate the proportion aware of status at the district, this proportion 
+  is applied to the estimated untreated population in each district. This is 
+  added to the ART coverage to estimate the total proportion aware of status at
+  district level by age and sex.
+
+* New output indicators for awarness of HIV status:
+  * `untreated_plhiv_num`: Number of untreated PLHIV (the 'treatment gap').
+  * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
+  * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
+  
+* Add model option `output_aware_plhiv` in 'Advanced options'. If no `.shiny90` file is present 
+  in the PJNZ, this must be set to `FALSE`. An error is raised by `validate_model_options()` 
+  prompting this if no `.shiny90` file is found inside the PJNZ.
+
+
+### PEPFAR Data Pack
+
+* Update PEFPAR datapack export to conform to 2021 Data Pack specification.
+
+
+### Additional changes
+
+* Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
+  affix `_demo` to the end of the area IDs.
+* Add argument `quantile(..., names = FALSE)` in the funciton `add_stats()` for computation 
+  of posterior quantiles. This gives a decent speedup in producing the outptus package.
+
+
 # naomi 2.1.2
 
 * Make running input validation during model run optional
@@ -12,6 +47,8 @@
 
 This release revises the modelling of ANC prevalence and ART coverage and produces
 outputs for district-level ANC testing cascade.
+
+### ANC testing cascade
 
 * Add ANC bias parameters to age-specific prevalence and ART coverage regression equations instead of to aggregate ANC prevalence and ART coverage.
 
@@ -55,7 +92,7 @@ outputs for district-level ANC testing cascade.
 
   Age-stratified ANC testing do not yet inform national or district level estimates for 
   age-specific fertility or HIV/ART fertility rate ratios.
-  
+    
 Additional changes:
 
 * Use Kish effective sample size in likelihood for household survey data.

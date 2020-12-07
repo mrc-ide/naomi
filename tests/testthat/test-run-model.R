@@ -27,12 +27,19 @@ test_that("model can be run", {
                  "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
 
-  ## 16363 = number of non ANC outputs per time
+  ## Total population outputs:
+  ## * 31 age groups
+  ## * 3 sexes
+  ## * 3 output times
+  ## * 22 areas
+  ## * 11 indicators
+  ## 
+  ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
   ## 22 = number of areas
   ## 11 = number of ANC age groups
-  expect_equal(nrow(output), 16368 * 3 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 11 + 3 * 9 * 22 * 11)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -42,6 +49,7 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -52,6 +60,7 @@ test_that("model can be run", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -81,19 +90,19 @@ test_that("model can be run", {
   )
 
   ## Check coarse age outputs saved in coarse_output_path
-coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064",
-                 "Y000_014", "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
+  coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064",
+                   "Y000_014", "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
 
   coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
   expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   ## Metadata has been saved
-  expect_equal(model_run$metadata$areas, "MWI_1_2")
+  expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_path))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report_path))))
   expect_true(any(grepl(basename(a_hintr_data$pjnz), readLines(summary_report_path))))
   expect_true(any(grepl("Central", readLines(summary_report_path))))
 
@@ -114,27 +123,18 @@ test_that("model can be run without programme data", {
   data$art_number <- NULL
   data$anc_testing <- NULL
 
-  options <- list(
-    area_scope = "MWI_1_2",
-    area_level = "4",
-    calendar_quarter_t1 = "CY2016Q1",
-    calendar_quarter_t2 = "CY2018Q3",
-    calendar_quarter_t3 = "CY2019Q2",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
-    spectrum_population_calibration = "national",
-    spectrum_plhiv_calibration_level = "subnational",
-    spectrum_plhiv_calibration_strat = "sex_age_group",
-    spectrum_artnum_calibration_level = "national",
-    spectrum_artnum_calibration_strat = "age_coarse",
-    spectrum_infections_calibration_level = "national",
-    spectrum_infections_calibration_strat = "age_coarse",
-    rng_seed = 17,
-    no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
-  )
+  options <- a_hintr_options
+  options$include_art_t1 <- NULL
+  options$include_art_t2 <- NULL
+  options$anc_clients_year2 <- NULL
+  options$anc_clients_year2_num_months <- NULL
+  options$anc_prevalence_year1 <- NULL
+  options$anc_prevalence_year2 <- NULL
+  options$anc_art_coverage_year1 <- NULL
+  options$anc_art_coverage_year2 <- NULL
+  options$artattend <- NULL
+  options$artattend_t2 <- NULL
+  options$artattend_log_gamma_offset <- NULL
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -152,7 +152,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_label",
                  "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_equal(nrow(output), 16368 * 3 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 11 + 3 * 9 * 22 * 11)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -163,6 +163,7 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -175,6 +176,7 @@ test_that("model can be run without programme data", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
@@ -275,14 +277,15 @@ test_that("setting rng_seed returns same output", {
   data <- a_hintr_data
 
   options <- a_hintr_options
-  options$survey_prevalence = "MWI2016PHIA"
-  options$survey_art_coverage <- "MWI2016PHIA"
+  options$survey_prevalence = "DEMO2016PHIA"
+  options$survey_art_coverage <- "DEMO2016PHIA"
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
   options$include_art_t2 = "false"
   options$artattend <- "false"
   options$spectrum_plhiv_calibration_level <- "none"
   options$spectrum_artnum_calibration_level <- "none"
+  options$spectrum_aware_calibration_level <- "none"
   options$spectrum_infections_calibration_level <- "none"
 
   output_path <- tempfile()
@@ -329,7 +332,7 @@ test_that("exceeding max_iterations convergence error or warning", {
   data <- a_hintr_data
 
   options <- a_hintr_options
-  options$survey_prevalence = "MWI2016PHIA"
+  options$survey_prevalence = "DEMO2016PHIA"
   options$survey_art_coverage <- NULL
   options$survey_recently_infected <- NULL
   options$include_art_t1 = "false"
@@ -428,7 +431,7 @@ test_that("model run can be calibrated", {
                         a_hintr_output$output_path)
   indicators_output <- readRDS(calibrated_output$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 16368 * 3 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 11 + 3 * 9 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output$spectrum_path,
@@ -441,7 +444,9 @@ test_that("model run can be calibrated", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
+      "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
+      "info/", "info/calibration_options.yml", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
@@ -453,7 +458,9 @@ test_that("model run can be calibrated", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv",
-      "meta_period.csv", "info/", "info/calibration_options.yml", info_names,
+      "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
+      "info/", "info/calibration_options.yml", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )
 
@@ -463,8 +470,8 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report))))
-  expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report))))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output$calibration_path,
@@ -499,6 +506,8 @@ test_that("model run can be calibrated", {
     spectrum_plhiv_calibration_strat = "sex_age_coarse",
     spectrum_artnum_calibration_level = "subnational",
     spectrum_artnum_calibration_strat = "age_coarse",
+    spectrum_aware_calibration_level = "subnational",
+    spectrum_aware_calibration_strat = "age_coarse",
     spectrum_infections_calibration_level = "none",
     spectrum_infections_calibration_strat = "age_coarse"
   )
@@ -513,7 +522,7 @@ test_that("model run can be calibrated", {
                         calibrated_output$output_path)
   indicators_output <- readRDS(calibrated_output_2$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 16368 * 3 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 11 + 3 * 9 * 22 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output_2$spectrum_path,
@@ -535,8 +544,8 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report_2)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", readLines(summary_report_2))))
-  expect_true(any(grepl("mwi2019.PJNZ", readLines(summary_report_2))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report_2))))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,
@@ -608,6 +617,145 @@ test_that("progress can report on model fit", {
   expect_equal(messages4$progress[[1]]$fit_model$helpText,
                "Itération 4 - 1h 5m 8s écoulées")
   expect_null(messages5$progress[[1]]$fit_model$helpText)
+})
+
+
+test_that("Model can be run without .shiny90 file", {
+
+  ## Remove .shiny90 from PJNZ and set 'output_aware_plhiv = FALSE'
+  temp_pjnz <- tempfile(fileext = ".pjnz")
+  file.copy(a_hintr_data$pjnz, temp_pjnz)
+  utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
+  expect_false(assert_pjnz_shiny90(temp_pjnz))
+  
+  data <- a_hintr_data
+  data$pjnz <- temp_pjnz
+  data <- format_data_input(data)
+
+  opts <- a_hintr_options
+  opts$output_aware_plhiv <- "false"
+  expect_true(validate_model_options(data, opts))
+
+  ## Fit model without .shiny90 in PJNZ
+  output_path <- tempfile()
+  output_spectrum <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
+  summary_report_path = tempfile(fileext = ".html")
+  calibration_path <- tempfile(fileext = ".rds")
+
+  model_run <- hintr_run_model(data,
+                               opts,
+                               output_path,
+                               output_spectrum,
+                               coarse_output_path,
+                               summary_report_path,
+                               calibration_path)
+
+  expect_s3_class(model_run, "hintr_output")
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "coarse_output_path",
+                 "summary_report_path", "calibration_path", "metadata"))
+
+  output <- readRDS(model_run$output_path)
+  expect_equal(colnames(output),
+               c("area_level", "area_level_label", "area_id", "area_name",
+                 "sex", "age_group", "age_group_label",
+                 "calendar_quarter", "quarter_label",
+                 "indicator", "indicator_label",
+                 "mean", "se", "median", "mode", "lower", "upper"))
+
+  ## Total population outputs:
+  ## * 31 age groups
+  ## * 3 sexes
+  ## * 3 output times
+  ## * 22 areas
+  ## * 9 indicators [9 vs. 11 OMITTED 2 aware of status]
+  ## 
+  ## ANC indicators outputs
+  ## 3 = number or output times
+  ## 9 = number of ANC indicators
+  ## 22 = number of areas
+  ## 11 = number of ANC age groups
+  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 9 + 3 * 9 * 22 * 11)
+  expect_equal(model_run$spectrum_path, output_spectrum)
+  file_list <- unzip(model_run$spectrum_path, list = TRUE)
+  ## Note that this test is likely quite platform specific
+  info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
+  info_names <- paste0("info/", names(info))
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
+
+  expect_equal(model_run$coarse_output_path, coarse_output_path)
+  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
+  expect_setequal(
+    file_list$Name,
+    c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
+      "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
+      "pepfar_datapack_indicators_2021.csv",
+      "info/", info_names,
+      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+  )
+
+  tmp <- tempfile()
+  unzip(model_run$spectrum_path, exdir = tmp, files = info_names)
+  expect_equal(dir(tmp), "info")
+  expect_equal(dir(file.path(tmp, "info")), names(info))
+
+  outputs <- read_output_package(model_run$spectrum_path)
+
+  expect_true(
+    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
+          "spectrum_region_code", "area_sort_order", "geometry") %in%
+        names(outputs$meta_area))
+  )
+
+  tmpf <- tempfile()
+  unzip(model_run$spectrum_path, "boundaries.geojson", exdir = tmpf)
+  output_boundaries <- sf::read_sf(file.path(tmpf, "boundaries.geojson"))
+
+  ## Check coarse age outputs saved in coarse_output_path
+  coarse_ages <- c("Y015_049", "Y015_064", "Y015_999", "Y050_999", "Y000_999", "Y000_064",
+                   "Y000_014", "Y015_024", "Y025_034", "Y035_049", "Y050_064", "Y065_999")
+
+  coarse_age_outputs <- read_output_package(model_run$coarse_output_path)
+  expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
+  expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
+
+  ## Metadata has been saved
+  expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
+
+  ## Summary report has been generated
+  expect_true(file.size(summary_report_path) > 2000)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", readLines(summary_report_path))))
+
+  ## Calibration data is stored
+  expect_true(!is.null(model_run$calibration_path))
+  calibration_data <- readRDS(model_run$calibration_path)
+  expect_equal(names(calibration_data),
+               c("output_package", "naomi_data", "info"))
+  expect_s3_class(calibration_data$output_package, "naomi_output")
+  expect_s3_class(calibration_data$naomi_data, "naomi_data")
+  expect_s3_class(calibration_data$naomi_data, "naomi_mf")
+  expect_equal(names(calibration_data$info),
+               c("inputs.csv", "options.yml", "packages.csv"))
+
+
+  ## ## Calibrate model
+
+  ## Calibration modifies files in place.
+  calibrated_output <- hintr_calibrate(model_run, a_hintr_calibration_options)
+
+  expect_s3_class(calibrated_output, "hintr_output")
+
+  indicators_output <- readRDS(calibrated_output$output_path)
+  ## Check there is some data
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 9 + 3 * 9 * 22 * 11)
 })
 
 test_that("hintr_run_model can skip validation", {
