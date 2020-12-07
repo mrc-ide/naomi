@@ -225,7 +225,7 @@ test_that("progress messages are printed", {
   expect_equal(first_message[[2]]$name, "Fitting the model")
   expect_equal(first_message[[3]]$name, "Generating uncertainty ranges")
   expect_equal(first_message[[4]]$name, "Preparing outputs")
-  ## 5 different states
+  ## 4 different states
   expect_equal(length(first_message), 4)
   expect_true(first_message[[1]]$started)
   expect_false(first_message[[1]]$complete)
