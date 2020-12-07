@@ -95,7 +95,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   if (is.null(options$spectrum_aware_strat)) {
     options$spectrum_aware_calibration_strat <- "sex_age_coarse"
   }
-  
+
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
@@ -120,6 +120,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     stop(paste("convergence error:", fit$message))
   }
 
+  progress$finalise_fit()
   progress$complete("fit_model")
   progress$start("uncertainty")
   progress$print()
@@ -227,7 +228,7 @@ hintr_calibrate <- function(output, calibration_options) {
     spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
     spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
   )
-  
+
   calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
                                                  naomi_mf = calibration_data$naomi_data)
 
@@ -431,7 +432,6 @@ Progress <- R6::R6Class("Progress", list(
 
   complete = function(step_name) {
     self$step_exists(step_name)
-    self$progress[[step_name]]$helpText <- NULL
     self$progress[[step_name]]$complete <- TRUE
   },
 
@@ -458,6 +458,13 @@ Progress <- R6::R6Class("Progress", list(
       list(iteration = self$iteration,
            elapsed = prettyunits::pretty_dt(self$elapsed)))
     self$print()
+  },
+
+  finalise_fit = function() {
+    self$progress$fit_model$helpText <- t_(
+      "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE",
+      list(iteration = self$iteration,
+           elapsed = prettyunits::pretty_dt(self$elapsed)))
   }
 ))
 
