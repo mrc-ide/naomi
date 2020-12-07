@@ -605,6 +605,7 @@ test_that("progress can report on model fit", {
       progress$iterate_fit()
     )
     messages5 <- naomi_evaluate_promise({
+      progress$finalise_fit()
       progress$complete("fit_model")
       progress$print()
     })
@@ -618,7 +619,8 @@ test_that("progress can report on model fit", {
                "Iteration 3 - 1h 2m elapsed")
   expect_equal(messages4$progress[[1]]$fit_model$helpText,
                "Itération 4 - 1h 5m 8s écoulées")
-  expect_null(messages5$progress[[1]]$fit_model$helpText)
+  expect_equal(messages5$progress[[1]]$fit_model$helpText,
+               "Fit terminé en 4 itérations et 1h 5m 8s")
 })
 
 
