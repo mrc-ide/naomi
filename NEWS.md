@@ -1,4 +1,4 @@
-# naomi 2.1.2
+# naomi 2.1.3
 
 ### Awareness of HIV status
 
@@ -32,6 +32,10 @@
 * Add argument `quantile(..., names = FALSE)` in the funciton `add_stats()` for computation 
   of posterior quantiles. This gives a decent speedup in producing the outptus package.
 
+
+# naomi 2.1.2
+
+* Make running input validation during model run optional
 
 # naomi 2.1.1
 
