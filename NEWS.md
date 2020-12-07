@@ -1,6 +1,6 @@
 # naomi 2.1.4
 
-* Add final no of iterations & duration to model fit progress message
+* Add final number of iterations and duration to model fit progress message.
 
 # naomi 2.1.3
 
