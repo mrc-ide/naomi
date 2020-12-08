@@ -347,13 +347,12 @@ text1 <- tibble::tibble(prefix = c("National household survey data on new HIV in
 
 cat(paste0("* ", text1$prefix, "_", text1$source, "_"), sep = "\n")
 ```
-  
-Operational programme data:  
+
   
 ```{r, echo = FALSE, results= 'asis'}
 programme_data <- c(art_year, anc_prev, anc_art)
 
-if(sum(is.na(programme_data))<3) {
+if(sum(is.na(programme_data)) <3 ) {
   
   cat(paste0("\n Operational programme data: \n", sep = "\n"))
   
