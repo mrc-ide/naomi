@@ -216,10 +216,10 @@ test_that("can get model calibration options label from ID", {
 
   expect_length(options_map, length(options))
   expect_equal(options_map, list(
-    spectrum_population_calibration = "Subnational",
-    spectrum_plhiv_calibration_level = "Sex and 5-year age group",
-    spectrum_plhiv_calibration_strat = "None",
-    spectrum_artnum_calibration_level = "Age <15 / 15+",
-    spectrum_artnum_calibration_strat = "None",
+    spectrum_population_calibration_level = "Subnational",
+    spectrum_plhiv_calibration_strat = "Sex and 5-year age group",
+    spectrum_artnum_calibration_level = "None",
+    spectrum_artnum_calibration_strat = "Age <15 / 15+",
+    spectrum_infections_calibration_level = "None",
     spectrum_infections_calibration_strat ="Age <15 / 15+"))
 })
