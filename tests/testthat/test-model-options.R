@@ -146,11 +146,13 @@ test_that("artattend_t2 option produces model frames", {
 
   options_NULL <- a_hintr_options
   options_NULL$artattend_t2 <- NULL
+  options_NULL <- format_options(options_NULL)
   data_NULL <- naomi_prepare_data(input_data, options_NULL)
   inputs_NULL <- prepare_tmb_inputs(data_NULL)
 
   options_FALSE <- a_hintr_options
   options_FALSE$artattend_t2 <- "false"
+  options_FALSE <- format_options(options_FALSE)
   data_FALSE <- naomi_prepare_data(input_data, options_FALSE)
   inputs_FALSE <- prepare_tmb_inputs(data_FALSE)
 
