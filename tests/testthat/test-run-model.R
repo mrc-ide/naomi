@@ -33,7 +33,7 @@ test_that("model can be run", {
   ## * 3 output times
   ## * 22 areas
   ## * 11 indicators
-  ## 
+  ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
@@ -219,7 +219,7 @@ test_that("progress messages are printed", {
       hintr_run_model(a_hintr_data, a_hintr_options,
                       output_path, output_spectrum, coarse_output_path))
   })
-  ## If using mock fit here there will only be 6, if using real
+  ## If using mock fit here there will only be 5, if using real
   ## fit_tmb there will be many more
   expect_true(length(model_run$progress) >= 5)
   first_message <- model_run$progress[[1]]
@@ -247,7 +247,7 @@ test_that("progress messages are printed", {
   model_help <- lapply(model_run$progress, function(msg) {
     msg$fit_model$helpText
   })
-  have_iteration <- grepl("Iteration \\d+ - [\\d.m]+s elapsed", model_help,
+  have_iteration <- grepl("Iteration \\d+ - [\\d.m\\s]+s elapsed", model_help,
                           perl = TRUE)
   expect_true(any(have_iteration))
   expect_false(all(have_iteration))
@@ -255,9 +255,11 @@ test_that("progress messages are printed", {
   expect_false(identical(model_help[[which(have_iteration)[1]]],
                       model_help[[which(have_iteration)[2]]]))
 
-  ## Final messages is cleared of help text
+  ## Final messages has completed message
   final_message <- model_run$progress[[length(model_run$progress)]]
-  expect_true(is.null(final_message$fit_model$helpText))
+  expect_match(final_message$fit_model$helpText,
+               "Fit completed in \\d+ iterations and [\\d.m\\s]+s",
+               perl = TRUE)
 })
 
 test_that("model run throws error for invalid inputs", {
@@ -603,6 +605,7 @@ test_that("progress can report on model fit", {
       progress$iterate_fit()
     )
     messages5 <- naomi_evaluate_promise({
+      progress$finalise_fit()
       progress$complete("fit_model")
       progress$print()
     })
@@ -616,7 +619,8 @@ test_that("progress can report on model fit", {
                "Iteration 3 - 1h 2m elapsed")
   expect_equal(messages4$progress[[1]]$fit_model$helpText,
                "Itération 4 - 1h 5m 8s écoulées")
-  expect_null(messages5$progress[[1]]$fit_model$helpText)
+  expect_equal(messages5$progress[[1]]$fit_model$helpText,
+               "Fit terminé en 4 itérations et 1h 5m 8s")
 })
 
 
@@ -627,7 +631,7 @@ test_that("Model can be run without .shiny90 file", {
   file.copy(a_hintr_data$pjnz, temp_pjnz)
   utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
-  
+
   data <- a_hintr_data
   data$pjnz <- temp_pjnz
   data <- format_data_input(data)
@@ -670,7 +674,7 @@ test_that("Model can be run without .shiny90 file", {
   ## * 3 output times
   ## * 22 areas
   ## * 9 indicators [9 vs. 11 OMITTED 2 aware of status]
-  ## 
+  ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators

@@ -112,6 +112,7 @@
     "PROGRESS_UNCERTAINTY": "Generating uncertainty ranges",
     "PROGRESS_PREPARE_OUTPUTS": "Preparing outputs",
     "PROGRESS_FIT_MODEL_HELP_TEXT": "Iteration {{iteration}} - {{elapsed}} elapsed",
+    "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE": "Fit completed in {{iteration}} iterations and {{elapsed}}",
     "NO_ART_DATA_FOR_QUARTER": "No ART data found for quarter {{calendar_quarter}}.\nSet 'Include ART data' to 'No' if you intend to include no ART data.",
     "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "ANC testing on ART greater than ANC testing total positive.",
     "ANC_DATA_MISSING_FOR_YEAR": "ANC testing data not found for year {{missing_year}}.",
@@ -151,7 +152,7 @@
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Number PLHIV unaware of HIV positive status",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL": "Output 'awareness of HIV status' indicators",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting.",
-    "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}",    
+    "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}",
     "ERROR_SHINY90_MISSING_1": ".shiny90 file is not present for the following projection(s)",
     "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\"."
 }

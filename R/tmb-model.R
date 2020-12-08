@@ -38,7 +38,7 @@ prepare_tmb_inputs <- function(naomi_data) {
   ##       fertility, etc.
 
   create_anc_Amat <- function(anc_obs_dat) {
-    
+
     df_attend_anc <- naomi_data$mf_model %>%
     dplyr::select(reside_area_id = area_id,
                   attend_area_id = area_id,
@@ -49,7 +49,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     dat <- dplyr::rename(anc_obs_dat,
                          attend_area_id = area_id,
                          artnum_idx = obs_idx)
-    
+
     Amat <- create_artattend_Amat(
       dat,
       age_groups = naomi_data$age_groups,

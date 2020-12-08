@@ -1,3 +1,7 @@
+# naomi 2.1.4
+
+* Add final number of iterations and duration to model fit progress message.
+
 # naomi 2.1.3
 
 ### Awareness of HIV status
