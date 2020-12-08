@@ -1,3 +1,9 @@
+# naomi 2.1.1
+
+* Summary report updated to handle model options from naomi web application
+* Calibration options unscrambled in get_model_calibration_options() test
+
+
 # naomi 2.1.0 
 
 This release revises the modelling of ANC prevalence and ART coverage and produces
