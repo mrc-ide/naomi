@@ -508,50 +508,50 @@ format_options <- function(options) {
 
   
 
-  if (is.null(options$artattend)) {
+  if (is.null(options[["artattend"]])) {
     options$artattend <- FALSE
   }
-  if (is.null(options$artattend_t2)) {
+  if (is.null(options[["artattend_t2"]])) {
     options$artattend_t2 <- FALSE
   }
-  if (is.null(options$artattend_log_gamma_offset)) {
+  if (is.null(options[["artattend_log_gamma_offset"]])) {
     options$artattend_log_gamma_offset <- -4
   }
 
-  if(is.null(options$deff_prev))
+  if(is.null(options[["deff_prev"]]))
     options$deff_prev <- 1.0
 
-  if(is.null(options$deff_artcov))
+  if(is.null(options[["deff_artcov"]]))
     options$deff_artcov <- 1.0
 
-  if(is.null(options$deff_recent))
+  if(is.null(options[["deff_recent"]]))
     options$deff_recent <- 1.0
 
-  if(is.null(options$deff_vls))
+  if(is.null(options[["deff_vls"]]))
     options$deff_vls <- 1.0
 
-  if(is.null(options$use_kish_prev))
+  if(is.null(options[["use_kish_prev"]]))
     options$use_kish_prev <- "true"
 
-  if(is.null(options$use_kish_artcov))
+  if(is.null(options[["use_kish_artcov"]]))
     options$use_kish_artcov <- "true"
 
-  if(is.null(options$use_kish_recent))
+  if(is.null(options[["use_kish_recent"]]))
     options$use_kish_recent <- "true"
 
-  if(is.null(options$use_kish_vls))
+  if(is.null(options[["use_kish_vls"]]))
     options$use_kish_vls <- "true"
 
   ## Recode anc_*_year* from "" to NULL
-  if(!is.null(options$anc_clients_year2) && options$anc_clients_year2 == "")
+  if(!is.null(options[["anc_clients_year2"]]) && options$anc_clients_year2 == "")
     options["anc_clients_year2"] <- list(NULL)
-  if(!is.null(options$anc_prevalence_year1) && options$anc_prevalence_year1 == "")
+  if(!is.null(options[["anc_prevalence_year1"]]) && options$anc_prevalence_year1 == "")
     options["anc_prevalence_year1"] <- list(NULL)
-  if(!is.null(options$anc_prevalence_year2) && options$anc_prevalence_year2 == "")
+  if(!is.null(options[["anc_prevalence_year2"]]) && options$anc_prevalence_year2 == "")
     options["anc_prevalence_year2"] <- list(NULL)
-  if(!is.null(options$anc_art_coverage_year1) && options$anc_art_coverage_year1 == "")
+  if(!is.null(options[["anc_art_coverage_year1"]]) && options$anc_art_coverage_year1 == "")
     options["anc_art_coverage_year1"] <- list(NULL)
-  if(!is.null(options$anc_art_coverage_year2) && options$anc_art_coverage_year2 == "")
+  if(!is.null(options[["anc_art_coverage_year2"]]) && options$anc_art_coverage_year2 == "")
     options["anc_art_coverage_year2"] <- list(NULL)
 
   options
