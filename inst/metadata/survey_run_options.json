@@ -23,6 +23,7 @@
           "type": "multiselect",
           "options":
             <+survey_prevalence_options+>,
+          "value": <+survey_prevalence_default+>,
           "required": true
         }
       ]
@@ -35,6 +36,7 @@
           "type": "multiselect",
           "options":
             <+survey_art_coverage_options+>,
+          "value": <+survey_art_coverage_default+>,
           "required": false
         }
       ]
