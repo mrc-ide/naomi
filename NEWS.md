@@ -1,3 +1,11 @@
+# naomi 2.1.5
+
+* Add default model options for
+  * survey prevalence
+  * survey art coverage
+  * ANC time 1
+  * ANC time 2
+
 # naomi 2.1.4
 
 * Add final number of iterations and duration to model fit progress message.
