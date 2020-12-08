@@ -206,11 +206,11 @@ test_that("can get model calibration options", {
 })
 
 test_that("can get model calibration options label from ID", {
-  options <- list(spectrum_population_calibration = "subnational",
-                  spectrum_plhiv_calibration_level = "sex_age_group" ,
-                  spectrum_plhiv_calibration_strat = "none",
-                  spectrum_artnum_calibration_level = "age_coarse",
-                  spectrum_artnum_calibration_strat = "none",
+  options <- list(spectrum_population_calibration_level = "subnational",
+                  spectrum_plhiv_calibration_strat = "sex_age_group" ,
+                  spectrum_artnum_calibration_level = "none",
+                  spectrum_artnum_calibration_strat = "age_coarse",
+                  spectrum_infections_calibration_level = "none",
                   spectrum_infections_calibration_strat ="age_coarse")
   options_map <- get_calibration_option_labels(options)
 
