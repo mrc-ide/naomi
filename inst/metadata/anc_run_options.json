@@ -114,7 +114,7 @@
           "helpText": "t_(OPTIONS_T1_HELP)",
           "options":
             <+anc_art_coverage_year1_options+>,
-          "value": <+anc_prevalence_year1_default+>,
+          "value": <+anc_art_coverage_year1_default+>,
           "required": false
         },
         {
@@ -124,7 +124,7 @@
           "helpText": "t_(OPTIONS_T2_HELP)",
           "options":
             <+anc_art_coverage_year2_options+>,
-          "value": <+anc_prevalence_year2_default+>,
+          "value": <+anc_art_coverage_year2_default+>,
           "required": false
         }
       ]
