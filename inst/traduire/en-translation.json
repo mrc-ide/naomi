@@ -125,7 +125,7 @@
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Scope areas {{missing_areas}} not found in hierarchy.",
     "SHAPE_SPECTRUM_REGION_ALL_NA": "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level.",
     "INVALID_CALIBRATE_OBJECT": "Can't calibrate this model output please re-run model and try calibration again",
-    "OPTIONS_ANC_MONTHS_LABEL": "Months included included in ANC reporting for ANC clients",
+    "OPTIONS_ANC_MONTHS_LABEL": "Months included in ANC reporting for ANC clients",
     "OPTIONS_ANC_MONTHS_HELP": "Number of months included in ANC reporting in this year.",
     "OPTIONS_ADVANCED_USE_KISH_LABEL": "Use Kish ESS",
     "OPTIONS_ADVANCED_USE_KISH_HELP": "Use Kish Effective Sample Size (ESS) for survey data likelihood",
