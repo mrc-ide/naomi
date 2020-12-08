@@ -1,3 +1,8 @@
+# naomi 2.1.6
+
+* Patch front end issue if anc_clients_year2 is selected and unselected, 
+  resulting in `anc_clients_year2` passed to model.
+
 # naomi 2.1.5
 
 * Summary report updated to handle model options from naomi web application
