@@ -31,16 +31,6 @@ test_that("all output stratifications are included in metatdata", {
 
 })
 
-test_that("datapack export writes a csv", {
-
-  tmpf <- tempfile(fileext = ".csv")
-  res <- export_datapack(a_output_full, tmpf)
-  datapack <- readr_read_csv(res)
-
-  expect_equal(tmpf, res)
-  expect_true(!any(is.na(datapack[!names(datapack) == "psnuid"])))
-})
-
 test_that("write and read hintr outputs returns same thing", {
 
   read1 <- read_output_package(a_hintr_output$spectrum_path)
@@ -80,7 +70,7 @@ test_that("write and read naomi outputs returns same thing", {
 test_that("subset output returns expected subset", {
 
 
-  area_id_sub <- c("MWI_1_1", "MWI_2_1")
+  area_id_sub <- c("MWI_1_1_demo", "MWI_2_1_demo")
   sex_sub <- "both"
   age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
   calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
@@ -107,7 +97,7 @@ test_that("subset output returns expected subset", {
                                         age_group = age_group_sub,
                                         calendar_quarter = calendar_quarter_sub,
                                         indicator = indicator_sub)
-  expect_setequal("MWI_1_1", sub_keep_level$indicators$area_id)
+  expect_setequal("MWI_1_1_demo", sub_keep_level$indicators$area_id)
 
   sub_drop <- subset_naomi_output(a_output,
                                   area_id = area_id_sub,
@@ -129,18 +119,18 @@ test_that("subset output returns expected subset", {
 
 
   sub_drop_level <- subset_naomi_output(a_output, area_level = 2:4, drop = TRUE)
-  expect_setequal("MWI_1_1", sub_drop_level$indicators$area_id)
+  expect_setequal("MWI_1_1_demo", sub_drop_level$indicators$area_id)
 
 
-  expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1", "jibberish")),
+  expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1_demo", "jibberish")),
                "area_ids not found in naomi_output: jibberish")
-  expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1", "jibberish"), check_list = FALSE), NA)
+  expect_error(subset_naomi_output(a_output, area_id = c("MWI_2_1_demo", "jibberish"), check_list = FALSE), NA)
 
 })
 
 test_that("subset_output_package() saves expected output package", {
 
-  area_id_sub <- c("MWI_1_2", "MWI_2_2")
+  area_id_sub <- c("MWI_1_2_demo", "MWI_2_2_demo")
   sex_sub <- "both"
   age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
   calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
@@ -148,13 +138,16 @@ test_that("subset_output_package() saves expected output package", {
 
   sub_keep_file <- tempfile(fileext = ".zip")
 
-  sub_keep_return <- subset_output_package(a_hintr_output$spectrum_path,
-                                           sub_keep_file,
-                                           area_id = area_id_sub,
-                                           sex = sex_sub,
-                                           age_group = age_group_sub,
-                                           calendar_quarter = calendar_quarter_sub,
-                                           indicator = indicator_sub)
+  sub_keep_return <- expect_warning(
+    subset_output_package(a_hintr_output$spectrum_path,
+                          sub_keep_file,
+                          area_id = area_id_sub,
+                          sex = sex_sub,
+                          age_group = age_group_sub,
+                          calendar_quarter = calendar_quarter_sub,
+                          indicator = indicator_sub),
+    "PSNU level 3 not included in model outputs"
+  )
 
   sub_keep_out <- read_output_package(sub_keep_file)
 
@@ -194,8 +187,8 @@ test_that("can generate summary report", {
   generate_output_summary_report(t, a_hintr_output$spectrum_path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- readLines(t)
-  expect_true(any(grepl("MWI2016PHIA, MWI2015DHS", content)))
-  expect_true(any(grepl("mwi2019.PJNZ", content)))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo_naomi\"", content)))
 })

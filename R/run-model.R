@@ -10,6 +10,7 @@
 #' @param coarse_output_path Path to store coarse age group output zip file at.
 #' @param summary_report_path Path to store summary report at.
 #' @param calibration_path Path to store data required for calibrating model.
+#' @param validate If FALSE validation of inputs & data will be skipped.
 #'
 #' @details
 #'
@@ -55,55 +56,54 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                             spectrum_path = tempfile(fileext = ".zip"),
                             coarse_output_path = tempfile(fileext = ".zip"),
                             summary_report_path = tempfile(fileext = ".html"),
-                            calibration_path = tempfile(fileext = ".rds")) {
+                            calibration_path = tempfile(fileext = ".rds"),
+                            validate = TRUE) {
   progress <- new_progress()
-
-  progress$start("validate_options")
+  progress$start("prepare_inputs")
   progress$print()
 
   data <- format_data_input(data)
+
+  if (validate) {
+    validate_model_options(data, options)
+  }
 
   if(is.null(options$permissive))
     permissive <- FALSE
   else
     permissive <- as.logical(options$permissive)
 
-  validate_model_options(data, options)
-  progress$complete("validate_options")
-
-
   ## Set default "none" calibration options if missing from options list
 
   if (is.null(options$spectrum_plhiv_calibration_level)) {
     options$spectrum_plhiv_calibration_level  <-  "none"
   }
-
   if (is.null(options$spectrum_plhiv_calibration_strat)) {
     options$spectrum_plhiv_calibration_strat <- "sex_age_group"
   }
-
   if (is.null(options$spectrum_artnum_calibration_level)) {
     options$spectrum_artnum_calibration_level <- "none"
   }
-
   if (is.null(options$spectrum_artnum_strat)) {
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
+  }
+
+  if (is.null(options$spectrum_aware_calibration_level)) {
+    options$spectrum_aware_calibration_level <- "none"
+  }
+
+  if (is.null(options$spectrum_aware_strat)) {
+    options$spectrum_aware_calibration_strat <- "sex_age_coarse"
   }
 
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
-
   if (is.null(options$spectrum_infections_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
 
-  progress$start("prepare_inputs")
-  progress$print()
-
-
   naomi_data <- naomi_prepare_data(data, options)
-
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
   progress$complete("prepare_inputs")
@@ -120,6 +120,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     stop(paste("convergence error:", fit$message))
   }
 
+  progress$finalise_fit()
   progress$complete("fit_model")
   progress$start("uncertainty")
   progress$print()
@@ -149,6 +150,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                options$spectrum_plhiv_calibration_strat,
                                options$spectrum_artnum_calibration_level,
                                options$spectrum_artnum_calibration_strat,
+                               options$spectrum_aware_calibration_level,
+                               options$spectrum_aware_calibration_strat,
                                options$spectrum_infections_calibration_level,
                                options$spectrum_infections_calibration_strat)
 
@@ -214,16 +217,20 @@ hintr_calibrate <- function(output, calibration_options) {
   }
   calibration_data <- readRDS(calibration_path)
   calibrated_output <- calibrate_outputs(
-    calibration_data$output_package, calibration_data$naomi_data,
-    calibration_options$spectrum_plhiv_calibration_level,
-    calibration_options$spectrum_plhiv_calibration_strat,
-    calibration_options$spectrum_artnum_calibration_level,
-    calibration_options$spectrum_artnum_calibration_strat,
-    calibration_options$spectrum_infections_calibration_level,
-    calibration_options$spectrum_infections_calibration_strat)
+    output = calibration_data$output_package,
+    naomi_mf = calibration_data$naomi_data,
+    spectrum_plhiv_calibration_level = calibration_options$spectrum_plhiv_calibration_level,
+    spectrum_plhiv_calibration_strat = calibration_options$spectrum_plhiv_calibration_strat,
+    spectrum_artnum_calibration_level = calibration_options$spectrum_artnum_calibration_level,
+    spectrum_artnum_calibration_strat = calibration_options$spectrum_artnum_calibration_strat,
+    spectrum_aware_calibration_level = calibration_options$spectrum_aware_calibration_level,
+    spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
+    spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
+    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
+  )
 
-  calibrated_output <- disaggregate_0to4_outputs(calibrated_output,
-                                                 calibration_data$naomi_data)
+  calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
+                                                 naomi_mf = calibration_data$naomi_data)
 
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
@@ -288,13 +295,13 @@ naomi_prepare_data <- function(data, options) {
 
   if(is.null(options$use_kish_prev))
     options$use_kish_prev <- "true"
-  
+
   if(is.null(options$use_kish_artcov))
     options$use_kish_artcov <- "true"
-  
+
   if(is.null(options$use_kish_recent))
     options$use_kish_recent <- "true"
-  
+
   if(is.null(options$use_kish_vls))
     options$use_kish_vls <- "true"
 
@@ -344,6 +351,7 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter2 = calendar_quarter_t2,
     calendar_quarter3 = calendar_quarter_t3,
     spectrum_population_calibration = options$spectrum_population_calibration,
+    output_aware_plhiv = as.logical(options$output_aware_plhiv),
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
@@ -393,11 +401,6 @@ Progress <- R6::R6Class("Progress", list(
   initialize = function() {
     self$progress <-
       list(
-        validate_options = list(
-          started = FALSE,
-          complete = FALSE,
-          name = t_("PROGRESS_VALIDATE_OPTIONS")
-        ),
         prepare_inputs = list(
           started = FALSE,
           complete = FALSE,
@@ -429,7 +432,6 @@ Progress <- R6::R6Class("Progress", list(
 
   complete = function(step_name) {
     self$step_exists(step_name)
-    self$progress[[step_name]]$helpText <- NULL
     self$progress[[step_name]]$complete <- TRUE
   },
 
@@ -456,6 +458,13 @@ Progress <- R6::R6Class("Progress", list(
       list(iteration = self$iteration,
            elapsed = prettyunits::pretty_dt(self$elapsed)))
     self$print()
+  },
+
+  finalise_fit = function() {
+    self$progress$fit_model$helpText <- t_(
+      "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE",
+      list(iteration = self$iteration,
+           elapsed = prettyunits::pretty_dt(self$elapsed)))
   }
 ))
 

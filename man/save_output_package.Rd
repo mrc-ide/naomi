@@ -12,7 +12,8 @@ save_output_package(
   overwrite = FALSE,
   with_labels = FALSE,
   boundary_format = "geojson",
-  single_csv = FALSE
+  single_csv = FALSE,
+  export_datapack = !single_csv
 )
 
 read_output_package(path)
@@ -33,6 +34,8 @@ or shape format}
 
 \item{single_csv}{If TRUE only output the csv of indicators, otherwise save
 the metadata too}
+
+\item{export_datapack}{If TRUE save CSV of PEPFAR datapack indicators.}
 
 \item{path}{Path to output zip file.}
 }

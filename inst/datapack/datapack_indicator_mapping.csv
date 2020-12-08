@@ -1,0 +1,14 @@
+indicator,datapack_indicator_id,datapack_indicator_code,datapack_description,is_integer
+prevalence,lJtpR5byqps,HIV_PREV.T_1,HIV Prevalence,FALSE
+plhiv,iwSejvD8cXl,PLHIV.T_1,People living with HIV,TRUE
+population,KssDaTsGWnS,POP_EST.T_1,Total Population,TRUE
+anc_plhiv,eJaChfuqUTs,PMTCT_ART_SUBNAT.D.T_1,# HIV-positIve Pregnant Women identified at ANC1,TRUE
+anc_already_art,HVBf6Sgi6Jk,PMTCT_ART_SUBNAT.N.Already.T_1,# HIV-positive Pregnant Women already on ART at ANC1,TRUE
+anc_art_new,HVBf6Sgi6Jk,PMTCT_ART_SUBNAT.N.New.T_1,# HIV-positive Pregnant Women newly diagnosed at ANC1 and placed on ART,TRUE
+anc_clients,RM8gRoxtsNw,PMTCT_STAT_SUBNAT.D.T_1,# Pregnant Women who present at ANC1,TRUE
+anc_known_pos,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.Known.Pos.T_1,# Pregnant Women who are known HIV-positive at ANC1,TRUE
+anc_tested_neg,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.New.Neg.T_1,# Pregnant Women who are newly tested and found HIV-negative at ANC1,TRUE
+anc_tested_pos,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.New.Pos.T_1,# Pregnant Women who are newly tested and found HIV-positive at ANC1,TRUE
+art_current,xghQXueYJxu,TX_CURR_SUBNAT.T_1,Total # of PLHIV on ART,TRUE
+art_coverage,TX_CURR_SUBNAT.N.coverage,TX_CURR_SUBNAT.N.coverage,ART coverage,FALSE
+aware_plhiv_prop,DIAGNOSED_SUBNAT,DIAGNOSED_SUBNAT,Proportion awareness of HIV status,FALSE

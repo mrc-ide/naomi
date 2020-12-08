@@ -109,6 +109,59 @@
       ]
     },
     {
+      "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_LABEL)",
+      "controls": [
+        {
+          "name": "spectrum_aware_calibration_level",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_LEVEL_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "none",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE)"
+            },
+            {
+              "id": "national",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NATIONAL)"
+            },
+            {
+              "id": "subnational",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
+            }
+          ],
+          "value": "national",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_HELP)"
+        },
+        {
+          "name": "spectrum_aware_calibration_strat",
+          "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_STRATIFICATION_LABEL)",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "sex_age_coarse",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)"
+            },
+            {
+              "id": "age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)"
+            },
+            {
+              "id": "sex_age_group",
+              "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
+            }
+          ],
+          "value": "sex_age_coarse",
+          "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AWARE_HELP)"
+        }
+      ]
+    },
+    {
       "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_LABEL)",
       "controls": [
         {

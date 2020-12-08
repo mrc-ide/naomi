@@ -29,9 +29,9 @@ library(sf)
 #' web tool.
 ##+ load_area_data, message = FALSE
 
-area_levels <- read_csv(system.file("extdata/areas/area_levels.csv", package = "naomi"))
-area_hierarchy  <- read_csv(system.file("extdata/areas/area_hierarchy.csv", package = "naomi"))
-area_boundaries <- sf::read_sf(system.file("extdata/areas/area_boundaries.geojson", package = "naomi"))
+area_levels <- read_csv(system.file("extdata/areas/demo_area_levels.csv", package = "naomi"))
+area_hierarchy  <- read_csv(system.file("extdata/areas/demo_area_hierarchy.csv", package = "naomi"))
+area_boundaries <- sf::read_sf(system.file("extdata/areas/demo_area_boundaries.geojson", package = "naomi"))
 
 area_merged <- area_hierarchy %>%
   left_join(
@@ -52,17 +52,17 @@ area_merged <- read_sf(file.path(tempdir(), "area_merged.geojson"))
 
 #' Population data
 ##+ load_population_data, message = FALSE
-pop_agesex <- read_csv(system.file("extdata/population/population_agesex.csv", package = "naomi"))
+pop_agesex <- read_csv(system.file("extdata/demo_population_agesex.csv", package = "naomi"))
 
 #' Survey data
 ##+ load_survey_data, message = FALSE
-survey_hiv_indicators <- read_csv(system.file("extdata/survey/survey_hiv_indicators.csv", package = "naomi"))
+survey_hiv_indicators <- read_csv(system.file("extdata/demo_survey_hiv_indicators.csv", package = "naomi"))
 
 #' Programme data
 #'
 ##+ message = FALSE
-art_number <- read_csv(system.file("extdata/programme/art_number.csv", package = "naomi"))
-anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package = "naomi"))
+art_number <- read_csv(system.file("extdata/demo_art_number.csv", package = "naomi"))
+anc_testing <- read_csv(system.file("extdata/demo_anc_testing.csv", package = "naomi"))
 
 
 #' Programme data
@@ -70,7 +70,7 @@ anc_testing <- read_csv(system.file("extdata/programme/anc_testing.csv", package
 
 #' Spectrum PJNZ
 
-pjnz <- system.file("extdata/mwi2019.PJNZ", package = "naomi")
+pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 spec <- extract_pjnz_naomi(pjnz)
 
 
@@ -223,6 +223,8 @@ outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_strat = "sex_age_coarse",
                                    spectrum_artnum_calibration_level = "national", 
                                    spectrum_artnum_calibration_strat = "sex_age_coarse",
+                                   spectrum_aware_calibration_level = "national", 
+                                   spectrum_aware_calibration_strat = "sex_age_coarse",
                                    spectrum_infections_calibration_level = "national", 
                                    spectrum_infections_calibration_strat = "sex_age_coarse")
 
@@ -239,10 +241,10 @@ outputs$indicators %>%
 
 ##+ save_outputs, message = FALSE, results = "hide"
 dir.create("outputs", showWarnings = FALSE)
-save_output_package(outputs, "mwi_outputs", "outputs", with_labels = FALSE)
-save_output_package(outputs, "mwi_outputs_with_labels", "outputs", with_labels = TRUE)
-save_output_package(outputs, "mwi_outputs_single_csv", "outputs", with_labels = TRUE, single_csv = TRUE)
-save_output_package(outputs, "mwi_outputs_single_csv_unlabelled", "outputs", with_labels = FALSE, single_csv = TRUE)
+save_output_package(outputs, "demo_outputs", "outputs", with_labels = FALSE)
+save_output_package(outputs, "demo_outputs_with_labels", "outputs", with_labels = TRUE)
+save_output_package(outputs, "demo_outputs_single_csv", "outputs", with_labels = TRUE, single_csv = TRUE)
+save_output_package(outputs, "demo_outputs_single_csv_unlabelled", "outputs", with_labels = FALSE, single_csv = TRUE)
 
 
 ## #' 6. Plot some model outputs
@@ -274,7 +276,6 @@ indicators %>%
          ## sex == "both",
          indicator == "prevalence",
          area_level == 2) %>%
-  ## semi_join(get_area_collection(areas, level = 3, area_scope = "MWI.3")) %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +

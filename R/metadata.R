@@ -97,3 +97,11 @@ get_five_year_age_groups <- function() {
   age_groups <- age_groups[age_groups$age_group_span == 5 | age_groups$age_group == "Y080_999", ]
   age_groups$age_group
 }
+
+
+
+get_iso3 <- function(area_ids) {
+
+  ## TODO: This violates our rules about no string parsing of area_id.
+  sub("([A-Z]{3}).*", "\\1", area_ids[1])
+}

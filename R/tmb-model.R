@@ -38,7 +38,7 @@ prepare_tmb_inputs <- function(naomi_data) {
   ##       fertility, etc.
 
   create_anc_Amat <- function(anc_obs_dat) {
-    
+
     df_attend_anc <- naomi_data$mf_model %>%
     dplyr::select(reside_area_id = area_id,
                   attend_area_id = area_id,
@@ -49,7 +49,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     dat <- dplyr::rename(anc_obs_dat,
                          attend_area_id = area_id,
                          artnum_idx = obs_idx)
-    
+
     Amat <- create_artattend_Amat(
       dat,
       age_groups = naomi_data$age_groups,
@@ -238,6 +238,10 @@ prepare_tmb_inputs <- function(naomi_data) {
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset * naomi_data$mf_model$bin_rho_model,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
     logit_alpha_t1t2_offset = logit_alpha_t1t2_offset,
+    ##
+    unaware_untreated_prop_t1 = df$spec_unaware_untreated_prop_t1,
+    unaware_untreated_prop_t2 = df$spec_unaware_untreated_prop_t2,
+    unaware_untreated_prop_t3 = df$spec_unaware_untreated_prop_t3,
     ##
     Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
     n_nb = naomi_data$mf_areas$n_neighbors,
