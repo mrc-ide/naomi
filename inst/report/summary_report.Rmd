@@ -95,8 +95,8 @@ include <- tibble::tibble(
   anc_art = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2),
   anc_prev = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
 ) %>%
-  dplyr::mutate_all(list(~na_if(., "NULL"))) %>%
-  dplyr::mutate_all(list(~na_if(., "")))
+  dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
+  dplyr::mutate_all(list(~dplyr::na_if(., "")))
 
 # Select years where ART programme data is included
 
