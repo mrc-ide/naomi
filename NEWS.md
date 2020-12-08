@@ -1,3 +1,8 @@
+# naomi 2.1.5
+
+* Summary report updated to handle model options from naomi web application
+* Calibration options unscrambled in get_model_calibration_options() test
+
 # naomi 2.1.4
 
 * Add final number of iterations and duration to model fit progress message.
