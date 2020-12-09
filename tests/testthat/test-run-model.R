@@ -753,6 +753,7 @@ test_that("Model can be run without .shiny90 file", {
 
 
   ## ## Calibrate model
+
   ## Calibration modifies files in place.
   calibrated_output <- hintr_calibrate(model_run, a_hintr_calibration_options)
 
@@ -785,3 +786,4 @@ test_that("hintr_run_model can skip validation", {
   })
   mockery::expect_called(mock_validate_model_options, 1)
 })
+
