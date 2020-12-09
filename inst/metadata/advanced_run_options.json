@@ -1,5 +1,5 @@
 {
-  "label": "t_(OPTIONS_CALIBRATION_LABEL)",
+  "label": "t_(OPTIONS_MODEL_CALIBRATION_LABEL)",
   "description": "t_(OPTIONS_MODEL_CALIBRATION_DESCRIPTION)",
   "controlGroups": [
     {
