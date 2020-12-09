@@ -207,7 +207,7 @@ test_that("validation check for spectrum region code returns error", {
 test_that("can get model calibration options", {
   options <- get_model_calibration_options()
   expect_length(options, 1)
-  expect_true(any(grepl("Calibration options", options)))
+  expect_true(any(grepl("Pot model fit calibration", options)))
 })
 
 test_that("can get model calibration options label from ID", {
@@ -235,7 +235,7 @@ test_that("validate_model_options() returns error if missing .shiny90", {
   file.copy(a_hintr_data$pjnz, temp_pjnz)
   utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
-  
+
   bad_data <- a_hintr_data
   bad_data$pjnz <- temp_pjnz
   bad_data <- format_data_input(bad_data)
