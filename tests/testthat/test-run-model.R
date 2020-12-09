@@ -372,6 +372,8 @@ test_that("invalid time sequencing returns an error", {
 test_that("model works with empty string for ANC year", {
 
   options <- a_hintr_options
+
+  options$anc_clients_year2 <- ""
   options$anc_prevalence_year1 <- ""
   options$anc_prevalence_year2 <- ""
   options$anc_art_coverage_year1 <- ""

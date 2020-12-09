@@ -1,3 +1,10 @@
+# naomi 2.1.6
+
+* Patch front end issue if anc_clients_year2 is selected and unselected, 
+  resulting in `anc_clients_year2` passed to model.
+* Patch issue arising if no ART data is uploaded and R gets confused 
+  about an option not supplied due to autocompletion of list$name.
+
 # naomi 2.1.5
 
 * Summary report updated to handle model options from naomi web application
