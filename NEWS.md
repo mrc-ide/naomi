@@ -1,3 +1,7 @@
+# naomi 2.1.6
+
+* Summary report logic error corrected
+
 # naomi 2.1.5
 
 * Summary report updated to handle model options from naomi web application
