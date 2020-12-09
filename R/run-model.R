@@ -63,10 +63,44 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$print()
 
   data <- format_data_input(data)
-  options <- format_options(options)
 
   if (validate) {
     validate_model_options(data, options)
+  }
+
+  if(is.null(options$permissive))
+    permissive <- FALSE
+  else
+    permissive <- as.logical(options$permissive)
+
+  ## Set default "none" calibration options if missing from options list
+
+  if (is.null(options$spectrum_plhiv_calibration_level)) {
+    options$spectrum_plhiv_calibration_level  <-  "none"
+  }
+  if (is.null(options$spectrum_plhiv_calibration_strat)) {
+    options$spectrum_plhiv_calibration_strat <- "sex_age_group"
+  }
+  if (is.null(options$spectrum_artnum_calibration_level)) {
+    options$spectrum_artnum_calibration_level <- "none"
+  }
+  if (is.null(options$spectrum_artnum_strat)) {
+    options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
+  }
+
+  if (is.null(options$spectrum_aware_calibration_level)) {
+    options$spectrum_aware_calibration_level <- "none"
+  }
+
+  if (is.null(options$spectrum_aware_strat)) {
+    options$spectrum_aware_calibration_strat <- "sex_age_coarse"
+  }
+
+  if (is.null(options$spectrum_infections_calibration_level)) {
+    options$spectrum_infections_calibration_level <- "none"
+  }
+  if (is.null(options$spectrum_infections_strat)) {
+    options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
 
   naomi_data <- naomi_prepare_data(data, options)
@@ -82,7 +116,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                  max_iter = options$max_iterations %||% 250,
                  progress = progress)
 
-  if(fit$convergence != 0 && !options$permissive) {
+  if(fit$convergence != 0 && !permissive) {
     stop(paste("convergence error:", fit$message))
   }
 
@@ -177,8 +211,45 @@ is_hintr_output <- function(object) {
 #' @return Calibrated hintr_output object
 #' @export
 hintr_calibrate <- function(output, calibration_options) {
-  ## TODO: Run this asynchronously see mrc-2040
-  output
+  calibration_path <- output$calibration_path
+  if (!is_hintr_output(output) || is.null(calibration_path)) {
+    stop(t_("INVALID_CALIBRATE_OBJECT"))
+  }
+  calibration_data <- readRDS(calibration_path)
+  calibrated_output <- calibrate_outputs(
+    output = calibration_data$output_package,
+    naomi_mf = calibration_data$naomi_data,
+    spectrum_plhiv_calibration_level = calibration_options$spectrum_plhiv_calibration_level,
+    spectrum_plhiv_calibration_strat = calibration_options$spectrum_plhiv_calibration_strat,
+    spectrum_artnum_calibration_level = calibration_options$spectrum_artnum_calibration_level,
+    spectrum_artnum_calibration_strat = calibration_options$spectrum_artnum_calibration_strat,
+    spectrum_aware_calibration_level = calibration_options$spectrum_aware_calibration_level,
+    spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
+    spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
+    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
+  )
+
+  calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
+                                                 naomi_mf = calibration_data$naomi_data)
+
+  calibration_data$info$calibration_options.yml <-
+    yaml::as.yaml(calibration_options)
+  saveRDS(calibration_data, output$calibration_path)
+  attr(calibrated_output, "info") <- calibration_data$info
+
+  indicators <- add_output_labels(calibrated_output)
+  saveRDS(indicators, file = output$output_path)
+  save_output_coarse_age_groups(output$coarse_output_path, calibrated_output,
+                                overwrite = TRUE)
+  save_output_spectrum(output$spectrum_path, calibrated_output,
+                       overwrite = TRUE)
+  generate_output_summary_report(output$summary_report_path,
+                                 output$spectrum_path,
+                                 quiet = TRUE)
+  build_hintr_output(output$output_path, output$spectrum_path,
+                     output$coarse_output_path, output$summary_report_path,
+                     output$calibration_path,
+                     output$metadata)
 }
 
 naomi_prepare_data <- function(data, options) {
@@ -199,6 +270,41 @@ naomi_prepare_data <- function(data, options) {
   } else {
     anc_testing <- NULL
   }
+
+  if (is.null(options$artattend)) {
+    options$artattend <- FALSE
+  }
+  if (is.null(options$artattend_t2)) {
+    options$artattend_t2 <- FALSE
+  }
+  if (is.null(options$artattend_log_gamma_offset)) {
+    options$artattend_log_gamma_offset <- -4
+  }
+
+  if(is.null(options$deff_prev))
+    options$deff_prev <- 1.0
+
+  if(is.null(options$deff_artcov))
+    options$deff_artcov <- 1.0
+
+  if(is.null(options$deff_recent))
+    options$deff_recent <- 1.0
+
+  if(is.null(options$deff_vls))
+    options$deff_vls <- 1.0
+
+  if(is.null(options$use_kish_prev))
+    options$use_kish_prev <- "true"
+
+  if(is.null(options$use_kish_artcov))
+    options$use_kish_artcov <- "true"
+
+  if(is.null(options$use_kish_recent))
+    options$use_kish_recent <- "true"
+
+  if(is.null(options$use_kish_vls))
+    options$use_kish_vls <- "true"
+
 
   ## Get from the options
   scope <- options$area_scope
@@ -224,6 +330,16 @@ naomi_prepare_data <- function(data, options) {
     artnum_calendar_quarter2 <- calendar_quarter_t2
   else
     artnum_calendar_quarter2 <- NULL
+
+  ## Recode anc_*_year* from "" to NULL
+  if(!is.null(options$anc_prevalence_year1) && options$anc_prevalence_year1 == "")
+    options["anc_prevalence_year1"] <- list(NULL)
+  if(!is.null(options$anc_prevalence_year2) && options$anc_prevalence_year2 == "")
+    options["anc_prevalence_year2"] <- list(NULL)
+  if(!is.null(options$anc_art_coverage_year1) && options$anc_art_coverage_year1 == "")
+    options["anc_art_coverage_year1"] <- list(NULL)
+  if(!is.null(options$anc_art_coverage_year2) && options$anc_art_coverage_year2 == "")
+    options["anc_art_coverage_year2"] <- list(NULL)
 
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
@@ -423,99 +539,4 @@ convert_format <- function(data) {
       filename = basename(input)
     )
   })
-}
-
-
-## Move several ad hoc options formatting from hintr_run_model() into a separate
-## function.
-##
-## In future, refactor this to systmatically cast options based on type and set
-## defaults if missing from metadata.
-format_options <- function(options) {
-
-  if (is.null(options$permissive)) {
-    options$permissive <- FALSE
-  } else {
-    options$permissive <- as.logical(options$permissive)
-  }
-
-  ## Set default "none" calibration options if missing from options list
-
-  if (is.null(options$spectrum_plhiv_calibration_level)) {
-    options$spectrum_plhiv_calibration_level  <-  "none"
-  }
-  if (is.null(options$spectrum_plhiv_calibration_strat)) {
-    options$spectrum_plhiv_calibration_strat <- "sex_age_group"
-  }
-  if (is.null(options$spectrum_artnum_calibration_level)) {
-    options$spectrum_artnum_calibration_level <- "none"
-  }
-  if (is.null(options$spectrum_artnum_strat)) {
-    options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
-  }
-
-  if (is.null(options$spectrum_aware_calibration_level)) {
-    options$spectrum_aware_calibration_level <- "none"
-  }
-
-  if (is.null(options$spectrum_aware_strat)) {
-    options$spectrum_aware_calibration_strat <- "sex_age_coarse"
-  }
-
-  if (is.null(options$spectrum_infections_calibration_level)) {
-    options$spectrum_infections_calibration_level <- "none"
-  }
-  if (is.null(options$spectrum_infections_strat)) {
-    options$spectrum_infections_calibration_strat <- "sex_age_coarse"
-  }
-
-
-
-  if (is.null(options[["artattend"]])) {
-    options$artattend <- FALSE
-  }
-  if (is.null(options[["artattend_t2"]])) {
-    options$artattend_t2 <- FALSE
-  }
-  if (is.null(options[["artattend_log_gamma_offset"]])) {
-    options$artattend_log_gamma_offset <- -4
-  }
-
-  if(is.null(options[["deff_prev"]]))
-    options$deff_prev <- 1.0
-
-  if(is.null(options[["deff_artcov"]]))
-    options$deff_artcov <- 1.0
-
-  if(is.null(options[["deff_recent"]]))
-    options$deff_recent <- 1.0
-
-  if(is.null(options[["deff_vls"]]))
-    options$deff_vls <- 1.0
-
-  if(is.null(options[["use_kish_prev"]]))
-    options$use_kish_prev <- "true"
-
-  if(is.null(options[["use_kish_artcov"]]))
-    options$use_kish_artcov <- "true"
-
-  if(is.null(options[["use_kish_recent"]]))
-    options$use_kish_recent <- "true"
-
-  if(is.null(options[["use_kish_vls"]]))
-    options$use_kish_vls <- "true"
-
-  ## Recode anc_*_year* from "" to NULL
-  if(!is.null(options[["anc_clients_year2"]]) && options$anc_clients_year2 == "")
-    options["anc_clients_year2"] <- list(NULL)
-  if(!is.null(options[["anc_prevalence_year1"]]) && options$anc_prevalence_year1 == "")
-    options["anc_prevalence_year1"] <- list(NULL)
-  if(!is.null(options[["anc_prevalence_year2"]]) && options$anc_prevalence_year2 == "")
-    options["anc_prevalence_year2"] <- list(NULL)
-  if(!is.null(options[["anc_art_coverage_year1"]]) && options$anc_art_coverage_year1 == "")
-    options["anc_art_coverage_year1"] <- list(NULL)
-  if(!is.null(options[["anc_art_coverage_year2"]]) && options$anc_art_coverage_year2 == "")
-    options["anc_art_coverage_year2"] <- list(NULL)
-
-  options
 }
