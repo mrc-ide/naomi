@@ -1,3 +1,7 @@
+# naomi 2.1.8
+
+* Hotfix to move calibration options back to model run, and skip model calibration step. This is too slow to run synchronously and is meaning no other users can use the application whilst calibration is being run
+
 # naomi 2.1.7
 
 * In model options:

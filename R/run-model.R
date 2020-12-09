@@ -177,6 +177,7 @@ is_hintr_output <- function(object) {
 #' @return Calibrated hintr_output object
 #' @export
 hintr_calibrate <- function(output, calibration_options) {
+  ## TODO: Run this asynchronously see mrc-2040
   output
 }
 
