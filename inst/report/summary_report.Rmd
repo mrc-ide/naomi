@@ -605,7 +605,7 @@ if(district_count <= 35){height <- 8}
 if(district_count > 35 && district_count <= 65){height <- 10}
 if(district_count > 65 && district_count <= 125){height <- 14}
 if(district_count > 125 && district_count <= 160){height <- 20}
-if(district_count > 160){fig_height <- 24}
+if(district_count > 160){height <- 24}
 
 ```
 
