@@ -258,7 +258,7 @@ test_that("progress messages are printed", {
   ## Final messages has completed message
   final_message <- model_run$progress[[length(model_run$progress)]]
   expect_match(final_message$fit_model$helpText,
-               "Fit completed in \\d+ iterations and [\\d.m\\s]+s",
+               "\\d+ iterations in [\\d.m\\s]+s",
                perl = TRUE)
 })
 
@@ -622,7 +622,7 @@ test_that("progress can report on model fit", {
   expect_equal(messages4$progress[[1]]$fit_model$helpText,
                "Itération 4 - 1h 5m 8s écoulées")
   expect_equal(messages5$progress[[1]]$fit_model$helpText,
-               "Fit terminé en 4 itérations et 1h 5m 8s")
+               "4 itérations en 1h 5m 8s")
 })
 
 
