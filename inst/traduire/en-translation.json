@@ -46,7 +46,7 @@
     "OPTIONS_RECENTLY_INFECTED_LABEL": "Use survey data on proportion recently infected",
     "OPTIONS_POPULATION_CALIBRATION_LABEL": "Population calibration",
     "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum population size. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Calibration to Spectrum population is completed before model fitting.",
-    "OPTIONS_CALIBRATION_LABEL": "Post-fit model calibration - coming soon!",
+    "OPTIONS_CALIBRATION_LABEL": "Post model fit model calibration - Coming soon!",
     "OPTIONS_CALIBRATION_DESCRIPTION": "Calibration currently not working on this page, please click Calibrate to continue to next stage. If you need to recalibrate the model please re-run the model fit.",
     "OPTIONS_MODEL_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL": "Adjust to Spectrum population size",
