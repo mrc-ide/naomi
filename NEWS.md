@@ -6,6 +6,11 @@
   * If ANC data exist in the most recent survey year [defaulted for prevalence], default select that year for Time 1 (both prevalence and ART coverage). If no data in that year, do not select default
   * If ANC data exist in the year 2020, preselect that for 'Time 2' in ANC clients, ANC prevalence, and ANC coverage.
 
+# naomi 2.1.5
+
+* Summary report updated to handle model options from naomi web application
+* Calibration options unscrambled in get_model_calibration_options() test
+
 # naomi 2.1.4
 
 * Add final number of iterations and duration to model fit progress message.

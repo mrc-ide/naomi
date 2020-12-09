@@ -94,14 +94,17 @@ include <- tibble::tibble(
   art_attend = list(options$artattend, options$artattend_t2),
   anc_art = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2),
   anc_prev = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
-) 
+) %>%
+  dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
+  dplyr::mutate_all(list(~dplyr::na_if(., "")))
 
 # Select years where ART programme data is included
-if("true" %in% include$art ) {
+
+if("true" %in% include$art) {
   df <- include %>% dplyr::filter(art == "true")
   art_year <- paste0(df$art_year, sep = "", collapse = " and ")
 } else {
-  art_year <- " "
+  art_year <- NA
 }
 
 # Select years where ART attendance reallocation is implemented
@@ -109,23 +112,23 @@ if("true" %in% include$art_attend ) {
   df <- include %>% dplyr::filter(art_attend == "true")
   art_attend <- paste0(df$art_year, sep = "", collapse = " and ")
 } else {
-  art_attend <- " "
+  art_attend <- NA
 }
 
 # Select years where ANC ART programme data is included
-if(sum(lengths(include$anc_art)) > 0) {
+if(sum(length(is.na(include$anc_art))) < 2) {
   df <- include %>% dplyr::filter(anc_art != "NULL")
   anc_art <- paste0(df$anc_art, sep = "", collapse = " and ")
 } else {
-  anc_art <- " "
+  anc_art <- NA
 }
 
 # Select years where ANC prev programme data is included
-if(sum(lengths(include$anc_prev)) > 0) {
+if(sum(length(is.na(include$anc_prev))) < 2) {
   df <- include %>% dplyr::filter(anc_prev != "NULL")
   anc_prev <- paste0(df$anc_prev, sep = "", collapse = " and ")
 } else {
-  anc_prev <- " "
+  anc_prev <- NA
 }
 
 
@@ -344,23 +347,30 @@ text1 <- tibble::tibble(prefix = c("National household survey data on new HIV in
 
 cat(paste0("* ", text1$prefix, "_", text1$source, "_"), sep = "\n")
 ```
-  
-Operational programme data:  
+
   
 ```{r, echo = FALSE, results= 'asis'}
-text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for ",
+programme_data <- c(art_year, anc_prev, anc_art)
+
+if(sum(is.na(programme_data)) <3 ) {
+  
+  cat(paste0("\n Operational programme data: \n", sep = "\n"))
+  
+  text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for ",
                                   "National programme data on ANC HIV prevalence for ", 
                                   "National programme data on ANC ART coverage for "
                                   ), 
                        source = c(art_year,
                                   anc_prev, 
                                   anc_art)) %>%
-  dplyr::filter(source != "")
+  tidyr::drop_na()
 
 
 cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  
+}
 
-cat(paste0("\n and national HIV estimates from Spectrum file _", spectrum_file,"_",
+ cat(paste0("\n and national HIV estimates from Spectrum file _", spectrum_file,"_",
            "\n using calibration options: \n " ))
 ```
 ```{r, echo = FALSE, results = 'asis'}
