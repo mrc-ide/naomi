@@ -1,10 +1,18 @@
-# naomi 2.1.5
+# naomi 2.1.7
 
 * In model options:
   * Select most recent household survey for prevalence based on survey_mid_calendar_quarter
   * Select most recent household survey for art_coverage if data exist
   * If ANC data exist in the most recent survey year [defaulted for prevalence], default select that year for Time 1 (both prevalence and ART coverage). If no data in that year, do not select default
   * If ANC data exist in the year 2020, preselect that for 'Time 2' in ANC clients, ANC prevalence, and ANC coverage.
+
+# naomi 2.1.6
+
+* Summary report logic error corrected
+* Patch front end issue if anc_clients_year2 is selected and unselected, 
+  resulting in `anc_clients_year2` passed to model.
+* Patch issue arising if no ART data is uploaded and R gets confused 
+  about an option not supplied due to autocompletion of list$name.
 
 # naomi 2.1.5
 

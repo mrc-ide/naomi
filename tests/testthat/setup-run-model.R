@@ -36,7 +36,13 @@ a_hintr_options <- list(
   rng_seed = 17,
   no_of_samples = 20,
   max_iter = 250,
-  permissive = "false"
+  permissive = "false",
+  use_kish_prev = "true",  
+  deff_prev = 1.0,
+  use_kish_artcov = "true",
+  deff_artcov = 1.0,
+  use_kish_recent = "true",
+  deff_recent = 1.0
 )
 
 a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)
