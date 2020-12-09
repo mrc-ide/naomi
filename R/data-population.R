@@ -19,7 +19,7 @@ get_age_groups <- function() {
 #' @param quarter_id vector of integer quarter IDs.
 #' @param year vector of integer years.
 #' @param quarter vector of integer quarters (1,2,3,4).
-#' @param calendar_quarter Vector of calendar quarters to convert to quarter id labels.
+#' @param calendar_quarter Vector of calendar quarters to convert.
 #'
 #' @details
 #' Quarters are labelled as "Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec" instead of
@@ -35,6 +35,7 @@ get_age_groups <- function() {
 #' year_labels(quarter_ids)
 #' quarter_year_labels(quarter_ids)
 #' calendar_quarter_labels("CY2015Q2")
+#' calendar_quarter_to_year("CY2015Q2")
 #'
 #' @export
 quarter_year_labels <- function(quarter_id) {
@@ -104,6 +105,11 @@ quarter_id_to_calendar_quarter <- function(quarter_id) {
   convert_calendar_quarter(year, quarter)
 }
 
+#' @rdname quarter_year_labels
+#' @export
+calendar_quarter_to_year <- function(calendar_quarter) {
+  year_labels(calendar_quarter_to_quarter_id(calendar_quarter))
+}
 
 #' Log-linear interpolation of age/sex stratified population
 #'
@@ -142,7 +148,7 @@ interpolate_population_agesex <- function(population_agesex, calendar_quarters) 
 
   df <- dplyr::select(raw, calendar_quarter, area_id, source, sex, age_group, population) %>%
     dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter))
-  
+
   val <- tidyr::expand(
                   df,
                   tidyr::nesting(calendar_quarter = calendar_quarters,
@@ -166,7 +172,7 @@ interpolate_population_agesex <- function(population_agesex, calendar_quarters) 
 #' @param x vector of points to interpolate (no NAs)
 #' @param rule rule for extrapolating outside range (see [approx()])
 #' @param replace_na value to replace if interpolation evaluates to NA
-#' 
+#'
 #' @examples
 #' log_linear_interp(c(100, 105, NA, 110), 1:4)
 #' log_linear_interp(c(NA, 105, NA, 110), 1:4)

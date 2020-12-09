@@ -112,7 +112,7 @@
     "PROGRESS_UNCERTAINTY": "Génération de fourchettes d'incertitude",
     "PROGRESS_PREPARE_OUTPUTS": "Préparation des sorties",
     "PROGRESS_FIT_MODEL_HELP_TEXT": "Itération {{iteration}} - {{elapsed}} écoulées",
-    "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE": "Fit terminé en {{iteration}} itérations et {{elapsed}}",
+    "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE": "{{iteration}} itérations en {{elapsed}}",
     "NO_ART_DATA_FOR_QUARTER": "Aucune donnée ART trouvée pour le trimestre {{calendar_quarter}}.\nDéfinissez 'inclure les données ART' sur 'Non' si vous avez l'intention de ne pas inclure de données ART.",
     "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "Le test CPN sur ART est supérieur au test CPN total positif.",
     "ANC_DATA_MISSING_FOR_YEAR": "Données de test CPN introuvables pour l'année {{missing_year}}.",
