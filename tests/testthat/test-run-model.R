@@ -422,6 +422,7 @@ test_that("input data types can be formatted", {
 })
 
 test_that("model run can be calibrated", {
+  skip("TODO: calibration should be run async see mrc-2040")
   ## Calibration modifies files in place. We want to make sure we don't modify
   ## the test setup output and introduce race condition in tests.
   ## Create a copy and calibrate that
@@ -578,6 +579,7 @@ test_that("model run can be calibrated", {
 })
 
 test_that("useful error returned when model output can't be calibrated", {
+  skip("TODO: calibration should be run async see mrc-2040")
   expect_error(hintr_calibrate(NULL, list(test = "option")),
                paste0("Can't calibrate this model output please re-run model",
                " and try calibration again"))
@@ -753,7 +755,7 @@ test_that("Model can be run without .shiny90 file", {
 
 
   ## ## Calibrate model
-
+  skip("TODO: calibration should be run async see mrc-2040")
   ## Calibration modifies files in place.
   calibrated_output <- hintr_calibrate(model_run, a_hintr_calibration_options)
 
@@ -785,5 +787,15 @@ test_that("hintr_run_model can skip validation", {
     expect_error(hintr_run_model(format_data_input(a_hintr_data), options))
   })
   mockery::expect_called(mock_validate_model_options, 1)
+})
+
+test_that("model calibration returns inputs", {
+  skip("TODO: calibration should be run async and this removed mrc-2040")
+  ## Calibration modifies files in place. We want to make sure we don't modify
+  ## the test setup output and introduce race condition in tests.
+  ## Create a copy and calibrate that
+  output <- clone_output(a_hintr_output)
+  calibrated_output <- hintr_calibrate(output, a_hintr_calibration_options)
+  expect_identical(calibrated_output, output)
 })
 

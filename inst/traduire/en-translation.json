@@ -47,7 +47,7 @@
     "OPTIONS_POPULATION_CALIBRATION_LABEL": "Population calibration",
     "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum population size. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Calibration to Spectrum population is completed before model fitting.",
     "OPTIONS_CALIBRATION_LABEL": "Calibration options",
-    "OPTIONS_CALIBRATION_DESCRIPTION": "Options for calibrating to Spectrum outputs. If national Spectrum file, 'National' and 'Subnational' options will return the same result. Some calibrations will invalidate model inference to survey, ART programme, and ANC testing data. If calibration adjustments are large, it is recommended to review Spectrum results and Naomi input data rather than accept large calibration adjustments.",
+    "OPTIONS_CALIBRATION_DESCRIPTION": "Calibration currently not working on this page, please click Claibrate to continue to next stage. If you need to recalibrate the model please re-run the model fit.",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_LABEL": "Adjust to Spectrum population size",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP" : "Calibrate to Spectrum population size by sex and 5-year age group by national or subnational. If national Spectrum file, national and subnational will return the same result.",
     "OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_NONE": "None",

@@ -177,45 +177,7 @@ is_hintr_output <- function(object) {
 #' @return Calibrated hintr_output object
 #' @export
 hintr_calibrate <- function(output, calibration_options) {
-  calibration_path <- output$calibration_path
-  if (!is_hintr_output(output) || is.null(calibration_path)) {
-    stop(t_("INVALID_CALIBRATE_OBJECT"))
-  }
-  calibration_data <- readRDS(calibration_path)
-  calibrated_output <- calibrate_outputs(
-    output = calibration_data$output_package,
-    naomi_mf = calibration_data$naomi_data,
-    spectrum_plhiv_calibration_level = calibration_options$spectrum_plhiv_calibration_level,
-    spectrum_plhiv_calibration_strat = calibration_options$spectrum_plhiv_calibration_strat,
-    spectrum_artnum_calibration_level = calibration_options$spectrum_artnum_calibration_level,
-    spectrum_artnum_calibration_strat = calibration_options$spectrum_artnum_calibration_strat,
-    spectrum_aware_calibration_level = calibration_options$spectrum_aware_calibration_level,
-    spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
-    spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
-    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
-  )
-
-  calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
-                                                 naomi_mf = calibration_data$naomi_data)
-
-  calibration_data$info$calibration_options.yml <-
-    yaml::as.yaml(calibration_options)
-  saveRDS(calibration_data, output$calibration_path)
-  attr(calibrated_output, "info") <- calibration_data$info
-
-  indicators <- add_output_labels(calibrated_output)
-  saveRDS(indicators, file = output$output_path)
-  save_output_coarse_age_groups(output$coarse_output_path, calibrated_output,
-                                overwrite = TRUE)
-  save_output_spectrum(output$spectrum_path, calibrated_output,
-                       overwrite = TRUE)
-  generate_output_summary_report(output$summary_report_path,
-                                 output$spectrum_path,
-                                 quiet = TRUE)
-  build_hintr_output(output$output_path, output$spectrum_path,
-                     output$coarse_output_path, output$summary_report_path,
-                     output$calibration_path,
-                     output$metadata)
+  output
 }
 
 naomi_prepare_data <- function(data, options) {
@@ -467,7 +429,7 @@ convert_format <- function(data) {
 ## function.
 ##
 ## In future, refactor this to systmatically cast options based on type and set
-## defaults if missing from metadata. 
+## defaults if missing from metadata.
 format_options <- function(options) {
 
   if (is.null(options$permissive)) {
@@ -506,7 +468,7 @@ format_options <- function(options) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
 
-  
+
 
   if (is.null(options[["artattend"]])) {
     options$artattend <- FALSE
