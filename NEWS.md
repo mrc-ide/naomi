@@ -1,3 +1,7 @@
+# naomi 2.1.9
+
+* Increase eppasm dependency to 0.5.9.
+
 # naomi 2.1.8
 
 * Hotfix to move calibration options back to model run. Calibration is too slow to run synchronously and is meaning no other users can use the application whilst calibration is being run - we will disable async calibration in hintr.
