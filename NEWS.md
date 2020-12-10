@@ -1,3 +1,7 @@
+# naomi 2.1.10
+
+* Fix new infections scaling. In plotting outputs number of new infections were being inadvertently scaled x100 (reported by Lesotho estimates team).
+
 # naomi 2.1.9
 
 * Increase eppasm dependency to 0.5.9.
