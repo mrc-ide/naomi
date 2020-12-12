@@ -383,7 +383,20 @@ naomi_model_frame <- function(area_merged,
 
   ## Add Spectrum inputs
 
+  ## Note: Any proportions calculated here evaluate to exactly 0.0 or 1.0, will
+  ##   probably result in numerical problems in later modelling stages. Also
+  ##   make sure to check for edge cases where a deminator evaluates to NaN
+  ##
   ## TODO::insert flag to aggregate national or regional
+
+  cap_prop <- function(x, min = 0.001, max = 0.999) {
+    if(!is.na(min))
+      x <- pmax(x, min)
+    if(!is.na(max))
+      x <- pmin(x, max)
+    x
+  }
+
   spec_indicators <- spectrum_calibration %>%
     dplyr::transmute(
              spectrum_region_code,
