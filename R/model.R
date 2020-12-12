@@ -13,13 +13,13 @@
 #' @export
 naomi_output_frame <- function(mf_model,
                                area_aggregation,
-                               age_groups = unique(mf_model$age_group),
-                               sexes = unique(mf_model$sex)) {
+                               age_groups = unique(mf_model[["age_group"]]),
+                               sexes = unique(mf_model[["sex"]])) {
 
-  stopifnot(age_groups %in% mf_model$age_group)
-  stopifnot(sexes %in% mf_model$sex)
+  stopifnot(age_groups %in% mf_model[["age_group"]])
+  stopifnot(sexes %in% mf_model[["sex"]])
   
-  model_area_ids <- unique(mf_model$area_id)
+  model_area_ids <- unique(mf_model[["area_id"]])
   sex_out <- get_sex_out(sexes)
 
   sex_join <- data.frame(sex_out = c("male", "female", "both", "both", "both"),
@@ -40,10 +40,10 @@ naomi_output_frame <- function(mf_model,
                   (age_group_start_out + age_group_span_out)) %>%
     dplyr::select(age_group_out, age_group)
 
-  stopifnot(age_groups %in% age_group_join$age_group)
+  stopifnot(age_groups %in% age_group_join[["age_group"]])
 
   mf_out <- tidyr::crossing(
-                     area_id = area_aggregation$area_id,
+                     area_id = area_aggregation[["area_id"]],
                      sex = sex_out,
                      age_group = age_group_out
   )
@@ -66,9 +66,9 @@ naomi_output_frame <- function(mf_model,
 
   A <- Matrix::spMatrix(nrow(mf_out),
                         nrow(mf_model),
-                        df_join$out_idx,
-                        df_join$idx,
-                        df_join$x)
+                        df_join[["out_idx"]],
+                        df_join[["idx"]],
+                        df_join[["x"]])
 
   list(mf = mf_out, A = A)
 }
@@ -283,7 +283,7 @@ naomi_model_frame <- function(area_merged,
   ##           of a Spectrum file and then calibrated. Currently no way to know if areas
   ##           comparise only part of a Spectrum file, so can't address.
 
-  pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas$area_id)
+  pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas[["area_id"]])
   pop_t1 <- interpolate_population_agesex(pop_subset, calendar_quarter1)
   pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
   pop_t3 <- interpolate_population_agesex(pop_subset, calendar_quarter3)
@@ -336,8 +336,8 @@ naomi_model_frame <- function(area_merged,
       dplyr::mutate(population = population * population_calibration)
 
   } else if(spectrum_population_calibration == "none") {
-    spectrum_calibration$population_calibration <- 1.0
-    spectrum_calibration$population <- spectrum_calibration$population_raw
+    spectrum_calibration[["population_calibration"]] <- 1.0
+    spectrum_calibration[["population"]] <- spectrum_calibration[["population_raw"]]
   } else {
     stop(paste0("spectrum_calibration_option \"", spectrum_population_calibration, "\" not found."))
   }
@@ -363,21 +363,21 @@ naomi_model_frame <- function(area_merged,
              by = c("area_id", "sex", "age_group")
            )
 
-  stopifnot(!is.na(mf_model$population_t1))
-  stopifnot(!is.na(mf_model$population_t2))
-  stopifnot(!is.na(mf_model$population_t3))
+  stopifnot(!is.na(mf_model[["population_t1"]]))
+  stopifnot(!is.na(mf_model[["population_t2"]]))
+  stopifnot(!is.na(mf_model[["population_t3"]]))
 
-  zeropop1 <- mf_model$population_t1 == 0
-  zeropop2 <- mf_model$population_t2 == 0
-  zeropop3 <- mf_model$population_t3 == 0
+  zeropop1 <- mf_model[["population_t1"]] == 0
+  zeropop2 <- mf_model[["population_t2"]] == 0
+  zeropop3 <- mf_model[["population_t3"]] == 0
 
   if(any(zeropop1) || any(zeropop2) || any(zeropop3)) {
     warning(paste("Zero population input for", sum(zeropop1) + sum(zeropop2) + sum(zeropop3),
                   "area/age/sex groups.",
                   "Replaced with population 0.1."))
-    mf_model$population_t1[zeropop1] <- 0.1
-    mf_model$population_t2[zeropop2] <- 0.1
-    mf_model$population_t3[zeropop3] <- 0.1
+    mf_model[["population_t1"]][zeropop1] <- 0.1
+    mf_model[["population_t2"]][zeropop2] <- 0.1
+    mf_model[["population_t3"]][zeropop3] <- 0.1
   }
 
 
@@ -488,7 +488,7 @@ naomi_model_frame <- function(area_merged,
     dplyr::filter(age_group %in% get_five_year_age_groups(),
                   age_group_start >= 15,
                   age_group_start + age_group_span <= 50)
-  anc_age_groups <- anc_age_groups$age_group
+  anc_age_groups <- anc_age_groups[["age_group"]]
   
   anc_outf <- naomi_output_frame(mf_model, area_aggregation, anc_age_groups, "female")
   
@@ -571,8 +571,8 @@ naomi_model_frame <- function(area_merged,
     dplyr::ungroup()
 
   ## Remove unneeded columns from spectrum_calibration
-  spectrum_calibration$susc_previous_year_spectrum <- NULL
-  spectrum_calibration$births_spectrum <- NULL
+  spectrum_calibration[["susc_previous_year_spectrum"]] <- NULL
+  spectrum_calibration[["births_spectrum"]] <- NULL
 
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
@@ -661,12 +661,12 @@ select_naomi_data <- function(naomi_mf,
                               artcov_survey_ids,
                               recent_survey_ids,
                               vls_survey_ids = NULL,
-                              artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
-                              artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
-                              anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+                              artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
+                              artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
+                              anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
                               anc_clients_year_t2_num_months = 12,
-                              anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
-                              anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+                              anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter1"]])),
+                              anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
                               anc_artcov_year_t1 = anc_prev_year_t1,
                               anc_artcov_year_t2 = anc_prev_year_t2,
                               use_kish_prev = TRUE,
