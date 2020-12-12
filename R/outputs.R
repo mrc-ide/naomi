@@ -63,10 +63,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
         v <- add_stats(v, naomi_fit$mode[[varname]])
       },
       "error" = function(e) {
-        stop("Error simulating output for indicator: ", varname, ". ",
-             "Please contact support for troubleshooting.")
-      }
-    )
+        stop(t_("EXTRACT_INDICATORS_SIMULATE_ERROR",
+                list(varname = varname)))
+      })
 
     v
   }
