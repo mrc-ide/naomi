@@ -56,11 +56,17 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                   calendar_quarter = calendar_quarter,
                   indicator = indicator)
 
-    if(!is.null(naomi_fit$sample)) {
-      v <- add_stats(v, naomi_fit$mode[[varname]], naomi_fit$sample[[varname]])
-    } else {
-      v <- add_stats(v, naomi_fit$mode[[varname]])
-    }
+    tryCatch(
+      if(!is.null(naomi_fit$sample)) {
+        v <- add_stats(v, naomi_fit$mode[[varname]], naomi_fit$sample[[varname]])
+      } else {
+        v <- add_stats(v, naomi_fit$mode[[varname]])
+      },
+      "error" = function(e) {
+        stop("Error simulating output for indicator: ", varname, ". ",
+             "Please contact support for troubleshooting.")
+      }
+    )
 
     v
   }
