@@ -1,3 +1,10 @@
+# naomi 2.1.11
+
+* Catch error if output package construction returns NA error when calculating 
+  quantiles and return the REPORTed indicator that threw error (#180).
+* Replace unaware_untreated_prop = 1.0 if ART coverage is 100% in a particular
+  Spectrum age group (support ticket 11).
+
 # naomi 2.1.10
 
 * Fix new infections scaling. In plotting outputs number of new infections were being inadvertently scaled x100 (reported by Lesotho estimates team).

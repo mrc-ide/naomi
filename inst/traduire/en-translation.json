@@ -156,5 +156,6 @@
     "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Calculating awareness of HIV status indicators requires .shiny90 files to be included in each PJNZ. If .shiny90 files are not available, select 'No' to proceed with model fitting.",
     "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}",
     "ERROR_SHINY90_MISSING_1": ".shiny90 file is not present for the following projection(s)",
-    "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\"."
+    "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\".",
+    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Error simulating output for indicator: {{varname}}. Please contact support for troubleshooting."
 }

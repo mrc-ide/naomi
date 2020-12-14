@@ -192,3 +192,11 @@ test_that("can generate summary report", {
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo_naomi\"", content)))
 })
+
+test_that("output_package() catches error if NA in simulated sample.", {
+
+  bad_sample <- a_fit_sample
+  bad_sample$sample$alpha_t1_out[50] <- NA
+  expect_error(output_package(bad_sample, a_naomi_mf),
+               "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
+})
