@@ -1,3 +1,9 @@
+# naomi 2.1.12
+
+* Update dependency first90 v1.4.2 which ensures backwards compatibility for 
+  previous .shiny90 files.
+  
+
 # naomi 2.1.11
 
 * Catch error if output package construction returns NA error when calculating 

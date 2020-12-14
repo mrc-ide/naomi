@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.1.11
+Version: 2.1.12
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -24,7 +24,7 @@ Imports:
     data.tree,
     dplyr,
     eppasm (>= 0.5.9),
-    first90,
+    first90 (>= 1.4.2),
     forcats,
     fs,
     ggplot2,
