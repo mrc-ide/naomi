@@ -787,3 +787,45 @@ test_that("hintr_run_model can skip validation", {
   mockery::expect_called(mock_validate_model_options, 1)
 })
 
+test_that("simple progress", {
+  now <- round.POSIXt(Sys.time(), units = "mins")
+  mock_sys_time <- mockery::mock(now, now + 30, now + (2 * 60), now + (62 * 60))
+  with_mock("Sys.time" = mock_sys_time, {
+    progress <- MockSimpleProgress$new()
+    messages1 <- naomi_evaluate_promise(
+      progress$update_progress("PROGRESS_CALIBRATE")
+    )
+    messages2 <- naomi_evaluate_promise(
+      progress$update_progress("PROGRESS_CALIBRATE")
+    )
+    reset <- naomi_set_language("fr")
+    on.exit(reset())
+    messages3 <- naomi_evaluate_promise(
+      progress$update_progress("PROGRESS_CALIBRATE")
+    )
+  })
+  expect_equal(progress$start_time, now)
+  expect_equal(messages1$progress[[1]]$message,
+               "Calibrating outputs - 30s elapsed")
+  expect_equal(messages2$progress[[1]]$message,
+               "Calibrating outputs - 2m elapsed")
+  expect_equal(messages3$progress[[1]]$message,
+               "Calibrage des sorties - 1h 2m écoulées")
+})
+
+test_that("calibration reports simple progress", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  output <- clone_output(a_hintr_output)
+  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      hintr_calibrate(output, a_hintr_calibration_options))
+  })
+  expect_length(messages$progress, 3)
+  progress <- messages$progress
+  expect_match(progress[[1]]$message,
+               "Calibrating outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+  expect_match(progress[[2]]$message,
+               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+  expect_match(progress[[3]]$message,
+               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+})

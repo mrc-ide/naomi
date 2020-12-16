@@ -181,6 +181,8 @@ hintr_calibrate <- function(output, calibration_options) {
   if (!is_hintr_output(output) || is.null(calibration_path)) {
     stop(t_("INVALID_CALIBRATE_OBJECT"))
   }
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_CALIBRATE")
   calibration_data <- readRDS(calibration_path)
   calibrated_output <- calibrate_outputs(
     output = calibration_data$output_package,
@@ -200,6 +202,7 @@ hintr_calibrate <- function(output, calibration_options) {
 
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
+  progress$update_progress("PROGRESS_CALIBRATE_SAVE_OUTPUT")
   saveRDS(calibration_data, output$calibration_path)
   attr(calibrated_output, "info") <- calibration_data$info
 
@@ -209,6 +212,7 @@ hintr_calibrate <- function(output, calibration_options) {
                                 overwrite = TRUE)
   save_output_spectrum(output$spectrum_path, calibrated_output,
                        overwrite = TRUE)
+  progress$update_progress("PROGRESS_CALIBRATE_GENERATE_REPORT")
   generate_output_summary_report(output$summary_report_path,
                                  output$spectrum_path,
                                  quiet = TRUE)
@@ -389,6 +393,40 @@ Progress <- R6::R6Class("Progress", list(
   }
 ))
 
+new_simple_progress <- function() {
+  SimpleProgress$new()
+}
+
+SimpleProgress <- R6::R6Class("SimpleProgress", list(
+  cloneable = FALSE,
+  progress = "",
+  start_time = NULL,
+  elapsed = NULL,
+
+  initialize = function() {
+    self$set_start_time()
+  },
+
+  print = function() {
+    signalCondition(structure(list(message = self$progress),
+                              class = c("progress", "condition")))
+  },
+
+  set_start_time = function() {
+    self$start_time <- Sys.time()
+  },
+
+  update_progress = function(message_key) {
+    if (is.null(self$start_time)) {
+      self$set_start_time()
+    }
+    self$elapsed <- Sys.time() - self$start_time
+    self$progress <- t_(message_key,
+                        list(elapsed = prettyunits::pretty_dt(self$elapsed)))
+    self$print()
+  }
+))
+
 naomi_info_input <- function(data) {
   get_col_from_list <- function(data, what) {
     value <- data[[what]]
@@ -467,7 +505,7 @@ convert_format <- function(data) {
 ## function.
 ##
 ## In future, refactor this to systmatically cast options based on type and set
-## defaults if missing from metadata. 
+## defaults if missing from metadata.
 format_options <- function(options) {
 
   if (is.null(options$permissive)) {
@@ -506,7 +544,7 @@ format_options <- function(options) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
 
-  
+
 
   if (is.null(options[["artattend"]])) {
     options$artattend <- FALSE

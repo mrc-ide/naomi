@@ -37,7 +37,7 @@ a_hintr_options <- list(
   no_of_samples = 20,
   max_iter = 250,
   permissive = "false",
-  use_kish_prev = "true",  
+  use_kish_prev = "true",
   deff_prev = 1.0,
   use_kish_artcov = "true",
   deff_artcov = 1.0,
@@ -111,6 +111,21 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
 MockProgress <- R6::R6Class(
   "MockProgress",
   inherit = Progress,
+  cloneable = FALSE,
+  public = list(
+    ## Wrap print message in a with restarts so we can capture messages for
+    ## testing
+    print = function() {
+      withRestarts({
+        super$print()
+      }, muffleProgress = function(...) NULL)
+    }
+  )
+)
+
+MockSimpleProgress <- R6::R6Class(
+  "MockSimpleProgress",
+  inherit = SimpleProgress,
   cloneable = FALSE,
   public = list(
     ## Wrap print message in a with restarts so we can capture messages for
