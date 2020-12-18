@@ -207,7 +207,7 @@ test_that("validation check for spectrum region code returns error", {
 test_that("can get model calibration options", {
   options <- get_model_calibration_options()
   expect_length(options, 1)
-  expect_true(any(grepl("Post model fit calibration", options)))
+  expect_true(any(grepl("Calibration options", options)))
 })
 
 test_that("can get model calibration options label from ID", {
