@@ -128,6 +128,7 @@
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvables dans la hiérarchie.",
     "SHAPE_SPECTRUM_REGION_ALL_NA": "Le colonne avec le code de région Spectrum est manquant dans votre fichier de formes. Veuillez mettre à jour votre fichier de formes avec le code de région Spectrum pour le niveau d'estimation.",
     "INVALID_CALIBRATE_OBJECT": "Impossible de calibrer la sortie de ce modèle, veuillez réexécuter le modèle pour obtenir une sortie mise à jour",
+    "MISSING_CALIBRATION_OPTIONS": "Impossible de calibrer, des options manquantes pour {{missing}}",
     "OPTIONS_ANC_MONTHS_LABEL": "Mois inclus dans la déclaration des soins prénatals pour les CPN",
     "OPTIONS_ANC_MONTHS_HELP": "Nombre de mois inclus dans reportage des cliniques prénatales cette année",
     "OPTIONS_ADVANCED_USE_KISH_LABEL": "Utiliser ESS Kish",
