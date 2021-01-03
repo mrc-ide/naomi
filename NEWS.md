@@ -1,3 +1,17 @@
+# naomi 2.2.0
+
+* Reparameterise random effects to be scaled to the linear predictor, as implemented
+  by INLA parameterisation. That is now: mu = beta0 + u_i; u_i ~ N(0, sigma) instead of 
+  the previous parameterisation: mu = beta0 + u_i * sigma; u_i ~ N(0, 1). 
+  
+  This does not change the model at all, reduces the fitting time noticeably 
+  because the starting values for the linear predictor for the 'inner optimisation' 
+  step do not change resulting from steps in the hyperparameters. 
+  
+  Implementation for the BYM2 model follows the sparsity preserving conditional 
+  parameterisation described by Riebler _et al._ in Section 3.4.
+  
+
 # naomi 2.1.13
 
 * Report progress back from calibration
