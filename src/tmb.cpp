@@ -22,7 +22,7 @@
  * @note 
  * The $\sqrt(2\pi)^{-2*n}$ and $|Q|^{1/2}$ terms are dropped.
  * Returns the _positive_ log PDF (differetn from builtin TMB 
- * functions. Thus shoudl typically be implemented as `val -= bym2_conditional_lpdf(...)`.
+ * functions. Thus shoudl typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
  */ 
 template<class Type>
 Type bym2_conditional_lpdf(const vector<Type> x,
@@ -32,9 +32,11 @@ Type bym2_conditional_lpdf(const vector<Type> x,
 			   const Eigen::SparseMatrix<Type> Q) {
 
   Type val(0.0);
+
+  // constant terms omitted: -0.5 * (n + rank(Q)) * log(2*pi) + 0.5 * log|Q|
   val += -0.5 * x.size() * (2 * log(sigma) + log(1 - phi));  // normalising constant
   val += -0.5 / (sigma * sigma * (1 - phi)) * (x * x).sum();
-  val += -0.5 * 2 * sqrt(phi) / (sigma * (1 - phi)) * (x * u).sum();
+  val += sqrt(phi) / (sigma * (1 - phi)) * (x * u).sum();
   val += -0.5 * (u * (Q * u)).sum();
   val += -0.5 * phi / (1 - phi) * (u * u).sum();
 
