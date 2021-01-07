@@ -10,7 +10,8 @@
   
   Implementation for the BYM2 model follows the sparsity preserving conditional 
   parameterisation described by Riebler _et al._ in Section 3.4.
-  
+
+* Update CIV Datim UID mapping for new 113 health districts.
 
 # naomi 2.1.13
 
