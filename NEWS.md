@@ -1,3 +1,7 @@
+# naomi 2.1.14
+
+* Add calibration options back in, reverts 2.1.8 changes
+
 # naomi 2.1.13
 
 * Report progress back from calibration

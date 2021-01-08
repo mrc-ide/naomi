@@ -829,3 +829,41 @@ test_that("calibration reports simple progress", {
   expect_match(progress[[3]]$message,
                "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
 })
+
+test_that("validate_calibrate_options errors if required options are missing", {
+  expect_error(validate_calibrate_options(list(
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_strat" = "none",
+    "spectrum_artnum_calibration_level" = "none",
+    "spectrum_artnum_calibration_strat" = "none",
+    "spectrum_aware_calibration_level" = "none",
+    "spectrum_aware_calibration_strat" = "none")),
+    paste0("Calibration cannot be run, missing options for ",
+           "spectrum_infections_calibration_level, ",
+           "spectrum_infections_calibration_strat."))
+
+
+  expect_error(validate_calibrate_options(list(
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_strat" = "none",
+    "spectrum_artnum_calibration_level" = "none",
+    "spectrum_artnum_calibration_strat" = "none",
+    "spectrum_aware_calibration_level" = "none",
+    "spectrum_aware_calibration_strat" = "none",
+    "spectrum_infections_calibration_level" = "none")),
+    paste0("Calibration cannot be run, missing options for ",
+           "spectrum_infections_calibration_strat."))
+
+  expect_true(validate_calibrate_options(list(
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_strat" = "none",
+    "spectrum_artnum_calibration_level" = "none",
+    "spectrum_artnum_calibration_strat" = "none",
+    "spectrum_aware_calibration_level" = "none",
+    "spectrum_aware_calibration_strat" = "none",
+    "spectrum_infections_calibration_level" = "none",
+    "spectrum_infections_calibration_strat" = "none")))
+})
