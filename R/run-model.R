@@ -181,6 +181,7 @@ hintr_calibrate <- function(output, calibration_options) {
   if (!is_hintr_output(output) || is.null(calibration_path)) {
     stop(t_("INVALID_CALIBRATE_OBJECT"))
   }
+  validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
   calibration_data <- readRDS(calibration_path)
@@ -220,6 +221,24 @@ hintr_calibrate <- function(output, calibration_options) {
                      output$coarse_output_path, output$summary_report_path,
                      output$calibration_path,
                      output$metadata)
+}
+
+validate_calibrate_options <- function(calibration_options) {
+  expected_options <- c("spectrum_plhiv_calibration_level",
+                        "spectrum_plhiv_calibration_strat",
+                        "spectrum_artnum_calibration_level",
+                        "spectrum_artnum_calibration_strat",
+                        "spectrum_aware_calibration_level",
+                        "spectrum_aware_calibration_strat",
+                        "spectrum_infections_calibration_level",
+                        "spectrum_infections_calibration_strat")
+  missing_options <- expected_options[
+    !(expected_options %in% names(calibration_options))]
+  if (length(missing_options) > 0) {
+    stop(t_("Calibration cannot be run, missing options for {{missing}}.",
+                 list(missing = paste(missing_options, collapse = ", "))))
+  }
+  invisible(TRUE)
 }
 
 naomi_prepare_data <- function(data, options) {
