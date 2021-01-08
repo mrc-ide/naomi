@@ -62,12 +62,42 @@ prepare_tmb_inputs <- function(naomi_data) {
     Amat
   }
 
+  create_survey_Amat <- function(survey_dat) {
+
+    df_attend_survey <- naomi_data$mf_model %>%
+      dplyr::select(reside_area_id = area_id,
+                    attend_area_id = area_id,
+                    sex,
+                    age_group,
+                    idx)
+
+    survey_dat$attend_area_id <- survey_dat$area_id
+    survey_dat$artnum_idx <- seq_len(nrow(survey_dat))
+    
+    Amat <- create_artattend_Amat(
+      survey_dat,
+      age_groups = naomi_data$age_groups,
+      sexes = naomi_data$sexes,
+      area_aggregation = naomi_data$area_aggregation,
+      df_art_attend = df_attend_survey,
+      by_residence = FALSE,
+      by_survey = TRUE
+    )
+
+    Amat
+  }
+
   A_anc_clients_t2 <- create_anc_Amat(naomi_data$anc_clients_t2_dat)
   A_anc_prev_t1 <- create_anc_Amat(naomi_data$anc_prev_t1_dat)
   A_anc_prev_t2 <- create_anc_Amat(naomi_data$anc_prev_t2_dat)
   A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat)
   A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat)
 
+  A_prev <- create_survey_Amat(naomi_data$prev_dat)
+  A_artcov <- create_survey_Amat(naomi_data$artcov_dat)
+  A_vls <- create_survey_Amat(naomi_data$vls_dat)
+  A_recent <- create_survey_Amat(naomi_data$recent_dat)
+  
   ## ART attendance aggregation
 
   Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
@@ -272,18 +302,18 @@ prepare_tmb_inputs <- function(naomi_data) {
     paed_rho_ratio_offset = paed_rho_ratio_offset,
     ##
     ## Household survey input data
-    idx_prev = naomi_data$prev_dat$idx - 1L,
     x_prev = naomi_data$prev_dat$x_eff,
     n_prev = naomi_data$prev_dat$n_eff,
-    idx_artcov = naomi_data$artcov_dat$idx - 1L,
+    A_prev = A_prev,
     x_artcov = naomi_data$artcov_dat$x_eff,
     n_artcov = naomi_data$artcov_dat$n_eff,
-    idx_vls = naomi_data$vls_dat$idx - 1L,
+    A_artcov = A_artcov,
     x_vls = naomi_data$vls_dat$x_eff,
     n_vls = naomi_data$vls_dat$n_eff,
-    idx_recent = naomi_data$recent_dat$idx - 1L,
+    A_vls = A_vls,
     x_recent = naomi_data$recent_dat$x_eff,
     n_recent = naomi_data$recent_dat$n_eff,
+    A_recent = A_recent,
     ##
     ## ANC testing input data
     x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,
@@ -615,16 +645,22 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
 
 
 create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation,
-                                  df_art_attend, by_residence = FALSE) {
+                                  df_art_attend, by_residence = FALSE, by_survey = FALSE) {
 
   ## If by_residence = TRUE, merge by reside_area_id, else aggregate over all
   ## reside_area_id
   by_vars <- c("attend_area_id", "sex", "age_group")
-  if(by_residence)
+  if (by_residence) {
     by_vars <- c(by_vars, "reside_area_id")
+  }
+
+  id_vars <- by_vars
+  if (by_survey) {
+    id_vars <- c(id_vars, "survey_id")
+  }
 
   A_artnum <- artnum_df %>%
-    dplyr::select(tidyselect::all_of(by_vars), artnum_idx) %>%
+    dplyr::select(tidyselect::all_of(id_vars), artnum_idx) %>%
     dplyr::rename(artdat_age_group = age_group,
                   artdat_sex = sex) %>%
     dplyr::left_join(
@@ -664,7 +700,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
 
   ## Check no areas with duplicated reporting
   art_duplicated_check <- A_artnum %>%
-    dplyr::group_by_at(by_vars) %>%
+    dplyr::group_by_at(id_vars) %>%
     dplyr::summarise(n = dplyr::n()) %>%
     dplyr::filter(n > 1)
 
@@ -677,18 +713,12 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   df_art_attend <- df_art_attend %>%
     dplyr::select(tidyselect::all_of(by_vars)) %>%
     dplyr::mutate(
-      df_art_attend_idx = dplyr::row_number(),
-      value = 1
-    )
+             Aidx = dplyr::row_number(),
+             value = 1
+           )
 
-  A_artnum <- dplyr::left_join(A_artnum,
-                               df_art_attend %>%
-                               dplyr::select(tidyselect::all_of(by_vars)) %>%
-                               dplyr::mutate(
-                                 Aidx = dplyr::row_number(),
-                                 value = 1),
-                               by = by_vars)
-
+  A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars)
+  
   A_artnum <- A_artnum %>%
     {
       Matrix::spMatrix(nrow(artnum_df),

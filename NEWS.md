@@ -1,3 +1,8 @@
+# naomi 2.2.0
+
+* Implement survey data likelihood as flexible aggregation over areas / sex / age groups, 
+  similar to likelihood for number on ART and ANC testing.
+  
 # naomi 2.1.13
 
 * Report progress back from calibration

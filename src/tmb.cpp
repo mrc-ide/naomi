@@ -79,21 +79,21 @@ Type objective_function<Type>::operator() ()
   // Precision matrix for ICAR area model
   DATA_SPARSE_MATRIX(Q_x);
 
-  DATA_IVECTOR(idx_prev);
   DATA_VECTOR(n_prev);
   DATA_VECTOR(x_prev);
+  DATA_SPARSE_MATRIX(A_prev);
 
-  DATA_IVECTOR(idx_artcov);
   DATA_VECTOR(n_artcov);
   DATA_VECTOR(x_artcov);
+  DATA_SPARSE_MATRIX(A_artcov);
 
-  DATA_IVECTOR(idx_vls);
   DATA_VECTOR(n_vls);
   DATA_VECTOR(x_vls);
+  DATA_SPARSE_MATRIX(A_vls);
 
-  DATA_IVECTOR(idx_recent);
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
+  DATA_SPARSE_MATRIX(A_recent);
 
   DATA_VECTOR(x_anc_clients_t2);
   DATA_VECTOR(offset_anc_clients_t2);
@@ -510,24 +510,25 @@ Type objective_function<Type>::operator() ()
 
   // likelihood for household survey data
 
-  for(int i = 0; i < idx_prev.size(); i++)
-    val -= dbinom_robust(x_prev[i], n_prev[i], mu_rho[idx_prev[i]], true);
+  vector<Type> rho_obs_t1((A_prev * plhiv_t1) / (A_prev * population_t1));
+  val -= dbinom(x_prev, n_prev, rho_obs_t1, true).sum();
 
-  for(int i = 0; i < idx_artcov.size(); i++)
-    val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
+  vector<Type> alpha_obs_t1((A_artcov * artnum_t1) / (A_artcov * plhiv_t1));
+  val -= dbinom(x_artcov, n_artcov, alpha_obs_t1, true).sum();
+  
+  vector<Type> vls_obs_t1(nu * (A_vls * artnum_t1) / (A_vls * plhiv_t1));
+  val -= dbinom(x_vls, n_vls, vls_obs_t1, true).sum();
 
-  for(int i = 0; i < idx_vls.size(); i++)
-    val -= dbinom(x_vls[i], n_vls[i], alpha_t1[idx_vls[i]] * nu, true);
+  vector<Type> pR_infections_obs_t1(A_recent * infections_t1);
+  vector<Type> pR_plhiv_obs_t1(A_recent * plhiv_t1);
+  vector<Type> pR_population_obs_t1(A_recent * population_t1);
+  vector<Type> pR_lambda_obs_t1(pR_infections_obs_t1 / (pR_population_obs_t1 - pR_plhiv_obs_t1));
+  vector<Type> pR_rho_obs_t1(pR_plhiv_obs_t1 / pR_population_obs_t1);
+  vector<Type> pR(1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
+			      (OmegaT - betaT * ritaT) + betaT)));
+  val -= dbinom(x_recent, n_recent, pR, true).sum();
 
-  vector<Type> pR_i(idx_recent.size());
-  for(int i = 0; i < idx_recent.size(); i++) {
-    int idx = idx_recent[i];
-    Type pR = 1.0 - exp(-(exp(mu_lambda_t1[idx]) * (1 - rho_t1[idx]) / rho_t1[idx] * (OmegaT - betaT * ritaT) + betaT));
-    pR_i[i] = pR;
-    val -= dbinom(x_recent[i], n_recent[i], pR, true);
-  }
-
-
+  
   // ANC prevalence and ART coverage model
   // Note: currently this operates on the entire population vector, producing 
   //       lots of zeros for males and female age groups not exposed to fertility.
