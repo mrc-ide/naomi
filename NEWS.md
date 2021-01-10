@@ -8,6 +8,9 @@
   - If only age 15-49 data are available, do not estimate age effects; use Spectrum 
     odds ratio as offset pattern for all ages.
   - If only both sexes data are available, do not estimate district x sex interaction.
+  
+* Add _advanced_ model option `use_survey_aggregate` to select use of aggregate uploaded
+  survey dataset.
 
 * Reparameterise random effects to be scaled to the linear predictor, as implemented
   by INLA parameterisation. That is now: mu = beta0 + u_i; u_i ~ N(0, sigma) instead of 

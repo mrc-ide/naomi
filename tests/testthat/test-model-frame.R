@@ -201,7 +201,8 @@ test_that("survey_mf(..., use_aggregate) option returns expected results", {
 
   aggregate_survey <- dplyr::filter(demo_survey_hiv_indicators,
                                     age_group %in% c("Y000_014", "Y015_049"),
-                                    sex == "both", grepl("MWI_1", area_id))
+                                    sex == "both",
+                                    grepl("MWI_1", area_id))
 
   expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf)), 0)
   expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)), 0)

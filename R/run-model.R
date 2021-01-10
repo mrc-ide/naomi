@@ -325,7 +325,8 @@ naomi_prepare_data <- function(data, options) {
     use_kish_recent = options[["use_kish_recent"]],
     deff_recent = options[["deff_recent"]],
     use_kish_vls = options[["use_kish_vls"]],
-    deff_vls = options[["deff_vls"]]
+    deff_vls = options[["deff_vls"]],
+    use_survey_aggregate = as.logical(options[["use_survey_aggregate"]])
   )
 
   return(naomi_data)

@@ -159,5 +159,7 @@
     "POPULATION_REQUIRED_COLUMNS_MISSING": "Colonnes obligatoires introuvables: {{cols}}",
     "ERROR_SHINY90_MISSING_1": "Le fichier .shiny90 n'est pas présent pour la (les) projection (s) suivante (s)",
     "ERROR_SHINY90_MISSING_2": "Rechargez PJNZ avec .shiny90 inclus ou définissez l'option Avancé 'Sortie de la connaissance des indicateurs de statut VIH' sur \"Non\".",
-    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Erreur de simulation de la sortie pour l'indicateur: {{varname}}. Veuillez contacter l'assistance pour le dépannage."
+    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Erreur de simulation de la sortie pour l'indicateur: {{varname}}. Veuillez contacter l'assistance pour le dépannage.",
+    "OPTIONS_USE_SURVEY_AGGREGATE_LABEL": "Utiliser un ensemble de données d'enquête agrégées",
+    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "L'ensemble de données d'enquête téléchargé doit être sous-défini exactement aux données à utiliser dans le calibrage du modèle."
 }

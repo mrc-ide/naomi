@@ -159,5 +159,7 @@
     "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}",
     "ERROR_SHINY90_MISSING_1": ".shiny90 file is not present for the following projection(s)",
     "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\".",
-    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Error simulating output for indicator: {{varname}}. Please contact support for troubleshooting."
+    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Error simulating output for indicator: {{varname}}. Please contact support for troubleshooting.",
+    "OPTIONS_USE_SURVEY_AGGREGATE_LABEL": "Use aggregate survey dataset",
+    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "The uploaded survey dataset must be subsetted to exactly the data to be used in model calibration."
 }
