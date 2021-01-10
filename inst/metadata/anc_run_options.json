@@ -29,51 +29,51 @@
           "options": [
             {
                 "id": "12",
-                "label": "12 months"
+                "label": "t_(OPTIONS_12_MONTHS)"
             },
             {
                 "id": "11",
-                "label": "11 months"
+                "label": "t_(OPTIONS_11_MONTHS)"
             },
             {
                 "id": "10",
-                "label": "10 months"
+                "label": "t_(OPTIONS_10_MONTHS)"
             },
             {
                 "id": "9",
-                "label": "9 months"
+                "label": "t_(OPTIONS_9_MONTHS)"
             },
             {
                 "id": "8",
-                "label": "8 months"
+                "label": "t_(OPTIONS_8_MONTHS)"
             },
             {
                 "id": "7",
-                "label": "7 months"
+                "label": "t_(OPTIONS_7_MONTHS)"
             },
             {
                 "id": "6",
-                "label": "6 months"
+                "label": "t_(OPTIONS_6_MONTHS)"
             },
             {
                 "id": "5",
-                "label": "5 months"
+                "label": "t_(OPTIONS_5_MONTHS)"
             },
             {
                 "id": "4",
-                "label": "4 months"
+                "label": "t_(OPTIONS_4_MONTHS)"
             },
             {
                 "id": "3",
-                "label": "3 months"
+                "label": "t_(OPTIONS_3_MONTHS)"
             },
             {
                 "id": "2",
-                "label": "2 months"
+                "label": "t_(OPTIONS_2_MONTHS)"
             },
             {
                 "id": "1",
-                "label": "1 months"
+                "label": "t_(OPTIONS_1_MONTHS)"
             }
           ]
         }

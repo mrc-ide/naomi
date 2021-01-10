@@ -159,5 +159,17 @@
     "POPULATION_REQUIRED_COLUMNS_MISSING": "Required columns not found: {{cols}}",
     "ERROR_SHINY90_MISSING_1": ".shiny90 file is not present for the following projection(s)",
     "ERROR_SHINY90_MISSING_2": "Reload PJNZ with .shiny90 included or set Advanced option 'Output awareness of HIV status indicators' to \"No\".",
-    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Error simulating output for indicator: {{varname}}. Please contact support for troubleshooting."
+    "EXTRACT_INDICATORS_SIMULATE_ERROR": "Error simulating output for indicator: {{varname}}. Please contact support for troubleshooting.",
+    "OPTIONS_1_MONTHS": "1 month",
+    "OPTIONS_2_MONTHS": "2 months",
+    "OPTIONS_3_MONTHS": "3 months",
+    "OPTIONS_4_MONTHS": "4 months",
+    "OPTIONS_5_MONTHS": "5 months",
+    "OPTIONS_6_MONTHS": "6 months",
+    "OPTIONS_7_MONTHS": "7 months",
+    "OPTIONS_8_MONTHS": "8 months",
+    "OPTIONS_9_MONTHS": "9 months",
+    "OPTIONS_10_MONTHS": "10 months",
+    "OPTIONS_11_MONTHS": "11 months",
+    "OPTIONS_12_MONTHS": "12 months"
 }
