@@ -289,8 +289,10 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(u_rho_xs);  
   PARAMETER_VECTOR(us_rho_xs);
-  val -= dnorm(sum(us_rho_xs), Type(0.0), Type(0.001) * us_rho_xs.size(), true); // soft sum-to-zero constraint
-  val -= bym2_conditional_lpdf(u_rho_xs, us_rho_xs, sigma_rho_xs, phi_rho_xs, Q_x);
+  if (u_rho_xs.size()) {
+    val -= dnorm(sum(us_rho_xs), Type(0.0), Type(0.001) * us_rho_xs.size(), true); // soft sum-to-zero constraint
+    val -= bym2_conditional_lpdf(u_rho_xs, us_rho_xs, sigma_rho_xs, phi_rho_xs, Q_x);
+  }
 
   PARAMETER_VECTOR(u_rho_a);
   if(u_rho_a.size() > 0)
@@ -364,8 +366,10 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(u_alpha_xs);
   PARAMETER_VECTOR(us_alpha_xs);
-  val -= dnorm(sum(us_alpha_xs), Type(0.0), Type(0.001) * us_alpha_xs.size(), true); // soft sum-to-zero constraint
-  val -= bym2_conditional_lpdf(u_alpha_xs, us_alpha_xs, sigma_alpha_xs, phi_alpha_xs, Q_x);
+  if (u_alpha_xs.size()) {
+    val -= dnorm(sum(us_alpha_xs), Type(0.0), Type(0.001) * us_alpha_xs.size(), true); // soft sum-to-zero constraint
+    val -= bym2_conditional_lpdf(u_alpha_xs, us_alpha_xs, sigma_alpha_xs, phi_alpha_xs, Q_x);
+  }
 
   PARAMETER_VECTOR(u_alpha_a);
   if(u_alpha_a.size() > 0)

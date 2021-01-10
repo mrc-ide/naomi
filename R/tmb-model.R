@@ -175,6 +175,23 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_rho_xa <- ~0
   }
 
+  ## If no sex stratified prevalence data, don't estimate spatial variation in
+  ## sex odds ratio
+  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$sex)) {
+    f_rho_xs <- ~0
+  } else {
+    f_rho_xs <- ~0 + area_idf
+  }
+
+  ## If no sex stratified ART coverage data, don't estimate spatial variation in
+  ## sex odds ratio
+  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$sex)) {
+    f_alpha_xs <- ~0
+  } else {
+    f_alpha_xs <- ~0 + area_idf
+  }
+
+  
   ## If no t2 ART data, do not fit a change in ART coverage. Use logit difference
   ## in ART coverage from Spectrum.
   if(nrow(naomi_data$artnum_t2_dat) == 0) {
@@ -239,12 +256,12 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_ancalpha = stats::model.matrix(~1, df),
     Z_x = sparse_model_matrix(~0 + area_idf, df),
     Z_rho_x = sparse_model_matrix(~0 + area_idf, df, "bin_rho_model", TRUE),
-    Z_rho_xs = sparse_model_matrix(~0 + area_idf, df, "female_15plus", TRUE),
+    Z_rho_xs = sparse_model_matrix(f_rho_xs, df, "female_15plus", TRUE),
     Z_rho_a = sparse_model_matrix(f_rho_a, df, "bin_rho_model", TRUE),
     Z_rho_as = sparse_model_matrix(f_rho_a, df, "female_15plus", TRUE),
     Z_rho_xa = sparse_model_matrix(f_rho_xa, df, "age_below15"),
     Z_alpha_x = sparse_model_matrix(~0 + area_idf, df),
-    Z_alpha_xs = sparse_model_matrix(~0 + area_idf, df, "female_15plus", TRUE),
+    Z_alpha_xs = sparse_model_matrix(f_alpha_xs, df, "female_15plus", TRUE),
     Z_alpha_a = sparse_model_matrix(f_alpha_a, df),
     Z_alpha_as = sparse_model_matrix(f_alpha_a, df, "female_15plus", TRUE),
     Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),

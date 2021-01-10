@@ -2,6 +2,12 @@
 
 * Implement survey data likelihood as flexible aggregation over areas / sex / age groups, 
   similar to likelihood for number on ART and ANC testing.
+  
+* Adjust flexibility of random effects specification based on granularity of available 
+  survey data when using aggregate survey data.
+  - If only age 15-49 data are available, do not estimate age effects; use Spectrum 
+    odds ratio as offset pattern for all ages.
+  - If only both sexes data are available, do not estimate district x sex interaction.
 
 * Reparameterise random effects to be scaled to the linear predictor, as implemented
   by INLA parameterisation. That is now: mu = beta0 + u_i; u_i ~ N(0, sigma) instead of 
