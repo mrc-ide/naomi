@@ -276,10 +276,11 @@ test_that("use_survey_aggregate option affects selected data", {
   expect_equal(nrow(naomi_data_aggregate$prev_dat), 3)
   expect_equal(nrow(naomi_data_aggregate$artcov_dat), 2)
   expect_equal(nrow(naomi_data_aggregate$recent_dat), 1)
-  
-  naomi_data_mismatch <- naomi_prepare_data(input_data_aggregate, a_hintr_options)
-  expect_equal(nrow(naomi_data_mismatch$prev_dat), 0)
-  expect_equal(nrow(naomi_data_mismatch$artcov_dat), 0)
-  expect_equal(nrow(naomi_data_mismatch$recent_dat), 0)
-  
+ 
+  ## Aggregate data with standard model options -- returns no data and an error.
+  expect_error(
+    naomi_prepare_data(input_data_aggregate, a_hintr_options),
+    "No prevalence survey data found for survey: DEMO2016PHIA, DEMO2015DHS. Prevalence data are required for Naomi. Check your selections."
+  )
+               
 })

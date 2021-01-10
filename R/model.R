@@ -717,6 +717,12 @@ select_naomi_data <- function(naomi_mf,
                                  deff = deff_prev,
                                  use_aggregate = use_survey_aggregate)
 
+  if (nrow(naomi_mf$prev_dat) == 0) {
+    stop("No prevalence survey data found for survey: ",
+         paste0(prev_survey_ids, collapse = ", "),
+         ". Prevalence data are required for Naomi. Check your selections.")
+  }
+
   naomi_mf$artcov_dat <- survey_mf(survey_ids = artcov_survey_ids,
                                    indicator = "art_coverage",
                                    survey_hiv_indicators = survey_hiv_indicators,,

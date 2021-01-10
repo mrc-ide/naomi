@@ -600,6 +600,11 @@ format_options <- function(options) {
   if(is.null(options[["use_kish_vls"]]))
     options$use_kish_vls <- "true"
 
+  if(is.null(options[["use_survey_aggregate"]]))
+    options$use_survey_aggregate <- "false"
+
+  
+
   ## Recode anc_*_year* from "" to NULL
   if(!is.null(options[["anc_clients_year2"]]) && options$anc_clients_year2 == "")
     options["anc_clients_year2"] <- list(NULL)
