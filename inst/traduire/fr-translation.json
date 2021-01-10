@@ -160,6 +160,18 @@
     "ERROR_SHINY90_MISSING_1": "Le fichier .shiny90 n'est pas présent pour la (les) projection (s) suivante (s)",
     "ERROR_SHINY90_MISSING_2": "Rechargez PJNZ avec .shiny90 inclus ou définissez l'option Avancé 'Sortie de la connaissance des indicateurs de statut VIH' sur \"Non\".",
     "EXTRACT_INDICATORS_SIMULATE_ERROR": "Erreur de simulation de la sortie pour l'indicateur: {{varname}}. Veuillez contacter l'assistance pour le dépannage.",
+    "OPTIONS_1_MONTHS": "1 mois",
+    "OPTIONS_2_MONTHS": "2 mois",
+    "OPTIONS_3_MONTHS": "3 mois",
+    "OPTIONS_4_MONTHS": "4 mois",
+    "OPTIONS_5_MONTHS": "5 mois",
+    "OPTIONS_6_MONTHS": "6 mois",
+    "OPTIONS_7_MONTHS": "7 mois",
+    "OPTIONS_8_MONTHS": "8 mois",
+    "OPTIONS_9_MONTHS": "9 mois",
+    "OPTIONS_10_MONTHS": "10 mois",
+    "OPTIONS_11_MONTHS": "11 mois",
+    "OPTIONS_12_MONTHS": "12 mois",
     "OPTIONS_USE_SURVEY_AGGREGATE_LABEL": "Utiliser un ensemble de données d'enquête agrégées",
-    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "L'ensemble de données d'enquête téléchargé doit être sous-défini exactement aux données à utiliser dans le calibrage du modèle."
+    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "L'ensemble de données d'enquête téléchargé doit être sous-défini exactement aux données à utiliser dans le calibrage du modèle."    
 }
