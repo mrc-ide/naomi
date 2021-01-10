@@ -282,4 +282,4 @@ test_that("use_survey_aggregate option affects selected data", {
   expect_equal(nrow(naomi_data_mismatch$artcov_dat), 0)
   expect_equal(nrow(naomi_data_mismatch$recent_dat), 0)
   
-}
+})
