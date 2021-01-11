@@ -195,3 +195,32 @@ test_that("select_naomi_data() returns expected stratifications", {
   expect_setequal(a_naomi_data$recent_dat$age_group, recent_age_groups)
 
 })
+
+
+test_that("survey_mf(..., use_aggregate) option returns expected results", {
+
+  aggregate_survey <- dplyr::filter(demo_survey_hiv_indicators,
+                                    age_group %in% c("Y000_014", "Y015_049"),
+                                    sex == "both",
+                                    grepl("MWI_1", area_id))
+
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf)), 0)
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)), 0)
+  expect_error(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf, use_aggregate = TRUE)),
+               "Aggregate survey data selected. Stratifications included in dataset which are not in model scope for indicator prevalence")
+
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf)), 0)
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)), 0)
+  expect_error(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf, use_aggregate = TRUE)),
+               "Aggregate survey data selected. Stratifications included in dataset which are not in model scope for indicator art_coverage")
+
+  aggregate_survey_good <- dplyr::filter(aggregate_survey, area_id == "MWI_1_1_demo")
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey_good, a_naomi_mf, use_aggregate = TRUE)),
+               nrow(dplyr::filter(aggregate_survey_good, indicator == "prevalence", survey_id == "DEMO2016PHIA")))
+
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey_good, a_naomi_mf, use_aggregate = TRUE)),
+               nrow(dplyr::filter(aggregate_survey_good, indicator == "art_coverage", survey_id == "DEMO2016PHIA")))
+
+  expect_equal(nrow(survey_mf("DEMO2016PHIA", "recent_infected", aggregate_survey_good, a_naomi_mf,
+                              min_age = 15, max_age = 50, use_aggregate = TRUE)), 1)
+})

@@ -104,12 +104,15 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
     indicators_t1 <- c(indicators_t1,
                        "aware_plhiv_prop_t1_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t1_out" = "aware_plhiv_num",
                        "unaware_plhiv_num_t1_out" = "unaware_plhiv_num")
     indicators_t2 <- c(indicators_t2,
                        "aware_plhiv_prop_t2_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t2_out" = "aware_plhiv_num",
                        "unaware_plhiv_num_t2_out" = "unaware_plhiv_num")
     indicators_t3 <- c(indicators_t3,
                        "aware_plhiv_prop_t3_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t3_out" = "aware_plhiv_num",
                        "unaware_plhiv_num_t3_out" = "unaware_plhiv_num")
   }
   
@@ -883,7 +886,7 @@ calibrate_outputs <- function(output,
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
     dplyr::filter(indicator %in%
-                  c("plhiv", "art_current_residents", "unaware_plhiv_num", "infections")) %>%
+                  c("plhiv", "art_current_residents", "aware_plhiv_num", "unaware_plhiv_num", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
@@ -1118,6 +1121,8 @@ calibrate_outputs <- function(output,
 
 
   if (naomi_mf$output_aware_plhiv) {
+
+    ## browser()
     
     aware_calibration <- out %>%
       dplyr::filter(
@@ -1272,7 +1277,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
                   incidence = infections / (population - plhiv))
 
   if (naomi_mf$output_aware_plhiv) {
-    out_0to4strat_rates$aware_plhiv_prop = 1.0 - out_0to4strat_rates$unaware_plhiv_num / out_0to4strat_rates$plhiv
+    out_0to4strat_rates$aware_plhiv_prop = out_0to4strat_rates$aware_plhiv_num / out_0to4strat_rates$plhiv
   } else {
     out_0to4strat_rates$aware_plhiv_prop <- NA_real_
   }

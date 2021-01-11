@@ -26,10 +26,9 @@
 write_datapack_csv <- function(naomi_output,
                                path,
                                psnu_level = NULL,
-                               calendar_quarter = naomi_output$meta_period$calendar_quarter) {
+                               calendar_quarter = NULL) {
   
   stopifnot(inherits(naomi_output, "naomi_output"))
-  stopifnot(psnu_level %in% naomi_output$meta_area$area_level)
   stopifnot(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
   
   if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
@@ -54,6 +53,14 @@ write_datapack_csv <- function(naomi_output,
   if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
     warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
+
+  if (is.null(calendar_quarter)) {
+    calendar_quarter = max(naomi_output$meta_period$calendar_quarter)
+  }
+
+  tx_curr_calendar_quarter <- unique(naomi_output$meta_period$calendar_quarter)
+  tx_curr_calendar_quarter <- sort(tx_curr_calendar_quarter, decreasing = TRUE)[2]
+
   
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
@@ -94,7 +101,8 @@ write_datapack_csv <- function(naomi_output,
            ) %>%
     dplyr::filter(
              indicator %in% datapack_indicator_map$indicator,
-             calendar_quarter %in% {{ calendar_quarter }},
+             (calendar_quarter %in% {{ calendar_quarter }} |
+              calendar_quarter == tx_curr_calendar_quarter & indicator == "art_current"),
              (sex_naomi %in% datapack_sex_map$sex_naomi &
               age_group %in% datapack_age_group_map$age_group |
               sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
@@ -129,6 +137,16 @@ write_datapack_csv <- function(naomi_output,
 
   ## Merge data pack Ids
   dat <- dplyr::left_join(dat, strat, by = c("indicator", "age_group", "sex_naomi"))
+
+  ## Manually recode current quarter TX_CURR indicator to TX_CURR_SUBNAT.R
+  dat <- dat %>%
+    dplyr::mutate(
+             indicator_code = dplyr::if_else(calendar_quarter == tx_curr_calendar_quarter &
+                                             indicator == "art_current",
+                                             "TX_CURR_SUBNAT.R",
+                                             indicator_code)
+           )
+                                             
 
   ## Round integer indicators
   dat$value <- ifelse(dat$is_integer, round(dat$value), dat$value)

@@ -247,3 +247,40 @@ test_that("validate_model_options() returns error if missing .shiny90", {
   opts$output_aware_plhiv <- "false"
   expect_true(validate_model_options(bad_data, opts))
 })
+
+test_that("use_survey_aggregate option affects selected data", {
+
+  a_hintr_options <- format_options(a_hintr_options)
+  options_aggregate <- a_hintr_options
+  options_aggregate$use_survey_aggregate <- "true"
+
+  aggregate_survey <- dplyr::filter(demo_survey_hiv_indicators,
+                                    age_group %in% c("Y000_014", "Y015_049"),
+                                    sex == "both",
+                                    area_id == "MWI_1_2_demo")
+
+  aggregate_survey_file <- tempfile(fileext = ".csv")
+  write.csv(aggregate_survey, aggregate_survey_file, row.names = FALSE)
+
+  input_data <- format_data_input(a_hintr_data)
+
+  input_data_aggregate <- input_data
+  input_data_aggregate$survey$path <- aggregate_survey_file
+  
+  expect_error(
+    naomi_prepare_data(input_data, options_aggregate),
+    "Aggregate survey data selected. Stratifications included in dataset which are not in model scope for indicator prevalence"
+  )
+
+  naomi_data_aggregate <- naomi_prepare_data(input_data_aggregate, options_aggregate)
+  expect_equal(nrow(naomi_data_aggregate$prev_dat), 3)
+  expect_equal(nrow(naomi_data_aggregate$artcov_dat), 2)
+  expect_equal(nrow(naomi_data_aggregate$recent_dat), 1)
+ 
+  ## Aggregate data with standard model options -- returns no data and an error.
+  expect_error(
+    naomi_prepare_data(input_data_aggregate, a_hintr_options),
+    "No prevalence survey data found for survey: DEMO2016PHIA, DEMO2015DHS. Prevalence data are required for Naomi. Check your selections."
+  )
+               
+})

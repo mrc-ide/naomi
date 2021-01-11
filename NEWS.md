@@ -1,3 +1,35 @@
+# naomi 2.2.0
+
+* Implement survey data likelihood as flexible aggregation over areas / sex / age groups, 
+  similar to likelihood for number on ART and ANC testing.
+  
+* Adjust flexibility of random effects specification based on granularity of available 
+  survey data when using aggregate survey data.
+  - If only age 15-49 data are available, do not estimate age effects; use Spectrum 
+    odds ratio as offset pattern for all ages.
+  - If only both sexes data are available, do not estimate district x sex interaction.
+  
+* Add _advanced_ model option `use_survey_aggregate` to select use of aggregate uploaded
+  survey dataset.
+
+* Reparameterise random effects to be scaled to the linear predictor, as implemented
+  by INLA parameterisation. That is now: mu = beta0 + u_i; u_i ~ N(0, sigma) instead of 
+  the previous parameterisation: mu = beta0 + u_i * sigma; u_i ~ N(0, 1). 
+  
+  This does not change the model at all, reduces the fitting time noticeably 
+  because the starting values for the linear predictor for the 'inner optimisation' 
+  step do not change resulting from steps in the hyperparameters. 
+  
+  Implementation for the BYM2 model follows the sparsity preserving conditional 
+  parameterisation described by Riebler _et al._ in Section 3.4.
+
+* Update PEPFAR Data Pack export:
+  * Only return future projection outputs except for `art_current` for current estimates.
+  * Manually code `art_current` at current estimates as indicator_code `TX_CURR_SUBNAT.R`.
+  * Return number aware of status instead of proportion aware of status (DIAGNOSED_SUBNAT.T_1).
+  
+* Update CIV Datim UID mapping for new 113 health districts.
+
 # naomi 2.1.14
 
 * Add calibration options back in, reverts 2.1.8 changes

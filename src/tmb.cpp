@@ -1,6 +1,48 @@
 #define TMB_LIB_INIT R_init_naomi
 #include <TMB.hpp>
 
+
+/** Log posterior density of BYM2 with INLA conditional parameterisation
+ * 
+ * Calculate the joint LPDF of parameter vector (x, u) where 
+ * x = sigma * (sqrt(phi) * u + sqrt(1-phi) * v) with u a ICAR structured 
+ * component u ~ N(0, Q^-1) and v is an IID effect v ~ N(0, 1). Calculation
+ * proceeds by conditioning P(<x, u>) = P(x | u) * P(u). See Reibler et al. 
+ * Section 3.4.
+ * 
+ * @param x vector of random effects.
+ * @param u vector of spatial component of random effect.
+ * @param sigma marginal standard deviation (>0).
+ * @param phi proporiton of marginal variance explained by spatial structured 
+ *            component u (phi \in [0, 1]).
+ * @param Q scaled structure matrix for spatial component.
+ * 
+ * @return Log probability density of x and u.
+ * 
+ * @note 
+ * The $\sqrt(2\pi)^{-2*n}$ and $|Q|^{1/2}$ terms are dropped.
+ * Returns the _positive_ log PDF (differetn from builtin TMB 
+ * functions. Thus shoudl typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
+ */ 
+template<class Type>
+Type bym2_conditional_lpdf(const vector<Type> x,
+			   const vector<Type> u,
+			   const Type sigma,
+			   const Type phi,
+			   const Eigen::SparseMatrix<Type> Q) {
+
+  Type val(0.0);
+
+  // constant terms omitted: -0.5 * (n + rank(Q)) * log(2*pi) + 0.5 * log|Q|
+  val += -0.5 * x.size() * (2 * log(sigma) + log(1 - phi));  // normalising constant
+  val += -0.5 / (sigma * sigma * (1 - phi)) * (x * x).sum();
+  val += sqrt(phi) / (sigma * (1 - phi)) * (x * u).sum();
+  val += -0.5 * (u * (Q * u)).sum();
+  val += -0.5 * phi / (1 - phi) * (u * u).sum();
+
+  return(val);
+}
+
 template<class Type>
 Type objective_function<Type>::operator() ()
 {
@@ -78,22 +120,23 @@ Type objective_function<Type>::operator() ()
 
   // Precision matrix for ICAR area model
   DATA_SPARSE_MATRIX(Q_x);
+  DATA_SCALAR(Q_x_rankdef);
 
-  DATA_IVECTOR(idx_prev);
   DATA_VECTOR(n_prev);
   DATA_VECTOR(x_prev);
+  DATA_SPARSE_MATRIX(A_prev);
 
-  DATA_IVECTOR(idx_artcov);
   DATA_VECTOR(n_artcov);
   DATA_VECTOR(x_artcov);
+  DATA_SPARSE_MATRIX(A_artcov);
 
-  DATA_IVECTOR(idx_vls);
   DATA_VECTOR(n_vls);
   DATA_VECTOR(x_vls);
+  DATA_SPARSE_MATRIX(A_vls);
 
-  DATA_IVECTOR(idx_recent);
   DATA_VECTOR(n_recent);
   DATA_VECTOR(x_recent);
+  DATA_SPARSE_MATRIX(A_recent);
 
   DATA_VECTOR(x_anc_clients_t2);
   DATA_VECTOR(offset_anc_clients_t2);
@@ -238,33 +281,33 @@ Type objective_function<Type>::operator() ()
 
   // latent effects
 
+  PARAMETER_VECTOR(u_rho_x);
   PARAMETER_VECTOR(us_rho_x);
-  val -= Type(-0.5) * (us_rho_x * (Q_x * us_rho_x)).sum();
   val -= dnorm(sum(us_rho_x), Type(0.0), Type(0.001) * us_rho_x.size(), true); // soft sum-to-zero constraint
-
-  PARAMETER_VECTOR(ui_rho_x);
-  val -= sum(dnorm(ui_rho_x, 0.0, 1.0, true));
+  val -= bym2_conditional_lpdf(u_rho_x, us_rho_x, sigma_rho_x, phi_rho_x, Q_x);
 
 
+  PARAMETER_VECTOR(u_rho_xs);  
   PARAMETER_VECTOR(us_rho_xs);
-  val -= Type(-0.5) * (us_rho_xs * (Q_x * us_rho_xs)).sum();
-  val -= dnorm(sum(us_rho_xs), Type(0.0), Type(0.001) * us_rho_xs.size(), true); // soft sum-to-zero constraint
-
-  PARAMETER_VECTOR(ui_rho_xs);
-  val -= sum(dnorm(ui_rho_xs, 0.0, 1.0, true));
+  if (u_rho_xs.size()) {
+    val -= dnorm(sum(us_rho_xs), Type(0.0), Type(0.001) * us_rho_xs.size(), true); // soft sum-to-zero constraint
+    val -= bym2_conditional_lpdf(u_rho_xs, us_rho_xs, sigma_rho_xs, phi_rho_xs, Q_x);
+  }
 
   PARAMETER_VECTOR(u_rho_a);
   if(u_rho_a.size() > 0)
-    val += AR1(phi_rho_a)(u_rho_a);
-
+    val += SCALE(AR1(phi_rho_a), sigma_rho_a)(u_rho_a);
+  
   PARAMETER_VECTOR(u_rho_as);
-  if(u_rho_as.size() > 0)
-    val += AR1(phi_rho_as)(u_rho_as);
+  if(u_rho_a.size() > 0)
+    val += SCALE(AR1(phi_rho_as), sigma_rho_as)(u_rho_as);
 
   PARAMETER_VECTOR(u_rho_xa);
   if (u_rho_xa.size() > 0) {
-    val -= Type(-0.5) * (u_rho_xa * (Q_x * u_rho_xa)).sum();
-    val -= dnorm(sum(u_rho_xa), Type(0.0), Type(0.001) * u_rho_xa.size(), true); // soft sum-to-zero constraint
+    val -= dnorm(sum(u_rho_xa), Type(0.0), sigma_rho_xa * Type(0.001) * u_rho_xa.size(), true); // soft sum-to-zero constraint
+
+    val -= -(Q_x.rows() - Q_x_rankdef) * log_sigma_rho_xa -
+      0.5 / (sigma_rho_xa * sigma_rho_xa) * (u_rho_xa * (Q_x * u_rho_xa)).sum();
   }
 
 
@@ -316,36 +359,34 @@ Type objective_function<Type>::operator() ()
   Type sigma_alpha_xat(exp(log_sigma_alpha_xat));
   val -= dnorm(sigma_alpha_xat, Type(0.0), Type(2.5), true) + log_sigma_alpha_xat;
 
+  PARAMETER_VECTOR(u_alpha_x);
   PARAMETER_VECTOR(us_alpha_x);
-  val -= Type(-0.5) * (us_alpha_x * (Q_x * us_alpha_x)).sum();
   val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
+  val -= bym2_conditional_lpdf(u_alpha_x, us_alpha_x, sigma_alpha_x, phi_alpha_x, Q_x);
 
-  PARAMETER_VECTOR(ui_alpha_x);
-  val -= sum(dnorm(ui_alpha_x, 0.0, 1.0, true));
-
+  PARAMETER_VECTOR(u_alpha_xs);
   PARAMETER_VECTOR(us_alpha_xs);
-  val -= Type(-0.5) * (us_alpha_xs * (Q_x * us_alpha_xs)).sum();
-  val -= dnorm(sum(us_alpha_xs), Type(0.0), Type(0.001) * us_alpha_xs.size(), true); // soft sum-to-zero constraint
-
-  PARAMETER_VECTOR(ui_alpha_xs);
-  val -= sum(dnorm(ui_alpha_xs, 0.0, 1.0, true));
+  if (u_alpha_xs.size()) {
+    val -= dnorm(sum(us_alpha_xs), Type(0.0), Type(0.001) * us_alpha_xs.size(), true); // soft sum-to-zero constraint
+    val -= bym2_conditional_lpdf(u_alpha_xs, us_alpha_xs, sigma_alpha_xs, phi_alpha_xs, Q_x);
+  }
 
   PARAMETER_VECTOR(u_alpha_a);
   if(u_alpha_a.size() > 0)
-    val += AR1(phi_alpha_a)(u_alpha_a);
+    val += SCALE(AR1(phi_alpha_a), sigma_alpha_a)(u_alpha_a);
 
   PARAMETER_VECTOR(u_alpha_as);
   if(u_alpha_as.size() > 0)
-    val += AR1(phi_alpha_as)(u_alpha_as);
+    val += SCALE(AR1(phi_alpha_as), sigma_alpha_as)(u_alpha_as);
 
   PARAMETER_VECTOR(u_alpha_xt);
-  val -= sum(dnorm(u_alpha_xt, 0.0, 1.0, true));
-
+  val -= dnorm(u_alpha_xt, 0.0, sigma_alpha_xt, true).sum();
+  
   PARAMETER_VECTOR(u_alpha_xa);
-  val -= sum(dnorm(u_alpha_xa, 0.0, 1.0, true));
+  val -= dnorm(u_alpha_xa, 0.0, sigma_alpha_xa, true).sum();
 
   PARAMETER_VECTOR(u_alpha_xat);
-  val -= sum(dnorm(u_alpha_xat, 0.0, 1.0, true));
+  val -= dnorm(u_alpha_xat, 0.0, sigma_alpha_xat, true).sum();
 
   // * HIV incidence model *
 
@@ -366,7 +407,7 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(sigma_lambda_x, Type(0.0), Type(1.0), true) + log_sigma_lambda_x;
 
   PARAMETER_VECTOR(ui_lambda_x);
-  val -= sum(dnorm(ui_lambda_x, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_lambda_x, 0.0, sigma_lambda_x, true));
 
   // * ANC testing model *
 
@@ -376,7 +417,7 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(sigma_asfr_x, Type(0.0), Type(2.5), true) + log_sigma_asfr_x;
 
   PARAMETER_VECTOR(ui_asfr_x);
-  val -= sum(dnorm(ui_asfr_x, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_asfr_x, 0.0, sigma_asfr_x, true));
 
   // ANC prevalence and ART coverage random effects
   PARAMETER(log_sigma_ancrho_x);
@@ -388,10 +429,10 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(sigma_ancalpha_x, Type(0.0), Type(2.5), true) + log_sigma_ancalpha_x;
 
   PARAMETER_VECTOR(ui_anc_rho_x);
-  val -= sum(dnorm(ui_anc_rho_x, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_anc_rho_x, 0.0, sigma_ancrho_x, true));
 
   PARAMETER_VECTOR(ui_anc_alpha_x);
-  val -= sum(dnorm(ui_anc_alpha_x, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_anc_alpha_x, 0.0, sigma_ancalpha_x, true));
 
   PARAMETER(log_sigma_ancrho_xt);
   Type sigma_ancrho_xt(exp(log_sigma_ancrho_xt));
@@ -402,10 +443,10 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(sigma_ancalpha_xt, Type(0.0), Type(2.5), true) + log_sigma_ancalpha_xt;
 
   PARAMETER_VECTOR(ui_anc_rho_xt);
-  val -= sum(dnorm(ui_anc_rho_xt, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_anc_rho_xt, 0.0, sigma_ancrho_xt, true));
 
   PARAMETER_VECTOR(ui_anc_alpha_xt);
-  val -= sum(dnorm(ui_anc_alpha_xt, 0.0, 1.0, true));
+  val -= sum(dnorm(ui_anc_alpha_xt, 0.0, sigma_ancalpha_xt, true));
 
 
   // * ART attendance model *
@@ -415,29 +456,27 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(sigma_or_gamma, Type(0.0), Type(2.5), true) + log_sigma_or_gamma;
 
   PARAMETER_VECTOR(log_or_gamma);
-  val -= dnorm(log_or_gamma, 0.0, 1.0, true).sum();
+  val -= dnorm(log_or_gamma, 0.0, sigma_or_gamma, true).sum();
 
   PARAMETER(log_sigma_or_gamma_t1t2);
   Type sigma_or_gamma_t1t2(exp(log_sigma_or_gamma_t1t2));
   val -= dnorm(sigma_or_gamma_t1t2, Type(0.0), Type(2.5), true) + log_sigma_or_gamma_t1t2;
     
   PARAMETER_VECTOR(log_or_gamma_t1t2);
-  val -= dnorm(log_or_gamma_t1t2, 0.0, 1.0, true).sum();
+  val -= dnorm(log_or_gamma_t1t2, 0.0, sigma_or_gamma_t1t2, true).sum();
 
 
   // *** Process model ***
 
   // HIV prevalence time 1
   
-  vector<Type> u_rho_x(sqrt(phi_rho_x) * us_rho_x + sqrt(1 - phi_rho_x) * ui_rho_x);
-  vector<Type> u_rho_xs(sqrt(phi_rho_xs) * us_rho_xs + sqrt(1 - phi_rho_xs) * ui_rho_xs);
   vector<Type> mu_rho(X_rho * beta_rho +
                       logit_rho_offset +
-                      Z_rho_x * u_rho_x * sigma_rho_x +
-                      Z_rho_xs * u_rho_xs * sigma_rho_xs +
-                      Z_rho_a * u_rho_a * sigma_rho_a +
-                      Z_rho_as * u_rho_as * sigma_rho_as +
-		      Z_rho_xa * u_rho_xa * sigma_rho_xa);
+                      Z_rho_x * u_rho_x +
+                      Z_rho_xs * u_rho_xs +
+                      Z_rho_a * u_rho_a +
+                      Z_rho_as * u_rho_as +
+		      Z_rho_xa * u_rho_xa);
 
   // paediatric prevalence
 
@@ -451,15 +490,13 @@ Type objective_function<Type>::operator() ()
 
   // ART coverage time 1
   
-  vector<Type> u_alpha_x(sqrt(phi_alpha_x) * us_alpha_x + sqrt(1 - phi_alpha_x) * ui_alpha_x);
-  vector<Type> u_alpha_xs(sqrt(phi_alpha_xs) * us_alpha_xs + sqrt(1 - phi_alpha_xs) * ui_alpha_xs);
   vector<Type> mu_alpha(X_alpha * beta_alpha +
                         logit_alpha_offset +
-                        Z_alpha_x * u_alpha_x * sigma_alpha_x +
-                        Z_alpha_xs * u_alpha_xs * sigma_alpha_xs +
-                        Z_alpha_a * u_alpha_a * sigma_alpha_a +
-                        Z_alpha_as * u_alpha_as * sigma_alpha_as +
-                        Z_alpha_xa * u_alpha_xa * sigma_alpha_xa);
+                        Z_alpha_x * u_alpha_x +
+                        Z_alpha_xs * u_alpha_xs +
+                        Z_alpha_a * u_alpha_a +
+                        Z_alpha_as * u_alpha_as +
+                        Z_alpha_xa * u_alpha_xa);
 
 
   vector<Type> rho_t1(invlogit(mu_rho));
@@ -475,7 +512,7 @@ Type objective_function<Type>::operator() ()
 
   vector<Type> mu_lambda_t1(X_lambda * beta_lambda + log_lambda_t1_offset +
                             Z_x * vector<Type>(log(rho_15to49_t1) + log(1.0 - omega * alpha_15to49_t1)) +
-                            Z_lambda_x * ui_lambda_x * sigma_lambda_x);
+                            Z_lambda_x * ui_lambda_x);
 
   vector<Type> lambda_t1(exp(mu_lambda_t1));
   vector<Type> infections_t1(lambda_t1 * (population_t1 - plhiv_t1));
@@ -485,8 +522,8 @@ Type objective_function<Type>::operator() ()
 
   vector<Type> mu_alpha_t2(mu_alpha + logit_alpha_t1t2_offset +
                            X_alpha_t2 * beta_alpha_t2 +
-                           Z_alpha_xt * u_alpha_xt * sigma_alpha_xt +
-                           Z_alpha_xat * u_alpha_xat * sigma_alpha_xat);
+                           Z_alpha_xt * u_alpha_xt +
+                           Z_alpha_xat * u_alpha_xat);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
 
   vector<Type> infections_t1t2((1 - exp(-lambda_t1 * projection_duration)) * (population_t1 - plhiv_t1));
@@ -503,31 +540,32 @@ Type objective_function<Type>::operator() ()
 
   vector<Type> mu_lambda_t2(X_lambda * beta_lambda + log_lambda_t2_offset +
                             Z_x * vector<Type>(log(rho_15to49_t2) + log(1.0 - omega * alpha_15to49_t2)) +
-                            Z_lambda_x * ui_lambda_x * sigma_lambda_x);
+                            Z_lambda_x * ui_lambda_x);
 
   vector<Type> lambda_t2(exp(mu_lambda_t2));
   vector<Type> infections_t2(lambda_t2 * (population_t2 - plhiv_t2));
 
   // likelihood for household survey data
 
-  for(int i = 0; i < idx_prev.size(); i++)
-    val -= dbinom_robust(x_prev[i], n_prev[i], mu_rho[idx_prev[i]], true);
+  vector<Type> rho_obs_t1((A_prev * plhiv_t1) / (A_prev * population_t1));
+  val -= dbinom(x_prev, n_prev, rho_obs_t1, true).sum();
 
-  for(int i = 0; i < idx_artcov.size(); i++)
-    val -= dbinom_robust(x_artcov[i], n_artcov[i], mu_alpha[idx_artcov[i]], true);
+  vector<Type> alpha_obs_t1((A_artcov * artnum_t1) / (A_artcov * plhiv_t1));
+  val -= dbinom(x_artcov, n_artcov, alpha_obs_t1, true).sum();
+  
+  vector<Type> vls_obs_t1(nu * (A_vls * artnum_t1) / (A_vls * plhiv_t1));
+  val -= dbinom(x_vls, n_vls, vls_obs_t1, true).sum();
 
-  for(int i = 0; i < idx_vls.size(); i++)
-    val -= dbinom(x_vls[i], n_vls[i], alpha_t1[idx_vls[i]] * nu, true);
+  vector<Type> pR_infections_obs_t1(A_recent * infections_t1);
+  vector<Type> pR_plhiv_obs_t1(A_recent * plhiv_t1);
+  vector<Type> pR_population_obs_t1(A_recent * population_t1);
+  vector<Type> pR_lambda_obs_t1(pR_infections_obs_t1 / (pR_population_obs_t1 - pR_plhiv_obs_t1));
+  vector<Type> pR_rho_obs_t1(pR_plhiv_obs_t1 / pR_population_obs_t1);
+  vector<Type> pR(1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
+			      (OmegaT - betaT * ritaT) + betaT)));
+  val -= dbinom(x_recent, n_recent, pR, true).sum();
 
-  vector<Type> pR_i(idx_recent.size());
-  for(int i = 0; i < idx_recent.size(); i++) {
-    int idx = idx_recent[i];
-    Type pR = 1.0 - exp(-(exp(mu_lambda_t1[idx]) * (1 - rho_t1[idx]) / rho_t1[idx] * (OmegaT - betaT * ritaT) + betaT));
-    pR_i[i] = pR;
-    val -= dbinom(x_recent[i], n_recent[i], pR, true);
-  }
-
-
+  
   // ANC prevalence and ART coverage model
   // Note: currently this operates on the entire population vector, producing 
   //       lots of zeros for males and female age groups not exposed to fertility.
@@ -536,18 +574,18 @@ Type objective_function<Type>::operator() ()
   //       meaningfully more efficient.
 
   vector<Type> mu_asfr(X_asfr * beta_asfr +
-		       Z_asfr_x * ui_asfr_x * sigma_asfr_x);
+		       Z_asfr_x * ui_asfr_x);
 		       
   vector<Type> mu_anc_rho_t1(mu_rho +
 			     logit_anc_rho_t1_offset + 
 			     X_ancrho * beta_anc_rho +
-			     Z_ancrho_x * ui_anc_rho_x * sigma_ancrho_x);
+			     Z_ancrho_x * ui_anc_rho_x);
   vector<Type> anc_rho_t1(invlogit(mu_anc_rho_t1));
   
   vector<Type> mu_anc_alpha_t1(mu_alpha +
 			       logit_anc_alpha_t1_offset + 
 			       X_ancalpha * beta_anc_alpha +
-			       Z_ancalpha_x * ui_anc_alpha_x * sigma_ancalpha_x);
+			       Z_ancalpha_x * ui_anc_alpha_x);
   vector<Type> anc_alpha_t1(invlogit(mu_anc_alpha_t1));
   
   vector<Type> anc_clients_t1(population_t1 * exp(log_asfr_t1_offset + mu_asfr));
@@ -557,13 +595,13 @@ Type objective_function<Type>::operator() ()
   vector<Type> mu_anc_rho_t2(logit(rho_t2) +
 			     logit_anc_rho_t2_offset + 
 			     X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			     Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
+			     Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
   vector<Type> anc_rho_t2(invlogit(mu_anc_rho_t2));
 
   vector<Type> mu_anc_alpha_t2(mu_alpha_t2 +
 			       logit_anc_alpha_t2_offset + 
 			       X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-			       Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
+			       Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
   vector<Type> anc_alpha_t2(invlogit(mu_anc_alpha_t2));
 
   vector<Type> anc_clients_t2(population_t2 * exp(log_asfr_t2_offset + mu_asfr));
@@ -590,7 +628,7 @@ Type objective_function<Type>::operator() ()
   
   // * ART attendance model *
 
-  vector<Type> gamma_art(exp(Xgamma * log_or_gamma * sigma_or_gamma + log_gamma_offset));
+  vector<Type> gamma_art(exp(Xgamma * log_or_gamma + log_gamma_offset));
   int cum_nb = 0;
   for(int i = 0; i < n_nb.size(); i++){
     Type cum_exp_or_gamma_i = 0.0;
@@ -611,7 +649,7 @@ Type objective_function<Type>::operator() ()
 
   val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
 
-  vector<Type> gamma_art_t2(exp(Xgamma * log_or_gamma * sigma_or_gamma + Xgamma_t2 * log_or_gamma_t1t2 * sigma_or_gamma_t1t2 + log_gamma_offset));
+  vector<Type> gamma_art_t2(exp(Xgamma * log_or_gamma + Xgamma_t2 * log_or_gamma_t1t2 + log_gamma_offset));
   cum_nb = 0;
   for(int i = 0; i < n_nb.size(); i++){
     Type cum_exp_or_gamma_i = 0.0;
@@ -659,7 +697,8 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> unaware_plhiv_num_t1((plhiv_t1 - artnum_t1) * unaware_untreated_prop_t1);
     vector<Type> unaware_plhiv_num_t1_out(A_out * unaware_plhiv_num_t1);
-    vector<Type> aware_plhiv_prop_t1_out(1.0 - unaware_plhiv_num_t1_out / plhiv_t1_out);
+    vector<Type> aware_plhiv_num_t1_out(plhiv_t1_out - unaware_plhiv_num_t1_out);
+    vector<Type> aware_plhiv_prop_t1_out(aware_plhiv_num_t1_out / plhiv_t1_out);
 					  
     vector<Type> infections_t1_out(A_out * infections_t1);
     vector<Type> lambda_t1_out(infections_t1_out / (population_t1_out - plhiv_t1_out));
@@ -677,7 +716,8 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> unaware_plhiv_num_t2((plhiv_t2 - artnum_t2) * unaware_untreated_prop_t2);
     vector<Type> unaware_plhiv_num_t2_out(A_out * unaware_plhiv_num_t2);
-    vector<Type> aware_plhiv_prop_t2_out(1.0 - unaware_plhiv_num_t2_out / plhiv_t2_out);
+    vector<Type> aware_plhiv_num_t2_out(plhiv_t2_out - unaware_plhiv_num_t2_out);
+    vector<Type> aware_plhiv_prop_t2_out(aware_plhiv_num_t2_out / plhiv_t2_out);
 
     vector<Type> infections_t2_out(A_out * infections_t2);
     vector<Type> lambda_t2_out(infections_t2_out / (population_t2_out - plhiv_t2_out));
@@ -718,6 +758,7 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_ij_t1_out);
     REPORT(untreated_plhiv_num_t1_out);
     REPORT(aware_plhiv_prop_t1_out);
+    REPORT(aware_plhiv_num_t1_out);
     REPORT(unaware_plhiv_num_t1_out);
     REPORT(lambda_t1_out);
     REPORT(infections_t1_out);
@@ -740,6 +781,7 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_ij_t2_out);
     REPORT(untreated_plhiv_num_t2_out);
     REPORT(aware_plhiv_prop_t2_out);
+    REPORT(aware_plhiv_num_t2_out);
     REPORT(unaware_plhiv_num_t2_out);
     REPORT(lambda_t2_out);
     REPORT(infections_t2_out);
@@ -781,7 +823,7 @@ Type objective_function<Type>::operator() ()
     
     vector<Type> mu_lambda_t3(X_lambda * beta_lambda + log_lambda_t3_offset +
 			      Z_x * vector<Type>(log(rho_15to49_t3) + log(1.0 - omega * alpha_15to49_t3)) +
-			      Z_lambda_x * ui_lambda_x * sigma_lambda_x);
+			      Z_lambda_x * ui_lambda_x);
     
     vector<Type> infections_t3(exp(mu_lambda_t3) * (population_t3 - plhiv_t3));
 
@@ -790,13 +832,13 @@ Type objective_function<Type>::operator() ()
     vector<Type> mu_anc_rho_t3(logit(rho_t3) +
 			       logit_anc_rho_t2_offset + 
 			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			       Z_ancrho_x * vector<Type>(ui_anc_rho_x * sigma_ancrho_x + ui_anc_rho_xt * sigma_ancrho_xt));
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
     vector<Type> anc_rho_t3(invlogit(mu_anc_rho_t3));
     
     vector<Type> mu_anc_alpha_t3(mu_alpha_t3 +
 				 logit_anc_alpha_t3_offset + 
 				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x * sigma_ancalpha_x + ui_anc_alpha_xt * sigma_ancalpha_xt));
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
     vector<Type> anc_alpha_t3(invlogit(mu_anc_alpha_t3));
     
     vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset + mu_asfr));
@@ -819,7 +861,8 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> unaware_plhiv_num_t3((plhiv_t3 - artnum_t3) * unaware_untreated_prop_t3);
     vector<Type> unaware_plhiv_num_t3_out(A_out * unaware_plhiv_num_t3);
-    vector<Type> aware_plhiv_prop_t3_out(1.0 - unaware_plhiv_num_t3_out / plhiv_t3_out);
+    vector<Type> aware_plhiv_num_t3_out(plhiv_t3_out - unaware_plhiv_num_t3_out);
+    vector<Type> aware_plhiv_prop_t3_out(aware_plhiv_num_t3_out / plhiv_t3_out);
     
     vector<Type> infections_t3_out(A_out * infections_t3);
     vector<Type> lambda_t3_out(infections_t3_out / (population_t3_out - plhiv_t3_out));
@@ -845,6 +888,7 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_ij_t3_out);
     REPORT(untreated_plhiv_num_t3_out);
     REPORT(aware_plhiv_prop_t3_out);
+    REPORT(aware_plhiv_num_t3_out);
     REPORT(unaware_plhiv_num_t3_out);
     REPORT(lambda_t3_out);
     REPORT(infections_t3_out);

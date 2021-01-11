@@ -29,26 +29,11 @@ library(sf)
 #' web tool.
 ##+ load_area_data, message = FALSE
 
-area_levels <- read_csv(system.file("extdata/areas/demo_area_levels.csv", package = "naomi"))
-area_hierarchy  <- read_csv(system.file("extdata/areas/demo_area_hierarchy.csv", package = "naomi"))
-area_boundaries <- sf::read_sf(system.file("extdata/areas/demo_area_boundaries.geojson", package = "naomi"))
-
-area_merged <- area_hierarchy %>%
-  left_join(
-    area_levels %>% select(area_level, area_level_label, display, naomi_level)
-  ) %>%
-  left_join(
-    area_boundaries
-  )
-
-##+ message = FALSE
-st_write(area_merged, file.path(tempdir(), "area_merged.geojson"), delete_dsn = TRUE)
-
 #' # 1. (Up)Load data inputs
 #'
 #' Area hierarchy and boundaries
 
-area_merged <- read_sf(file.path(tempdir(), "area_merged.geojson"))
+area_merged <- read_sf(system.file("extdata/demo_areas.geojson", package = "naomi"))
 
 #' Population data
 ##+ load_population_data, message = FALSE
@@ -112,10 +97,10 @@ calendar_quarter_t3 <- "CY2019Q4"
 #'   example if there were reporting problems known to affect a given quarter.
 
 #' Survey IDs to include in fitting
-prev_survey_ids  <- c("MWI2016PHIA", "MWI2015DHS")
-artcov_survey_ids  <- "MWI2016PHIA"
+prev_survey_ids  <- c("DEMO2016PHIA", "DEMO2015DHS")
+artcov_survey_ids  <- "DEMO2016PHIA"
 vls_survey_ids <- NULL
-recent_survey_ids <- "MWI2016PHIA"
+recent_survey_ids <- "DEMO2016PHIA"
 
 artnum_calendar_quarter_t1 <- "CY2016Q1"
 artnum_calendar_quarter_t2 <- "CY2018Q3"

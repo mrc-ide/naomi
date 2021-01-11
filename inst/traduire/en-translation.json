@@ -150,6 +150,7 @@
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC",
     "UNTREATED_PLHIV_NUM": "PLHIV not on ART",
     "AWARE_PLHIV_PROP": "Proportion PLHIV aware",
+    "AWARE_PLHIV_NUM": "Number PLHIV aware",
     "UNAWARE_PLHIV_NUM": "Number PLHIV unaware",
     "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Number of PLHIV not on ART",
     "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion of PLHIV aware of HIV positive status",
@@ -171,5 +172,7 @@
     "OPTIONS_9_MONTHS": "9 months",
     "OPTIONS_10_MONTHS": "10 months",
     "OPTIONS_11_MONTHS": "11 months",
-    "OPTIONS_12_MONTHS": "12 months"
+    "OPTIONS_12_MONTHS": "12 months",
+    "OPTIONS_USE_SURVEY_AGGREGATE_LABEL": "Use aggregate survey dataset",
+    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "The uploaded survey dataset must be subsetted to exactly the data to be used in model calibration."
 }

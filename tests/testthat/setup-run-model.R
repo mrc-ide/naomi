@@ -42,7 +42,8 @@ a_hintr_options <- list(
   use_kish_artcov = "true",
   deff_artcov = 1.0,
   use_kish_recent = "true",
-  deff_recent = 1.0
+  deff_recent = 1.0,
+  use_survey_aggregate = "false"
 )
 
 a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)
