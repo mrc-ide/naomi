@@ -23,6 +23,11 @@
   Implementation for the BYM2 model follows the sparsity preserving conditional 
   parameterisation described by Riebler _et al._ in Section 3.4.
 
+* Update PEPFAR Data Pack export:
+  * Only return future projection outputs except for `art_current` for current estimates.
+  * Manually code `art_current` at current estimates as indicator_code `TX_CURR_SUBNAT.R`.
+  * Return number aware of status instead of proportion aware of status (DIAGNOSED_SUBNAT.T_1).
+  
 * Update CIV Datim UID mapping for new 113 health districts.
 
 # naomi 2.1.14
