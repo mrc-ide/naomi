@@ -664,6 +664,13 @@ naomi_model_frame <- function(area_merged,
 #' observations. Stratified design effects are will not be the same as full survey DEFF and there is not
 #' a straightforward way to approximate these.
 #'
+#' The option `use_aggregate_survey = TRUE` allows for aggregate versions of survey data to be used in model
+#' fitting, for example age 15-49 prevalence instead of five-year age group prevalence or province-level
+#' survey data instead of district level data. This maybe useful if cluster coordinates or survey microdata
+#' are not available. This option assumes that the `survey_hiv_indicators` is alreaddy subsetted to exactly
+#' the data to be used. All stratifications must also appear in the `naomi_data$mf_out` stratifications.
+#' 
+#'
 #' @seealso [demo_survey_hiv_indicators], [demo_anc_testing], [demo_art_number], [convert_quarter_id]
 #'
 #' @export
@@ -690,7 +697,8 @@ select_naomi_data <- function(naomi_mf,
                               use_kish_recent = TRUE,
                               deff_recent = 1.0,
                               use_kish_vls = TRUE,
-                              deff_vls = 1.0) {
+                              deff_vls = 1.0,
+                              use_survey_aggregate = FALSE) {
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
@@ -706,14 +714,22 @@ select_naomi_data <- function(naomi_mf,
                                  survey_hiv_indicators = survey_hiv_indicators,,
                                  naomi_mf = naomi_mf,
                                  use_kish = use_kish_prev,
-                                 deff = deff_prev)
+                                 deff = deff_prev,
+                                 use_aggregate = use_survey_aggregate)
+
+  if (nrow(naomi_mf$prev_dat) == 0) {
+    stop("No prevalence survey data found for survey: ",
+         paste0(prev_survey_ids, collapse = ", "),
+         ". Prevalence data are required for Naomi. Check your selections.")
+  }
 
   naomi_mf$artcov_dat <- survey_mf(survey_ids = artcov_survey_ids,
                                    indicator = "art_coverage",
                                    survey_hiv_indicators = survey_hiv_indicators,,
                                    naomi_mf = naomi_mf,
                                    use_kish = use_kish_artcov,
-                                   deff = deff_artcov)
+                                   deff = deff_artcov,
+                                   use_aggregate = use_survey_aggregate)
 
   naomi_mf$recent_dat <- survey_mf(survey_ids = recent_survey_ids,
                                    indicator = "recent_infected",
@@ -722,14 +738,16 @@ select_naomi_data <- function(naomi_mf,
                                    use_kish = use_kish_recent,
                                    deff = deff_recent,
                                    min_age = 15,
-                                   max_age = 80)
+                                   max_age = 80,
+                                   use_aggregate = use_survey_aggregate)
 
   naomi_mf$vls_dat <- survey_mf(survey_ids = vls_survey_ids,
                                 indicator = "viral_suppression_plhiv",
                                 survey_hiv_indicators = survey_hiv_indicators,
                                 naomi_mf = naomi_mf,
                                 use_kish = use_kish_vls,
-                                deff = deff_vls)
+                                deff = deff_vls,
+                                use_aggregate = use_survey_aggregate)
 
   naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
   naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
@@ -785,13 +803,17 @@ update_mf_offsets <- function(naomi_mf,
   }
 
 
-  if(is.null(prev_dat) || nrow(prev_dat) == 0) {
+  if (
+    is.null(prev_dat) ||
+    nrow(prev_dat) == 0 ||
+    all(prev_dat$age_group %in% c("Y000_014", "Y015_049"))
+  ) {
     ## Offset vs. age 15-49 prevalence
     ## No rho_a_fct
     naomi_mf$mf_model <- naomi_mf$mf_model %>%
       dplyr::mutate(
                rho_a_fct = NA,
-               logit_rho_offset = qlogis(spec_prev_t1) - qlogis(spec_prev15to49_t1),
+               logit_rho_offset = qlogis(spec_prev_t1) - qlogis(spec_prev15to49_t1)
              )
   } else {
     d <- get_idx(naomi_mf$mf_model, prev_dat)
@@ -813,15 +835,24 @@ update_mf_offsets <- function(naomi_mf,
   }
 
 
-  if((is.null(artcov_dat) || nrow(artcov_dat) == 0) && (is.null(vls_dat) || nrow(vls_dat) == 0)) {
+  if (
+  (
+    is.null(artcov_dat) ||
+    nrow(artcov_dat) == 0 ||
+    all(prev_dat$age_group %in% c("Y000_014", "Y015_049"))
+  ) && (
+    is.null(vls_dat) ||
+    nrow(vls_dat) == 0 ||
+    all(vls_dat$age_group %in% c("Y000_014", "Y015_049"))
+  )
+  ){
     ## Offset vs. age 15-49 ART coverage
     ## No alpha_a_fct
     naomi_mf$mf_model <- naomi_mf$mf_model %>%
       dplyr::mutate(
                alpha_a_fct = NA,
-               logit_alpha_offset = qlogis(spec_artcov_t1) - qlogis(spec_artcov15to49_t1),
+               logit_alpha_offset = qlogis(spec_artcov_t1) - qlogis(spec_artcov15to49_t1)
              )
-
   } else {
 
     artcov_vls_dat <- dplyr::bind_rows(artcov_dat, vls_dat)
@@ -901,6 +932,9 @@ get_sex_out <- function(sexes) {
 #' @param deff Assumed design effect for scaling effective sample size
 #' @param min_age Min age for calculating recent infection
 #' @param max_age Max age for calculating recent infection
+#' @param use_aggregate Logical; use aggregate survey data as provided instead of 
+#'   subsetting fine area/sex/age group stratification.
+#'
 #'
 #' @export
 survey_mf <- function(survey_ids,
@@ -910,27 +944,48 @@ survey_mf <- function(survey_ids,
                       use_kish = TRUE,
                       deff = 1.0,
                       min_age = 0,
-                      max_age = 80) {
+                      max_age = 80,
+                      use_aggregate = FALSE) {
 
-  dat <- naomi_mf$mf_model %>%
-    dplyr::left_join(get_age_groups(), by = "age_group") %>%
-    dplyr::filter(age_group_start >= min_age,
-                  age_group_start + age_group_span <= max_age) %>%
-    dplyr::inner_join(
-             survey_hiv_indicators %>%
-             dplyr::filter(survey_id %in% survey_ids,
-                           indicator == !!indicator),
-             by = c("area_id", "sex", "age_group")
-           ) %>%
+  eligible_age_groups <- get_age_groups() %>%
+    dplyr::filter(
+             age_group_start >= min_age,
+             age_group_start + age_group_span <= max_age
+           )
+  dat <- survey_hiv_indicators %>%
+    dplyr::filter(
+             survey_id %in% survey_ids,
+             indicator == !!indicator,
+             age_group %in% eligible_age_groups$age_group
+           ) 
+
+  if (!use_aggregate) {
+    ## Filter data to finest area / sex / age_group stratification
+    dat <- dplyr::semi_join(dat, naomi_mf$mf_model,
+                            by = c("area_id", "sex", "age_group"))
+  } else {
+    ## Check that all of the aggregates are in the coarser stratification
+    check <- dplyr::anti_join(dat, naomi_mf$mf_out,
+                              by = c("area_id", "sex", "age_group"))
+    if (nrow(check) > 0) {
+      stop("Aggregate survey data selected. Stratifications included in dataset which ",
+           "are not in model scope for indicator ", indicator)
+    }
+
+    ## TODO: insert check of whether any area / sex / age group is duplicated. Currently
+    ##  this will be checked later in the prepare_tmb_inputs(), but it would be better
+    ##  to throw the error earlier here.
+  }
+
+    dat <- dat %>%
     dplyr::mutate(n = n_observations,
                   n_eff = if(use_kish) n_eff_kish else n,
                   n_eff = n_eff / deff,
                   x_eff = n_eff * estimate) %>%
-    dplyr::select(idx, area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
-
+    dplyr::select(area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
+  
   dat
 }
-
 
 #' Prepare Model Frames for Programme Datasets
 #'

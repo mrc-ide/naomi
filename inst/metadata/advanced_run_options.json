@@ -129,6 +129,28 @@
       ]
     },
     {
+      "label": "t_(OPTIONS_USE_SURVEY_AGGREGATE_LABEL)",
+      "controls": [
+        {
+          "name": "use_survey_aggregate",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "false",
+          "helpText": "t_(OPTIONS_USE_SURVEY_AGGREGATE_HELP)"
+        }
+      ]
+    },
+    {
       "label": "t_(OPTIONS_RECENTLY_INFECTED_LABEL)",
       "controls": [
         {
@@ -139,7 +161,7 @@
           "required": false
         }
       ]
-    },
+    },      
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL)",
       "controls": [

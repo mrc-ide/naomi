@@ -149,3 +149,139 @@ test_that("output_package() works with mode, sample, or both", {
 })
 
 
+test_that("model fit with aggregate survey data", {
+
+  ## Test cases:
+  ## - Aggregate areas, age/sex stratified data
+  ## - Aggregate areas and age, sex stratified dataii
+  ## - Aggregate area/age/sex
+
+  # 1. Aggregate areas, age/sex stratified data
+  aggregate_survey_5yr <- dplyr::filter(demo_survey_hiv_indicators,
+                                        age_group %in% get_five_year_age_groups(),
+                                        sex %in% c("male", "female"),
+                                        area_id == "MWI_1_1_demo",
+                                        indicator %in% c("prevalence", "art_coverage"))
+
+  naomi_data <- select_naomi_data(a_naomi_mf,
+                                  aggregate_survey_5yr,
+                                  demo_anc_testing,
+                                  demo_art_number,
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                  artcov_survey_ids = "DEMO2016PHIA",
+                                  recent_survey_ids = "DEMO2016PHIA",
+                                  anc_prev_year_t1 = 2016,
+                                  anc_prev_year_t2 = 2018,
+                                  anc_artcov_year_t1 = 2016,
+                                  anc_artcov_year_t2 = 2018,
+                                  artnum_calendar_quarter_t1 = NULL,
+                                  artnum_calendar_quarter_t2 = NULL,
+                                  use_survey_aggregate = TRUE)
+
+    tmb_inputs <- prepare_tmb_inputs(naomi_data)
+    fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+    expect_true(ncol(tmb_inputs$data$Z_rho_xs) > 0)
+    expect_true(ncol(tmb_inputs$data$Z_rho_a) > 0)
+    expect_true(ncol(tmb_inputs$data$Z_rho_as) > 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$us_rho_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_a) > 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_as) > 0)
+
+    expect_true(ncol(tmb_inputs$data$Z_alpha_xs) > 0)
+    expect_true(ncol(tmb_inputs$data$Z_alpha_a) > 0)
+    expect_true(ncol(tmb_inputs$data$Z_alpha_as) > 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$us_alpha_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_a) > 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_as) > 0)
+
+    expect_equal(fit$convergence, 0)
+
+    ## 2. Aggregate areas and age, sex stratified dataii
+    aggregate_survey_sex <- dplyr::filter(demo_survey_hiv_indicators,
+                                          age_group == "Y015_049",
+                                          sex %in% c("male", "female"),
+                                          area_id == "MWI_1_1_demo",
+                                          indicator %in% c("prevalence", "art_coverage"))
+
+    naomi_data <- select_naomi_data(a_naomi_mf,
+                                    aggregate_survey_sex,
+                                    demo_anc_testing,
+                                    demo_art_number,
+                                    prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                    artcov_survey_ids = "DEMO2016PHIA",
+                                    recent_survey_ids = "DEMO2016PHIA",
+                                    anc_prev_year_t1 = 2016,
+                                    anc_prev_year_t2 = 2018,
+                                    anc_artcov_year_t1 = 2016,
+                                    anc_artcov_year_t2 = 2018,
+                                    artnum_calendar_quarter_t1 = NULL,
+                                    artnum_calendar_quarter_t2 = NULL,
+                                    use_survey_aggregate = TRUE)
+    
+    tmb_inputs <- prepare_tmb_inputs(naomi_data)
+    fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+    expect_true(ncol(tmb_inputs$data$Z_rho_xs) > 0)
+    expect_true(ncol(tmb_inputs$data$Z_rho_a) == 0)
+    expect_true(ncol(tmb_inputs$data$Z_rho_as) == 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$us_rho_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_a) == 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_as) == 0)
+
+    expect_true(ncol(tmb_inputs$data$Z_alpha_xs) > 0)
+    expect_true(ncol(tmb_inputs$data$Z_alpha_a) == 0)
+    expect_true(ncol(tmb_inputs$data$Z_alpha_as) == 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$us_alpha_xs) > 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_a) == 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_as) == 0)
+
+    expect_equal(fit$convergence, 0)
+
+    ## 3. Aggregate areas and age, sex stratified dataii
+    aggregate_survey_all <- dplyr::filter(demo_survey_hiv_indicators,
+                                          age_group == "Y015_049",
+                                          sex == "both",
+                                          area_id == "MWI_1_1_demo",
+                                          indicator %in% c("prevalence", "art_coverage"))
+
+    naomi_data <- select_naomi_data(a_naomi_mf,
+                                    aggregate_survey_all,
+                                    demo_anc_testing,
+                                    demo_art_number,
+                                    prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                    artcov_survey_ids = "DEMO2016PHIA",
+                                    recent_survey_ids = "DEMO2016PHIA",
+                                    anc_prev_year_t1 = 2016,
+                                    anc_prev_year_t2 = 2018,
+                                    anc_artcov_year_t1 = 2016,
+                                    anc_artcov_year_t2 = 2018,
+                                    artnum_calendar_quarter_t1 = NULL,
+                                    artnum_calendar_quarter_t2 = NULL,
+                                    use_survey_aggregate = TRUE)
+    
+    tmb_inputs <- prepare_tmb_inputs(naomi_data)
+    fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+    expect_true(ncol(tmb_inputs$data$Z_rho_xs) == 0)
+    expect_true(ncol(tmb_inputs$data$Z_rho_a) == 0)
+    expect_true(ncol(tmb_inputs$data$Z_rho_as) == 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_xs) == 0)
+    expect_true(length(tmb_inputs$par_init$us_rho_xs) == 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_a) == 0)
+    expect_true(length(tmb_inputs$par_init$u_rho_as) == 0)
+
+    expect_true(ncol(tmb_inputs$data$Z_alpha_xs) == 0)
+    expect_true(ncol(tmb_inputs$data$Z_alpha_a) == 0)
+    expect_true(ncol(tmb_inputs$data$Z_alpha_as) == 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_xs) == 0)
+    expect_true(length(tmb_inputs$par_init$us_alpha_xs) == 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_a) == 0)
+    expect_true(length(tmb_inputs$par_init$u_alpha_as) == 0)
+
+    expect_equal(fit$convergence, 0)
+})
