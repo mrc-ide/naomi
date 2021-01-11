@@ -1,3 +1,4 @@
+
 # naomi 2.2.0
 
 * Reparameterise random effects to be scaled to the linear predictor, as implemented
@@ -12,6 +13,10 @@
   parameterisation described by Riebler _et al._ in Section 3.4.
 
 * Update CIV Datim UID mapping for new 113 health districts.
+
+# naomi 2.1.14
+
+* Add calibration options back in, reverts 2.1.8 changes
 
 # naomi 2.1.13
 
