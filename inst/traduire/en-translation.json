@@ -150,6 +150,7 @@
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Number of HIV negative ANC attendees tested at ANC",
     "UNTREATED_PLHIV_NUM": "PLHIV not on ART",
     "AWARE_PLHIV_PROP": "Proportion PLHIV aware",
+    "AWARE_PLHIV_NUM": "Number PLHIV aware",
     "UNAWARE_PLHIV_NUM": "Number PLHIV unaware",
     "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Number of PLHIV not on ART",
     "INDICATOR_LABEL_AWARE_PLHIV_PROP": "Proportion of PLHIV aware of HIV positive status",

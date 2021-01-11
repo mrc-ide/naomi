@@ -269,10 +269,14 @@ naomi_model_frame <- function(area_merged,
                      untreated_plhiv_num = (plhiv_spectrum - art_current_spectrum) /
                        sum(plhiv_spectrum - art_current_spectrum),
                      unaware_plhiv_num = unaware_spectrum / sum(unaware_spectrum),
+                     aware_plhiv_num = (plhiv_spectrum - unaware_spectrum) / sum(plhiv_spectrum - unaware_spectrum),
                      infections = infections_spectrum / sum(infections_spectrum)) %>%
     tidyr::pivot_longer(cols = c(population, plhiv, art_current,
                                  art_current_residents,
-                                 untreated_plhiv_num, unaware_plhiv_num, infections),
+                                 untreated_plhiv_num,
+                                 unaware_plhiv_num,
+                                 aware_plhiv_num,
+                                 infections),
                         names_to = "indicator", values_to = "distribution") %>%
     dplyr::ungroup()
 
@@ -957,7 +961,7 @@ survey_mf <- function(survey_ids,
              survey_id %in% survey_ids,
              indicator == !!indicator,
              age_group %in% eligible_age_groups$age_group
-           ) 
+           )
 
   if (!use_aggregate) {
     ## Filter data to finest area / sex / age_group stratification
