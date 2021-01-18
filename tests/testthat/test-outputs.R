@@ -17,7 +17,7 @@ test_that("traidure hooks work in model outputs", {
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Prévalence du VIH", "Couverture ART"))
   expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
-                  c("Proportion de la population totale séropositif",
+                  c("Proportion de la population totale séropositive",
                     "Proportion de PLHIV sur ART (résidents)"))
 })
 
