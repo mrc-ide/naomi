@@ -1,6 +1,6 @@
 # naomi 2.2.1
 
-* Update translations from strings supplied by UNAIDS
+* Update French translation strings supplied by UNAIDS.
 
 # naomi 2.2.0
 
