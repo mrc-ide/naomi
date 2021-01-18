@@ -1,3 +1,7 @@
+# naomi 2.2.1
+
+* Update translations from strings supplied by UNAIDS
+
 # naomi 2.2.0
 
 * Implement survey data likelihood as flexible aggregation over areas / sex / age groups, 
