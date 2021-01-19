@@ -1,3 +1,7 @@
+# naomi 2.2.2
+
+* Fix summary report map colour scales 
+
 # naomi 2.2.1
 
 * Update French translation strings supplied by UNAIDS.
