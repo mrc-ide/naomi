@@ -1,5 +1,9 @@
 # naomi 2.2.2
 
+* Add BEN to PEPFAR Data Pack PSNU list.
+
+# naomi 2.2.2
+
 * Fix summary report map colour scales 
 
 # naomi 2.2.1
