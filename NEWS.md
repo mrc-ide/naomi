@@ -1,3 +1,7 @@
+# naomi 2.2.4
+
+* hintr_calibrate will store calibration outputs to new files instead of overwriting existing
+
 # naomi 2.2.3
 
 * Add BEN to PEPFAR Data Pack PSNU list.

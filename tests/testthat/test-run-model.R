@@ -422,13 +422,45 @@ test_that("input data types can be formatted", {
 })
 
 test_that("model run can be calibrated", {
-  ## Calibration modifies files in place. We want to make sure we don't modify
-  ## the test setup output and introduce race condition in tests.
-  ## Create a copy and calibrate that
-  output <- clone_output(a_hintr_output)
-  calibrated_output <- hintr_calibrate(output, a_hintr_calibration_options)
+  ## Calibration makes no modification of existing files.
+  output_hash <- tools::md5sum(a_hintr_output$output_path)
+  spectrum_hash <- tools::md5sum(a_hintr_output$spectrum_path)
+  coarse_output_hash <- tools::md5sum(a_hintr_output$coarse_output_path)
+  summary_report_hash <- tools::md5sum(a_hintr_output$summary_report_path)
+  calibration_hash <- tools::md5sum(a_hintr_output$calibration_path)
+
+  output_path <- tempfile()
+  spectrum_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
+  summary_report_path = tempfile(fileext = ".html")
+  calibration_path <- tempfile(fileext = ".rds")
+  calibrated_output <- hintr_calibrate(a_hintr_output,
+                                       a_hintr_calibration_options,
+                                       output_path,
+                                       spectrum_path,
+                                       coarse_output_path,
+                                       summary_report_path,
+                                       calibration_path)
 
   expect_s3_class(calibrated_output, "hintr_output")
+  expect_equal(calibrated_output$output_path, output_path)
+  expect_equal(calibrated_output$spectrum_path, spectrum_path)
+  expect_equal(calibrated_output$coarse_output_path, coarse_output_path)
+  expect_equal(calibrated_output$summary_report_path, summary_report_path)
+  expect_equal(calibrated_output$calibration_path, calibration_path)
+  expect_equal(calibrated_output$metadata, output$metadata)
+
+  ## Calibration does not modify original files
+  expect_equal(tools::md5sum(a_hintr_output$output_path),
+               output_hash)
+  expect_equal(tools::md5sum(a_hintr_output$spectrum_path),
+               spectrum_hash)
+  expect_equal(tools::md5sum(a_hintr_output$coarse_output_path),
+               coarse_output_hash)
+  expect_equal(tools::md5sum(a_hintr_output$summary_report_path),
+               summary_report_hash)
+  expect_equal(tools::md5sum(a_hintr_output$calibration_path),
+               calibration_hash)
 
   ## Output has been calibrated
   expect_file_different(calibrated_output$output_path,
@@ -437,7 +469,7 @@ test_that("model run can be calibrated", {
   ## Check there is some data
   expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
 
-  ## Spectrum file has been calibrated
+  ## Spectrum file has been calibrated & original files unchanged
   expect_file_different(calibrated_output$spectrum_path,
                         a_hintr_output$spectrum_path)
   file_list <- unzip(calibrated_output$spectrum_path, list = TRUE)
@@ -502,9 +534,6 @@ test_that("model run can be calibrated", {
   expect_equal(calibrated_output$metadata, a_hintr_output$metadata)
 
   ## Can calibrate multiple times
-  ## Copy files again as calibration modified in place and we want to test
-  ## that recalibrating returns us new results
-  clone <- clone_output(calibrated_output)
   calibration_options <- list(
     spectrum_plhiv_calibration_level = "national",
     spectrum_plhiv_calibration_strat = "sex_age_coarse",
@@ -515,7 +544,8 @@ test_that("model run can be calibrated", {
     spectrum_infections_calibration_level = "none",
     spectrum_infections_calibration_strat = "age_coarse"
   )
-  calibrated_output_2 <- hintr_calibrate(clone, calibration_options)
+  calibrated_output_2 <- hintr_calibrate(calibrated_output,
+                                         calibration_options)
 
   expect_s3_class(calibrated_output_2, "hintr_output")
 
@@ -815,10 +845,9 @@ test_that("simple progress", {
 
 test_that("calibration reports simple progress", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
-  output <- clone_output(a_hintr_output)
   with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
-      hintr_calibrate(output, a_hintr_calibration_options))
+      hintr_calibrate(a_hintr_output, a_hintr_calibration_options))
   })
   expect_length(messages$progress, 3)
   progress <- messages$progress
