@@ -448,7 +448,7 @@ test_that("model run can be calibrated", {
   expect_equal(calibrated_output$coarse_output_path, coarse_output_path)
   expect_equal(calibrated_output$summary_report_path, summary_report_path)
   expect_equal(calibrated_output$calibration_path, calibration_path)
-  expect_equal(calibrated_output$metadata, output$metadata)
+  expect_equal(calibrated_output$metadata, a_hintr_output$metadata)
 
   ## Calibration does not modify original files
   expect_equal(tools::md5sum(a_hintr_output$output_path),
