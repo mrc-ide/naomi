@@ -55,6 +55,9 @@ font-size: 35px;
 
 
 ```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
+#Set limit for scientific notation
+options(scipen=10000000)
+
 # Read in files from naomi outputs zip
 output_zip <- params$output_zip
 
@@ -309,6 +312,7 @@ district_bar_plot <- function(district_data,
      ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
      ggplot2::scale_y_continuous(labels = label_format) +
      ggplot2::theme(
+       plot.title = ggplot2::element_text(size = 10),
        axis.text.x = ggplot2::element_text(size = 8),
        axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
        axis.title.y = ggplot2::element_blank()) +
@@ -381,19 +385,42 @@ calibration_options <- get_calibration_option_labels(calibration_options)
 
 text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "PLHIV calibration level: ", 
-                                  "PLHIV calibration strata: ", 
+                                  "PLHIV calibration strata: ",
+                                  "Calculate PLHIV status known: ",
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
-                                  "New infections calibration strata: "), 
-                       source = c(calibration_options$spectrum_population_calibration,
-                                  calibration_options$spectrum_plhiv_calibration_level,
-                                  calibration_options$spectrum_plhiv_calibration_strat,
-                                  calibration_options$spectrum_artnum_calibration_level,
-                                  calibration_options$spectrum_artnum_calibration_strat, 
-                                  calibration_options$spectrum_infections_calibration_strat))
+                                  "New infections calibration level: ",
+                                  "New infections calibration strata: " 
+                                  
+                                  ), 
+                       source = c(options$spectrum_population_calibration,
+                                  options$spectrum_plhiv_calibration_level,
+                                  options$spectrum_plhiv_calibration_strat,
+                                  options$output_aware_plhiv,
+                                  options$spectrum_artnum_calibration_level,
+                                  options$spectrum_artnum_calibration_strat, 
+                                  options$spectrum_infections_calibration_level,
+                                  options$spectrum_infections_calibration_strat
+                                  ))
+  
+  
+  
+if(text$source[text$prefix == "PLHIV calibration level: "] == "none"){
+  text <- filter(text, !grepl("PLHIV",prefix))}
 
-cat(paste0("* ", text$prefix, "_", text$source, "_"), sep = "\n")
+if(text$source[text$prefix == "ART number calibration level: "] == "none"){
+  text <- filter(text, !grepl("ART",prefix))}
 
+if(text$source[text$prefix == "New infections calibration level: "] == "none"){
+  text <- filter(text, !grepl("infections",prefix))}
+
+text <- filter(text, source == "false")
+
+if(length(nrow(text)) > 1) {
+  cat(paste0("* ", text$prefix, "_", text$source, "_"), sep = "\n")
+} else {
+  cat(paste0("* No calibration selected"), sep = "\n")
+}
 ```
 
 ```{r, echo = FALSE, results = 'asis'}
@@ -422,11 +449,11 @@ if("true" %in% include$art_attend) {
 #-------------------------------------------------------------------------------
 p1 <- map_outputs(geom_data = data, 
                   var = "plhiv",
-                  age = "Y015_049", 
+                  age = "Y015_999", 
                   sex = "both", 
                   start_colour_scale = "#FFE3E00F", 
                   end_colour_scale = "red4", 
-                  fig_title = "People living with HIV (15-49)",
+                  fig_title = "People living with HIV (15+)",
                   legend_title = "PLHIV")
 #-------------------------------------------------------------------------------
 # Map: on ART
@@ -448,11 +475,11 @@ p2 <- map_outputs(geom_data = data,
 #-------------------------------------------------------------------------------
 p3 <- map_outputs(geom_data = data, 
                   var = "infections",
-                  age = "Y015_049", 
+                  age = "Y015_999", 
                   sex = "both", 
                   start_colour_scale = "#7181910F", 
                   end_colour_scale = "skyblue4", 
-                  fig_title = "Annual HIV infections (15-49)",
+                  fig_title = "Annual HIV infections (15+)",
                   legend_title = "Infections" )
 
 
@@ -491,7 +518,7 @@ p5 <- map_outputs(geom_data = data,
                   end_colour_scale = "olivedrab4", 
                   fig_title = "Proportion PLHIV on ART (15+)",
                   legend_title = "ART Coverage", 
-                  legend_label = scales::percent_format()
+                  legend_label = scales::percent_format(accuracy = 5L)
 )
 
 #-------------------------------------------------------------------------------
@@ -506,7 +533,7 @@ p6 <- map_outputs(geom_data = data,
                   end_colour_scale = "skyblue4", 
                   fig_title = "Rate of HIV infection (15-49)",
                   legend_title = "Incidence per 1000", 
-                  legend_label = scales::label_number(0.01, 1000)
+                  legend_label = scales::label_number(0.1, 1000)
 )
 
 grid::grid.draw(cbind(ggplot2::ggplotGrob(p4), ggplot2::ggplotGrob(p5), 
@@ -626,9 +653,21 @@ if("0" %in% area_levels) {
                   age_group == "Y015_049",
                   calendar_quarter == t2)
   
-  national_inc <- national[national$indicator == "incidence",]$mean
-  national_prev <- national[national$indicator == "prevalence",]$mean
-  national_art <- national[national$indicator == "art_coverage",]$mean
+gen_est <- function(df, ind, scale, deci, sign) {
+  
+  df <- df %>% filter(indicator == ind) %>%
+    mutate_if(is.numeric, ~ . * scale) %>%
+    mutate_if(is.numeric, round, deci) 
+  est <- paste0(df$mean, sign, " (", df$lower, " - ", df$upper, sign, ")")
+}
+
+national_inc <- national[national$indicator == "incidence",]$mean
+national_prev <- national[national$indicator == "prevalence",]$mean
+national_art <- national[national$indicator == "art_coverage",]$mean
+
+national_inc_est <- gen_est(national, "incidence", 1000, 1, "")
+national_prev_est <- gen_est(national, "prevalence", 100, 2, "%")
+national_art_est <- gen_est(national, "art_coverage", 100, 0, "%")
   
   #-----------------------------------------------------------------------------
   # Barplot: Preavalence
@@ -644,7 +683,7 @@ if("0" %in% area_levels) {
   
   
   p13 <- p13 + ggplot2::scale_fill_manual(name = paste0("National HIV Prevalence: \n ",
-                                                        round(national_prev*100, 2),"%"),
+                                                        national_prev_est),
                                           values = c("above" = "red4", 
                                                      "below" = "mistyrose2"))
   
@@ -664,7 +703,7 @@ if("0" %in% area_levels) {
   
   
   p14 <- p14 + ggplot2::scale_fill_manual(name = paste0("National ART Coverage:\n ", 
-                                                        round(national_art*100, 2),"%"),
+                                                        national_art_est),
                                           values = c("above" = "olivedrab4",
                                                      "below" = "honeydew3"))
    
@@ -684,7 +723,7 @@ if("0" %in% area_levels) {
    
    
   p15 <- p15 + ggplot2::scale_fill_manual(name = paste0("National HIV Incidence\n per 1000 population: ",    
-                                                         round(national_inc*1000, 2)),
+                                                         national_inc_est),
                                                values = c("above" = "skyblue4", 
                                                           "below" = "slategray3")) 
    
