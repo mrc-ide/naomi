@@ -186,7 +186,7 @@ test_that("can generate summary report", {
   t <- tempfile(fileext = ".html")
   generate_output_summary_report(t, a_hintr_output$spectrum_path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
-  content <- brio::read_lines(t)
+  content <- brio::readLines(t)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
   expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))

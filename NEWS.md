@@ -1,4 +1,4 @@
-# naomi 2.2.3
+# naomi 2.2.4
 
 * Replace `readLines()` with `brio::read_lines()`.
 * Use `readr::read_csv()` as default file reader in function `naomi_read_csv()`.

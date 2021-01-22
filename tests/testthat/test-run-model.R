@@ -102,9 +102,9 @@ test_that("model can be run", {
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::read_lines(summary_report_path))))
-  expect_true(any(grepl(basename(a_hintr_data$pjnz), brio::read_lines(summary_report_path))))
-  expect_true(any(grepl("Central", brio::read_lines(summary_report_path))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLines(summary_report_path))))
+  expect_true(any(grepl(basename(a_hintr_data$pjnz), brio::readLines(summary_report_path))))
+  expect_true(any(grepl("Central", brio::readLines(summary_report_path))))
 
   ## Calibration data is stored
   expect_true(!is.null(model_run$calibration_path))
@@ -474,8 +474,8 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::read_lines(summary_report))))
-  expect_true(any(grepl("demo_mwi2019.PJNZ", brio::read_lines(summary_report))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLiness(summary_report))))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", brio::readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output$calibration_path,
@@ -548,8 +548,8 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report_2)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::read_lines(summary_report_2))))
-  expect_true(any(grepl("demo_mwi2019.PJNZ", brio::read_lines(summary_report_2))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLines(summary_report_2))))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", brio::readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,
@@ -738,7 +738,7 @@ test_that("Model can be run without .shiny90 file", {
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::read_lines(summary_report_path))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLines(summary_report_path))))
 
   ## Calibration data is stored
   expect_true(!is.null(model_run$calibration_path))
