@@ -115,7 +115,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                        "aware_plhiv_num_t3_out" = "aware_plhiv_num",
                        "unaware_plhiv_num_t3_out" = "unaware_plhiv_num")
   }
-  
+
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
@@ -143,7 +143,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                          "anc_tested_neg_t2_out" = "anc_tested_neg",
                          "anc_rho_t2_out" = "anc_prevalence",
                          "anc_alpha_t2_out" = "anc_art_coverage")
-  
+
   indicators_anc_t3 <- c("anc_clients_t3_out" = "anc_clients",
                          "anc_plhiv_t3_out" = "anc_plhiv",
                          "anc_already_art_t3_out" = "anc_already_art",
@@ -154,7 +154,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                          "anc_rho_t3_out" = "anc_prevalence",
                          "anc_alpha_t3_out" = "anc_art_coverage")
 
-  
+
   indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
                               naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
   indicator_anc_est_t2 <- Map(get_est, names(indicators_anc_t2), indicators_anc_t2,
@@ -807,7 +807,7 @@ read_output_package <- function(path) {
 
   info_files <- list.files(file.path(tmpd, "info"))
   if(length(info_files)) {
-    info <- lapply(file.path(tmpd, "info", info_files), brio::read_lines)
+    info <- lapply(file.path(tmpd, "info", info_files), brio::readLines)
     names(info) <- info_files
     attr(v, "info") <- info
   }
@@ -919,7 +919,7 @@ calibrate_outputs <- function(output,
              dplyr::select(-indicator) %>%
              dplyr::rename(unaware_raw = est_raw),
              by = group_vars
-           ) %>%    
+           ) %>%
     dplyr::left_join(
              val_aggr %>%
              dplyr::filter(indicator == "infections") %>%
@@ -986,7 +986,7 @@ calibrate_outputs <- function(output,
   } else {
     spectrum_calibration$infections_calibration <- 1.0
   }
-  
+
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::mutate(plhiv_final = plhiv_raw * plhiv_calibration,
                   art_current_final = art_current_raw * art_current_calibration,
@@ -994,7 +994,7 @@ calibrate_outputs <- function(output,
 
   ## Will be NA if output_aware_plhiv = FALSE
   spectrum_calibration$unaware_final <- spectrum_calibration$unaware_raw * spectrum_calibration$unaware_calibration
-    
+
 
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
@@ -1047,7 +1047,7 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "art_current_residents"),
                   .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
-                  .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),                  
+                  .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "infections"),
                   .expand(naomi_mf$calendar_quarter2, "infections"),
                   .expand(naomi_mf$calendar_quarter3, "infections")
@@ -1089,9 +1089,9 @@ calibrate_outputs <- function(output,
              lower = lower * calibration,
              upper = upper * calibration
            )
-  
+
   out <- dplyr::select(out, names(output$indicators))
-  
+
   incidence_calibration <- out %>%
     dplyr::filter(indicator %in% c("population", "plhiv", "infections", "incidence")) %>%
     tidyr::pivot_wider(
@@ -1123,7 +1123,7 @@ calibrate_outputs <- function(output,
   if (naomi_mf$output_aware_plhiv) {
 
     ## browser()
-    
+
     aware_calibration <- out %>%
       dplyr::filter(
                indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop")
@@ -1138,7 +1138,7 @@ calibrate_outputs <- function(output,
                aware_calibration = dplyr::if_else(aware_new == 0, 0, aware_new / aware_plhiv_prop)
              ) %>%
       dplyr::select(area_id, sex, age_group, calendar_quarter, aware_calibration)
-    
+
     out <- out %>%
       dplyr::left_join(aware_calibration,
                        by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
@@ -1152,7 +1152,7 @@ calibrate_outputs <- function(output,
                upper = upper * calibration
              ) %>%
       dplyr::select(names(output$indicators))
-  } 
+  }
 
   ## Save calibration options
 

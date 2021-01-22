@@ -29,7 +29,7 @@ get_model_options_template <- function(art, anc) {
 
 read_options <- function(type) {
   options <- paste(
-    brio::read_lines(system_file("metadata", sprintf("%s_run_options.json", type))),
+    brio::readLines(system_file("metadata", sprintf("%s_run_options.json", type))),
     collapse = ""
   )
   traduire::translator()$replace(options)
@@ -99,7 +99,7 @@ validate_model_options <- function(data, options) {
                         "survey_prevalence")
 
   data <- format_data_input(data)
-  
+
   if(!all(required_options %in% names(options)))
     stop(t_("MISSING_OPTIONS", list(missing_options =
       paste(setdiff(required_options, names(options)), collapse = ", "))))
@@ -175,10 +175,10 @@ validate_model_options <- function(data, options) {
   }
 
   ## ## Validate PJNZ
-  
+
   pjnz_list <- unroll_pjnz(data$pjnz$path)
   spectrum_region_codes <- vapply(pjnz_list, read_spectrum_region_code, integer(1))
-  
+
   missing_spectrum_regions <- !all(is.na(area_merged$spectrum_region_code) |
                                    area_merged$spectrum_region_code %in% spectrum_region_codes)
   ## !! TODO: return names and codes of missing regions

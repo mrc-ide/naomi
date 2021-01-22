@@ -1,6 +1,6 @@
 # naomi 2.2.3
 
-* Replace `readLines()` with `brio::read_lines()`.
+* Replace `readLines()` with `brio::readLines()`.
 
 # naomi 2.2.3
 
