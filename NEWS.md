@@ -1,5 +1,9 @@
 # naomi 2.2.3
 
+* Replace `readLines()` with `brio::read_lines()`.
+
+# naomi 2.2.3
+
 * Add BEN to PEPFAR Data Pack PSNU list.
 
 # naomi 2.2.2

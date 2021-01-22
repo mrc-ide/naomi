@@ -38,7 +38,7 @@ extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
 
   utils::unzip(shiny90_path, exdir = tmpd)
 
-  name <- readLines(file.path(tmpd, "country.txt"))[1]
+  name <- brio::read_lines(file.path(tmpd, "country.txt"))[1]
   spectrum_data <- list.files(file.path(tmpd, "spectrum_data"), "rds$", full.names = TRUE)
   spec <- lapply(spectrum_data, readRDS)
   spec <- lapply(spec, "[[", "data")

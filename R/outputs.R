@@ -807,7 +807,7 @@ read_output_package <- function(path) {
 
   info_files <- list.files(file.path(tmpd, "info"))
   if(length(info_files)) {
-    info <- lapply(file.path(tmpd, "info", info_files), readLines)
+    info <- lapply(file.path(tmpd, "info", info_files), brio::read_lines)
     names(info) <- info_files
     attr(v, "info") <- info
   }

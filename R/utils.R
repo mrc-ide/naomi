@@ -11,7 +11,7 @@ readr_read_csv <- function(file, ..., col_types = readr::cols()) {
 }
 
 csv_reader <- function(file, readr = FALSE) {
-  header <- readLines(file, 1)
+  header <- brio::read_lines(file, 1)
   if (!grepl(",", header) && grepl(";", header)) {
     if (readr) readr::read_csv2 else utils::read.csv2
   } else {
@@ -27,7 +27,7 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
   tmp <- tempfile()
   on.exit(unlink(tmp))
   write.csv(x, tmp, ..., row.names = row.names)
-  paste0(readLines(tmp), collapse = "\n")
+  paste0(brio::read_lines(tmp), collapse = "\n")
 }
 
 suppress_one_warning <- function(expr, regexp) {
