@@ -377,6 +377,7 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
  cat(paste0("\n and national HIV estimates from Spectrum file _", spectrum_file,"_",
            "\n using calibration options: \n " ))
 ```
+
 ```{r, echo = FALSE, results = 'asis'}
 
 # Translate calibration options to human readable
@@ -386,37 +387,43 @@ calibration_options <- get_calibration_option_labels(calibration_options)
 text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "PLHIV calibration level: ", 
                                   "PLHIV calibration strata: ",
-                                  "Calculate PLHIV status known: ",
+                                  "Status known calibration level: ",
+                                  "Status known calibration strata: ",
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
                                   "New infections calibration level: ",
                                   "New infections calibration strata: " 
                                   
                                   ), 
-                       source = c(options$spectrum_population_calibration,
-                                  options$spectrum_plhiv_calibration_level,
-                                  options$spectrum_plhiv_calibration_strat,
-                                  options$output_aware_plhiv,
-                                  options$spectrum_artnum_calibration_level,
-                                  options$spectrum_artnum_calibration_strat, 
-                                  options$spectrum_infections_calibration_level,
-                                  options$spectrum_infections_calibration_strat
+                       source = c(calibration_options$spectrum_population_calibration,
+                                  calibration_options$spectrum_plhiv_calibration_level,
+                                  calibration_options$spectrum_plhiv_calibration_strat,
+                                  calibration_options$spectrum_aware_calibration_level,
+                                  calibration_options$spectrum_aware_calibration_strat,
+                                  calibration_options$spectrum_artnum_calibration_level,
+                                  calibration_options$spectrum_artnum_calibration_strat, 
+                                  calibration_options$spectrum_infections_calibration_level,
+                                  calibration_options$spectrum_infections_calibration_strat
                                   ))
   
-  
-  
-if(text$source[text$prefix == "PLHIV calibration level: "] == "none"){
-  text <- filter(text, !grepl("PLHIV",prefix))}
 
-if(text$source[text$prefix == "ART number calibration level: "] == "none"){
-  text <- filter(text, !grepl("ART",prefix))}
+if(text$source[text$prefix == "PLHIV calibration level: "] == "None"){
+  text <- dplyr::filter(text, !grepl("PLHIV", prefix))
+}
 
-if(text$source[text$prefix == "New infections calibration level: "] == "none"){
-  text <- filter(text, !grepl("infections",prefix))}
+if(text$source[text$prefix == "Status known calibration level: "] == "None"){
+  text <- dplyr::filter(text, !grepl("Status",prefix))
+  }
 
-text <- filter(text, source == "false")
+if(text$source[text$prefix == "ART number calibration level: "] == "None"){
+  text <- dplyr::filter(text, !grepl("ART",prefix))
+  }
 
-if(length(nrow(text)) > 1) {
+if(text$source[text$prefix == "New infections calibration level: "] == "None"){
+  text <- dplyr::filter(text, !grepl("infections",prefix))
+  }
+
+if(nrow(text) > 0) {
   cat(paste0("* ", text$prefix, "_", text$source, "_"), sep = "\n")
 } else {
   cat(paste0("* No calibration selected"), sep = "\n")
@@ -698,7 +705,7 @@ national_art_est <- gen_est(national, "art_coverage", 100, 0, "%")
                                     age_disag = "Y015_999", 
                                     national_indicator = national_art, 
                                     label_format = scales::percent_format(1),
-                                    x_axis_title = "ART_coverage", 
+                                    x_axis_title = "ART coverage", 
                                     fig_title = "Proportion PLHIV on ART (15+)")
   
   
@@ -758,7 +765,7 @@ national_art_est <- gen_est(national, "art_coverage", 100, 0, "%")
                                     age_disag = "Y015_999", 
                                     colour = "olivedrab4", 
                                     label_format = scales::percent_format(1),
-                                    x_axis_title = "ART_coverage", 
+                                    x_axis_title = "ART coverage", 
                                     fig_title = "Proportion PLHIV on ART (15+)")
   
   #-----------------------------------------------------------------------------
