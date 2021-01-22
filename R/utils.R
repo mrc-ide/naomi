@@ -3,7 +3,7 @@ naomi_write_csv <- function(...) {
 }
 
 naomi_read_csv <- function(file, ...) {
-  csv_reader(file, FALSE)(file, ..., stringsAsFactors = FALSE)
+  csv_reader(file, TRUE)(file, ...)
 }
 
 readr_read_csv <- function(file, ..., col_types = readr::cols()) {
