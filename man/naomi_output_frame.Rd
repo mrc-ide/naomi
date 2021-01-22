@@ -7,8 +7,8 @@
 naomi_output_frame(
   mf_model,
   area_aggregation,
-  age_groups = unique(mf_model$age_group),
-  sexes = unique(mf_model$sex)
+  age_groups = unique(mf_model[["age_group"]]),
+  sexes = unique(mf_model[["sex"]])
 )
 }
 \arguments{

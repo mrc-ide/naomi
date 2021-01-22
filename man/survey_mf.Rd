@@ -12,7 +12,8 @@ survey_mf(
   use_kish = TRUE,
   deff = 1,
   min_age = 0,
-  max_age = 80
+  max_age = 80,
+  use_aggregate = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ survey_mf(
 \item{min_age}{Min age for calculating recent infection}
 
 \item{max_age}{Max age for calculating recent infection}
+
+\item{use_aggregate}{Logical; use aggregate survey data as provided instead of
+subsetting fine area/sex/age group stratification.}
 }
 \description{
 Prepare model frames for survey datasets
