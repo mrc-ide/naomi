@@ -1,5 +1,4 @@
 ﻿iso3,area_id,map_level,map_name,map_id,map_source
-BEN,BEN,0,Benin PSNU Placeholder,ohNhyTc0gIz,Datim
 MWI,MWI_3_1_demo,3,Chitipa District,GkIwZrXy1h2,Datim
 MWI,MWI_3_2_demo,3,Karonga District,cPtvxaZqXIH,Datim
 MWI,MWI_3_5_demo,3,Nkhata Bay District,E7zpfyBt7Tw,Datim
@@ -75,7 +74,35 @@ BDI,BDI_2_47,2,DS Ruyigi,QwNaultrBl7,Datim
 BDI,BDI_2_8,2,DS Rwibaga,ZEisaRR50rX,Datim
 BDI,BDI_2_19,2,DS Ryansoro,B4nTrrOQwMw,Datim
 BDI,BDI_2_28,2,DS Vumbi,flfhn0vMg6P,Datim
+BEN,BEN,0,Benin PSNU Placeholder,ohNhyTc0gIz,Datim
 BFA,BFA,0,Burkina Faso,ZeB2eGmDfGw,Datim
+BWA,BWA_3_01ci,2,Boteti District,p5JLtcOw9iv,Datim
+BWA,BWA_3_02sw,2,Bobirwa District,gGqaAXuUGpb,Datim
+BWA,BWA_3_03fy,2,Selibe Phikwe District,qUdeJw9Q0Vk,Datim
+BWA,BWA_3_04br,2,Mahalapye District,iY69BUSqcnC,Datim
+BWA,BWA_3_05qx,2,Palapye District,TcLMNlsgbcz,Datim
+BWA,BWA_3_06kn,2,Serowe District,YmeyoDakwFX,Datim
+BWA,BWA_3_07cw,2,Tutume District,gchw5PMi4N2,Datim
+BWA,BWA_3_08sk,2,Chobe District,e9Ze74PEe99,Datim
+BWA,BWA_3_09ro,2,Charleshill District,v3v0gu2Gtol,Datim
+BWA,BWA_3_10ox,2,Gantsi District,saOJtBcENzM,Datim
+BWA,BWA_3_11ah,2,Kgalagadi North District,oGXMBBGIRJl,Datim
+BWA,BWA_3_12po,2,Kgalagadi South District,KrgFtpUJ20E,Datim
+BWA,BWA_3_13bi,2,Kgatleng District,yNcvm7JYBfi,Datim
+BWA,BWA_3_14bv,2,Kweneng East District,Uz8LWtC0vYF,Datim
+BWA,BWA_3_15ll,2,Kweneng West District,w2kp2bfOmNv,Datim
+BWA,BWA_3_16la,2,Francistown District,h1CepDrLWib,Datim
+BWA,BWA_3_17kp,2,North East District,nszh0FzynAQ,Datim
+BWA,BWA_3_18zk,2,Ngamiland District,TnDQJQtNVCK,Datim
+BWA,BWA_3_19wt,2,Okavango District,ML9AwCIGjAx,Datim
+BWA,BWA_3_20it,2,Gaborone District,VB7am4futjm,Datim
+BWA,BWA_3_21zt,2,South East District,YksWHI1yLuv,Datim
+BWA,BWA_3_22am,2,Lobatse District,m9qc7MnDafM,Datim
+BWA,BWA_3_23qq,2,Goodhope District,y8A4MNQse4l,Datim
+BWA,BWA_3_24hp,2,Jwaneng District,dEkUfWWZQ61,Datim
+BWA,BWA_3_25be,2,Mabutsane District,GgzMAsHUgHC,Datim
+BWA,BWA_3_26he,2,Moshupa District,xLLFT8x1CF5,Datim
+BWA,BWA_3_27dj,2,Southern District,LEUjALXInGD,Datim
 CMR,CMR_3_1,2,Ngaoundal,gsAPKvb8uK2,Datim
 CMR,CMR_3_2,2,Tibati,QN0TvRQr8SA,Datim
 CMR,CMR_3_3,2,Tignere,iwjlpyhilt2,Datim
