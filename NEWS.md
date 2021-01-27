@@ -1,3 +1,8 @@
+# naomi 2.2.5
+
+* Add BWA, HTI, and COD to PEPFAR Data Pack PSNU list
+* Fix Datim data element UID for indicator DIAGNOSED_SUBNAT.T_1.
+
 # naomi 2.2.4
 
 * hintr_calibrate will store calibration outputs to new files instead of overwriting existing
