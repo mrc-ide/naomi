@@ -174,5 +174,8 @@
     "OPTIONS_11_MONTHS": "11 mois",
     "OPTIONS_12_MONTHS": "12 mois",
     "OPTIONS_USE_SURVEY_AGGREGATE_LABEL": "Utiliser un ensemble de données d'enquête agrégées",
-    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "L'ensemble de données d'enquête téléchargé doit être sous-défini exactement aux données à utiliser dans le calibrage du modèle."
+    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "L'ensemble de données d'enquête téléchargé doit être sous-défini exactement aux données à utiliser dans le calibrage du modèle.",
+    "OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL": "Logistique",
+    "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportionnelle",
+    "OPTIONS_CALIBRATE_METHOD_LABEL": "Méthode d'étalonnage"
 }

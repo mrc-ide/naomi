@@ -1,3 +1,14 @@
+# naomi 2.3.0
+
+* Implement 'logistic' scaling option for [`calibrate_outputs()`] such that estimates are
+  adjusted on logistic scale by fine district/sex/age group to ensure proportions do 
+  not go above 100%.
+  - Note: implementation does not yet handle uncertainty ranges. Those might still go above
+    100%.
+* Fix to model calibration for number aware of status to align with proportion aware 
+  of status and number unaware of status.
+
+
 # naomi 2.2.5
 
 * Add BWA, HTI, and COD to PEPFAR Data Pack PSNU list

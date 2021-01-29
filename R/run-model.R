@@ -119,7 +119,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                options$spectrum_aware_calibration_level,
                                options$spectrum_aware_calibration_strat,
                                options$spectrum_infections_calibration_level,
-                               options$spectrum_infections_calibration_strat)
+                               options$spectrum_infections_calibration_strat,
+                               options$calibrate_method)
 
   outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
 
@@ -206,7 +207,8 @@ hintr_calibrate <- function(output, calibration_options,
     spectrum_aware_calibration_level = calibration_options$spectrum_aware_calibration_level,
     spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
     spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
-    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
+    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat,
+    calibrate_method = calibration_options$calibrate_method
   )
 
   calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
@@ -234,6 +236,7 @@ hintr_calibrate <- function(output, calibration_options,
 }
 
 validate_calibrate_options <- function(calibration_options) {
+  
   expected_options <- c("spectrum_plhiv_calibration_level",
                         "spectrum_plhiv_calibration_strat",
                         "spectrum_artnum_calibration_level",
@@ -241,13 +244,19 @@ validate_calibrate_options <- function(calibration_options) {
                         "spectrum_aware_calibration_level",
                         "spectrum_aware_calibration_strat",
                         "spectrum_infections_calibration_level",
-                        "spectrum_infections_calibration_strat")
+                        "spectrum_infections_calibration_strat",
+                        "calibrate_method")
   missing_options <- expected_options[
     !(expected_options %in% names(calibration_options))]
   if (length(missing_options) > 0) {
     stop(t_("Calibration cannot be run, missing options for {{missing}}.",
                  list(missing = paste(missing_options, collapse = ", "))))
   }
+
+  if (!all(calibration_options[["calibrate_method"]] %in% c("logistic", "proportional"))) {
+    stop(t_("calibrate_method must be either \"logistic\" or \"proportional\""))
+  }
+    
   invisible(TRUE)
 }
 
@@ -572,6 +581,9 @@ format_options <- function(options) {
   }
   if (is.null(options$spectrum_infections_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
+  }
+  if (is.null(options$calibrate_method)) {
+    options$calibrate_method <- "logistic"
   }
 
 

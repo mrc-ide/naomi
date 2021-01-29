@@ -115,7 +115,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                        "aware_plhiv_num_t3_out" = "aware_plhiv_num",
                        "unaware_plhiv_num_t3_out" = "unaware_plhiv_num")
   }
-  
+
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
@@ -143,7 +143,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                          "anc_tested_neg_t2_out" = "anc_tested_neg",
                          "anc_rho_t2_out" = "anc_prevalence",
                          "anc_alpha_t2_out" = "anc_art_coverage")
-  
+
   indicators_anc_t3 <- c("anc_clients_t3_out" = "anc_clients",
                          "anc_plhiv_t3_out" = "anc_plhiv",
                          "anc_already_art_t3_out" = "anc_already_art",
@@ -154,7 +154,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                          "anc_rho_t3_out" = "anc_prevalence",
                          "anc_alpha_t3_out" = "anc_art_coverage")
 
-  
+
   indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
                               naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
   indicator_anc_est_t2 <- Map(get_est, names(indicators_anc_t2), indicators_anc_t2,
@@ -763,10 +763,10 @@ generate_output_summary_report <- function(report_path,
     fs::file_copy(list.files(system_file("report"), full.names = TRUE), ".")
 
     rmarkdown::render("summary_report.Rmd", params = list(
-      output_zip = output_zip_path),
-      output_file = report_filename,
-      quiet = quiet
-    )
+                                              output_zip = output_zip_path),
+                      output_file = report_filename,
+                      quiet = quiet
+                      )
 
     fs::file_copy(report_filename, report_path_dir, overwrite = TRUE)
   })
@@ -859,15 +859,14 @@ calibrate_outputs <- function(output,
                               spectrum_aware_calibration_level,
                               spectrum_aware_calibration_strat,
                               spectrum_infections_calibration_level,
-                              spectrum_infections_calibration_strat) {
+                              spectrum_infections_calibration_strat,
+                              calibrate_method = "logistic") {
 
   stopifnot(inherits(output, "naomi_output"))
   stopifnot(inherits(naomi_mf, "naomi_mf"))
+  stopifnot(calibrate_method %in% c("logistic", "proportional"))
 
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
-
-  ## !!! TODO: much of this joining will be obolete by replacing _id with
-  ##     the more readable versions.
 
   mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
     dplyr::left_join(
@@ -886,47 +885,42 @@ calibrate_outputs <- function(output,
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
     dplyr::filter(indicator %in%
-                  c("plhiv", "art_current_residents", "aware_plhiv_num", "unaware_plhiv_num", "infections")) %>%
+                  c("population", "plhiv", "art_current_residents", "aware_plhiv_num", "unaware_plhiv_num", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
   val_aggr <- val %>%
     dplyr::group_by_at(c("indicator", group_vars)) %>%
-    dplyr::summarise(est_raw = sum(mean)) %>%
-    dplyr::ungroup()
+    dplyr::summarise(est_raw = sum(mean), .groups = "drop")
 
+  ## Table of target values from Spectrum
   spectrum_calibration <- naomi_mf$spectrum_calibration %>%
     dplyr::mutate(age_coarse = dplyr::if_else(
                                         age_group %in% c("Y000_004", "Y005_009", "Y010_014"),
-                                        "Y000_014", "Y015_999")) %>%
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "plhiv") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(plhiv_raw = est_raw),
-             by = group_vars
+                                        "Y000_014", "Y015_999"))
+
+  ## Table of raw mean estimates
+  val_aggr_wide <- val_aggr %>%
+    dplyr::filter(
+             indicator %in% c("plhiv", "art_current_residents",
+                              "unaware_plhiv_num", "infections")
            ) %>%
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "art_current_residents") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(art_current_raw = est_raw),
-             by = group_vars
+    dplyr::mutate(
+             indicator = indicator %>%
+               dplyr::recode("plhiv" = "plhiv_raw",
+                             "art_current_residents" = "art_current_raw",
+                             "unaware_plhiv_num" = "unaware_raw",
+                             "infections" = "infections_raw")
            ) %>%
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "unaware_plhiv_num") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(unaware_raw = est_raw),
-             by = group_vars
-           ) %>%    
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "infections") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(infections_raw = est_raw),
-             by = group_vars
-           )
+    tidyr::pivot_wider(names_from = indicator, values_from = est_raw)
+
+  if (is.null(val_aggr_wide[["unaware_raw"]])) {
+    val_aggr_wide[["unaware_raw"]] <- NA_real_
+  }
+
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::left_join(val_aggr_wide, by = group_vars)
+
 
   ## Calculate calibration ratios for PLHIV, ART number, and new infections
 
@@ -959,7 +953,7 @@ calibrate_outputs <- function(output,
   }
 
   aware_aggr_var <- get_spectrum_aggr_var(spectrum_aware_calibration_level,
-                                           spectrum_aware_calibration_strat)
+                                          spectrum_aware_calibration_strat)
 
   if(length(aware_aggr_var) > 0L) {
 
@@ -986,7 +980,7 @@ calibrate_outputs <- function(output,
   } else {
     spectrum_calibration$infections_calibration <- 1.0
   }
-  
+
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::mutate(plhiv_final = plhiv_raw * plhiv_calibration,
                   art_current_final = art_current_raw * art_current_calibration,
@@ -994,7 +988,7 @@ calibrate_outputs <- function(output,
 
   ## Will be NA if output_aware_plhiv = FALSE
   spectrum_calibration$unaware_final <- spectrum_calibration$unaware_raw * spectrum_calibration$unaware_calibration
-    
+
 
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
@@ -1005,9 +999,9 @@ calibrate_outputs <- function(output,
                   infections_spectrum, infections_raw, infections_calibration, infections_final)
 
 
-  ## Calculate calibrated PLHIV at finest stratification (mf_model)
+  ## Calculate calibrated values at finest stratification (mf_model)
 
-  val <- val %>%
+  val_adj <- val %>%
     dplyr::left_join(
              spectrum_calibration %>%
              dplyr::select(
@@ -1023,11 +1017,91 @@ calibrate_outputs <- function(output,
            ) %>%
     dplyr::mutate(adjusted = mean * calibration)
 
+  ## Logistic scaling adjustment
+  if (calibrate_method == "logistic") {
+    val_wide <- val_adj %>%
+      tidyr::pivot_wider(c(area_id, group_vars), names_from = indicator, values_from = c(mean, adjusted))
+
+    val_wide <- val_wide %>%
+      dplyr::mutate(age_coarse = dplyr::if_else(
+                                          age_group %in% c("Y000_004", "Y005_009", "Y010_014"),
+                                          "Y000_014", "Y015_999"))
+
+
+    calibrate_logistic_one <- function(numerator_vector,
+                                       denominator_vector,
+                                       denominator_new,
+                                       target_vector) {
+
+      target_val <- sum(target_vector)
+      logit_p_fine <- qlogis(numerator_vector / denominator_vector)
+      adjust_numerator <- function(theta, l, d) plogis(l + theta) * d
+      optfn <- function(theta) (sum(adjust_numerator(theta, logit_p_fine, denominator_new)) - target_val)^2
+      opt <- optimise(optfn, c(-10, 10), tol = .Machine$double.eps^0.5)
+
+      adjust_numerator(opt$minimum, logit_p_fine, denominator_new)
+    }
+
+
+
+    val_wide_adj <- val_wide %>%
+      dplyr::group_by_at(plhiv_aggr_var) %>%
+      dplyr::mutate(
+               adjusted_plhiv = calibrate_logistic_one(mean_plhiv,
+                                                       mean_population,
+                                                       mean_population,
+                                                       adjusted_plhiv)
+             ) %>%
+      dplyr::group_by_at(artnum_aggr_var) %>%
+      dplyr::mutate(
+               adjusted_art_current_residents =
+                 calibrate_logistic_one(mean_art_current_residents,
+                                        mean_plhiv,
+                                        adjusted_plhiv,
+                                        adjusted_art_current_residents)) %>%
+      dplyr::group_by_at(infections_aggr_var) %>%
+      dplyr::mutate(
+               adjusted_infections =
+                 calibrate_logistic_one(mean_infections,
+                                        mean_population - mean_plhiv,
+                                        mean_population - adjusted_plhiv,
+                                        adjusted_infections)
+             ) %>%
+      dplyr::ungroup()
+
+    if (naomi_mf$output_aware_plhiv) {
+
+      val_wide_adj <- val_wide_adj %>%
+        dplyr::group_by_at(aware_aggr_var) %>%
+        dplyr::mutate(
+                 adjusted_unaware_plhiv_num =
+                   calibrate_logistic_one(mean_unaware_plhiv_num,
+                                          mean_plhiv - mean_art_current_residents,
+                                          adjusted_plhiv - adjusted_art_current_residents,
+                                          adjusted_unaware_plhiv_num)
+               ) %>%
+        dplyr::ungroup()
+      
+    } else {
+      val_wide_adj$adjusted_unaware_plhiv_num <- NA_real_
+    }
+    
+    val_adj <- val_wide_adj %>%
+      dplyr::rename(plhiv = adjusted_plhiv,
+                    art_current_residents = adjusted_art_current_residents,
+                    unaware_plhiv_num = adjusted_unaware_plhiv_num,
+                    infections = adjusted_infections) %>%
+      tidyr::pivot_longer(c(plhiv, art_current_residents, unaware_plhiv_num, infections),
+                          names_to = "indicator", values_to = "adjusted") %>%
+      dplyr::select("area_id", tidyselect::all_of(group_vars), indicator, adjusted)
+  }
+
+  ## Aggregate adjusted fine stratification values
 
   .expand <- function(cq, ind) {
 
     byv <- c("area_id", "sex", "spectrum_region_code", "age_group")
-    m <- dplyr::filter(val, calendar_quarter == cq, indicator == ind)
+    m <- dplyr::filter(val_adj, calendar_quarter == cq, indicator == ind)
     m <- dplyr::left_join(mf, m, by = byv)
 
     val <- mfout
@@ -1047,7 +1121,7 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "art_current_residents"),
                   .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
-                  .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),                  
+                  .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "infections"),
                   .expand(naomi_mf$calendar_quarter2, "infections"),
                   .expand(naomi_mf$calendar_quarter3, "infections")
@@ -1089,9 +1163,9 @@ calibrate_outputs <- function(output,
              lower = lower * calibration,
              upper = upper * calibration
            )
-  
+
   out <- dplyr::select(out, names(output$indicators))
-  
+
   incidence_calibration <- out %>%
     dplyr::filter(indicator %in% c("population", "plhiv", "infections", "incidence")) %>%
     tidyr::pivot_wider(
@@ -1122,11 +1196,9 @@ calibrate_outputs <- function(output,
 
   if (naomi_mf$output_aware_plhiv) {
 
-    ## browser()
-    
     aware_calibration <- out %>%
       dplyr::filter(
-               indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop")
+               indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop", "aware_plhiv_num")
              ) %>%
       tidyr::pivot_wider(
                id_cols = c(area_id, sex, age_group, calendar_quarter),
@@ -1134,16 +1206,21 @@ calibrate_outputs <- function(output,
                values_from = mean
              ) %>%
       dplyr::mutate(
-               aware_new = 1 - unaware_plhiv_num / plhiv,
-               aware_calibration = dplyr::if_else(aware_new == 0, 0, aware_new / aware_plhiv_prop)
+               aware_num_new = plhiv - unaware_plhiv_num,
+               aware_prop_new = aware_num_new / plhiv,
+               aware_num_calibration = dplyr::if_else(aware_num_new == 0, 0, aware_num_new / aware_plhiv_num),
+               aware_prop_calibration = dplyr::if_else(aware_prop_new == 0, 0, aware_prop_new / aware_plhiv_prop)
              ) %>%
-      dplyr::select(area_id, sex, age_group, calendar_quarter, aware_calibration)
-    
+      dplyr::select(area_id, sex, age_group, calendar_quarter,
+                    aware_num_calibration, aware_prop_calibration)
+
     out <- out %>%
       dplyr::left_join(aware_calibration,
                        by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
       dplyr::mutate(
-               calibration = dplyr::if_else(indicator == "aware_plhiv_prop", aware_calibration, 1.0),
+               calibration = dplyr::case_when(indicator == "aware_plhiv_prop" ~ aware_prop_calibration,
+                                              indicator == "aware_plhiv_num" ~ aware_num_calibration,
+                                              TRUE ~ 1.0),
                mean = mean * calibration,
                se = se * calibration,
                median = median * calibration,
@@ -1152,7 +1229,7 @@ calibrate_outputs <- function(output,
                upper = upper * calibration
              ) %>%
       dplyr::select(names(output$indicators))
-  } 
+  }
 
   ## Save calibration options
 
@@ -1304,4 +1381,3 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   output
 }
-

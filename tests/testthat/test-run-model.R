@@ -289,6 +289,7 @@ test_that("setting rng_seed returns same output", {
   options$spectrum_artnum_calibration_level <- "none"
   options$spectrum_aware_calibration_level <- "none"
   options$spectrum_infections_calibration_level <- "none"
+  options$calibrate_method <- "logistic"
 
   output_path <- tempfile()
   output_spectrum <- tempfile(fileext = ".zip")
@@ -542,7 +543,8 @@ test_that("model run can be calibrated", {
     spectrum_aware_calibration_level = "subnational",
     spectrum_aware_calibration_strat = "age_coarse",
     spectrum_infections_calibration_level = "none",
-    spectrum_infections_calibration_strat = "age_coarse"
+    spectrum_infections_calibration_strat = "age_coarse",
+    calibrate_method = "logistic"
   )
   calibrated_output_2 <- hintr_calibrate(calibrated_output,
                                          calibration_options)
@@ -867,7 +869,8 @@ test_that("validate_calibrate_options errors if required options are missing", {
     "spectrum_artnum_calibration_level" = "none",
     "spectrum_artnum_calibration_strat" = "none",
     "spectrum_aware_calibration_level" = "none",
-    "spectrum_aware_calibration_strat" = "none")),
+    "spectrum_aware_calibration_strat" = "none",
+    "calibrate_method" = "logistic")),
     paste0("Calibration cannot be run, missing options for ",
            "spectrum_infections_calibration_level, ",
            "spectrum_infections_calibration_strat."))
@@ -881,7 +884,8 @@ test_that("validate_calibrate_options errors if required options are missing", {
     "spectrum_artnum_calibration_strat" = "none",
     "spectrum_aware_calibration_level" = "none",
     "spectrum_aware_calibration_strat" = "none",
-    "spectrum_infections_calibration_level" = "none")),
+    "spectrum_infections_calibration_level" = "none",
+    "calibrate_method" = "logistic")),
     paste0("Calibration cannot be run, missing options for ",
            "spectrum_infections_calibration_strat."))
 
@@ -894,5 +898,33 @@ test_that("validate_calibrate_options errors if required options are missing", {
     "spectrum_aware_calibration_level" = "none",
     "spectrum_aware_calibration_strat" = "none",
     "spectrum_infections_calibration_level" = "none",
-    "spectrum_infections_calibration_strat" = "none")))
+    "spectrum_infections_calibration_strat" = "none",
+    "calibrate_method" = "logistic")))
+
+  expect_error(validate_calibrate_options(list(
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_strat" = "none",
+    "spectrum_artnum_calibration_level" = "none",
+    "spectrum_artnum_calibration_strat" = "none",
+    "spectrum_aware_calibration_level" = "none",
+    "spectrum_aware_calibration_strat" = "none",
+    "spectrum_infections_calibration_level" = "none",
+    "spectrum_infections_calibration_strat" = "none")),
+    paste0("Calibration cannot be run, missing options for ",
+           "calibrate_method."))
+
+  expect_error(validate_calibrate_options(list(
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_level" = "none",
+    "spectrum_plhiv_calibration_strat" = "none",
+    "spectrum_artnum_calibration_level" = "none",
+    "spectrum_artnum_calibration_strat" = "none",
+    "spectrum_aware_calibration_level" = "none",
+    "spectrum_aware_calibration_strat" = "none",
+    "spectrum_infections_calibration_level" = "none",
+    "spectrum_infections_calibration_strat" = "none",
+    "calibrate_method" = "JIBBERISH")),
+    paste0("calibrate_method must be either \"logistic\" or \"proportional\""))
+
 })
