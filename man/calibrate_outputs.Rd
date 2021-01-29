@@ -14,7 +14,8 @@ calibrate_outputs(
   spectrum_aware_calibration_level,
   spectrum_aware_calibration_strat,
   spectrum_infections_calibration_level,
-  spectrum_infections_calibration_strat
+  spectrum_infections_calibration_strat,
+  calibrate_method = "logistic"
 )
 }
 \description{
