@@ -866,9 +866,6 @@ calibrate_outputs <- function(output,
 
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
 
-  ## !!! TODO: much of this joining will be obolete by replacing _id with
-  ##     the more readable versions.
-
   mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
     dplyr::left_join(
              sf::st_drop_geometry(output$meta_area) %>%
@@ -895,38 +892,30 @@ calibrate_outputs <- function(output,
     dplyr::summarise(est_raw = sum(mean)) %>%
     dplyr::ungroup()
 
+  ## Table of target values from Spectrum
   spectrum_calibration <- naomi_mf$spectrum_calibration %>%
     dplyr::mutate(age_coarse = dplyr::if_else(
                                         age_group %in% c("Y000_004", "Y005_009", "Y010_014"),
-                                        "Y000_014", "Y015_999")) %>%
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "plhiv") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(plhiv_raw = est_raw),
-             by = group_vars
+                                        "Y000_014", "Y015_999"))
+
+  ## Table of raw mean estimates
+  val_aggr_wide <- val_aggr %>%
+    dplyr::filter(
+             indicator %in% c("plhiv", "art_current_residents",
+                              "unaware_plhiv_num", "infections")
            ) %>%
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "art_current_residents") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(art_current_raw = est_raw),
-             by = group_vars
+    dplyr::mutate(
+             indicator = indicator %>%
+               dplyr::recode("plhiv" = "plhiv_raw",
+                             "art_current_residents" = "art_current_raw",
+                             "unaware_plhiv_num" = "unaware_raw",
+                             "infections" = "infections_raw")
            ) %>%
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "unaware_plhiv_num") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(unaware_raw = est_raw),
-             by = group_vars
-           ) %>%    
-    dplyr::left_join(
-             val_aggr %>%
-             dplyr::filter(indicator == "infections") %>%
-             dplyr::select(-indicator) %>%
-             dplyr::rename(infections_raw = est_raw),
-             by = group_vars
-           )
+    tidyr::pivot_wider(names_from = indicator, values_from = est_raw)
+
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::left_join(val_aggr_wide, by = group_vars)
+  
 
   ## Calculate calibration ratios for PLHIV, ART number, and new infections
 
@@ -1122,11 +1111,11 @@ calibrate_outputs <- function(output,
 
   if (naomi_mf$output_aware_plhiv) {
 
-    ## browser()
+    browser()
     
     aware_calibration <- out %>%
       dplyr::filter(
-               indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop")
+               indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop", "aware_plhiv_num")
              ) %>%
       tidyr::pivot_wider(
                id_cols = c(area_id, sex, age_group, calendar_quarter),
@@ -1134,16 +1123,21 @@ calibrate_outputs <- function(output,
                values_from = mean
              ) %>%
       dplyr::mutate(
-               aware_new = 1 - unaware_plhiv_num / plhiv,
-               aware_calibration = dplyr::if_else(aware_new == 0, 0, aware_new / aware_plhiv_prop)
+               aware_num_new = plhiv - unaware_plhiv_num,
+               aware_prop_new = aware_num_new / plhiv,
+               aware_num_calibration = dplyr::if_else(aware_num_new == 0, 0, aware_num_new / aware_plhiv_num),
+               aware_prop_calibration = dplyr::if_else(aware_prop_new == 0, 0, aware_prop_new / aware_plhiv_prop)
              ) %>%
-      dplyr::select(area_id, sex, age_group, calendar_quarter, aware_calibration)
+      dplyr::select(area_id, sex, age_group, calendar_quarter,
+                    aware_num_calibration, aware_prop_calibration)
     
     out <- out %>%
       dplyr::left_join(aware_calibration,
                        by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
       dplyr::mutate(
-               calibration = dplyr::if_else(indicator == "aware_plhiv_prop", aware_calibration, 1.0),
+               calibration = dplyr::case_when(indicator == "aware_plhiv_prop" ~ aware_prop_calibration,
+                                              indicator == "aware_plhiv_num" ~ aware_num_calibration,
+                                              TRUE ~ 1.0),
                mean = mean * calibration,
                se = se * calibration,
                median = median * calibration,

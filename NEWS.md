@@ -1,3 +1,8 @@
+# naomi 2.3.0
+
+* Fix to model calibration for number aware of status to align with proportion aware 
+  of status and number unaware of status.
+  
 # naomi 2.2.5
 
 * Add BWA, HTI, and COD to PEPFAR Data Pack PSNU list
