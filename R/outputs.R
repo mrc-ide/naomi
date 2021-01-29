@@ -994,7 +994,7 @@ calibrate_outputs <- function(output,
                   infections_spectrum, infections_raw, infections_calibration, infections_final)
 
 
-  ## Calculate calibrated PLHIV at finest stratification (mf_model)
+  ## Calculate calibrated values at finest stratification (mf_model)
 
   val <- val %>%
     dplyr::left_join(
@@ -1013,6 +1013,8 @@ calibrate_outputs <- function(output,
     dplyr::mutate(adjusted = mean * calibration)
 
 
+  ## Aggregate adjusted fine stratification values
+  
   .expand <- function(cq, ind) {
 
     byv <- c("area_id", "sex", "spectrum_region_code", "age_group")
@@ -1111,8 +1113,6 @@ calibrate_outputs <- function(output,
 
   if (naomi_mf$output_aware_plhiv) {
 
-    browser()
-    
     aware_calibration <- out %>%
       dplyr::filter(
                indicator %in% c("plhiv", "unaware_plhiv_num", "aware_plhiv_prop", "aware_plhiv_num")
