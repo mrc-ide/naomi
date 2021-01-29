@@ -1070,7 +1070,9 @@ calibrate_outputs <- function(output,
       dplyr::ungroup()
 
     if (naomi_mf$output_aware_plhiv) {
-      val_wide_adj <- dplyr::group_by_at(aware_aggr_var) %>%
+
+      val_wide_adj <- val_wide_adj %>%
+        dplyr::group_by_at(aware_aggr_var) %>%
         dplyr::mutate(
                  adjusted_unaware_plhiv_num =
                    calibrate_logistic_one(mean_unaware_plhiv_num,
