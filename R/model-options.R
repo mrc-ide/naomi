@@ -65,7 +65,9 @@ get_calibration_option_labels <- function(options) {
     age_coarse = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_COARSE_LABEL)",
     sex_age_coarse = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_COARSE_LABEL)",
     age_group = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_AGE_GROUP_LABEL)",
-    sex_age_group = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)"
+    sex_age_group = "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SEX_AGE_GROUP_LABEL)",
+    logistic = "t_(OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL)",
+    proportional = "t_(OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL)"
   )
   calibration_option_map <- traduire::translator()$replace(
     calibration_option_map)

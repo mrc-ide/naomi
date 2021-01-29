@@ -59,7 +59,8 @@ a_hintr_calibration_options <- list(
   spectrum_aware_calibration_level = "national",
   spectrum_aware_calibration_strat = "age_coarse",
   spectrum_infections_calibration_level = "none",
-  spectrum_infections_calibration_strat = "age_coarse"
+  spectrum_infections_calibration_strat = "age_coarse",
+  calibrate_method = "logistic"
 )
 
 ## Use fit.RDS if it exists locally, otherwise just use the actual functions

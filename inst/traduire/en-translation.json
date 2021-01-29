@@ -174,5 +174,8 @@
     "OPTIONS_11_MONTHS": "11 months",
     "OPTIONS_12_MONTHS": "12 months",
     "OPTIONS_USE_SURVEY_AGGREGATE_LABEL": "Use aggregate survey dataset",
-    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "The uploaded survey dataset must be subsetted to exactly the data to be used in model calibration."
+    "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "The uploaded survey dataset must be subsetted to exactly the data to be used in model calibration.",
+    "OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL": "Logistic",
+    "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportional",
+    "OPTIONS_CALIBRATE_METHOD_LABEL": "Calibration method"
 }

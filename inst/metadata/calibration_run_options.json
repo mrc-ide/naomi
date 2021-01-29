@@ -214,5 +214,25 @@
         }
       ]
     }
+    {
+      "label": "t_(OPTIONS_CALIBRATE_METHOD_LABEL)",
+      "controls": [
+        {
+          "name": "calibrate_method",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "logistic",
+              "label": "t_(OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL)"
+            },
+            {
+              "id": "proportional",
+              "label": "t_(OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL)"
+            }
+	  ]
+        }
+      ]
+    }      
   ]
 }
