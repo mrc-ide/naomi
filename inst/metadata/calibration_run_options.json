@@ -213,7 +213,7 @@
           "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
         }
       ]
-    }
+    },
     {
       "label": "t_(OPTIONS_CALIBRATE_METHOD_LABEL)",
       "controls": [
