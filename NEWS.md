@@ -1,3 +1,8 @@
+# naomi 2.3.1
+
+* Set default for `calibrate_method` model option in user interface via JSON metadata.
+* Fix swapped indicator_code and indicator_id for Data Pack metadata which were swapped.
+
 # naomi 2.3.0
 
 * Implement 'logistic' scaling option for [`calibrate_outputs()`] such that estimates are
