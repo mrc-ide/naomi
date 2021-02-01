@@ -1098,8 +1098,7 @@ calibrate_outputs <- function(output,
                                                      art_coverage,
                                                      plhiv,
                                                      artnum_target,
-                                                     calibrate_method),
-               untreated_plhiv_num = plhiv - art_current_residents
+                                                     calibrate_method)
              )
 
     ## Calibrate number attending
@@ -1123,6 +1122,7 @@ calibrate_outputs <- function(output,
                                                         artattend_target)
              )
   }
+  valmean_wide$untreated_plhiv_num = valmean_wide$plhiv - valmean_wide$art_current_residents
 
   ## Calibrate infections
   infections_aggr_var <- get_spectrum_aggr_var(spectrum_infections_calibration_level,
@@ -1175,11 +1175,10 @@ calibrate_outputs <- function(output,
                                                  calibrate_method)
              )
 
-    valmean_wide <- valmean_wide %>%
-      dplyr::mutate(aware_plhiv_num = plhiv - unaware_plhiv_num)
-  } else {
-    valmean_wide$aware_plhiv_num <- NA_real_
   }
+
+  valmean_wide <- valmean_wide %>%
+    dplyr::mutate(aware_plhiv_num = plhiv - unaware_plhiv_num)
 
 
 
