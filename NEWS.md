@@ -2,6 +2,7 @@
 
 * Set default for `calibrate_method` model option in user interface via JSON metadata.
 * Fix swapped indicator_code and indicator_id for Data Pack metadata which were swapped.
+* Refactor [`calibrate_outputs()`]; handle uncertainty ranges for proportion adjustments.
 
 # naomi 2.3.0
 
