@@ -1011,18 +1011,23 @@ calibrate_outputs <- function(output,
                                      denominator_new,
                                      target_val) {
 
+    ## Adjust for small numerical discrepancy
+    proportion_raw[proportion_raw >= 1 & proportion_raw < 1+1e-5] <- 0.99999
+    proportion_raw[proportion_raw <= 0 & proportion_raw > -1e-5] <- 0.00001
+    
     stopifnot(proportion_raw >= 0)
     stopifnot(proportion_raw <= 1)
     stopifnot(target_val == target_val[1])
     target_val <- target_val[1]
 
-    if (sum(denominator_new) < target_val) {
+    ## Add a small value for numerical issues
+    if (target_val > (sum(denominator_new) + 1e-2)) {
       stop("Error in logistic calibration: target numerator is larger than aggregated denominator.")
     }
 
     logit_p_fine <- qlogis(proportion_raw)
     adjust_numerator <- function(theta, l, d) plogis(l + theta) * d
-    optfn <- function(theta) (sum(adjust_numerator(theta, logit_p_fine, denominator_new)) - target_val)^2
+    optfn <- function(theta){ (sum(adjust_numerator(theta, logit_p_fine, denominator_new)) - target_val)^2 }
     opt <- optimise(optfn, c(-10, 10), tol = .Machine$double.eps^0.5)
 
     adjust_numerator(opt$minimum, logit_p_fine, denominator_new)
@@ -1156,7 +1161,7 @@ calibrate_outputs <- function(output,
 
 
   if (naomi_mf$output_aware_plhiv & length(unaware_aggr_var) > 0L) {
-
+    
     unaware_target <- spectrum_calibration %>%
       dplyr::group_by_at(unaware_aggr_var) %>%
       dplyr::summarise(unaware_target = sum(unaware_spectrum),
