@@ -1010,7 +1010,7 @@ calibrate_outputs <- function(output,
   calibrate_logistic_one <- function(proportion_raw,
                                      denominator_new,
                                      target_val) {
-
+    
     ## Adjust for small numerical discrepancy
     proportion_raw[proportion_raw >= 1 & proportion_raw < 1+1e-5] <- 0.99999
     proportion_raw[proportion_raw <= 0 & proportion_raw > -1e-5] <- 0.00001
@@ -1256,7 +1256,7 @@ calibrate_outputs <- function(output,
                          by = byv
                        ) %>%
     dplyr::mutate(
-             ratio = dplyr::if_else(adjusted == 0, 0, adjusted / raw),
+             ratio = dplyr::if_else(raw == 0, 0, adjusted / raw),
              raw = NULL,
              adjusted = NULL
            )
@@ -1299,13 +1299,13 @@ calibrate_outputs <- function(output,
            )
 
   adjust_prop <- function(val, log_odds) {
-    idx <- !is.na(log_odds)
+    idx <- !is.na(log_odds) & val > 0
     val[idx] <- plogis(qlogis(val[idx]) + log_odds[idx])
     val
   }
 
   adjust_prop_se <- function(se, mean, log_odds) {
-    idx <- !is.na(log_odds)
+    idx <- !is.na(log_odds) & se > 0
     val <- se
     val[idx] <- se[idx] * exp(log_odds[idx]) / ((exp(log_odds[idx]) - 1) * mean[idx] + 1)^2
     val
