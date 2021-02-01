@@ -8,7 +8,7 @@ write_datapack_csv(
   naomi_output,
   path,
   psnu_level = NULL,
-  calendar_quarter = naomi_output$meta_period$calendar_quarter
+  calendar_quarter = NULL
 )
 }
 \arguments{

@@ -119,7 +119,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
                                options$spectrum_aware_calibration_level,
                                options$spectrum_aware_calibration_strat,
                                options$spectrum_infections_calibration_level,
-                               options$spectrum_infections_calibration_strat)
+                               options$spectrum_infections_calibration_strat,
+                               options$calibrate_method)
 
   outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
 
@@ -173,18 +174,29 @@ is_hintr_output <- function(object) {
 #'
 #' @param output A hintr_output object
 #' @param calibration_options A set of calibration options
+#' @param output_path Path to store calibrated output indicators as an RDS at.
+#' @param spectrum_path Path to store calibrated spectrum digest file at.
+#' @param coarse_output_path Path to store calibrated coarse age group output
+#'   zip file at.
+#' @param summary_report_path Path to store calibrated summary report at.
+#' @param calibration_path Path to store data required for calibrating model.
 #'
 #' @return Calibrated hintr_output object
 #' @export
-hintr_calibrate <- function(output, calibration_options) {
-  calibration_path <- output$calibration_path
-  if (!is_hintr_output(output) || is.null(calibration_path)) {
+hintr_calibrate <- function(output, calibration_options,
+                            output_path = tempfile(),
+                            spectrum_path = tempfile(fileext = ".zip"),
+                            coarse_output_path = tempfile(fileext = ".zip"),
+                            summary_report_path = tempfile(fileext = ".html"),
+                            calibration_path = tempfile(fileext = ".rds")) {
+  prev_calibration_path <- output$calibration_path
+  if (!is_hintr_output(output) || is.null(prev_calibration_path)) {
     stop(t_("INVALID_CALIBRATE_OBJECT"))
   }
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
-  calibration_data <- readRDS(calibration_path)
+  calibration_data <- readRDS(prev_calibration_path)
   calibrated_output <- calibrate_outputs(
     output = calibration_data$output_package,
     naomi_mf = calibration_data$naomi_data,
@@ -195,7 +207,8 @@ hintr_calibrate <- function(output, calibration_options) {
     spectrum_aware_calibration_level = calibration_options$spectrum_aware_calibration_level,
     spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
     spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
-    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat
+    spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat,
+    calibrate_method = calibration_options$calibrate_method
   )
 
   calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
@@ -204,26 +217,26 @@ hintr_calibrate <- function(output, calibration_options) {
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
   progress$update_progress("PROGRESS_CALIBRATE_SAVE_OUTPUT")
-  saveRDS(calibration_data, output$calibration_path)
+  saveRDS(calibration_data, calibration_path)
   attr(calibrated_output, "info") <- calibration_data$info
 
   indicators <- add_output_labels(calibrated_output)
-  saveRDS(indicators, file = output$output_path)
-  save_output_coarse_age_groups(output$coarse_output_path, calibrated_output,
+  saveRDS(indicators, file = output_path)
+  save_output_coarse_age_groups(coarse_output_path, calibrated_output,
                                 overwrite = TRUE)
-  save_output_spectrum(output$spectrum_path, calibrated_output,
+  save_output_spectrum(spectrum_path, calibrated_output,
                        overwrite = TRUE)
   progress$update_progress("PROGRESS_CALIBRATE_GENERATE_REPORT")
-  generate_output_summary_report(output$summary_report_path,
-                                 output$spectrum_path,
+  generate_output_summary_report(summary_report_path,
+                                 spectrum_path,
                                  quiet = TRUE)
-  build_hintr_output(output$output_path, output$spectrum_path,
-                     output$coarse_output_path, output$summary_report_path,
-                     output$calibration_path,
-                     output$metadata)
+  build_hintr_output(output_path, spectrum_path,
+                     coarse_output_path, summary_report_path,
+                     calibration_path, output$metadata)
 }
 
 validate_calibrate_options <- function(calibration_options) {
+  
   expected_options <- c("spectrum_plhiv_calibration_level",
                         "spectrum_plhiv_calibration_strat",
                         "spectrum_artnum_calibration_level",
@@ -231,13 +244,19 @@ validate_calibrate_options <- function(calibration_options) {
                         "spectrum_aware_calibration_level",
                         "spectrum_aware_calibration_strat",
                         "spectrum_infections_calibration_level",
-                        "spectrum_infections_calibration_strat")
+                        "spectrum_infections_calibration_strat",
+                        "calibrate_method")
   missing_options <- expected_options[
     !(expected_options %in% names(calibration_options))]
   if (length(missing_options) > 0) {
     stop(t_("Calibration cannot be run, missing options for {{missing}}.",
                  list(missing = paste(missing_options, collapse = ", "))))
   }
+
+  if (!all(calibration_options[["calibrate_method"]] %in% c("logistic", "proportional"))) {
+    stop(t_("calibrate_method must be either \"logistic\" or \"proportional\""))
+  }
+    
   invisible(TRUE)
 }
 
@@ -563,6 +582,9 @@ format_options <- function(options) {
   if (is.null(options$spectrum_infections_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
+  if (is.null(options$calibrate_method)) {
+    options$calibrate_method <- "logistic"
+  }
 
 
 
@@ -603,7 +625,7 @@ format_options <- function(options) {
   if(is.null(options[["use_survey_aggregate"]]))
     options$use_survey_aggregate <- "false"
 
-  
+
 
   ## Recode anc_*_year* from "" to NULL
   if(!is.null(options[["anc_clients_year2"]]) && options$anc_clients_year2 == "")

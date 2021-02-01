@@ -213,6 +213,27 @@
           "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_INFECTIONS_HELP)"
         }
       ]
-    }
+    },
+    {
+      "label": "t_(OPTIONS_CALIBRATE_METHOD_LABEL)",
+      "controls": [
+        {
+          "name": "calibrate_method",
+          "type": "select",
+          "value": "logistic",
+          "required": true,
+          "options": [
+            {
+              "id": "logistic",
+              "label": "t_(OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL)"
+            },
+            {
+              "id": "proportional",
+              "label": "t_(OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL)"
+            }
+	  ]
+        }
+      ]
+    }      
   ]
 }

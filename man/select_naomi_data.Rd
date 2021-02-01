@@ -13,15 +13,15 @@ select_naomi_data(
   artcov_survey_ids,
   recent_survey_ids,
   vls_survey_ids = NULL,
-  artnum_calendar_quarter_t1 = naomi_mf$calendar_quarter1,
-  artnum_calendar_quarter_t2 = naomi_mf$calendar_quarter2,
+  artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
+  artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
  
-    anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+    anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
   anc_clients_year_t2_num_months = 12,
  
-    anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter1)),
+    anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter1"]])),
  
-    anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf$calendar_quarter2)),
+    anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
   anc_artcov_year_t1 = anc_prev_year_t1,
   anc_artcov_year_t2 = anc_prev_year_t2,
   use_kish_prev = TRUE,
@@ -31,7 +31,8 @@ select_naomi_data(
   use_kish_recent = TRUE,
   deff_recent = 1,
   use_kish_vls = TRUE,
-  deff_vls = 1
+  deff_vls = 1,
+  use_survey_aggregate = FALSE
 )
 }
 \arguments{
@@ -88,6 +89,12 @@ by the function call and will throw an error.
 The \verb{deff_*} arguments are approximate design effects used to scale the effective sample size for survey
 observations. Stratified design effects are will not be the same as full survey DEFF and there is not
 a straightforward way to approximate these.
+
+The option \code{use_aggregate_survey = TRUE} allows for aggregate versions of survey data to be used in model
+fitting, for example age 15-49 prevalence instead of five-year age group prevalence or province-level
+survey data instead of district level data. This maybe useful if cluster coordinates or survey microdata
+are not available. This option assumes that the \code{survey_hiv_indicators} is alreaddy subsetted to exactly
+the data to be used. All stratifications must also appear in the \code{naomi_data$mf_out} stratifications.
 }
 \seealso{
 \link{demo_survey_hiv_indicators}, \link{demo_anc_testing}, \link{demo_art_number}, \link{convert_quarter_id}
