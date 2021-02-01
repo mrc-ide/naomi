@@ -18,6 +18,81 @@ calibrate_outputs(
   calibrate_method = "logistic"
 )
 }
+\arguments{
+\item{output}{Naomi model output package produced by \code{\link[=output_package]{output_package()}}.}
+
+\item{naomi_mf}{Naomi model frame, objective of class \code{naomi_mf}.}
+
+\item{spectrum_plhiv_calibration_level}{Level to calibrate PLHIV, see details.}
+
+\item{spectrum_plhiv_calibration_strat}{Age/sex stratification to calibrate PLHIV, see details.}
+
+\item{spectrum_artnum_calibration_level}{Level to calibrate number on ART, see details.}
+
+\item{spectrum_artnum_calibration_strat}{Age/sex stratification to calibrate number on ART, see details.}
+
+\item{spectrum_aware_calibration_level}{Level to calibrate number aware of HIV positive status, see details.}
+
+\item{spectrum_aware_calibration_strat}{Age/sex stratification to calibrate number aware of HIV positive status, see details.}
+
+\item{spectrum_infections_calibration_level}{Level to calibrate number infections of HIV positive status, see details.}
+
+\item{spectrum_infections_calibration_strat}{Age/sex stratification to calibrate number infections of HIV positive status, see details.}
+
+\item{calibrate_method}{Calibration method, either \code{"logistic"} (default) or \code{"proportional"}.}
+}
 \description{
 Calibrate naomi model outputs
+}
+\details{
+The following indicators are calibrated:
+\itemize{
+\item \code{plhiv}
+\item \code{art_current_residents}
+\item \code{unaware_plhiv_num}
+\item \code{infections}
+\item \code{art_current} (attending)
+\item \code{aware_plhiv_num}
+\item \code{untreated_plhiv_num}
+\item \code{prevalence}
+\item \code{art_coverage}
+\item \code{aware_plhiv_prop}
+\item \code{incidence}
+}
+
+Steps in the calibration:
+\enumerate{
+\item Aggregate Spectrum totals to specified stratification by level/sex/age to
+calculate the target totals within each stratification.
+\item Adjust fine area/sex/age-group mean values to match targeted total using
+either "logistic" or "proportional" scaling.
+\item Aggregate revised mean count values to all stratifications of Naomi outputs.
+\item Calculate calibrated mean for proportion indicators.
+\item Adjust outputs for all statistics (mean, median, mode, se, range).
+\item Aggregate totals spectrum_calibration table.
+}
+
+The "logistic" scaling method converts fine counts to logit proportions, then
+uses numerical optimisation to solve the logit-scale adjustment to the fine
+district/sex/age proportions such that the adjusted proportions times the
+denominator sums to the target value.
+
+Calibration proceeds sequentially through the following indicators.
+\itemize{
+\item PLHIV
+\item Number of residents on ART
+\item Number unaware of HIV status
+\item Number of new infections
+\item Number of attending ANC by district
+}
+
+Calibration of a previous indicator may affect the denominator for the next
+indicator. This does not affect the calculation for proportional scaling,
+but will affect logistic scaling. Inconsistent selections for calibration
+levels or stratifications could result in a denominator smaller than a target
+numerator for a particular value. This will throw an error for logistic
+scaling methods.
+
+The number of attending ARG clients is always calibrated proportionally by
+sex and five-year age group to the number or residents attending.
 }
