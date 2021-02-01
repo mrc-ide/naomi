@@ -423,6 +423,7 @@ test_that("input data types can be formatted", {
 })
 
 test_that("model run can be calibrated", {
+
   ## Calibration makes no modification of existing files.
   output_hash <- tools::md5sum(a_hintr_output$output_path)
   spectrum_hash <- tools::md5sum(a_hintr_output$spectrum_path)

@@ -220,6 +220,7 @@
         {
           "name": "calibrate_method",
           "type": "select",
+          "value": "logistic",
           "required": true,
           "options": [
             {
