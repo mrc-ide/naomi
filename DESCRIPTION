@@ -21,6 +21,7 @@ Imports:
     R6,
     TMB,
     assertthat,
+    brio,
     data.tree,
     dplyr,
     eppasm (>= 0.5.9),
