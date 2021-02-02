@@ -101,7 +101,7 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
   if (result$visible && print) {
     withr::with_output_sink(temp, print(result$value))
   }
-  output <- paste0(brio::readLines(temp), collapse = "\n")
+  output <- paste0(brio::read_file(temp), collapse = "\n")
   list(result = result$value,
        output = output,
        warnings = testthat:::get_messages(warnings$as_list()),
