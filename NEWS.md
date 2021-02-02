@@ -1,3 +1,7 @@
+# naomi 2.3.2
+
+* Add PEPFAR Datim UID for Uganda Arua and Terego districts.
+
 # naomi 2.3.1
 
 * Set default for `calibrate_method` model option in user interface via JSON metadata.
