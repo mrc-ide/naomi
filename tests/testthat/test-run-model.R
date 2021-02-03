@@ -508,7 +508,7 @@ test_that("model run can be calibrated", {
   expect_true(file.info(summary_report)$ctime >
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLiness(summary_report))))
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLines(summary_report))))
   expect_true(any(grepl("demo_mwi2019.PJNZ", brio::readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
