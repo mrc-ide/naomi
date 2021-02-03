@@ -16,7 +16,7 @@ test_that("datapack_psnu_area_id_map is well formed", {
 
 test_that("datapack_psnu_area_level is well formed", {
 
-  psnu_level <- naomi_read_csv(system_file("datapack/datapack_psnu_area_level.csv"))
+  psnu_level <- read_datapack_psnu()
 
   expect_equal(names(psnu_level), c("iso3", "psnu_area_level"))
   expect_equal(anyDuplicated(psnu_level$iso3), 0)
@@ -25,7 +25,7 @@ test_that("datapack_psnu_area_level is well formed", {
 })
 
 test_that("datapack_indicator_map is well formed", {
-  
+
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
   expect_true(all(c("indicator", "datapack_indicator_code", "is_integer") %in%
                   names(datapack_indicator_map)))
@@ -55,7 +55,7 @@ test_that("datapack export writes correct psnu_level", {
 
   datapack <- readr_read_csv(res)
   datapack3 <- readr_read_csv(res3)
-  
+
   expect_true(!any(is.na(datapack)))
   expect_equal(datapack, datapack3)
 })
