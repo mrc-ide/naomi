@@ -1,3 +1,8 @@
+# naomi 2.3.2
+
+* Update naomi summary report
+* Switch to brio for file reading to avoid encoding issues on windows
+
 # naomi 2.3.1
 
 * Set default for `calibrate_method` model option in user interface via JSON metadata.
