@@ -664,9 +664,9 @@ if("0" %in% area_levels) {
   
 gen_est <- function(df, ind, scale, deci, sign) {
   
-  df <- df %>% filter(indicator == ind) %>%
-    mutate_if(is.numeric, ~ . * scale) %>%
-    mutate_if(is.numeric, round, deci) 
+  df <- df %>% dplyr::filter(indicator == ind) %>%
+    dplyr::mutate_if(is.numeric, ~ . * scale) %>%
+    dplyr::mutate_if(is.numeric, round, deci) 
   est <- paste0(df$mean, sign, " (", df$lower, " - ", df$upper, sign, ")")
 }
 
