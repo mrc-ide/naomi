@@ -27,19 +27,19 @@ write_datapack_csv <- function(naomi_output,
                                path,
                                psnu_level = NULL,
                                calendar_quarter = NULL) {
-  
+
   stopifnot(inherits(naomi_output, "naomi_output"))
   stopifnot(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
-  
+
   if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
     path <- paste0(path, ".csv")
   }
-  
+
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
   datapack_age_group_map <- naomi_read_csv(system_file("datapack", "datapack_age_group_mapping.csv"))
   datapack_sex_map <- naomi_read_csv(system_file("datapack", "datapack_sex_mapping.csv"))
   datapack_psnu_map <- naomi_read_csv(system_file("datapack/datapack_psnu_area_id_map.csv"))
-  datapack_psnu_level <- naomi_read_csv(system_file("datapack/datapack_psnu_area_level.csv"))
+  datapack_psnu_level <- read_datapack_psnu()
 
   if (is.null(psnu_level)) {
     iso3 <- get_iso3(naomi_output$meta_area$area_id)
@@ -61,7 +61,7 @@ write_datapack_csv <- function(naomi_output,
   tx_curr_calendar_quarter <- unique(naomi_output$meta_period$calendar_quarter)
   tx_curr_calendar_quarter <- sort(tx_curr_calendar_quarter, decreasing = TRUE)[2]
 
-  
+
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
              indicator_code = datapack_indicator_code,
@@ -81,12 +81,12 @@ write_datapack_csv <- function(naomi_output,
              sex_naomi = sex,
              sex_datapack = datapack_sex_label,
              sex_uid = datapack_sex_id
-           ) 
+           )
 
   strat <-  datapack_indicator_map %>%
     tidyr::expand_grid(datapack_age_group_map) %>%
     tidyr::expand_grid(datapack_sex_map)
-    
+
   dat <- naomi_output$indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
@@ -146,7 +146,7 @@ write_datapack_csv <- function(naomi_output,
                                              "TX_CURR_SUBNAT.R",
                                              indicator_code)
            )
-                                             
+
 
   ## Round integer indicators
   dat$value <- ifelse(dat$is_integer, round(dat$value), dat$value)
@@ -175,4 +175,11 @@ write_datapack_csv <- function(naomi_output,
   naomi_write_csv(datapack, path)
 
   path
+}
+
+
+read_datapack_psnu <- function() {
+  readr::read_csv(system_file("datapack/datapack_psnu_area_level.csv"),
+                  col_types = list(readr::col_character(),
+                                   readr::col_integer()))
 }

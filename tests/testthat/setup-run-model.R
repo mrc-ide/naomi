@@ -90,8 +90,7 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
     progress$push(condition)
     invokeRestart("muffleProgress")
   }
-  temp <- file()
-  on.exit(close(temp))
+  temp <- tempfile()
   result <- withr::with_output_sink(
     temp,
     withCallingHandlers(withVisible(code),
@@ -101,8 +100,7 @@ naomi_evaluate_promise <- function (code, print = FALSE) {
   if (result$visible && print) {
     withr::with_output_sink(temp, print(result$value))
   }
-  output <- paste0(readLines(temp, encoding = "UTF-8", warn = FALSE),
-                   collapse = "\n")
+  output <- brio::read_file(temp)
   list(result = result$value,
        output = output,
        warnings = testthat:::get_messages(warnings$as_list()),

@@ -1,3 +1,8 @@
+# naomi 2.3.3
+
+* Update naomi summary report
+* Switch to brio for file reading to avoid encoding issues on windows
+
 # naomi 2.3.2
 
 * Add PEPFAR Datim UID for Uganda Arua and Terego districts.
