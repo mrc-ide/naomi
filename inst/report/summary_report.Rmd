@@ -392,9 +392,7 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
                                   "New infections calibration level: ",
-                                  "New infections calibration strata: ", 
-                                  "Calibration method: "
-                                  
+                                  "New infections calibration strata: "
                                   ), 
                        source = c(calibration_options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
@@ -404,8 +402,7 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   calibration_options$spectrum_artnum_calibration_level,
                                   calibration_options$spectrum_artnum_calibration_strat, 
                                   calibration_options$spectrum_infections_calibration_level,
-                                  calibration_options$spectrum_infections_calibration_strat, 
-                                  options$calibrate_method
+                                  calibration_options$spectrum_infections_calibration_strat
                                   ))
   
 

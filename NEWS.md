@@ -1,5 +1,9 @@
 # naomi 2.3.3
 
+* Hotfix: remove `option$calibrate_method` from summary report (naomi troubleshooting #76).
+
+# naomi 2.3.3
+
 * Update naomi summary report
 * Switch to brio for file reading to avoid encoding issues on windows
 
