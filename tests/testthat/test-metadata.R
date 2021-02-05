@@ -190,11 +190,11 @@ test_that("metadata can be translated", {
   on.exit(reset())
 
   metadata <- get_metadata()
-  expect_equal(as.character(metadata[1, "name"]), "Prévalence du VIH")
+  expect_equal(metadata[1, "name"], "Prévalence du VIH")
 
   reset()
   metadata <- get_metadata()
-  expect_equal(as.character(metadata[1, "name"]), "HIV prevalence")
+  expect_equal(metadata[1, "name"], "HIV prevalence")
 })
 
 test_that("uncertainty metadata set for all model output data", {

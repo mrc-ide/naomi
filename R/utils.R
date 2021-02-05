@@ -2,8 +2,8 @@ naomi_write_csv <- function(...) {
   write.csv(..., row.names = FALSE, na = "")
 }
 
-naomi_read_csv <- function(file, ...) {
-  csv_reader(file, TRUE)(file, ...)
+naomi_read_csv <- function(file, ..., col_types = readr::cols()) {
+  as.data.frame(csv_reader(file, TRUE)(file, ..., col_types = col_types))
 }
 
 readr_read_csv <- function(file, ..., col_types = readr::cols()) {
