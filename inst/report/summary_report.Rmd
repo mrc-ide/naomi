@@ -160,7 +160,7 @@ district_count <- length(levels(as.factor(data$area_name)))
 map_outputs <- function(geom_data,
                         var,
                         age, 
-                        sex,
+                        sex_disag,
                         start_colour_scale, 
                         end_colour_scale, 
                         legend_title, 
@@ -170,7 +170,7 @@ map_outputs <- function(geom_data,
   # filter data for desired indicator
   fig_data <- geom_data %>% dplyr::filter(indicator == var, 
                                           age_group == age,
-                                          sex == sex)
+                                          sex == sex_disag)
   # generate figure
   ggplot2::ggplot(fig_data, ggplot2::aes(fill = mean)) +
     ggplot2::geom_sf() +
@@ -287,13 +287,13 @@ pop_pyramid_outputs <- function(disag_data,
 # District Barplot (no national indicator)
 #-------------------------------------------------------------------------------  
 district_bar_plot <- function(district_data, 
-                               var, 
-                               age_disag, 
+                              var, 
+                              age_disag, 
                               colour,
-                               sex_disag = "both",
+                              sex_disag = "both",
                               label_format,
-                               x_axis_title, 
-                               fig_title) {
+                              x_axis_title, 
+                              fig_title) {
    
    # Filter data for desired indicator and disag
    # # assign categories based on national level indicator 
@@ -459,7 +459,7 @@ if("true" %in% include$art_attend) {
 p1 <- map_outputs(geom_data = data, 
                   var = "plhiv",
                   age = "Y015_999", 
-                  sex = "both", 
+                  sex_disag = "both", 
                   start_colour_scale = "#FFE3E00F", 
                   end_colour_scale = "red4", 
                   fig_title = "People living with HIV (15+)",
@@ -471,7 +471,7 @@ p1 <- map_outputs(geom_data = data,
 p2 <- map_outputs(geom_data = data, 
                   var = "art_current_residents",
                   age = "Y015_999", 
-                  sex = "both", 
+                  sex_disag = "both", 
                   start_colour_scale = "#C3CFC30F", 
                   end_colour_scale = "olivedrab4", 
                   fig_title = "Residents receiving ART (15+)",
@@ -485,7 +485,7 @@ p2 <- map_outputs(geom_data = data,
 p3 <- map_outputs(geom_data = data, 
                   var = "infections",
                   age = "Y015_999", 
-                  sex = "both", 
+                  sex_disag = "both", 
                   start_colour_scale = "#7181910F", 
                   end_colour_scale = "skyblue4", 
                   fig_title = "Annual HIV infections (15+)",
@@ -508,7 +508,7 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2),
 p4 <- map_outputs(geom_data = data, 
                   var = "prevalence",
                   age = "Y015_049", 
-                  sex = "both", 
+                  sex_disag = "both", 
                   start_colour_scale = "#FFE3E00F", 
                   end_colour_scale = "red4", 
                   fig_title = "HIV prevalence (15-49)",
@@ -522,7 +522,7 @@ p4 <- map_outputs(geom_data = data,
 p5 <- map_outputs(geom_data = data, 
                   var = "art_coverage",
                   age = "Y015_999", 
-                  sex = "both", 
+                  sex_disag = "both", 
                   start_colour_scale = "#C3CFC30F", 
                   end_colour_scale = "olivedrab4", 
                   fig_title = "Proportion PLHIV on ART (15+)",
@@ -537,7 +537,7 @@ p5 <- map_outputs(geom_data = data,
 p6 <- map_outputs(geom_data = data, 
                   var = "incidence",
                   age = "Y015_049", 
-                  sex = "both", 
+                  sex_disag = "both", 
                   start_colour_scale = "#7181910F", 
                   end_colour_scale = "skyblue4", 
                   fig_title = "Rate of HIV infection (15-49)",
@@ -664,9 +664,9 @@ if("0" %in% area_levels) {
   
 gen_est <- function(df, ind, scale, deci, sign) {
   
-  df <- df %>% dplyr::filter(indicator == ind) %>%
-    dplyr::mutate_if(is.numeric, ~ . * scale) %>%
-    dplyr::mutate_if(is.numeric, round, deci) 
+  df <- df %>% filter(indicator == ind) %>%
+    mutate_if(is.numeric, ~ . * scale) %>%
+    mutate_if(is.numeric, round, deci) 
   est <- paste0(df$mean, sign, " (", df$lower, " - ", df$upper, sign, ")")
 }
 
