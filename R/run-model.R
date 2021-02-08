@@ -236,7 +236,7 @@ hintr_calibrate <- function(output, calibration_options,
 }
 
 validate_calibrate_options <- function(calibration_options) {
-  
+
   expected_options <- c("spectrum_plhiv_calibration_level",
                         "spectrum_plhiv_calibration_strat",
                         "spectrum_artnum_calibration_level",
@@ -256,7 +256,7 @@ validate_calibrate_options <- function(calibration_options) {
   if (!all(calibration_options[["calibrate_method"]] %in% c("logistic", "proportional"))) {
     stop(t_("calibrate_method must be either \"logistic\" or \"proportional\""))
   }
-    
+
   invisible(TRUE)
 }
 
@@ -564,7 +564,7 @@ format_options <- function(options) {
   if (is.null(options$spectrum_artnum_calibration_level)) {
     options$spectrum_artnum_calibration_level <- "none"
   }
-  if (is.null(options$spectrum_artnum_strat)) {
+  if (is.null(options$spectrum_artnum_calibration_strat)) {
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
   }
 
@@ -572,14 +572,14 @@ format_options <- function(options) {
     options$spectrum_aware_calibration_level <- "none"
   }
 
-  if (is.null(options$spectrum_aware_strat)) {
+  if (is.null(options$spectrum_aware_calibration_strat)) {
     options$spectrum_aware_calibration_strat <- "sex_age_coarse"
   }
 
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
-  if (is.null(options$spectrum_infections_strat)) {
+  if (is.null(options$spectrum_infections_calibration_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
   if (is.null(options$calibrate_method)) {
