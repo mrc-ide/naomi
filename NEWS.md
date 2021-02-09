@@ -2,6 +2,7 @@
 
 * Ensure summary report pulls most recent calibration options.
 * Fix `validate_calibration_options()` typo.
+* Add `option$calibrate_method` back into the summary report
 
 # naomi 2.3.4
 
