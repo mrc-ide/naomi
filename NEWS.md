@@ -1,7 +1,7 @@
 # naomi 2.3.5
 
-* Ensure summary report pulls most recent calibration options
-* Fix `validate_calibration_options()` typo
+* Ensure summary report pulls most recent calibration options.
+* Fix `validate_calibration_options()` typo.
 
 # naomi 2.3.4
 
