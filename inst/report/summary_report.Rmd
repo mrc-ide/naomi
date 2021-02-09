@@ -380,8 +380,19 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 
 ```{r, echo = FALSE, results = 'asis'}
 
+# Read in calibration options from calibration_options.yml, if that does not exist, 
+# use default options in options.yml
+
+calibration_files <- utils::unzip(output_zip, list = TRUE)
+
+if("info/calibration_options.yml" %in% calibration_files$Name) {
+  calibration_options <- unz(output_zip, "info/calibration_options.yml")
+  calibration_options <- yaml::read_yaml(calibration_options)
+} else {
+  calibration_options <- options[grep("calibration", names(options))]
+}
+
 # Translate calibration options to human readable
-calibration_options <- options[grep("calibration", names(options))]
 calibration_options <- get_calibration_option_labels(calibration_options)
 
 text <- tibble::tibble(prefix = c("Population calibration: ",
@@ -394,7 +405,7 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "New infections calibration level: ",
                                   "New infections calibration strata: "
                                   ), 
-                       source = c(calibration_options$spectrum_population_calibration,
+                       source = c(options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
                                   calibration_options$spectrum_plhiv_calibration_strat,
                                   calibration_options$spectrum_aware_calibration_level,
