@@ -1,4 +1,8 @@
-# naomi 2.3.3
+# naomi 2.3.5
+
+* Add PEPFAR Datim UID for Angola.
+
+# naomi 2.3.4
 
 * Hotfix: remove `option$calibrate_method` from summary report (naomi troubleshooting #76).
 
