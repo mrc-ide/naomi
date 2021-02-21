@@ -1,3 +1,11 @@
+# naomi 2.3.6
+
+* If ART data are not available at both times, do not estimate overall or district-level 
+  change in ART coverage. Previously this was only restricted if there were no ART at 
+  Time 2; not the case where ART at time 2 but not at time 1.
+* It no sex-stratified ART data from any source, do not estimate difference between adult 
+  female and male ART coverage.
+
 # naomi 2.3.5
 
 * Add PEPFAR Datim UID for Angola.
