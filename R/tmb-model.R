@@ -185,16 +185,24 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no sex stratified ART coverage data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$sex)) {
+  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$sex) &
+       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &
+       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
     f_alpha_xs <- ~0
   } else {
     f_alpha_xs <- ~0 + area_idf
   }
 
   
-  ## If no t2 ART data, do not fit a change in ART coverage. Use logit difference
-  ## in ART coverage from Spectrum.
-  if(nrow(naomi_data$artnum_t2_dat) == 0) {
+  ## If no ART data at both time points, do not fit a change in ART coverage. Use
+  ## logit difference in ART coverage from Spectrum.
+  ## T1 ART data may be either survey or programme
+  ##
+
+  has_t1_art <- nrow(naomi_data$artcov_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
+  has_t2_art <- nrow(naomi_data$artnum_t2_dat) > 0
+  
+  if( !has_t1_art | !has_t2_art ) {
     f_alpha_t2 <- ~0
     f_alpha_xt <- ~0
     logit_alpha_t1t2_offset <- naomi_data$mf_model$logit_alpha_t1t2_offset
