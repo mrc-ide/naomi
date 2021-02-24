@@ -1223,7 +1223,10 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       stop(paste("ART data multiply reported for some age/sex strata in areas:",
                  paste(unique(art_duplicated_check$model_area_id), collapse = ", ")))
     }
-    
+
+    if (out_quarter_id %in% dat$quarter_id) {
+      dat <- dplyr::filter(dat, quarter_id == out_quarter_id)
+    } else {
     dat <- dat %>%
       dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
@@ -1232,6 +1235,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::ungroup() %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter)
+    }
 
     if (nrow(dat) == 0) {
       stop(t_("NO_ART_DATA_FOR_QUARTER",

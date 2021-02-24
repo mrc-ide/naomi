@@ -41,6 +41,13 @@ test_that("artnum_mf() throws errors for invalid inputs", {
   expect_error(artnum_mf(c("CY2016Q1", "CY2016Q2"), demo_art_number, "jibberish"))
 })
 
+test_that("artnum_mf() works with single quarter ART data", {
+  data_art_single_quarter <- dplyr::filter(demo_art_number, calendar_quarter == "CY2017Q4")
+  expect_equal(nrow(artnum_mf("CY2017Q4", data_art_single_quarter, a_naomi_mf)), 14L)
+})
+
+
+
 
 test_that("population calibration options", {
 

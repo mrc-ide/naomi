@@ -1,3 +1,9 @@
+# naomi 2.3.7
+
+* When selecting ART data in `artnum_mf()`, if exact ART quarter is found in the 
+  data, filter those data instead of interpolating. This is more efficient and 
+  avoids interpolation error if only a single quarter of data are uploaded.
+
 # naomi 2.3.6
 
 * If ART data are not available at both times, do not estimate overall or district-level 
