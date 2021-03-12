@@ -761,9 +761,12 @@ generate_output_summary_report <- function(report_path,
   on.exit(unlink(tmpd, recursive = TRUE))
   withr::with_dir(tmpd, {
     fs::file_copy(list.files(system_file("report"), full.names = TRUE), ".")
-
-    rmarkdown::render("summary_report.Rmd", params = list(
-                                              output_zip = output_zip_path),
+    style <- brio::readLines("styles.css")
+    style <- traduire::translator()$replace(style)
+    writeLines(style, "styles.css")
+    rmarkdown::render("summary_report.Rmd",
+                      params = list(output_zip = output_zip_path,
+                                    lang = t_("LANG")),
                       output_file = report_filename,
                       quiet = quiet
                       )
@@ -998,7 +1001,7 @@ calibrate_outputs <- function(output,
   if (!naomi_mf$output_aware_plhiv) {
     valmean_wide$unaware_plhiv_num <- NA_real_
   }
-    
+
   valmean_wide <- valmean_wide %>%
     dplyr::mutate(
              prevalence = plhiv / population,
@@ -1010,11 +1013,11 @@ calibrate_outputs <- function(output,
   calibrate_logistic_one <- function(proportion_raw,
                                      denominator_new,
                                      target_val) {
-    
+
     ## Adjust for small numerical discrepancy
     proportion_raw[proportion_raw >= 1 & proportion_raw < 1+1e-5] <- 0.99999
     proportion_raw[proportion_raw <= 0 & proportion_raw > -1e-5] <- 0.00001
-    
+
     stopifnot(proportion_raw >= 0)
     stopifnot(proportion_raw <= 1)
     stopifnot(target_val == target_val[1])
@@ -1161,7 +1164,7 @@ calibrate_outputs <- function(output,
 
 
   if (naomi_mf$output_aware_plhiv & length(unaware_aggr_var) > 0L) {
-    
+
     unaware_target <- spectrum_calibration %>%
       dplyr::group_by_at(unaware_aggr_var) %>%
       dplyr::summarise(unaware_target = sum(unaware_spectrum),
