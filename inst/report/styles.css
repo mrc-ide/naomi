@@ -26,10 +26,10 @@
 }
 
 .text {
- padding-left: 10px;
- padding-top: 10px;
- color: white;
- font-size: 35px;
+  padding-left: 10px;
+  padding-top: 10px;
+  color: white;
+  font-size: 35px;
 }
 
 #translate:not(#translate[lang="t_(LANG)"]) {
