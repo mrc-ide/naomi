@@ -326,7 +326,6 @@ Naomi is a statistical model that uses data from several sources, including:
 
 National survey data:
 
-
 ```{r, echo = FALSE, results = 'asis'}
 text1 <- tibble::tibble(prefix = c("National household survey data on new HIV infections from ",
                                    "National household survey data on HIV prevalence from ",
