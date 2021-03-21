@@ -8,9 +8,7 @@ naomi_init_traduire <- function() {
   pattern <- sprintf("%s/{language}-{namespace}.json", root)
   languages <- c("en", "fr")
   namespaces <- "translation"
-  traduire::translator_register(resources = NULL,
-                                language = languages[[1]],
-                                default_namespace = namespaces[[1]],
+  traduire::translator_register(NULL, languages[[1]], namespaces[[1]],
                                 resource_pattern = pattern,
                                 namespaces = namespaces,
                                 fallback = "en",
