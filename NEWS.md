@@ -1,3 +1,7 @@
+# naomi 2.3.8
+
+* Add description text for ADR upload to model output metadata.
+
 # naomi 2.3.7
 
 * When selecting ART data in `artnum_mf()`, if exact ART quarter is found in the 

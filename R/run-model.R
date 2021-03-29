@@ -146,7 +146,10 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     summary_report_path,
     calibration_path,
     metadata = list(
-      areas = options$area_scope
+      areas = options$area_scope,
+      output_description = build_output_description(data, options),
+      summary_report_description = build_summary_report_description(data,
+                                                                    options)
   ))
 }
 
@@ -236,7 +239,7 @@ hintr_calibrate <- function(output, calibration_options,
 }
 
 validate_calibrate_options <- function(calibration_options) {
-  
+
   expected_options <- c("spectrum_plhiv_calibration_level",
                         "spectrum_plhiv_calibration_strat",
                         "spectrum_artnum_calibration_level",
@@ -256,7 +259,7 @@ validate_calibrate_options <- function(calibration_options) {
   if (!all(calibration_options[["calibrate_method"]] %in% c("logistic", "proportional"))) {
     stop(t_("calibrate_method must be either \"logistic\" or \"proportional\""))
   }
-    
+
   invisible(TRUE)
 }
 
@@ -640,4 +643,12 @@ format_options <- function(options) {
     options["anc_art_coverage_year2"] <- list(NULL)
 
   options
+}
+
+build_output_description <- function(data, options) {
+  "placeholder text"
+}
+
+build_summary_report_description <- function(data, options) {
+  "placeholder text"
 }

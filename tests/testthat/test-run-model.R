@@ -99,6 +99,10 @@ test_that("model can be run", {
 
   ## Metadata has been saved
   expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
+  expect_type(model_run$metadata$output_description, "character")
+  expect_length(model_run$metadata$output_description, 1)
+  expect_type(model_run$metadata$summary_report_description, "character")
+  expect_length(model_run$metadata$summary_report_description, 1)
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
