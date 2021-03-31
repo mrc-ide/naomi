@@ -1,3 +1,7 @@
+# naomi 2.3.9
+
+* Add PEPFAR PSNU level for BFA to level 1.
+
 # naomi 2.3.8
 
 * Ensure that log interpolation is non-negative values only by inserting `pmax(..., 0)` 
