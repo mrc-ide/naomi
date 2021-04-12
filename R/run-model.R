@@ -147,9 +147,8 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
     calibration_path,
     metadata = list(
       areas = options$area_scope,
-      output_description = build_output_description(data, options),
-      summary_report_description = build_summary_report_description(data,
-                                                                    options)
+      output_description = build_output_description(options),
+      summary_report_description = build_summary_report_description(options)
   ))
 }
 
@@ -233,6 +232,14 @@ hintr_calibrate <- function(output, calibration_options,
   generate_output_summary_report(summary_report_path,
                                  spectrum_path,
                                  quiet = TRUE)
+
+  metadata <- output$metadata
+  if (is.null(metadata$output_description)) {
+    metadata$output_description <- build_output_description(calibration_data$info)
+  }
+  if (is.null(metadata$summary_report_description)) {
+    metadata$summary_report_description <- build_summary_report_description(calibration_data$info)
+  }
   build_hintr_output(output_path, spectrum_path,
                      coarse_output_path, summary_report_path,
                      calibration_path, output$metadata)
@@ -645,10 +652,27 @@ format_options <- function(options) {
   options
 }
 
-build_output_description <- function(data, options) {
-  "Outputs uploaded from Naomi web app"
+build_output_description <- function(options) {
+  build_description("Naomi output uploaded from Naomi web app", options)
 }
 
-build_summary_report_description <- function(data, options) {
-  "Report uploaded from Naomi web app"
+build_summary_report_description <- function(options) {
+  build_description("Naomi summary report uploaded from Naomi web app",
+                    options)
+}
+
+build_description <- function(type_text, options) {
+  write_options <- function(name, value) {
+    sprintf("%s - %s", name, value)
+  }
+  opt_text <- Map(write_options,
+      c(t_("OPTIONS_GENERAL_AREA_SCOPE_LABEL"),
+        t_("OPTIONS_GENERAL_AREA_LEVEL_LABEL"),
+        t_("OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL"),
+        t_("OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL")),
+      c(options[["area_scope"]],
+        options[["area_level"]],
+        options[["calendar_quarter_t2"]],
+        options[["calendar_quarter_t3"]]))
+  paste0(c(type_text, "", opt_text), collapse = "\n")
 }
