@@ -939,9 +939,7 @@ test_that("validate_calibrate_options errors if required options are missing", {
 
 })
 
-test_that("model run can be calibrated", {
-
-  ## Calibration makes no modification of existing files.
+test_that("calibrating adds output descriptions when missing", {
   output_hash <- tools::md5sum(a_hintr_output$output_path)
   spectrum_hash <- tools::md5sum(a_hintr_output$spectrum_path)
   coarse_output_hash <- tools::md5sum(a_hintr_output$coarse_output_path)
@@ -966,7 +964,6 @@ test_that("model run can be calibrated", {
 
   expect_s3_class(calibrated_output, "hintr_output")
 
-  ## Descriptions are created during calibrate where they are missing
   expect_type(calibrated_output$metadata$output_description, "character")
   expect_length(calibrated_output$metadata$output_description, 1)
   expect_type(calibrated_output$metadata$summary_report_description,
