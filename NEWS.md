@@ -1,3 +1,7 @@
+# naomi 2.3.10
+
+* Add description text for ADR upload to model output metadata.
+
 # naomi 2.3.9
 
 * Add PEPFAR PSNU level for BFA to level 1.
