@@ -235,14 +235,16 @@ hintr_calibrate <- function(output, calibration_options,
 
   metadata <- output$metadata
   if (is.null(metadata$output_description)) {
-    metadata$output_description <- build_output_description(calibration_data$info)
+    metadata$output_description <- build_output_description(
+      yaml::yaml.load(calibration_data$info$options.yml))
   }
   if (is.null(metadata$summary_report_description)) {
-    metadata$summary_report_description <- build_summary_report_description(calibration_data$info)
+    metadata$summary_report_description <- build_summary_report_description(
+      yaml::yaml.load(calibration_data$info$options.yml))
   }
   build_hintr_output(output_path, spectrum_path,
                      coarse_output_path, summary_report_path,
-                     calibration_path, output$metadata)
+                     calibration_path, metadata)
 }
 
 validate_calibrate_options <- function(calibration_options) {
