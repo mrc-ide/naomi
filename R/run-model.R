@@ -646,9 +646,9 @@ format_options <- function(options) {
 }
 
 build_output_description <- function(data, options) {
-  "placeholder text"
+  "Outputs uploaded from Naomi web app"
 }
 
 build_summary_report_description <- function(data, options) {
-  "placeholder text"
+  "Report uploaded from Naomi web app"
 }
