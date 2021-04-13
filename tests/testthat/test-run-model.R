@@ -99,6 +99,10 @@ test_that("model can be run", {
 
   ## Metadata has been saved
   expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
+  expect_type(model_run$metadata$output_description, "character")
+  expect_length(model_run$metadata$output_description, 1)
+  expect_type(model_run$metadata$summary_report_description, "character")
+  expect_length(model_run$metadata$summary_report_description, 1)
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
@@ -534,6 +538,11 @@ test_that("model run can be calibrated", {
 
   ## metadata is unchanged
   expect_equal(calibrated_output$metadata, a_hintr_output$metadata)
+  expect_type(calibrated_output$metadata$output_description, "character")
+  expect_length(calibrated_output$metadata$output_description, 1)
+  expect_type(calibrated_output$metadata$summary_report_description,
+              "character")
+  expect_length(calibrated_output$metadata$summary_report_description, 1)
 
   ## Can calibrate multiple times
   calibration_options <- list(
@@ -928,4 +937,36 @@ test_that("validate_calibrate_options errors if required options are missing", {
     "calibrate_method" = "JIBBERISH")),
     paste0("calibrate_method must be either \"logistic\" or \"proportional\""))
 
+})
+
+test_that("calibrating adds output descriptions when missing", {
+  output_hash <- tools::md5sum(a_hintr_output$output_path)
+  spectrum_hash <- tools::md5sum(a_hintr_output$spectrum_path)
+  coarse_output_hash <- tools::md5sum(a_hintr_output$coarse_output_path)
+  summary_report_hash <- tools::md5sum(a_hintr_output$summary_report_path)
+  calibration_hash <- tools::md5sum(a_hintr_output$calibration_path)
+
+  output_path <- tempfile()
+  spectrum_path <- tempfile(fileext = ".zip")
+  coarse_output_path <- tempfile(fileext = ".zip")
+  summary_report_path = tempfile(fileext = ".html")
+  calibration_path <- tempfile(fileext = ".rds")
+  output <- a_hintr_output
+  output$metadata$output_description <- NULL
+  output$metadata$summary_report_description <- NULL
+  calibrated_output <- hintr_calibrate(output,
+                                       a_hintr_calibration_options,
+                                       output_path,
+                                       spectrum_path,
+                                       coarse_output_path,
+                                       summary_report_path,
+                                       calibration_path)
+
+  expect_s3_class(calibrated_output, "hintr_output")
+
+  expect_type(calibrated_output$metadata$output_description, "character")
+  expect_length(calibrated_output$metadata$output_description, 1)
+  expect_type(calibrated_output$metadata$summary_report_description,
+              "character")
+  expect_length(calibrated_output$metadata$summary_report_description, 1)
 })
