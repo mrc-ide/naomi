@@ -1,3 +1,7 @@
+# naomi 2.3.11
+
+* Add PEPFAR PSNU ID mapping for MLI, SEN, LBR, GHA, SLE.
+
 # naomi 2.3.10
 
 * Add description text for ADR upload to model output metadata.
