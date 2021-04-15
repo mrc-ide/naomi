@@ -1,3 +1,4 @@
+
 # naomi 2.3.7
 
 * When selecting ART data in `artnum_mf()`, if exact ART quarter is found in the 
@@ -15,6 +16,9 @@
 # naomi 2.3.5
 
 * Add PEPFAR Datim UID for Angola.
+* Ensure summary report pulls most recent calibration options.
+* Fix `validate_calibration_options()` typo.
+* Add `option$calibrate_method` back into the summary report
 
 # naomi 2.3.4
 
