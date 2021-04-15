@@ -562,7 +562,8 @@ text <- tibble::tibble(prefix = c("Étalonnage de la population: ",
                                   "Niveau d'étalonnage du numéro TARV: ", 
                                   "Strates d'étalonnage du numéro TARV: ", 
                                   "Nouveau niveau d'étalonnage des infections: ",
-                                  "Nouvelles strates d'étalonnage des infections: "
+                                  "Nouvelles strates d'étalonnage des infections: ,", 
+                                  "Méthode d'étalonnage:"
                                   ), 
                        source = c(calibration_options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
@@ -572,7 +573,8 @@ text <- tibble::tibble(prefix = c("Étalonnage de la population: ",
                                   calibration_options$spectrum_artnum_calibration_level,
                                   calibration_options$spectrum_artnum_calibration_strat, 
                                   calibration_options$spectrum_infections_calibration_level,
-                                  calibration_options$spectrum_infections_calibration_strat
+                                  calibration_options$spectrum_infections_calibration_strat,
+                                  calibration_options$calibrate_method
                                   ))
   
 
