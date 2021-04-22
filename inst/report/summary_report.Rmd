@@ -48,7 +48,7 @@ indicators <- naomi::add_output_labels(outputs) %>%
 
 # Grab inputs and model options from model output zip file
 # # concatenating strings where more than one option may be selected
-report_date <- format(Sys.Date(), "%B %d, %Y")
+report_date <- format(Sys.Date(), "%d-%m-%Y")
 t1 <- options$calendar_quarter_t1
 t2 <- options$calendar_quarter_t2
 iso <- options$area_scope
@@ -71,10 +71,14 @@ include <- tibble::tibble(
   dplyr::mutate_all(list(~dplyr::na_if(., "")))
 
 # Select years where ART programme data is included
+collapse_and <- " and "
+if (print_fr) {
+  collapse_and <- " et "
+}
 
 if("true" %in% include$art) {
   df <- include %>% dplyr::filter(art == "true")
-  art_year <- paste0(df$art_year, sep = "", collapse = " and ")
+  art_year <- paste0(df$art_year, sep = "", collapse = collapse_and)
 } else {
   art_year <- NA
 }
@@ -82,7 +86,7 @@ if("true" %in% include$art) {
 # Select years where ART attendance reallocation is implemented
 if("true" %in% include$art_attend ) {
   df <- include %>% dplyr::filter(art_attend == "true")
-  art_attend <- paste0(df$art_year, sep = "", collapse = " and ")
+  art_attend <- paste0(df$art_year, sep = "", collapse = collapse_and)
 } else {
   art_attend <- NA
 }
@@ -92,7 +96,7 @@ anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_
 anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
 
 if(length(anc_art_options)) {
-  anc_art <- paste0(anc_art_options, sep = "", collapse = " and ")
+  anc_art <- paste0(anc_art_options, sep = "", collapse = collapse_and)
 } else {
   anc_art <- NA
 }
@@ -102,7 +106,7 @@ anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year
 anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
 
 if(length(anc_prev_options)) {
-  anc_prev <- paste0(anc_prev_options, sep = "", collapse = " and ")
+  anc_prev <- paste0(anc_prev_options, sep = "", collapse = collapse_and)
 } else {
   anc_prev <- NA
 }
@@ -867,7 +871,7 @@ cat("### **Distribution of HIV by age and sex**")
 
 ```{r, echo = FALSE, results = 'asis', include = print_fr, eval = print_fr}
 
-cat("### **Distribution of HIV by age and sex**")
+cat("### **Répartition du VIH par âge et par sexe**")
 
 ```
 
