@@ -2,7 +2,7 @@ iso3,psnu_area_level
 AGO,1
 BEN,0
 BDI,2
-BFA,0
+BFA,1
 BWA,3
 COD,3
 CIV,2
@@ -10,6 +10,7 @@ CMR,3
 HTI,2
 KEN,2
 LSO,1
+MLI,1
 MOZ,2
 MWI,3
 NAM,2
@@ -22,3 +23,7 @@ UGA,3
 ZAF,2
 ZMB,2
 ZWE,2
+GHA,2
+SLE,2
+SEN,1
+LBR,1

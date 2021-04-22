@@ -1,3 +1,23 @@
+# naomi 2.3.12
+
+* Add translated summary report
+
+# naomi 2.3.11
+
+* Add PEPFAR PSNU ID mapping for MLI, SEN, LBR, GHA, SLE.
+
+# naomi 2.3.10
+
+* Add description text for ADR upload to model output metadata.
+
+# naomi 2.3.9
+
+* Add PEPFAR PSNU level for BFA to level 1.
+
+# naomi 2.3.8
+
+* Ensure that log interpolation is non-negative values only by inserting `pmax(..., 0)`
+  in function `log_lin_approx()`. (NAOMI TROUBLESHOOTING #100)
 
 # naomi 2.3.7
 
