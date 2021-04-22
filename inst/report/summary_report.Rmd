@@ -91,9 +91,7 @@ spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 include <- tibble::tibble(
   art = list(options$include_art_t1, options$include_art_t2),
   art_year = list(quarter_t1, quarter_t2),
-  art_attend = list(options$artattend, options$artattend_t2),
-  anc_art = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2),
-  anc_prev = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+  art_attend = list(options$artattend, options$artattend_t2)
 ) %>%
   dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
   dplyr::mutate_all(list(~dplyr::na_if(., "")))
@@ -116,17 +114,21 @@ if("true" %in% include$art_attend ) {
 }
 
 # Select years where ANC ART programme data is included
-if(sum(length(is.na(include$anc_art))) < 2) {
-  df <- include %>% dplyr::filter(anc_art != "NULL")
-  anc_art <- paste0(df$anc_art, sep = "", collapse = " and ")
+anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2) 
+anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_art_options)) {
+  anc_art <- paste0(anc_art_options, sep = "", collapse = " and ")
 } else {
   anc_art <- NA
 }
 
 # Select years where ANC prev programme data is included
-if(sum(length(is.na(include$anc_prev))) < 2) {
-  df <- include %>% dplyr::filter(anc_prev != "NULL")
-  anc_prev <- paste0(df$anc_prev, sep = "", collapse = " and ")
+anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_prev_options)) {
+  anc_prev <- paste0(anc_prev_options, sep = "", collapse = " and ")
 } else {
   anc_prev <- NA
 }
@@ -487,7 +489,6 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 
 # Read in calibration options from calibration_options.yml, if that does not exist, 
 # use default options in options.yml
-
 calibration_files <- utils::unzip(output_zip, list = TRUE)
 
 if("info/calibration_options.yml" %in% calibration_files$Name) {
@@ -508,8 +509,7 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
                                   "New infections calibration level: ",
-                                  "New infections calibration strata: ", 
-                                  "Calibration method: "
+                                  "New infections calibration strata: "
                                   ), 
                        source = c(options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
@@ -519,11 +519,18 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   calibration_options$spectrum_artnum_calibration_level,
                                   calibration_options$spectrum_artnum_calibration_strat, 
                                   calibration_options$spectrum_infections_calibration_level,
-                                  calibration_options$spectrum_infections_calibration_strat, 
-                                  calibration_options$calibrate_method
+                                  calibration_options$spectrum_infections_calibration_strat
                                   ))
-  
 
+# Add calibration method in if present in calibration options
+if("calibrate_method" %in% names(calibration_options)) {
+  
+  add <- tibble::tibble(prefix ="Calibration method: ", 
+                        source = calibration_options$calibrate_method )
+  text <- rbind(text, add)
+}
+  
+# Filter out strata options if calibration not selected
 if(text$source[text$prefix == "PLHIV calibration level: "] == "None"){
   text <- dplyr::filter(text, !grepl("PLHIV", prefix))
 }

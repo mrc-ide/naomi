@@ -1,3 +1,25 @@
+# naomi 2.3.12
+* Fix to summary report to display input ANC data in description.
+* Ensure summary report pulls most recent calibration options.
+* Fix `validate_calibration_options()` typo.
+* Add `option$calibrate_method` back into the summary report.
+
+# naomi 2.3.11
+
+* Add PEPFAR PSNU ID mapping for MLI, SEN, LBR, GHA, SLE.
+
+# naomi 2.3.10
+
+* Add description text for ADR upload to model output metadata.
+
+# naomi 2.3.9
+
+* Add PEPFAR PSNU level for BFA to level 1.
+
+# naomi 2.3.8
+
+* Ensure that log interpolation is non-negative values only by inserting `pmax(..., 0)` 
+  in function `log_lin_approx()`. (NAOMI TROUBLESHOOTING #100)
 
 # naomi 2.3.7
 
@@ -16,9 +38,6 @@
 # naomi 2.3.5
 
 * Add PEPFAR Datim UID for Angola.
-* Ensure summary report pulls most recent calibration options.
-* Fix `validate_calibration_options()` typo.
-* Add `option$calibrate_method` back into the summary report
 
 # naomi 2.3.4
 
