@@ -15,32 +15,6 @@ output:
     anchor_sections: false
 ---
 
-::: {#translate lang="en"}
-text in english
-:::
-
-::: {#translate lang="fr"}
-texte en français
-:::
-
-```{r, include = FALSE}
-if (params$lang == "fr") {
-  print_en <- FALSE
-  print_fr <- TRUE
-} else {
-  print_en <- TRUE
-  print_fr <- FALSE
-}
-```
-
-```{r include = print_en, eval = print_en}
-plot(1:5, 1:5)
-```
-
-```{r include = print_fr, eval = print_fr}
-plot(5:1, 5:1)
-```
-
 ```{r, include = FALSE}
 if (params$lang == "fr") {
   print_en <- FALSE
@@ -91,9 +65,7 @@ spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 include <- tibble::tibble(
   art = list(options$include_art_t1, options$include_art_t2),
   art_year = list(quarter_t1, quarter_t2),
-  art_attend = list(options$artattend, options$artattend_t2),
-  anc_art = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2),
-  anc_prev = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+  art_attend = list(options$artattend, options$artattend_t2)
 ) %>%
   dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
   dplyr::mutate_all(list(~dplyr::na_if(., "")))
@@ -116,17 +88,21 @@ if("true" %in% include$art_attend ) {
 }
 
 # Select years where ANC ART programme data is included
-if(sum(length(is.na(include$anc_art))) < 2) {
-  df <- include %>% dplyr::filter(anc_art != "NULL")
-  anc_art <- paste0(df$anc_art, sep = "", collapse = " and ")
+anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2) 
+anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_art_options)) {
+  anc_art <- paste0(anc_art_options, sep = "", collapse = " and ")
 } else {
   anc_art <- NA
 }
 
 # Select years where ANC prev programme data is included
-if(sum(length(is.na(include$anc_prev))) < 2) {
-  df <- include %>% dplyr::filter(anc_prev != "NULL")
-  anc_prev <- paste0(df$anc_prev, sep = "", collapse = " and ")
+anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_prev_options)) {
+  anc_prev <- paste0(anc_prev_options, sep = "", collapse = " and ")
 } else {
   anc_prev <- NA
 }
@@ -432,16 +408,16 @@ cat(paste0("* ", text1$prefix, "_", text1$source, "_"), sep = "\n")
 ```
   
   
-```{r, echo = FALSE, results= 'asis', include = print_en, eval = print_en}
+```{r, echo = FALSE, results= 'asis', include = print_fr, eval = print_fr}
 programme_data <- c(art_year, anc_prev, anc_art)
 
 if(sum(is.na(programme_data)) <3 ) {
   
-  cat(paste0("\n Operational programme data: \n", sep = "\n"))
+  cat(paste0("\n Données du programme opérationnel: \n", sep = "\n"))
   
-  text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for ",
-                                  "National programme data on ANC HIV prevalence for ", 
-                                  "National programme data on ANC ART coverage for "
+  text2 <- tibble::tibble(prefix = c("Données national sur la couverture TARV pour ",
+                                  "Données national sur la prévalence du VIH parmi CPN pour ", 
+                                  "Données national sur la couverture du TARV parmi CPN pour "
                                   ), 
                        source = c(art_year,
                                   anc_prev, 
@@ -487,7 +463,6 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 
 # Read in calibration options from calibration_options.yml, if that does not exist, 
 # use default options in options.yml
-
 calibration_files <- utils::unzip(output_zip, list = TRUE)
 
 if("info/calibration_options.yml" %in% calibration_files$Name) {
@@ -508,8 +483,7 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
                                   "New infections calibration level: ",
-                                  "New infections calibration strata: ", 
-                                  "Calibration method: "
+                                  "New infections calibration strata: "
                                   ), 
                        source = c(options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
@@ -519,11 +493,18 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   calibration_options$spectrum_artnum_calibration_level,
                                   calibration_options$spectrum_artnum_calibration_strat, 
                                   calibration_options$spectrum_infections_calibration_level,
-                                  calibration_options$spectrum_infections_calibration_strat, 
-                                  calibration_options$calibrate_method
+                                  calibration_options$spectrum_infections_calibration_strat
                                   ))
-  
 
+# Add calibration method in if present in calibration options
+if("calibrate_method" %in% names(calibration_options)) {
+  
+  add <- tibble::tibble(prefix ="Calibration method: ", 
+                        source = calibration_options$calibrate_method )
+  text <- rbind(text, add)
+}
+  
+# Filter out strata options if calibration not selected
 if(text$source[text$prefix == "PLHIV calibration level: "] == "None"){
   text <- dplyr::filter(text, !grepl("PLHIV", prefix))
 }
@@ -547,12 +528,22 @@ if(nrow(text) > 0) {
 }
 ```
 
+
 ```{r, echo = FALSE, results = 'asis', include = print_fr, eval = print_fr}
 
-# Translate calibration options to human readable
-calibration_options <- options[grep("calibration", names(options))]
-calibration_options <- get_calibration_option_labels(calibration_options)
+# Read in calibration options from calibration_options.yml, if that does not exist, 
+# use default options in options.yml
+calibration_files <- utils::unzip(output_zip, list = TRUE)
 
+if("info/calibration_options.yml" %in% calibration_files$Name) {
+  calibration_options <- unz(output_zip, "info/calibration_options.yml")
+  calibration_options <- yaml::read_yaml(calibration_options)
+} else {
+  calibration_options <- options[grep("calibration", names(options))]
+}
+
+# Translate calibration options to human readable
+calibration_options <- get_calibration_option_labels(calibration_options)
 
 text <- tibble::tibble(prefix = c("Étalonnage de la population: ",
                                   "Niveau d'étalonnage des PVVIH: ", 
@@ -562,10 +553,9 @@ text <- tibble::tibble(prefix = c("Étalonnage de la population: ",
                                   "Niveau d'étalonnage du numéro TARV: ", 
                                   "Strates d'étalonnage du numéro TARV: ", 
                                   "Nouveau niveau d'étalonnage des infections: ",
-                                  "Nouvelles strates d'étalonnage des infections: ,", 
-                                  "Méthode d'étalonnage:"
+                                  "Nouvelles strates d'étalonnage des infections: "
                                   ), 
-                       source = c(calibration_options$spectrum_population_calibration,
+                       source = c(options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
                                   calibration_options$spectrum_plhiv_calibration_strat,
                                   calibration_options$spectrum_aware_calibration_level,
@@ -573,11 +563,20 @@ text <- tibble::tibble(prefix = c("Étalonnage de la population: ",
                                   calibration_options$spectrum_artnum_calibration_level,
                                   calibration_options$spectrum_artnum_calibration_strat, 
                                   calibration_options$spectrum_infections_calibration_level,
-                                  calibration_options$spectrum_infections_calibration_strat,
-                                  calibration_options$calibrate_method
+                                  calibration_options$spectrum_infections_calibration_strat
                                   ))
-  
 
+                                  
+
+# Add calibration method in if present in calibration options
+if("calibrate_method" %in% names(calibration_options)) {
+  
+  add <- tibble::tibble(prefix ="Méthode d'étalonnage: ", 
+                        source = calibration_options$calibrate_method )
+  text <- rbind(text, add)
+}
+  
+# Filter out strata options if calibration not selected
 if(text$source[text$prefix == "Niveau d'étalonnage des PVVIH: "] == "None"){
   text <- dplyr::filter(text, !grepl("PVVIH", prefix))
 }
@@ -657,7 +656,7 @@ p1 <- map_outputs(geom_data = data,
                   sex_disag = "both", 
                   start_colour_scale = "#FFE3E00F", 
                   end_colour_scale = "red4", 
-                  fig_title = "Personnes vivant avec le VIH (15 ans et plus)",
+                  fig_title = "Personnes vivant avec le VIH\n (15 ans et plus)",
                   legend_title = "PVVIH")
 
 #-------------------------------------------------------------------------------
@@ -1120,7 +1119,7 @@ if("0" %in% area_levels) {
                                     national_indicator = national_inc, 
                                     label_format = scales::label_number(0.01, 1000),
                                     x_axis_title = "Rate of HIV infection (15-49)", 
-                                    fig_title = "HIV Incidence per 1000 population")
+                                    fig_title = "HIV Incidence\n per 1000 population")
    
    
   p15 <- p15 + ggplot2::scale_fill_manual(name = paste0("National HIV Incidence\n per 1000 population: ",    
@@ -1172,7 +1171,7 @@ if("0" %in% area_levels) {
                                     colour = "skyblue4", 
                                     label_format = scales::label_number(0.01, 1000),
                                     x_axis_title = "Rate of HIV infection (15-49)", 
-                                    fig_title = "HIV Incidence per 1000 population")
+                                    fig_title = "HIV Incidence\n per 1000 population")
   
   # Plot figs together
   bar_plot <- grid::grid.draw(cbind(ggplot2::ggplotGrob(p13), ggplot2::ggplotGrob(p14),
@@ -1265,7 +1264,7 @@ if("0" %in% area_levels) {
                                     national_indicator = national_inc, 
                                     label_format = scales::label_number(0.01, 1000),
                                     x_axis_title = "Taux d'infection  par le VIH (15-49)", 
-                                    fig_title = "Incidence du VIH pour 1000 habitants", 
+                                    fig_title = "Incidence du VIH\n pour 1000 habitants", 
                                     lang = "fr")
    
 
@@ -1336,7 +1335,7 @@ cat(paste0("### **", area_level_label, "-level indicators**"))
 ```
 
 ```{r, echo = FALSE, results = 'asis', include = print_fr, eval = print_fr}
-cat(paste0("### **Indicateurs de niveau", area_level_label, "**"))
+cat(paste0("### **Indicateurs de niveau ", area_level_label, "**"))
 ```
 
 ``` {r, echo = FALSE, warning = FALSE, results = 'asis'}
@@ -1597,5 +1596,6 @@ Un défi dans la estimation de la couverture du traitement au niveau du district
 
 `r if(print_fr){"_Version_"}`
 `r if(print_fr){"\nLe modèle Naomi est soutenu par l'ONUSIDA et développé et maintenu par le [MRC Centre for Global Infectious Disease Analysis] (https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis) à l'Imperial College London. Le modèle reçoit des conseils techniques du [Groupe de référence de l'ONUSIDA sur les estimations, la modélisation et les projections] (http://epidem.org/). Le modèle a été utilisé pour la première fois en 2020 et continue d'être développé en fonction des nouvelles données et des besoins en informations stratégiques sur le VIH."}`
+
 
 

@@ -1,6 +1,12 @@
-# naomi 2.3.12
+# naomi 2.3.13
 
-* Add translated summary report
+* Option to output summary report in French.
+
+# naomi 2.3.12
+* Fix to summary report to display input ANC data in description.
+* Ensure summary report pulls most recent calibration options.
+* Fix `validate_calibration_options()` typo.
+* Add `option$calibrate_method` back into the summary report.
 
 # naomi 2.3.11
 
@@ -36,9 +42,6 @@
 # naomi 2.3.5
 
 * Add PEPFAR Datim UID for Angola.
-* Ensure summary report pulls most recent calibration options.
-* Fix `validate_calibration_options()` typo.
-* Add `option$calibrate_method` back into the summary report
 
 # naomi 2.3.4
 
