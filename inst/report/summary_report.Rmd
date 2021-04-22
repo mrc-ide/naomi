@@ -94,9 +94,7 @@ spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 include <- tibble::tibble(
   art = list(options$include_art_t1, options$include_art_t2),
   art_year = list(quarter_t1, quarter_t2),
-  art_attend = list(options$artattend, options$artattend_t2),
-  anc_art = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2),
-  anc_prev = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+  art_attend = list(options$artattend, options$artattend_t2)
 ) %>%
   dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
   dplyr::mutate_all(list(~dplyr::na_if(., "")))
@@ -119,17 +117,21 @@ if("true" %in% include$art_attend ) {
 }
 
 # Select years where ANC ART programme data is included
-if(sum(length(is.na(include$anc_art))) < 2) {
-  df <- include %>% dplyr::filter(anc_art != "NULL")
-  anc_art <- paste0(df$anc_art, sep = "", collapse = " and ")
+anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2) 
+anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_art_options)) {
+  anc_art <- paste0(anc_art_options, sep = "", collapse = " and ")
 } else {
   anc_art <- NA
 }
 
 # Select years where ANC prev programme data is included
-if(sum(length(is.na(include$anc_prev))) < 2) {
-  df <- include %>% dplyr::filter(anc_prev != "NULL")
-  anc_prev <- paste0(df$anc_prev, sep = "", collapse = " and ")
+anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_prev_options)) {
+  anc_prev <- paste0(anc_prev_options, sep = "", collapse = " and ")
 } else {
   anc_prev <- NA
 }
