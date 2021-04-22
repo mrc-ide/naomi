@@ -1,3 +1,6 @@
+# naomi 2.3.13
+* Option to output summary report in French.
+
 # naomi 2.3.12
 * Fix to summary report to display input ANC data in description.
 * Ensure summary report pulls most recent calibration options.
