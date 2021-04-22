@@ -761,6 +761,9 @@ generate_output_summary_report <- function(report_path,
   on.exit(unlink(tmpd, recursive = TRUE))
   withr::with_dir(tmpd, {
     fs::file_copy(list.files(system_file("report"), full.names = TRUE), ".")
+    style <- brio::readLines("styles.css")
+    style <- traduire::translator()$replace(style)
+    writeLines(style, "styles.css")
     rmarkdown::render("summary_report.Rmd",
                       params = list(output_zip = output_zip_path,
                                     lang = t_("LANG")),

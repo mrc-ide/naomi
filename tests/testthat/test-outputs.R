@@ -208,8 +208,8 @@ test_that("summary report can be translated", {
   expect_true(file.size(t_en) > 2000)
   content <- brio::readLines(t_en)
   ## Contains both sets of content
-  expect_true(any(grepl("text in english", content)))
-  expect_true(any(grepl("texte en français", content)))
+  expect_true(any(grepl("Methods", content)))
+  expect_true(any(grepl("Méthodes", content)))
   ## Styling correct - all non English sections are hidden
   expect_true(any(grepl('#translate:not(#translate[lang="en"])', content,
                         fixed = TRUE)))
@@ -223,10 +223,11 @@ test_that("summary report can be translated", {
   t_fr <- tempfile(fileext = ".html")
   generate_output_summary_report(t_fr, a_hintr_output$spectrum_path,
                                  quiet = TRUE)
-  expect_true(file.size(t) > 2000)
+  expect_true(file.size(t_fr) > 2000)
+  content <- brio::readLines(t_fr)
   ## Contains both sets of content
-  expect_true(any(grepl("text in english", content)))
-  expect_true(any(grepl("texte en français", content)))
+  expect_true(any(grepl("Methods", content)))
+  expect_true(any(grepl("Méthodes", content)))
   ## Styling correct - all non French sections are hidden
   expect_true(any(grepl('#translate:not(#translate[lang="fr"])', content,
                         fixed = TRUE)))
