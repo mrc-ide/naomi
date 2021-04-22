@@ -384,7 +384,6 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 
 # Read in calibration options from calibration_options.yml, if that does not exist, 
 # use default options in options.yml
-
 calibration_files <- utils::unzip(output_zip, list = TRUE)
 
 if("info/calibration_options.yml" %in% calibration_files$Name) {
@@ -405,8 +404,7 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   "ART number calibration level: ", 
                                   "ART number calibration strata: ", 
                                   "New infections calibration level: ",
-                                  "New infections calibration strata: ", 
-                                  "Calibration method: "
+                                  "New infections calibration strata: "
                                   ), 
                        source = c(options$spectrum_population_calibration,
                                   calibration_options$spectrum_plhiv_calibration_level,
@@ -416,11 +414,18 @@ text <- tibble::tibble(prefix = c("Population calibration: ",
                                   calibration_options$spectrum_artnum_calibration_level,
                                   calibration_options$spectrum_artnum_calibration_strat, 
                                   calibration_options$spectrum_infections_calibration_level,
-                                  calibration_options$spectrum_infections_calibration_strat, 
-                                  calibration_options$calibrate_method
+                                  calibration_options$spectrum_infections_calibration_strat
                                   ))
-  
 
+# Add calibration method in if present in calibration options
+if("calibrate_method" %in% names(calibration_options)) {
+  
+  add <- tibble::tibble(prefix ="Calibration method: ", 
+                        source = calibration_options$calibrate_method )
+  text <- rbind(text, add)
+}
+  
+# Filter out strata options if calibration not selected
 if(text$source[text$prefix == "PLHIV calibration level: "] == "None"){
   text <- dplyr::filter(text, !grepl("PLHIV", prefix))
 }
