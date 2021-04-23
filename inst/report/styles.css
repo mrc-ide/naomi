@@ -1,4 +1,4 @@
-.main-container {
+div.main-container {
   max-width: 1300px;
   margin-left: 0;
   margin-right: 1;
@@ -15,23 +15,27 @@
   max-width: 1300px;
 }
 
-.logo_naomi {
+.logo-naomi {
   height: 60px;
   padding-left: 15px;
   padding-right: 10px;
 }
 
-.logo_unaids {
+.logo-unaids {
   height: 60px;
 }
 
-.text {
+.banner-text {
   padding-left: 10px;
   padding-top: 10px;
   color: white;
   font-size: 35px;
 }
 
-#translate:not(#translate[lang="t_(LANG)"]) {
+#translate {
   display: none;
+}
+
+#translate[lang="t_(LANG)"] {
+  display: block;
 }

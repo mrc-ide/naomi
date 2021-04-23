@@ -354,7 +354,7 @@ cat(paste0("### **", quarter_t2, "** (report ", report_date, ")"))
 
 cat(paste0("# ", country, " Estimations infranationales du VIH \n"))
 
-cat(paste0("### **", quarter_t2, "** (report ", report_date, ")"))
+cat(paste0("### **", quarter_t2, "** (rapport ", report_date, ")"))
 ```
 
 

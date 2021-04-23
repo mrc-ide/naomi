@@ -190,7 +190,7 @@ test_that("can generate summary report", {
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
   expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))
-  expect_true(any(grepl("class=\"logo_naomi\"", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
 test_that("output_package() catches error if NA in simulated sample.", {
@@ -211,11 +211,10 @@ test_that("summary report can be translated", {
   expect_true(any(grepl("Methods", content)))
   expect_true(any(grepl("Méthodes", content)))
   ## Styling correct - all non English sections are hidden
-  expect_true(any(grepl('#translate:not(#translate[lang="en"])', content,
-                        fixed = TRUE)))
-  style_line <- which(grepl('#translate:not(#translate[lang="en"])', content,
+  expect_true(any(grepl('#translate[lang="en"]', content, fixed = TRUE)))
+  style_line <- which(grepl('#translate[lang="en"]', content,
                       fixed = TRUE))
-  expect_equal(content[style_line + 1], "display: none;")
+  expect_equal(content[style_line + 1], "display: block;")
 
 
   reset <- naomi_set_language("fr")
@@ -229,9 +228,9 @@ test_that("summary report can be translated", {
   expect_true(any(grepl("Methods", content)))
   expect_true(any(grepl("Méthodes", content)))
   ## Styling correct - all non French sections are hidden
-  expect_true(any(grepl('#translate:not(#translate[lang="fr"])', content,
+  expect_true(any(grepl('#translate[lang="fr"]', content,
                         fixed = TRUE)))
-  style_line <- which(grepl('#translate:not(#translate[lang="fr"])', content,
+  style_line <- which(grepl('#translate[lang="fr"]', content,
                             fixed = TRUE))
-  expect_equal(content[style_line + 1], "display: none;")
+  expect_equal(content[style_line + 1], "display: block;")
 })
