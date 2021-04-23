@@ -576,7 +576,7 @@ format_options <- function(options) {
   if (is.null(options$spectrum_artnum_calibration_level)) {
     options$spectrum_artnum_calibration_level <- "none"
   }
-  if (is.null(options$spectrum_artnum_strat)) {
+  if (is.null(options$spectrum_artnum_calibration_strat)) {
     options$spectrum_artnum_calibration_strat <- "sex_age_coarse"
   }
 
@@ -584,14 +584,14 @@ format_options <- function(options) {
     options$spectrum_aware_calibration_level <- "none"
   }
 
-  if (is.null(options$spectrum_aware_strat)) {
+  if (is.null(options$spectrum_aware_calibration_strat)) {
     options$spectrum_aware_calibration_strat <- "sex_age_coarse"
   }
 
   if (is.null(options$spectrum_infections_calibration_level)) {
     options$spectrum_infections_calibration_level <- "none"
   }
-  if (is.null(options$spectrum_infections_strat)) {
+  if (is.null(options$spectrum_infections_calibration_strat)) {
     options$spectrum_infections_calibration_strat <- "sex_age_coarse"
   }
   if (is.null(options$calibrate_method)) {

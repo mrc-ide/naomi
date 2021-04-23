@@ -200,3 +200,38 @@ test_that("output_package() catches error if NA in simulated sample.", {
   expect_error(output_package(bad_sample, a_naomi_mf),
                "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
 })
+
+test_that("summary report can be translated", {
+  t_en <- tempfile(fileext = ".html")
+  generate_output_summary_report(t_en, a_hintr_output$spectrum_path,
+                                 quiet = TRUE)
+  expect_true(file.size(t_en) > 2000)
+  content <- brio::readLines(t_en)
+  ## Contains both sets of content
+  expect_true(any(grepl("Methods", content)))
+  expect_true(any(grepl("Méthodes", content)))
+  ## Styling correct - all non English sections are hidden
+  expect_true(any(grepl('#translate:not(#translate[lang="en"])', content,
+                        fixed = TRUE)))
+  style_line <- which(grepl('#translate:not(#translate[lang="en"])', content,
+                      fixed = TRUE))
+  expect_equal(content[style_line + 1], "display: none;")
+
+
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  t_fr <- tempfile(fileext = ".html")
+  generate_output_summary_report(t_fr, a_hintr_output$spectrum_path,
+                                 quiet = TRUE)
+  expect_true(file.size(t_fr) > 2000)
+  content <- brio::readLines(t_fr)
+  ## Contains both sets of content
+  expect_true(any(grepl("Methods", content)))
+  expect_true(any(grepl("Méthodes", content)))
+  ## Styling correct - all non French sections are hidden
+  expect_true(any(grepl('#translate:not(#translate[lang="fr"])', content,
+                        fixed = TRUE)))
+  style_line <- which(grepl('#translate:not(#translate[lang="fr"])', content,
+                            fixed = TRUE))
+  expect_equal(content[style_line + 1], "display: none;")
+})

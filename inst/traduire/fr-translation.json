@@ -177,5 +177,6 @@
     "OPTIONS_USE_SURVEY_AGGREGATE_HELP": "L'ensemble de données d'enquête téléchargé doit être sous-défini exactement aux données à utiliser dans le calibrage du modèle.",
     "OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL": "Logistique",
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportionnelle",
-    "OPTIONS_CALIBRATE_METHOD_LABEL": "Méthode d'étalonnage"
+    "OPTIONS_CALIBRATE_METHOD_LABEL": "Méthode d'étalonnage",
+    "LANG": "fr"
 }
