@@ -190,7 +190,7 @@ test_that("can generate summary report", {
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
   expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))
-  expect_true(any(grepl("class=\"logo_naomi\"", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
 test_that("output_package() catches error if NA in simulated sample.", {
