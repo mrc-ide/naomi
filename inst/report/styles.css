@@ -32,6 +32,10 @@
   font-size: 35px;
 }
 
-#translate:not(#translate[lang="t_(LANG)"]) {
+#translate {
   display: none;
+}
+
+#translate[lang="t_(LANG)"] {
+  display: block;
 }
