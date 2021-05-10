@@ -970,3 +970,13 @@ test_that("calibrating adds output descriptions when missing", {
               "character")
   expect_length(calibrated_output$metadata$summary_report_description, 1)
 })
+
+test_that("calibrate plot data can be generated", {
+  plot_data <- hintr_calibrate_plot(a_hintr_output)
+  expect_setequal(names(plot_data),
+                  c("area_id", "sex", "age_group", "calendar_quarter",
+                    "indicator", "mean", "lower", "upper", "data_type"))
+  expect_match(plot_data$area_id, "^MWI_.+")
+  expect_setequal(unique(plot_data$indicator),
+                  c("plhiv", "population", "infections", "art_current"))
+})

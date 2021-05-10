@@ -1,3 +1,7 @@
+# naomi 2.3.15
+
+* Add function `hintr_calibrate_plot` to return data for plotting calibrate barchart
+
 # naomi 2.3.14
 
 * Add alternate example survey data using data from MDHS 2015-16 survey final report.

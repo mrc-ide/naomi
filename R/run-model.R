@@ -247,6 +247,67 @@ hintr_calibrate <- function(output, calibration_options,
                      calibration_path, metadata)
 }
 
+#' Get data for hintr calibrate plot
+#'
+#' Takes hintr_output object, reads data and prepares data in format needed
+#' for plotting calibrate barchart to compare calibrated, spectrum and
+#' unadjusted estimates for a set of indicators.
+#'
+#' @param output A hintr_output object
+#'
+#' @return Calibrated, unadjusted and spectrum estimates of indicators
+#' @export
+hintr_calibrate_plot <- function(output) {
+  calibration_path <- output$calibration_path
+  if (!is_hintr_output(output) || is.null(calibration_path)) {
+    stop(t_("INVALID_CALIBRATE_OBJECT"))
+  }
+  cols_to_keep <- c("area_id", "sex", "age_group", "calendar_quarter",
+                    "indicator", "mean", "lower", "upper")
+  indicators_to_keep <- c("plhiv", "population", "infections", "art_current")
+  calibration_data <- readRDS(calibration_path)
+  region_code_area_id_map <- data.frame(
+    area_id = calibration_data$naomi_data$mf_model$area_id,
+    spectrum_region_code =
+      calibration_data$naomi_data$mf_model$spectrum_region_code)
+  region_code_area_id_map <- unique(region_code_area_id_map)
+  spectrum_data <- calibration_data$output_package$fit$spectrum_calibration
+  ## TODO: Map spectrum_region_code to area_id
+  col_to_indicator <- list(
+    population_spectrum = "population",
+    plhiv_spectrum = "plhiv",
+    art_current_spectrum = "art_current",
+    infections_spectrum = "infections"
+  )
+  spectrum_long <- tidyr::gather(spectrum_data, col, mean,
+                                 population_spectrum:population)
+  spectrum_long <- spectrum_long[spectrum_long$col %in% names(col_to_indicator), ]
+  spectrum_long$indicator <- vapply(spectrum_long$col, function(col) {
+    col_to_indicator[[col]]
+  }, character(1))
+  ## Region codes here are not unique
+  # spectrum_long$area_id <- vapply(
+  #   spectrum_long$spectrum_region_code, function(region_code) {
+  #     region_code_area_id_map[region_code_area_id_map$spectrum_region_code == region_code, "area_id"]
+  #   }, character(1))
+  # spectrum_data <- spectrum_long[cols_to_keep]
+  # spectrum_data$data_type <- "spectrum"
+
+  ## We also want to limit this data to the regions the spectrum data has?
+  calibrated_data <- calibration_data$output_package$indicators
+  calibrated_data <- calibrated_data[cols_to_keep]
+  calibrated_data <- calibrated_data[
+    calibrated_data$indicator %in% indicators_to_keep, ]
+  calibrated_data$data_type <- "calibrated"
+
+  unadjusted_data <- readRDS(output$output_path)
+  unadjusted_data <- unadjusted_data[cols_to_keep]
+  unadjusted_data <- unadjusted_data[
+    unadjusted_data$indicator %in% indicators_to_keep, ]
+  unadjusted_data$data_type <- "unadjusted"
+  dplyr::bind_rows(calibrated_data, unadjusted_data)
+}
+
 validate_calibrate_options <- function(calibration_options) {
 
   expected_options <- c("spectrum_plhiv_calibration_level",
