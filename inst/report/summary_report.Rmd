@@ -30,8 +30,7 @@ if (params$lang == "fr") {
 options(scipen=10000000)
 
 # Read in files from naomi outputs zip
-output_zip <- params$output_zip
-
+output_zip <-params$output_zip
 outputs <- naomi::read_output_package(output_zip)
 inputs <- unz(output_zip, "info/inputs.csv") 
 inputs <- read.csv(inputs)
@@ -142,7 +141,8 @@ map_outputs <- function(geom_data,
                         end_colour_scale, 
                         legend_title, 
                         legend_label = ggplot2::waiver(), 
-                        fig_title) {
+                        fig_title, 
+                        breaks = 6) {
   
   # filter data for desired indicator
   fig_data <- geom_data %>% dplyr::filter(indicator == var, 
@@ -152,11 +152,11 @@ map_outputs <- function(geom_data,
   ggplot2::ggplot(fig_data, ggplot2::aes(fill = mean)) +
     ggplot2::geom_sf() +
     ggplot2::coord_sf(datum = NA) +
-    ggplot2::scale_fill_gradient(low = start_colour_scale,
-                                 high = end_colour_scale,
-                                 name = legend_title,
-                                 guide = "legend", 
-                                 labels = legend_label) +
+    ggplot2::scale_fill_steps(low = start_colour_scale,
+                              high = end_colour_scale,
+                              name = legend_title,
+                              labels = legend_label, 
+                              n.breaks = breaks) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom",
                    legend.direction = "vertical", 
@@ -199,6 +199,8 @@ pop_pyramid_outputs <- function(disag_data,
     cols <- c("hommes" = left_colour, 
               "femmes" = right_colour)
     
+    dat$sex <- factor(dat$sex, levels = c("hommes","femmes"))
+    
   } else {
     masc <- "male"
     fem <- "female"
@@ -208,6 +210,8 @@ pop_pyramid_outputs <- function(disag_data,
     
     cols <- c("male" = left_colour, 
               "female" = right_colour)
+    
+    dat$sex <- factor(dat$sex, levels = c("male", "female"))
   }
   
   
@@ -476,7 +480,7 @@ if("info/calibration_options.yml" %in% calibration_files$Name) {
   calibration_options <- options[grep("calibration", names(options))]
 }
 
-# Translate calibration options to human readable
+# # Translate calibration options to human readable
 calibration_options <- get_calibration_option_labels(calibration_options)
 
 text <- tibble::tibble(prefix = c("Population calibration: ",
@@ -546,7 +550,7 @@ if("info/calibration_options.yml" %in% calibration_files$Name) {
   calibration_options <- options[grep("calibration", names(options))]
 }
 
-# Translate calibration options to human readable
+# # Translate calibration options to human readable
 calibration_options <- get_calibration_option_labels(calibration_options)
 
 text <- tibble::tibble(prefix = c("Étalonnage de la population: ",
@@ -609,7 +613,9 @@ if(nrow(text) > 0) {
 if("true" %in% include$art_attend) {
   
   cat(paste0("ART coverage is estimated accounting for patient mobility between
-             neighbouring districts (for ", art_attend, "). 
+             neighbouring districts (for ", art_attend, ").
+             \n This takes into account 
+             where patients reside as opposed to the location of the clinic they attended.
              \n Further technical information about this allocation method
              and the Naomi model is available at the end of this report."))
 } else {
@@ -626,7 +632,9 @@ if("true" %in% include$art_attend) {
   
   cat(paste0("La couverture du ART est estimée en tenant compte de la mobilité 
   des patients entre les districts voisins (pour ", art_attend, "). 
-             \n De plus amples informations techniques sur cette méthode 
+  \n Cela prend en compte leur lieu de résidence par opposition à
+  l'emplacement de la clinique qu'ils ont fréquentée
+  \n De plus amples informations techniques sur cette méthode 
   d'allocation et le modèle Naomi sont disponibles à la fin de ce rapport."))
 } else {
   
@@ -648,7 +656,7 @@ cat("### **Répartition géographique des PVVIH**")
 
 ```
 
-```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", results = 'asis', include = print_fr, eval = print_fr}
+```{r, echo=FALSE,warning = FALSE, out.width  =  "90%", results = 'asis', include = print_fr, eval = print_fr}
 
 #-------------------------------------------------------------------------------
 # Map: PLHIV (mean)
@@ -658,7 +666,7 @@ p1 <- map_outputs(geom_data = data,
                   var = "plhiv",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#FFE3E00F", 
+                  start_colour_scale = "#8C000038", 
                   end_colour_scale = "red4", 
                   fig_title = "Personnes vivant avec le VIH\n (15 ans et plus)",
                   legend_title = "PVVIH")
@@ -671,8 +679,8 @@ p2 <- map_outputs(geom_data = data,
                   var = "art_current_residents",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#C3CFC30F", 
-                  end_colour_scale = "olivedrab4", 
+                  start_colour_scale = "#688C2155", 
+                  end_colour_scale = "#4A690C", 
                   fig_title = "Résidents recevant TARV (15+)",
                   legend_title = "Nombre de personnes sous TARV"
 )
@@ -685,7 +693,7 @@ p3 <- map_outputs(geom_data = data,
                   var = "infections",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#7181910F", 
+                  start_colour_scale = "#4A718C47", 
                   end_colour_scale = "skyblue4", 
                   fig_title = "Infections annuelles au VIH (15+)",
                   legend_title = "Infections" )
@@ -696,7 +704,7 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2),
 
 ```
 
-```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", results = 'asis', include = print_en, eval = print_en}
+```{r, echo=FALSE,warning = FALSE, out.width  =  "90%", results = 'asis', include = print_en, eval = print_en}
 
 #-------------------------------------------------------------------------------
 # Map: PLHIV (mean)
@@ -706,7 +714,7 @@ p1 <- map_outputs(geom_data = data,
                   var = "plhiv",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#FFE3E00F", 
+                  start_colour_scale = "#8C000038", 
                   end_colour_scale = "red4", 
                   fig_title = "People living with HIV (15+)",
                   legend_title = "PLHIV")
@@ -720,8 +728,8 @@ p2 <- map_outputs(geom_data = data,
                   var = "art_current_residents",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#C3CFC30F", 
-                  end_colour_scale = "olivedrab4", 
+                  start_colour_scale = "#688C2155", 
+                  end_colour_scale = "#4A690C", 
                   fig_title = "Residents receiving ART (15+)",
                   legend_title = "Number on ART"
 )
@@ -734,7 +742,7 @@ p3 <- map_outputs(geom_data = data,
                   var = "infections",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#7181910F", 
+                  start_colour_scale = "#4A718C47", 
                   end_colour_scale = "skyblue4", 
                   fig_title = "Annual HIV infections (15+)",
                   legend_title = "Infections" )
@@ -758,7 +766,7 @@ cat("### **Répartition géographique des taux d'infection par le VIH**")
 ```
 
 
-```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", out.height=  "100%", results = 'asis', include = print_en, eval = print_en}
+```{r, echo=FALSE,warning = FALSE, out.width  =  "90%", out.height=  "100%", results = 'asis', include = print_en, eval = print_en}
 
 #-------------------------------------------------------------------------------
 # Map: Prevalence (mean)
@@ -768,11 +776,11 @@ p4 <- map_outputs(geom_data = data,
                   var = "prevalence",
                   age = "Y015_049", 
                   sex_disag = "both", 
-                  start_colour_scale = "#FFE3E00F", 
+                  start_colour_scale = "#8C000038", 
                   end_colour_scale = "red4", 
                   fig_title = "HIV prevalence (15-49)",
                   legend_title = "Prevalence", 
-                  legend_label = scales::percent_format())
+                  legend_label = scales::percent_format(1L))
 
 #-------------------------------------------------------------------------------
 # Map: ART coverage (mean)
@@ -782,11 +790,11 @@ p5 <- map_outputs(geom_data = data,
                   var = "art_coverage",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#C3CFC30F", 
-                  end_colour_scale = "olivedrab4", 
+                  start_colour_scale = "#688C2149", 
+                  end_colour_scale = "#4A690C", 
                   fig_title = "Proportion PLHIV on ART (15+)",
                   legend_title = "ART Coverage", 
-                  legend_label = scales::percent_format(accuracy = 5L)
+                  legend_label = scales::percent_format(accuracy = 1L)
 )
 
 #-------------------------------------------------------------------------------
@@ -797,12 +805,11 @@ p6 <- map_outputs(geom_data = data,
                   var = "incidence",
                   age = "Y015_049", 
                   sex_disag = "both", 
-                  start_colour_scale = "#7181910F", 
+                  start_colour_scale = "#4A718C47", 
                   end_colour_scale = "skyblue4", 
                   fig_title = "Rate of HIV infection (15-49)",
                   legend_title = "Incidence per 1000", 
-                  legend_label = scales::label_number(0.1, 1000)
-)
+                  legend_label = scales::label_number(0.1, 1000))
 
 grid::grid.draw(cbind(ggplot2::ggplotGrob(p4), ggplot2::ggplotGrob(p5), 
                       ggplot2::ggplotGrob(p6)))
@@ -811,7 +818,7 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p4), ggplot2::ggplotGrob(p5),
 
 
 
-```{r, echo=FALSE,warning = FALSE, out.width  =  "75%", out.height=  "100%", results = 'asis', include = print_fr, eval = print_fr}
+```{r, echo=FALSE,warning = FALSE, out.width  =  "90%", out.height=  "100%", results = 'asis', include = print_fr, eval = print_fr}
 
 #-------------------------------------------------------------------------------
 # Map: Prevalence (mean)
@@ -821,7 +828,7 @@ p4 <- map_outputs(geom_data = data,
                   var = "prevalence",
                   age = "Y015_049", 
                   sex_disag = "both", 
-                  start_colour_scale = "#FFE3E00F", 
+                  start_colour_scale = "#8C000038", 
                   end_colour_scale = "red4", 
                   fig_title = "Prévalence du VIH (15-49)",
                   legend_title = "Prévalence", 
@@ -835,11 +842,11 @@ p5 <- map_outputs(geom_data = data,
                   var = "art_coverage",
                   age = "Y015_999", 
                   sex_disag = "both", 
-                  start_colour_scale = "#C3CFC30F", 
-                  end_colour_scale = "olivedrab4", 
+                  start_colour_scale = "#688C2149", 
+                  end_colour_scale = "#4A690C", 
                   fig_title = "Proportion de PLHIV sous ART (15+)",
                   legend_title = "Couverture ART", 
-                  legend_label = scales::percent_format(accuracy = 5L)
+                  legend_label = scales::percent_format(accuracy = 1L)
 )
 
 
@@ -851,7 +858,7 @@ p6 <- map_outputs(geom_data = data,
                   var = "incidence",
                   age = "Y015_049", 
                   sex_disag = "both", 
-                  start_colour_scale = "#7181910F", 
+                  start_colour_scale = "#4A718C47", 
                   end_colour_scale = "skyblue4", 
                   fig_title = "Taux d'infection par le VIH (15-49)",
                   legend_title = "Incidence pour 1000", 
@@ -898,7 +905,7 @@ age_sex <- indicators %>%
 
 ```
 
-```{r, echo = FALSE, warning = FALSE, message= FALSE, out.width = "75%", fig.height = 3, fig.width = 6, include = print_fr, eval = print_fr}
+```{r, echo = FALSE, warning = FALSE, message= FALSE, out.width = "90%", fig.height = 3, fig.width = 6, include = print_fr, eval = print_fr}
 #-------------------------------------------------------------------------------
 # Pop Pyramid: PLHIV (mean)
 # # By age and sex (15-49)
@@ -959,7 +966,7 @@ p9 <- p9 + ggplot2::theme(
 
 ```
 
-```{r, echo = FALSE, warning = FALSE, message= FALSE, out.width = "75%", fig.height = 3, fig.width = 6, include = print_en, eval = print_en}
+```{r, echo = FALSE, warning = FALSE, message= FALSE, out.width = "90%", fig.height = 3, fig.width = 6, include = print_en, eval = print_en}
 
 #-------------------------------------------------------------------------------
 # Pop Pyramid: PLHIV (mean)
@@ -970,7 +977,8 @@ p7 <- pop_pyramid_outputs(disag_data = age_sex,
                           left_colour = "mistyrose2",
                           right_colour = "red4",
                           x_axis_title = "PLHIV",
-                          fig_title = "People living with HIV"
+                          fig_title = "People living with HIV", 
+                          lang = "en"
 )
 
 #-------------------------------------------------------------------------------
@@ -1039,7 +1047,7 @@ if(district_count > 160){height <- 24}
 
 
   
-``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = height, fig.width = 10, include = print_en, eval = print_en}  
+``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = height, fig.width = 12, include = print_en, eval = print_en}  
   
 # Check output data for area levels avalible
 ## If national level data is present, generate figure comparing district level 
@@ -1185,7 +1193,7 @@ if("0" %in% area_levels) {
 
 ```
 
-``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = height, fig.width = 10, include = print_fr, eval = print_fr}
+``` {r, echo=FALSE, warning = FALSE, result = "asis", fig.height = height, fig.width = 12, include = print_fr, eval = print_fr}
 
 # Check output data for area levels avalible
 ## If national level data is present, generate figure comparing district level 
@@ -1389,7 +1397,8 @@ indicators_15plus <- c("art_coverage", "plhiv", "infections",
                        "art_current", "art_current_residents")
 
 
-x1 <- data %>%
+x1 <- indicators %>%
+  dplyr::filter(calendar_quarter == t2) %>%
   sf::st_drop_geometry() %>%           
   dplyr::filter(
            sex == "both",
@@ -1402,7 +1411,8 @@ x1 <- data %>%
            by = "area_id"
          ) %>%
   dplyr::mutate(area_id = forcats::fct_reorder(area_id, area_sort_order)) %>%
-  dplyr::select(area_id, area_name, mean, lower, upper, indicator)
+  dplyr::select(area_id, area_level_label, area_level, area_name, mean, lower, upper, indicator)
+  
 
 ## Format values
 format_value <- function(x, indicator) {
@@ -1420,19 +1430,20 @@ x1$fmt <- display_fmt[x1$indicator]
 x1$val <- sprintf(x1$fmt, x1$mean, x1$suffix, x1$lower, x1$upper, x1$suffix)
 
 # Melt data in table 
-x4 <- x1 %>% 
-  dplyr::select(area_id, area_name, val, indicator) %>%
+x2 <- x1 %>% 
+  dplyr::select(area_id, area_level_label, area_level, area_name, val, indicator) %>%
   tidyr::spread(indicator, val) %>%
-  dplyr::select(
-           area_name,
-           plhiv,
-           prevalence,
-           infections,
-           incidence,
-           art_coverage,
-           art_current_residents,
-           art_current
-         )
+  dplyr::select(area_level_label,
+                area_level,
+                area_name,
+                plhiv,
+                prevalence,
+                infections,
+                incidence,
+                art_coverage,
+                art_current_residents,
+                art_current
+  )
 ```
 
 ``` {r, echo = FALSE, warning = FALSE, results = 'asis', include = print_en, eval = print_en}
@@ -1441,7 +1452,10 @@ x4 <- x1 %>%
 # # # By lowest area_level, indicators defined above
 # #------------------------------------------------------------------------------
 
-x4 %>%
+x2 %>%
+  dplyr::group_by(area_level_label) %>%
+  dplyr::arrange(area_level, area_name) %>%
+  dplyr::select(-c(area_level)) %>%
   gt::gt(rowname_col = "area_name") %>%
   gt::tab_stubhead(label = gt::md("**Area**")) %>%
   gt::tab_options(
@@ -1451,6 +1465,7 @@ x4 %>%
     column_labels.background.color = "grey",
     table.font.size = "smaller",
     data_row.padding = gt::px(3),
+    row_group.background.color = "lightgrey"
   ) %>%
   gt::tab_spanner(
     label = gt::md("**Distribution of HIV**"),
@@ -1481,7 +1496,9 @@ x4 %>%
 # # # By lowest area_level, indicators defined above
 # #------------------------------------------------------------------------------
 
-x4 %>%
+x2 %>%
+  dplyr::group_by(area_level_label) %>%
+  dplyr::arrange(area_name) %>%
   gt::gt(rowname_col = "area_name") %>%
   gt::tab_stubhead(label = gt::md("**Area**")) %>%
   gt::tab_options(
@@ -1491,6 +1508,7 @@ x4 %>%
     column_labels.background.color = "grey",
     table.font.size = "smaller",
     data_row.padding = gt::px(3),
+    row_group.background.color = "lightgrey"
   ) %>%
   gt::tab_spanner(
     label = gt::md("**Répartition du VIH**"),
