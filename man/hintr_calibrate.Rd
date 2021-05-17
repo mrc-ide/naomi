@@ -5,14 +5,14 @@
 \title{Calibrate hintr_output}
 \usage{
 hintr_calibrate(
-  output_path,
+  output,
   calibration_options,
   plot_data_path = tempfile(fileext = ".rds"),
   calibrate_output_path = tempfile(fileext = ".rds")
 )
 }
 \arguments{
-\item{output_path}{A hintr_output object.}
+\item{output}{A hintr_output object.}
 
 \item{calibration_options}{A set of calibration options}
 

@@ -1,4 +1,4 @@
-#' Run the model and save output as RDS
+#' Run the model and save output
 #'
 #' This prepares the model inputs from data and options and saves output as
 #' an rds.
@@ -46,7 +46,7 @@
 #' * anc_art_coverage_year1
 #' * anc_art_coverage_year2
 #'
-#' @return Path to
+#' @return Paths to output files
 #' @export
 #'
 hintr_run_model <- function(data, options,

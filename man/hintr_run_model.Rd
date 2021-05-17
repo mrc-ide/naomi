@@ -2,7 +2,7 @@
 % Please edit documentation in R/run-model.R
 \name{hintr_run_model}
 \alias{hintr_run_model}
-\title{Run the model and save output as RDS}
+\title{Run the model and save output}
 \usage{
 hintr_run_model(
   data,
@@ -22,7 +22,7 @@ calibrating model and producing output downloads.}
 \item{validate}{If FALSE validation of inputs & data will be skipped.}
 }
 \value{
-Path to
+Paths to output files
 }
 \description{
 This prepares the model inputs from data and options and saves output as
