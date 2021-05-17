@@ -332,6 +332,9 @@ output_package <- function(naomi_fit, naomi_mf) {
   val
 }
 
+is_naomi_output <- function(object) {
+  inherits(object, "naomi_output")
+}
 
 #' Add labels to output indicators
 #'
@@ -773,7 +776,7 @@ generate_output_summary_report <- function(report_path,
 
     fs::file_copy(report_filename, report_path_dir, overwrite = TRUE)
   })
-  invisible(report_path)
+  report_path
 }
 
 
@@ -1466,7 +1469,11 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
                   ratio = NULL) %>%
     tidyr::pivot_wider()
 
-  indicators <- dplyr::bind_rows(output$indicators, out_0to4strat_counts, out_0to4strat_rates) %>%
+  age_groups <- unique(out_0to4strat_counts$age_group)
+  out_indicators <- output$indicators %>%
+    dplyr::filter(!age_group %in% age_groups)
+
+  indicators <- dplyr::bind_rows(out_indicators, out_0to4strat_counts, out_0to4strat_rates) %>%
     dplyr::arrange(forcats::fct_inorder(area_id),
                    forcats::fct_inorder(calendar_quarter),
                    forcats::fct_inorder(indicator),

@@ -32,8 +32,9 @@ test_that("all output stratifications are included in metatdata", {
 })
 
 test_that("write and read hintr outputs returns same thing", {
+  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
 
-  read1 <- read_output_package(a_hintr_output$spectrum_path)
+  read1 <- read_output_package(out$path)
 
   tmpf <- tempfile(fileext = ".zip")
   save_output_spectrum(tmpf, read1)
@@ -137,9 +138,10 @@ test_that("subset_output_package() saves expected output package", {
   indicator_sub <- c("prevalence", "plhiv")
 
   sub_keep_file <- tempfile(fileext = ".zip")
+  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
 
   sub_keep_return <- expect_warning(
-    subset_output_package(a_hintr_output$spectrum_path,
+    subset_output_package(out$path,
                           sub_keep_file,
                           area_id = area_id_sub,
                           sex = sex_sub,
@@ -163,7 +165,7 @@ test_that("subset_output_package() saves expected output package", {
 
   sub_drop_file <- tempfile(fileext = ".zip")
 
-  sub_drop_return <- subset_output_package(a_hintr_output$spectrum_path,
+  sub_drop_return <- subset_output_package(out$path,
                                            sub_drop_file,
                                            area_id = area_id_sub,
                                            sex = sex_sub,
@@ -183,8 +185,11 @@ test_that("subset_output_package() saves expected output package", {
 })
 
 test_that("can generate summary report", {
+  ## TODO: Once summary report updated, add a test that it works
+  ## being generated from output RDS
+  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
   t <- tempfile(fileext = ".html")
-  generate_output_summary_report(t, a_hintr_output$spectrum_path, quiet = TRUE)
+  generate_output_summary_report(t, out$path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
@@ -202,9 +207,9 @@ test_that("output_package() catches error if NA in simulated sample.", {
 })
 
 test_that("summary report can be translated", {
+  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
   t_en <- tempfile(fileext = ".html")
-  generate_output_summary_report(t_en, a_hintr_output$spectrum_path,
-                                 quiet = TRUE)
+  generate_output_summary_report(t_en, out$path, quiet = TRUE)
   expect_true(file.size(t_en) > 2000)
   content <- brio::readLines(t_en)
   ## Contains both sets of content
@@ -220,8 +225,7 @@ test_that("summary report can be translated", {
   reset <- naomi_set_language("fr")
   on.exit(reset())
   t_fr <- tempfile(fileext = ".html")
-  generate_output_summary_report(t_fr, a_hintr_output$spectrum_path,
-                                 quiet = TRUE)
+  generate_output_summary_report(t_fr, out$path, quiet = TRUE)
   expect_true(file.size(t_fr) > 2000)
   content <- brio::readLines(t_fr)
   ## Contains both sets of content

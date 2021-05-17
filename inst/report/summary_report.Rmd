@@ -1469,13 +1469,13 @@ x2 %>%
   ) %>%
   gt::tab_spanner(
     label = gt::md("**Distribution of HIV**"),
-    columns = gt::vars('plhiv', 'prevalence')) %>%
+    columns = c('plhiv', 'prevalence')) %>%
   gt::tab_spanner(
     label = gt::md("**Annual HIV infections**"),
-    columns = gt::vars('incidence', 'infections')) %>%
+    columns = c('incidence', 'infections')) %>%
   gt::tab_spanner(
     label = gt::md("**Antiretroviral Treatment**"),
-    columns = gt::vars('art_coverage', 'art_current_residents', 'art_current')) %>%
+    columns = c('art_coverage', 'art_current_residents', 'art_current')) %>%
   gt::cols_label(
     plhiv = gt::md("**PLHIV 15+**"),
     prevalence = gt::md("**HIV prevalence 15-49**"),
@@ -1512,13 +1512,13 @@ x2 %>%
   ) %>%
   gt::tab_spanner(
     label = gt::md("**Répartition du VIH**"),
-    columns = gt::vars('plhiv', 'prevalence')) %>%
+    columns = c('plhiv', 'prevalence')) %>%
   gt::tab_spanner(
     label = gt::md("**Infections annuelles au VIH**"),
-    columns = gt::vars('incidence', 'infections')) %>%
+    columns = c('incidence', 'infections')) %>%
   gt::tab_spanner(
     label = gt::md("**Thérapie Antirétrovirale**"),
-    columns = gt::vars('art_coverage', 'art_current_residents', 'art_current')) %>%
+    columns = c('art_coverage', 'art_current_residents', 'art_current')) %>%
   gt::cols_label(
     plhiv = gt::md("**PVVIH 15+**"),
     prevalence = gt::md("**Prévalence du VIH 15-49**"),

@@ -178,5 +178,6 @@
     "OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL": "Logistic",
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportional",
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Calibration method",
-    "LANG": "en"
+    "LANG": "en",
+    "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again"
 }

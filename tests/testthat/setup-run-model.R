@@ -63,6 +63,9 @@ a_hintr_calibration_options <- list(
   calibrate_method = "logistic"
 )
 
+a_hintr_output_calibrated <- hintr_calibrate(a_hintr_output,
+                                             a_hintr_calibration_options)
+
 ## Use fit.RDS if it exists locally, otherwise just use the actual functions
 ## fit.RDS not on git because it is pretty massive ~ 220MB
 if (file.exists("testdata/fit.RDS")) {
