@@ -153,3 +153,20 @@ expect_file_different <- function(path_object, path_expected) {
   expect_false(isTRUE(all.equal(object_md5, expected_md5,
                                 check.attributes = FALSE)))
 }
+
+## After migration only output_path and calibration_path data will be kept,
+## we can ignore the other outputs
+a_hintr_output_2.3.15 <- list(
+  output_path = file.path("refdata/naomi-2.3.15/output_data_2.3.15.rds"),
+  spectrum_path = tempfile(),
+  coarse_output_path = tempfile(),
+  summary_report_path = tempfile(),
+  calibration_path =
+    file.path("refdata/naomi-2.3.15/calibration_data_2.3.15.rds"),
+  metadata = list(
+    areas = "MWI_1_demo",
+    output_description = "output desc 1",
+    summary_report_description = "summary_report_desc"
+  )
+)
+class(a_hintr_output_2.3.15) <- "hintr_output"

@@ -1,3 +1,8 @@
+# naomi 2.3.16
+
+* Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
+* Refactor `hintr_run_model` and `hintr_calibrate` to save out minimal data
+
 # naomi 2.3.15
 
 * Updates to summary report

@@ -112,9 +112,12 @@ hintr_run_model <- function(data, options,
   )
 }
 
+hintr_output_version <- "2.3.16"
+
 build_hintr_output <- function(plot_data_path, model_output_path) {
   out <- list(plot_data_path = plot_data_path,
-              model_output_path = model_output_path)
+              model_output_path = model_output_path,
+              version = hintr_output_version)
   class(out) <- "hintr_output"
   out
 }
@@ -123,29 +126,43 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
+hintr_migrate_output <- function(hintr_output) {
+  if (is.null(hintr_output$version)) {
+    output <- build_hintr_output(hintr_output$output_path,
+                                 hintr_output$calibration_path)
+  } else if (identical(hintr_output$version, hintr_output_version)) {
+    output <- hintr_output
+  } else {
+    stop(t_("FAILED_VERSION_MIGRATE", list(old = hintr_output$version,
+                                           new = hintr_output_version)))
+  }
+  output
+}
+
 #' Calibrate hintr_output
 #'
 #' Take a previously generated hintr_output object and calibrate. Format
 #' response as another hintr_output object.
 #'
-#' @param output_path A hintr_output object.
+#' @param output A hintr_output object.
 #' @param calibration_options A set of calibration options
 #' @param plot_data_path Path to store calibrated output indicators as an RDS.
 #' @param calibrate_output_path Path to store data required for re-calibrating model.
 #'
 #' @return Calibrated hintr_output object
 #' @export
-hintr_calibrate <- function(output_path, calibration_options,
+hintr_calibrate <- function(output, calibration_options,
                             plot_data_path = tempfile(fileext = ".rds"),
                             calibrate_output_path = tempfile(fileext = ".rds")) {
-  if (!is_hintr_output(output_path)) {
+  if (!is_hintr_output(output)) {
     stop(t_("INVALID_CALIBRATE_OBJECT"))
   }
+  output <- hintr_migrate_output(output)
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
 
-  model_output <- readRDS(output_path$model_output_path)
+  model_output <- readRDS(output$model_output_path)
   calibrated_output <- calibrate_outputs(
     output = model_output$output_package,
     naomi_mf = model_output$naomi_data,

@@ -179,5 +179,6 @@
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportional",
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Calibration method",
     "LANG": "en",
-    "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again"
+    "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again",
+    "FAILED_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}"
 }
