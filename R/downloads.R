@@ -1,3 +1,10 @@
+#' Prepare spectrum download
+#'
+#' @param hintr_output object
+#' @param path Path to save output file
+#'
+#' @return Path to output file and metadata for file
+#' @export
 hintr_prepare_spectrum_download <- function(output,
                                             path = tempfile(fileext = ".zip")) {
   if (!is_hintr_output(output)) {
@@ -15,6 +22,13 @@ hintr_prepare_spectrum_download <- function(output,
   )
 }
 
+#' Prepare coarse age group download
+#'
+#' @param hintr_output object
+#' @param path Path to save output file
+#'
+#' @return Path to output file and metadata for file
+#' @export
 hintr_prepare_coarse_age_group_download <- function(
   output, path = tempfile(fileext = ".zip")) {
   if (!is_hintr_output(output)) {
@@ -31,6 +45,13 @@ hintr_prepare_coarse_age_group_download <- function(
   )
 }
 
+#' Prepare summary report download
+#'
+#' @param hintr_output object
+#' @param path Path to save output file
+#'
+#' @return Path to output file and metadata for file
+#' @export
 hintr_prepare_summary_report_download <- function(
   output, path = tempfile(fileext = ".html")) {
   if (!is_hintr_output(output)) {
