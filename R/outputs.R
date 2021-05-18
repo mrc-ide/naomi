@@ -743,17 +743,17 @@ save_output <- function(filename, dir,
 #' Generate and save summary report at specified path
 #'
 #' @param report_path Path to save summary report at
-#' @param outputs Path to model outputs rds or zip file
+#' @param output_zip Path to model outputs zip file
 #' @param quiet Suppress printing of the pandoc command line
 #'
 #' @return Path to summary report
 #' @keywords internal
 generate_output_summary_report <- function(report_path,
-                                           outputs,
+                                           output_zip,
                                            quiet = FALSE) {
   report_filename <- basename(report_path)
   report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
-  output_file_path <- normalizePath(outputs, mustWork = TRUE)
+  output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
   ## Render uses relative paths to locate the html file. The package author
   ## advises against using output_dir see:
   ## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
@@ -768,7 +768,7 @@ generate_output_summary_report <- function(report_path,
     style <- traduire::translator()$replace(style)
     writeLines(style, "styles.css")
     rmarkdown::render("summary_report.Rmd",
-                      params = list(outputs = output_file_path,
+                      params = list(output_zip = output_zip_path,
                                     lang = t_("LANG")),
                       output_file = report_filename,
                       quiet = quiet
