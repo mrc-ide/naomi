@@ -6,7 +6,9 @@ test_that("model can be run", {
                                a_hintr_options,
                                output_path)
   expect_s3_class(model_run, "hintr_output")
-  expect_equal(names(model_run), c("plot_data_path", "model_output_path"))
+  expect_equal(names(model_run),
+               c("plot_data_path", "model_output_path", "version"))
+  expect_equal(model_run$version, hintr_output_version)
   expect_null(model_run$plot_data_path)
 
   output <- readRDS(model_run$model_output_path)
@@ -39,7 +41,8 @@ test_that("model can be run without programme data", {
 
   output_path <- tempfile()
   model_run <- hintr_run_model(data, options, output_path)
-  expect_equal(names(model_run), c("plot_data_path", "model_output_path"))
+  expect_equal(names(model_run),
+               c("plot_data_path", "model_output_path", "version"))
   expect_null(model_run$plot_data_path)
 
   output <- readRDS(model_run$model_output_path)
@@ -222,7 +225,8 @@ test_that("model works with empty string for ANC year", {
 
   model_run <- hintr_run_model(a_hintr_data, options)
 
-  expect_equal(names(model_run), c("plot_data_path", "model_output_path"))
+  expect_equal(names(model_run),
+               c("plot_data_path", "model_output_path", "version"))
 })
 
 test_that("input data types can be formatted", {
@@ -424,7 +428,7 @@ test_that("Model can be run without .shiny90 file", {
 
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
-               c("plot_data_path", "model_output_path"))
+               c("plot_data_path", "model_output_path", "version"))
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),

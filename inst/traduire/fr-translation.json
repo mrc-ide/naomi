@@ -180,5 +180,5 @@
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Méthode d'étalonnage",
     "LANG": "fr",
     "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again",
-    "FAILED_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}"
+    "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}"
 }
