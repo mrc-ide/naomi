@@ -32,7 +32,7 @@ options(scipen=10000000)
 # Read files if hintr rds provided
 if(grepl("\\.rds$", params$outputs)) {
   
-  model_object <- readRDS(a_hintr_output_calibrated$model_output_path)
+  model_object <- readRDS(params$outputs)
   outputs <- model_object$output_package
   inputs <- readr::read_csv(model_object$info$inputs.csv)
   options <- yaml::read_yaml(text = model_object$info$options.yml)

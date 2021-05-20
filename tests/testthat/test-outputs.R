@@ -184,12 +184,22 @@ test_that("subset_output_package() saves expected output package", {
 
 })
 
-test_that("can generate summary report", {
-  ## TODO: Once summary report updated, add a test that it works
-  ## being generated from output RDS
-  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
+test_that("can generate summary report from rds file", {
   t <- tempfile(fileext = ".html")
-  generate_output_summary_report(t, out$path, quiet = TRUE)
+  generate_output_summary_report(t, a_hintr_output_calibrated$model_output_path,
+                                 quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  content <- brio::readLines(t)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
+  expect_true(any(grepl("Central", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
+})
+
+test_that("can generate summary report from zip file", {
+  zip <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
+  t <- tempfile(fileext = ".html")
+  generate_output_summary_report(t, zip$path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))

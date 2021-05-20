@@ -54,7 +54,8 @@ hintr_prepare_summary_report_download <- function(
   model_output <- readRDS(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
-    path = generate_output_summary_report(path, output$model_output_path, quiet = TRUE),
+    path = generate_output_summary_report(path, output$model_output_path,
+                                          quiet = TRUE),
     metadata = list(
       description = build_summary_report_description(options),
       areas = options$area_scope,
