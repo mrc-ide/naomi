@@ -8,7 +8,7 @@ test_that("model can be run", {
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
                c("plot_data_path", "model_output_path", "version"))
-  expect_equal(model_run$version, hintr_output_version)
+  expect_equal(model_run$version, packageVersion("naomi"))
   expect_null(model_run$plot_data_path)
 
   output <- readRDS(model_run$model_output_path)
@@ -356,8 +356,7 @@ test_that("model run can be calibrated", {
 
 test_that("useful error returned when model output can't be calibrated", {
   expect_error(hintr_calibrate(NULL, list(test = "option")),
-               paste0("Can't calibrate this model output please re-run model",
-               " and try calibration again"))
+               "Model output out of date please re-run model and try again")
 })
 
 test_that("progress can report on model fit", {
@@ -588,113 +587,8 @@ test_that("validate_calibrate_options errors if required options are missing", {
 
 })
 
-test_that("hintr_output can be migrated", {
-  migrated <- hintr_migrate_output(a_hintr_output_2.3.15)
-  expect_s3_class(migrated, "hintr_output")
-  expect_setequal(names(migrated),
-                  c("plot_data_path", "model_output_path", "version"))
-  expect_equal(migrated$version, hintr_output_version)
-  expect_true(file.exists(migrated$plot_data_path))
-  expect_true(file.exists(migrated$model_output_path))
-})
-
-test_that("migration fails if version invalid", {
-  expect_error(hintr_migrate_output(list(version = "123")),
-               paste0("Can't migrate model output from version 123 to ",
-                      hintr_output_version))
-})
-
-test_that("migration returns identical if version numbers match", {
-  expect_identical(hintr_migrate_output(a_hintr_output), a_hintr_output)
-})
-
-test_that("old model run can be calibrated - v 2.3.15", {
-
-  ## Calibration makes no modification of existing files.
-  output_hash <- tools::md5sum(a_hintr_output_2.3.15$output_path)
-  calibration_data_hash <- tools::md5sum(a_hintr_output_2.3.15$calibration_path)
-
-  plot_data_path <- tempfile(fileext = ".rds")
-  calibration_output_path <- tempfile(fileext = ".rds")
-  calibrated_output <- hintr_calibrate(a_hintr_output_2.3.15,
-                                       a_hintr_calibration_options,
-                                       plot_data_path,
-                                       calibration_output_path)
-
-  expect_s3_class(calibrated_output, "hintr_output")
-  expect_equal(calibrated_output$plot_data_path, plot_data_path)
-  expect_equal(calibrated_output$model_output_path, calibration_output_path)
-
-  ## Calibration does not modify original files
-  expect_equal(tools::md5sum(a_hintr_output_2.3.15$output_path),
-               output_hash)
-  expect_equal(tools::md5sum(a_hintr_output_2.3.15$calibration_path),
-               calibration_data_hash)
-
-  ## Output has been calibrated
-  expect_true(!is.null(calibrated_output$plot_data_path))
-  indicators_output <- readRDS(calibrated_output$plot_data_path)
-  ## Total population outputs:
-  ## * 31 age groups
-  ## * 3 sexes
-  ## * 3 output times
-  ## * 22 areas
-  ## * 12 indicators
-  ##
-  ## ANC indicators outputs
-  ## 3 = number or output times
-  ## 9 = number of ANC indicators
-  ## 22 = number of areas
-  ## 11 = number of ANC age groups
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
-
-  expect_file_different(calibrated_output$model_output_path,
-                        a_hintr_output_2.3.15$calibration_path)
-
-  ## Can calibrate multiple times
-  calibration_options <- list(
-    spectrum_plhiv_calibration_level = "national",
-    spectrum_plhiv_calibration_strat = "sex_age_coarse",
-    spectrum_artnum_calibration_level = "subnational",
-    spectrum_artnum_calibration_strat = "age_coarse",
-    spectrum_aware_calibration_level = "subnational",
-    spectrum_aware_calibration_strat = "age_coarse",
-    spectrum_infections_calibration_level = "none",
-    spectrum_infections_calibration_strat = "age_coarse",
-    calibrate_method = "logistic"
-  )
-  calibrated_output_2 <- hintr_calibrate(calibrated_output,
-                                         calibration_options)
-
-  expect_s3_class(calibrated_output_2, "hintr_output")
-
-  ## Output has been calibrated
-  expect_file_different(calibrated_output_2$plot_data_path,
-                        calibrated_output$plot_data_path)
-  indicators_output <- readRDS(calibrated_output_2$plot_data_path)
-  ## Check there is some data
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
-
-  ## calibration data: info has been updated and data changed
-  expect_file_different(calibrated_output_2$model_output_path,
-                        a_hintr_output_2.3.15$calibration_path)
-  expect_file_different(calibrated_output_2$model_output_path,
-                        calibrated_output$model_output_path)
-  pre_calibration_data <- readRDS(a_hintr_output_2.3.15$calibration_path)
-  post_calibration_2_data <- readRDS(calibrated_output_2$model_output_path)
-  expect_true(!identical(post_calibration_2_data$output_package,
-                         pre_calibration_data$output_package))
-  expect_equal(post_calibration_2_data$naomi_data,
-               pre_calibration_data$naomi_data)
-  expect_equal(names(post_calibration_2_data$info),
-               c("inputs.csv", "options.yml", "packages.csv",
-                 "calibration_options.yml"))
-  expect_equal(post_calibration_2_data$info$inputs.csv,
-               pre_calibration_data$info$inputs.csv)
-  expect_equal(post_calibration_2_data$info$options.yml,
-               pre_calibration_data$info$options.yml)
-  expect_equal(post_calibration_2_data$info$packages.csv,
-               pre_calibration_data$info$packages.csv)
-  expect_equal(post_calibration_2_data$info$calibration_options.yml,
-               yaml::as.yaml(calibration_options))
+test_that("assert_model_output_version ensures model version up to date", {
+  expect_true(assert_model_output_version(a_hintr_output))
+  expect_error(assert_model_output_version(list(version = "123")),
+               "Model output out of date please re-run model and try again")
 })

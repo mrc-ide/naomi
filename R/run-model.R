@@ -112,12 +112,10 @@ hintr_run_model <- function(data, options,
   )
 }
 
-hintr_output_version <- "2.3.16"
-
 build_hintr_output <- function(plot_data_path, model_output_path) {
   out <- list(plot_data_path = plot_data_path,
               model_output_path = model_output_path,
-              version = hintr_output_version)
+              version = packageVersion("naomi"))
   class(out) <- "hintr_output"
   out
 }
@@ -126,17 +124,11 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
-hintr_migrate_output <- function(hintr_output) {
-  if (is.null(hintr_output$version)) {
-    output <- build_hintr_output(hintr_output$output_path,
-                                 hintr_output$calibration_path)
-  } else if (identical(hintr_output$version, hintr_output_version)) {
-    output <- hintr_output
-  } else {
-    stop(t_("FAILED_VERSION_MIGRATE", list(old = hintr_output$version,
-                                           new = hintr_output_version)))
+assert_model_output_version <- function(obj) {
+  if (!is_hintr_output(obj) || is.null(obj$version)) {
+    stop(t_("OLD_MODEL_OUTPUT"))
   }
-  output
+  invisible(TRUE)
 }
 
 #' Calibrate hintr_output
@@ -154,10 +146,7 @@ hintr_migrate_output <- function(hintr_output) {
 hintr_calibrate <- function(output, calibration_options,
                             plot_data_path = tempfile(fileext = ".rds"),
                             calibrate_output_path = tempfile(fileext = ".rds")) {
-  if (!is_hintr_output(output)) {
-    stop(t_("INVALID_CALIBRATE_OBJECT"))
-  }
-  output <- hintr_migrate_output(output)
+  assert_model_output_version(output)
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
