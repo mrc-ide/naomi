@@ -3,7 +3,7 @@ title: "&nbsp;"
 fig_width: 5
 fig_height: 5
 params:
-  output_zip: NA
+  outputs: NA
   spectrum_file: NA
   options: NA
   lang: NA
@@ -29,13 +29,52 @@ if (params$lang == "fr") {
 #Set limit for scientific notation
 options(scipen=10000000)
 
-# Read in files from naomi outputs zip
-output_zip <-params$output_zip
-outputs <- naomi::read_output_package(output_zip)
-inputs <- unz(output_zip, "info/inputs.csv") 
-inputs <- read.csv(inputs)
-options <- unz(output_zip, "info/options.yml")
-options <- yaml::read_yaml(options)
+# Read files if hintr rds provided
+if(grepl("\\.rds$", params$outputs)) {
+  
+  model_object <- readRDS(a_hintr_output_calibrated$model_output_path)
+  outputs <- model_object$output_package
+  inputs <- readr::read_csv(model_object$info$inputs.csv)
+  options <- yaml::read_yaml(text = model_object$info$options.yml)
+  
+  calibration_files <- names(model_object$info)
+    if("calibration_options.yml" %in% calibration_files) {
+    calibration_options <- yaml::read_yaml(text = model_object$info$calibration_options.yml)
+  } else {
+    # In the event there is no calibration options, add in defaults:
+    calibration_options <- tibble::tribble( ~option, ~value, 
+                                    "spectrum_population_calibration", "none",         
+                                    "spectrum_plhiv_calibration_level","subnational", 
+                                    "spectrum_plhiv_calibration_strat","sex_age_group",
+                                    "spectrum_artnum_calibration_level","national",     
+                                    "spectrum_artnum_calibration_strat","age_coarse",   
+                                    "spectrum_aware_calibration_level","national",     
+                                    "spectrum_aware_calibration_strat","age_coarse",   
+                                    "spectrum_infections_calibration_level","none",         
+                                    "spectrum_infections_calibration_strat","age_coarse",  
+                                    "calibrate_method","logistic")
+  }
+}
+
+# Read files if zipped output package provided
+if(grepl("\\.zip$", params$outputs)) {
+  output_zip <- params$outputs
+  outputs <- naomi::read_output_package(output_zip)
+  inputs <- unz(output_zip, "info/inputs.csv") 
+  inputs <- read.csv(inputs)
+  options <- unz(output_zip, "info/options.yml")
+  options <- yaml::read_yaml(options)
+  
+  calibration_files <- utils::unzip(output_zip, list = TRUE)
+
+  if("fit/calibration_options.csv" %in% calibration_files$Name) {
+    calibration_options <- unz(output_zip, "fit/calibration_options.csv")
+    calibration_options <- readr::read_csv(calibration_options)
+    calibration_options <- split(calibration_options$value, calibration_options$option)
+  } else {
+    calibration_options <- options[grep("calibration", names(options))]
+  }
+}
 
 indicators <- naomi::add_output_labels(outputs) %>%
   dplyr::left_join(
@@ -336,6 +375,7 @@ district_bar_plot <- function(district_data,
      ggplot2::theme(
        plot.title = ggplot2::element_text(size = 10),
        axis.text.x = ggplot2::element_text(size = 8),
+       legend.title = ggplot2::element_text(size = 8, face = "bold"),
        axis.title.x = ggplot2::element_text(size = 8, face = "bold"), 
        axis.title.y = ggplot2::element_blank()) +
      ggplot2::ylab(x_axis_title) +
@@ -469,18 +509,8 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 
 ```{r, echo = FALSE, results = 'asis', include = print_en, eval = print_en}
 
-# Read in calibration options from calibration_options.yml, if that does not exist, 
-# use default options in options.yml
-calibration_files <- utils::unzip(output_zip, list = TRUE)
-
-if("info/calibration_options.yml" %in% calibration_files$Name) {
-  calibration_options <- unz(output_zip, "info/calibration_options.yml")
-  calibration_options <- yaml::read_yaml(calibration_options)
-} else {
-  calibration_options <- options[grep("calibration", names(options))]
-}
-
 # # Translate calibration options to human readable
+
 calibration_options <- get_calibration_option_labels(calibration_options)
 
 text <- tibble::tibble(prefix = c("Population calibration: ",
