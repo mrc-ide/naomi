@@ -22,7 +22,7 @@ devtools::install_github("mrc-ide/naomi")
 * Run build and check before pushing to remote using `make build` and `make check` from command line or `devtools::check()` from R
 * When branch is ready for merging create a PR and add a reviewer
 * Ensure that the version number has been updated according to [semantic versioning](https://semver.org/) and add a news item describing the change
-* Reviewer should check code and ensure the build passes on [Travis](https://travis-ci.org/mrc-ide/naomi) before merging
+* Reviewer should check code and ensure the build passes on [Buildkite](https://buildkite.com/mrc-ide/naomi) before merging
 
 ### Code coverage
 
