@@ -5,6 +5,16 @@
 
 Naomi model for subnational HIV estimates
 
+### Installation
+
+The package is not available from [CRAN](https://cran.r-project.org/).
+Instead, the latest version (of this Github repo) may be installed by running the following code from R.
+
+```
+# install.packages("devtools") # Uncomment this line if devtools is not yet installed
+devtools::install_github("mrc-ide/naomi")
+```
+
 ### Development steps
 
 * Make changes in a new branch
@@ -12,9 +22,9 @@ Naomi model for subnational HIV estimates
 * Run build and check before pushing to remote using `make build` and `make check` from command line or `devtools::check()` from R
 * When branch is ready for merging create a PR and add a reviewer
 * Ensure that the version number has been updated according to [semantic versioning](https://semver.org/) and add a news item describing the change
-* Reviewer should check code and ensure the build passes on [travis](https://travis-ci.org/mrc-ide/naomi) before merging
+* Reviewer should check code and ensure the build passes on [Travis](https://travis-ci.org/mrc-ide/naomi) before merging
 
-## Code coverage
+### Code coverage
 
 To check code coverage from R.
 
@@ -23,11 +33,10 @@ cov <- covr::package_coverage()
 covr::report(cov)
 ```
 
-
 ### Website
 
 A [pkgdown website](https://mrc-ide.github.io/naomi) is available for the package. To update the website using most recent docs and vignettes type `make website` on the command line from the root directory. Note that to see the effects in place immediately you may need to refresh the browser cache by opening developer console and right click refresh button -> Empty Cache and Hard Reload.
 
 ### Generating test data
 
-Run `./scripts/build_test_data` to run the model and output the fit data. This will speed up some tests and stop the model fitting and uncertainty calculations being done every time. This data is not on github as it is quite large ~ 220MB for Malawi
+Run `./scripts/build_test_data` to run the model and output the fit data. This will speed up some tests and stop the model fitting and uncertainty calculations being done every time. This data is not on Github as it is quite large ~ 220MB for Malawi.
