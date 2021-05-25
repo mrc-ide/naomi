@@ -4,12 +4,12 @@
 \alias{generate_output_summary_report}
 \title{Generate and save summary report at specified path}
 \usage{
-generate_output_summary_report(report_path, output_zip, quiet = FALSE)
+generate_output_summary_report(report_path, outputs, quiet = FALSE)
 }
 \arguments{
 \item{report_path}{Path to save summary report at}
 
-\item{output_zip}{Path to model outputs zip file}
+\item{outputs}{Path to model outputs rds or zip file}
 
 \item{quiet}{Suppress printing of the pandoc command line}
 }
