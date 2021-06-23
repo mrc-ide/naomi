@@ -1,3 +1,7 @@
+# naomi 2.3.16
+
+* Add Portuguese translations
+
 # naomi 2.3.15
 
 * Updates to summary report
