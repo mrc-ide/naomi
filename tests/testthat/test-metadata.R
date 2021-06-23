@@ -195,6 +195,11 @@ test_that("metadata can be translated", {
   reset()
   metadata <- get_metadata()
   expect_equal(metadata[1, "name"], "HIV prevalence")
+
+  reset <- naomi_set_language("pt")
+  on.exit(reset())
+  metadata <- get_metadata()
+  expect_equal(metadata[1, "name"], "Prevalência de VIH")
 })
 
 test_that("uncertainty metadata set for all model output data", {
