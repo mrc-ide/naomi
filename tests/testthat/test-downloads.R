@@ -1,7 +1,11 @@
 context("downloads")
 
 test_that("spectrum download can be created", {
-  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated))
+  })
   expect_true(file.exists(out$path))
 
   expect_type(out$metadata$description, "character")
@@ -32,10 +36,19 @@ test_that("spectrum download can be created", {
           "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
           names(output_boundaries))
   )
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message,
+               "Generating output zip download")
 })
 
 test_that("coarse age group download can be created", {
-  out <- hintr_prepare_coarse_age_group_download(a_hintr_output_calibrated)
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_coarse_age_group_download(a_hintr_output_calibrated))
+  })
   expect_true(file.exists(out$path))
 
   expect_null(out$metadata$description)
@@ -61,10 +74,18 @@ test_that("coarse age group download can be created", {
   coarse_age_outputs <- read_output_package(out$path)
   expect_setequal(coarse_age_outputs$meta_age_group$age_group, coarse_ages)
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message,
+               "Generating coarse-output download")
 })
 
 test_that("summary report download can be created", {
-  out <- hintr_prepare_summary_report_download(a_hintr_output_calibrated)
+  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_summary_report_download(a_hintr_output_calibrated))
+  })
   expect_true(file.exists(out$path))
 
   expect_type(out$metadata$description, "character")
@@ -77,4 +98,9 @@ test_that("summary report download can be created", {
   expect_true(any(grepl(basename(a_hintr_data$pjnz),
                         brio::readLines(out$path))))
   expect_true(any(grepl("Central", brio::readLines(out$path))))
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message,
+               "Generating summary report")
 })

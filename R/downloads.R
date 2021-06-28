@@ -8,6 +8,8 @@
 hintr_prepare_spectrum_download <- function(output,
                                             path = tempfile(fileext = ".zip")) {
   assert_model_output_version(output)
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")
   model_output <- readRDS(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
@@ -30,6 +32,8 @@ hintr_prepare_spectrum_download <- function(output,
 hintr_prepare_coarse_age_group_download <- function(
   output, path = tempfile(fileext = ".zip")) {
   assert_model_output_version(output)
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_COARSE")
   model_output <- readRDS(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
@@ -51,6 +55,8 @@ hintr_prepare_coarse_age_group_download <- function(
 hintr_prepare_summary_report_download <- function(
   output, path = tempfile(fileext = ".html")) {
   assert_model_output_version(output)
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_SUMMARY")
   model_output <- readRDS(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(

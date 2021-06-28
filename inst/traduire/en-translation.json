@@ -180,5 +180,8 @@
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Calibration method",
     "LANG": "en",
     "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again",
-    "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}"
+    "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}",
+    "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
+    "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
+    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report"
 }
