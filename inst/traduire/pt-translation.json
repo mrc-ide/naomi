@@ -178,5 +178,12 @@
     "SHAPE_SPECTRUM_REGION_ALL_NA": "A coluna do código de região do Spectrum está em falta no seu ficheiro de formas. Atualize o ficheiro de formas com o código de região do Spectrum para o nível de estimativa.",
     "UNAWARE_PLHIV_NUM": "Número de PVVIH sem conhecimento",
     "UNTREATED_PLHIV_NUM": "PVVIH sem TARV",
-    "VLS": "Supressão da carga viral"
+    "VLS": "Supressão da carga viral",
+    "PLHIV_MAP_PLOT_TITLE": "Pessoas que vivem com VIH (15+)",
+    "ART_CURRENT_MAP_PLOT_TITLE": "Residentes que recebem TARV (15+)",
+    "INFECTIONS_MAP_PLOT_TITLE": "Infeções anuais por VIH (15+)",
+    "PREVALENCE_MAP_PLOT_TITLE": "Prevalência de VIH (15-49)",
+    "ART_COVERAGE_MAP_PLOT_TITLE": "Proporção de PVVIH em TARV (15+)",
+    "INCIDENCE_MAP_PLOT_TITLE": "Taxa de infeção pelo VIH (15-49)",
+    "INCIDENCE_MAP_LEGEND_TITLE": "Incidência por 1000"
 }

@@ -178,5 +178,12 @@
     "OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL": "Logistique",
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportionnelle",
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Méthode d'étalonnage",
-    "LANG": "fr"
+    "LANG": "fr",
+    "PLHIV_MAP_PLOT_TITLE": "Personnes vivant avec le VIH  (15+)",
+    "ART_CURRENT_MAP_PLOT_TITLE": "Résidents recevant TARV (15+)",
+    "INFECTIONS_MAP_PLOT_TITLE": "Infections annuelles au VIH (15+)",
+    "PREVALENCE_MAP_PLOT_TITLE": "Prévalence du VIH (15-49)",
+    "ART_COVERAGE_MAP_PLOT_TITLE": "Proportion de PVVIH sous TARV (15 +)",
+    "INCIDENCE_MAP_PLOT_TITLE": "Taux d’infection par le VIH (15-49)",
+    "INCIDENCE_MAP_LEGEND_TITLE": "Incidence pour 1000"
 }
