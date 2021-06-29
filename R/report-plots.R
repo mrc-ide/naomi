@@ -16,8 +16,6 @@
 ##'
 ##' @return
 ##' @export
-##'
-##' @examples
 map_outputs <- function(geom_data,
                         indicator,
                         age,
