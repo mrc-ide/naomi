@@ -178,5 +178,12 @@
     "OPTIONS_CALIBRATE_METHOD_LOGISTIC_LABEL": "Logistic",
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportional",
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Calibration method",
-    "LANG": "en"
+    "LANG": "en",
+    "PLHIV_MAP_PLOT_TITLE": "People living with HIV (15+)",
+    "ART_CURRENT_MAP_PLOT_TITLE": "Residents receiving ART (15+)",
+    "INFECTIONS_MAP_PLOT_TITLE": "Annual HIV infections (15+)",
+    "PREVALENCE_MAP_PLOT_TITLE": "HIV prevalence (15-49)",
+    "ART_COVERAGE_MAP_PLOT_TITLE": "Proportion PLHIV on ART (15+)",
+    "INCIDENCE_MAP_PLOT_TITLE": "Rate of HIV infection (15-49)",
+    "INCIDENCE_MAP_LEGEND_TITLE": "Incidence per 1000"
 }

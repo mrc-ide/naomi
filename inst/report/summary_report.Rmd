@@ -141,55 +141,6 @@ translate <- readr::read_csv("translations.csv", col_types = readr::cols())
 
 # Legend functions
 #-------------------------------------------------------------------------------
-# Map Figure
-#-------------------------------------------------------------------------------
-map_outputs <- function(geom_data,
-                        var,
-                        age, 
-                        sex_disag,
-                        start_colour_scale, 
-                        end_colour_scale, 
-                        fig_title = NULL, 
-                        legend_title = NULL, 
-                        legend_label = ggplot2::waiver(), 
-                        breaks = 6, 
-                        fig = "map", 
-                        language = "en") {
-  
-  # Filter translations for desired language
-  title_map <- dplyr::filter(translate, lang == language, plot == "map", 
-                             indicator %in% c(var, "all"))
-  legend_title <- title_map$string[title_map$key == "legend_title"]
-  fig_title <- title_map$string[title_map$key == "fig_title"]
-  
-  # filter data for desired indicator
-  fig_data <- geom_data %>% dplyr::filter(indicator == var, 
-                                          age_group == age,
-                                          sex == sex_disag)
-  # generate figure
-  ggplot2::ggplot(fig_data, ggplot2::aes(fill = mean)) +
-    ggplot2::geom_sf() +
-    ggplot2::coord_sf(datum = NA) +
-    ggplot2::scale_fill_steps(low = start_colour_scale,
-                              high = end_colour_scale,
-                              name = legend_title,
-                              labels = legend_label, 
-                              n.breaks = breaks) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = "bottom",
-                   legend.direction = "vertical", 
-                   plot.title = ggplot2::element_text(size = 8, face = "bold"), 
-                   legend.text = ggplot2::element_text(size = 8), 
-                   legend.title = ggplot2::element_text(size = 8, face = "bold", hjust = 0.5),
-                   legend.key.size = ggplot2::unit(0.7, "lines"),
-                   legend.background = ggplot2::element_rect(linetype = "dashed",
-                                                             colour = "black"),
-                   legend.title.align = 0.5, 
-                   plot.margin = ggplot2::margin(0, 0.4, 0, 0.4, "cm")) +
-    ggplot2::ggtitle(fig_title)
-}
-                              
-
 #-------------------------------------------------------------------------------
 # Pop pyramid
 #-------------------------------------------------------------------------------
@@ -657,37 +608,40 @@ if (print_pt) { cat("### **Distribuição geográfica de PVVIH**") }
 # Map: PLHIV (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p1 <- map_outputs(geom_data = data, 
-                  var = "plhiv",
-                  age = "Y015_999", 
-                  sex_disag = "both", 
-                  start_colour_scale = "#8C000038", 
-                  end_colour_scale = "red4", 
-                  language = params$lang)
+p1 <- naomi::map_outputs(geom_data = data, 
+                         indicator = "plhiv",
+                         age = "Y015_999", 
+                         sex_disag = "both", 
+                         start_colour_scale = "#8C000038", 
+                         end_colour_scale = "red4", 
+                         fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
+                         legend_title = t_("PLHIV"))
 
 #-------------------------------------------------------------------------------
 # Map: on ART
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p2 <- map_outputs(geom_data = data, 
-                  var = "art_current_residents",
-                  age = "Y015_999", 
-                  sex_disag = "both", 
-                  start_colour_scale = "#688C2155", 
-                  end_colour_scale = "#4A690C", 
-                  language = params$lang)
+p2 <- naomi::map_outputs(geom_data = data, 
+                         indicator = "art_current_residents",
+                         age = "Y015_999", 
+                         sex_disag = "both", 
+                         start_colour_scale = "#688C2155", 
+                         end_colour_scale = "#4A690C", 
+                         fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
+                         legend_title = t_("ART_NUMBER_RESIDENTS"))
 
 #-------------------------------------------------------------------------------
 # Map: new infections (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p3 <- map_outputs(geom_data = data, 
-                  var = "infections",
-                  age = "Y015_999", 
-                  sex_disag = "both", 
-                  start_colour_scale = "#4A718C47", 
-                  end_colour_scale = "skyblue4", 
-                  language = params$lang)
+p3 <- naomi::map_outputs(geom_data = data, 
+                         indicator = "infections",
+                         age = "Y015_999", 
+                         sex_disag = "both", 
+                         start_colour_scale = "#4A718C47", 
+                         end_colour_scale = "skyblue4", 
+                         fig_title = t_("INFECTIONS_MAP_PLOT_TITLE"),
+                         legend_title = t_("NEW_INFECTIONS"))
 
 
 grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2), 
@@ -709,41 +663,44 @@ if(print_pt) {cat("### **Distribuição geográfica das taxas de infeção pelo 
 # Map: Prevalence (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p4 <- map_outputs(geom_data = data, 
-                  var = "prevalence",
-                  age = "Y015_049", 
-                  sex_disag = "both", 
-                  start_colour_scale = "#8C000038", 
-                  end_colour_scale = "red4", 
-                  legend_label = scales::percent_format(1L), 
-                  language = params$lang)
+p4 <- naomi::map_outputs(geom_data = data, 
+                         indicator = "prevalence",
+                         age = "Y015_049", 
+                         sex_disag = "both", 
+                         start_colour_scale = "#8C000038", 
+                         end_colour_scale = "red4", 
+                         legend_label = scales::percent_format(1L), 
+                         fig_title = t_("PREVALENCE_MAP_PLOT_TITLE"),
+                         legend_title = t_("HIV_PREVALENCE"))
 
 #-------------------------------------------------------------------------------
 # Map: ART coverage (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p5 <- map_outputs(geom_data = data, 
-                  var = "art_coverage",
-                  age = "Y015_999", 
-                  sex_disag = "both", 
-                  start_colour_scale = "#688C2149", 
-                  end_colour_scale = "#4A690C", 
-                  legend_label = scales::percent_format(accuracy = 1L), 
-                  language = params$lang
+p5 <- naomi::map_outputs(geom_data = data, 
+                         indicator = "art_coverage",
+                         age = "Y015_999", 
+                         sex_disag = "both", 
+                         start_colour_scale = "#688C2149", 
+                         end_colour_scale = "#4A690C", 
+                         legend_label = scales::percent_format(accuracy = 1L), 
+                         fig_title = t_("ART_COVERAGE_MAP_PLOT_TITLE"),
+                         legend_title = t_("ART_COVERAGE")
 )
 
 #-------------------------------------------------------------------------------
 # Map: Incidence
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p6 <- map_outputs(geom_data = data, 
-                  var = "incidence",
-                  age = "Y015_049", 
-                  sex_disag = "both", 
-                  start_colour_scale = "#4A718C47", 
-                  end_colour_scale = "skyblue4", 
-                  legend_label = scales::label_number(0.1, 1000), 
-                  language = params$lang)
+p6 <- naomi::map_outputs(geom_data = data, 
+                         indicator = "incidence",
+                         age = "Y015_049", 
+                         sex_disag = "both", 
+                         start_colour_scale = "#4A718C47", 
+                         end_colour_scale = "skyblue4", 
+                         legend_label = scales::label_number(0.1, 1000), 
+                         fig_title = t_("INCIDENCE_MAP_PLOT_TITLE"),
+                         legend_title = t_("INCIDENCE_MAP_LEGEND_TITLE"))
 
 grid::grid.draw(cbind(ggplot2::ggplotGrob(p4), ggplot2::ggplotGrob(p5), 
                       ggplot2::ggplotGrob(p6)))
