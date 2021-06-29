@@ -1068,7 +1068,7 @@ x2 <- x1 %>%
 # # Table: ART
 # # # By lowest area_level, indicators defined above
 # #------------------------------------------------------------------------------
-table_map <- translate %>% filter(plot == "table", lang == params$lang)
+table_map <- translate %>% dplyr::filter(plot == "table", lang == params$lang)
 
  x2 %>%
   dplyr::group_by(area_level_label) %>%
