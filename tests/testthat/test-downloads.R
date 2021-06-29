@@ -82,6 +82,7 @@ test_that("coarse age group download can be created", {
 })
 
 test_that("summary report download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_summary_report_download(a_hintr_output_calibrated))
