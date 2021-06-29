@@ -16,18 +16,15 @@ output:
 ---
 
 ```{r, include = FALSE}
+print_fr <- FALSE
+print_en <- FALSE
+print_pt <- FALSE
 if (params$lang == "fr") {
   print_fr <- TRUE
-  print_en <- FALSE
-  print_pt <- FALSE
 } else if (params$lang == "pt") {
-  print_fr <- FALSE
-  print_en <- FALSE
   print_pt <- TRUE
 } else {
-  print_fr <- FALSE
   print_en <- TRUE
-  print_pt <- FALSE
 }
 ```
 
@@ -48,7 +45,7 @@ options <- yaml::read_yaml(options)
 report_date <- format(Sys.Date(), "%d-%m-%Y")
 t1 <- options$calendar_quarter_t1
 t2 <- options$calendar_quarter_t2
-iso <- options$area_scop
+iso <- options$area_scope
 quarter_t1 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t1,]$quarter_label
 quarter_t2 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t2,]$quarter_label
 level <- as.integer(options$area_level)
@@ -319,54 +316,62 @@ district_barplot <- function(district_data,
 
 ```{r, echo = FALSE, results = 'asis'}
 
-if(print_en){
+if (print_en) {
   cat(paste0("# ", country, " Subnational HIV Estimates \n"))
-  cat(paste0("### **", quarter_t2, "** (report ", report_date, ")"))}
+  cat(paste0("### **", quarter_t2, "** (report ", report_date, ")"))
+}
 
-if(print_fr){
+if (print_fr) {
   cat(paste0("# Estimations infranationales du VIH ", country, " \n"))
-  cat(paste0("### **", quarter_t2, "** (rapport ", report_date, ")"))}
+  cat(paste0("### **", quarter_t2, "** (rapport ", report_date, ")"))
+}
 
-if(print_pt){
-cat(paste0("# Estimativas subnacionais do VIH ", country, "\n"))
-cat(paste0("### **", quarter_t2, "** (relatório ", report_date, ")"))}
+if (print_pt) {
+  cat(paste0("# Estimativas subnacionais do VIH ", country, "\n"))
+  cat(paste0("### **", quarter_t2, "** (relatório ", report_date, ")"))
+}
 
 ```
 
 
 ``` {r, echo = FALSE, results = 'asis'}
 
-if(print_en){
+if (print_en) {
   cat(paste0("This report summarises the **", area_level_label,
              "-level** HIV indicators for **", country,
-             "** from the Naomi model", sep = "\n")) }
+             "** from the Naomi model", sep = "\n"))
+}
 
-if(print_fr){
+if (print_fr) {
   cat(paste0("Ce rapport résume les **", area_level_label,
              "** indicateurs VIH pour **",country,
-             "** du modèle Naomi", sep = "\n")) }
+             "** du modèle Naomi", sep = "\n"))
+}
 
-if(print_pt){
+if (print_pt) {
   cat(paste0("Este relatório resume os Indicadores de VIH **", area_level_label,
            "** para **", country,
-           "** a partir do modelo Naomi", sep = "\n")) }
-
+           "** a partir do modelo Naomi", sep = "\n"))
+}
 ```
 
 
 ```{r, echo = FALSE, results = 'asis'}
 
-if(print_en){
+if (print_en) {
   cat("Naomi is a statistical model that uses data from several sources, including:  \n")
-  cat("\nNational survey data:   \n")}
+  cat("\nNational survey data:   \n")
+}
 
-if(print_fr){
+if (print_fr) {
   cat("Naomi est un modèle statistique qui utilise des données provenant de plusieurs sources, notamment:  \n")
-  cat("\nDonnées d'enquête nationales:   \n")}
+  cat("\nDonnées d'enquête nationales:   \n")
+}
 
-if(print_pt){
+if (print_pt) {
   cat("Naomi é um modelo estatístico que utiliza dados de várias fontes, incluindo:  \n")
-  cat("\nDados de inquéritos nacionais:   \n")}
+  cat("\nDados de inquéritos nacionais:   \n")
+}
 
 ```
 
@@ -393,7 +398,7 @@ cat(paste0("* ", text$prefix, " _", text$source, "_"), sep = "\n")
 ```{r, echo = FALSE, results= 'asis', include = print_en, eval = print_en}
 programme_data <- c(art_year, anc_prev, anc_art)
 
-if(sum(is.na(programme_data)) <3 ) {
+if (sum(is.na(programme_data)) <3 ) {
   
   cat(paste0("\n Operational programme data: \n", sep = "\n"))
   
@@ -405,7 +410,7 @@ if(sum(is.na(programme_data)) <3 ) {
                                   anc_prev, 
                                   anc_art)) %>% tidyr::drop_na()
 
-cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
 }
 
@@ -416,7 +421,7 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 ```{r, echo = FALSE, results= 'asis', include = print_fr, eval = print_fr}
 programme_data <- c(art_year, anc_prev, anc_art)
 
-if(sum(is.na(programme_data)) <3 ) {
+if (sum(is.na(programme_data)) <3 ) {
   
   cat(paste0("\n Données du programme opérationnel: \n", sep = "\n"))
   
@@ -428,7 +433,7 @@ if(sum(is.na(programme_data)) <3 ) {
                                   anc_prev, 
                                   anc_art)) %>% tidyr::drop_na()
 
-cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
 }
 
@@ -440,7 +445,7 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 ```{r, echo = FALSE, results= 'asis', include = print_pt, eval = print_pt}
 programme_data <- c(art_year, anc_prev, anc_art)
 
-if(sum(is.na(programme_data)) <3 ) {
+if (sum(is.na(programme_data)) <3 ) {
   
   cat(paste0("\n Dados do programa operacional: \n", sep = "\n"))
   
@@ -452,7 +457,7 @@ if(sum(is.na(programme_data)) <3 ) {
                                   anc_prev, 
                                   anc_art)) %>% tidyr::drop_na()
   
-cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
 }
 
@@ -465,7 +470,7 @@ cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "
 # use default options in options.yml
 calibration_files <- utils::unzip(output_zip, list = TRUE)
 
-if("info/calibration_options.yml" %in% calibration_files$Name) {
+if ("info/calibration_options.yml" %in% calibration_files$Name) {
   calibration_options <- unz(output_zip, "info/calibration_options.yml")
   calibration_options <- yaml::read_yaml(calibration_options)
 } else {
@@ -502,49 +507,52 @@ text <- tibble::tibble(prefix = calibration_options_prefix$string,
                                   ))
 
 # Add calibration method in if present in calibration options
-if("calibrate_method" %in% names(calibration_options)) {
-  if(print_en){method_prefix <- "Calibration method: "}
-  if(print_fr){method_prefix <- "Méthode d’étalonnage: "}
-  if(print_pt){method_prefix<- "Método de calibração:" }
+if ("calibrate_method" %in% names(calibration_options)) {
+  if (print_en) {method_prefix <- "Calibration method: "}
+  if (print_fr) {method_prefix <- "Méthode d’étalonnage: "}
+  if (print_pt) {method_prefix <- "Método de calibração: "}
 
   method <- tibble::tibble(prefix = method_prefix,
                            key = "calibration_method",
-                        source = calibration_options$calibrate_method )
+                           source = calibration_options$calibrate_method)
   text <- rbind(text, method)
 }
 
-if(print_en){no_selection <- "None"}
-if(print_fr){no_selection <- "Aucun"}
-if(print_pt){no_selection <- "Nenhum"}
+if (print_en) {no_selection <- "None"}
+if (print_fr) {no_selection <- "Aucun"}
+if (print_pt) {no_selection <- "Nenhum"}
 
 # Filter out strata options if calibration not selected
-if(text$source[text$key == "spectrum_plhiv_calibration_level"] == no_selection){
-  text <- dplyr::filter(text, !grepl("plhiv", key))}
+if (text$source[text$key == "spectrum_plhiv_calibration_level"] == no_selection){
+  text <- dplyr::filter(text, !grepl("plhiv", key))
+}
 
-if(text$source[text$key == "spectrum_aware_calibration_level"] == no_selection){
-  text <- dplyr::filter(text, !grepl("aware",key))}
+if (text$source[text$key == "spectrum_aware_calibration_level"] == no_selection) {
+  text <- dplyr::filter(text, !grepl("aware",key))
+}
 
-if(text$source[text$key == "spectrum_artnum_calibration_level"] == no_selection){
-  text <- dplyr::filter(text, !grepl("artnum",key))}
+if (text$source[text$key == "spectrum_artnum_calibration_level"] == no_selection) {
+  text <- dplyr::filter(text, !grepl("artnum",key))
+}
 
-if(text$source[text$key== "spectrum_infections_calibration_level"] == no_selection){
-  text <- dplyr::filter(text, !grepl("infections", key))}  
+if (text$source[text$key == "spectrum_infections_calibration_level"] == no_selection) {
+  text <- dplyr::filter(text, !grepl("infections", key))
+}  
 
 if(nrow(text) > 0) {
   cat(paste0("* ", text$prefix, " _", text$source, "_"), sep = "\n")
 } else {
-  
-if(print_en){no_calibration <- "No calibration selected"}
-if(print_fr){no_calibration <- "Aucun étalonnage sélectionné"}
-if(print_pt){no_calibration <- "Nenhuma calibração selecionada"}
+  if (print_en) {no_calibration <- "No calibration selected"}
+  if (print_fr) {no_calibration <- "Aucun étalonnage sélectionné"}
+  if (print_pt) {no_calibration <- "Nenhuma calibração selecionada"}
   cat(paste0("* ", no_calibration), sep = "\n")
- }
+}
 ```
 
 
 
 ```{r, echo = FALSE, results = 'asis', include = print_en, eval = print_en}
-if("true" %in% include$art_attend) {
+if ("true" %in% include$art_attend) {
   
   cat(paste0("ART coverage is estimated accounting for patient mobility between
              neighbouring districts (for ", art_attend, ").
@@ -561,7 +569,7 @@ if("true" %in% include$art_attend) {
 ```
 
 ```{r, echo = FALSE, results = 'asis', include = print_fr, eval = print_fr}
-if("true" %in% include$art_attend) {
+if ("true" %in% include$art_attend) {
   
   cat(paste0("La couverture du ART est estimée en tenant compte de la mobilité 
   des patients entre les districts voisins (pour ", art_attend, "). 
@@ -578,7 +586,7 @@ if("true" %in% include$art_attend) {
 ```
 
 ```{r, echo = FALSE, results = 'asis', include = print_pt, eval = print_pt}
-if("true" %in% include$art_attend) {
+if ("true" %in% include$art_attend) {
   
   cat(paste0("A cobertura de TARV é estimada considerando a mobilidade dos 
               pacientes entre distritos vizinhos (para ", art_attend, ").
@@ -650,9 +658,9 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p1), ggplot2::ggplotGrob(p2),
 ```
 
 ```{r, echo = FALSE, results = 'asis'}
-if(print_en) {cat("### **Geographic distribution of rates of HIV infection**")}
-if(print_fr) {cat("### **Répartition géographique des taux d'infection par le VIH**")}
-if(print_pt) {cat("### **Distribuição geográfica das taxas de infeção pelo VIH**")}
+if (print_en) {cat("### **Geographic distribution of rates of HIV infection**")}
+if (print_fr) {cat("### **Répartition géographique des taux d'infection par le VIH**")}
+if (print_pt) {cat("### **Distribuição geográfica das taxas de infeção pelo VIH**")}
 
 ```
 
@@ -709,9 +717,9 @@ grid::grid.draw(cbind(ggplot2::ggplotGrob(p4), ggplot2::ggplotGrob(p5),
 
 
 ```{r, echo = FALSE, results = 'asis'}
-if(print_en){cat("### **Distribution of HIV by age and sex**")}
-if(print_fr){cat("### **Répartition du VIH par âge et par sexe**")}
-if(print_pt){cat("### **Distribuição do VIH por idade e género**")}
+if (print_en) {cat("### **Distribution of HIV by age and sex**")}
+if (print_fr) {cat("### **Répartition du VIH par âge et par sexe**")}
+if (print_pt) {cat("### **Distribuição do VIH por idade e género**")}
 
 ```
 
@@ -777,11 +785,11 @@ if(print_pt){cat(paste0("### **Tendências de VIH de nível ", area_level_label,
 ```{r, echo = FALSE}
 ## Dynamically size plot based on number of districts
 
-if(district_count <= 35){height <- 8}
-if(district_count > 35 && district_count <= 65){height <- 10}
-if(district_count > 65 && district_count <= 125){height <- 14}
-if(district_count > 125 && district_count <= 160){height <- 20}
-if(district_count > 160){height <- 24}
+if (district_count <= 35) {height <- 8}
+if (district_count > 35 && district_count <= 65) {height <- 10}
+if (district_count > 65 && district_count <= 125) {height <- 14}
+if (district_count > 125 && district_count <= 160) {height <- 20}
+if (district_count > 160) {height <- 24}
 
 ```
 
@@ -792,7 +800,7 @@ if(district_count > 160){height <- 24}
 ## If national level data is present, generate figure comparing district level 
 ## indicator to national level otherwise generate district level figure
 
-if("0" %in% levels(as.factor(area_level_map$area_level))) {
+if ("0" %in% levels(as.factor(area_level_map$area_level))) {
   
   national <- indicators %>% 
     sf::st_drop_geometry() %>%
@@ -920,9 +928,9 @@ if("0" %in% levels(as.factor(area_level_map$area_level))) {
 ```
 
 ```{r, echo = FALSE, results = 'asis'}
-if(print_en){cat(paste0("### **", area_level_label, "-level indicators**"))}
-if(print_fr){cat(paste0("### **Indicateurs de niveau ", area_level_label, "**"))}
-if(print_pt){cat(paste0("### **Indicadores de nível ", area_level_label, "**"))}
+if (print_en) {cat(paste0("### **", area_level_label, "-level indicators**"))}
+if (print_fr) {cat(paste0("### **Indicateurs de niveau ", area_level_label, "**"))}
+if (print_pt) {cat(paste0("### **Indicadores de nível ", area_level_label, "**"))}
 ```
 
 ``` {r, echo = FALSE, warning = FALSE, results = 'asis'}
