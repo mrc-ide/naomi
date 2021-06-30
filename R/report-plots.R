@@ -26,9 +26,6 @@ map_outputs <- function(geom_data,
                         legend_title = NULL,
                         legend_label = ggplot2::waiver(),
                         breaks = 6) {
-
-  force(fig_title)
-  force(legend_title)
   # filter data for desired indicator
   fig_data <- geom_data %>% dplyr::filter(indicator == !!indicator,
                                           age_group == age,
