@@ -1,3 +1,9 @@
+# naomi 2.4.1
+
+* Refactor model calibration
+  * Uncalibrate
+  * Aggregate calibration comparison
+  
 # naomi 2.4.0
 
 * Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
@@ -16,6 +22,7 @@
 * Option to output summary report in French.
 
 # naomi 2.3.12
+
 * Fix to summary report to display input ANC data in description.
 * Ensure summary report pulls most recent calibration options.
 * Fix `validate_calibration_options()` typo.
