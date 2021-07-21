@@ -210,7 +210,7 @@ naomi_model_frame <- function(area_merged,
              births_hivpop = dplyr::if_else(is.na(asfr), 0, pregprev * births),
              births_artpop = dplyr::if_else(is.na(asfr), 0, pregartcov * births_hivpop)
            ) %>%
-    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
     dplyr::summarise_at(
              dplyr::vars(totpop, hivpop, artpop, infections, unaware,
                          births, births_hivpop, births_artpop),
@@ -245,7 +245,7 @@ naomi_model_frame <- function(area_merged,
                   age %in% 0:4) %>%
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
-    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
     dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, unaware), sum) %>%
     dplyr::mutate(
              births = 0,

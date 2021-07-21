@@ -342,7 +342,7 @@ calibrate_outputs <- function(output,
 
 
   spectrum_calibration <- spectrum_calibration %>%
-    dplyr::select(spectrum_region_code, sex, age_group, calendar_quarter,
+    dplyr::select(spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
                   population_spectrum, population_raw, population_calibration, population_final = population,
                   plhiv_spectrum, plhiv_raw,
                   art_current_spectrum, art_current_raw,
