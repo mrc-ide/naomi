@@ -1,3 +1,8 @@
+# naomi 2.4.0
+
+* Add demo datasets for subnational Spectrum files for three Malawi regions (Northern, Central, Southern).
+* Add zone-level demo datasets population, ART, and ANC testing datasets.
+
 # naomi 2.3.15
 
 * Updates to summary report
