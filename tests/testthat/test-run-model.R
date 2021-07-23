@@ -31,15 +31,15 @@ test_that("model can be run", {
   ## * 31 age groups
   ## * 3 sexes
   ## * 3 output times
-  ## * 22 areas
+  ## * 9 areas
   ## * 12 indicators
   ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
-  ## 22 = number of areas
+  ## 9 = number of areas
   ## 11 = number of ANC age groups
-  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -98,7 +98,7 @@ test_that("model can be run", {
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   ## Metadata has been saved
-  expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
+  expect_equal(model_run$metadata$areas, "MWI")
   expect_type(model_run$metadata$output_description, "character")
   expect_length(model_run$metadata$output_description, 1)
   expect_type(model_run$metadata$summary_report_description, "character")
@@ -156,7 +156,7 @@ test_that("model can be run without programme data", {
                  "calendar_quarter", "quarter_label",
                  "indicator", "indicator_label",
                  "mean", "se", "median", "mode", "lower", "upper"))
-  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
 
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
@@ -473,7 +473,7 @@ test_that("model run can be calibrated", {
                         a_hintr_output$output_path)
   indicators_output <- readRDS(calibrated_output$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
 
   ## Spectrum file has been calibrated & original files unchanged
   expect_file_different(calibrated_output$spectrum_path,
@@ -513,7 +513,7 @@ test_that("model run can be calibrated", {
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLines(summary_report))))
-  expect_true(any(grepl("demo_mwi2019.PJNZ", brio::readLines(summary_report))))
+  expect_true(any(grepl("demo_mwi2019_region-pjnz.zip", brio::readLines(summary_report))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output$calibration_path,
@@ -546,7 +546,7 @@ test_that("model run can be calibrated", {
 
   ## Can calibrate multiple times
   calibration_options <- list(
-    spectrum_plhiv_calibration_level = "national",
+    spectrum_plhiv_calibration_level = "subnational",
     spectrum_plhiv_calibration_strat = "sex_age_coarse",
     spectrum_artnum_calibration_level = "subnational",
     spectrum_artnum_calibration_strat = "age_coarse",
@@ -568,7 +568,7 @@ test_that("model run can be calibrated", {
                         calibrated_output$output_path)
   indicators_output <- readRDS(calibrated_output_2$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
 
   ## Spectrum file has been calibrated
   expect_file_different(calibrated_output_2$spectrum_path,
@@ -591,7 +591,7 @@ test_that("model run can be calibrated", {
                 file.info(a_hintr_output$summary_report_path)$ctime)
   ## Options & filename are available to calibrated report
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", brio::readLines(summary_report_2))))
-  expect_true(any(grepl("demo_mwi2019.PJNZ", brio::readLines(summary_report_2))))
+  expect_true(any(grepl("demo_mwi2019_region-pjnz.zip", brio::readLines(summary_report_2))))
 
   ## calibration data: info has been updated but everything else unchanged
   expect_file_different(calibrated_output_2$calibration_path,
@@ -672,12 +672,13 @@ test_that("Model can be run without .shiny90 file", {
 
   ## Remove .shiny90 from PJNZ and set 'output_aware_plhiv = FALSE'
   temp_pjnz <- tempfile(fileext = ".pjnz")
-  file.copy(a_hintr_data$pjnz, temp_pjnz)
+  file.copy(system_file("extdata/demo_mwi2019.PJNZ"), temp_pjnz)
   utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
 
   data <- a_hintr_data
   data$pjnz <- temp_pjnz
+  data$shape <- system_file("extdata/demo_areas.geojson")
   data <- format_data_input(data)
 
   opts <- a_hintr_options
@@ -716,15 +717,15 @@ test_that("Model can be run without .shiny90 file", {
   ## * 31 age groups
   ## * 3 sexes
   ## * 3 output times
-  ## * 22 areas
+  ## * 9 areas
   ## * 9 indicators [9 vs. 11 OMITTED 3 aware of status]
   ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
-  ## 22 = number of areas
+  ## 9 = number of areas
   ## 11 = number of ANC age groups
-  expect_equal(nrow(output), 31 * 3 * 3 * 22 * 9 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(output), 31 * 3 * 3 * 9 * 9 + 3 * 9 * 9 * 11)
   expect_equal(model_run$spectrum_path, output_spectrum)
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   ## Note that this test is likely quite platform specific
@@ -776,7 +777,7 @@ test_that("Model can be run without .shiny90 file", {
   expect_setequal(coarse_age_outputs$indicators$age_group, coarse_ages)
 
   ## Metadata has been saved
-  expect_equal(model_run$metadata$areas, "MWI_1_2_demo")
+  expect_equal(model_run$metadata$areas, "MWI")
 
   ## Summary report has been generated
   expect_true(file.size(summary_report_path) > 2000)
@@ -803,7 +804,7 @@ test_that("Model can be run without .shiny90 file", {
 
   indicators_output <- readRDS(calibrated_output$output_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 9 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 9 + 3 * 9 * 9 * 11)
 })
 
 test_that("hintr_run_model can skip validation", {
