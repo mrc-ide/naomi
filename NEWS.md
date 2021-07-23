@@ -3,6 +3,9 @@
 * Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
 * Refactor `hintr_run_model` and `hintr_calibrate` to save out minimal data
 
+* Add demo datasets for subnational Spectrum files for three Malawi regions (Northern, Central, Southern).
+* Add zone-level demo datasets population, ART, and ANC testing datasets.
+
 # naomi 2.3.15
 
 * Updates to summary report

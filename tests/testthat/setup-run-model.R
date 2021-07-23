@@ -3,17 +3,17 @@
 ## for every test.
 
 a_hintr_data <- list(
-  pjnz = system_file("extdata/demo_mwi2019.PJNZ"),
-  population = system_file("extdata/demo_population_agesex.csv"),
-  shape = system_file("extdata/demo_areas.geojson"),
+  pjnz = system_file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip"),
+  population = system_file("extdata/demo-subnational-pjnz/demo_population_zone.csv"),
+  shape = system_file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson"),
   survey = system_file("extdata/demo_survey_hiv_indicators.csv"),
-  art_number = system_file("extdata/demo_art_number.csv"),
-  anc_testing = system_file("extdata/demo_anc_testing.csv")
+  art_number = system_file("extdata/demo-subnational-pjnz/demo_art_number_zone.csv"),
+  anc_testing = system_file("extdata/demo-subnational-pjnz/demo_anc_testing_zone.csv")
 )
 
 a_hintr_options <- list(
-  area_scope = "MWI_1_2_demo",
-  area_level = "4",
+  area_scope = "MWI",
+  area_level = "2",
   calendar_quarter_t1 = "CY2016Q1",
   calendar_quarter_t2 = "CY2018Q3",
   calendar_quarter_t3 = "CY2019Q2",
@@ -28,7 +28,7 @@ a_hintr_options <- list(
   anc_prevalence_year2 = 2018,
   anc_art_coverage_year1 = 2016,
   anc_art_coverage_year2 = 2018,
-  spectrum_population_calibration = "none",
+  spectrum_population_calibration = "national",
   artattend = "true",
   artattend_t2 = "false",
   artattend_log_gamma_offset = -4L,
