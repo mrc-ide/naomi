@@ -238,12 +238,13 @@ test_that("can get model calibration options label from ID", {
 test_that("validate_model_options() returns error if missing .shiny90", {
 
   temp_pjnz <- tempfile(fileext = ".pjnz")
-  file.copy(a_hintr_data$pjnz, temp_pjnz)
+  file.copy(system_file("extdata/demo_mwi2019.PJNZ"), temp_pjnz)
   utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
 
   bad_data <- a_hintr_data
   bad_data$pjnz <- temp_pjnz
+  bad_data$shape <- system_file("extdata/demo_areas.geojson")
   bad_data <- format_data_input(bad_data)
 
   expect_error(validate_model_options(bad_data, a_hintr_options),
