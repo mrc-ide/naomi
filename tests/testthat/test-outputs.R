@@ -188,7 +188,7 @@ test_that("can generate summary report", {
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
+  expect_true(any(grepl("demo_mwi2019_region-pjnz.zip", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
@@ -211,11 +211,9 @@ test_that("summary report can be translated", {
   expect_true(any(grepl("Methods", content)))
   expect_true(any(grepl("Méthodes", content)))
   ## Styling correct - all non English sections are hidden
-  expect_true(any(grepl('#translate[lang="en"]', content, fixed = TRUE)))
-  style_line <- which(grepl('#translate[lang="en"]', content,
-                      fixed = TRUE))
-  expect_equal(content[style_line + 1], "display: block;")
-
+  ## URL encoded json for #translate[lang=\"en\"] {\ndisplay: block;\n}
+  en <- "%23translate%5Blang%3D%22en%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
+  expect_true(any(grepl(en, content, fixed = TRUE)))
 
   reset <- naomi_set_language("fr")
   on.exit(reset())
@@ -228,9 +226,7 @@ test_that("summary report can be translated", {
   expect_true(any(grepl("Methods", content)))
   expect_true(any(grepl("Méthodes", content)))
   ## Styling correct - all non French sections are hidden
-  expect_true(any(grepl('#translate[lang="fr"]', content,
-                        fixed = TRUE)))
-  style_line <- which(grepl('#translate[lang="fr"]', content,
-                            fixed = TRUE))
-  expect_equal(content[style_line + 1], "display: block;")
+  ## URL encoded json for #translate[lang=\"fr\"] {\ndisplay: block;\n}
+  fr <- "%23translate%5Blang%3D%22fr%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
+  expect_true(any(grepl(fr, content, fixed = TRUE)))
 })
