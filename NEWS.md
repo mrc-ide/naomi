@@ -1,6 +1,12 @@
-# naomi 2.3.16
+# naomi 2.4.1
 
 * Add Portuguese translations
+* Move summary plot functions into naomi package 
+
+# naomi 2.4.0
+
+* Add demo datasets for subnational Spectrum files for three Malawi regions (Northern, Central, Southern).
+* Add zone-level demo datasets population, ART, and ANC testing datasets.
 
 # naomi 2.3.15
 

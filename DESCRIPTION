@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.3.16
+Version: 2.4.1
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -35,6 +35,7 @@ Imports:
     knitr,
     magrittr,
     methods,
+    mockery,
     mvtnorm,
     prettyunits,
     readr,
