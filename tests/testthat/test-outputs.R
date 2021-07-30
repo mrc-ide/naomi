@@ -188,7 +188,7 @@ test_that("can generate summary report", {
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("demo_mwi2019_region-pjnz.zip", content)))
+  expect_true(any(grepl("demo_mwi2019.PJNZ", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
