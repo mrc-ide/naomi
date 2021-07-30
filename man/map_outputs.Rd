@@ -5,12 +5,13 @@
 \title{Create output map plot}
 \usage{
 map_outputs(
-  geom_data,
+  naomi_output,
   indicator,
+  calendar_quarter = 2,
   age,
   sex_disag,
-  start_colour_scale,
-  end_colour_scale,
+  level = NULL,
+  colour_palette = "red",
   fig_title = NULL,
   legend_title = NULL,
   legend_label = ggplot2::waiver(),
@@ -18,20 +19,19 @@ map_outputs(
 )
 }
 \arguments{
-\item{geom_data}{Data frame containing indicators output and geometry
-filtered to a single quarter}
+\item{naomi_output}{Naomi output object or path to naomi output zip folder}
 
 \item{indicator}{The indicator to generate plot for}
+
+\item{calendar_quarter}{Integer, corresponding to Naomi projection quarter to filter supplied data to. Default is calendar_quarter_t2 (2).}
 
 \item{age}{The age group to include in plots}
 
 \item{sex_disag}{Sex diaggregation to use in plot,}
 
-\item{start_colour_scale}{The colour value to start scale at, applied to
-lowest value in the data.}
+\item{level}{Integer, corresponding to desired area level to filter supplied data to. Default is lowest area level available in supplied data.}
 
-\item{end_colour_scale}{The colour value to end scale at, applied to highest
-value in the supplied data,}
+\item{colour_palette}{Names or hexcode value for colour scale to be applied to to lowest and highest value in the supplied data. Can be specified as a preset colour palette using "red", "green" and "blue" or manually as a named list: cols = c( start_colour = "red", end_colour = "blue").}
 
 \item{fig_title}{Title for the figure, blank by default}
 
