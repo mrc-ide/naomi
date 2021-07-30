@@ -5,9 +5,9 @@
 #' @return data frame
 #' @export
 get_age_groups <- function() {
-
-  naomi_read_csv(system_file("metadata", "meta_age_group.csv"))
-
+  groups <- naomi_read_csv(system_file("metadata", "meta_age_group.csv"))
+  groups$age_group_span <- as.numeric(groups$age_group_span)
+  groups
 }
 
 #' Time period indexing
