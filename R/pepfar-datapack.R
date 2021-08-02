@@ -51,7 +51,14 @@ write_datapack_csv <- function(naomi_output,
   }
 
   if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
-    warning("PSNU level ", psnu_level, " not included in model outputs.")
+
+    ## If using the demo data, don't print this warning.
+    ## The demo data only contain levels 0:2, but have ISO3 = "MWI", for which psnu_level = 3.
+    ## A better way to handle this is to change the ISO3 for the demo data to an artificial
+    ## code. However, some hint validation needs to be relaxed to enable this.
+    if (!("MWI_2_5_demo" %in% naomi_output$meta_area$area_id && setequal(0:2, naomi_output$meta_area$area_level))) {
+      warning("PSNU level ", psnu_level, " not included in model outputs.")
+    }
   }
 
   if (is.null(calendar_quarter)) {

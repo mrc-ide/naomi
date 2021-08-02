@@ -1,7 +1,11 @@
-# naomi 2.4.1
+# naomi 2.4.2
 
 * Add Portuguese translations
 * Move summary plot functions into naomi package 
+
+# naomi 2.4.1
+
+* Manually skip 'PSNU not found warning' in `write_datapack_csv()` when running `hintr_run_model()` with zone-level demo data. This occurs because the demo data have ISO3 = `MWI` for which the PSNU level is 3, but demo zone-level model fits are only applied to levels 0:2. A better solution would be to change the ISO3 for the demo data to something artificial, but this requires relaxing some validation in the user interface first.
 
 # naomi 2.4.0
 
