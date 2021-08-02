@@ -1,3 +1,7 @@
+# naomi 2.4.1
+
+* Manually skip 'PSNU not found warning' in `write_datapack_csv()` when running `hintr_run_model()` with zone-level demo data. This occurs because the demo data have ISO3 = `MWI` for which the PSNU level is 3, but demo zone-level model fits are only applied to levels 0:2. A better solution would be to change the ISO3 for the demo data to something artificial, but this requires relaxing some validation in the user interface first.
+
 # naomi 2.4.0
 
 * Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
