@@ -293,22 +293,22 @@ test_that("model run can be calibrated", {
   ## * 31 age groups
   ## * 3 sexes
   ## * 3 output times
-  ## * 22 areas
+  ## * 9 areas
   ## * 12 indicators
   ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
-  ## 22 = number of areas
+  ## 9 = number of areas
   ## 11 = number of ANC age groups
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
 
   ## Can calibrate multiple times
   calibration_options <- list(
-    spectrum_plhiv_calibration_level = "national",
+    spectrum_plhiv_calibration_level = "subnational",
     spectrum_plhiv_calibration_strat = "sex_age_coarse",
     spectrum_artnum_calibration_level = "subnational",
     spectrum_artnum_calibration_strat = "age_coarse",
@@ -328,7 +328,7 @@ test_that("model run can be calibrated", {
                         calibrated_output$plot_data_path)
   indicators_output <- readRDS(calibrated_output_2$plot_data_path)
   ## Check there is some data
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 22 * 12 + 3 * 9 * 22 * 11)
+  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
 
   ## calibration data: info has been updated and data changed
   expect_file_different(calibrated_output_2$model_output_path,
@@ -406,12 +406,13 @@ test_that("Model can be run without .shiny90 file", {
 
   ## Remove .shiny90 from PJNZ and set 'output_aware_plhiv = FALSE'
   temp_pjnz <- tempfile(fileext = ".pjnz")
-  file.copy(a_hintr_data$pjnz, temp_pjnz)
+  file.copy(system_file("extdata/demo_mwi2019.PJNZ"), temp_pjnz)
   utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
 
   data <- a_hintr_data
   data$pjnz <- temp_pjnz
+  data$shape <- system_file("extdata/demo_areas.geojson")
   data <- format_data_input(data)
 
   opts <- a_hintr_options
@@ -453,7 +454,7 @@ test_that("Model can be run without .shiny90 file", {
   indicators_output <- readRDS(calibrated_output$model_output_path)
   ## Check there is some data
   expect_equal(nrow(indicators_output$output_package$indicators),
-               31 * 3 * 3 * 22 * 9 + 3 * 9 * 22 * 11)
+               31 * 3 * 3 * 9 * 9 + 3 * 9 * 9 * 11)
 })
 
 test_that("hintr_run_model can skip validation", {

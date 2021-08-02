@@ -10,7 +10,7 @@ test_that("spectrum download can be created", {
 
   expect_type(out$metadata$description, "character")
   expect_length(out$metadata$description, 1)
-  expect_equal(out$metadata$areas, "MWI_1_2_demo")
+  expect_equal(out$metadata$areas, "MWI")
 
   tmp <- tempfile()
   info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
@@ -52,7 +52,7 @@ test_that("coarse age group download can be created", {
   expect_true(file.exists(out$path))
 
   expect_null(out$metadata$description)
-  expect_equal(out$metadata$areas, "MWI_1_2_demo")
+  expect_equal(out$metadata$areas, "MWI")
 
   info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
   info_names <- paste0("info/", names(info))
@@ -91,7 +91,7 @@ test_that("summary report download can be created", {
 
   expect_type(out$metadata$description, "character")
   expect_length(out$metadata$description, 1)
-  expect_equal(out$metadata$areas, "MWI_1_2_demo")
+  expect_equal(out$metadata$areas, "MWI")
 
   expect_true(file.size(out$path) > 2000)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS",
