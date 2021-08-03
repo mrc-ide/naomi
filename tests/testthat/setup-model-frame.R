@@ -22,7 +22,7 @@ a_naomi_data <- select_naomi_data(a_naomi_mf,
                                   artcov_survey_ids = "DEMO2016PHIA",
                                   recent_survey_ids = "DEMO2016PHIA")
 
-                                                      
+
 a_tmb_inputs <- prepare_tmb_inputs(a_naomi_data)
 a_fit <- fit_tmb(a_tmb_inputs, outer_verbose = FALSE)
 a_fit_sample <- sample_tmb(a_fit, nsample = 30, rng_seed = 28)
@@ -36,3 +36,11 @@ a_output_calib <- calibrate_outputs(a_output, a_naomi_data,
                                     calibrate_method = "logistic")
 
 a_output_full  <- disaggregate_0to4_outputs(a_output_calib, a_naomi_data)
+
+a_output_indicators <- add_output_labels(a_output_full) %>%
+  dplyr::left_join(
+    a_output_full$meta_area %>%
+      dplyr::select(area_level, area_id, center_x, center_y),
+    by = c("area_level", "area_id")
+  ) %>% sf::st_as_sf() %>%
+  dplyr::filter(area_level == 4, calendar_quarter == "CY2018Q3")

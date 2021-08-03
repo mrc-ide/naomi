@@ -210,12 +210,18 @@ test_that("summary report can be translated", {
   ## Contains both sets of content
   expect_true(any(grepl("Methods", content)))
   expect_true(any(grepl("Méthodes", content)))
-  ## Styling correct - all non English sections are hidden
-  expect_true(any(grepl('#translate[lang="en"]', content, fixed = TRUE)))
-  style_line <- which(grepl('#translate[lang="en"]', content,
-                      fixed = TRUE))
-  expect_equal(content[style_line + 1], "display: block;")
 
+  ## Styling correct - all non English sections are hidden
+  ## Depending on where this is generated the CSS might be included in plain
+  ## text (buildkite) or as encoded JSON (locally). We check for 1 or the other
+  if (any(grepl('#translate[lang="en"]', content, fixed = TRUE))) {
+    style_line <- which(grepl('#translate[lang="en"]', content,
+                              fixed = TRUE))
+    expect_equal(content[style_line + 1], "display: block;")
+  } else {
+    en <- "%23translate%5Blang%3D%22en%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
+    expect_true(any(grepl(en, content, fixed = TRUE)))
+  }
 
   reset <- naomi_set_language("fr")
   on.exit(reset())
@@ -227,10 +233,16 @@ test_that("summary report can be translated", {
   ## Contains both sets of content
   expect_true(any(grepl("Methods", content)))
   expect_true(any(grepl("Méthodes", content)))
-  ## Styling correct - all non French sections are hidden
-  expect_true(any(grepl('#translate[lang="fr"]', content,
-                        fixed = TRUE)))
-  style_line <- which(grepl('#translate[lang="fr"]', content,
-                            fixed = TRUE))
-  expect_equal(content[style_line + 1], "display: block;")
+
+  ## Styling correct - all non English sections are hidden
+  ## Depending on where this is generated the CSS might be included in plain
+  ## text (buildkite) or as encoded JSON (locally). We check for 1 or the other
+  if (any(grepl('#translate[lang="fr"]', content, fixed = TRUE))) {
+    style_line <- which(grepl('#translate[lang="fr"]', content,
+                              fixed = TRUE))
+    expect_equal(content[style_line + 1], "display: block;")
+  } else {
+    fr <- "%23translate%5Blang%3D%22fr%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
+    expect_true(any(grepl(fr, content, fixed = TRUE)))
+  }
 })
