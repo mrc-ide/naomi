@@ -99,7 +99,7 @@ pop_pyramid_outputs <- function(naomi_output,
 
   # if not naomi output - read naomi output zip
   if(!inherits(naomi_output, "naomi_output")) {
-    naomi_output <- naomi::read_output_package(naomi_output)
+    naomi_output <- read_output_package(naomi_output)
   }
 
   # set colour palette
@@ -115,7 +115,7 @@ pop_pyramid_outputs <- function(naomi_output,
   level_max <- min(levels(as.factor(naomi_output$meta_area$area_level)))
   quarter <- naomi_output$meta_period[calendar_quarter,]$calendar_quarter
 
-  fig_data <- naomi::add_output_labels(naomi_output) %>%
+  fig_data <- add_output_labels(naomi_output) %>%
     # get age labels for 5-year age bands
     dplyr::left_join(naomi_output$meta_age_group, by = c("age_group", "age_group_label")) %>%
     # filter for desired indicator and disaggregates
@@ -192,14 +192,14 @@ district_barplot <- function(naomi_output,
 
   # if not naomi output - read naomi output zip
   if(!inherits(naomi_output, "naomi_output")) {
-    naomi_output <- naomi::read_output_package(naomi_output)
+    naomi_output <- read_output_package(naomi_output)
   }
 
   # filter data for desired disaggregates
   if(is.null(level)) {level <- max(levels(as.factor(naomi_output$meta_area$area_level)))}
   quarter <- naomi_output$meta_period[calendar_quarter,]$calendar_quarter
 
-  district_data <- naomi::add_output_labels(naomi_output) %>%
+  district_data <- add_output_labels(naomi_output) %>%
     dplyr::filter(indicator == !!indicator,
                   age_group == age,
                   sex == sex_disag,
