@@ -55,6 +55,7 @@ spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 
 # Filter data for specific analytics
 indicators <- naomi::add_output_labels(outputs) 
+indicators_geom <- naomi::add_output_labels(outputs, geometry = TRUE)
 
 # Identify area_level_label for model estimates
 area_level_map <- outputs$meta_area %>%
@@ -387,9 +388,10 @@ if (print_pt) { cat("### **Distribuição geográfica de PVVIH**") }
 # Map: PLHIV (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p1 <- naomi::map_outputs(naomi_output = outputs, 
+p1 <- naomi::map_outputs(indicators_geom, 
                          indicator = "plhiv",
                          age = "Y015_999", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "red",
                          fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
@@ -399,9 +401,10 @@ p1 <- naomi::map_outputs(naomi_output = outputs,
 # Map: on ART
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p2 <- naomi::map_outputs(naomi_output = outputs, 
+p2 <- naomi::map_outputs(indicators_geom, 
                          indicator = "art_current_residents",
-                         age = "Y015_999", 
+                         age = "Y015_999",                          
+                         calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "green",
                          fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
@@ -411,9 +414,10 @@ p2 <- naomi::map_outputs(naomi_output = outputs,
 # Map: new infections (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p3 <- naomi::map_outputs(naomi_output = outputs, 
+p3 <- naomi::map_outputs(indicators_geom, 
                          indicator = "infections",
                          age = "Y015_999", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "blue",
                          fig_title = t_("INFECTIONS_MAP_PLOT_TITLE"),
@@ -439,10 +443,11 @@ if (print_pt) {cat("### **Distribuição geográfica das taxas de infeção pelo
 # Map: Prevalence (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p4 <- naomi::map_outputs(naomi_output = outputs, 
+p4 <- naomi::map_outputs(indicators_geom, 
                          indicator = "prevalence",
                          age = "Y015_049", 
                          sex_disag = "both", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          colour_palette = "red",
                          legend_label = scales::percent_format(1L), 
                          fig_title = t_("PREVALENCE_MAP_PLOT_TITLE"),
@@ -452,10 +457,11 @@ p4 <- naomi::map_outputs(naomi_output = outputs,
 # Map: ART coverage (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p5 <- naomi::map_outputs(naomi_output = outputs, 
+p5 <- naomi::map_outputs(indicators_geom, 
                          indicator = "art_coverage",
                          age = "Y015_999", 
                          sex_disag = "both", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          colour_palette = "green",
                          legend_label = scales::percent_format(accuracy = 1L), 
                          fig_title = t_("ART_COVERAGE_MAP_PLOT_TITLE"),
@@ -466,10 +472,11 @@ p5 <- naomi::map_outputs(naomi_output = outputs,
 # Map: Incidence
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p6 <- naomi::map_outputs(naomi_output = outputs, 
+p6 <- naomi::map_outputs(indicators_geom, 
                          indicator = "incidence",
                          age = "Y015_049", 
                          sex_disag = "both", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          colour_palette = "blue",
                          legend_label = scales::label_number(0.1, 1000), 
                          fig_title = t_("INCIDENCE_MAP_PLOT_TITLE"),

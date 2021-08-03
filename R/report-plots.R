@@ -1,8 +1,8 @@
 ##' Create output map plot
 ##'
-##' @param naomi_output Naomi output object or path to naomi output zip folder
+##' @param naomi_geom Labelled naomi output object with geometry
 ##' @param indicator The indicator to generate plot for
-##' @param calendar_quarter Integer, corresponding to Naomi projection quarter to filter supplied data to. Default is calendar_quarter_t2 (2).
+##' @param calendar_quarter Naomi projection quarter to filter supplied data to.
 ##' @param age The age group to include in plots
 ##' @param sex_disag Sex diaggregation to use in plot,
 ##' @param level Integer, corresponding to desired area level to filter supplied data to. Default is lowest area level available in supplied data.
@@ -18,9 +18,9 @@
 ##'
 ##'
 
-map_outputs <- function(naomi_output,
+map_outputs <- function(naomi_geom,
                         indicator,
-                        calendar_quarter = 2,
+                        calendar_quarter,
                         age,
                         sex_disag,
                         level = NULL,
@@ -30,10 +30,6 @@ map_outputs <- function(naomi_output,
                         legend_label = ggplot2::waiver(),
                         breaks = 6) {
 
-  # if not naomi output - read naomi output zip
-  if(!inherits(naomi_output, "naomi_output")) {
-    naomi_output <- naomi::read_output_package(naomi_output)
-  }
 
   # set colour palette
   if(colour_palette == "blue") {cols = c(start_colour="#4A718C47",end_colour="skyblue4")}
@@ -41,10 +37,10 @@ map_outputs <- function(naomi_output,
   if(colour_palette == "green") {cols = c(start_colour="#688C2155",end_colour="#4A690C")}
 
   # shape data for plot
-  if(is.null(level)) {level <- max(levels(as.factor(naomi_output$meta_area$area_level)))}
-  quarter <- naomi_output$meta_period[calendar_quarter,]$calendar_quarter
+  if(is.null(level)) {level <- max(levels(as.factor(naomi_geom$area_level)))}
+  quarter <- calendar_quarter
 
-  fig_data <- naomi::add_output_labels(naomi_output, geometry = TRUE) %>%
+  fig_data <- naomi_geom %>%
     dplyr::filter(indicator == !!indicator,
                   age_group == age,
                   sex == sex_disag,
