@@ -1,3 +1,7 @@
+# naomi 2.4.3
+
+* Add functions `prepare_input_time_series_art` and `prepare_input_time_series_anc` for returning ART and ANC data formatted for plotting input time series graphs.
+
 # naomi 2.4.2
 
 * Add Portuguese translations
