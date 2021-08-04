@@ -4,10 +4,12 @@
 \alias{add_output_labels}
 \title{Add labels to output indicators}
 \usage{
-add_output_labels(naomi_output)
+add_output_labels(naomi_output, geometry = FALSE)
 }
 \arguments{
 \item{naomi_output}{Naomi output object.}
+
+\item{geometry}{logical whether to include geometry from meta_area.}
 }
 \value{
 Labelled output indicators
