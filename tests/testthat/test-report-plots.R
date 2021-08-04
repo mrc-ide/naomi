@@ -1,10 +1,11 @@
 context("report-plots")
 
 test_that("map plot can be generated", {
-  expect_no_error(map_outputs(a_hintr_output$spectrum_path,
+  expect_no_error(map_outputs(a_output_indicators,
                               indicator = "plhiv",
                               age = "Y015_999",
                               sex_disag = "both",
+                              calendar_quarter = "CY2018Q3",
                               colour_palette = "red",
                               fig_title = "title PLHIV",
                               legend_title = "legend PLHIV"))
