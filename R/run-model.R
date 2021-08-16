@@ -147,6 +147,7 @@ hintr_calibrate <- function(output, calibration_options,
                             plot_data_path = tempfile(fileext = ".rds"),
                             calibrate_output_path = tempfile(fileext = ".rds")) {
   assert_model_output_version(output)
+  validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
 
