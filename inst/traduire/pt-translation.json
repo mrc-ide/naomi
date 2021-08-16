@@ -231,5 +231,6 @@
     "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}",
     "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
     "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
-    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report"
+    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
+    "CANNOT_RECALIBRATE": "A calibração não pode ser executada de novo para este modelo de ajuste, por favor, execute de novo o passo de ajuste."
 }

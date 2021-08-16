@@ -231,6 +231,7 @@
     "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}",
     "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
     "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
-    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report"
+    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
+    "CANNOT_RECALIBRATE": "Calibration cannot be re-run for this model fit please re-run fit step."
 }
 

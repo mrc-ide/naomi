@@ -147,11 +147,16 @@ hintr_calibrate <- function(output, calibration_options,
                             plot_data_path = tempfile(fileext = ".rds"),
                             calibrate_output_path = tempfile(fileext = ".rds")) {
   assert_model_output_version(output)
-  validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
 
   model_output <- readRDS(output$model_output_path)
+
+  ## TODO: Add ability to re-run the calibration
+  if (!is.null(model_output$info$calibration_options.yml)) {
+    stop(t_("CANNOT_RECALIBRATE"))
+  }
+
   calibrated_output <- calibrate_outputs(
     output = model_output$output_package,
     naomi_mf = model_output$naomi_data,
