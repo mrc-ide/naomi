@@ -38,7 +38,7 @@ Imports:
     mockery,
     mvtnorm,
     prettyunits,
-    readr,
+    readr (>= 2.0.1),
     rlang,
     rmarkdown,
     sf,
