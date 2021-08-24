@@ -2,16 +2,12 @@
 % Please edit documentation in R/run-model.R
 \name{hintr_run_model}
 \alias{hintr_run_model}
-\title{Run the model and save output to file}
+\title{Run the model and save output}
 \usage{
 hintr_run_model(
   data,
   options,
-  output_path = tempfile(),
-  spectrum_path = tempfile(fileext = ".zip"),
-  coarse_output_path = tempfile(fileext = ".zip"),
-  summary_report_path = tempfile(fileext = ".html"),
-  calibration_path = tempfile(fileext = ".rds"),
+  model_output_path = tempfile(fileext = ".rds"),
   validate = TRUE
 )
 }
@@ -20,24 +16,17 @@ hintr_run_model(
 
 \item{options}{List of model run options (see details).}
 
-\item{output_path}{Path to store output indicators as an RDS at.}
-
-\item{spectrum_path}{Path to store spectrum digest file at.}
-
-\item{coarse_output_path}{Path to store coarse age group output zip file at.}
-
-\item{summary_report_path}{Path to store summary report at.}
-
-\item{calibration_path}{Path to store data required for calibrating model.}
+\item{model_output_path}{Path to store model output as rds. Used in
+calibrating model and producing output downloads.}
 
 \item{validate}{If FALSE validation of inputs & data will be skipped.}
 }
 \value{
-Paths to 4 output files.
+Paths to output files
 }
 \description{
 This prepares the model inputs from data and options and saves output as
-an rds, the spectrum digst and indicators at specified paths.
+an rds.
 }
 \details{
 The \code{data} argument must be a list specifying paths to the following:

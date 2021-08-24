@@ -1,15 +1,12 @@
-#' Run the model and save output to file
+#' Run the model and save output
 #'
 #' This prepares the model inputs from data and options and saves output as
-#' an rds, the spectrum digst and indicators at specified paths.
+#' an rds.
 #'
 #' @param data List of paths to input data files.
 #' @param options List of model run options (see details).
-#' @param output_path Path to store output indicators as an RDS at.
-#' @param spectrum_path Path to store spectrum digest file at.
-#' @param coarse_output_path Path to store coarse age group output zip file at.
-#' @param summary_report_path Path to store summary report at.
-#' @param calibration_path Path to store data required for calibrating model.
+#' @param model_output_path Path to store model output as rds. Used in
+#'   calibrating model and producing output downloads.
 #' @param validate If FALSE validation of inputs & data will be skipped.
 #'
 #' @details
@@ -49,14 +46,11 @@
 #' * anc_art_coverage_year1
 #' * anc_art_coverage_year2
 #'
-#' @return Paths to 4 output files.
+#' @return Paths to output files
 #' @export
 #'
-hintr_run_model <- function(data, options, output_path = tempfile(),
-                            spectrum_path = tempfile(fileext = ".zip"),
-                            coarse_output_path = tempfile(fileext = ".zip"),
-                            summary_report_path = tempfile(fileext = ".html"),
-                            calibration_path = tempfile(fileext = ".rds"),
+hintr_run_model <- function(data, options,
+                            model_output_path = tempfile(fileext = ".rds"),
                             validate = TRUE) {
   progress <- new_progress()
   progress$start("prepare_inputs")
@@ -90,6 +84,7 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$complete("fit_model")
   progress$start("uncertainty")
   progress$print()
+
   fit <- sample_tmb(fit,
                     nsample = options$no_of_samples,
                     rng_seed = options$rng_seed)
@@ -98,69 +93,29 @@ hintr_run_model <- function(data, options, output_path = tempfile(),
   progress$start("prepare_outputs")
   progress$print()
 
-  ## TODO: Include input data in output package based on model options
-  ## input download_input
   outputs <- output_package(fit, naomi_data)
-
-  ## TODO: Remove calibration after separate options are integrated
-  ## into app
-  calibration_data <- list(
-    output_package = outputs,
-    naomi_data = naomi_data
-  )
-  ## TODO: Remove this call to calibrate_outputs once front end has been
-  ## updated to support separate calibration
-  ## Should hintr not return any data either?
-  outputs <- calibrate_outputs(outputs, naomi_data,
-                               options$spectrum_plhiv_calibration_level,
-                               options$spectrum_plhiv_calibration_strat,
-                               options$spectrum_artnum_calibration_level,
-                               options$spectrum_artnum_calibration_strat,
-                               options$spectrum_aware_calibration_level,
-                               options$spectrum_aware_calibration_strat,
-                               options$spectrum_infections_calibration_level,
-                               options$spectrum_infections_calibration_strat,
-                               options$calibrate_method)
-
-  outputs <- disaggregate_0to4_outputs(outputs, naomi_data)
-
   info <- naomi_info(data, options)
   attr(outputs, "info") <- info
-  calibration_data$info <- info
-  saveRDS(calibration_data, calibration_path)
-
-  indicators <- add_output_labels(outputs)
-  saveRDS(indicators, file = output_path)
-  save_output_coarse_age_groups(coarse_output_path, outputs)
-  save_output_spectrum(spectrum_path, outputs)
-  generate_output_summary_report(summary_report_path,
-                                 spectrum_path,
-                                 quiet = TRUE)
+  model_run_output <- list(
+    output_package = outputs,
+    naomi_data = naomi_data,
+    info = info
+  )
+  saveRDS(model_run_output, model_output_path)
 
   progress$complete("prepare_outputs")
   progress$print()
+
   build_hintr_output(
-    output_path,
-    spectrum_path,
-    coarse_output_path,
-    summary_report_path,
-    calibration_path,
-    metadata = list(
-      areas = options$area_scope,
-      output_description = build_output_description(options),
-      summary_report_description = build_summary_report_description(options)
-  ))
+    NULL,
+    model_output_path
+  )
 }
 
-build_hintr_output <- function(output_path, spectrum_path, coarse_output_path,
-                               summary_report_path, calibration_path,
-                               metadata) {
-  out <- list(output_path = output_path,
-              spectrum_path = spectrum_path,
-              coarse_output_path = coarse_output_path,
-              summary_report_path = summary_report_path,
-              calibration_path = calibration_path,
-              metadata = metadata)
+build_hintr_output <- function(plot_data_path, model_output_path) {
+  out <- list(plot_data_path = plot_data_path,
+              model_output_path = model_output_path,
+              version = packageVersion("naomi"))
   class(out) <- "hintr_output"
   out
 }
@@ -169,39 +124,43 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
+assert_model_output_version <- function(obj) {
+  if (!is_hintr_output(obj) || is.null(obj$version)) {
+    stop(t_("OLD_MODEL_OUTPUT"))
+  }
+  invisible(TRUE)
+}
+
 #' Calibrate hintr_output
 #'
 #' Take a previously generated hintr_output object and calibrate. Format
 #' response as another hintr_output object.
 #'
-#' @param output A hintr_output object
+#' @param output A hintr_output object.
 #' @param calibration_options A set of calibration options
-#' @param output_path Path to store calibrated output indicators as an RDS at.
-#' @param spectrum_path Path to store calibrated spectrum digest file at.
-#' @param coarse_output_path Path to store calibrated coarse age group output
-#'   zip file at.
-#' @param summary_report_path Path to store calibrated summary report at.
-#' @param calibration_path Path to store data required for calibrating model.
+#' @param plot_data_path Path to store calibrated output indicators as an RDS.
+#' @param calibrate_output_path Path to store data required for re-calibrating model.
 #'
 #' @return Calibrated hintr_output object
 #' @export
 hintr_calibrate <- function(output, calibration_options,
-                            output_path = tempfile(),
-                            spectrum_path = tempfile(fileext = ".zip"),
-                            coarse_output_path = tempfile(fileext = ".zip"),
-                            summary_report_path = tempfile(fileext = ".html"),
-                            calibration_path = tempfile(fileext = ".rds")) {
-  prev_calibration_path <- output$calibration_path
-  if (!is_hintr_output(output) || is.null(prev_calibration_path)) {
-    stop(t_("INVALID_CALIBRATE_OBJECT"))
-  }
+                            plot_data_path = tempfile(fileext = ".rds"),
+                            calibrate_output_path = tempfile(fileext = ".rds")) {
+  assert_model_output_version(output)
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
-  calibration_data <- readRDS(prev_calibration_path)
+
+  model_output <- readRDS(output$model_output_path)
+
+  ## TODO: Add ability to re-run the calibration
+  if (!is.null(model_output$info$calibration_options.yml)) {
+    stop(t_("CANNOT_RECALIBRATE"))
+  }
+
   calibrated_output <- calibrate_outputs(
-    output = calibration_data$output_package,
-    naomi_mf = calibration_data$naomi_data,
+    output = model_output$output_package,
+    naomi_mf = model_output$naomi_data,
     spectrum_plhiv_calibration_level = calibration_options$spectrum_plhiv_calibration_level,
     spectrum_plhiv_calibration_strat = calibration_options$spectrum_plhiv_calibration_strat,
     spectrum_artnum_calibration_level = calibration_options$spectrum_artnum_calibration_level,
@@ -213,38 +172,26 @@ hintr_calibrate <- function(output, calibration_options,
     calibrate_method = calibration_options$calibrate_method
   )
 
-  calibrated_output <- disaggregate_0to4_outputs(output = calibrated_output,
-                                                 naomi_mf = calibration_data$naomi_data)
+  calibrated_output <- disaggregate_0to4_outputs(
+    output = calibrated_output,
+    naomi_mf = model_output$naomi_data)
 
+  calibration_data <- list(
+    output_package = calibrated_output,
+    naomi_data = model_output$naomi_data,
+    info = model_output$info
+  )
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
   progress$update_progress("PROGRESS_CALIBRATE_SAVE_OUTPUT")
-  saveRDS(calibration_data, calibration_path)
+  saveRDS(calibration_data, calibrate_output_path)
+
   attr(calibrated_output, "info") <- calibration_data$info
-
   indicators <- add_output_labels(calibrated_output)
-  saveRDS(indicators, file = output_path)
-  save_output_coarse_age_groups(coarse_output_path, calibrated_output,
-                                overwrite = TRUE)
-  save_output_spectrum(spectrum_path, calibrated_output,
-                       overwrite = TRUE)
-  progress$update_progress("PROGRESS_CALIBRATE_GENERATE_REPORT")
-  generate_output_summary_report(summary_report_path,
-                                 spectrum_path,
-                                 quiet = TRUE)
+  saveRDS(indicators, file = plot_data_path)
 
-  metadata <- output$metadata
-  if (is.null(metadata$output_description)) {
-    metadata$output_description <- build_output_description(
-      yaml::yaml.load(calibration_data$info$options.yml))
-  }
-  if (is.null(metadata$summary_report_description)) {
-    metadata$summary_report_description <- build_summary_report_description(
-      yaml::yaml.load(calibration_data$info$options.yml))
-  }
-  build_hintr_output(output_path, spectrum_path,
-                     coarse_output_path, summary_report_path,
-                     calibration_path, metadata)
+  build_hintr_output(plot_data_path,
+                     calibrate_output_path)
 }
 
 validate_calibrate_options <- function(calibration_options) {

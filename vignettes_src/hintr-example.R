@@ -49,14 +49,6 @@ hintr_options <- list(
   anc_art_coverage_year1 = 2016,
   anc_art_coverage_year2 = 2018,
   spectrum_population_calibration = "national",
-  spectrum_plhiv_calibration_level = "national",
-  spectrum_plhiv_calibration_strat = "sex_age_group",
-  spectrum_artnum_calibration_level = "national",
-  spectrum_artnum_calibration_strat = "age_coarse",
-  spectrum_aware_calibration_level = "national",
-  spectrum_aware_calibration_strat = "age_coarse",
-  spectrum_infections_calibration_level = "national",
-  spectrum_infections_calibration_strat = "age_coarse",
   artattend = "true",
   artattend_t2 = "true",
   artattend_log_gamma_offset = -4L,
@@ -67,13 +59,27 @@ hintr_options <- list(
   permissive = "false"
 )
 
+calibration_options <- list(
+  spectrum_plhiv_calibration_level = "national",
+  spectrum_plhiv_calibration_strat = "sex_age_group",
+  spectrum_artnum_calibration_level = "national",
+  spectrum_artnum_calibration_strat = "age_coarse",
+  spectrum_aware_calibration_level = "national",
+  spectrum_aware_calibration_strat = "age_coarse",
+  spectrum_infections_calibration_level = "national",
+  spectrum_infections_calibration_strat = "age_coarse",
+  calibrate_method = "logistic"
+)
+
 hintr_options$outer_verbose <- TRUE
 
 hintr_paths <- hintr_run_model(hintr_data, hintr_options)
+calibrated_paths <- hintr_calibrate(hintr_paths, calibration_options)
+spectrum_download <- hintr_prepare_spectrum_download(calibrated_paths)
 
 
 #' Read output package and generate datapack export
-naomi_output <- read_output_package(hintr_paths$spectrum_path)
+naomi_output <- read_output_package(spectrum_download$path)
 
 datapack_path <- tempfile(fileext = ".csv")
 write_datapack_csv(naomi_output, datapack_path)
