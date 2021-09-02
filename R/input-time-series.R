@@ -27,7 +27,7 @@ prepare_input_time_series_art <- function(art, shape) {
   # Check for duplicated years in area_id/sex/age combinations
   dup <- art_number %>%
     dplyr::group_by(area_id, sex, age_group, year) %>%
-    dplyr::summarise(n=n(), .groups = 'drop')
+    dplyr::summarise(n=dplyr::n(), .groups = 'drop')
 
   if(unique(dup$n == 4)) {
     # If quarterly values available for all disags - aggregate to annual
@@ -56,7 +56,9 @@ prepare_input_time_series_art <- function(art, shape) {
 
   ## Recursively aggregate ART data up from lowest level of programm data provided
   # Level to aggregate from
-  art_level <- levels(as.factor(art_number$area_level))
+  art_level <- unique(art_number$area_level)
+  sex_level <- unique(art_number$sex)
+  age_level <- levels(as.factor(art_number$age_group))
   # Join ART data to hierarchy
   art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
     dplyr::left_join(art_number, by = "area_id")
@@ -93,6 +95,20 @@ prepare_input_time_series_art <- function(art, shape) {
     tidyr::pivot_longer(cols = dplyr::starts_with("art"),
                         names_to = "plot",
                         values_to = "value")
+
+  # Remove sex disaggregated variables if only sex aggregated data is present
+  if(all(!c("male", "female") %in% sex_level)) {
+   art_plot_data <-  dplyr::filter(art_plot_data,
+                                   !(plot %in% c("art_adult_f","art_adult_m", "art_adult_sex_ratio")))
+  }
+
+  # Remove age disaggregated variables if paeds data is not present
+  if(!("Y000_014" %in% age_level)) {
+    art_plot_data <-  dplyr::filter(art_plot_data,
+                                    !(plot %in% c("art_child","art_adult_child_ratio", "art_prop_u15")))
+  }
+
+  return(art_plot_data)
 
 }
 
