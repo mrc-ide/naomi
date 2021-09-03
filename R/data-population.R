@@ -62,6 +62,13 @@ calendar_quarter_labels <- function(calendar_quarter) {
 
 #' @rdname quarter_year_labels
 #' @export
+calendar_quarter_labels_short <- function(calendar_quarter) {
+  id <- calendar_quarter_to_quarter_id(calendar_quarter)
+  sprintf("%s Q%s", year_labels(id), quarter_number(id))
+}
+
+#' @rdname quarter_year_labels
+#' @export
 year_labels <- function(quarter_id) {
   1900 + (quarter_id - 1) %/% 4
 }

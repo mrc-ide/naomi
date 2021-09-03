@@ -232,5 +232,6 @@
     "PROGRESS_DOWNLOAD_SPECTRUM": "Téléchargement du zip de sortie",
     "PROGRESS_DOWNLOAD_COARSE": "Génération d'un téléchargement à sortie grossière",
     "PROGRESS_DOWNLOAD_SUMMARY": "Générer un rapport de synthèse",
-    "CANNOT_RECALIBRATE": "L'étalonnage ne peut pas être relancé pour cet ajustement de modèle, veuillez relancer l'étape d'ajustement."
+    "CANNOT_RECALIBRATE": "L'étalonnage ne peut pas être relancé pour cet ajustement de modèle, veuillez relancer l'étape d'ajustement.",
+    "INVALID_ART_TIME_PERIOD": "Données trimestrielles non fournies pour tous les désagrégats ou données annuelles dupliquées fournies pour tous les désagrégats."
 }

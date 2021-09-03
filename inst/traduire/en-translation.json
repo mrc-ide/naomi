@@ -232,6 +232,7 @@
     "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
     "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
     "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
-    "CANNOT_RECALIBRATE": "Calibration cannot be re-run for this model fit please re-run fit step."
+    "CANNOT_RECALIBRATE": "Calibration cannot be re-run for this model fit please re-run fit step.",
+    "INVALID_ART_TIME_PERIOD": "Quarterly data not provided for all disaggregates or duplicate annual data provided for all disaggregates."
 }
 
