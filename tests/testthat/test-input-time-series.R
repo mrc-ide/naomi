@@ -57,10 +57,10 @@ test_that("ART data can be aggregated by time and space", {
     dplyr::left_join(shape %>% dplyr::select(area_id, area_level), by = "area_id")
 
   # Check data has been aggregated from correct baseline
-  expect_equal(unique(art_number$area_level), max(data$area_level))
+  expect_equal(max(data$area_level), unique(art_number$area_level))
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(art_number$area_level)]
-  expect_equal(shape_level, unique(data$area_level))
+  expect_equal(unique(data$area_level), shape_level)
 
   # Time period has correct format
   expect_setequal(data$time_step, "quarterly")
