@@ -5,9 +5,9 @@
 \title{Create output map plot}
 \usage{
 map_outputs(
-  naomi_output,
+  naomi_geom,
   indicator,
-  calendar_quarter = 2,
+  calendar_quarter,
   age,
   sex_disag,
   level = NULL,
@@ -19,11 +19,11 @@ map_outputs(
 )
 }
 \arguments{
-\item{naomi_output}{Naomi output object or path to naomi output zip folder}
+\item{naomi_geom}{Labelled naomi output object with geometry}
 
 \item{indicator}{The indicator to generate plot for}
 
-\item{calendar_quarter}{Integer, corresponding to Naomi projection quarter to filter supplied data to. Default is calendar_quarter_t2 (2).}
+\item{calendar_quarter}{Naomi projection quarter to filter supplied data to.}
 
 \item{age}{The age group to include in plots}
 
