@@ -29,7 +29,7 @@ prepare_input_time_series_art <- function(art, shape) {
       dplyr::group_by(area_id, area_name, area_level, sex, age_group, year) %>%
       dplyr::summarise(art_current = sum(art_current, na.rm = TRUE),
                 .groups = 'drop') %>%
-      dplyr::mutate(time_period = year, time_step = "annual")
+      dplyr::mutate(time_period = as.character(year), time_step = "annual")
     # Bind to quarterly data set
     art_number <- art_number %>%
       dplyr::mutate(time_step = "quarterly") %>%
@@ -40,7 +40,7 @@ prepare_input_time_series_art <- function(art, shape) {
     # If annual values available for all disags - don't aggregate
     art_number <- art_number %>%
       dplyr::mutate(time_step = "annual") %>%
-      dplyr::rename(time_period = year)
+      dplyr::mutate(time_period = as.character(year))
   } else {
     # Throw error for duplicate annual or incomplete quarterly data
       stop(t_("INVALID_ART_TIME_PERIOD"))
@@ -124,7 +124,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
   anc_testing <- readr::read_csv(anc, show_col_types = FALSE) %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(time_step = "annual",
-                  time_period = year)
+                  time_period = as.character(year))
 
   ## Recursively aggregate ART data up from lowest level of programm data provided
   # Level to aggregate from

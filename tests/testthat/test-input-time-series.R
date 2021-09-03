@@ -152,4 +152,3 @@ test_that("ART data throws error if dupe annual data or incomplete quarterly", {
     paste0("Quarterly data not provided for all disaggregates or duplicate ",
            "annual data provided for all disaggregates."))
 })
-
