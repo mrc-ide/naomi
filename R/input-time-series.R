@@ -14,7 +14,7 @@ prepare_input_time_series_art <- function(art, shape) {
   ## Check if data is quarterly or annual - if quarterly aggregate to annual
   areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
 
-  art_number <- read_art_number(art) %>%
+  art_number <- readr::read_csv(art, show_col_types = FALSE) %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)))
 
@@ -29,19 +29,18 @@ prepare_input_time_series_art <- function(art, shape) {
       dplyr::group_by(area_id, area_name, area_level, sex, age_group, year) %>%
       dplyr::summarise(art_current = sum(art_current, na.rm = TRUE),
                 .groups = 'drop') %>%
-      dplyr::mutate(time_period = paste0("CY", year, "Q4"),
-             time_step = "annual")
-
+      dplyr::mutate(time_period = year, time_step = "annual")
     # Bind to quarterly data set
     art_number <- art_number %>%
       dplyr::mutate(time_step = "quarterly") %>%
-      dplyr::rename(time_period = calendar_quarter) %>%
+      dplyr::mutate(time_period = calendar_quarter_labels_short(calendar_quarter)) %>%
+      dplyr::select(-calendar_quarter)
       rbind(art_number_annual)
   } else if (unique(dup$n == 1)) {
     # If annual values available for all disags - don't aggregate
     art_number <- art_number %>%
       dplyr::mutate(time_step = "annual") %>%
-      dplyr::rename(time_period = calendar_quarter)
+      dplyr::rename(time_period = year)
   } else {
     # Throw error for duplicate annual or incomplete quarterly data
       stop(t_("INVALID_ART_TIME_PERIOD"))
@@ -122,10 +121,10 @@ prepare_input_time_series_anc <- function(anc, shape) {
   # Level to aggregate from
   areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
 
-  anc_testing <- read_anc_testing(anc) %>%
+  anc_testing <- readr::read_csv(anc, show_col_types = FALSE) %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(time_step = "annual",
-           time_period = paste0("CY", year, "Q4"))
+                  time_period = year)
 
   ## Recursively aggregate ART data up from lowest level of programm data provided
   # Level to aggregate from

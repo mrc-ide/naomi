@@ -6,6 +6,10 @@ test_that("data can be formatted for ART input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level_label","area_level",
                     "time_step", "time_period", "plot", "value"))
+
+  # Time period has correct format
+  expect_setequal(data$time_step, "annual")
+  expect_match(as.character(data$time_period), "\\d{4}")
 })
 
 test_that("data can be formatted for ANC input time series", {
@@ -15,6 +19,10 @@ test_that("data can be formatted for ANC input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level", "area_level_label",
                     "age_group", "time_period", "time_step", "plot", "value"))
+
+  # Time period has correct format
+  expect_setequal(data$time_step, "annual")
+  expect_match(as.character(data$time_period), "\\d{4}")
 })
 
 test_that("ART data can be aggregated by time and space", {
@@ -22,7 +30,7 @@ test_that("ART data can be aggregated by time and space", {
   art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
 
   # Make dummy quarterly data
-  art_q <-art_number %>%
+  art_q <- art_number %>%
     dplyr::mutate(art_current = art_current/4,
            calendar_quarter = paste0("CY",year, "Q1")) %>%
     rbind(art_number %>%
@@ -53,6 +61,10 @@ test_that("ART data can be aggregated by time and space", {
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(art_number$area_level)]
   expect_equal(shape_level, unique(data$area_level))
+
+  # Time period has correct format
+  expect_setequal(data$time_step, "quarterly")
+  expect_match(data$time_period, "\\d{4} Q\\d{1}")
 })
 
 test_that("plots are filtered according to avalible disaggregates", {
@@ -112,6 +124,10 @@ test_that("ANC data can be aggregated by space", {
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(anc_testing$area_level)]
   expect_equal(unique(data$area_level), shape_level)
+
+  # Time period has correct format
+  expect_setequal(data$time_step, "annual")
+  expect_match(as.character(data$time_period), "\\d{4}")
 })
 
 test_that("ART data throws error if dupe annual data or incomplete quarterly", {
