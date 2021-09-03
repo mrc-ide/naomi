@@ -226,5 +226,6 @@
     "ART_RESIDENT_TABLE_SUBHEADING": "**Número de clientes a receber TARV 15+**",
     "PREVALENCE_LEGEND_TITLE": "Prevalência nacional de VIH:",
     "ART_LEGEND_TITLE": "Cobertura nacional de TARV::",
-    "INCIDENCE_LEGEND_TITLE": "Incidência nacional de VIH por 1000 habitantes:"
+    "INCIDENCE_LEGEND_TITLE": "Incidência nacional de VIH por 1000 habitantes:",
+    "INVALID_ART_TIME_PERIOD": "Dados trimestrais não fornecidos para todos os desagregados ou dados anuais duplicados fornecidos para todos os desagregados."
 }

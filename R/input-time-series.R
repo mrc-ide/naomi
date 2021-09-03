@@ -11,16 +11,10 @@
 ##' value
 ##' @export
 prepare_input_time_series_art <- function(art, shape) {
-
-  ## From "area_id", "calendar_quarter", "sex", "age_group", "art_current"
-
-  ## To "area_id","area_name","area_level_label", "area_level", time_step",
-  ## "time_period","plot", "value"
-
   ## Check if data is quarterly or annual - if quarterly aggregate to annual
   areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
 
-  art_number <- readr::read_csv(art, show_col_types = FALSE) %>%
+  art_number <- read_art_number(art) %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)))
 
@@ -50,8 +44,7 @@ prepare_input_time_series_art <- function(art, shape) {
       dplyr::rename(time_period = calendar_quarter)
   } else {
     # Throw error for duplicate annual or incomplete quarterly data
-      stop(print("Quarterly data not provdied for all dissagregates/n
-                 OR duplicate annual data provided for all dissagreagtes"))
+      stop(t_("INVALID_ART_TIME_PERIOD"))
     }
 
   ## Recursively aggregate ART data up from lowest level of programm data provided
@@ -125,21 +118,14 @@ prepare_input_time_series_art <- function(art, shape) {
 ##' time_step, plot and value
 ##' @export
 prepare_input_time_series_anc <- function(anc, shape) {
-  ## From "area_id", "age_group", "year", "anc_clients",
-  ## "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos"
-
-  ## TO "area_id","area_name","area_level","area_level_label","age_group",
-  ## "time_period","time_step","plot","value"
-
-
   ## Recursively aggregate ANC data up from lowest level of programm data provided
   # Level to aggregate from
   areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
 
-  anc_testing <- readr::read_csv(anc, show_col_types = FALSE) %>%
+  anc_testing <- read_anc_testing(anc) %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(time_step = "annual",
-           time_period = paste0("CY",year, "Q4"))
+           time_period = paste0("CY", year, "Q4"))
 
   ## Recursively aggregate ART data up from lowest level of programm data provided
   # Level to aggregate from

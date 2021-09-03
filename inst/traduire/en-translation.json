@@ -226,6 +226,7 @@
     "ART_RESIDENT_TABLE_SUBHEADING": "**Number residents on ART 15+**",
     "PREVALENCE_LEGEND_TITLE": "National HIV Prevalence:",
     "ART_LEGEND_TITLE": "National ART Coverage:",
-    "INCIDENCE_LEGEND_TITLE": "National Annual Incidence:"
+    "INCIDENCE_LEGEND_TITLE": "National Annual Incidence:",
+    "INVALID_ART_TIME_PERIOD": "Quarterly data not provided for all disaggregates or duplicate annual data provided for all disaggregates."
 }
 

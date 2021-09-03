@@ -53,8 +53,6 @@ test_that("ART data can be aggregated by time and space", {
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(art_number$area_level)]
   expect_equal(shape_level, unique(data$area_level))
-
-
 })
 
 test_that("plots are filtered according to avalible disaggregates", {
@@ -96,8 +94,6 @@ test_that("plots are filtered according to avalible disaggregates", {
   expect_setequal(unique(data2$plot),
                   c("art_adult" ,"art_total", "art_adult_f","art_adult_m",
                     "art_adult_sex_ratio"))
-
-
 })
 
 test_that("ANC data can be aggregated by space", {
@@ -112,10 +108,32 @@ test_that("ANC data can be aggregated by space", {
     dplyr::left_join(shape %>% dplyr::select(area_id, area_level), by = "area_id")
 
   # Check data has been aggregated from correct baseline
-  expect_equal(unique(anc_testing$area_level), max(data$area_level))
+  expect_equal(max(data$area_level), unique(anc_testing$area_level))
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(anc_testing$area_level)]
-  expect_equal(shape_level, unique(data$area_level))
+  expect_equal(unique(data$area_level), shape_level)
+})
 
+test_that("ART data throws error if dupe annual data or incomplete quarterly", {
+
+  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
+
+  # Make dummy quarterly data
+  art_q <-art_number %>%
+    dplyr::mutate(art_current = art_current/4,
+                  calendar_quarter = paste0("CY",year, "Q1")) %>%
+    rbind(art_number %>%
+            dplyr::mutate(art_current = art_current/4,
+                          calendar_quarter = paste0("CY",year, "Q2"))) %>%
+    dplyr::select(-c(art_new))
+
+  dir <- tempdir()
+  art_q_file <- paste0(dir, "art_q.csv")
+  readr::write_csv(art_q, art_q_file)
+
+  data <- expect_error(
+    prepare_input_time_series_art(art_q_file, a_hintr_data$shape),
+    paste0("Quarterly data not provided for all disaggregates or duplicate ",
+           "annual data provided for all disaggregates."))
 })
 
