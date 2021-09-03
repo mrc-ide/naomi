@@ -1,6 +1,11 @@
-# naomi 2.4.3
+# naomi 2.5.1
 
 * Add functions `prepare_input_time_series_art` and `prepare_input_time_series_anc` for returning ART and ANC data formatted for plotting input time series graphs.
+
+# naomi 2.5.0
+
+* Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
+* Refactor `hintr_run_model` and `hintr_calibrate` to save out minimal data
 
 # naomi 2.4.2
 

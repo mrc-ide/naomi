@@ -332,6 +332,9 @@ output_package <- function(naomi_fit, naomi_mf) {
   val
 }
 
+is_naomi_output <- function(object) {
+  inherits(object, "naomi_output")
+}
 
 #' Add labels to output indicators
 #'
@@ -773,17 +776,17 @@ save_output <- function(filename, dir,
 #' Generate and save summary report at specified path
 #'
 #' @param report_path Path to save summary report at
-#' @param output_zip Path to model outputs zip file
+#' @param outputs Path to model outputs rds or zip file
 #' @param quiet Suppress printing of the pandoc command line
 #'
 #' @return Path to summary report
 #' @keywords internal
 generate_output_summary_report <- function(report_path,
-                                           output_zip,
+                                           outputs,
                                            quiet = FALSE) {
   report_filename <- basename(report_path)
   report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
-  output_zip_path <- normalizePath(output_zip, mustWork = TRUE)
+  output_file_path <- normalizePath(outputs, mustWork = TRUE)
   ## Render uses relative paths to locate the html file. The package author
   ## advises against using output_dir see:
   ## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
@@ -798,7 +801,7 @@ generate_output_summary_report <- function(report_path,
     style <- traduire::translator()$replace(style)
     writeLines(style, "styles.css")
     rmarkdown::render("summary_report.Rmd",
-                      params = list(output_zip = output_zip_path,
+                      params = list(outputs = output_file_path,
                                     lang = t_("LANG")),
                       output_file = report_filename,
                       quiet = quiet
@@ -806,7 +809,7 @@ generate_output_summary_report <- function(report_path,
 
     fs::file_copy(report_filename, report_path_dir, overwrite = TRUE)
   })
-  invisible(report_path)
+  report_path
 }
 
 
@@ -1499,7 +1502,11 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
                   ratio = NULL) %>%
     tidyr::pivot_wider()
 
-  indicators <- dplyr::bind_rows(output$indicators, out_0to4strat_counts, out_0to4strat_rates) %>%
+  age_groups <- unique(out_0to4strat_counts$age_group)
+  out_indicators <- output$indicators %>%
+    dplyr::filter(!age_group %in% age_groups)
+
+  indicators <- dplyr::bind_rows(out_indicators, out_0to4strat_counts, out_0to4strat_rates) %>%
     dplyr::arrange(forcats::fct_inorder(area_id),
                    forcats::fct_inorder(calendar_quarter),
                    forcats::fct_inorder(indicator),

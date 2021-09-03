@@ -7,28 +7,18 @@
 hintr_calibrate(
   output,
   calibration_options,
-  output_path = tempfile(),
-  spectrum_path = tempfile(fileext = ".zip"),
-  coarse_output_path = tempfile(fileext = ".zip"),
-  summary_report_path = tempfile(fileext = ".html"),
-  calibration_path = tempfile(fileext = ".rds")
+  plot_data_path = tempfile(fileext = ".rds"),
+  calibrate_output_path = tempfile(fileext = ".rds")
 )
 }
 \arguments{
-\item{output}{A hintr_output object}
+\item{output}{A hintr_output object.}
 
 \item{calibration_options}{A set of calibration options}
 
-\item{output_path}{Path to store calibrated output indicators as an RDS at.}
+\item{plot_data_path}{Path to store calibrated output indicators as an RDS.}
 
-\item{spectrum_path}{Path to store calibrated spectrum digest file at.}
-
-\item{coarse_output_path}{Path to store calibrated coarse age group output
-zip file at.}
-
-\item{summary_report_path}{Path to store calibrated summary report at.}
-
-\item{calibration_path}{Path to store data required for calibrating model.}
+\item{calibrate_output_path}{Path to store data required for re-calibrating model.}
 }
 \value{
 Calibrated hintr_output object

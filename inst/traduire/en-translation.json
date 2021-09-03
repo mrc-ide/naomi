@@ -127,7 +127,7 @@
     "SCOPE_AREAS_MISSING_HIERARCHY": "Scope area {{missing_areas}} not found in hierarchy.",
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Scope areas {{missing_areas}} not found in hierarchy.",
     "SHAPE_SPECTRUM_REGION_ALL_NA": "Spectrum region code column is all missing in your shape file. Update the shape file with Spectrum region code for the estimation level.",
-    "INVALID_CALIBRATE_OBJECT": "Can't calibrate this model output please re-run model and try calibration again",
+    "OLD_MODEL_OUTPUT": "Model output out of date please re-run model and try again",
     "MISSING_CALIBRATION_OPTIONS": "Calibration cannot be run, missing options for {{missing}}",
     "OPTIONS_ANC_MONTHS_LABEL": "Months included in ANC reporting for ANC clients",
     "OPTIONS_ANC_MONTHS_HELP": "Number of months included in ANC reporting in this year.",
@@ -227,6 +227,12 @@
     "PREVALENCE_LEGEND_TITLE": "National HIV Prevalence:",
     "ART_LEGEND_TITLE": "National ART Coverage:",
     "INCIDENCE_LEGEND_TITLE": "National Annual Incidence:",
+    "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again",
+    "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}",
+    "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
+    "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
+    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
+    "CANNOT_RECALIBRATE": "Calibration cannot be re-run for this model fit please re-run fit step.",
     "INVALID_ART_TIME_PERIOD": "Quarterly data not provided for all disaggregates or duplicate annual data provided for all disaggregates."
 }
 

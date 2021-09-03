@@ -48,7 +48,7 @@
     "INDICATOR_LABEL_PREVALENCE": "Proporção da população total seropositiva",
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Número de PVVIH sem conhecimento da condição de seropositividade",
     "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Número de PVVIH que não está em TARV",
-    "INVALID_CALIBRATE_OBJECT": "Não é possível calibrar a saída deste modelo, por favor, volte a executar o modelo e tente calibrar novamente",
+    "OLD_MODEL_OUTPUT": "Saída de modelo desactualizada, por favor volte a executar o modelo e tente novamente",
     "LANG": "pt",
     "MISSING_ART_DATA": "Conjunto de dados de TARV não fornecido. Os dados de TARV não podem ser selecionados. Sim para incluir.",
     "MISSING_CALIBRATION_OPTIONS": "A calibração não pode ser executada, opções em falta para {{falta}}.",
@@ -227,5 +227,11 @@
     "PREVALENCE_LEGEND_TITLE": "Prevalência nacional de VIH:",
     "ART_LEGEND_TITLE": "Cobertura nacional de TARV::",
     "INCIDENCE_LEGEND_TITLE": "Incidência nacional de VIH por 1000 habitantes:",
+    "INVALID_DOWNLOAD": "Não consigo preparar o download, por favor recalibre o modelo e tente novamente",
+    "FAILED_VERSION_MIGRATE": "Não consegue migrar a saída do modelo da versão {{old}} para {{new}}}}",
+    "PROGRESS_DOWNLOAD_SPECTRUM": "Geração de saída zip download",
+    "PROGRESS_DOWNLOAD_COARSE": "Geração de resultados grosseiros",
+    "PROGRESS_DOWNLOAD_SUMMARY": "Elaboração de relatório de síntese",
+    "CANNOT_RECALIBRATE": "A calibração não pode ser executada de novo para este modelo de ajuste, por favor, execute de novo o passo de ajuste.",
     "INVALID_ART_TIME_PERIOD": "Dados trimestrais não fornecidos para todos os desagregados ou dados anuais duplicados fornecidos para todos os desagregados."
 }

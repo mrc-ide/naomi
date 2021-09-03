@@ -3,7 +3,7 @@ title: "&nbsp;"
 fig_width: 5
 fig_height: 5
 params:
-  output_zip: NA
+  outputs: NA
   spectrum_file: NA
   options: NA
   lang: NA
@@ -32,14 +32,50 @@ if (params$lang == "fr") {
 #Set limit for scientific notation
 options(scipen=10000000)
 
-
-# Read in files from naomi outputs zip
-output_zip <- params$output_zip
-outputs <- naomi::read_output_package(output_zip)
-inputs <- unz(output_zip, "info/inputs.csv") 
-inputs <- readr::read_csv(inputs, col_types = readr::cols())
-options <- unz(output_zip, "info/options.yml")
-options <- yaml::read_yaml(options)
+# Read files if hintr rds provided
+if(grepl("\\.rds$", params$outputs)) {
+  
+  model_object <- readRDS(params$outputs)
+  outputs <- model_object$output_package
+  inputs <- readr::read_csv(model_object$info$inputs.csv)
+  options <- yaml::read_yaml(text = model_object$info$options.yml)
+  
+  calibration_files <- names(model_object$info)
+  if("calibration_options.yml" %in% calibration_files) {
+    calibration_options <- yaml::read_yaml(text = model_object$info$calibration_options.yml)
+  } else {
+    # In the event there is no calibration options, add in defaults:
+    calibration_options <- tibble::tribble( ~option, ~value, 
+                                    "spectrum_population_calibration", "none",         
+                                    "spectrum_plhiv_calibration_level","subnational", 
+                                    "spectrum_plhiv_calibration_strat","sex_age_group",
+                                    "spectrum_artnum_calibration_level","national",     
+                                    "spectrum_artnum_calibration_strat","age_coarse",   
+                                    "spectrum_aware_calibration_level","national",     
+                                    "spectrum_aware_calibration_strat","age_coarse",   
+                                    "spectrum_infections_calibration_level","none",         
+                                    "spectrum_infections_calibration_strat","age_coarse",  
+                                    "calibrate_method","logistic")
+  }
+}
+# Read files if zipped output package provided
+if(grepl("\\.zip$", params$outputs)) {
+  output_zip <- params$outputs
+  outputs <- naomi::read_output_package(output_zip)
+  inputs <- unz(output_zip, "info/inputs.csv") 
+  inputs <- read.csv(inputs)
+  options <- unz(output_zip, "info/options.yml")
+  options <- yaml::read_yaml(options)
+  
+  calibration_files <- utils::unzip(output_zip, list = TRUE)
+  if("fit/calibration_options.csv" %in% calibration_files$Name) {
+    calibration_options <- unz(output_zip, "fit/calibration_options.csv")
+    calibration_options <- readr::read_csv(calibration_options)
+    calibration_options <- split(calibration_options$value, calibration_options$option)
+  } else {
+    calibration_options <- options[grep("calibration", names(options))]
+  }
+}
 
 # Grab inputs and model options from model output zip file
 # # concatenating strings where more than one option may be selected
@@ -55,6 +91,7 @@ spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 
 # Filter data for specific analytics
 indicators <- naomi::add_output_labels(outputs) 
+indicators_geom <- naomi::add_output_labels(outputs, geometry = TRUE)
 
 # Identify area_level_label for model estimates
 area_level_map <- outputs$meta_area %>%
@@ -266,17 +303,6 @@ if (sum(is.na(programme_data)) <3 ) {
 ```
 
 ```{r, echo = FALSE, results = 'asis'}
-# Read in calibration options from calibration_options.yml, if that does not exist, 
-# use default options in options.yml
-
-
-calibration_files <- utils::unzip(output_zip, list = TRUE)
-if("info/calibration_options.yml" %in% calibration_files$Name) {
-  calibration_options <- unz(output_zip, "info/calibration_options.yml")
-  calibration_options <- yaml::read_yaml(calibration_options)
-} else {
-  calibration_options <- options[grep("calibration", names(options))]
-}
 # Translate calibration options to human readable
 calibration_options <- naomi::get_calibration_option_labels(calibration_options)
 calibration_df <- stack(calibration_options)
@@ -387,9 +413,10 @@ if (print_pt) { cat("### **Distribuição geográfica de PVVIH**") }
 # Map: PLHIV (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p1 <- naomi::map_outputs(naomi_output = outputs, 
+p1 <- naomi::map_outputs(indicators_geom, 
                          indicator = "plhiv",
                          age = "Y015_999", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "red",
                          fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
@@ -399,9 +426,10 @@ p1 <- naomi::map_outputs(naomi_output = outputs,
 # Map: on ART
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p2 <- naomi::map_outputs(naomi_output = outputs, 
+p2 <- naomi::map_outputs(indicators_geom, 
                          indicator = "art_current_residents",
-                         age = "Y015_999", 
+                         age = "Y015_999",                          
+                         calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "green",
                          fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
@@ -411,9 +439,10 @@ p2 <- naomi::map_outputs(naomi_output = outputs,
 # Map: new infections (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p3 <- naomi::map_outputs(naomi_output = outputs, 
+p3 <- naomi::map_outputs(indicators_geom, 
                          indicator = "infections",
                          age = "Y015_999", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "blue",
                          fig_title = t_("INFECTIONS_MAP_PLOT_TITLE"),
@@ -439,10 +468,11 @@ if (print_pt) {cat("### **Distribuição geográfica das taxas de infeção pelo
 # Map: Prevalence (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p4 <- naomi::map_outputs(naomi_output = outputs, 
+p4 <- naomi::map_outputs(indicators_geom, 
                          indicator = "prevalence",
                          age = "Y015_049", 
                          sex_disag = "both", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          colour_palette = "red",
                          legend_label = scales::percent_format(1L), 
                          fig_title = t_("PREVALENCE_MAP_PLOT_TITLE"),
@@ -452,10 +482,11 @@ p4 <- naomi::map_outputs(naomi_output = outputs,
 # Map: ART coverage (mean)
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p5 <- naomi::map_outputs(naomi_output = outputs, 
+p5 <- naomi::map_outputs(indicators_geom, 
                          indicator = "art_coverage",
                          age = "Y015_999", 
                          sex_disag = "both", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          colour_palette = "green",
                          legend_label = scales::percent_format(accuracy = 1L), 
                          fig_title = t_("ART_COVERAGE_MAP_PLOT_TITLE"),
@@ -466,10 +497,11 @@ p5 <- naomi::map_outputs(naomi_output = outputs,
 # Map: Incidence
 # # By lowest area_level
 #-------------------------------------------------------------------------------
-p6 <- naomi::map_outputs(naomi_output = outputs, 
+p6 <- naomi::map_outputs(indicators_geom, 
                          indicator = "incidence",
                          age = "Y015_049", 
                          sex_disag = "both", 
+                         calendar_quarter = options$calendar_quarter_t2,
                          colour_palette = "blue",
                          legend_label = scales::label_number(0.1, 1000), 
                          fig_title = t_("INCIDENCE_MAP_PLOT_TITLE"),
@@ -891,4 +923,3 @@ _Versão_
 
 O modelo Naomi é apoiado pela UNAIDS e desenvolvido e mantido pelo [MRC Centre for Global Infectious Disease Analysis] (https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis) no Imperial College London. O modelo recebe orientação técnica do [UNAIDS Reference Group on Estimates, Modelling, and Projections](http://epidem.org/). O modelo foi usado pela primeira vez em 2020 e continua a ser desenvolvido em resposta a novos dados e necessidades de informação estratégica sobre o VIH.
 :::
-
