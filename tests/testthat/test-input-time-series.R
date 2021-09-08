@@ -10,6 +10,9 @@ test_that("data can be formatted for ART input time series", {
   # Time period has correct format
   expect_setequal(data$time_step, "annual")
   expect_match(as.character(data$time_period), "\\d{4}")
+
+  # Plot type uses translated names i.e. letters, numbers and spaces, no _
+  expect_match(data$plot, "[\\w ]+")
 })
 
 test_that("data can be formatted for ANC input time series", {
@@ -23,6 +26,9 @@ test_that("data can be formatted for ANC input time series", {
   # Time period has correct format
   expect_setequal(data$time_step, "annual")
   expect_match(as.character(data$time_period), "\\d{4}")
+
+  # Plot type uses translated names i.e. letters, numbers and spaces, no _
+  expect_match(data$plot, "[\\w ]+")
 })
 
 test_that("ART data can be aggregated by time and space", {

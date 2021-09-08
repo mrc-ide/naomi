@@ -1,3 +1,7 @@
+# naomi 2.5.2
+
+* Translate plot type column returned from `prepare_input_time_series_art` and `prepare_input_time_series_anc`
+
 # naomi 2.5.1
 
 * Add functions `prepare_input_time_series_art` and `prepare_input_time_series_anc` for returning ART and ANC data formatted for plotting input time series graphs.

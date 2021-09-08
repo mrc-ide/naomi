@@ -100,8 +100,8 @@ prepare_input_time_series_art <- function(art, shape) {
                                     !(plot %in% c("art_child","art_adult_child_ratio", "art_prop_u15")))
   }
 
+  art_plot_data$plot <- translate_plot_type(art_plot_data$plot)
   return(art_plot_data)
-
 }
 
 ##' Prepare data for ANC input time series plots
@@ -168,4 +168,13 @@ prepare_input_time_series_anc <- function(anc, shape) {
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
                         values_to = "value")
+
+  anc_plot_data$plot <- translate_plot_type(anc_plot_data$plot)
+  anc_plot_data
+}
+
+translate_plot_type <- function(plot_type) {
+  vapply(plot_type, function(x) {
+    t_(toupper(x))
+  }, character(1), USE.NAMES = FALSE)
 }
