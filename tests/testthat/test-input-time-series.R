@@ -81,8 +81,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c("ART adult" , "ART proportion <15", "ART paediatric" ,
-                    "ART paediatric sex ratio", "ART count"))
+                  c("art_adult" , "art_adult_child_ratio", "art_child",
+                    "art_prop_u15", "art_total"))
 
   # Check data with sex disaggregated, age disaggregated
   test1 <- rbind(adult_f, adult_m, peads)
@@ -92,9 +92,9 @@ test_that("plots are filtered according to avalible disaggregates", {
   data1 <- prepare_input_time_series_art(test1_file,
                                              a_hintr_data$shape)
   expect_setequal(unique(data1$plot),
-                  c("ART adult" , "ART paediatric sex ratio", "ART paediatric",
-                    "ART proportion <15", "ART count", "ART female", "ART male",
-                    "ART adult sex ratio"))
+                  c("art_adult" , "art_adult_child_ratio", "art_child" ,
+                    "art_prop_u15", "art_total", "art_adult_f","art_adult_m",
+                    "art_adult_sex_ratio"))
 
   # Check data with sex disaggregated, age aggregated
   test2 <- rbind(adult_f, adult_m)
@@ -104,8 +104,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   data2 <- prepare_input_time_series_art(test2_file,
                                          a_hintr_data$shape)
   expect_setequal(unique(data2$plot),
-                  c("ART adult" ,"ART count", "ART female","ART male",
-                    "ART adult sex ratio"))
+                  c("art_adult" ,"art_total", "art_adult_f","art_adult_m",
+                    "art_adult_sex_ratio"))
 })
 
 test_that("ANC data can be aggregated by space", {
