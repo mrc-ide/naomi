@@ -99,8 +99,6 @@ prepare_input_time_series_art <- function(art, shape) {
     art_plot_data <-  dplyr::filter(art_plot_data,
                                     !(plot %in% c("art_child","art_adult_child_ratio", "art_prop_u15")))
   }
-
-  art_plot_data$plot <- translate_plot_type(art_plot_data$plot)
   return(art_plot_data)
 }
 
@@ -168,13 +166,23 @@ prepare_input_time_series_anc <- function(anc, shape) {
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
                         values_to = "value")
-
-  anc_plot_data$plot <- translate_plot_type(anc_plot_data$plot)
   anc_plot_data
 }
 
-translate_plot_type <- function(plot_type) {
-  vapply(plot_type, function(x) {
-    t_(toupper(x))
-  }, character(1), USE.NAMES = FALSE)
+##' Return the translated label & description for a set of plot types
+##'
+##' @param plot_type Plot type ids
+##'
+##' @return For each plot type the label and description as a list of lists
+##'   containing id, label and description
+##' @export
+get_plot_type_label_and_description <- function(plot_type) {
+  lapply(plot_type, function(x) {
+    key <- toupper(x)
+    list(
+      id = x,
+      label = t_(key),
+      description = t_(paste0(key, "_DESC"))
+    )
+  })
 }

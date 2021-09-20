@@ -1,6 +1,6 @@
 # naomi 2.5.2
 
-* Translate plot type column returned from `prepare_input_time_series_art` and `prepare_input_time_series_anc`
+* Add function `get_plot_type_label_and_description` to get label and description for each input time series plot types.
 
 # naomi 2.5.1
 

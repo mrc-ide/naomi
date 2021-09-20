@@ -10,9 +10,6 @@ test_that("data can be formatted for ART input time series", {
   # Time period has correct format
   expect_setequal(data$time_step, "annual")
   expect_match(as.character(data$time_period), "\\d{4}")
-
-  # Plot type uses translated names i.e. letters, numbers and spaces, no _
-  expect_match(data$plot, "[\\w ]+")
 })
 
 test_that("data can be formatted for ANC input time series", {
@@ -26,9 +23,6 @@ test_that("data can be formatted for ANC input time series", {
   # Time period has correct format
   expect_setequal(data$time_step, "annual")
   expect_match(as.character(data$time_period), "\\d{4}")
-
-  # Plot type uses translated names i.e. letters, numbers and spaces, no _
-  expect_match(data$plot, "[\\w ]+")
 })
 
 test_that("ART data can be aggregated by time and space", {
@@ -157,4 +151,20 @@ test_that("ART data throws error if dupe annual data or incomplete quarterly", {
     prepare_input_time_series_art(art_q_file, a_hintr_data$shape),
     paste0("Quarterly data not provided for all disaggregates or duplicate ",
            "annual data provided for all disaggregates."))
+})
+
+test_that("can get plot type descriptions from key", {
+  ret <- get_plot_type_label_and_description(c("art_total", "art_child"))
+  expect_equal(ret, list(
+    list(
+      id = "art_total",
+      label = "ART count",
+      description = "Number on ART at the end of calendar year"
+    ),
+    list(
+      id = "art_child",
+      label = "ART paediatric",
+      description = "Proportion of total on-ART under age 15"
+    )
+  ))
 })
