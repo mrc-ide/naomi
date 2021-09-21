@@ -158,7 +158,6 @@ prepare_input_time_series_anc <- function(anc, shape) {
                      by = "area_id") %>%
     dplyr::mutate(
       anc_total_pos = anc_known_pos + anc_tested_pos,
-      anc_status = anc_known_pos + anc_tested,
       anc_prevalence = anc_total_pos / anc_status,
       anc_art_among_known = anc_already_art / anc_known_pos,
       anc_art_coverage = anc_already_art / anc_total_pos
