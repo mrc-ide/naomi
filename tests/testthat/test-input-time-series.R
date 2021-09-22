@@ -164,7 +164,7 @@ test_that("can get plot type descriptions from key", {
     list(
       id = "art_child",
       label = "ART paediatric",
-      description = "Proportion of total on-ART under age 15"
+      description = "Number of children (<15) on ART at the end of calendar year"
     )
   ))
 })
