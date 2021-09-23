@@ -242,10 +242,7 @@
     "ART_ADULT_SEX_RATIO": "Rapport de masculinité des adultes TARV",
     "ART_ADULT_CHILD_RATIO": "Rapport de masculinité pédiatrique TARV",
     "ART_PROP_U15": "Proportion de TARV <15",
-    "ANC_TESTED": "CPN testée",
-    "ANC_TOTAL_POS": "Compte des CPN",
     "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence de la CPN",
-    "ANC_ART_AMONG_KNOWN": "Couverture CPN TARV parmi les positifs connus",
     "ANC_ART_COVERAGE": "Couverture CPN TARV"
 }
