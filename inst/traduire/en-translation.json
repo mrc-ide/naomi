@@ -250,18 +250,11 @@
     "ART_ADULT_CHILD_RATIO_DESC": "Ratio of females-to-males among children (<15) on ART",
     "ART_PROP_U15": "ART proportion <15",
     "ART_PROP_U15_DESC": "Proportion of total on-ART under age 15",
-    "ANC_TESTED": "ANC tested",
-    "ANC_TESTED_DESC": "Number of ANC clients tested at the end of calendar year",
-    "ANC_TOTAL_POS": "ANC total positives",
-    "ANC_TOTAL_POS_DESC": "Total number of HIV positive ANC clients (known positives + tested positives)",
     "ANC_PREVALENCE": "ANC prevalence",
     "ANC_PREVALENCE_DESC": "HIV prevalence among ANC attendees",
-    "ANC_ART_AMONG_KNOWN": "ANC ART coverage among known positive",
-    "ANC_ART_AMONG_KNOWN_DESC": "Percentage of known positives already on ART prior to first ANC visit",
     "ANC_ART_COVERAGE": "ANC ART coverage",
     "ANC_ART_COVERAGE_DESC": "Total ART coverage prior to first ANC visit",
     "ANC_CLIENTS_DESC": "Total number attending first ANC",
-    "ANC_KNOWN_POS_DESC": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
-    "ANC_ALREADY_ART_DESC": "Number already on ART prior prior to first ANC visit"
+    "ANC_KNOWN_POS_DESC": "Number of HIV positive ANC attendees aware of status prior to first ANC visit"
 }
 

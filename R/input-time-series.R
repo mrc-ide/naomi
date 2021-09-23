@@ -163,6 +163,8 @@ prepare_input_time_series_anc <- function(anc, shape) {
       anc_art_among_known = anc_already_art / anc_known_pos,
       anc_art_coverage = anc_already_art / anc_total_pos
     ) %>%
+    dplyr::select(area_id, age_group, time_step, time_period,
+                  anc_clients, anc_prevalence, anc_known_pos, anc_art_coverage) %>%
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
                         values_to = "value")
