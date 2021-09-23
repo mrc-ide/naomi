@@ -81,8 +81,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c("art_adult" , "art_adult_child_ratio", "art_child" , "art_prop_u15",
-                    "art_total"))
+                  c("art_adult" , "art_adult_child_ratio", "art_child",
+                    "art_prop_u15", "art_total"))
 
   # Check data with sex disaggregated, age disaggregated
   test1 <- rbind(adult_f, adult_m, peads)
@@ -151,4 +151,20 @@ test_that("ART data throws error if dupe annual data or incomplete quarterly", {
     prepare_input_time_series_art(art_q_file, a_hintr_data$shape),
     paste0("Quarterly data not provided for all disaggregates or duplicate ",
            "annual data provided for all disaggregates."))
+})
+
+test_that("can get plot type descriptions from key", {
+  ret <- get_plot_type_label_and_description(c("art_total", "art_child"))
+  expect_equal(ret, list(
+    list(
+      id = "art_total",
+      label = "ART count",
+      description = "Number on ART at the end of calendar year"
+    ),
+    list(
+      id = "art_child",
+      label = "ART paediatric",
+      description = "Number of children (<15) on ART at the end of calendar year"
+    )
+  ))
 })

@@ -5,6 +5,7 @@
 \alias{quarter_number}
 \alias{quarter_labels}
 \alias{calendar_quarter_labels}
+\alias{calendar_quarter_labels_short}
 \alias{year_labels}
 \alias{convert_quarter_id}
 \alias{convert_calendar_quarter}
@@ -20,6 +21,8 @@ quarter_number(quarter_id)
 quarter_labels(quarter_id)
 
 calendar_quarter_labels(calendar_quarter)
+
+calendar_quarter_labels_short(calendar_quarter)
 
 year_labels(quarter_id)
 

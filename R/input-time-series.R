@@ -99,9 +99,7 @@ prepare_input_time_series_art <- function(art, shape) {
     art_plot_data <-  dplyr::filter(art_plot_data,
                                     !(plot %in% c("art_child","art_adult_child_ratio", "art_prop_u15")))
   }
-
   return(art_plot_data)
-
 }
 
 ##' Prepare data for ANC input time series plots
@@ -165,7 +163,29 @@ prepare_input_time_series_anc <- function(anc, shape) {
       anc_art_among_known = anc_already_art / anc_known_pos,
       anc_art_coverage = anc_already_art / anc_total_pos
     ) %>%
+    dplyr::select(area_id, area_name, area_level, area_level_label, age_group,
+                  time_period, time_step, anc_clients, anc_prevalence,
+                  anc_known_pos, anc_art_coverage) %>%
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
                         values_to = "value")
+  anc_plot_data
+}
+
+##' Return the translated label & description for a set of plot types
+##'
+##' @param plot_type Plot type ids
+##'
+##' @return For each plot type the label and description as a list of lists
+##'   containing id, label and description
+##' @export
+get_plot_type_label_and_description <- function(plot_type) {
+  lapply(plot_type, function(x) {
+    key <- toupper(x)
+    list(
+      id = x,
+      label = t_(key),
+      description = t_(paste0(key, "_DESC"))
+    )
+  })
 }
