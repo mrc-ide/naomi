@@ -231,14 +231,21 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3) 
                           quarter_id = c(quarter_id1, quarter_id2, quarter_id3)) %>%
     dplyr::full_join(spec_quarter, by = names(.)) %>%
     dplyr::group_by(spectrum_region_code, sex, age_quarter) %>%
-    dplyr::mutate(hivpop = exp(zoo::na.approx(log(hivpop), quarter_id, na.rm = FALSE)),
-                  hivpop = tidyr::replace_na(hivpop, 0)) %>%
+    dplyr::mutate(
+      hivpop = exp(zoo::na.approx(log(hivpop), quarter_id, na.rm = FALSE)),
+      hivpop = tidyr::replace_na(hivpop, 0),
+      totpop = exp(zoo::na.approx(log(totpop), quarter_id, na.rm = FALSE)),
+      totpop = tidyr::replace_na(totpop, 0)
+    ) %>%
     dplyr::filter(quarter_id %in% c(quarter_id1, quarter_id2, quarter_id3)) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(cohort_quarter = quarter_id - age_quarter,
                   age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
                   age_group2 = age_quarter_to_age_group(quarter_id2 - cohort_quarter),
                   age_group3 = age_quarter_to_age_group(quarter_id3 - cohort_quarter))
+
+
+ stop("!!!WORKING HERE: need to add population survivorship ratio; then district ratio")
 
   infections_cohort <- spec_quarter %>%
     ## Subtract 4 quarters to move infections from end year to forthcoming year
@@ -270,6 +277,17 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3) 
   
   ## Construct Lproj for t1 to t2
 
+  totpop_t1 <- totpop %>%
+    dplyr::filter(quarter_id == quarter_id1) %>%
+    dplyr::count(spectrum_region_code, sex, age_group1,
+                 wt = totpop, name = "totpop1")
+  
+  totpop_t2 <- totpop %>%
+    dplyr::filter(quarter_id == quarter_id2) %>%
+    dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
+                 wt = totpop, name = "totpop2")
+
+  
   hivpop_t1 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id1) %>%
     dplyr::count(spectrum_region_code, sex, age_group1,

@@ -1,3 +1,7 @@
+# naomi 2.6.0
+
+* Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change accounts for mortality and international net migration.
+ 
 # naomi 2.5.2
 
 * Add function `get_plot_type_label_and_description` to get label and description for each input time series plot types.
