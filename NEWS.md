@@ -1,6 +1,6 @@
 # naomi 2.5.3
 
-* Includ `parent_area_id` in input time series function outputs
+* Include `parent_area_id` and `area_sort_order` in input time series function outputs
 
 # naomi 2.5.2
 
