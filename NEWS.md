@@ -1,3 +1,7 @@
+# naomi 2.5.3
+
+* Includ `parent_area_id` in input time series function outputs
+
 # naomi 2.5.2
 
 * Add function `get_plot_type_label_and_description` to get label and description for each input time series plot types.

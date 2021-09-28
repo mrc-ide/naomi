@@ -4,8 +4,9 @@ test_that("data can be formatted for ART input time series", {
 
   expect_true(nrow(data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level_label","area_level",
-                    "time_step", "time_period", "plot", "value"))
+                  c("area_id", "area_name", "area_level_label", "area_level",
+                    "parent_area_id", "time_step", "time_period", "plot",
+                    "value"))
 
   # Time period has correct format
   expect_setequal(data$time_step, "annual")
@@ -18,7 +19,8 @@ test_that("data can be formatted for ANC input time series", {
   expect_true(nrow(data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level", "area_level_label",
-                    "age_group", "time_period", "time_step", "plot", "value"))
+                    "parent_area_id", "age_group", "time_period", "time_step",
+                    "plot", "value"))
 
   # Time period has correct format
   expect_setequal(data$time_step, "annual")
