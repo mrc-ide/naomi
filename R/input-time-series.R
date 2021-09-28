@@ -70,7 +70,8 @@ prepare_input_time_series_art <- function(art, shape) {
   ## Shape data for plot
   art_plot_data <- art_long %>%
     dplyr::left_join(areas, by = "area_id" ) %>%
-    dplyr::group_by(area_id, area_name, area_level_label, area_level, time_step, time_period) %>%
+    dplyr::group_by(area_id, area_name, area_level_label, area_level,
+                    parent_area_id, area_sort_order, time_step, time_period) %>%
     dplyr::summarise(
       art_total = sum(art_current, na.rm = TRUE),
       art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
@@ -154,7 +155,8 @@ prepare_input_time_series_anc <- function(anc, shape) {
   ## Shape data for plot
   anc_plot_data <- anc_long %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_name,area_level,
-                                             area_level_label),
+                                             area_level_label, parent_area_id,
+                                             area_sort_order),
                      by = "area_id") %>%
     dplyr::mutate(
       anc_total_pos = anc_known_pos + anc_tested_pos,
@@ -163,9 +165,10 @@ prepare_input_time_series_anc <- function(anc, shape) {
       anc_art_among_known = anc_already_art / anc_known_pos,
       anc_art_coverage = anc_already_art / anc_total_pos
     ) %>%
-    dplyr::select(area_id, area_name, area_level, area_level_label, age_group,
-                  time_period, time_step, anc_clients, anc_prevalence,
-                  anc_known_pos, anc_art_coverage) %>%
+    dplyr::select(area_id, area_name, area_level, area_level_label,
+                  parent_area_id, area_sort_order, age_group, time_period,
+                  time_step, anc_clients, anc_prevalence, anc_known_pos,
+                  anc_art_coverage) %>%
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
                         values_to = "value")
