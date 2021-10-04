@@ -134,7 +134,8 @@ naomi_model_frame <- function(area_merged,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national",
-                              output_aware_plhiv = TRUE) {
+                              output_aware_plhiv = TRUE,
+                              adjust_area_growth = TRUE) {
 
   ## Create area tree
   ## TODO: Get rid of reliance on data.tree
@@ -481,7 +482,8 @@ naomi_model_frame <- function(area_merged,
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   quarter_id3 <- calendar_quarter_to_quarter_id(calendar_quarter3)
 
-  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3)
+  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
+                        adjust_area_growth = adjust_area_growth)
   projection_duration <- (quarter_id2 - quarter_id1) / 4
   projection_duration_t2t3 <- (quarter_id3 - quarter_id2) / 4
 

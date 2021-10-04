@@ -1,6 +1,11 @@
 # naomi 2.6.0
 
 * Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change accounts for mortality and international net migration.
+  - < How to turn off / on >
+  - < How to output net HIV population change
+  - < Limitation: (1) does not explicitly account for migration of PLHIV between districts. (2) In some cases, masks unrealistic demographic assumptions in subnational population data.
+
+* Paediatric entrant infections are scaled based on the ratio of child population to adult (15-49) female population. This approximately accounts for varying fertility rates across districts (which in principle determine different child to adult ratios).
  
 # naomi 2.5.2
 
