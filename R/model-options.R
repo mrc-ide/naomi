@@ -54,6 +54,7 @@ get_model_calibration_options <- function() {
 #'
 #' @return Mapped key-value (calibration option name - calibration option label)
 #' list of model options
+#' @export
 get_calibration_option_labels <- function(options) {
   ## This is not ideal that we are maintaining this list here and in the
   ## calibration options themselves but the alternative of parsing this

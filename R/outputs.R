@@ -339,10 +339,11 @@ is_naomi_output <- function(object) {
 #' Add labels to output indicators
 #'
 #' @param naomi_output Naomi output object.
+#' @param geometry logical whether to include geometry from meta_area.
 #'
 #' @return Labelled output indicators
 #' @export
-add_output_labels <- function(naomi_output) {
+add_output_labels <- function(naomi_output, geometry = FALSE) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
 
@@ -350,9 +351,16 @@ add_output_labels <- function(naomi_output) {
     dplyr::select(area_id, sex, age_group, calendar_quarter, indicator,
                   mean, se, median, mode, lower, upper)
 
-  meta_area <- naomi_output$meta_area %>%
-    sf::st_drop_geometry() %>%
-    dplyr::select(area_id, area_level, area_level_label, area_name, area_sort_order)
+  if (geometry) {
+    meta_area <- naomi_output$meta_area %>%
+      dplyr::select(area_level, area_level_label, area_name, area_sort_order,
+                    area_id, center_x, center_y)
+  } else {
+    meta_area <- naomi_output$meta_area %>%
+      sf::st_drop_geometry() %>%
+      dplyr::select(area_id, area_level, area_level_label, area_name, area_sort_order)
+  }
+
   indicators <- dplyr::left_join(indicators, meta_area, by = "area_id")
 
   meta_age_group <- naomi_output$meta_age_group %>%
@@ -374,28 +382,53 @@ add_output_labels <- function(naomi_output) {
                                sex,
                                age_group_sort_order)
 
-  indicators <- dplyr::select(indicators,
-                              area_level,
-                              area_level_label,
-                              area_id,
-                              area_name,
-                              sex,
-                              age_group,
-                              age_group_label,
-                              calendar_quarter,
-                              quarter_label,
-                              indicator,
-                              indicator_label,
-                              mean,
-                              se,
-                              median,
-                              mode,
-                              lower,
-                              upper
-                              )
+  if(geometry) {
+    indicators <- dplyr::select(indicators,
+                                area_level,
+                                area_level_label,
+                                area_sort_order,
+                                area_id,
+                                area_name,
+                                sex,
+                                age_group,
+                                age_group_label,
+                                calendar_quarter,
+                                quarter_label,
+                                indicator,
+                                indicator_label,
+                                mean,
+                                se,
+                                median,
+                                mode,
+                                lower,
+                                upper,
+                                center_x,
+                                center_y,
+                                geometry) %>%
+      sf::st_as_sf()
+    } else {
+      indicators <- dplyr::select(indicators,
+                                  area_level,
+                                  area_level_label,
+                                  area_id,
+                                  area_name,
+                                  sex,
+                                  age_group,
+                                  age_group_label,
+                                  calendar_quarter,
+                                  quarter_label,
+                                  indicator,
+                                  indicator_label,
+                                  mean,
+                                  se,
+                                  median,
+                                  mode,
+                                  lower,
+                                  upper)
+    }
 
-  indicators
-}
+  }
+
 
 remove_output_labels <- function(naomi_output) {
 
