@@ -1,3 +1,7 @@
+# naomi 2.5.4
+
+* Add `naomi_warning` helper to raise warnings which can be displayed in front end
+
 # naomi 2.5.3
 
 * Include `parent_area_id` and `area_sort_order` in input time series function outputs

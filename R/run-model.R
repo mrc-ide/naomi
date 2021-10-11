@@ -190,6 +190,8 @@ hintr_calibrate <- function(output, calibration_options,
   indicators <- add_output_labels(calibrated_output)
   saveRDS(indicators, file = plot_data_path)
 
+  naomi_warning("calibrate test warning", c("calibrate_model", "review_output"))
+
   build_hintr_output(plot_data_path,
                      calibrate_output_path)
 }
