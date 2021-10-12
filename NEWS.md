@@ -1,7 +1,10 @@
 # naomi 2.6.0
 
-* Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change accounts for mortality and international net migration.
-  - < How to turn off / on >
+* In construction of survivorship projection matrices, the method for interpolating annual population totals to quarter-year age group totals was revised to use Hyman monotonic interpolation of population counts.
+
+* Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration. For 
+
+  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`.
   - < How to output net HIV population change
   - < Limitation: (1) does not explicitly account for migration of PLHIV between districts. (2) In some cases, masks unrealistic demographic assumptions in subnational population data.
 

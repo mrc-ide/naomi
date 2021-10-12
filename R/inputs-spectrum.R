@@ -207,24 +207,23 @@ age_quarter_to_age_group <- function(age_quarter) {
 create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                          adjust_area_growth = TRUE) {
 
-  ## Graduate HIV population to quarter-year age
-  ## For now, simply divide single-year age by 4
-  ## 80+ age group not handled, but will be re-aggreated later
+  ## Graduate HIV population to quarter-year age using Hyman monotonic
+  ## spline interpolation. 80+ open-ended age group is extended to age 100.
+  graduate_mono <- function(y, x, xout) {
+    xout <- c(xout, 2*xout[length(xout)] - xout[length(xout)-1])
+    diff(splinefun(x, c(0, cumsum(y)), method = "hyman")(xout))
+  }
+
   spec_quarter <- spec %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L),
                   year = NULL) %>%
     dplyr::filter(dplyr::between(quarter_id, quarter_id1 - 4, quarter_id3 + 8)) %>%
-    tidyr::crossing(age_quarter = 0:3) %>%
-    dplyr::mutate(age_quarter = pmin(4 * age + age_quarter, max(age)*4),
-                  age = NULL,
-                  totpop = totpop / 4,
-                  hivpop = hivpop / 4,
-                  artpop = artpop / 4,
-                  infections = infections / 4) %>%
-    dplyr::group_by(spectrum_region_code, sex, age_quarter, quarter_id) %>%
-    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections), sum) %>%
-    dplyr::ungroup()
-
+    dplyr::group_by(spectrum_region_code, quarter_id, sex) %>%
+    dplyr::summarise(
+      age_quarter = 0:(400-1),
+      dplyr::across(c(totpop, hivpop, artpop, infections), graduate_mono, c(age, 100), age_quarter/4),
+      .groups = "drop"
+    )
 
   ## Log-linear interpolate mid-year population to T1, T2, and T3
   hivpop <- tidyr::expand(spec_quarter,
@@ -286,27 +285,30 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                                     name == "population_t2" ~ quarter_id2,
                                     name == "population_t3" ~ quarter_id3),
       name = NULL
-    )
+    ) 
                                   
 
-  ## Distribute 5-year age group population to quarter-year age group population
-  ## using Spectrum quarter disaggregation proportions.
+  ## Graduate 5-year age group population to quarter-year age group population
+  ## use hyman smoothing on cumulative population.
+  
   totpop_area <- totpop_area %>%
     dplyr::left_join(
-      hivpop %>%
-      dplyr::select(spectrum_region_code, sex, age_quarter, quarter_id, totpop,
-                    age_group, age_group1, age_group2, age_group3) %>%
-      dplyr::group_by(spectrum_region_code, quarter_id, sex, age_group) %>%
-      dplyr::mutate(
-        age_quarter_prop = totpop / sum(totpop),
-      totpop = NULL
-      ),
-      by = c("spectrum_region_code", "sex", "age_group", "quarter_id")
+      dplyr::select(get_age_groups(), age_group, age_group_start),
+      by = "age_group"
     ) %>%
-    dplyr::mutate(
-      population = population * age_quarter_prop
+    dplyr::group_by(area_id, spectrum_region_code, sex, quarter_id) %>%
+    dplyr::summarise(
+      age_quarter = 0:(400-1),
+      population = graduate_mono(population, c(age_group_start, 100), age_quarter/4),
+      .groups = "drop"
+    ) %>%
+    dplyr::left_join(
+      ## Merge age groups
+      dplyr::select(hivpop, spectrum_region_code, sex, quarter_id,
+                    age_quarter, age_group, age_group1, age_group2, age_group3),
+      by = c("spectrum_region_code", "sex", "quarter_id", "age_quarter")
     )
-
+  
   
   ## Construct Lproj for t1 to t2
   
@@ -378,10 +380,16 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::right_join(totpop_spec_t1t2,
                      by = c("spectrum_region_code", "sex", "age_group1", "age_group2")) %>%
     dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec) %>%
-    dplyr::select(area_id, sex, age_group1, age_group2, net_growth_ratio)
+    dplyr::select(area_id, sex, age_group1, age_group2, totpop_ratio_area, totpop_ratio_spec, net_growth_ratio)
+
+  net_growth_ratio_t1t2_aggr <- net_growth_ratio_t1t2 %>%
+    dplyr::group_by(area_id, sex, age_group1) %>%
+    dplyr::summarise(dplyr::across(c(totpop_ratio_area, totpop_ratio_spec), sum), .groups = "drop") %>%
+    dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec)
 
   if (!adjust_area_growth) {
     net_growth_ratio_t1t2$net_growth_ratio <- 1.0
+    net_growth_ratio_t1t2_aggr$net_growth_ratio <- 1.0    
   }
 
   hivpopLproj <- hivpop_t1t2 %>%
@@ -445,7 +453,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("area_id", "sex", "age_group_infection" = "age_group1", "age_group2")
     ) %>%
     dplyr::mutate(
-      ## L_incid = L_incid * (net_growth_ratio ^ 0.5)
+      L_incid = L_incid * (net_growth_ratio ^ 0.5)
     )
 
   Lproj_incid <- Matrix::sparseMatrix(i = incidLproj$idx2,
@@ -471,7 +479,8 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
              by = "spectrum_region_code"
            ) %>%
     dplyr::group_by(spectrum_region_code, sex2, age_group2) %>%
-    dplyr::mutate(L_paed = hivpop2 / sum(hivpop1))
+    dplyr::mutate(L_paed = hivpop2 / sum(hivpop1)) %>%
+    dplyr::ungroup()
 
   paedLproj <- paedLproj %>%
     dplyr::inner_join(
@@ -487,11 +496,11 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 
   paedLproj <- paedLproj %>%
     dplyr::left_join(
-      dplyr::filter(net_growth_ratio_t1t2, sex == "female"),
-      by = c("area_id", "age_group1", "age_group2")
+      dplyr::filter(net_growth_ratio_t1t2_aggr, sex == "female"),
+      by = c("area_id", "age_group1")
     ) %>%
     dplyr::mutate(
-      ## L_paed = L_paed * (net_growth_ratio ^ 0.5)
+      L_paed = L_paed * (net_growth_ratio ^ 0.5)
     )
 
   Lproj_paed <- Matrix::sparseMatrix(i = paedLproj$idx2,
@@ -569,9 +578,15 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::right_join(totpop_spec_t2t3,
                      by = c("spectrum_region_code", "sex", "age_group2", "age_group3")) %>%
     dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec) %>%
-    dplyr::select(area_id, sex, age_group2, age_group3, net_growth_ratio)
+    dplyr::select(area_id, sex, age_group2, age_group3, totpop_ratio_area, totpop_ratio_spec, net_growth_ratio)
 
+  net_growth_ratio_t2t3_aggr <- net_growth_ratio_t2t3 %>%
+    dplyr::group_by(area_id, sex, age_group2) %>%
+    dplyr::summarise(dplyr::across(c(totpop_ratio_area, totpop_ratio_spec), sum), .groups = "drop") %>%
+    dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec)
+  
   if (!adjust_area_growth) {
+    net_growth_ratio_t2t3$net_growth_ratio <- 1.0    
     net_growth_ratio_t2t3$net_growth_ratio <- 1.0
   }
 
@@ -634,7 +649,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("area_id", "sex", "age_group_infection" = "age_group2", "age_group3")
     ) %>%
     dplyr::mutate(
-      ## L_incid = L_incid * (net_growth_ratio ^ 0.5)
+      L_incid = L_incid * (net_growth_ratio ^ 0.5)
     )
 
   Lproj_incid_t2t3 <- Matrix::sparseMatrix(i = incidLproj$idx3,
@@ -676,11 +691,11 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 
   paedLproj <- paedLproj %>%
     dplyr::left_join(
-      dplyr::filter(net_growth_ratio_t2t3, sex == "female"),
-      by = c("area_id", "age_group2", "age_group3")
+      dplyr::filter(net_growth_ratio_t2t3_aggr, sex == "female"),
+      by = c("area_id", "age_group2")
     ) %>%
     dplyr::mutate(
-      ## L_paed = L_paed * (net_growth_ratio ^ 0.5)
+      L_paed = L_paed * (net_growth_ratio ^ 0.5)
     )
   
   Lproj_paed_t2t3 <- Matrix::sparseMatrix(i = paedLproj$idx3,
