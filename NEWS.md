@@ -1,3 +1,8 @@
+# naomi 2.5.4
+* Separate input data aggregation and plot prepartion scripts
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+time series function outputs
+
 # naomi 2.5.3
 
 * Include `parent_area_id` and `area_sort_order` in input time series function outputs
