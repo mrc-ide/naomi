@@ -52,6 +52,10 @@
 hintr_run_model <- function(data, options,
                             model_output_path = tempfile(fileext = ".rds"),
                             validate = TRUE) {
+  handle_naomi_warnings(run_model(data, options, model_output_path, validate))
+}
+
+run_model <- function(data, options, model_output_path, validate) {
   progress <- new_progress()
   progress$start("prepare_inputs")
   progress$print()
@@ -60,7 +64,7 @@ hintr_run_model <- function(data, options,
   options <- format_options(options)
 
   if (validate) {
-    validate_model_options(data, options)
+    do_validate_model_options(data, options)
   }
 
   naomi_data <- naomi_prepare_data(data, options)
@@ -143,9 +147,16 @@ assert_model_output_version <- function(obj) {
 #'
 #' @return Calibrated hintr_output object
 #' @export
-hintr_calibrate <- function(output, calibration_options,
-                            plot_data_path = tempfile(fileext = ".rds"),
-                            calibrate_output_path = tempfile(fileext = ".rds")) {
+hintr_calibrate <- function(
+  output, calibration_options, plot_data_path = tempfile(fileext = ".rds"),
+  calibrate_output_path = tempfile(fileext = ".rds")) {
+  handle_naomi_warnings(run_calibrate(output, calibration_options,
+                                      plot_data_path,
+                                      calibrate_output_path))
+}
+
+run_calibrate <- function(output, calibration_options, plot_data_path,
+                          calibrate_output_path) {
   assert_model_output_version(output)
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
@@ -190,7 +201,8 @@ hintr_calibrate <- function(output, calibration_options,
   indicators <- add_output_labels(calibrated_output)
   saveRDS(indicators, file = plot_data_path)
 
-  naomi_warning("calibrate test warning", c("calibrate_model", "review_output"))
+  naomi_warning("ART coverage greater than 100% for 10 age groups",
+                c("model_calibrate", "review_output"))
 
   build_hintr_output(plot_data_path,
                      calibrate_output_path)
