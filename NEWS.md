@@ -1,3 +1,7 @@
+# naomi 2.5.5
+
+* Return naomi warnings in the output from `hintr_run_model`, `hintr_calibrate` and `validate_model_options`
+
 # naomi 2.5.4
 
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
