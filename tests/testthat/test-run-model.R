@@ -310,7 +310,7 @@ test_that("model run can be calibrated", {
 
   expect_length(calibrated_output$warnings, 1)
   warning <- calibrated_output$warnings[[1]]
-  expect_equal(warning$message,
+  expect_equal(warning$text,
                "ART coverage greater than 100% for 10 age groups")
   expect_equal(warning$locations, c("model_calibrate", "review_output"))
 

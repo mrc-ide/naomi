@@ -5,7 +5,7 @@ naomi_warning <- function(text, locations) {
   match_values(locations, c("model_options", "model_fit", "model_calibrate",
                            "review_output", "download_results"))
   warn <- list(
-    message = text,
+    text = text,
     locations = locations
   )
   signalCondition(structure(

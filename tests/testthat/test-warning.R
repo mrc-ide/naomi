@@ -1,7 +1,7 @@
 test_that("naomi warning can be raised", {
   w <- capture_condition(
     naomi_warning("my warning", c("model_fit", "review_output")))
-  expect_equal(w$message, "my warning")
+  expect_equal(w$text, "my warning")
   expect_equal(w$locations, c("model_fit", "review_output"))
   expect_s3_class(w, "naomi_warning")
   expect_s3_class(w, "condition")
