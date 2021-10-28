@@ -26,9 +26,9 @@ test_that("naomi warnings can be handled", {
   expect_equal(names(out), c("output", "warnings"))
   expect_equal(out$output, "return value")
   expect_length(out$warnings, 2)
-  expect_equal(out$warnings[[1]]$message, "my warning")
+  expect_equal(out$warnings[[1]]$text, "my warning")
   expect_equal(out$warnings[[1]]$locations, c("model_fit", "review_output"))
-  expect_equal(out$warnings[[2]]$message, "second warning")
+  expect_equal(out$warnings[[2]]$text, "second warning")
   expect_equal(out$warnings[[2]]$locations, "download_results")
 })
 
