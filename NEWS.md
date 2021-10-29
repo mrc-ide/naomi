@@ -1,3 +1,7 @@
+# naomi 2.5.4
+
+* Add _simulated_ viral load testing data to example datasets.
+
 # naomi 2.5.3
 
 * Include `parent_area_id` and `area_sort_order` in input time series function outputs
