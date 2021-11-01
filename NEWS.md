@@ -1,6 +1,10 @@
 # naomi 2.5.4
 
 * Add _simulated_ viral load testing data to example datasets.
+* Separate input data aggregation and plot prepartion scripts
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+time series function outputs
+
 
 # naomi 2.5.3
 
