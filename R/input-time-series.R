@@ -43,14 +43,15 @@ aggregate_art <- function(art, shape) {
   art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
     dplyr::left_join(art_number, by = "area_id")
   # Function to aggregate based on area_id[0-9]$ columns in hierarchy
+
   aggregate_data_art <- function(col_name) {
     df <- art_number_wide %>%
       dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
                       year, quarter, calendar_quarter) %>%
-      dplyr::summarise(art_current = sum(art_current,
-                                         na.rm = TRUE), .groups = 'drop') %>%
+      dplyr::summarise_at(dplyr::vars(dplyr::starts_with("art")), funs(mean(.))) %>%
       dplyr::rename(area_id = `eval(as.name(col_name))`)
   }
+
   # Aggregated data frame
   art_long <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE) %>%
     lapply(function(x) aggregate_data_art(x))  %>%
@@ -61,7 +62,7 @@ aggregate_art <- function(art, shape) {
                      by = "area_id" ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group,time_period, year, quarter,
-                  calendar_quarter, art_current)
+                  calendar_quarter, dplyr::everything())
 
   return(art_long)
 }
