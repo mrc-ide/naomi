@@ -5,6 +5,9 @@
 # naomi 2.5.4
 
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
+* Separate input data aggregation and plot preparation scripts
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+time series function outputs
 
 # naomi 2.5.3
 
