@@ -1,9 +1,27 @@
-# naomi 2.4.3
+# naomi 2.5.7
 
 * Refactor model calibration
   * Uncalibrate
   * Aggregate calibration comparison
   
+# naomi 2.5.3
+
+* Include `parent_area_id` and `area_sort_order` in input time series function outputs
+
+# naomi 2.5.2
+
+* Add function `get_plot_type_label_and_description` to get label and description for each input time series plot types.
+
+# naomi 2.5.1
+
+* Add functions `prepare_input_time_series_art` and `prepare_input_time_series_anc` for returning ART and ANC data formatted for plotting input time series graphs.
+
+# naomi 2.5.0
+
+* Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
+* Refactor `hintr_run_model` and `hintr_calibrate` to save out minimal data
+
+
 # naomi 2.4.2
 
 * Add Portuguese translations
@@ -14,9 +32,6 @@
 * Manually skip 'PSNU not found warning' in `write_datapack_csv()` when running `hintr_run_model()` with zone-level demo data. This occurs because the demo data have ISO3 = `MWI` for which the PSNU level is 3, but demo zone-level model fits are only applied to levels 0:2. A better solution would be to change the ISO3 for the demo data to something artificial, but this requires relaxing some validation in the user interface first.
 
 # naomi 2.4.0
-
-* Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
-* Refactor `hintr_run_model` and `hintr_calibrate` to save out minimal data
 
 * Add demo datasets for subnational Spectrum files for three Malawi regions (Northern, Central, Southern).
 * Add zone-level demo datasets population, ART, and ANC testing datasets.

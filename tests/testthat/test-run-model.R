@@ -306,7 +306,7 @@ test_that("model run can be calibrated", {
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
 
-  ## Can calibrate multiple times
+  ## Cannot calibrate multiple times
   calibration_options <- list(
     spectrum_plhiv_calibration_level = "subnational",
     spectrum_plhiv_calibration_strat = "sex_age_coarse",
@@ -318,40 +318,9 @@ test_that("model run can be calibrated", {
     spectrum_infections_calibration_strat = "age_coarse",
     calibrate_method = "logistic"
   )
-  calibrated_output_2 <- hintr_calibrate(calibrated_output,
-                                         calibration_options)
-
-  expect_s3_class(calibrated_output_2, "hintr_output")
-
-  ## Output has been calibrated
-  expect_file_different(calibrated_output_2$plot_data_path,
-                        calibrated_output$plot_data_path)
-  indicators_output <- readRDS(calibrated_output_2$plot_data_path)
-  ## Check there is some data
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
-
-  ## calibration data: info has been updated and data changed
-  expect_file_different(calibrated_output_2$model_output_path,
-                        a_hintr_output$model_output_path)
-  expect_file_different(calibrated_output_2$model_output_path,
-                        calibrated_output$model_output_path)
-  pre_calibration_data <- readRDS(a_hintr_output$model_output_path)
-  post_calibration_2_data <- readRDS(calibrated_output_2$model_output_path)
-  expect_true(!identical(post_calibration_2_data$output_package,
-                         pre_calibration_data$output_package))
-  expect_equal(post_calibration_2_data$naomi_data,
-               pre_calibration_data$naomi_data)
-  expect_equal(names(post_calibration_2_data$info),
-              c("inputs.csv", "options.yml", "packages.csv",
-                "calibration_options.yml"))
-  expect_equal(post_calibration_2_data$info$inputs.csv,
-               pre_calibration_data$info$inputs.csv)
-  expect_equal(post_calibration_2_data$info$options.yml,
-               pre_calibration_data$info$options.yml)
-  expect_equal(post_calibration_2_data$info$packages.csv,
-               pre_calibration_data$info$packages.csv)
-  expect_equal(post_calibration_2_data$info$calibration_options.yml,
-               yaml::as.yaml(calibration_options))
+  expect_error(
+    hintr_calibrate(calibrated_output, calibration_options),
+    "Calibration cannot be re-run for this model fit please re-run fit step.")
 })
 
 test_that("calibrating model with 'none' returns same results", {
