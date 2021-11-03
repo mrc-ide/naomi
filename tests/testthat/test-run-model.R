@@ -345,13 +345,15 @@ test_that("calibrating model with 'none' returns same results", {
                                        calibration_output_path)
 
   out_raw <- readRDS(a_hintr_output$model_output_path)
+  out_raw_disag <- disaggregate_0to4_outputs(out_raw$output_package, out_raw$naomi_data)
+  
   out_calib <- readRDS(calibrated_output$model_output_path)
 
-  expect_equal(out_raw$output_package$indicators, out_calib$output_package$indicators)
+  expect_equal(out_raw_disag$indicators, out_calib$output_package$indicators, tolerance = 1e-6)
   expect_equal(out_raw$output_package$art_attendance, out_calib$output_package$art_attendance)
 })
 
-test_that("calibrating twice with same options returns same results", {
+test_that("re-calibrating an already calibrated output throws error", {
 
   plot_data_path1 <- tempfile(fileext = ".rds")
   calibration_output_path1 <- tempfile(fileext = ".rds")
@@ -363,72 +365,12 @@ test_that("calibrating twice with same options returns same results", {
   ## Calibrate again with same options using the outputs of calibration 1
   plot_data_path2 <- tempfile(fileext = ".rds")
   calibration_output_path2 <- tempfile(fileext = ".rds")
-  calibrated_output2 <- hintr_calibrate(calibrated_output1,
-                                        a_hintr_calibration_options,
-                                        plot_data_path2,
-                                        calibration_output_path2)
-
-  ## Confirm different file paths
-  expect_true(calibrated_output1$model_output_path != calibrated_output2$model_output_path)
-  expect_true(calibrated_output1$plot_data_path != calibrated_output2$plot_data_path)
-  
-  out_calib1 <- readRDS(calibrated_output1$model_output_path)
-  out_calib2 <- readRDS(calibrated_output2$model_output_path)
-
-  plot_calib1 <- readRDS(calibrated_output1$plot_data_path)
-  plot_calib2 <- readRDS(calibrated_output2$plot_data_path)
-
-  expect_equal(out_calib1$output_package$indicators, out_calib2$output_package$indicators)
-  expect_equal(out_calib1$output_package$art_attendance, out_calib2$output_package$art_attendance)
-  expect_equal(plot_calib1, plot_calib2)
+  expect_error(hintr_calibrate(calibrated_output1,
+                               a_hintr_calibration_options,
+                               plot_data_path2,
+                               calibration_output_path2),
+               "Calibration cannot be re-run for this model fit please re-run fit step.")
 })
-
-test_that("calibrating with options and with 'none' returns initial results", {
-
-  none_calibration_options <- list(
-    spectrum_plhiv_calibration_level = "none",
-    spectrum_plhiv_calibration_strat = "sex_age_coarse",
-    spectrum_artnum_calibration_level = "none",
-    spectrum_artnum_calibration_strat = "age_coarse",
-    spectrum_aware_calibration_level = "none",
-    spectrum_aware_calibration_strat = "age_coarse",
-    spectrum_infections_calibration_level = "none",
-    spectrum_infections_calibration_strat = "age_coarse",
-    calibrate_method = "logistic"
-  )
-
-  plot_data_path1 <- tempfile(fileext = ".rds")
-  calibration_output_path1 <- tempfile(fileext = ".rds")
-  calibrated_output1 <- hintr_calibrate(a_hintr_output,
-                                        a_hintr_calibration_options,
-                                        plot_data_path1,
-                                        calibration_output_path1)
-
-  ## Calibrate again with same options using the outputs of calibration 1
-  plot_data_path2 <- tempfile(fileext = ".rds")
-  calibration_output_path2 <- tempfile(fileext = ".rds")
-  calibrated_output2 <- hintr_calibrate(calibrated_output1,
-                                        none_calibration_options,
-                                        plot_data_path2,
-                                        calibration_output_path2)
-
-  ## Confirm different file paths
-  expect_true(calibrated_output1$model_output_path != calibrated_output2$model_output_path)
-  expect_true(calibrated_output1$plot_data_path != calibrated_output2$plot_data_path)
-
-  out_raw <- readRDS(a_hintr_output$model_output_path)
-  out_calib1 <- readRDS(calibrated_output1$model_output_path)
-  out_calib2 <- readRDS(calibrated_output2$model_output_path)
-
-  plot_calib1 <- readRDS(calibrated_output1$plot_data_path)
-  plot_calib2 <- readRDS(calibrated_output2$plot_data_path)
-
-  expect_equal(out_raw$output_package$indicators, out_calib2$output_package$indicators)
-  expect_equal(out_raw$output_package$art_attendance, out_calib2$output_package$art_attendance)
-  expect_false(all(plot_calib1$mean == plot_calib2$mean))
-
-})
-
 
 test_that("useful error returned when model output can't be calibrated", {
   expect_error(hintr_calibrate(NULL, list(test = "option")),

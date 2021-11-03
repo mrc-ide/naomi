@@ -81,6 +81,13 @@ calibrate_outputs <- function(output,
   stopifnot(inherits(naomi_mf, "naomi_mf"))
   stopifnot(calibrate_method %in% c("logistic", "proportional"))
 
+
+  if (!is.null(output[["spectrum_calibration"]])) {
+    stop("Outputs have already been calibrated. ",
+         "You cannot re-calibrate outputs. ",
+         "Please provide uncalibrated output package.")
+  }
+  
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
 
   mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
@@ -111,7 +118,7 @@ calibrate_outputs <- function(output,
                                         age_group %in% c("Y000_004", "Y005_009", "Y010_014"),
                                         "Y000_014", "Y015_999"))
 
-  ## Join aggregates of raw Naomi mean to archive
+  ## Join aggregates of raw Naomi mean to save in calibration output
   val_aggr <- val %>%
     dplyr::group_by_at(c("indicator", group_vars)) %>%
     dplyr::summarise(est_raw = sum(mean), .groups = "drop")
@@ -339,21 +346,49 @@ calibrate_outputs <- function(output,
   valmean_wide <- valmean_wide %>%
     dplyr::mutate(aware_plhiv_num = plhiv - unaware_plhiv_num)
 
-
-
-  spectrum_calibration <- spectrum_calibration %>%
-    dplyr::select(spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
-                  population_spectrum, population_raw, population_calibration, population_final = population,
-                  plhiv_spectrum, plhiv_raw,
-                  art_current_spectrum, art_current_raw,
-                  unaware_spectrum, unaware_raw,
-                  infections_spectrum, infections_raw)
-
   val_adj <- valmean_wide %>%
     tidyr::pivot_longer(cols = c(population, plhiv, art_current_residents, art_current,
                                  untreated_plhiv_num, unaware_plhiv_num, aware_plhiv_num,
                                  infections),
                         names_to = "indicator", values_to = "adjusted")
+
+
+  ## Aggregate calibrated values to Spectrum region level to save in calibration
+  ## output.
+
+  val_adj_aggr <- val_adj %>%
+    dplyr::group_by_at(c("indicator", group_vars)) %>%
+    dplyr::summarise(est_calibrated = sum(adjusted), .groups = "drop")
+
+  val_adj_aggr_wide <- val_adj_aggr %>%
+    dplyr::filter(
+             indicator %in% c("plhiv", "art_current_residents",
+                              "unaware_plhiv_num", "infections")
+           ) %>%
+    dplyr::mutate(
+             indicator = indicator %>%
+               dplyr::recode("plhiv" = "plhiv_calibrated",
+                             "art_current_residents" = "art_current_calibrated",
+                             "unaware_plhiv_num" = "unaware_calibrated",
+                             "infections" = "infections_calibrated")
+           ) %>%
+    tidyr::pivot_wider(names_from = indicator, values_from = est_calibrated)
+
+  if (is.null(val_adj_aggr_wide[["unaware_calibrated"]])) {
+    val_aggr_wide[["unaware_calibrated"]] <- NA_real_
+  }
+
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::left_join(val_adj_aggr_wide, by = group_vars)
+
+  
+  spectrum_calibration <- spectrum_calibration %>%
+    dplyr::select(spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
+                  population_spectrum, population_raw, population_calibrated,
+                  plhiv_spectrum, plhiv_raw, plhiv_calibrated,
+                  art_current_spectrum, art_current_raw, art_current_calibrated,
+                  unaware_spectrum, unaware_raw, unaware_calibrated,
+                  infections_spectrum, infections_raw, infections_calibrated)
 
 
   ## Aggregate adjusted fine stratification values to all Naomi aggregates

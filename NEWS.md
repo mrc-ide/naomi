@@ -1,8 +1,11 @@
 # naomi 2.5.7
 
-* Refactor model calibration
-  * Uncalibrate
-  * Aggregate calibration comparison
+* Throw an error from `calibrate_outputs()` if user tries to calibrate an ouptut package that has
+  already been calibrated. This is determined by whether the `output$spectrum_calibration` table 
+  exists in the output object. _In future, it would be nicer to allow user to re-calibrate an output 
+  package. This will require saving additional information to un-calibrate and re-calibrate._
+
+* Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
   
 # naomi 2.5.3
 
