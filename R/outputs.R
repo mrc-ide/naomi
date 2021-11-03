@@ -747,7 +747,7 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
-    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2021.csv")
+    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
   }
 
   info <- attr(naomi_output, "info")
