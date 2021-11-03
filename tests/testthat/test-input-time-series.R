@@ -7,7 +7,7 @@ test_that("ART data can be aggregated", {
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "art_current"))
+                    "art_current", "art_new"))
 
 
   # Time period has correct format
