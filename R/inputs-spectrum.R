@@ -85,6 +85,11 @@ extract_pjnz_one <- function(pjnz) {
   spec
 }
 
+read_art_coarse <- function(pjnz) {
+  ### WORKING HERE
+  ## Add end of year ART from Spectrum to extract table
+}
+
 add_shiny90_unaware <- function(spec, pjnz) {
 
   if (assert_pjnz_shiny90(pjnz)) {
