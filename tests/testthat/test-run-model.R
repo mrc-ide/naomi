@@ -611,3 +611,13 @@ test_that("assert_model_output_version ensures model version up to date", {
   expect_error(assert_model_output_version(list(version = "123")),
                "Model output out of date please re-run model and try again")
 })
+
+test_that("calibrate plot data can be generated", {
+  plot_data <- hintr_calibrate_plot(a_hintr_output)
+  expect_setequal(names(plot_data),
+                  c("area_id", "sex", "age_group", "calendar_quarter",
+                    "indicator", "mean", "lower", "upper", "data_type"))
+  expect_match(plot_data$area_id, "^MWI_.+")
+  expect_setequal(unique(plot_data$indicator),
+                  c("plhiv", "population", "infections", "art_current"))
+})

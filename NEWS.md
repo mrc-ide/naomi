@@ -6,6 +6,8 @@
   package. This will require saving additional information to un-calibrate and re-calibrate._
 
 * Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
+
+* Add function `hintr_calibrate_plot` to return data for plotting calibrate barchart
   
 # naomi 2.5.3
 

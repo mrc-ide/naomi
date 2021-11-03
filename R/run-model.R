@@ -194,6 +194,81 @@ hintr_calibrate <- function(output, calibration_options,
                      calibrate_output_path)
 }
 
+#' Get data for hintr calibrate plot
+#'
+#' Takes hintr_output object, reads data and prepares data in format needed
+#' for plotting calibrate barchart to compare calibrated, spectrum and
+#' unadjusted estimates for a set of indicators.
+#'
+#' @param output A hintr_output object
+#'
+#' @return Calibrated, unadjusted and spectrum estimates of indicators
+#' @export
+hintr_calibrate_plot <- function(output) {
+  calibration_path <- output$calibration_path
+  if (!is_hintr_output(output) || is.null(calibration_path)) {
+    stop(t_("INVALID_CALIBRATE_OBJECT"))
+  }
+  calibration_data <- readRDS(calibration_path)
+  ## If model was run below national level -> return no data
+  ## (it does not make sense to compare to spectrum if this is the case)
+  ##
+
+  cols_to_keep <- c("area_id", "sex", "age_group", "calendar_quarter",
+                    "indicator", "mean")
+  indicators_to_keep <- c("plhiv", "population", "infections", "art_current")
+
+  ## Get unadjusted and spectrum data from spectrum_calibration table
+  spectrum_data <- calibration_data$output_package$fit$spectrum_calibration
+  col_to_indicator <- list(
+    population_spectrum = "population",
+    plhiv_spectrum = "plhiv",
+    art_current_spectrum = "art_current",
+    infections_spectrum = "infections",
+    population_raw = "population",
+    plhiv_raw = "plhiv",
+    art_current_raw = "art_current",
+    infections_raw = "infections"
+  )
+  spectrum_long <- tidyr::gather(spectrum_data, col, mean,
+                                 population_spectrum:population)
+  spectrum_long <- spectrum_long[
+    spectrum_long$col %in% names(col_to_indicator), ]
+  spectrum_long$indicator <- vapply(spectrum_long$col, function(col) {
+    col_to_indicator[[col]]
+  }, character(1))
+  spectrum_long$data_type <- vapply(spectrum_long$col, function(col) {
+    if (grepl(".*_raw", col)) {
+      "unadjusted"
+    } else {
+      "spectrum"
+    }
+  }, character(1))
+
+  ## Map spectrum_region code to area_id
+  region_code_area_id_map <- unique(calibration_data$output_package$meta_area[
+    c("area_id", "spectrum_region_code")])
+  spectrum_long$area_id <- vapply(
+    spectrum_long$spectrum_region_code, function(region_code) {
+      region_code_area_id_map[region_code_area_id_map$spectrum_region_code == region_code, "area_id"]
+    }, character(1))
+  spectrum_data <- spectrum_long[cols_to_keep]
+
+  ## Get calibrated data from output indicators
+  calibrated_data <- calibration_data$output_package$indicators
+  calibrated_data <- calibrated_data[cols_to_keep]
+  ## Only keep data for which we have spectrum data and is of indicators of
+  ## interest
+  calibrated_data <- calibrated_data[
+    calibrated_data$area_id %in% spectrum_data$area_id &
+      calibrated_data$indicator %in% indicators_to_keep, ]
+  calibrated_data$data_type <- "calibrated"
+  data <- dplyr::bind_rows(spectrum_data, calibrated_data)
+
+  ## TODO: calculate prevalence and art_coverage before returning data
+  data
+}
+
 validate_calibrate_options <- function(calibration_options) {
 
   expected_options <- c("spectrum_plhiv_calibration_level",
