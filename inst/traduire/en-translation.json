@@ -260,6 +260,7 @@
     "ANC_ART_COVERAGE": "ANC ART coverage",
     "ANC_ART_COVERAGE_DESC": "Total ART coverage prior to first ANC visit",
     "ANC_CLIENTS_DESC": "Total number attending first ANC",
-    "ANC_KNOWN_POS_DESC": "Number of HIV positive ANC attendees aware of status prior to first ANC visit"
+    "ANC_KNOWN_POS_DESC": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
+    "INVALID_CALIBRATE_OBJECT": "Cannot get calibration plot, output does not contain calibration data"
 }
 

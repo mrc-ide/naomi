@@ -346,7 +346,7 @@ test_that("calibrating model with 'none' returns same results", {
 
   out_raw <- readRDS(a_hintr_output$model_output_path)
   out_raw_disag <- disaggregate_0to4_outputs(out_raw$output_package, out_raw$naomi_data)
-  
+
   out_calib <- readRDS(calibrated_output$model_output_path)
 
   expect_equal(out_raw_disag$indicators, out_calib$output_package$indicators, tolerance = 1e-6)
@@ -610,6 +610,12 @@ test_that("assert_model_output_version ensures model version up to date", {
   expect_true(assert_model_output_version(a_hintr_output))
   expect_error(assert_model_output_version(list(version = "123")),
                "Model output out of date please re-run model and try again")
+  output <- a_hintr_output
+  output$version <- "2.5.3"
+  expect_error(assert_model_output_version(output, "2.5.4"),
+               "Model output out of date please re-run model and try again")
+  expect_true(assert_model_output_version(output, "2.5.3"))
+  expect_true(assert_model_output_version(output))
 })
 
 test_that("calibrate plot data can be generated", {

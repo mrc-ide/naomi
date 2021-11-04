@@ -124,8 +124,11 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
-assert_model_output_version <- function(obj) {
+assert_model_output_version <- function(obj, version = NULL) {
   if (!is_hintr_output(obj) || is.null(obj$version)) {
+    stop(t_("OLD_MODEL_OUTPUT"))
+  }
+  if (!is.null(version) && obj$version < version) {
     stop(t_("OLD_MODEL_OUTPUT"))
   }
   invisible(TRUE)
@@ -206,17 +209,15 @@ hintr_calibrate <- function(output, calibration_options,
 #' @export
 hintr_calibrate_plot <- function(output) {
 
-  ## ROB: PLEASE REVIEW THIS
-  ## calibration_path <- output$calibration_path
+  assert_model_output_version(output, "2.5.7")
   calibration_path <- output$model_output_path
-  
-  if (!is_hintr_output(output) || is.null(calibration_path)) {
-    stop(t_("INVALID_CALIBRATE_OBJECT"))
-  }
   calibration_data <- readRDS(calibration_path)
 
-
   df <- calibration_data$output_package$fit$spectrum_calibration
+  ## Could be NULL if called with uncalibrated model output
+  if (is.null(df)) {
+    stop(t_("INVALID_CALIBRATE_OBJECT"))
+  }
 
   dflong <- df %>%
     tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
