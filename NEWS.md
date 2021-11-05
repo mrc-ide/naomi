@@ -11,6 +11,9 @@ Updates to PEPFAR Data Pack outputs.
   - Add column `dataelement_uid`.
   - Add `=""<>""` around age group values.
 * Change file name save to `pepfar_datapack_indicators_2022.csv`.
+* Separate input data aggregation and plot prepartion scripts
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+time series function outputs
 
 # naomi 2.5.3
 
