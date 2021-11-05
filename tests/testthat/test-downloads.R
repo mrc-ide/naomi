@@ -61,7 +61,7 @@ test_that("coarse age group download can be created", {
     file_list$Name,
     c("boundaries.geojson", "indicators.csv", "art_attendance.csv",
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
-      "pepfar_datapack_indicators_2021.csv",
+      "pepfar_datapack_indicators_2022.csv",
       "info/", info_names,
       "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
   )

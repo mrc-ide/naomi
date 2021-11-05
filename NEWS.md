@@ -4,6 +4,13 @@
 
 # naomi 2.5.4
 
+Updates to PEPFAR Data Pack outputs.
+
+* Add age groups 50-54, 55-59, 60-64, 65+.
+* Edit format of PEPFAR data pack CSV:
+  - Add column `dataelement_uid`.
+  - Add `=""<>""` around age group values.
+* Change file name save to `pepfar_datapack_indicators_2022.csv`.
 * Separate input data aggregation and plot prepartion scripts
 * Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
 time series function outputs
