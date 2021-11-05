@@ -4,16 +4,26 @@
 \alias{output_package}
 \title{Build output package from fit}
 \usage{
-output_package(naomi_fit, naomi_mf)
+output_package(naomi_fit, naomi_mf, na.rm = FALSE)
 }
 \arguments{
 \item{naomi_fit}{Fitted naomi model}
 
 \item{naomi_mf}{Naomi model frame}
+
+\item{na.rm}{Whether to remove NA values when calculating summary statistics, default FALSE}
 }
 \value{
 List containing output indicators and metadata.
 }
 \description{
 Build output package from fit
+}
+\details{
+The argument \code{na.rm = TRUE} allows the output package to be
+produced when there are errors due to missing values when
+generating outputs. This is only for debugging purposes to
+review results when there are errors. \code{NA} values in
+simulated model results typically mean poor model fit or
+non-convergence that needs to be addressed.
 }
