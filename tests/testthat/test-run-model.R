@@ -621,9 +621,15 @@ test_that("assert_model_output_version ensures model version up to date", {
 test_that("calibrate plot data can be generated", {
   plot_data <- hintr_calibrate_plot(a_hintr_output)
   expect_setequal(names(plot_data),
-                  c("area_id", "sex", "age_group", "calendar_quarter",
-                    "indicator", "mean", "lower", "upper", "data_type"))
-  expect_match(plot_data$area_id, "^MWI_.+")
+                  c("spectrum_region_code", "spectrum_region_name", "sex",
+                    "age_group", "calendar_quarter", "indicator", "mean",
+                    "data_type"))
+  expect_setequal(unique(plot_data$spectrum_region_name),
+                  c("National", "Northern Region", "Central Region",
+                    "Southern Region"))
   expect_setequal(unique(plot_data$indicator),
-                  c("plhiv", "population", "infections", "art_current"))
+                  c("art_current", "births_artpop", "births_hivpop",
+                    "infections", "plhiv", "population", "unaware",
+                    "prevalence", "art_coverage", "unaware_plhiv_prop",
+                    "aware_plhiv_prop", "incidence"))
 })
