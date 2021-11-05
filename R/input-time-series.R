@@ -84,9 +84,7 @@ prepare_input_time_series_art <- function(art, shape) {
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
-  }
-
-  if(inherits(shape, "sf")) {
+  } else {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
