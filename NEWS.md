@@ -2,6 +2,12 @@
 
 * Add argument `na.rm=` to `output_package()` to allow calculation of quantiles if there are missing values in the simulation. Default is `na.rm = FALSE` and `na.rm = TRUE` is to be used for debugging purposes only. Cases where missing values occur will usually indicate very poor model fits and issues that need to be addressed.
 
+# naomi 2.5.4
+
+* Separate input data aggregation and plot prepartion scripts
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+time series function outputs
+
 # naomi 2.5.3
 
 * Include `parent_area_id` and `area_sort_order` in input time series function outputs
