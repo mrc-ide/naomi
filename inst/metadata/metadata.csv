@@ -55,4 +55,3 @@ calibrate,barchart,population,mean,lower,upper,indicator,population,t_(POPULATIO
 calibrate,barchart,plhiv,mean,lower,upper,indicator,plhiv,t_(PLHIV),1,100,0
 calibrate,barchart,infections,mean,lower,upper,indicator,infections,t_(NEW_INFECTIONS),1,100,0
 calibrate,barchart,art_current,mean,lower,upper,indicator,art_current,t_(ART_NUMBER_ATTENDING),1,100,0
-

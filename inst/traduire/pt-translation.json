@@ -245,7 +245,7 @@
     "ANC_STATUS": "Estatuto conhecido do CPN",
     "ANC_PREVALENCE": "Prevalência do CPN",
     "ANC_ART_COVERAGE": "Cobertura TARV CPN",
-"ART_NEW_TOTAL": "ART new",
+    "ART_NEW_TOTAL": "ART new",
     "ART_NEW_TOTAL_DESC": "Number initiated on ART",
     "ART_NEW_ADULT_F": "ART new female",
     "ART_NEW_ADULT_F_DESC": "Number of women (15+) initiated on ART",
