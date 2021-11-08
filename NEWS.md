@@ -26,7 +26,6 @@ Updates to PEPFAR Data Pack outputs.
 * Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
 time series function outputs
 
->>>>>>> master
 # naomi 2.5.3
 
 * Include `parent_area_id` and `area_sort_order` in input time series function outputs
@@ -43,7 +42,6 @@ time series function outputs
 
 * Add functions `hintr_prepare_spectrum_download`, `hintr_prepare_coarse_age_group_download` and `hintr_prepare_summary_report_download` for generating downloads from `hintr_output` object
 * Refactor `hintr_run_model` and `hintr_calibrate` to save out minimal data
-
 
 # naomi 2.4.2
 
