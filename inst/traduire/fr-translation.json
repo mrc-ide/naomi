@@ -244,5 +244,8 @@
     "ART_PROP_U15": "Proportion de TARV <15",
     "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence de la CPN",
-    "ANC_ART_COVERAGE": "Couverture CPN TARV"
+    "ANC_ART_COVERAGE": "Couverture CPN TARV",
+    "TYPE_CALIBRATED": "Étalonné",
+    "TYPE_SPECTRUM": "Spectrum",
+    "TYPE_UNADJUSTED": "Non ajusté"
 }

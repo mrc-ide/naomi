@@ -179,6 +179,11 @@
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportional",
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Calibration method",
     "LANG": "en",
+    "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again",
+    "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}",
+    "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
+    "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
+    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
     "PLHIV_MAP_PLOT_TITLE": "People living with HIV (15+)",
     "ART_CURRENT_MAP_PLOT_TITLE": "Residents receiving ART (15+)",
     "INFECTIONS_MAP_PLOT_TITLE": "Annual HIV infections (15+)",
@@ -255,6 +260,10 @@
     "ANC_ART_COVERAGE": "ANC ART coverage",
     "ANC_ART_COVERAGE_DESC": "Total ART coverage prior to first ANC visit",
     "ANC_CLIENTS_DESC": "Total number attending first ANC",
-    "ANC_KNOWN_POS_DESC": "Number of HIV positive ANC attendees aware of status prior to first ANC visit"
+    "ANC_KNOWN_POS_DESC": "Number of HIV positive ANC attendees aware of status prior to first ANC visit",
+    "INVALID_CALIBRATE_OBJECT": "Cannot get calibration plot, output does not contain calibration data",
+    "TYPE_CALIBRATED": "Calibrated",
+    "TYPE_SPECTRUM": "Spectrum",
+    "TYPE_UNADJUSTED": "Unadjusted"
 }
 

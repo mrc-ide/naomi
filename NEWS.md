@@ -1,3 +1,14 @@
+# naomi 2.5.7
+
+* Throw an error from `calibrate_outputs()` if user tries to calibrate an ouptut package that has
+  already been calibrated. This is determined by whether the `output$spectrum_calibration` table 
+  exists in the output object. _In future, it would be nicer to allow user to re-calibrate an output 
+  package. This will require saving additional information to un-calibrate and re-calibrate._
+
+* Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
+
+* Add function `hintr_calibrate_plot` to return data for plotting calibrate barchart.
+  
 # naomi 2.5.5
 
 * Add argument `na.rm=` to `output_package()` to allow calculation of quantiles if there are missing values in the simulation. Default is `na.rm = FALSE` and `na.rm = TRUE` is to be used for debugging purposes only. Cases where missing values occur will usually indicate very poor model fits and issues that need to be addressed.
@@ -59,6 +70,7 @@ time series function outputs
 * Option to output summary report in French.
 
 # naomi 2.3.12
+
 * Fix to summary report to display input ANC data in description.
 * Ensure summary report pulls most recent calibration options.
 * Fix `validate_calibration_options()` typo.
