@@ -179,11 +179,6 @@
     "OPTIONS_CALIBRATE_METHOD_PROPORTIONAL_LABEL": "Proportionnelle",
     "OPTIONS_CALIBRATE_METHOD_LABEL": "Méthode d'étalonnage",
     "LANG": "fr",
-    "INVALID_DOWNLOAD": "Can't prepare download, please re-calibrate model and try again",
-    "FAILED_VERSION_MIGRATE": "Can't migrate model output from version {{old}} to {{new}}",
-    "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
-    "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
-    "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
     "PLHIV_MAP_PLOT_TITLE": "Personnes vivant avec le VIH  (15+)",
     "ART_CURRENT_MAP_PLOT_TITLE": "Résidents recevant TARV (15+)",
     "INFECTIONS_MAP_PLOT_TITLE": "Infections annuelles au VIH (15+)",
@@ -249,5 +244,8 @@
     "ART_PROP_U15": "Proportion de TARV <15",
     "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence de la CPN",
-    "ANC_ART_COVERAGE": "Couverture CPN TARV"
+    "ANC_ART_COVERAGE": "Couverture CPN TARV",
+    "TYPE_CALIBRATED": "Étalonné",
+    "TYPE_SPECTRUM": "Spectrum",
+    "TYPE_UNADJUSTED": "Non ajusté"
 }
