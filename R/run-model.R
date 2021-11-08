@@ -321,7 +321,7 @@ data_type_labels <- function() {
       label = t_("TYPE_CALIBRATED")
     ),
     list(
-      id = "unadjusted",
+      id = "raw",
       label = t_("TYPE_UNADJUSTED")
     )
   )
