@@ -72,14 +72,15 @@ write_datapack_csv <- function(naomi_output,
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
              indicator_code = datapack_indicator_code,
+             dataelement_uid = datapack_indicator_id,
              ) %>%
-    dplyr::select(indicator, indicator_code, is_integer)
+    dplyr::select(indicator, indicator_code, dataelement_uid, is_integer)
 
 
   datapack_age_group_map <- datapack_age_group_map %>%
     dplyr::transmute(
              age_group,
-             age = paste0("\"", datapack_age_group_label, "\""),
+             age = paste0("=\"\"", datapack_age_group_label, "\"\""),
              age_uid = datapack_age_group_id
            )
 
@@ -151,7 +152,8 @@ write_datapack_csv <- function(naomi_output,
              indicator_code = dplyr::if_else(calendar_quarter == tx_curr_calendar_quarter &
                                              indicator == "art_current",
                                              "TX_CURR_SUBNAT.R",
-                                             indicator_code)
+                                             indicator_code),
+             dataelement_uid = dplyr::if_else(indicator_code == "TX_CURR_SUBNAT.R", "MktYDp33kd6", dataelement_uid)
            )
 
 
@@ -169,6 +171,7 @@ write_datapack_csv <- function(naomi_output,
              psnu_uid,
              area_id,
              indicator_code,
+             dataelement_uid,
              age,
              age_uid,
              sex = sex_datapack,

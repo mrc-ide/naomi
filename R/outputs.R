@@ -20,7 +20,7 @@ get_meta_indicator <- function() {
 
 
 
-add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
+add_stats <- function(df, mode = NULL, sample = NULL, prefix = "", na.rm = FALSE){
 
   v <- df
 
@@ -31,9 +31,11 @@ add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
   }
 
   if(!is.null(sample)) {
-    qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975), names = FALSE)
-    v[[paste0(prefix, "mean")]] <- rowMeans(sample)
-    v[[paste0(prefix, "se")]] <- sqrt(rowSums((sample - v[[paste0(prefix, "mean")]])^2) / (max(ncol(sample), 2) - 1))
+    qtl <- apply(sample, 1, stats::quantile, c(0.5, 0.025, 0.975), names = FALSE, na.rm = na.rm)
+    v[[paste0(prefix, "mean")]] <- rowMeans(sample, na.rm = na.rm)
+    rss <- rowSums((sample - v[[paste0(prefix, "mean")]])^2, na.rm = na.rm)
+    ndenom <- pmax(rowSums(!is.na(sample)), 2) - 1
+    v[[paste0(prefix, "se")]] <- sqrt(rss / ndenom)
     v[[paste0(prefix, "median")]] <- qtl[1,]
     v[[paste0(prefix, "lower")]] <- qtl[2,]
     v[[paste0(prefix, "upper")]] <- qtl[3,]
@@ -45,7 +47,7 @@ add_stats <- function(df, mode = NULL, sample = NULL, prefix = ""){
 }
 
 
-extract_indicators <- function(naomi_fit, naomi_mf) {
+extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 
   get_est <- function(varname,
                       indicator,
@@ -58,9 +60,9 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
 
     tryCatch(
       if(!is.null(naomi_fit$sample)) {
-        v <- add_stats(v, naomi_fit$mode[[varname]], naomi_fit$sample[[varname]])
+        v <- add_stats(v, naomi_fit$mode[[varname]], naomi_fit$sample[[varname]], na.rm = na.rm)
       } else {
-        v <- add_stats(v, naomi_fit$mode[[varname]])
+        v <- add_stats(v, naomi_fit$mode[[varname]], na.rm = na.rm)
       },
       "error" = function(e) {
         stop(t_("EXTRACT_INDICATORS_SIMULATE_ERROR",
@@ -185,7 +187,7 @@ extract_indicators <- function(naomi_fit, naomi_mf) {
                 calendar_quarter, indicator, mean, se, median, mode, lower, upper)
 }
 
-extract_art_attendance <- function(naomi_fit, naomi_mf) {
+extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 
   mode <- naomi_fit$mode
 
@@ -268,14 +270,14 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
   v$attend_out_idx <- NULL
 
   v_t1 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter1)
-  v_t1 <- add_stats(v_t1, m_artattend_ij_t1, s_artattend_ij_t1, "artnum_")
-  v_t1 <- add_stats(v_t1, m_prop_residents_t1, s_prop_residents_t1, "prop_residents_")
-  v_t1 <- add_stats(v_t1, m_prop_attendees_t1, s_prop_attendees_t1, "prop_attendees_")
+  v_t1 <- add_stats(v_t1, m_artattend_ij_t1, s_artattend_ij_t1, "artnum_", na.rm = na.rm)
+  v_t1 <- add_stats(v_t1, m_prop_residents_t1, s_prop_residents_t1, "prop_residents_", na.rm = na.rm)
+  v_t1 <- add_stats(v_t1, m_prop_attendees_t1, s_prop_attendees_t1, "prop_attendees_", na.rm = na.rm)
 
   v_t2 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter2)
-  v_t2 <- add_stats(v_t2, m_artattend_ij_t2, s_artattend_ij_t2, "artnum_")
-  v_t2 <- add_stats(v_t2, m_prop_residents_t2, s_prop_residents_t2, "prop_residents_")
-  v_t2 <- add_stats(v_t2, m_prop_attendees_t2, s_prop_attendees_t2, "prop_attendees_")
+  v_t2 <- add_stats(v_t2, m_artattend_ij_t2, s_artattend_ij_t2, "artnum_", na.rm = na.rm)
+  v_t2 <- add_stats(v_t2, m_prop_residents_t2, s_prop_residents_t2, "prop_residents_", na.rm = na.rm)
+  v_t2 <- add_stats(v_t2, m_prop_attendees_t2, s_prop_attendees_t2, "prop_attendees_", na.rm = na.rm)
 
   dplyr::bind_rows(v_t1, v_t2)
 }
@@ -285,14 +287,25 @@ extract_art_attendance <- function(naomi_fit, naomi_mf) {
 #'
 #' @param naomi_fit Fitted naomi model
 #' @param naomi_mf Naomi model frame
+#' @param na.rm Whether to remove NA values when calculating summary statistics, default FALSE
 #'
 #' @return List containing output indicators and metadata.
+#'
+#' @details
+#'
+#' The argument `na.rm = TRUE` allows the output package to be
+#' produced when there are errors due to missing values when
+#' generating outputs. This is only for debugging purposes to
+#' review results when there are errors. `NA` values in
+#' simulated model results typically mean poor model fit or
+#' non-convergence that needs to be addressed.
+#' 
 #' @export
-output_package <- function(naomi_fit, naomi_mf) {
+output_package <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 
-  indicators <- extract_indicators(naomi_fit, naomi_mf)
+  indicators <- extract_indicators(naomi_fit, naomi_mf, na.rm = na.rm)
 
-  art_attendance <- extract_art_attendance(naomi_fit, naomi_mf)
+  art_attendance <- extract_art_attendance(naomi_fit, naomi_mf, na.rm = na.rm)
 
   meta_area <- naomi_mf$areas %>%
     dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
@@ -747,7 +760,7 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
-    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2021.csv")
+    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
   }
 
   info <- attr(naomi_output, "info")
