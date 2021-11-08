@@ -646,7 +646,7 @@ test_that("can get data_type labels", {
     label = "Calibrated"
   ))
   expect_equal(labels[[3]], list(
-    id = "unadjusted",
+    id = "raw",
     label = "Unadjusted"
   ))
 })
