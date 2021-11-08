@@ -62,13 +62,12 @@ test_that("population calibration options", {
                                calendar_quarter3 = "CY2019Q2",
                                spectrum_population_calibration = "none")
 
-  expect_true(all(mf_none$spectrum_calibration$population_calibration == 1))
   expect_equal(mf_none$spectrum_calibration$population_raw,
-               mf_none$spectrum_calibration$population)
+               mf_none$spectrum_calibration$population_calibrated)
   expect_false(all(mf_none$spectrum_calibration$population_spectrum ==
-                   mf_none$spectrum_calibration$population))
+                   mf_none$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_none$mf_model$population_t1 + mf_none$mf_model$population_t2 + mf_none$mf_model$population_t3),
-               sum(mf_none$spectrum_calibration$population))
+               sum(mf_none$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_none$mf_model$population_t1 + mf_none$mf_model$population_t2 + + mf_none$mf_model$population_t3),
                sum(mf_none$spectrum_calibration$population_raw))
 
@@ -86,13 +85,12 @@ test_that("population calibration options", {
                               calendar_quarter3 = "CY2019Q2",
                               spectrum_population_calibration = "national")
 
-  expect_false(all(mf_nat$spectrum_calibration$population_calibration == 1))
   expect_false(sum(mf_nat$spectrum_calibration$population_raw) ==
-               sum(mf_nat$spectrum_calibration$population))
+               sum(mf_nat$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_nat$spectrum_calibration$population_spectrum),
-               sum(mf_nat$spectrum_calibration$population))
+               sum(mf_nat$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_nat$mf_model$population_t1 + mf_nat$mf_model$population_t2 + mf_nat$mf_model$population_t3),
-               sum(mf_nat$spectrum_calibration$population))
+               sum(mf_nat$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_nat$mf_model$population_t1 + mf_nat$mf_model$population_t2 + mf_nat$mf_model$population_t3),
                sum(mf_nat$spectrum_calibration$population_spectrum))
 
@@ -107,13 +105,12 @@ test_that("population calibration options", {
                                  calendar_quarter3 = "CY2019Q2",
                                  spectrum_population_calibration = "subnational")
 
-  expect_false(all(mf_subnat$spectrum_calibration$population_calibration == 1))
   expect_false(sum(mf_subnat$spectrum_calibration$population_raw) ==
-               sum(mf_subnat$spectrum_calibration$population))
+               sum(mf_subnat$spectrum_calibration$population_calibrated))
   expect_equal(mf_subnat$spectrum_calibration$population_spectrum,
-               mf_subnat$spectrum_calibration$population)
+               mf_subnat$spectrum_calibration$population_calibrated)
   expect_equal(sum(mf_subnat$mf_model$population_t1 + mf_subnat$mf_model$population_t2 + mf_subnat$mf_model$population_t3),
-               sum(mf_subnat$spectrum_calibration$population))
+               sum(mf_subnat$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_subnat$mf_model$population_t1 + mf_subnat$mf_model$population_t2 + mf_subnat$mf_model$population_t3),
                sum(mf_subnat$spectrum_calibration$population_spectrum))
 

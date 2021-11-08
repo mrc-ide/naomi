@@ -7,14 +7,14 @@
 prepare_input_time_series_art(art, shape)
 }
 \arguments{
-\item{art}{Path to file containing ART data}
+\item{art}{Path to file containing ART data or ART data object}
 
-\item{shape}{Path to file containing geojson areas data}
+\item{shape}{Path to file containing geojson areas data or area data object}
 }
 \value{
 Data formatted for plotting input time series containing columns
-area_id, area_name, area_level_label, time_step, time_period, plot and
-value
+area_id, area_name, area_level, area_level_label, time_period, year,
+quarter, plot and value
 }
 \description{
 Take uploaded ART and shape file paths and format as data which

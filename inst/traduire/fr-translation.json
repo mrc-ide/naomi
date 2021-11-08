@@ -294,5 +294,8 @@
     "VLS_COVERAGE_ADULT": "VLS testing coverage adult",
     "VLS_COVERAGE_ADULT_DESC": "Ratio of VLS tests to number on ART (adults 15+)",
     "VLS_COVERAGE_CHILD": "VLS testing coverage paediatric",
-    "VLS_COVERAGE_CHILD_DESC": "Ratio of VLS tests to number on ART (children <15)"
+    "VLS_COVERAGE_CHILD_DESC": "Ratio of VLS tests to number on ART (children <15)",
+    "TYPE_CALIBRATED": "Étalonné",
+    "TYPE_SPECTRUM": "Spectrum",
+    "TYPE_UNADJUSTED": "Non ajusté"
 }

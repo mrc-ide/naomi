@@ -784,7 +784,6 @@ x2 <- x1 %>%
   gt::cols_width(everything()~ px(155))
 
 
-
 ```
 
 ::: {#translate lang="en"}

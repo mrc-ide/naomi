@@ -15,7 +15,7 @@ extract_pjnz_naomi <- function(pjnz_list) {
   
   spec <- lapply(pjnz_list, extract_pjnz_one) %>%
     dplyr::bind_rows() %>%
-    dplyr::select(spectrum_region_code, dplyr::everything())
+    dplyr::select(spectrum_region_code, spectrum_region_name, dplyr::everything())
   
   spec
 }
@@ -80,7 +80,17 @@ extract_pjnz_one <- function(pjnz) {
 
   spec <- add_shiny90_unaware(spec, pjnz)
 
-  spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
+
+  spectrum_region_code <- read_spectrum_region_code(pjnz)
+  
+  if (spectrum_region_code == 0) {
+    spectrum_region_name <- eppasm::read_country(pjnz)
+  } else {
+    spectrum_region_name <- read_spectrum_region_name(pjnz)
+  }
+
+  spec$spectrum_region_code <- spectrum_region_code
+  spec$spectrum_region_name <- spectrum_region_name
   
   spec
 }
@@ -145,6 +155,31 @@ read_spectrum_region_code <- function(pjnz) {
   region_code <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 3, 4]
   as.integer(region_code)
 }
+
+#' Read Subnational Region Name from Spectrum PJNZ
+#'
+#' @param pjnz file path to Spectrum PJNZ file.
+#'
+#' @return Spectrum subnational region name as a string. Returns NA
+#'   if no subnational region.
+#'
+#' @details
+#' Value NA corresponds to region code 0 for a national Spectrum file.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' read_spectrum_region_name(pjnz)
+#' 
+#' @export
+read_spectrum_region_name <- function(pjnz) {
+  pjn <- eppasm::read_pjn(pjnz)
+  region_name <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 2, 4]
+  if (region_name == "") {
+    region_name <- NA_character_
+  }
+  region_name
+}
+
 
 #' Read Spectrum Projection Name from Spectrum PJNZ
 #'
@@ -494,7 +529,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 
   val <- spec_aggr %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
-    dplyr::group_by(spectrum_region_code, sex, age_group) %>%
+    dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group) %>%
     dplyr::summarise(
              calendar_quarter = calendar_quarter_out,
              population_spectrum = log_lin_approx(quarter_id, totpop, quarter_id_out),
@@ -511,7 +546,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 
   
   dplyr::select(val,
-                spectrum_region_code, sex, age_group, calendar_quarter,
+                spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
                 population_spectrum,
                 plhiv_spectrum,
                 art_current_spectrum,
