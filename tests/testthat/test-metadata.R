@@ -83,7 +83,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg"))
+                    "anc_tested_neg", "art_new", "vls_tested",
+                    "vls_suppressed"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -96,7 +97,7 @@ test_that("colour scales metadata is well formed", {
       "aware_plhiv_num", "aware_plhiv_prop", "unaware_plhiv_num",
       "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
       "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-      "anc_tested_neg"))
+      "anc_tested_neg", "art_new", "vls_tested", "vls_suppressed"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
