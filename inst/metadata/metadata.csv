@@ -2,6 +2,9 @@ data_type,plot_type,indicator,value_column,error_low_column,error_high_column,in
 survey,choropleth,prevalence,estimate,,,indicator,prevalence,t_(HIV_PREVALENCE),1,NA,0.0%
 survey,choropleth,art_coverage,estimate,,,indicator,art_coverage,t_(ART_COVERAGE),1,NA,0.0%
 programme,choropleth,art_current,art_current,,,,,t_(ART_NUMBER_ATTENDING),1,100,0
+programme,choropleth,art_new,art_new,,,,,t_(ART_NEW_TOTAL),1,100,0
+programme,choropleth,vls_tested,vls_tested,,,,,t_(VLS_TESTED_TOTAL),1,100,0
+programme,choropleth,vls_suppressed,vls_suppressed,,,,,t_(VLS_SUPPRESSED_TOTAL),1,100,0
 survey,choropleth,recent_infected,estimate,,,indicator,recent_infected,t_(PROPORTION_RECENTLY_INFECTED),1,1,0.00%
 survey,choropleth,viral_suppression_plhiv,estimate,,,indicator,viral_suppression_plhiv,t_(VLS),1,NA,0.00%
 anc,choropleth,anc_prevalence,anc_prevalence,,,,,t_(ANC_HIV_PREVALENCE),1,NA,0.0%

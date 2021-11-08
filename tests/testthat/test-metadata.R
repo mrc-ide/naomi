@@ -124,7 +124,7 @@ test_that("metadata is well formed", {
                     "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
                     "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
                     "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg"))
+                    "anc_tested_neg", "art_new", "vls_tested", "vls_suppressed"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
@@ -140,7 +140,8 @@ test_that("metadata is well formed", {
                     "ANC prior ART coverage", "ANC clients",
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
-                    "ANC known positive", "ANC tested positive", "ANC tested negative"))
+                    "ANC known positive", "ANC tested positive", "ANC tested negative",
+                    "ART new", "VLS tested", "VLS tests suppressed"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
