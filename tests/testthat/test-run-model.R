@@ -633,3 +633,20 @@ test_that("calibrate plot data can be generated", {
                     "prevalence", "art_coverage", "unaware_plhiv_prop",
                     "aware_plhiv_prop", "incidence"))
 })
+
+test_that("can get data_type labels", {
+  labels <- data_type_labels()
+  expect_length(labels, 3)
+  expect_equal(labels[[1]], list(
+    id = "spectrum",
+    label = "Spectrum"
+  ))
+  expect_equal(labels[[2]], list(
+    id = "calibrated",
+    label = "Calibrated"
+  ))
+  expect_equal(labels[[3]], list(
+    id = "unadjusted",
+    label = "Unadjusted"
+  ))
+})

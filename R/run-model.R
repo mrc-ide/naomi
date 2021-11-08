@@ -310,6 +310,23 @@ hintr_calibrate_plot <- function(output) {
   val
 }
 
+data_type_labels <- function() {
+  list(
+    list(
+      id = "spectrum",
+      label = t_("TYPE_SPECTRUM")
+    ),
+    list(
+      id = "calibrated",
+      label = t_("TYPE_CALIBRATED")
+    ),
+    list(
+      id = "unadjusted",
+      label = t_("TYPE_UNADJUSTED")
+    )
+  )
+}
+
 validate_calibrate_options <- function(calibration_options) {
 
   expected_options <- c("spectrum_plhiv_calibration_level",
