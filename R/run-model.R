@@ -310,6 +310,10 @@ hintr_calibrate_plot <- function(output) {
   val
 }
 
+#' Get id to label mapping for calibration plot data type
+#'
+#' @return List of ID & label mappings
+#' @export
 data_type_labels <- function() {
   list(
     list(
