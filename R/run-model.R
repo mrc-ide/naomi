@@ -220,7 +220,7 @@ hintr_calibrate_plot <- function(output) {
   }
 
   dflong <- df %>%
-    tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
+    tidyr:: pivot_longer(c(tidyselect::ends_with("unadjusted"),
                            tidyselect::ends_with("spectrum"),
                            tidyselect::ends_with("calibrated")),
                          names_to = c("indicator", "data_type"),
@@ -299,8 +299,9 @@ hintr_calibrate_plot <- function(output) {
   ## Calculate calibration ratio
   val <- dfw %>%
     tidyr::pivot_wider(names_from = data_type, values_from = value) %>%
-    dplyr::mutate(calibration_ratio = calibrated / raw) %>%
-    tidyr::pivot_longer(cols = c(calibrated, raw, spectrum, calibration_ratio),
+    dplyr::mutate(calibration_ratio = calibrated / unadjusted) %>%
+    tidyr::pivot_longer(cols = c(calibrated, unadjusted, spectrum,
+                                 calibration_ratio),
                         names_to = "data_type")
 
   val <- val %>%

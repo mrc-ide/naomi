@@ -87,7 +87,7 @@ calibrate_outputs <- function(output,
          "You cannot re-calibrate outputs. ",
          "Please provide uncalibrated output package.")
   }
-  
+
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
 
   mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
@@ -118,10 +118,10 @@ calibrate_outputs <- function(output,
                                         age_group %in% c("Y000_004", "Y005_009", "Y010_014"),
                                         "Y000_014", "Y015_999"))
 
-  ## Join aggregates of raw Naomi mean to save in calibration output
+  ## Join aggregates of unadjusted Naomi mean to save in calibration output
   val_aggr <- val %>%
     dplyr::group_by_at(c("indicator", group_vars)) %>%
-    dplyr::summarise(est_raw = sum(mean), .groups = "drop")
+    dplyr::summarise(est_unadjusted = sum(mean), .groups = "drop")
 
   val_aggr_wide <- val_aggr %>%
     dplyr::filter(
@@ -130,15 +130,15 @@ calibrate_outputs <- function(output,
            ) %>%
     dplyr::mutate(
              indicator = indicator %>%
-               dplyr::recode("plhiv" = "plhiv_raw",
-                             "art_current_residents" = "art_current_raw",
-                             "unaware_plhiv_num" = "unaware_raw",
-                             "infections" = "infections_raw")
+               dplyr::recode("plhiv" = "plhiv_unadjusted",
+                             "art_current_residents" = "art_current_unadjusted",
+                             "unaware_plhiv_num" = "unaware_unadjusted",
+                             "infections" = "infections_unadjusted")
            ) %>%
-    tidyr::pivot_wider(names_from = indicator, values_from = est_raw)
+    tidyr::pivot_wider(names_from = indicator, values_from = est_unadjusted)
 
-  if (is.null(val_aggr_wide[["unaware_raw"]])) {
-    val_aggr_wide[["unaware_raw"]] <- NA_real_
+  if (is.null(val_aggr_wide[["unaware_unadjusted"]])) {
+    val_aggr_wide[["unaware_unadjusted"]] <- NA_real_
   }
 
   spectrum_calibration <- spectrum_calibration %>%
@@ -168,16 +168,16 @@ calibrate_outputs <- function(output,
              incidence = infections / (population - plhiv)
            )
 
-  calibrate_logistic_one <- function(proportion_raw,
+  calibrate_logistic_one <- function(proportion_unadjusted,
                                      denominator_new,
                                      target_val) {
 
     ## Adjust for small numerical discrepancy
-    proportion_raw[proportion_raw >= 1 & proportion_raw < 1+1e-5] <- 0.99999
-    proportion_raw[proportion_raw <= 0 & proportion_raw > -1e-5] <- 0.00001
+    proportion_unadjusted[proportion_unadjusted >= 1 & proportion_unadjusted < 1+1e-5] <- 0.99999
+    proportion_unadjusted[proportion_unadjusted <= 0 & proportion_unadjusted > -1e-5] <- 0.00001
 
-    stopifnot(proportion_raw >= 0)
-    stopifnot(proportion_raw <= 1)
+    stopifnot(proportion_unadjusted >= 0)
+    stopifnot(proportion_unadjusted <= 1)
     stopifnot(target_val == target_val[1])
     target_val <- target_val[1]
 
@@ -186,7 +186,7 @@ calibrate_outputs <- function(output,
       stop("Error in logistic calibration: target numerator is larger than aggregated denominator.")
     }
 
-    logit_p_fine <- qlogis(proportion_raw)
+    logit_p_fine <- qlogis(proportion_unadjusted)
     adjust_numerator <- function(theta, l, d) plogis(l + theta) * d
     optfn <- function(theta){ (sum(adjust_numerator(theta, logit_p_fine, denominator_new)) - target_val)^2 }
     opt <- optimise(optfn, c(-10, 10), tol = .Machine$double.eps^0.5)
@@ -194,21 +194,21 @@ calibrate_outputs <- function(output,
     adjust_numerator(opt$minimum, logit_p_fine, denominator_new)
   }
 
-  calibrate_proportional_one <- function(value_raw, target_val) {
+  calibrate_proportional_one <- function(value_unadjusted, target_val) {
 
     stopifnot(target_val == target_val[1])
     target_val <- target_val[1]
 
-    value_raw * target_val / sum(value_raw)
+    value_unadjusted * target_val / sum(value_unadjusted)
   }
 
-  calibrate_one <- function(value_raw, proportion_raw, denominator_new,
+  calibrate_one <- function(value_unadjusted, proportion_unadjusted, denominator_new,
                             target_val, calibrate_method) {
 
     if (calibrate_method == "logistic") {
-      val <- calibrate_logistic_one(proportion_raw, denominator_new, target_val)
+      val <- calibrate_logistic_one(proportion_unadjusted, denominator_new, target_val)
     } else if (calibrate_method == "proportional") {
-      val <- calibrate_proportional_one(value_raw, target_val)
+      val <- calibrate_proportional_one(value_unadjusted, target_val)
     } else {
       stop(paste0("calibrate_method \"", calibrate_method, "\" not found."))
     }
@@ -381,14 +381,14 @@ calibrate_outputs <- function(output,
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::left_join(val_adj_aggr_wide, by = group_vars)
 
-  
+
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::select(spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
-                  population_spectrum, population_raw, population_calibrated,
-                  plhiv_spectrum, plhiv_raw, plhiv_calibrated,
-                  art_current_spectrum, art_current_raw, art_current_calibrated,
-                  unaware_spectrum, unaware_raw, unaware_calibrated,
-                  infections_spectrum, infections_raw, infections_calibrated)
+                  population_spectrum, population_unadjusted, population_calibrated,
+                  plhiv_spectrum, plhiv_unadjusted, plhiv_calibrated,
+                  art_current_spectrum, art_current_unadjusted, art_current_calibrated,
+                  unaware_spectrum, unaware_unadjusted, unaware_calibrated,
+                  infections_spectrum, infections_unadjusted, infections_calibrated)
 
 
   ## Aggregate adjusted fine stratification values to all Naomi aggregates
@@ -440,13 +440,13 @@ calibrate_outputs <- function(output,
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
 
   adj_counts <- dplyr::right_join(
-                         dplyr::select(indicators, tidyselect::all_of(byv), raw = mean),
+                         dplyr::select(indicators, tidyselect::all_of(byv), unadjusted = mean),
                          dplyr::select(adj, tidyselect::all_of(byv), adjusted),
                          by = byv
                        ) %>%
     dplyr::mutate(
-             ratio = dplyr::if_else(raw == 0, 0, adjusted / raw),
-             raw = NULL,
+             ratio = dplyr::if_else(unadjusted == 0, 0, adjusted / unadjusted),
+             unadjusted = NULL,
              adjusted = NULL
            )
 
@@ -478,12 +478,12 @@ calibrate_outputs <- function(output,
                         names_to = "indicator", values_to = "adjusted") %>%
     dplyr::select(tidyselect::all_of(byv), adjusted) %>%
     dplyr::left_join(
-             dplyr::select(indicators, tidyselect::all_of(byv), raw = mean),
+             dplyr::select(indicators, tidyselect::all_of(byv), unadjusted = mean),
              by = byv
            ) %>%
     dplyr::mutate(
-             log_odds = dplyr::if_else(adjusted == 0, 0, qlogis(adjusted) - qlogis(raw)),
-             raw = NULL,
+             log_odds = dplyr::if_else(adjusted == 0, 0, qlogis(adjusted) - qlogis(unadjusted)),
+             unadjusted = NULL,
              adjusted = NULL
            )
 
