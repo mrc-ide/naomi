@@ -69,7 +69,8 @@ get_colour_scale <- function(iso3 = "default") {
 #' get_metadata()
 get_metadata <- function() {
   data <- naomi_read_csv(system_file("metadata", "metadata.csv"),
-                         na = c("NA")) ## We want empty cells to be ""
+                         na = c("NA"), ## We want empty cells to be ""
+                         col_types = readr::cols(.default = "c"))
   data$name <- traduire::translator()$replace(data$name)
 
   ## TODO: refactor these into one location (issue #145)
