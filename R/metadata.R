@@ -72,6 +72,9 @@ get_metadata <- function() {
                          na = c("NA"), ## We want empty cells to be ""
                          col_types = readr::cols(.default = "c"))
   data$name <- traduire::translator()$replace(data$name)
+  ## Convert numeric columns to numbers
+  data$accuracy <- as.numeric(data$accuracy)
+  data$scale <- as.numeric(data$scale)
 
   ## TODO: refactor these into one location (issue #145)
   other_data <- get_meta_indicator()
