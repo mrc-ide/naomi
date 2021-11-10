@@ -83,6 +83,24 @@ demo_art_number <- demo_art_number %>%
          age_group_label = NULL) %>%
   select(area_id, area_name, sex, age_group, year, calendar_quarter, art_current, art_new)
 
+
+#' Add _simulated_ VLS data
+
+vls <- read_csv(here("data-raw/programme/mwi-simulated-vls.csv"))
+
+demo_art_number <- demo_art_number %>%
+  left_join(
+    vls %>%
+    mutate(
+      year = as.integer(substr(calendar_quarter, 3, 6))-1,
+      quarter = substr(calendar_quarter, 8, 8),
+      calendar_quarter = paste0("CY", year, "Q", quarter)
+    ) %>%
+    group_by(district, calendar_quarter, sex = "both", age_group) %>%
+    summarise(across(c(vls_tested, vls_suppressed), sum)),
+    by = c("area_name" = "district", "age_group", "sex", "calendar_quarter")
+  )
+
 usethis::use_data(
            demo_anc_testing,
            demo_art_number,

@@ -1,3 +1,7 @@
+# naomi 2.5.8
+
+* Add _simulated_ viral load testing data to example datasets.
+
 # naomi 2.5.7
 
 * Throw an error from `calibrate_outputs()` if user tries to calibrate an ouptut package that has

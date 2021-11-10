@@ -7,7 +7,7 @@ test_that("ART data can be aggregated", {
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "art_current", "art_new"))
+                    "art_current", "art_new", "vls_tested", "vls_suppressed"))
 
 
   # Time period has correct format
@@ -91,8 +91,7 @@ test_that("data can be formatted for ANC input time series", {
 test_that("plots are filtered according to avalible disaggregates", {
 
   dir <- tempdir()
-  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE) %>%
-    dplyr::select(-c(art_new))
+  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
 
   adult_f <- art_number %>% dplyr::filter(age_group == "Y015_999") %>% dplyr::mutate(sex = "female")
   adult_m <- art_number %>% dplyr::filter(age_group == "Y015_999") %>% dplyr::mutate(sex ="male")
@@ -102,8 +101,13 @@ test_that("plots are filtered according to avalible disaggregates", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c("art_adult" , "art_adult_child_ratio", "art_child",
-                    "art_prop_u15", "art_total"))
+                  c( "art_total","art_adult","art_child",
+                     "art_adult_child_ratio","art_prop_u15","art_new_total",
+                     "art_new_adult","art_new_child","vls_tested_total",
+                     "vls_tested_adult","vls_tested_child","vls_suppressed_total",
+                     "vls_suppressed_adult","vls_suppressed_child" , "vls_coverage_total",
+                     "vls_coverage_adult", "vls_coverage_child","vls_prop_suppressed_total",
+                     "vls_prop_suppressed_adult", "vls_prop_suppressed_child"))
 
   # Check data with sex disaggregated, age disaggregated
   test1 <- rbind(adult_f, adult_m, peads)
@@ -115,7 +119,15 @@ test_that("plots are filtered according to avalible disaggregates", {
   expect_setequal(unique(data1$plot),
                   c("art_adult" , "art_adult_child_ratio", "art_child" ,
                     "art_prop_u15", "art_total", "art_adult_f","art_adult_m",
-                    "art_adult_sex_ratio"))
+                    "art_adult_sex_ratio", "art_new_total","art_new_adult",
+                    "art_new_adult_f", "art_new_adult_m", "art_new_child",
+                    "vls_tested_total","vls_tested_adult", "vls_tested_adult_f",
+                    "vls_tested_adult_m", "vls_tested_child","vls_suppressed_total",
+                    "vls_suppressed_adult","vls_suppressed_adult_f","vls_suppressed_adult_m",
+                    "vls_suppressed_child","vls_coverage_total","vls_coverage_adult",
+                    "vls_coverage_adult_f","vls_coverage_adult_m","vls_coverage_child",
+                    "vls_prop_suppressed_total", "vls_prop_suppressed_adult","vls_prop_suppressed_adult_f",
+                    "vls_prop_suppressed_adult_m","vls_prop_suppressed_child"))
 
   # Check data with sex disaggregated, age aggregated
   test2 <- rbind(adult_f, adult_m)
@@ -125,8 +137,15 @@ test_that("plots are filtered according to avalible disaggregates", {
   data2 <- prepare_input_time_series_art(test2_file,
                                          a_hintr_data$shape)
   expect_setequal(unique(data2$plot),
-                  c("art_adult" ,"art_total", "art_adult_f","art_adult_m",
-                    "art_adult_sex_ratio"))
+                  c("art_adult" , "art_total","art_adult_f","art_adult_m",
+                    "art_adult_sex_ratio","art_new_total","art_new_adult","art_new_adult_f",
+                    "art_new_adult_m",  "vls_tested_total","vls_tested_adult",
+                    "vls_tested_adult_f", "vls_tested_adult_m", "vls_suppressed_total",
+                    "vls_suppressed_adult","vls_suppressed_adult_f","vls_suppressed_adult_m",
+                    "vls_coverage_total","vls_coverage_adult", "vls_coverage_adult_f",
+                    "vls_coverage_adult_m","vls_prop_suppressed_total",
+                    "vls_prop_suppressed_adult", "vls_prop_suppressed_adult_f",
+                    "vls_prop_suppressed_adult_m"))
 })
 
 
@@ -145,3 +164,4 @@ test_that("can get plot type descriptions from key", {
     )
   ))
 })
+
