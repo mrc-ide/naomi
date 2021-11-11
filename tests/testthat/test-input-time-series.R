@@ -165,3 +165,43 @@ test_that("can get plot type descriptions from key", {
   ))
 })
 
+test_that("data can be aggregated without all indicators", {
+
+  art <- readr::read_csv(a_hintr_data$art_number)
+
+  # data with no art_new
+  no_art_new <- art
+  no_art_new$art_new <- NULL
+
+  data <- prepare_input_time_series_art(no_art_new,
+                                        a_hintr_data$shape)
+  expect_setequal(unique(data$plot),
+                  c( "art_total" ,"art_adult","art_child",
+                     "art_adult_child_ratio","art_prop_u15","vls_tested_total",
+                     "vls_tested_adult","vls_tested_child","vls_suppressed_total",
+                     "vls_suppressed_adult","vls_suppressed_child","vls_coverage_total",
+                     "vls_coverage_adult" ,"vls_coverage_child","vls_prop_suppressed_total",
+                     "vls_prop_suppressed_adult","vls_prop_suppressed_child"))
+
+  # data with no vls indicators
+  no_vls <- art
+  no_vls$vls_tested <- NULL
+  no_vls$vls_suppressed <- NULL
+
+  data <- prepare_input_time_series_art(no_vls,
+                                        a_hintr_data$shape)
+  expect_setequal(unique(data$plot),
+                  c("art_total", "art_adult","art_child","art_adult_child_ratio",
+                    "art_prop_u15","art_new_total","art_new_adult","art_new_child"))
+
+  # data with no art_new or vls indicators
+  no_vls_art_new <- no_vls
+  no_vls_art_new$art_new <- NULL
+
+  data <- prepare_input_time_series_art(no_vls_art_new,
+                                        a_hintr_data$shape)
+  expect_setequal(unique(data$plot),
+                  c("art_total", "art_adult","art_child","art_adult_child_ratio",
+                    "art_prop_u15"))
+
+})
