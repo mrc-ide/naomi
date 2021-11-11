@@ -51,7 +51,7 @@ aggregate_art <- function(art, shape) {
     df <- art_number_wide %>%
       dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
                       year, quarter, calendar_quarter) %>%
-      dplyr::summarise_at(dplyr::vars(cols_list), ~sum(.)) %>%
+      dplyr::summarise_at(dplyr::vars(cols_keep), ~sum(.)) %>%
       dplyr::rename(area_id = `eval(as.name(col_name))`)
   }
 

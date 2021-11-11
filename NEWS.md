@@ -1,6 +1,11 @@
+# naomi 2.5.9
+
+* Fix to allow `prepare_input_time_series_art()` to accept data without art_new and vls indicators provided
+
 # naomi 2.5.8
 
 * Add _simulated_ viral load testing data to example datasets.
+
 
 # naomi 2.5.7
 
