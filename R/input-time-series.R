@@ -145,8 +145,8 @@ prepare_input_time_series_art <- function(art, shape) {
                                       "year", "quarter", "calendar_quarter"))
   }
 
-  # if vls columns exist in art data, calculate variables
-  if(any(grep("vls", colnames(art_long)))) {
+  # if VL columns exist in art data, calculate variables
+  if(any(grep("vl", colnames(art_long)))) {
 
     vl_data <- art_long %>%
       dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
