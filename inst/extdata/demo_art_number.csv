@@ -1,4 +1,4 @@
-area_id,area_name,sex,age_group,year,calendar_quarter,art_current,art_new,vls_tested,vls_suppressed
+area_id,area_name,sex,age_group,year,calendar_quarter,art_current,art_new,vl_tested_12mos,vl_suppressed_12mos
 MWI_4_1_demo,Chitipa,both,Y000_014,2011,CY2011Q4,127,9,,
 MWI_4_1_demo,Chitipa,both,Y015_999,2011,CY2011Q4,1989,144,,
 MWI_4_1_demo,Chitipa,both,Y000_014,2012,CY2012Q4,160,8,,

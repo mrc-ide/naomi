@@ -1,4 +1,4 @@
-area_id,area_name,sex,age_group,year,calendar_quarter,art_current,art_new,vls_tested,vls_suppressed
+area_id,area_name,sex,age_group,year,calendar_quarter,art_current,art_new,vl_tested_12mos,vl_suppressed_12mos
 MWI_2_1_demo,Northern,both,Y000_014,2011,CY2011Q4,2031,170,NA,NA
 MWI_2_1_demo,Northern,both,Y000_014,2012,CY2012Q4,2476,145,NA,NA
 MWI_2_1_demo,Northern,both,Y000_014,2013,CY2013Q4,2867,140,NA,NA

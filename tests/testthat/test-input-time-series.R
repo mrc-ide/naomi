@@ -7,7 +7,7 @@ test_that("ART data can be aggregated", {
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "art_current", "art_new", "vls_tested", "vls_suppressed"))
+                    "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
 
 
   # Time period has correct format
@@ -103,11 +103,11 @@ test_that("plots are filtered according to avalible disaggregates", {
   expect_setequal(unique(data$plot),
                   c( "art_total","art_adult","art_child",
                      "art_adult_child_ratio","art_prop_u15","art_new_total",
-                     "art_new_adult","art_new_child","vls_tested_total",
-                     "vls_tested_adult","vls_tested_child","vls_suppressed_total",
-                     "vls_suppressed_adult","vls_suppressed_child" , "vls_coverage_total",
-                     "vls_coverage_adult", "vls_coverage_child","vls_prop_suppressed_total",
-                     "vls_prop_suppressed_adult", "vls_prop_suppressed_child"))
+                     "art_new_adult","art_new_child","vl_tested_12mos_total",
+                     "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
+                     "vl_suppressed_12mos_adult","vl_suppressed_12mos_child" , "vl_coverage_total",
+                     "vl_coverage_adult", "vl_coverage_child","vl_prop_suppressed_total",
+                     "vl_prop_suppressed_adult", "vl_prop_suppressed_child"))
 
   # Check data with sex disaggregated, age disaggregated
   test1 <- rbind(adult_f, adult_m, peads)
@@ -121,13 +121,13 @@ test_that("plots are filtered according to avalible disaggregates", {
                     "art_prop_u15", "art_total", "art_adult_f","art_adult_m",
                     "art_adult_sex_ratio", "art_new_total","art_new_adult",
                     "art_new_adult_f", "art_new_adult_m", "art_new_child",
-                    "vls_tested_total","vls_tested_adult", "vls_tested_adult_f",
-                    "vls_tested_adult_m", "vls_tested_child","vls_suppressed_total",
-                    "vls_suppressed_adult","vls_suppressed_adult_f","vls_suppressed_adult_m",
-                    "vls_suppressed_child","vls_coverage_total","vls_coverage_adult",
-                    "vls_coverage_adult_f","vls_coverage_adult_m","vls_coverage_child",
-                    "vls_prop_suppressed_total", "vls_prop_suppressed_adult","vls_prop_suppressed_adult_f",
-                    "vls_prop_suppressed_adult_m","vls_prop_suppressed_child"))
+                    "vl_tested_12mos_total","vl_tested_12mos_adult", "vl_tested_12mos_adult_f",
+                    "vl_tested_12mos_adult_m", "vl_tested_12mos_child","vl_suppressed_12mos_total",
+                    "vl_suppressed_12mos_adult","vl_suppressed_12mos_adult_f","vl_suppressed_12mos_adult_m",
+                    "vl_suppressed_12mos_child","vl_coverage_total","vl_coverage_adult",
+                    "vl_coverage_adult_f","vl_coverage_adult_m","vl_coverage_child",
+                    "vl_prop_suppressed_total", "vl_prop_suppressed_adult","vl_prop_suppressed_adult_f",
+                    "vl_prop_suppressed_adult_m","vl_prop_suppressed_child"))
 
   # Check data with sex disaggregated, age aggregated
   test2 <- rbind(adult_f, adult_m)
@@ -139,13 +139,13 @@ test_that("plots are filtered according to avalible disaggregates", {
   expect_setequal(unique(data2$plot),
                   c("art_adult" , "art_total","art_adult_f","art_adult_m",
                     "art_adult_sex_ratio","art_new_total","art_new_adult","art_new_adult_f",
-                    "art_new_adult_m",  "vls_tested_total","vls_tested_adult",
-                    "vls_tested_adult_f", "vls_tested_adult_m", "vls_suppressed_total",
-                    "vls_suppressed_adult","vls_suppressed_adult_f","vls_suppressed_adult_m",
-                    "vls_coverage_total","vls_coverage_adult", "vls_coverage_adult_f",
-                    "vls_coverage_adult_m","vls_prop_suppressed_total",
-                    "vls_prop_suppressed_adult", "vls_prop_suppressed_adult_f",
-                    "vls_prop_suppressed_adult_m"))
+                    "art_new_adult_m",  "vl_tested_12mos_total","vl_tested_12mos_adult",
+                    "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m", "vl_suppressed_12mos_total",
+                    "vl_suppressed_12mos_adult","vl_suppressed_12mos_adult_f","vl_suppressed_12mos_adult_m",
+                    "vl_coverage_total","vl_coverage_adult", "vl_coverage_adult_f",
+                    "vl_coverage_adult_m","vl_prop_suppressed_total",
+                    "vl_prop_suppressed_adult", "vl_prop_suppressed_adult_f",
+                    "vl_prop_suppressed_adult_m"))
 })
 
 
@@ -177,16 +177,16 @@ test_that("data can be aggregated without all indicators", {
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
                   c( "art_total" ,"art_adult","art_child",
-                     "art_adult_child_ratio","art_prop_u15","vls_tested_total",
-                     "vls_tested_adult","vls_tested_child","vls_suppressed_total",
-                     "vls_suppressed_adult","vls_suppressed_child","vls_coverage_total",
-                     "vls_coverage_adult" ,"vls_coverage_child","vls_prop_suppressed_total",
-                     "vls_prop_suppressed_adult","vls_prop_suppressed_child"))
+                     "art_adult_child_ratio","art_prop_u15","vl_tested_12mos_total",
+                     "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
+                     "vl_suppressed_12mos_adult","vl_suppressed_12mos_child","vl_coverage_total",
+                     "vl_coverage_adult" ,"vl_coverage_child","vl_prop_suppressed_total",
+                     "vl_prop_suppressed_adult","vl_prop_suppressed_child"))
 
   # data with no vls indicators
   no_vls <- art
-  no_vls$vls_tested <- NULL
-  no_vls$vls_suppressed <- NULL
+  no_vls$vl_tested_12mos <- NULL
+  no_vls$vl_suppressed_12mos <- NULL
 
   data <- prepare_input_time_series_art(no_vls,
                                         a_hintr_data$shape)
