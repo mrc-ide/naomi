@@ -650,3 +650,22 @@ test_that("can get data_type labels", {
     label = "Unadjusted"
   ))
 })
+
+test_that("trying to calibrate incompatible model output returns error", {
+
+  ## Calibration makes no modification of existing files.
+  plot_data_path <- tempfile(fileext = ".rds")
+  calibration_output_path <- tempfile(fileext = ".rds")
+  hintr_output <- list(
+    plot_data_path = NULL,
+    model_output_path = "refdata/naomi-2.5.5/output_data_2.5.5.rds",
+    version = "2.5.5"
+  )
+  class(hintr_output) <- "hintr_output"
+  expect_error(hintr_calibrate(hintr_output,
+                               a_hintr_calibration_options,
+                               plot_data_path,
+                               calibration_output_path),
+               "Model output out of date please re-run model and try again")
+})
+
