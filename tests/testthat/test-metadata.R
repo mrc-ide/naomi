@@ -83,8 +83,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg", "art_new", "vls_tested",
-                    "vls_suppressed"))
+                    "anc_tested_neg", "art_new", "vl_tested_12mos",
+                    "vl_suppressed_12mos"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -97,7 +97,7 @@ test_that("colour scales metadata is well formed", {
       "aware_plhiv_num", "aware_plhiv_prop", "unaware_plhiv_num",
       "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
       "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-      "anc_tested_neg", "art_new", "vls_tested", "vls_suppressed"))
+      "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -125,7 +125,7 @@ test_that("metadata is well formed", {
                     "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
                     "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
                     "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg", "art_new", "vls_tested", "vls_suppressed"))
+                    "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
@@ -143,7 +143,7 @@ test_that("metadata is well formed", {
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
                     "ANC known positive", "ANC tested positive", "ANC tested negative",
-                    "ART new", "VLS tested", "VLS tests suppressed"))
+                    "ART new", "VL tested", "VL tests suppressed"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",

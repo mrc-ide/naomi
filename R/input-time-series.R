@@ -43,7 +43,7 @@ aggregate_art <- function(art, shape) {
 
 
   # Aggregate based on what columns exist in dataset
-  cols_list <- c("art_current", "art_new", "vls_tested", "vls_suppressed")
+  cols_list <- c("art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos")
   cols_keep <- intersect(cols_list, colnames(art))
 
   # Function to aggregate based on area_id[0-9]$ columns in hierarchy
@@ -145,42 +145,42 @@ prepare_input_time_series_art <- function(art, shape) {
                                       "year", "quarter", "calendar_quarter"))
   }
 
-  # if vls columns exist in art data, calculate variables
-  if(any(grep("vls", colnames(art_long)))) {
+  # if VL columns exist in art data, calculate variables
+  if(any(grep("vl", colnames(art_long)))) {
 
-    vls_data <- art_long %>%
+    vl_data <- art_long %>%
       dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
                       area_sort_order,time_period, year, quarter, calendar_quarter) %>%
       dplyr::summarise(
-        vls_tested_total = sum(vls_tested, na.rm = TRUE),
-        vls_tested_adult = sum(vls_tested * as.integer(age_group == "Y015_999"), na.rm = TRUE),
-        vls_tested_adult_f = sum(vls_tested * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
-        vls_tested_adult_m = sum(vls_tested * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
-        vls_tested_child = sum(vls_tested * as.integer(age_group == "Y000_014"), na.rm = TRUE),
-        vls_suppressed_total = sum(vls_suppressed, na.rm = TRUE),
-        vls_suppressed_adult = sum(vls_suppressed * as.integer(age_group == "Y015_999"), na.rm = TRUE),
-        vls_suppressed_adult_f = sum(vls_suppressed * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
-        vls_suppressed_adult_m = sum(vls_suppressed * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
-        vls_suppressed_child = sum(vls_suppressed * as.integer(age_group == "Y000_014"), na.rm = TRUE),
+        vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = TRUE),
+        vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = TRUE),
+        vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
+        vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
+        vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = TRUE),
+        vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = TRUE),
+        vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = TRUE),
+        vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
+        vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
+        vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = TRUE),
         .groups = "drop")
 
-    art_plot_data <- dplyr::left_join(art_plot_data, vls_data,
+    art_plot_data <- dplyr::left_join(art_plot_data, vl_data,
                                by = c("area_id", "area_name", "area_level",
                                       "area_level_label", "parent_area_id",
                                       "area_sort_order", "time_period",
                                       "year", "quarter", "calendar_quarter")) %>%
       dplyr::mutate(
-        vls_coverage_total = vls_tested_total/ art_total,
-        vls_coverage_adult = vls_tested_adult / art_adult,
-        vls_coverage_adult_f = vls_tested_adult_f/ art_adult_f,
-        vls_coverage_adult_m = vls_tested_adult_m/ art_adult_m,
-        vls_coverage_child = vls_tested_child/ art_child,
+        vl_coverage_total = vl_tested_12mos_total/ art_total,
+        vl_coverage_adult = vl_tested_12mos_adult / art_adult,
+        vl_coverage_adult_f = vl_tested_12mos_adult_f/ art_adult_f,
+        vl_coverage_adult_m = vl_tested_12mos_adult_m/ art_adult_m,
+        vl_coverage_child = vl_tested_12mos_child/ art_child,
 
-        vls_prop_suppressed_total = vls_suppressed_total/ vls_tested_total,
-        vls_prop_suppressed_adult = vls_suppressed_adult/ vls_tested_adult,
-        vls_prop_suppressed_adult_f = vls_suppressed_adult_f/ vls_tested_adult_f,
-        vls_prop_suppressed_adult_m = vls_suppressed_adult_m/ vls_tested_adult_m,
-        vls_prop_suppressed_child = vls_suppressed_child/ vls_tested_child)
+        vl_prop_suppressed_total = vl_suppressed_12mos_total/ vl_tested_12mos_total,
+        vl_prop_suppressed_adult = vl_suppressed_12mos_adult/ vl_tested_12mos_adult,
+        vl_prop_suppressed_adult_f = vl_suppressed_12mos_adult_f/ vl_tested_12mos_adult_f,
+        vl_prop_suppressed_adult_m = vl_suppressed_12mos_adult_m/ vl_tested_12mos_adult_m,
+        vl_prop_suppressed_child = vl_suppressed_12mos_child/ vl_tested_12mos_child)
 
   }
 
@@ -197,19 +197,19 @@ prepare_input_time_series_art <- function(art, shape) {
     art_plot_data_long <-  dplyr::filter(art_plot_data_long,
                                     !(plot %in% c("art_adult_f","art_adult_m", "art_adult_sex_ratio",
                                                   "art_new_adult_f", "art_new_adult_m",
-                                                  "vls_tested_adult_f", "vls_tested_adult_m",
-                                                  "vls_suppressed_adult_f", "vls_suppressed_adult_m",
-                                                  "vls_coverage_adult_f", "vls_coverage_adult_m",
-                                                  "vls_prop_suppressed_adult_f", "vls_prop_suppressed_adult_m")))
+                                                  "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m",
+                                                  "vl_suppressed_12mos_adult_f", "vl_suppressed_12mos_adult_m",
+                                                  "vl_coverage_adult_f", "vl_coverage_adult_m",
+                                                  "vl_prop_suppressed_adult_f", "vl_prop_suppressed_adult_m")))
   }
 
   # Remove age disaggregated variables if paeds data is not present
   if(!("Y000_014" %in% age_level)) {
     art_plot_data_long <-  dplyr::filter(art_plot_data_long,
                                     !(plot %in% c("art_child","art_adult_child_ratio", "art_prop_u15",
-                                                  "art_new_child","vls_tested_child",
-                                                  "vls_suppressed_child","vls_coverage_child",
-                                                  "vls_prop_suppressed_child")))
+                                                  "art_new_child","vl_tested_12mos_child",
+                                                  "vl_suppressed_12mos_child","vl_coverage_child",
+                                                  "vl_prop_suppressed_child")))
   }
   return(art_plot_data_long)
 }

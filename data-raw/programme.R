@@ -97,7 +97,7 @@ demo_art_number <- demo_art_number %>%
       calendar_quarter = paste0("CY", year, "Q", quarter)
     ) %>%
     group_by(district, calendar_quarter, sex = "both", age_group) %>%
-    summarise(across(c(vls_tested, vls_suppressed), sum)),
+    summarise(across(c(vl_tested_12mos = vls_tested, vl_suppressed_12mos = vls_suppressed), sum)),
     by = c("area_name" = "district", "age_group", "sex", "calendar_quarter")
   )
 

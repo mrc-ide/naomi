@@ -1,3 +1,7 @@
+# naomi 2.5.10
+
+* Change viral load indicators to `vl_tested_12mos` and `vl_suppressed_12mos` to specify that indicators are reported for the previous 12 months even if reporting period is quarterly.
+
 # naomi 2.5.9
 
 * Fix to allow `prepare_input_time_series_art()` to accept data without art_new and vls indicators provided
