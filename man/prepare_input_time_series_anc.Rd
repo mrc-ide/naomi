@@ -7,16 +7,16 @@
 prepare_input_time_series_anc(anc, shape)
 }
 \arguments{
-\item{anc}{Path to file containing ANC data}
+\item{anc}{Path to file containing ANC data or ANC data object}
 
-\item{shape}{Path to file containing geojson areas data}
+\item{shape}{Path to file containing geojson areas data or shape sf object}
 }
 \value{
-Data formatted for plotting input time series containing columns
+Data formatted for plotting input ANC time series containing columns
 area_id, area_name, area_level, area_level_label, age_group, time_period,
 time_step, plot and value
 }
 \description{
-Take uploaded ANC and shape file paths and format as data which
+Take uploaded ANC and shape file paths or objects and format as data which
 can be used to draw input time series graphs.
 }

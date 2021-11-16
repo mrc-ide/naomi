@@ -128,8 +128,11 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
-assert_model_output_version <- function(obj) {
+assert_model_output_version <- function(obj, version = NULL) {
   if (!is_hintr_output(obj) || is.null(obj$version)) {
+    stop(t_("OLD_MODEL_OUTPUT"))
+  }
+  if (!is.null(version) && obj$version < version) {
     stop(t_("OLD_MODEL_OUTPUT"))
   }
   invisible(TRUE)
@@ -157,7 +160,7 @@ hintr_calibrate <- function(
 
 run_calibrate <- function(output, calibration_options, plot_data_path,
                           calibrate_output_path) {
-  assert_model_output_version(output)
+  assert_model_output_version(output, "2.5.7")
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
@@ -208,6 +211,140 @@ run_calibrate <- function(output, calibration_options, plot_data_path,
                      calibrate_output_path)
 }
 
+#' Get data for hintr calibrate plot
+#'
+#' Takes hintr_output object, reads data and prepares data in format needed
+#' for plotting calibrate barchart to compare calibrated, spectrum and
+#' unadjusted estimates for a set of indicators.
+#'
+#' @param output A hintr_output object
+#'
+#' @return Calibrated, unadjusted and spectrum estimates of indicators
+#' @export
+hintr_calibrate_plot <- function(output) {
+
+  assert_model_output_version(output, "2.5.7")
+  calibration_path <- output$model_output_path
+  calibration_data <- readRDS(calibration_path)
+
+  df <- calibration_data$output_package$fit$spectrum_calibration
+  ## Could be NULL if called with uncalibrated model output
+  if (is.null(df)) {
+    stop(t_("INVALID_CALIBRATE_OBJECT"))
+  }
+
+  dflong <- df %>%
+    tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
+                           tidyselect::ends_with("spectrum"),
+                           tidyselect::ends_with("calibrated")),
+                         names_to = c("indicator", "data_type"),
+                         names_pattern = "(.*)_(.*)")
+
+  ## Code copied from naomi_output_frame()
+
+  regions <- unique(dflong$spectrum_region_code)
+  age_groups <- unique(dflong$age_group)
+  sexes <- unique(dflong$sex)
+
+  region_out <- unique(df[c("spectrum_region_code", "spectrum_region_name")]) %>%
+    dplyr::mutate(
+      spectrum_region_code_out = spectrum_region_code,
+      spectrum_region_name_out = spectrum_region_name,
+      spectrum_region_name = NULL
+    )
+
+  if (nrow(region_out) > 1) {
+    region_out <- region_out %>%
+      dplyr::bind_rows(
+        region_out %>%
+        dplyr::mutate(spectrum_region_code_out = 0,
+                      spectrum_region_name_out = "National")
+      )
+  }
+
+
+  sex_out <- get_sex_out(sexes)
+
+  sex_join <- data.frame(sex_out = c("male", "female", "both", "both", "both"),
+                         sex = c("male", "female", "male", "female", "both"),
+                         stringsAsFactors = FALSE) %>%
+    dplyr::filter(sex %in% sexes, sex_out %in% !!sex_out)
+
+  age_group_out <- get_age_group_out(age_groups)
+
+  age_group_join <- get_age_groups() %>%
+    dplyr::filter(age_group %in% age_group_out) %>%
+    stats::setNames(paste0(names(.), "_out")) %>%
+    tidyr::crossing(get_age_groups() %>%
+                    dplyr::filter(age_group %in% age_groups)) %>%
+    dplyr::filter(age_group_start_out <= age_group_start,
+                  age_group_span_out == Inf |
+                  (age_group_start + age_group_span) <=
+                  (age_group_start_out + age_group_span_out)) %>%
+    dplyr::select(age_group_out, age_group)
+
+  dfexpand <- dflong %>%
+    dplyr::inner_join(region_out, by = "spectrum_region_code") %>%
+    dplyr::inner_join(sex_join, by = "sex") %>%
+    dplyr::inner_join(age_group_join, by = "age_group") %>%
+    dplyr::count(spectrum_region_code = spectrum_region_code_out,
+                 spectrum_region_name = spectrum_region_name_out,
+                 sex = sex_out,
+                 age_group = age_group_out,
+                 calendar_quarter,
+                 indicator,
+                 data_type,
+                 wt = value,
+                 name = "value")
+
+  ## Calculate rate indicators
+
+  dfw <- dfexpand %>%
+    tidyr::pivot_wider(names_from = indicator, values_from = value) %>%
+    dplyr::mutate(
+      prevalence = plhiv / population,
+      art_coverage = art_current / plhiv,
+      unaware_plhiv_prop = unaware / (plhiv - art_current),
+      aware_plhiv_prop = 1 - unaware_plhiv_prop,
+      incidence = infections / (population - plhiv)
+    ) %>%
+    tidyr::pivot_longer(cols = art_current:incidence, names_to = "indicator")
+
+  ## Calculate calibration ratio
+  val <- dfw %>%
+    tidyr::pivot_wider(names_from = data_type, values_from = value) %>%
+    dplyr::mutate(calibration_ratio = calibrated / raw) %>%
+    tidyr::pivot_longer(cols = c(calibrated, raw, spectrum, calibration_ratio),
+                        names_to = "data_type")
+
+  val <- val %>%
+    dplyr::select(data_type, spectrum_region_code, spectrum_region_name,
+                  sex, age_group, calendar_quarter, indicator, mean = value)
+
+  val
+}
+
+#' Get id to label mapping for calibration plot data type
+#'
+#' @return List of ID & label mappings
+#' @export
+data_type_labels <- function() {
+  list(
+    list(
+      id = "spectrum",
+      label = t_("TYPE_SPECTRUM")
+    ),
+    list(
+      id = "calibrated",
+      label = t_("TYPE_CALIBRATED")
+    ),
+    list(
+      id = "raw",
+      label = t_("TYPE_UNADJUSTED")
+    )
+  )
+}
+
 validate_calibrate_options <- function(calibration_options) {
 
   expected_options <- c("spectrum_plhiv_calibration_level",
@@ -223,7 +360,7 @@ validate_calibrate_options <- function(calibration_options) {
     !(expected_options %in% names(calibration_options))]
   if (length(missing_options) > 0) {
     stop(t_("Calibration cannot be run, missing options for {{missing}}.",
-                 list(missing = paste(missing_options, collapse = ", "))))
+            list(missing = paste(missing_options, collapse = ", "))))
   }
 
   if (!all(calibration_options[["calibrate_method"]] %in% c("logistic", "proportional"))) {
@@ -266,13 +403,13 @@ naomi_prepare_data <- function(data, options) {
   vls_survey_ids <- NULL
 
   if(!is.null(options$include_art_t1) &&
-     as.logical(options$include_art_t1))
+      as.logical(options$include_art_t1))
     artnum_calendar_quarter1 <- calendar_quarter_t1
   else
     artnum_calendar_quarter1 <- NULL
 
   if(!is.null(options$include_art_t2) &&
-     as.logical(options$include_art_t2))
+      as.logical(options$include_art_t2))
     artnum_calendar_quarter2 <- calendar_quarter_t2
   else
     artnum_calendar_quarter2 <- NULL
@@ -329,115 +466,115 @@ new_progress <- function() {
 }
 
 Progress <- R6::R6Class("Progress", list(
-  cloneable = FALSE,
-  progress = NULL,
-  iteration = 0,
-  start_time = NULL,
-  elapsed = NULL,
+                                      cloneable = FALSE,
+                                      progress = NULL,
+                                      iteration = 0,
+                                      start_time = NULL,
+                                      elapsed = NULL,
 
-  initialize = function() {
-    self$progress <-
-      list(
-        prepare_inputs = list(
-          started = FALSE,
-          complete = FALSE,
-          name = t_("PROGRESS_PREPARE_INPUTS")
-        ),
-        fit_model = list(
-          started = FALSE,
-          complete = FALSE,
-          name = t_("PROGRESS_FIT_MODEL"),
-          helpText = NULL
-        ),
-        uncertainty = list(
-          started = FALSE,
-          complete = FALSE,
-          name = t_("PROGRESS_UNCERTAINTY")
-        ),
-        prepare_outputs = list(
-          started = FALSE,
-          complete = FALSE,
-          name = t_("PROGRESS_PREPARE_OUTPUTS")
-        )
-      )
-  },
+                                      initialize = function() {
+                                        self$progress <-
+                                          list(
+                                            prepare_inputs = list(
+                                              started = FALSE,
+                                              complete = FALSE,
+                                              name = t_("PROGRESS_PREPARE_INPUTS")
+                                            ),
+                                            fit_model = list(
+                                              started = FALSE,
+                                              complete = FALSE,
+                                              name = t_("PROGRESS_FIT_MODEL"),
+                                              helpText = NULL
+                                            ),
+                                            uncertainty = list(
+                                              started = FALSE,
+                                              complete = FALSE,
+                                              name = t_("PROGRESS_UNCERTAINTY")
+                                            ),
+                                            prepare_outputs = list(
+                                              started = FALSE,
+                                              complete = FALSE,
+                                              name = t_("PROGRESS_PREPARE_OUTPUTS")
+                                            )
+                                          )
+                                      },
 
-  start = function(step_name) {
-    self$step_exists(step_name)
-    self$progress[[step_name]]$started <- TRUE
-  },
+                                      start = function(step_name) {
+                                        self$step_exists(step_name)
+                                        self$progress[[step_name]]$started <- TRUE
+                                      },
 
-  complete = function(step_name) {
-    self$step_exists(step_name)
-    self$progress[[step_name]]$complete <- TRUE
-  },
+                                      complete = function(step_name) {
+                                        self$step_exists(step_name)
+                                        self$progress[[step_name]]$complete <- TRUE
+                                      },
 
-  step_exists = function(step_name) {
-    self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
-  },
+                                      step_exists = function(step_name) {
+                                        self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
+                                      },
 
-  print = function() {
-    signalCondition(structure(self$progress,
-                              class = c("progress", "condition")))
-  },
+                                      print = function() {
+                                        signalCondition(structure(self$progress,
+                                                                  class = c("progress", "condition")))
+                                      },
 
-  set_start_time = function() {
-    self$start_time <- Sys.time()
-  },
+                                      set_start_time = function() {
+                                        self$start_time <- Sys.time()
+                                      },
 
-  iterate_fit = function() {
-    if (is.null(self$start_time)) {
-      self$set_start_time()
-    }
-    self$iteration <- self$iteration + 1
-    self$elapsed <- Sys.time() - self$start_time
-    self$progress$fit_model$helpText <- t_("PROGRESS_FIT_MODEL_HELP_TEXT",
-      list(iteration = self$iteration,
-           elapsed = prettyunits::pretty_dt(self$elapsed)))
-    self$print()
-  },
+                                      iterate_fit = function() {
+                                        if (is.null(self$start_time)) {
+                                          self$set_start_time()
+                                        }
+                                        self$iteration <- self$iteration + 1
+                                        self$elapsed <- Sys.time() - self$start_time
+                                        self$progress$fit_model$helpText <- t_("PROGRESS_FIT_MODEL_HELP_TEXT",
+                                                                               list(iteration = self$iteration,
+                                                                                    elapsed = prettyunits::pretty_dt(self$elapsed)))
+                                        self$print()
+                                      },
 
-  finalise_fit = function() {
-    self$progress$fit_model$helpText <- t_(
-      "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE",
-      list(iteration = self$iteration,
-           elapsed = prettyunits::pretty_dt(self$elapsed)))
-  }
-))
+                                      finalise_fit = function() {
+                                        self$progress$fit_model$helpText <- t_(
+                                          "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE",
+                                          list(iteration = self$iteration,
+                                               elapsed = prettyunits::pretty_dt(self$elapsed)))
+                                      }
+                                    ))
 
 new_simple_progress <- function() {
   SimpleProgress$new()
 }
 
 SimpleProgress <- R6::R6Class("SimpleProgress", list(
-  cloneable = FALSE,
-  progress = "",
-  start_time = NULL,
-  elapsed = NULL,
+                                                  cloneable = FALSE,
+                                                  progress = "",
+                                                  start_time = NULL,
+                                                  elapsed = NULL,
 
-  initialize = function() {
-    self$set_start_time()
-  },
+                                                  initialize = function() {
+                                                    self$set_start_time()
+                                                  },
 
-  print = function() {
-    signalCondition(structure(list(message = self$progress),
-                              class = c("progress", "condition")))
-  },
+                                                  print = function() {
+                                                    signalCondition(structure(list(message = self$progress),
+                                                                              class = c("progress", "condition")))
+                                                  },
 
-  set_start_time = function() {
-    self$start_time <- Sys.time()
-  },
+                                                  set_start_time = function() {
+                                                    self$start_time <- Sys.time()
+                                                  },
 
-  update_progress = function(message_key) {
-    if (is.null(self$start_time)) {
-      self$set_start_time()
-    }
-    self$elapsed <- Sys.time() - self$start_time
-    self$progress <- t_(message_key,
-                        list(elapsed = prettyunits::pretty_dt(self$elapsed)))
-    self$print()
-  }
-))
+                                                  update_progress = function(message_key) {
+                                                    if (is.null(self$start_time)) {
+                                                      self$set_start_time()
+                                                    }
+                                                    self$elapsed <- Sys.time() - self$start_time
+                                                    self$progress <- t_(message_key,
+                                                                        list(elapsed = prettyunits::pretty_dt(self$elapsed)))
+                                                    self$print()
+                                                  }
+                                                ))
 
 naomi_info_input <- function(data) {
   get_col_from_list <- function(data, what) {
@@ -629,13 +766,13 @@ build_description <- function(type_text, options) {
     sprintf("%s - %s", name, value)
   }
   opt_text <- Map(write_options,
-      c(t_("OPTIONS_GENERAL_AREA_SCOPE_LABEL"),
-        t_("OPTIONS_GENERAL_AREA_LEVEL_LABEL"),
-        t_("OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL"),
-        t_("OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL")),
-      c(options[["area_scope"]],
-        options[["area_level"]],
-        options[["calendar_quarter_t2"]],
-        options[["calendar_quarter_t3"]]))
+                  c(t_("OPTIONS_GENERAL_AREA_SCOPE_LABEL"),
+                    t_("OPTIONS_GENERAL_AREA_LEVEL_LABEL"),
+                    t_("OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL"),
+                    t_("OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL")),
+                  c(options[["area_scope"]],
+                    options[["area_level"]],
+                    options[["calendar_quarter_t2"]],
+                    options[["calendar_quarter_t3"]]))
   paste0(c(type_text, "", opt_text), collapse = "\n")
 }

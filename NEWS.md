@@ -1,10 +1,49 @@
-# naomi 2.5.5
+# naomi 2.5.12
 
 * Return naomi warnings in the output from `hintr_run_model`, `hintr_calibrate` and `validate_model_options`
+* Add `naomi_warning` helper to raise warnings which can be displayed in front end
+
+# naomi 2.5.10
+
+* Change viral load indicators to `vl_tested_12mos` and `vl_suppressed_12mos` to specify that indicators are reported for the previous 12 months even if reporting period is quarterly.
+
+# naomi 2.5.9
+
+* Fix to allow `prepare_input_time_series_art()` to accept data without art_new and vls indicators provided
+
+# naomi 2.5.8
+
+* Add _simulated_ viral load testing data to example datasets.
+
+
+# naomi 2.5.7
+
+* Throw an error from `calibrate_outputs()` if user tries to calibrate an ouptut package that has
+  already been calibrated. This is determined by whether the `output$spectrum_calibration` table 
+  exists in the output object. _In future, it would be nicer to allow user to re-calibrate an output 
+  package. This will require saving additional information to un-calibrate and re-calibrate._
+
+* Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
+
+* Add function `hintr_calibrate_plot` to return data for plotting calibrate barchart.
+  
+# naomi 2.5.5
+
+* Add argument `na.rm=` to `output_package()` to allow calculation of quantiles if there are missing values in the simulation. Default is `na.rm = FALSE` and `na.rm = TRUE` is to be used for debugging purposes only. Cases where missing values occur will usually indicate very poor model fits and issues that need to be addressed.
 
 # naomi 2.5.4
 
-* Add `naomi_warning` helper to raise warnings which can be displayed in front end
+Updates to PEPFAR Data Pack outputs.
+
+* Add age groups 50-54, 55-59, 60-64, 65+.
+* Edit format of PEPFAR data pack CSV:
+  - Add column `dataelement_uid`.
+  - Add `=""<>""` around age group values.
+* Change file name save to `pepfar_datapack_indicators_2022.csv`.
+* Separate input data aggregation and plot prepartion scripts
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+time series function outputs
+>>>>>>> master
 
 # naomi 2.5.3
 
@@ -50,6 +89,7 @@
 * Option to output summary report in French.
 
 # naomi 2.3.12
+
 * Fix to summary report to display input ANC data in description.
 * Ensure summary report pulls most recent calibration options.
 * Fix `validate_calibration_options()` typo.
