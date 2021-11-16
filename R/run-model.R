@@ -52,10 +52,19 @@
 hintr_run_model <- function(data, options,
                             model_output_path = tempfile(fileext = ".rds"),
                             validate = TRUE) {
-  handle_naomi_warnings(run_model(data, options, model_output_path, validate))
+  model_run_output <- handle_naomi_warnings(
+    run_model(data, options, validate))
+  warnings <- model_run_output$warnings
+  model_run_output$warnings <- list(model_fit = warnings)
+  saveRDS(model_run_output, model_output_path)
+  build_hintr_output(
+    NULL,
+    model_output_path,
+    warnings = warnings
+  )
 }
 
-run_model <- function(data, options, model_output_path, validate) {
+run_model <- function(data, options, validate) {
   progress <- new_progress()
   progress$start("prepare_inputs")
   progress$print()
@@ -100,26 +109,21 @@ run_model <- function(data, options, model_output_path, validate) {
   outputs <- output_package(fit, naomi_data)
   info <- naomi_info(data, options)
   attr(outputs, "info") <- info
-  model_run_output <- list(
+  progress$complete("prepare_outputs")
+  progress$print()
+
+  list(
     output_package = outputs,
     naomi_data = naomi_data,
     info = info
   )
-  saveRDS(model_run_output, model_output_path)
-
-  progress$complete("prepare_outputs")
-  progress$print()
-
-  build_hintr_output(
-    NULL,
-    model_output_path
-  )
 }
 
-build_hintr_output <- function(plot_data_path, model_output_path) {
+build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
   out <- list(plot_data_path = plot_data_path,
               model_output_path = model_output_path,
-              version = packageVersion("naomi"))
+              version = packageVersion("naomi"),
+              warnings = warnings)
   class(out) <- "hintr_output"
   out
 }
@@ -153,13 +157,17 @@ assert_model_output_version <- function(obj, version = NULL) {
 hintr_calibrate <- function(
   output, calibration_options, plot_data_path = tempfile(fileext = ".rds"),
   calibrate_output_path = tempfile(fileext = ".rds")) {
-  handle_naomi_warnings(run_calibrate(output, calibration_options,
-                                      plot_data_path,
-                                      calibrate_output_path))
+  out <- handle_naomi_warnings(run_calibrate(output, calibration_options))
+  warnings <- out$warnings
+  out$calibrate_data$warnings$calibrate <- warnings
+  saveRDS(out$plot_data, plot_data_path)
+  saveRDS(out$calibrate_data, calibrate_output_path)
+  build_hintr_output(plot_data_path,
+                     calibrate_output_path,
+                     warnings = warnings)
 }
 
-run_calibrate <- function(output, calibration_options, plot_data_path,
-                          calibrate_output_path) {
+run_calibrate <- function(output, calibration_options) {
   assert_model_output_version(output, "2.5.7")
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
@@ -193,22 +201,21 @@ run_calibrate <- function(output, calibration_options, plot_data_path,
   calibration_data <- list(
     output_package = calibrated_output,
     naomi_data = model_output$naomi_data,
-    info = model_output$info
+    info = model_output$info,
+    warnings = model_output$warnings
   )
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
   progress$update_progress("PROGRESS_CALIBRATE_SAVE_OUTPUT")
-  saveRDS(calibration_data, calibrate_output_path)
 
   attr(calibrated_output, "info") <- calibration_data$info
   indicators <- add_output_labels(calibrated_output)
-  saveRDS(indicators, file = plot_data_path)
 
   naomi_warning("ART coverage greater than 100% for 10 age groups",
                 c("model_calibrate", "review_output"))
 
-  build_hintr_output(plot_data_path,
-                     calibrate_output_path)
+  list(plot_data = indicators,
+       calibrate_data = calibration_data)
 }
 
 #' Get data for hintr calibrate plot

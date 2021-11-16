@@ -13,12 +13,13 @@ test_that("model can be run", {
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 
   expect_equal(model_run$warnings, list())
 })
@@ -49,12 +50,13 @@ test_that("model can be run without programme data", {
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 })
 
 test_that("model fit without survey ART and survey recency data", {
@@ -314,6 +316,18 @@ test_that("model run can be calibrated", {
                "ART coverage greater than 100% for 10 age groups")
   expect_equal(warning$locations, c("model_calibrate", "review_output"))
 
+  output <- readRDS(calibrated_output$model_output_path)
+  expect_equal(names(output),
+               c("output_package", "naomi_data", "info", "warnings"))
+  expect_s3_class(output$output_package, "naomi_output")
+  expect_s3_class(output$naomi_data, "naomi_data")
+  expect_s3_class(output$naomi_data, "naomi_mf")
+  expect_equal(
+    names(output$info),
+    c("inputs.csv", "options.yml", "packages.csv", "calibration_options.yml"))
+  expect_setequal(names(output$warnings), c("model_fit", "calibrate"))
+  expect_equal(output$warnings$calibrate, calibrated_output$warnings)
+
   ## Cannot calibrate multiple times
   calibration_options <- list(
     spectrum_plhiv_calibration_level = "subnational",
@@ -458,12 +472,13 @@ test_that("Model can be run without .shiny90 file", {
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 
   expect_setequal(names(output$output_package$meta_area),
                    c("area_level", "area_level_label", "area_id", "area_name",
