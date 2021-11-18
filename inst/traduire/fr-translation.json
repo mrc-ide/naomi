@@ -90,7 +90,7 @@
     "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_LABEL": "Enquête design éffet - Proportion de personnes récemment infectées",
     "OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP": "DEFF approximatif pour ajuster la taille effective de l'échantillon de l'enquête sur la proportion récemment infectée parmi les séropositifs",
     "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Trimestre calendaire pour générer une projection à court terme",
-    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Trimestre calendaire pour générer une projection à court terme. Doit être après le trimestre calendaire pour générer des estimations",
+    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Doit être après le trimestre calendaire pour générer des estimations",
     "MONTH_MARCH": "Mars",
     "MONTH_JUNE": "Juin",
     "MONTH_SEPTEMBER": "Septembre",
