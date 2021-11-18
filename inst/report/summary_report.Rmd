@@ -1,5 +1,4 @@
 ---
-title: "&nbsp;"
 fig_width: 5
 fig_height: 5
 params:
@@ -21,12 +20,19 @@ print_en <- FALSE
 print_pt <- FALSE
 if (params$lang == "fr") {
   print_fr <- TRUE
+  title <- "Naomi rapport de synthèse"
 } else if (params$lang == "pt") {
   print_pt <- TRUE
+  title <- "Naomi relatório de síntese"
 } else {
   print_en <- TRUE
+  title <- "Naomi summary report"
 }
 ```
+
+---
+title: `r title`
+---
 
 ```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
 #Set limit for scientific notation
@@ -432,7 +438,7 @@ p2 <- naomi::map_outputs(indicators_geom,
                          calendar_quarter = options$calendar_quarter_t2,
                          sex_disag = "both", 
                          colour_palette = "green",
-                         fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
+                         fig_title = t_("ART_CURRENT_MAP_PLOT_TITLE"),
                          legend_title = t_("ART_NUMBER_RESIDENTS"))
 
 #-------------------------------------------------------------------------------
