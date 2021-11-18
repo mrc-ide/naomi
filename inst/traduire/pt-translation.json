@@ -141,7 +141,7 @@
     "OPTIONS_NO_LABEL": "Não",
     "OPTIONS_OUTPUT_DESCRIPTION": "Opções para controlar os resultados do modelo descarregado",
     "OPTIONS_OUTPUT_LABEL": "Opções de saída",
-    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Trimestre do calendário para gerar projeções de curto prazo. Deve ser após o trimestre do calendário para gerar estimativas.",
+    "OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP": "Deve ser após o trimestre do calendário para gerar estimativas.",
     "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL": "Trimestre do calendário para gerar projeções de curto prazo",
     "OPTIONS_POPULATION_CALIBRATION_DESCRIPTION": "Opções para calibrar de acordo com o tamanho da população no Spectrum. Em caso de ficheiro Spectrum nacional, as opções 'Nacional' e 'Subnacional' apresentarão o mesmo resultado. A calibração de acordo com a população no Spectrum é concluída antes do ajuste do modelo.",
     "OPTIONS_POPULATION_CALIBRATION_LABEL": "Calibração da população",
