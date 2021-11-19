@@ -9,7 +9,7 @@
 ## add your ADR key to setup below.
 url <- "https://adr.unaids.org/"
 ckanr::ckanr_setup(url = url,
-                   key = "KEY")
+                   key = "37ff2412-d89e-400c-a4bf-8deff4a0c4ff")
 src <- "inputs-unaids-estimates"
 dest <- "country-estimates-22"
 ## The display name of the package being created, ADR requies this
@@ -35,7 +35,7 @@ countries_keep <- !(countries_src %in% countries_dest)
 countries_src <- countries_src[countries_keep]
 
 ## If more than 1 dataset for a country - don't do anything report out
-multiple <- countries_src[table(countries_src) > 1]
+multiple <- names(table(countries_src))[table(countries_src) > 1]
 for (country in multiple) {
   message(sprintf("%s has more than 1 %s dataset, don't know how to migrate",
                   country, src))
@@ -89,7 +89,7 @@ for (package in packages_copy) {
         upload = path,
         extras = list(
           restricted = paste0('{"allowed_organizations": "unaids", ',
-                              '"allowed_users": "", "level": "public"}'),
+                              '"allowed_users": "", "level": "restricted"}'),
           resource_type = resource))
     }
   }
