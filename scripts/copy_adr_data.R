@@ -58,6 +58,7 @@ for (country in multiple) {
                   country, src))
 }
 countries_to_copy <- countries_src[table(countries_src) == 1]
+countries_to_copy <- countries_to_copy[countries_to_copy != "Albania"]
 
 packages_keep <- vapply(packages_src$results, function(package) {
   package[["geo-location"]] %in% countries_to_copy
