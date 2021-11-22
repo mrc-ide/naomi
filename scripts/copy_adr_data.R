@@ -1,24 +1,41 @@
-## This script will copy ADR datasets from a source package to a
-## destination package. The `src` and `dest` can be changed or the
-## resources which are copied over can be changed too.
-## A dataset will not be created if it already exists in the `dest` package
-## type. Similary a dataset won't be created if there isn't a unique
-## package for that country and type (as we don't know which to copy from)
+#! /usr/bin/env Rscript
+"Copy ADR datasets from a source package to a destination package. The `src`
+  and `dest` can be changed or the resources which are copied over can be
+  changed too. A dataset will not be created if it already exists in the
+  `dest` package type. Similary a dataset won't be created if there isn't a
+  unique package for that country and type (as we don't know which to
+  copy from). Before running delete any 2022 packages you want to replace.
 
-## Before running delete any 2022 packages you want to replace and
-## add your ADR key to setup below.
-url <- "https://adr.unaids.org/"
-ckanr::ckanr_setup(url = url,
-                   key = "37ff2412-d89e-400c-a4bf-8deff4a0c4ff")
+Usage:
+    copy_adr_data.R  [--dry-run] [--site=<site>] --key=<key>
+    copy_adr_data.R -h | --help
+
+Options
+    --dry-run     Run in dry-run mode.
+    --site=<site> ADR site to use dev or prod [default: dev].
+    --key=<key>   ADR auth key.
+" -> doc
+
+args <- docopt::docopt(doc)
+dry_run <- args[["dry_run"]]
+key <- args[["key"]]
+site <- args[["site"]]
+if (site == "prod") {
+  url <-  "https://adr.unaids.org/"
+} else if (site == "dev") {
+  url <- "https://dev.adr.fjelltopp.org/"
+} else {
+  stop("Site must be prod or dev")
+}
+
+ckanr::ckanr_setup(url = url, key = key)
 src <- "inputs-unaids-estimates"
 dest <- "country-estimates-22"
 ## The display name of the package being created, ADR requies this
 dest_name <- "HIV Estimates 2022"
 resources <- c("inputs-unaids-geographic", "inputs-unaids-anc",
                "inputs-unaids-art", "inputs-unaids-survey",
-               "inputs-unaids-population", "inputs-unaids-spectrum-file",
-               "inputs-unaids-hiv-testing", "inputs-unaids-shiny90-survey")
-dry_run <- FALSE
+               "inputs-unaids-population", "inputs-unaids-spectrum-file")
 
 packages_src <- ckanr::package_search(q = sprintf("type:%s", src),
                                        rows = 1000)
@@ -42,8 +59,6 @@ for (country in multiple) {
 }
 countries_to_copy <- countries_src[table(countries_src) == 1]
 
-## TODO: remove tmp line
-countries_to_copy <- "Aruba"
 packages_keep <- vapply(packages_src$results, function(package) {
   package[["geo-location"]] %in% countries_to_copy
 }, logical(1))
