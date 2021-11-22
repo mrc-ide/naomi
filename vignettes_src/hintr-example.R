@@ -40,8 +40,8 @@ hintr_options <- list(
   survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
   survey_art_coverage = "DEMO2016PHIA",
   survey_recently_infected = "DEMO2016PHIA",
-  include_art_t1 = "true",
-  include_art_t2 = "true",
+  include_art_t1 = "false",
+  include_art_t2 = "false",
   anc_clients_year2 = 2018,
   anc_clients_year2_num_months = "9",
   anc_prevalence_year1 = 2016,
@@ -49,8 +49,8 @@ hintr_options <- list(
   anc_art_coverage_year1 = 2016,
   anc_art_coverage_year2 = 2018,
   spectrum_population_calibration = "national",
-  artattend = "true",
-  artattend_t2 = "true",
+  artattend = "false",
+  artattend_t2 = "false",
   artattend_log_gamma_offset = -4L,
   output_aware_plhiv = "true",
   rng_seed = 17,
@@ -77,6 +77,7 @@ hintr_paths <- hintr_run_model(hintr_data, hintr_options)
 calibrated_paths <- hintr_calibrate(hintr_paths, calibration_options)
 spectrum_download <- hintr_prepare_spectrum_download(calibrated_paths)
 
+#' TO DO: add summary report download
 
 #' Read output package and generate datapack export
 naomi_output <- read_output_package(spectrum_download$path)

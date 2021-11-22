@@ -83,7 +83,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg"))
+                    "anc_tested_neg", "art_new", "vl_tested_12mos",
+                    "vl_suppressed_12mos"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -96,7 +97,7 @@ test_that("colour scales metadata is well formed", {
       "aware_plhiv_num", "aware_plhiv_prop", "unaware_plhiv_num",
       "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
       "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-      "anc_tested_neg"))
+      "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -124,11 +125,12 @@ test_that("metadata is well formed", {
                     "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
                     "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
                     "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg"))
+                    "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
-  expect_true(all(meta$data_type %in% c("survey", "anc", "programme", "output")))
+  expect_true(all(meta$data_type %in%
+                    c("survey", "anc", "programme", "output", "calibrate")))
   expect_setequal(meta$name,
                   c("HIV prevalence", "ART coverage", "Viral load suppression",
                     "Proportion recently infected", "PLHIV", "Population",
@@ -140,7 +142,8 @@ test_that("metadata is well formed", {
                     "ANC prior ART coverage", "ANC clients",
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
-                    "ANC known positive", "ANC tested positive", "ANC tested negative"))
+                    "ANC known positive", "ANC tested positive", "ANC tested negative",
+                    "ART new", "VL tested", "VL tests suppressed"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",

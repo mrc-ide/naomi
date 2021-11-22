@@ -13,12 +13,13 @@ test_that("model can be run", {
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 
   expect_equal(model_run$warnings, list())
 })
@@ -49,12 +50,13 @@ test_that("model can be run without programme data", {
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 })
 
 test_that("model fit without survey ART and survey recency data", {
@@ -314,6 +316,18 @@ test_that("model run can be calibrated", {
                "ART coverage greater than 100% for 10 age groups")
   expect_equal(warning$locations, c("model_calibrate", "review_output"))
 
+  output <- readRDS(calibrated_output$model_output_path)
+  expect_equal(names(output),
+               c("output_package", "naomi_data", "info", "warnings"))
+  expect_s3_class(output$output_package, "naomi_output")
+  expect_s3_class(output$naomi_data, "naomi_data")
+  expect_s3_class(output$naomi_data, "naomi_mf")
+  expect_equal(
+    names(output$info),
+    c("inputs.csv", "options.yml", "packages.csv", "calibration_options.yml"))
+  expect_setequal(names(output$warnings), c("model_fit", "calibrate"))
+  expect_equal(output$warnings$calibrate, calibrated_output$warnings)
+
   ## Cannot calibrate multiple times
   calibration_options <- list(
     spectrum_plhiv_calibration_level = "subnational",
@@ -329,6 +343,55 @@ test_that("model run can be calibrated", {
   expect_error(
     hintr_calibrate(calibrated_output, calibration_options),
     "Calibration cannot be re-run for this model fit please re-run fit step.")
+})
+
+test_that("calibrating model with 'none' returns same results", {
+
+  none_calibration_options <- list(
+    spectrum_plhiv_calibration_level = "none",
+    spectrum_plhiv_calibration_strat = "sex_age_coarse",
+    spectrum_artnum_calibration_level = "none",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    spectrum_aware_calibration_level = "none",
+    spectrum_aware_calibration_strat = "age_coarse",
+    spectrum_infections_calibration_level = "none",
+    spectrum_infections_calibration_strat = "age_coarse",
+    calibrate_method = "logistic"
+  )
+
+  plot_data_path <- tempfile(fileext = ".rds")
+  calibration_output_path <- tempfile(fileext = ".rds")
+  calibrated_output <- hintr_calibrate(a_hintr_output,
+                                       none_calibration_options,
+                                       plot_data_path,
+                                       calibration_output_path)
+
+  out_raw <- readRDS(a_hintr_output$model_output_path)
+  out_raw_disag <- disaggregate_0to4_outputs(out_raw$output_package, out_raw$naomi_data)
+
+  out_calib <- readRDS(calibrated_output$model_output_path)
+
+  expect_equal(out_raw_disag$indicators, out_calib$output_package$indicators, tolerance = 1e-6)
+  expect_equal(out_raw$output_package$art_attendance, out_calib$output_package$art_attendance)
+})
+
+test_that("re-calibrating an already calibrated output throws error", {
+
+  plot_data_path1 <- tempfile(fileext = ".rds")
+  calibration_output_path1 <- tempfile(fileext = ".rds")
+  calibrated_output1 <- hintr_calibrate(a_hintr_output,
+                                        a_hintr_calibration_options,
+                                        plot_data_path1,
+                                        calibration_output_path1)
+
+  ## Calibrate again with same options using the outputs of calibration 1
+  plot_data_path2 <- tempfile(fileext = ".rds")
+  calibration_output_path2 <- tempfile(fileext = ".rds")
+  expect_error(hintr_calibrate(calibrated_output1,
+                               a_hintr_calibration_options,
+                               plot_data_path2,
+                               calibration_output_path2),
+               "Calibration cannot be re-run for this model fit please re-run fit step.")
 })
 
 test_that("useful error returned when model output can't be calibrated", {
@@ -409,12 +472,13 @@ test_that("Model can be run without .shiny90 file", {
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 
   expect_setequal(names(output$output_package$meta_area),
                    c("area_level", "area_level_label", "area_id", "area_name",
@@ -569,4 +633,62 @@ test_that("assert_model_output_version ensures model version up to date", {
   expect_true(assert_model_output_version(a_hintr_output))
   expect_error(assert_model_output_version(list(version = "123")),
                "Model output out of date please re-run model and try again")
+  output <- a_hintr_output
+  output$version <- "2.5.3"
+  expect_error(assert_model_output_version(output, "2.5.4"),
+               "Model output out of date please re-run model and try again")
+  expect_true(assert_model_output_version(output, "2.5.3"))
+  expect_true(assert_model_output_version(output))
 })
+
+test_that("calibrate plot data can be generated", {
+  plot_data <- hintr_calibrate_plot(a_hintr_output)
+  expect_setequal(names(plot_data),
+                  c("spectrum_region_code", "spectrum_region_name", "sex",
+                    "age_group", "calendar_quarter", "indicator", "mean",
+                    "data_type"))
+  expect_setequal(unique(plot_data$spectrum_region_name),
+                  c("National", "Northern Region", "Central Region",
+                    "Southern Region"))
+  expect_setequal(unique(plot_data$indicator),
+                  c("art_current", "births_artpop", "births_hivpop",
+                    "infections", "plhiv", "population", "unaware",
+                    "prevalence", "art_coverage", "unaware_plhiv_prop",
+                    "aware_plhiv_prop", "incidence"))
+})
+
+test_that("can get data_type labels", {
+  labels <- data_type_labels()
+  expect_length(labels, 3)
+  expect_equal(labels[[1]], list(
+    id = "spectrum",
+    label = "Spectrum"
+  ))
+  expect_equal(labels[[2]], list(
+    id = "calibrated",
+    label = "Calibrated"
+  ))
+  expect_equal(labels[[3]], list(
+    id = "raw",
+    label = "Unadjusted"
+  ))
+})
+
+test_that("trying to calibrate incompatible model output returns error", {
+
+  ## Calibration makes no modification of existing files.
+  plot_data_path <- tempfile(fileext = ".rds")
+  calibration_output_path <- tempfile(fileext = ".rds")
+  hintr_output <- list(
+    plot_data_path = NULL,
+    model_output_path = "refdata/naomi-2.5.5/output_data_2.5.5.rds",
+    version = "2.5.5"
+  )
+  class(hintr_output) <- "hintr_output"
+  expect_error(hintr_calibrate(hintr_output,
+                               a_hintr_calibration_options,
+                               plot_data_path,
+                               calibration_output_path),
+               "Model output out of date please re-run model and try again")
+})
+

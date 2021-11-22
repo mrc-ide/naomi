@@ -36,7 +36,7 @@
           "type": "select",
           "options":
             <+calendar_quarter_t2_options+>,
-          "value": "CY2020Q4",
+          "value": "CY2021Q4",
           "required": true
         }
       ]
@@ -47,7 +47,7 @@
         {
           "name": "calendar_quarter_t3",
           "type": "select",
-          "value": "CY2021Q3",
+          "value": "CY2022Q3",
           "helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
           "required": true,
           "options": [
@@ -98,7 +98,23 @@
             {
               "id": "CY2022Q4",
               "label": "t_(MONTH_DECEMBER) 2022"
-            }
+            },
+            {
+              "id": "CY2023Q1",
+              "label": "t_(MONTH_MARCH) 2023"
+            },
+            {
+              "id": "CY2023Q2",
+              "label": "t_(MONTH_JUNE) 2023"
+            },
+            {
+              "id": "CY2023Q3",
+              "label": "t_(MONTH_SEPTEMBER) 2023"
+            },
+            {
+              "id": "CY2023Q4",
+              "label": "t_(MONTH_DECEMBER) 2023"
+            }	      
           ]
         }
       ]
