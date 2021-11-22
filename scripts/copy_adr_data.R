@@ -28,6 +28,10 @@ if (site == "prod") {
   stop("Site must be prod or dev")
 }
 
+key <- "f1f8a5c4-b9f5-43bb-ad4f-a6f8f234c4ed"
+
+
+
 ckanr::ckanr_setup(url = url, key = key)
 src <- "inputs-unaids-estimates"
 dest <- "country-estimates-22"
@@ -57,8 +61,7 @@ for (country in multiple) {
   message(sprintf("%s has more than 1 %s dataset, don't know how to migrate",
                   country, src))
 }
-countries_to_copy <- countries_src[table(countries_src) == 1]
-countries_to_copy <- countries_to_copy[countries_to_copy != "Albania"]
+countries_to_copy <- countries_src[!(countries_src %in% c(multiple, "Albania"))]
 
 packages_keep <- vapply(packages_src$results, function(package) {
   package[["geo-location"]] %in% countries_to_copy
@@ -66,8 +69,8 @@ packages_keep <- vapply(packages_src$results, function(package) {
 packages_copy <- packages_src$results[packages_keep]
 
 ## For each country, download 2021 resources
-## Upload as 2022 dataset (either straight to country or to Naomi development
-## team and Ian can transfer from there)
+## Upload as 2022 dataset in imperial-college-london org
+## then transfer from there
 t <- tempfile()
 dir.create(t)
 for (package in packages_copy) {
