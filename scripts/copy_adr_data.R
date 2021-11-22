@@ -84,8 +84,12 @@ for (package in packages_copy) {
       maintainer = "Naomi team",
       notes = "A record of the input data and final HIV estimates.")
   }
-  resource_types <- vapply(package$resources, "[[", character(1),
-                           "resource_type")
+  resource_types <- vapply(package$resources, function(resource) {
+    type <- resource[["resource_type"]]
+    if (is.null(type)) {
+      type <- "none"
+    }
+  }, character(1))
   for (resource in intersect(resources, resource_types)) {
     details <- package$resources[resource_types == resource]
     if (length(details) > 1) {
