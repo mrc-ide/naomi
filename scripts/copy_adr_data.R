@@ -89,6 +89,7 @@ for (package in packages_copy) {
     if (is.null(type)) {
       type <- "none"
     }
+    type
   }, character(1))
   for (resource in intersect(resources, resource_types)) {
     details <- package$resources[resource_types == resource]
