@@ -764,7 +764,7 @@ save_output <- function(filename, dir,
   }
 
   dir.create("info")
-  write_navigator_checklist(naomi_output, "unaids_navigator_checklist.csv")
+  write_navigator_checklist(naomi_output, "info/unaids_navigator_checklist.csv")
 
   info <- attr(naomi_output, "info")
   if (length(info) > 0L) {
