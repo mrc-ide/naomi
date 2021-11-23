@@ -6,7 +6,7 @@
 #' @details
 #'
 #' @export
-write_navigator_checks <- function(naomi_output,
+write_navigator_checklist <- function(naomi_output,
                                    path) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
@@ -35,32 +35,34 @@ write_navigator_checks <- function(naomi_output,
            "Cal_new_infections",
            "Cal_method")
 
-  label <- c(t("NAVIGATOR_ART_IS_SPECTRUM_DESC"),
-             t("NAVIGATOR_ANC_IS_SPECTRUM_DESC"),
-             t("NAVIGATOR_PACKAGE_CREATED_DESC"),
-             t("NAVIGATOR_PACKAGE_HAS_ALL_DATA_DESC"),
-             t("NAVIGATOR_OPT_RECENT_QTR_DESC"),
-             t("NAVIGATOR_OPT_FUTURE_PROJ_QTR_DESC"),
-             t("NAVIGATOR_OPT_AREA_ID_SELECTED_DESC"),
-             t("NAVIGATOR_OPT_CALENDAR_SURVEY_MATCH_DESC"),
-             t("NAVIGATOR_OPT_RECENT_SURVEY_ONLY_DESC"),
-             t("NAVIGATOR_OPT_ART_COVERAGE_DESC"),
-             t("NAVIGATOR_OPT_ANC_DATA_DESC"),
-             t("NAVIGATOR_OPT_ART_DATA_DESC"),
-             t("NAVIGATOR_OPT_ART_ATTENDANCE_YES_DESC"),
-             t("NAVIGATOR_MODEL_FIT_DESC"),
-             t("NAVIGGATOR_CAL_PLHIV_DESC"),
-             t("NAVIGATOR_CAL_ART_DESC"),
-             t("NAVIGATOR_CAL_KOS_DESC"),
-             t("NAVIGATOR_CAL_NEW_INFECTIONS_DESC"),
-             t("NAVIGATOR_CAL_METHOD_DESC"))                        
+  label <- c(t_("NAVIGATOR_ART_IS_SPECTRUM_DESC"),
+             t_("NAVIGATOR_ANC_IS_SPECTRUM_DESC"),
+             t_("NAVIGATOR_PACKAGE_CREATED_DESC"),
+             t_("NAVIGATOR_PACKAGE_HAS_ALL_DATA_DESC"),
+             t_("NAVIGATOR_OPT_RECENT_QTR_DESC"),
+             t_("NAVIGATOR_OPT_FUTURE_PROJ_QTR_DESC"),
+             t_("NAVIGATOR_OPT_AREA_ID_SELECTED_DESC"),
+             t_("NAVIGATOR_OPT_CALENDAR_SURVEY_MATCH_DESC"),
+             t_("NAVIGATOR_OPT_RECENT_SURVEY_ONLY_DESC"),
+             t_("NAVIGATOR_OPT_ART_COVERAGE_DESC"),
+             t_("NAVIGATOR_OPT_ANC_DATA_DESC"),
+             t_("NAVIGATOR_OPT_ART_DATA_DESC"),
+             t_("NAVIGATOR_OPT_ART_ATTENDANCE_YES_DESC"),
+             t_("NAVIGATOR_MODEL_FIT_DESC"),
+             t_("NAVIGGATOR_CAL_PLHIV_DESC"),
+             t_("NAVIGATOR_CAL_ART_DESC"),
+             t_("NAVIGATOR_CAL_KOS_DESC"),
+             t_("NAVIGATOR_CAL_NEW_INFECTIONS_DESC"),
+             t_("NAVIGATOR_CAL_METHOD_DESC"))                        
 
-  v <- data.frame(NaomiCheckPermPrimKey = key
+  v <- data.frame(NaomiCheckPermPrimKey = key,
                   NaomiCheckDes = label,
                   TrueFalse = NA)
 
   ## These checks are always 'TRUE'
-  v$TrueFalse[c("Package_created", "Package_has_all_data", "Model_fit")] <- TRUE
+  always_true_checks <- c("Package_created", "Package_has_all_data", "Model_fit")
+  v$TrueFalse[v$NaomiCheckPermPrimKey %in% always_true_checks] <- TRUE
 
-  naomi_write_csv(v, path)
+  ## Using write.csv() instead of naomi_write_csv() because writing na = "NA"
+  write.csv(v, path, row.names = FALSE, na = "NA")
 }

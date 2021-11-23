@@ -84,3 +84,6 @@ naomi_output <- read_output_package(spectrum_download$path)
 
 datapack_path <- tempfile(fileext = ".csv")
 write_datapack_csv(naomi_output, datapack_path)
+
+navigator_path <- tempfile(fileext = ".csv")
+write_navigator_checklist(naomi_output, navigator_path)

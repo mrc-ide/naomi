@@ -763,9 +763,11 @@ save_output <- function(filename, dir,
     write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
   }
 
+  dir.create("info")
+  write_navigator_checklist(naomi_output, "unaids_navigator_checklist.csv")
+
   info <- attr(naomi_output, "info")
   if (length(info) > 0L) {
-    dir.create("info")
     for (p in names(info)) {
       writeLines(trimws(info[[p]]), file.path("info", p))
     }
