@@ -1,3 +1,7 @@
+# naomi 2.5.12
+
+* Add UNAIDS Estimates Navigator checklist CSV to output package .zip.
+
 # naomi 2.5.11
 
 * Update defaults for current estimates period to `CY2021Q4` (December 2021) and short-term projection quarter to `CY2022Q3` (September 2022).
