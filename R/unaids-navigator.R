@@ -9,32 +9,58 @@
 write_navigator_checks <- function(naomi_output,
                                    path) {
 
+  stopifnot(inherits(naomi_output, "naomi_output"))
 
-  key <- c("NaomiCheckPermPrimKey", "ART_is_Spectrum", "ANC_is_Spectrum",
-           "Package_created", "Package_has_all_data", "Adv_recent_qtr",
-           "Adv_future_proj_qtr", "Adv_area_ID_selected", "Adv_calendar_survey_match",
-           "Adv_recent_survey_only", "Adv_ART_coverage", "Adv_ANC_data", "Adv_ART_data",
-           "Adv_ART_attendance_yes", "Model_fit",           
-           "Cal_PLHIV", "Cal_ART", "Cal_KOS", "Cal_new_infections", "Cal_method")
+  if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
+    path <- paste0(path, ".csv")
+  }
 
+  key <- c("ART_is_Spectrum",
+           "ANC_is_Spectrum",
+           "Package_created",
+           "Package_has_all_data",
+           "Opt_recent_qtr",
+           "Opt_future_proj_qtr",
+           "Opt_area_ID_selected",
+           "Opt_calendar_survey_match",
+           "Opt_recent_survey_only",
+           "Opt_ART_coverage",
+           "Opt_ANC_data",
+           "Opt_ART_data",
+           "Opt_ART_attendance_yes",
+           "Model_fit",           
+           "Cal_PLHIV",
+           "Cal_ART",
+           "Cal_KOS",
+           "Cal_new_infections",
+           "Cal_method")
 
-Naomi num on ART 2015-Pres is Spectrum national total on ART
-Naomi num ANC clients 2015-Pres is Spectrum ANC testing cascade
-Naomi package created
-Naomi package has all data from upload or ADR
-"Adv Options - Most recent calendar quarter selected"
-Adv Options - Future projection quarter selected
-Adv Options - National area_id selected
-Adv Options - T1 calendar quarter matches one survey
-Adv Options - Only most recent survey included (also TRUE for known special cases)
-Adv Options - ART coverage included if availble 
-Adv Options - ANC data included if avaialble
-Adv Options - ART data included if available
-Adv Options - ART attendance = "Yes"
-Naomi output returned (model was fit)
-Calibration - Spectrum PLHIV natl (subnatl if Spectrum subnatl)
-Calibration - Spectrum ART natl (subnatl if Spectrum subnatl)
-Calibration - Spectrum KOS natl (subnatl if Spectrum subnatl)
-Calibration - Spectrum new infections natl (subnatl if Spectrum subnatl)
-Calibration - method 
+  label <- c(t("NAVIGATOR_ART_IS_SPECTRUM_DESC"),
+             t("NAVIGATOR_ANC_IS_SPECTRUM_DESC"),
+             t("NAVIGATOR_PACKAGE_CREATED_DESC"),
+             t("NAVIGATOR_PACKAGE_HAS_ALL_DATA_DESC"),
+             t("NAVIGATOR_OPT_RECENT_QTR_DESC"),
+             t("NAVIGATOR_OPT_FUTURE_PROJ_QTR_DESC"),
+             t("NAVIGATOR_OPT_AREA_ID_SELECTED_DESC"),
+             t("NAVIGATOR_OPT_CALENDAR_SURVEY_MATCH_DESC"),
+             t("NAVIGATOR_OPT_RECENT_SURVEY_ONLY_DESC"),
+             t("NAVIGATOR_OPT_ART_COVERAGE_DESC"),
+             t("NAVIGATOR_OPT_ANC_DATA_DESC"),
+             t("NAVIGATOR_OPT_ART_DATA_DESC"),
+             t("NAVIGATOR_OPT_ART_ATTENDANCE_YES_DESC"),
+             t("NAVIGATOR_MODEL_FIT_DESC"),
+             t("NAVIGGATOR_CAL_PLHIV_DESC"),
+             t("NAVIGATOR_CAL_ART_DESC"),
+             t("NAVIGATOR_CAL_KOS_DESC"),
+             t("NAVIGATOR_CAL_NEW_INFECTIONS_DESC"),
+             t("NAVIGATOR_CAL_METHOD_DESC"))                        
+
+  v <- data.frame(NaomiCheckPermPrimKey = key
+                  NaomiCheckDes = label,
+                  TrueFalse = NA)
+
+  ## These checks are always 'TRUE'
+  v$TrueFalse[c("Package_created", "Package_has_all_data", "Model_fit")] <- TRUE
+
+  naomi_write_csv(v, path)
 }

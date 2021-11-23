@@ -309,6 +309,25 @@
     "INVALID_CALIBRATE_OBJECT": "Cannot get calibration plot, output does not contain calibration data",
     "TYPE_CALIBRATED": "Calibrated",
     "TYPE_SPECTRUM": "Spectrum",
-    "TYPE_UNADJUSTED": "Unadjusted"
+    "TYPE_UNADJUSTED": "Unadjusted",
+    "NAVIGATOR_ART_IS_SPECTRUM_DESC":             "Naomi number on ART 2015 to present is Spectrum national total on ART",
+    "NAVIGATOR_ANC_IS_SPECTRUM_DESC":             "Naomi num ANC clients 2015 to present is Spectrum ANC testing cascade",
+    "NAVIGATOR_PACKAGE_CREATED_DESC":             "Naomi package created",
+    "NAVIGATOR_PACKAGE_HAS_ALL_DATA_DESC":        "Naomi package has all data from upload or ADR",
+    "NAVIGATOR_OPT_RECENT_QTR_DESC":              "Model Options - Most recent calendar quarter selected",
+    "NAVIGATOR_OPT_FUTURE_PROJ_QTR_DESC":         "Model Options - Future projection quarter selected",
+    "NAVIGATOR_OPT_AREA_ID_SELECTED_DESC":        "Model Options - National area_id selected",
+    "NAVIGATOR_OPT_CALENDAR_SURVEY_MATCH_DESC":   "Model Options - T1 calendar quarter matches one survey",
+    "NAVIGATOR_OPT_RECENT_SURVEY_ONLY_DESC":      "Model Options - Only most recent survey included (also TRUE for known special cases)",
+    "NAVIGATOR_OPT_ART_COVERAGE_DESC":            "Model Options - ART coverage included if availble ",
+    "NAVIGATOR_OPT_ANC_DATA_DESC":                "Model Options - ANC data included if avaialble",
+    "NAVIGATOR_OPT_ART_DATA_DESC":                "Model Options - ART data included if available",
+    "NAVIGATOR_OPT_ART_ATTENDANCE_YES_DESC":      "Model Options - ART attendance = Yes",
+    "NAVIGATOR_MODEL_FIT_DESC":                   "Naomi output returned (model was fit)",
+    "NAVIGGATOR_CAL_PLHIV_DESC":                  "Calibration - Spectrum PLHIV national (subnational if Spectrum subnational)",
+    "NAVIGATOR_CAL_ART_DESC":                     "Calibration - Spectrum ART national (subnational if Spectrum subnational)",
+    "NAVIGATOR_CAL_KOS_DESC":                     "Calibration - Spectrum KOS national (subnational if Spectrum subnational)",
+    "NAVIGATOR_CAL_NEW_INFECTIONS_DESC":          "Calibration - Spectrum new infections national (subnational if Spectrum subnational)",
+    "NAVIGATOR_CAL_METHOD_DESC":                  "Calibration - method is logistic"
 }
 
