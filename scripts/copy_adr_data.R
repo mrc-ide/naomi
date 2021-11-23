@@ -28,10 +28,6 @@ if (site == "prod") {
   stop("Site must be prod or dev")
 }
 
-key <- "f1f8a5c4-b9f5-43bb-ad4f-a6f8f234c4ed"
-
-
-
 ckanr::ckanr_setup(url = url, key = key)
 src <- "inputs-unaids-estimates"
 dest <- "country-estimates-22"
@@ -78,14 +74,22 @@ for (package in packages_copy) {
   dir.create(country_dir)
   message("Creating package for ", package[["geo-location"]])
   if (!dry_run) {
-    new_package <- ckanr::package_create(
-      type = dest, owner_org = "imperial-college-london",
-      extras = list("geo-location" = package[["geo-location"]],
-                    type_name = dest_name,
-                    maintainer_email = "naomi-support@unaids.org",
-                    year = "2022"),
-      maintainer = "Naomi team",
-      notes = "A record of the input data and final HIV estimates.")
+    tryCatch({
+      new_package <- ckanr::package_create(
+        type = dest, owner_org = "imperial-college-london",
+        extras = list("geo-location" = package[["geo-location"]],
+                      type_name = dest_name,
+                      maintainer_email = "naomi-support@unaids.org",
+                      year = "2022"),
+        maintainer = "Naomi team",
+        notes = "A record of the input data and final HIV estimates.")
+    },
+    error = function(e) {
+      message("Failed to create package for ", package[["geo-location"]])
+    })
+    if (is.null(new_package)) {
+      next
+    }
   }
   resource_types <- vapply(package$resources, function(resource) {
     type <- resource[["resource_type"]]
@@ -97,24 +101,40 @@ for (package in packages_copy) {
   for (resource in intersect(resources, resource_types)) {
     details <- package$resources[resource_types == resource]
     if (length(details) > 1) {
-      stop(sprintf("package %s has more than 1 resource of type %s",
+      message(sprintf("package %s has more than 1 resource of type %s - skipping",
                    package[["name"]], resource))
+      next
     }
     details <- details[[1]]
     ## basename of the URL contains the name of the file when first uploaded
     path <- file.path(country_dir, basename(details[["url"]]))
-    ckanr::ckan_fetch(details$url, store = "disk", path = path)
+    tryCatch({
+      ckanr::ckan_fetch(details$url, store = "disk", path = path)
+    },
+    error = function(e) {
+      message(sprintf("Failed to download file %s for country %s - skipping",
+                      resource, package[["geo-location"]]))
+    })
+    if (!file.exists(path)) {
+      next
+    }
     message(sprintf("Uploading %s file for country %s",
-                    details[["name"]], package[["geo-location"]]))
+                    resource, package[["geo-location"]]))
     if (!dry_run) {
-      new_resource <- ckanr::resource_create(
-        new_package[["id"]],
-        name = details[["name"]],
-        upload = path,
-        extras = list(
-          restricted = paste0('{"allowed_organizations": "unaids", ',
-                              '"allowed_users": "", "level": "restricted"}'),
-          resource_type = resource))
+      tryCatch({
+        new_resource <- ckanr::resource_create(
+          new_package[["id"]],
+          name = details[["name"]],
+          upload = path,
+          extras = list(
+            restricted = paste0('{"allowed_organizations": "unaids", ',
+                                '"allowed_users": "", "level": "restricted"}'),
+            resource_type = resource))
+      },
+      error = function(e) {
+        message(sprintf("Failed to upload file %s for country %s - skipping",
+                        resource, package[["geo-location"]]))
+      })
     }
   }
   if (dry_run) {
@@ -125,4 +145,3 @@ for (package in packages_copy) {
   message(sprintf("Copy complete for %s see %s", package[["geo-location"]],
                   package_url))
 }
-
