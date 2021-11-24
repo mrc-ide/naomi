@@ -10,6 +10,8 @@
   - < Limitation: (1) does not explicitly account for migration of PLHIV between districts. (2) In some cases, masks unrealistic demographic assumptions in subnational population data.
 
 * Paediatric entrant infections are scaled based on the ratio of child population to adult (15-49) female population. This approximately accounts for varying fertility rates across districts (which in principle determine different child to adult ratios).
+
+* < Spectrum end year ART number >
  
 # naomi 2.5.11
 

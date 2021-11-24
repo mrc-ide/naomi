@@ -98,6 +98,43 @@ extract_pjnz_one <- function(pjnz) {
 read_art_coarse <- function(pjnz) {
   ### WORKING HERE
   ## Add end of year ART from Spectrum to extract table
+
+
+  ## You should not have to re-calculate since everything required to display all indicators is stored in the DP file. The display for children on ART as of Dec 31 is calculated as follows:
+
+## For each t
+
+##    If the input for children on ART is a number then display that number
+
+## To find the number of adults on ART search the DP file for the tag <RegionalOutput MV2>. The number of adult males on ART will be 51 lines below the tag. The number of adult females on ART will be 55 lines below the tag.
+
+## For adults, the Spectrum output for number on ART on Dec 31 is calibrated to match exactly to the inputs. So when the inputs are numbers, as they should be for all historical years, you can just use the inputs which are located after the tag <HAARTBySex MV>. Males are the 4th row after the tag and females are the 5th row.
+
+##   If the input is a percentage then the number on ART is calculated as the input percent times the number of children needing treatment. The number of children needing treatment is read from the DP file. It is the  9th line after the tag <ChildARTCalc MV2>. This is also a mid-year number but we agreed with UNAIDS to calculate this as the Dec 31 coverage (input) times the mid-year number needing treatment. This is done so that users can see the calculation themselves when display number needing treatment.
+
+
+
+dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+
+exists_dptag <- function(tag, tagcol = 1) {
+  tag %in% dp[, tagcol]
+}
+dpsub <- function(tag, rows, cols, tagcol = 1) {
+  dp[which(dp[, tagcol] == tag) + rows, cols]
+}
+yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
+yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
+proj.years <- yr_start:yr_end
+timedat.idx <- 4 + 1:length(proj.years) - 1
+
+
+art14plus_out <- dpsub("<RegionalOutput MV2>", c(51, 55), seq_along(proj.years)-1L)
+
+m15plus_idx <- 52
+f15plus_idx <- 56
+
+
 }
 
 add_shiny90_unaware <- function(spec, pjnz) {
