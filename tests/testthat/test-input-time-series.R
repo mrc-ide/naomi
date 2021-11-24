@@ -1,59 +1,22 @@
-test_that("data can be formatted for ART input time series", {
-  data <- prepare_input_time_series_art(a_hintr_data$art_number,
-                                        a_hintr_data$shape)
+test_that("ART data can be aggregated", {
+  data <- aggregate_art(a_hintr_data$art_number,
+                        a_hintr_data$shape)
 
   expect_true(nrow(data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level_label","area_level",
-                    "time_step", "time_period", "plot", "value"))
+                  c("area_id", "area_name",  "area_level","area_level_label",
+                    "parent_area_id", "area_sort_order", "sex", "age_group",
+                    "time_period", "year", "quarter", "calendar_quarter",
+                    "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
+
 
   # Time period has correct format
-  expect_setequal(data$time_step, "annual")
   expect_match(as.character(data$time_period), "\\d{4}")
-})
 
-test_that("data can be formatted for ANC input time series", {
-  data <- prepare_input_time_series_anc(a_hintr_data$anc_testing,
-                                        a_hintr_data$shape)
-  expect_true(nrow(data) > 100) ## Check that we have read out some data
-  expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level", "area_level_label",
-                    "age_group", "time_period", "time_step", "plot", "value"))
-
-  # Time period has correct format
-  expect_setequal(data$time_step, "annual")
-  expect_match(as.character(data$time_period), "\\d{4}")
-})
-
-test_that("ART data can be aggregated by time and space", {
-
-  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
-
-  # Make dummy quarterly data
-  art_q <- art_number %>%
-    dplyr::mutate(art_current = art_current/4,
-           calendar_quarter = paste0("CY",year, "Q1")) %>%
-    rbind(art_number %>%
-            dplyr::mutate(art_current = art_current/4,
-                   calendar_quarter = paste0("CY",year, "Q2"))) %>%
-    rbind(art_number %>%
-            dplyr::mutate(art_current = art_current/4,
-                   calendar_quarter = paste0("CY",year, "Q3"))) %>%
-    rbind(art_number %>%
-            dplyr::mutate(art_current = art_current/4)) %>%
-    dplyr::select(-c(art_new))
-
-  dir <- tempdir()
-  art_q_file <- paste0(dir, "art_q.csv")
-  readr::write_csv(art_q, art_q_file)
-
-  data <- prepare_input_time_series_art(art_q_file,
-                                        a_hintr_data$shape)
-
-  ## Check that data has been aggregated to all levels in hierarchy from baseline
-  ## determined by highest area_level in program data
+  # Check that data has been aggregated to all levels in hierarchy from baseline
+  # determined by highest area_level in program data
   shape <- sf::read_sf(a_hintr_data$shape)
-  art_number <- art_number %>%
+  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE) %>%
     dplyr::left_join(shape %>% dplyr::select(area_id, area_level), by = "area_id")
 
   # Check data has been aggregated from correct baseline
@@ -62,16 +25,73 @@ test_that("ART data can be aggregated by time and space", {
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(art_number$area_level)]
   expect_equal(unique(data$area_level), shape_level)
 
-  # Time period has correct format
-  expect_setequal(data$time_step, "quarterly")
-  expect_match(data$time_period, "\\d{4} Q\\d{1}")
 })
+
+
+test_that("data can be formatted for ART input time series", {
+  data <- prepare_input_time_series_art(a_hintr_data$art_number,
+                                        a_hintr_data$shape)
+
+  expect_true(nrow(data) > 50) ## Check that we have read out some data
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name",  "area_level", "area_level_label",
+                    "parent_area_id", "area_sort_order",  "time_period", "year",
+                    "quarter","calendar_quarter","plot", "value"))
+
+  # Time period has correct format
+  expect_match(as.character(data$time_period), "\\d{4}")
+})
+
+
+test_that("ANC data can be aggregated", {
+  data <- aggregate_anc(a_hintr_data$anc_testing,
+                        a_hintr_data$shape)
+
+  expect_true(nrow(data) > 50) ## Check that we have read out some data
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name", "area_level","area_level_label",
+                    "parent_area_id", "area_sort_order", "sex", "age_group",
+                    "time_period", "year", "quarter", "calendar_quarter",
+                    "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
+                    "anc_tested_pos" ))
+
+
+  # Time period has correct format
+  expect_match(as.character(data$time_period), "\\d{4}")
+
+  # Check that data has been aggregated to all levels in hierarchy from baseline
+  # determined by highest area_level in program data
+  shape <- sf::read_sf(a_hintr_data$shape)
+  anc_testing <- readr::read_csv(a_hintr_data$anc_testing, show_col_types = FALSE) %>%
+    dplyr::left_join(shape %>% dplyr::select(area_id, area_level), by = "area_id")
+
+  # Check data has been aggregated from correct baseline
+  expect_equal(max(data$area_level), unique(anc_testing$area_level))
+  # Check data has been aggregated from baseline to lowest level in hierarchy
+  shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(anc_testing$area_level)]
+  expect_equal(unique(data$area_level), shape_level)
+})
+
+
+test_that("data can be formatted for ANC input time series", {
+  data <- prepare_input_time_series_anc(a_hintr_data$anc_testing,
+                                        a_hintr_data$shape)
+  expect_true(nrow(data) > 100) ## Check that we have read out some data
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name", "area_level", "area_level_label",
+                    "parent_area_id", "area_sort_order", "age_group", "time_period",
+                    "year","quarter", "calendar_quarter","plot", "value"))
+
+  # Time period has correct format
+  expect_match(as.character(data$time_period), "\\d{4}")
+})
+
+
 
 test_that("plots are filtered according to avalible disaggregates", {
 
   dir <- tempdir()
-  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE) %>%
-    dplyr::select(-c(art_new))
+  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
 
   adult_f <- art_number %>% dplyr::filter(age_group == "Y015_999") %>% dplyr::mutate(sex = "female")
   adult_m <- art_number %>% dplyr::filter(age_group == "Y015_999") %>% dplyr::mutate(sex ="male")
@@ -81,8 +101,13 @@ test_that("plots are filtered according to avalible disaggregates", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c("art_adult" , "art_adult_child_ratio", "art_child",
-                    "art_prop_u15", "art_total"))
+                  c( "art_total","art_adult","art_child",
+                     "art_adult_child_ratio","art_prop_u15","art_new_total",
+                     "art_new_adult","art_new_child","vl_tested_12mos_total",
+                     "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
+                     "vl_suppressed_12mos_adult","vl_suppressed_12mos_child" , "vl_coverage_total",
+                     "vl_coverage_adult", "vl_coverage_child","vl_prop_suppressed_total",
+                     "vl_prop_suppressed_adult", "vl_prop_suppressed_child"))
 
   # Check data with sex disaggregated, age disaggregated
   test1 <- rbind(adult_f, adult_m, peads)
@@ -90,11 +115,19 @@ test_that("plots are filtered according to avalible disaggregates", {
   readr::write_csv(test1, test1_file)
 
   data1 <- prepare_input_time_series_art(test1_file,
-                                             a_hintr_data$shape)
+                                         a_hintr_data$shape)
   expect_setequal(unique(data1$plot),
                   c("art_adult" , "art_adult_child_ratio", "art_child" ,
                     "art_prop_u15", "art_total", "art_adult_f","art_adult_m",
-                    "art_adult_sex_ratio"))
+                    "art_adult_sex_ratio", "art_new_total","art_new_adult",
+                    "art_new_adult_f", "art_new_adult_m", "art_new_child",
+                    "vl_tested_12mos_total","vl_tested_12mos_adult", "vl_tested_12mos_adult_f",
+                    "vl_tested_12mos_adult_m", "vl_tested_12mos_child","vl_suppressed_12mos_total",
+                    "vl_suppressed_12mos_adult","vl_suppressed_12mos_adult_f","vl_suppressed_12mos_adult_m",
+                    "vl_suppressed_12mos_child","vl_coverage_total","vl_coverage_adult",
+                    "vl_coverage_adult_f","vl_coverage_adult_m","vl_coverage_child",
+                    "vl_prop_suppressed_total", "vl_prop_suppressed_adult","vl_prop_suppressed_adult_f",
+                    "vl_prop_suppressed_adult_m","vl_prop_suppressed_child"))
 
   # Check data with sex disaggregated, age aggregated
   test2 <- rbind(adult_f, adult_m)
@@ -104,54 +137,17 @@ test_that("plots are filtered according to avalible disaggregates", {
   data2 <- prepare_input_time_series_art(test2_file,
                                          a_hintr_data$shape)
   expect_setequal(unique(data2$plot),
-                  c("art_adult" ,"art_total", "art_adult_f","art_adult_m",
-                    "art_adult_sex_ratio"))
+                  c("art_adult" , "art_total","art_adult_f","art_adult_m",
+                    "art_adult_sex_ratio","art_new_total","art_new_adult","art_new_adult_f",
+                    "art_new_adult_m",  "vl_tested_12mos_total","vl_tested_12mos_adult",
+                    "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m", "vl_suppressed_12mos_total",
+                    "vl_suppressed_12mos_adult","vl_suppressed_12mos_adult_f","vl_suppressed_12mos_adult_m",
+                    "vl_coverage_total","vl_coverage_adult", "vl_coverage_adult_f",
+                    "vl_coverage_adult_m","vl_prop_suppressed_total",
+                    "vl_prop_suppressed_adult", "vl_prop_suppressed_adult_f",
+                    "vl_prop_suppressed_adult_m"))
 })
 
-test_that("ANC data can be aggregated by space", {
-
-  data <- prepare_input_time_series_anc(a_hintr_data$anc_testing,
-                                        a_hintr_data$shape)
-
-  ## Check that data has been aggregated to all levels in hierarchy from baseline
-  ## determined by highest area_level in program data
-  shape <- sf::read_sf(a_hintr_data$shape)
-  anc_testing <- readr::read_csv(a_hintr_data$anc_testing) %>%
-    dplyr::left_join(shape %>% dplyr::select(area_id, area_level), by = "area_id")
-
-  # Check data has been aggregated from correct baseline
-  expect_equal(max(data$area_level), unique(anc_testing$area_level))
-  # Check data has been aggregated from baseline to lowest level in hierarchy
-  shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(anc_testing$area_level)]
-  expect_equal(unique(data$area_level), shape_level)
-
-  # Time period has correct format
-  expect_setequal(data$time_step, "annual")
-  expect_match(as.character(data$time_period), "\\d{4}")
-})
-
-test_that("ART data throws error if dupe annual data or incomplete quarterly", {
-
-  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
-
-  # Make dummy quarterly data
-  art_q <-art_number %>%
-    dplyr::mutate(art_current = art_current/4,
-                  calendar_quarter = paste0("CY",year, "Q1")) %>%
-    rbind(art_number %>%
-            dplyr::mutate(art_current = art_current/4,
-                          calendar_quarter = paste0("CY",year, "Q2"))) %>%
-    dplyr::select(-c(art_new))
-
-  dir <- tempdir()
-  art_q_file <- paste0(dir, "art_q.csv")
-  readr::write_csv(art_q, art_q_file)
-
-  data <- expect_error(
-    prepare_input_time_series_art(art_q_file, a_hintr_data$shape),
-    paste0("Quarterly data not provided for all disaggregates or duplicate ",
-           "annual data provided for all disaggregates."))
-})
 
 test_that("can get plot type descriptions from key", {
   ret <- get_plot_type_label_and_description(c("art_total", "art_child"))
@@ -167,4 +163,45 @@ test_that("can get plot type descriptions from key", {
       description = "Number of children (<15) on ART at the end of calendar year"
     )
   ))
+})
+
+test_that("data can be aggregated without all indicators", {
+
+  art <- readr::read_csv(a_hintr_data$art_number)
+
+  # data with no art_new
+  no_art_new <- art
+  no_art_new$art_new <- NULL
+
+  data <- prepare_input_time_series_art(no_art_new,
+                                        a_hintr_data$shape)
+  expect_setequal(unique(data$plot),
+                  c( "art_total" ,"art_adult","art_child",
+                     "art_adult_child_ratio","art_prop_u15","vl_tested_12mos_total",
+                     "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
+                     "vl_suppressed_12mos_adult","vl_suppressed_12mos_child","vl_coverage_total",
+                     "vl_coverage_adult" ,"vl_coverage_child","vl_prop_suppressed_total",
+                     "vl_prop_suppressed_adult","vl_prop_suppressed_child"))
+
+  # data with no vls indicators
+  no_vls <- art
+  no_vls$vl_tested_12mos <- NULL
+  no_vls$vl_suppressed_12mos <- NULL
+
+  data <- prepare_input_time_series_art(no_vls,
+                                        a_hintr_data$shape)
+  expect_setequal(unique(data$plot),
+                  c("art_total", "art_adult","art_child","art_adult_child_ratio",
+                    "art_prop_u15","art_new_total","art_new_adult","art_new_child"))
+
+  # data with no art_new or vls indicators
+  no_vls_art_new <- no_vls
+  no_vls_art_new$art_new <- NULL
+
+  data <- prepare_input_time_series_art(no_vls_art_new,
+                                        a_hintr_data$shape)
+  expect_setequal(unique(data$plot),
+                  c("art_total", "art_adult","art_child","art_adult_child_ratio",
+                    "art_prop_u15"))
+
 })

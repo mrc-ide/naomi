@@ -211,7 +211,7 @@ naomi_model_frame <- function(area_merged,
              births_hivpop = dplyr::if_else(is.na(asfr), 0, pregprev * births),
              births_artpop = dplyr::if_else(is.na(asfr), 0, pregartcov * births_hivpop)
            ) %>%
-    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
     dplyr::summarise_at(
              dplyr::vars(totpop, hivpop, artpop, infections, unaware,
                          births, births_hivpop, births_artpop),
@@ -246,7 +246,7 @@ naomi_model_frame <- function(area_merged,
                   age %in% 0:4) %>%
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
-    dplyr::group_by(spectrum_region_code, sex, age_group, year) %>%
+    dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
     dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, unaware), sum) %>%
     dplyr::mutate(
              births = 0,
@@ -327,22 +327,24 @@ naomi_model_frame <- function(area_merged,
 
     spectrum_calibration <- spectrum_calibration %>%
       dplyr::group_by_at(aggr_vars) %>%
-      dplyr::mutate(population_calibration = sum(population_spectrum) / sum(population_raw),
-                    population = population_raw * population_calibration) %>%
+      dplyr::mutate(population_calibration_ratio = sum(population_spectrum) / sum(population_raw),
+                    population_calibrated = population_raw * population_calibration_ratio) %>%
       dplyr::ungroup()
 
     population_est <- population_est %>%
       dplyr::left_join(
                dplyr::select(spectrum_calibration,
                              tidyselect::all_of(group_vars),
-                             population_calibration),
+                             population_calibration_ratio),
                by = group_vars
              ) %>%
-      dplyr::mutate(population = population * population_calibration)
+      dplyr::mutate(
+               population = population * population_calibration_ratio
+             )
+    spectrum_calibration[["population_calibration_ratio"]] <- NULL
 
   } else if(spectrum_population_calibration == "none") {
-    spectrum_calibration[["population_calibration"]] <- 1.0
-    spectrum_calibration[["population"]] <- spectrum_calibration[["population_raw"]]
+    spectrum_calibration[["population_calibrated"]] <- spectrum_calibration[["population_raw"]]
   } else {
     stop(paste0("spectrum_calibration_option \"", spectrum_population_calibration, "\" not found."))
   }

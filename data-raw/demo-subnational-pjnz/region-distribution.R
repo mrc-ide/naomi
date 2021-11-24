@@ -102,7 +102,7 @@ art_number_zone <- art_number %>%
     by = "area_id"
   ) %>%
   group_by(area_id = area_id2, area_name = area_name2, sex, age_group, year, calendar_quarter) %>%
-  summarise(across(starts_with("art"), sum), .groups = "drop")
+  summarise(across(c(starts_with("art"), starts_with("vl")), sum), .groups = "drop")
 
 population_zone <- pop_agesex %>%
   inner_join(
