@@ -151,20 +151,20 @@ test_that("plots are filtered according to avalible disaggregates", {
 
 test_that("can get plot type descriptions from key", {
   ret <- get_plot_type_column_metadata(c("art_total", "art_child"))
-  expect_equivalent(ret, rbind.data.frame(
+  expect_equivalent(ret, list(
     list(
       id = "art_total",
       label = "ART count",
       description = "Number on ART at the end of calendar year",
-      accuracy = NA_integer_,
-      format = "0"
+      format = "0",
+      accuracy = NA_integer_
     ),
     list(
       id = "art_child",
       label = "ART paediatric",
       description = "Number of children (<15) on ART at the end of calendar year",
-      accuracy = NA_integer_,
-      format = "0"
+      format = "0",
+      accuracy = NA_integer_
     )
   ))
 })

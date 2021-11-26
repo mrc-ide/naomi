@@ -359,5 +359,14 @@ get_plot_type_column_metadata <- function(plot_type) {
   meta$description <- traduire::translator()$replace(meta$description)
   ## Convert numeric columns to numbers
   meta$accuracy <- as.numeric(meta$accuracy)
-  meta
+  lapply(seq_len(nrow(meta)), function(row_number) {
+    row <- meta[row_number, ]
+    list(
+      id = row$id,
+      label = row$label,
+      description = row$description,
+      format = row$format,
+      accuracy = row$accuracy
+    )
+  })
 }
