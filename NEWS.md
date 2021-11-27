@@ -11,7 +11,7 @@
 
 * Paediatric entrant infections are scaled based on the ratio of child population to adult (15-49) female population. This approximately accounts for varying fertility rates across districts (which in principle determine different child to adult ratios).
 
-* < Spectrum end year ART number >
+* Spectrum inputs for number on ART at end of year (Dec 31) for age 0-14, male 15+, and female 15+ are read from the PJNZ and used for model calibration. As a result, if calibration to Spectrum outputs is applied, Q4 outputs for art_current will match exactly to Spectrum. ART coverage will not be exactly the same because Spectrum uses mid-year PLHIV for the denominator and Naomi uses end-year PLHIV for the denominator.
  
 # naomi 2.5.11
 

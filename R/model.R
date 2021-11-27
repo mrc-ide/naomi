@@ -212,11 +212,14 @@ naomi_model_frame <- function(area_merged,
              births_artpop = dplyr::if_else(is.na(asfr), 0, pregartcov * births_hivpop)
            ) %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
-    dplyr::summarise_at(
-             dplyr::vars(totpop, hivpop, artpop, infections, unaware,
-                         births, births_hivpop, births_artpop),
-             sum
-           ) %>%
+    dplyr::summarise(
+      dplyr::across(
+        c(totpop, hivpop, artpop, artpop_dec31, infections, unaware,
+          births, births_hivpop, births_artpop),
+        sum
+      ),
+      .groups = "drop"
+    ) %>%
     dplyr::ungroup()
 
   ## Add number susceptible in previous year for Spectrum incidence calculation
@@ -247,7 +250,10 @@ naomi_model_frame <- function(area_merged,
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
-    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, unaware), sum) %>%
+    dplyr::summarise(
+      dplyr::across(c(totpop, hivpop, artpop, artpop_dec31, infections, unaware), sum),
+      .groups = "drop"
+    ) %>%
     dplyr::mutate(
              births = 0,
              births_hivpop= 0,

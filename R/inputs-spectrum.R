@@ -11,12 +11,12 @@
 #' @export
 extract_pjnz_naomi <- function(pjnz_list) {
 
-  pjnz_list <- unroll_pjnz(pjnz_list)    
-  
+  pjnz_list <- unroll_pjnz(pjnz_list)
+
   spec <- lapply(pjnz_list, extract_pjnz_one) %>%
     dplyr::bind_rows() %>%
     dplyr::select(spectrum_region_code, spectrum_region_name, dplyr::everything())
-  
+
   spec
 }
 
@@ -55,7 +55,7 @@ extract_pjnz_one <- function(pjnz) {
 
   mod <- eppasm::simmod(specfp)
 
-  
+
   totpop <- as.data.frame.table(specres$totpop, responseName = "totpop",
                                 stringsAsFactors = FALSE)
   hivpop <- as.data.frame.table(specres$hivpop, responseName = "hivpop",
@@ -67,7 +67,7 @@ extract_pjnz_one <- function(pjnz) {
   asfr <- as.data.frame.table(demp$asfr, responseName = "asfr",
                               stringsAsFactors = FALSE)
   asfr$sex <- "female"
-  
+
   spec <- totpop %>%
     dplyr::left_join(hivpop, by = c("age", "sex", "year")) %>%
     dplyr::left_join(artpop, by = c("age", "sex", "year")) %>%
@@ -78,11 +78,13 @@ extract_pjnz_one <- function(pjnz) {
   pregprev <- extract_eppasm_pregprev(mod, specfp)
   spec <- dplyr::left_join(spec, pregprev, by = c("age", "sex", "year"))
 
+  spec <- add_dec31_art(spec, pjnz)
+  
   spec <- add_shiny90_unaware(spec, pjnz)
 
 
   spectrum_region_code <- read_spectrum_region_code(pjnz)
-  
+
   if (spectrum_region_code == 0) {
     spectrum_region_name <- eppasm::read_country(pjnz)
   } else {
@@ -91,51 +93,153 @@ extract_pjnz_one <- function(pjnz) {
 
   spec$spectrum_region_code <- spectrum_region_code
   spec$spectrum_region_name <- spectrum_region_name
-  
+
   spec
 }
 
-read_art_coarse <- function(pjnz) {
-  ### WORKING HERE
-  ## Add end of year ART from Spectrum to extract table
+#'
+#' Read number on ART at Dec 31 from PJNZ
+#'
+#' Reads the number on ART at December 31 from Spectrum PJNZ for children (0-14),
+#' adult (15+) males, and adult (15+) females.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' read_pjnz_art_dec31(pjnz)
+#'
+read_pjnz_art_dec31 <- function(pjnz) {
+
+  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+  dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+  yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
+  yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
+  proj.years <- yr_start:yr_end
+  timedat.idx <- 4 + 1:length(proj.years) - 1
+
+  art15plus_isperc <- sapply(dpsub("<HAARTBySexPerNum MV>", 4:5, timedat.idx), as.integer)
+  dimnames(art15plus_isperc) <- list(sex = c("male", "female"), year = proj.years)
+
+  art15plus_num <- sapply(dpsub("<HAARTBySex MV>", 4:5, timedat.idx), as.numeric)
+  dimnames(art15plus_num) <- list(sex = c("male", "female"), year = proj.years)
+
+  art15plus_need <- sapply(dpsub("<NeedARTDec31 MV>", 3:4, timedat.idx), as.numeric)
+  dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
+
+  if (any(art15plus_num[art15plus_isperc == 1] < 1 |
+          art15plus_num[art15plus_isperc == 1] > 100)) {
+    stop("Invalid percentage on ART entered for adult ART")
+  }
+
+  art15plus_num[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_num[art15plus_isperc == 1] / 100
+
+  art15plus <- as.data.frame.table(art15plus_num,
+                                   responseName = "art_dec31",
+                                   stringsAsFactors = FALSE)
+  art15plus$age_group <- "Y015_999"
+  art15plus$year <- type.convert(art15plus$year, as.is = TRUE)
 
 
-  ## You should not have to re-calculate since everything required to display all indicators is stored in the DP file. The display for children on ART as of Dec 31 is calculated as follows:
+  ## # Child number on ART
+  ##
+  ## - If age-stratified entered, use sum of three age categories
+  ## - Else, if number entered for total children 0-14 on ART, use that
+  ## - Else, if percentage entered for children 0-14 on ART, use percentage
+  ##   times children needing ART.
+  ##
+  ## Children needing ART taken from line 9 of <ChildARTCalc MV2>, interpolated
+  ## to end of year. I am not entirely sure what this calculation is, but
+  ## averaging between two years in the internal values matches the values
+  ## reported in the Spectrum ART results table for "Children needing ART (0-14)".
+  ##
+  ## The Spectrum output for number of children on ART in the table can be quite
+  ## different from the internal number on ART in the projection period. I am
+  ## not sure what explains the difference; it should be minimal impact here.
 
-## For each t
+  child_art_raw<- dpsub("<ChildTreatInputs MV3>", 3:6, timedat.idx)
+  child_art_raw <- sapply(child_art_raw, as.numeric)
+  child_art_raw[child_art_raw == -9999] <- NA_real_
+  colnames(child_art_raw) <- proj.years
 
-##    If the input for children on ART is a number then display that number
+  child_art_0to14 <- child_art_raw[1,]
+  child_art_aggr <- colSums(child_art_raw[2:4,])
 
-## To find the number of adults on ART search the DP file for the tag <RegionalOutput MV2>. The number of adult males on ART will be 51 lines below the tag. The number of adult females on ART will be 55 lines below the tag.
+  ## Note: these errors should never occur; don't need to be translated.
+  if (any(is.na(child_art_0to14) & is.na(child_art_aggr))) {
+    stop(paste0("No child ART input found for year: ",
+                paste0(names(which(is.na(child_art_0to14) & is.na(child_art_aggr))), collapse = ", "),
+                ". Check PJNZ file inputs"))
+  }
 
-## For adults, the Spectrum output for number on ART on Dec 31 is calibrated to match exactly to the inputs. So when the inputs are numbers, as they should be for all historical years, you can just use the inputs which are located after the tag <HAARTBySex MV>. Males are the 4th row after the tag and females are the 5th row.
+  if (any(!is.na(child_art_0to14) & !is.na(child_art_aggr))) {
+    stop(paste0("Both aggregated and age-stratified child ART input found for year: ",
+                paste0(names(which(!is.na(child_art_0to14) & !is.na(child_art_aggr))), collapse = ", "),
+                ". Check PJNZ file inputs"))
+  }
 
-##   If the input is a percentage then the number on ART is calculated as the input percent times the number of children needing treatment. The number of children needing treatment is read from the DP file. It is the  9th line after the tag <ChildARTCalc MV2>. This is also a mid-year number but we agreed with UNAIDS to calculate this as the Dec 31 coverage (input) times the mid-year number needing treatment. This is done so that users can see the calculation themselves when display number needing treatment.
+  child_art_isperc <- dpsub("<ChildARTByAgeGroupPerNum MV2>", 3, timedat.idx)
+  child_art_isperc <- as.integer(child_art_isperc)
+  names(child_art_isperc) <- proj.years
 
+  child_art_need<- dpsub("<ChildARTCalc MV2>", 9, timedat.idx)
+  child_art_need <- as.numeric(child_art_need)
+  child_art_need <- approx(proj.years, child_art_need, proj.years + 0.5, rule = 2)$y
+  names(child_art_need) <- proj.years
 
+  child_art <- dplyr::case_when(child_art_isperc == 0  & !is.na(child_art_aggr) ~ child_art_aggr,
+                                child_art_isperc == 0  & !is.na(child_art_0to14) ~ child_art_0to14,
+                                child_art_isperc == 1 ~ child_art_need * child_art_0to14 / 100)
+  names(child_art) <- proj.years
 
-dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
-dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+  if (any(is.na(child_art))) {
+    stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
+  }
 
-exists_dptag <- function(tag, tagcol = 1) {
-  tag %in% dp[, tagcol]
+  child_art <- data.frame(sex = "both",
+                          age_group = "Y000_014",
+                          year = proj.years,
+                          art_dec31 = child_art)
+
+  art_dec31 <- rbind(child_art, art15plus)
+
+  art_dec31
 }
-dpsub <- function(tag, rows, cols, tagcol = 1) {
-  dp[which(dp[, tagcol] == tag) + rows, cols]
+
+#' Disaggregate the number on ART Dec 31 to single age
+#' 
+add_dec31_art <- function(spec, pjnz) {
+
+  art_dec31 <- read_pjnz_art_dec31(pjnz)
+
+  spec <- spec %>%
+    dplyr::mutate(age_group_coarse = dplyr::if_else(age <= 14, "Y000_014", "Y015_999"),
+                  sex_join = dplyr::if_else(age_group_coarse == "Y000_014", "both", sex)) %>%
+    dplyr::group_by(sex_join, age_group_coarse, year) %>%
+    dplyr::mutate(art_prop = dplyr::if_else(artpop == 0, 0.0, artpop / sum(artpop))) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(art_dec31, by = c("sex_join" = "sex", "age_group_coarse" = "age_group", "year")) %>%
+    dplyr::mutate(
+      artpop_dec31 = dplyr::if_else(is.na(art_prop), 0.0, art_prop * art_dec31),
+      age_group_coarse = NULL,
+      sex_join = NULL,
+      art_prop = NULL,
+      art_dec31 = NULL
+    )
+
+  stopifnot(sum(spec$artpop_dec31) == sum(art_dec31$art_dec31))
+
+  spec
 }
-yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
-yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
-proj.years <- yr_start:yr_end
-timedat.idx <- 4 + 1:length(proj.years) - 1
 
 
-art14plus_out <- dpsub("<RegionalOutput MV2>", c(51, 55), seq_along(proj.years)-1L)
-
-m15plus_idx <- 52
-f15plus_idx <- 56
-
-
-}
 
 add_shiny90_unaware <- function(spec, pjnz) {
 
@@ -145,7 +249,7 @@ add_shiny90_unaware <- function(spec, pjnz) {
 
     shiny90_name <- get_pjnz_shiny90_filename(pjnz)
     utils::unzip(pjnz, shiny90_name, exdir = shiny90_dir)
-    
+
     df <- extract_shiny90_age_sex(file.path(shiny90_dir, shiny90_name),
                                   years = unique(spec$year))
     df$unaware_untreated_prop <- (df$plhiv - df$aware) / (df$plhiv - df$artnum)
@@ -190,7 +294,7 @@ add_shiny90_unaware <- function(spec, pjnz) {
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' read_spectrum_region_code(pjnz)
-#' 
+#'
 #' @export
 read_spectrum_region_code <- function(pjnz) {
   pjn <- eppasm::read_pjn(pjnz)
@@ -211,7 +315,7 @@ read_spectrum_region_code <- function(pjnz) {
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' read_spectrum_region_name(pjnz)
-#' 
+#'
 #' @export
 read_spectrum_region_name <- function(pjnz) {
   pjn <- eppasm::read_pjn(pjnz)
@@ -232,7 +336,7 @@ read_spectrum_region_name <- function(pjnz) {
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' read_spectrum_projection_name(pjnz)
-#' 
+#'
 #' @export
 read_spectrum_projection_name <- function(pjnz) {
   pjn <- eppasm::read_pjn(pjnz)
@@ -257,7 +361,7 @@ assert_pjnz_shiny90 <- function(pjnz) {
 
 #' Cut Five Year Age Groups
 #'
-#' Wrapper for `[cut()]` to return five year age groups with 
+#' Wrapper for `[cut()]` to return five year age groups with
 #'
 #' @param age a vector of ages.
 #'
@@ -265,7 +369,7 @@ assert_pjnz_shiny90 <- function(pjnz) {
 #'
 #' @seealso
 #' get_age_groups
-#' 
+#'
 #' @export
 cut_naomi_age_group <- function(age) {
   labs <- c(sprintf("Y%03.0f_%03.0f", 0:15*5, 0:15*5 + 4), "Y080_999")
@@ -273,7 +377,7 @@ cut_naomi_age_group <- function(age) {
                    include.lowest = TRUE, right = FALSE)
   as.character(age_group)
 }
-  
+
 age_quarter_to_age_group <- function(age_quarter) {
   f <- cut(age_quarter, breaks = c(0:16*5*4, Inf),
            labels = c(sprintf("Y%03d_%03d", 0:15*5, 0:15*5+4), "Y080_999"),
@@ -338,8 +442,8 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
   infections_cohort <- infections_cohort %>%
     dplyr::mutate(infections = infections / 2) %>%
     dplyr::bind_rows(
-             dplyr::mutate(., age_quarter = age_quarter + 1)
-           ) %>%
+      dplyr::mutate(., age_quarter = age_quarter + 1)
+    ) %>%
     dplyr::filter(quarter_id >= quarter_id1,
                   quarter_id < quarter_id3 + 4) %>%
     dplyr::mutate(age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
@@ -362,12 +466,12 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                                     name == "population_t2" ~ quarter_id2,
                                     name == "population_t3" ~ quarter_id3),
       name = NULL
-    ) 
-                                  
+    )
+
 
   ## Graduate 5-year age group population to quarter-year age group population
   ## use hyman smoothing on cumulative population.
-  
+
   totpop_area <- totpop_area %>%
     dplyr::left_join(
       dplyr::select(get_age_groups(), age_group, age_group_start),
@@ -385,15 +489,15 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                     age_quarter, age_group, age_group1, age_group2, age_group3),
       by = c("spectrum_region_code", "sex", "quarter_id", "age_quarter")
     )
-  
-  
+
+
   ## Construct Lproj for t1 to t2
-  
+
   hivpop_t1 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id1) %>%
     dplyr::count(spectrum_region_code, sex, age_group1,
                  wt = hivpop, name = "hivpop1")
-  
+
   hivpop_t2 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
@@ -403,14 +507,14 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::filter(quarter_id < quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
                  wt = infections, name = "infections_t1t2")
-  
+
   hivpop_t1t2 <- dplyr::right_join(hivpop_t1, hivpop_t2,
                                    by = c("spectrum_region_code", "sex", "age_group1")) %>%
     dplyr::left_join(infections_t1t2,
                      by = c("spectrum_region_code", "sex", "age_group1", "age_group2")) %>%
     dplyr::mutate(L_hivpop = (hivpop2 - infections_t1t2) / hivpop1)
-  
-  
+
+
   ## # Calculate net_growth_ratio: ratio of district population change vs. Spectrum
   ##   region population change by cohort.
 
@@ -418,12 +522,12 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::filter(quarter_id == quarter_id1) %>%
     dplyr::count(area_id, spectrum_region_code, sex, age_group1,
                  wt = population, name = "population1")
-  
+
   totpop_area_t2 <- totpop_area %>%
     dplyr::filter(quarter_id == quarter_id2) %>%
     dplyr::count(area_id, spectrum_region_code, sex, age_group1, age_group2,
                  wt = population, name = "population2")
-  
+
   totpop_area_t1t2 <- totpop_area_t1 %>%
     dplyr::right_join(totpop_area_t2,
                       by = c("area_id", "spectrum_region_code", "sex", "age_group1")) %>%
@@ -432,30 +536,30 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       population1 = NULL,
       population2 = NULL
     )
-  
-  
+
+
   totpop_spec_t1 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id1) %>%
     dplyr::count(spectrum_region_code, sex, age_group1,
                  wt = totpop, name = "totpop1")
-  
+
   totpop_spec_t2 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
                  wt = totpop, name = "totpop2")
-  
+
   totpop_spec_t1t2 <- totpop_spec_t1 %>%
     dplyr::right_join(totpop_spec_t2,
-                     by = c("spectrum_region_code", "sex", "age_group1")) %>%
+                      by = c("spectrum_region_code", "sex", "age_group1")) %>%
     dplyr::mutate(
       totpop_ratio_spec = totpop2 / totpop1,
       totpop2 = NULL,
       totpop1 = NULL
     )
-  
+
   net_growth_ratio_t1t2 <- totpop_area_t1t2 %>%
     dplyr::right_join(totpop_spec_t1t2,
-                     by = c("spectrum_region_code", "sex", "age_group1", "age_group2")) %>%
+                      by = c("spectrum_region_code", "sex", "age_group1", "age_group2")) %>%
     dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec) %>%
     dplyr::select(area_id, sex, age_group1, age_group2, totpop_ratio_area, totpop_ratio_spec, net_growth_ratio)
 
@@ -466,7 +570,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 
   if (!adjust_area_growth) {
     net_growth_ratio_t1t2$net_growth_ratio <- 1.0
-    net_growth_ratio_t1t2_aggr$net_growth_ratio <- 1.0    
+    net_growth_ratio_t1t2_aggr$net_growth_ratio <- 1.0
   }
 
   hivpopLproj <- hivpop_t1t2 %>%
@@ -487,7 +591,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::mutate(
       L_hivpop = L_hivpop * net_growth_ratio
     )
-  
+
   Lproj_hivpop <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
                                        j = hivpopLproj$idx1,
                                        x = hivpopLproj$L_hivpop,
@@ -497,18 +601,18 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                                              j = hivpopLproj$idx1,
                                              x = hivpopLproj$net_growth_ratio,
                                              dims = rep(nrow(mf_model), 2))
-  
-  
+
+
   infections_age_t2 <- infections_cohort %>%
     dplyr::filter(quarter_id < quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group_infection, age_group2,
                  wt = infections, name = "infections_age_t2")
-  
+
   infections_age <- infections_cohort %>%
     dplyr::filter(quarter_id < quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group_infection,
                  wt = infections, name = "infections_age")
-  
+
   incidLproj <- infections_age_t2 %>%
     dplyr::left_join(infections_age,
                      by = c("spectrum_region_code", "sex", "age_group_infection")) %>%
@@ -544,17 +648,17 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::filter(is.na(age_group1)) %>%
     dplyr::select(spectrum_region_code, sex2 = sex, age_group2, hivpop2) %>%
     dplyr::left_join(
-             hivpop_t1 %>%
-             dplyr::left_join(get_age_groups(),
-                              by = c("age_group1" = "age_group")) %>%
-             dplyr::filter(
-                      sex == "female",
-                      age_group_start >= 15,
-                      (age_group_start + age_group_span) < 50
-                    ) %>%
-             dplyr::select(spectrum_region_code, sex1 = sex, age_group1, hivpop1),
-             by = "spectrum_region_code"
-           ) %>%
+      hivpop_t1 %>%
+      dplyr::left_join(get_age_groups(),
+                       by = c("age_group1" = "age_group")) %>%
+      dplyr::filter(
+        sex == "female",
+        age_group_start >= 15,
+        (age_group_start + age_group_span) < 50
+      ) %>%
+      dplyr::select(spectrum_region_code, sex1 = sex, age_group1, hivpop1),
+      by = "spectrum_region_code"
+    ) %>%
     dplyr::group_by(spectrum_region_code, sex2, age_group2) %>%
     dplyr::mutate(L_paed = hivpop2 / sum(hivpop1)) %>%
     dplyr::ungroup()
@@ -591,7 +695,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::filter(quarter_id == quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group2,
                  wt = hivpop, name = "hivpop2")
-  
+
   hivpop_t3 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id3) %>%
     dplyr::count(spectrum_region_code, sex, age_group2, age_group3,
@@ -602,7 +706,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                   quarter_id < quarter_id3) %>%
     dplyr::count(spectrum_region_code, sex, age_group2, age_group3,
                  wt = infections, name = "infections_t2t3")
-  
+
   hivpop_t2t3 <- dplyr::right_join(hivpop_t2, hivpop_t3,
                                    by = c("spectrum_region_code", "sex", "age_group2")) %>%
     dplyr::left_join(infections_t2t3,
@@ -612,17 +716,17 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 
   ## Calculate net_growth_ratio: ratio of district population change vs. Spectrum
   ## region population change by cohort.
-  
+
   totpop_area_t2 <- totpop_area %>%
     dplyr::filter(quarter_id == quarter_id2) %>%
     dplyr::count(area_id, spectrum_region_code, sex, age_group2,
                  wt = population, name = "population2")
-  
+
   totpop_area_t3 <- totpop_area %>%
     dplyr::filter(quarter_id == quarter_id3) %>%
     dplyr::count(area_id, spectrum_region_code, sex, age_group2, age_group3,
                  wt = population, name = "population3")
-  
+
   totpop_area_t2t3 <- totpop_area_t2 %>%
     dplyr::right_join(totpop_area_t3,
                       by = c("area_id", "spectrum_region_code", "sex", "age_group2")) %>%
@@ -631,20 +735,20 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       population1 = NULL,
       population2 = NULL
     )
-    
+
   totpop_spec_t2 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id2) %>%
     dplyr::count(spectrum_region_code, sex, age_group2,
                  wt = totpop, name = "totpop2")
-  
+
   totpop_spec_t3 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id3) %>%
     dplyr::count(spectrum_region_code, sex, age_group2, age_group3,
                  wt = totpop, name = "totpop3")
-  
+
   totpop_spec_t2t3 <- totpop_spec_t2 %>%
     dplyr::right_join(totpop_spec_t3,
-                     by = c("spectrum_region_code", "sex", "age_group2")) %>%
+                      by = c("spectrum_region_code", "sex", "age_group2")) %>%
     dplyr::mutate(
       totpop_ratio_spec = totpop3 / totpop2,
       totpop2 = NULL,
@@ -653,7 +757,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 
   net_growth_ratio_t2t3 <- totpop_area_t2t3 %>%
     dplyr::right_join(totpop_spec_t2t3,
-                     by = c("spectrum_region_code", "sex", "age_group2", "age_group3")) %>%
+                      by = c("spectrum_region_code", "sex", "age_group2", "age_group3")) %>%
     dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec) %>%
     dplyr::select(area_id, sex, age_group2, age_group3, totpop_ratio_area, totpop_ratio_spec, net_growth_ratio)
 
@@ -661,9 +765,9 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::group_by(area_id, sex, age_group2) %>%
     dplyr::summarise(dplyr::across(c(totpop_ratio_area, totpop_ratio_spec), sum), .groups = "drop") %>%
     dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec)
-  
+
   if (!adjust_area_growth) {
-    net_growth_ratio_t2t3$net_growth_ratio <- 1.0    
+    net_growth_ratio_t2t3$net_growth_ratio <- 1.0
     net_growth_ratio_t2t3$net_growth_ratio <- 1.0
   }
 
@@ -686,7 +790,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::mutate(
       L_hivpop = L_hivpop * net_growth_ratio
     )
-  
+
   Lproj_hivpop_t2t3 <- Matrix::sparseMatrix(i = hivpopLproj$idx3,
                                             j = hivpopLproj$idx2,
                                             x = hivpopLproj$L_hivpop,
@@ -696,7 +800,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                                              j = hivpopLproj$idx2,
                                              x = hivpopLproj$net_growth_ratio,
                                              dims = rep(nrow(mf_model), 2))
-  
+
   infections_age_t3 <- infections_cohort %>%
     dplyr::filter(quarter_id < quarter_id3) %>%
     dplyr::count(spectrum_region_code, sex, age_group_infection, age_group3,
@@ -730,9 +834,9 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     )
 
   Lproj_incid_t2t3 <- Matrix::sparseMatrix(i = incidLproj$idx3,
-                                      j = incidLproj$idx2,
-                                      x = incidLproj$L_incid,
-                                      dims = rep(nrow(mf_model), 2))
+                                           j = incidLproj$idx2,
+                                           x = incidLproj$L_incid,
+                                           dims = rep(nrow(mf_model), 2))
 
   ## Paediatric entrants and survivors between time 2 and time 3
 
@@ -740,29 +844,29 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::filter(is.na(age_group2)) %>%
     dplyr::select(spectrum_region_code, sex3 = sex, age_group3, hivpop3) %>%
     dplyr::left_join(
-             hivpop_t2 %>%
-             dplyr::left_join(get_age_groups(),
-                              by = c("age_group2" = "age_group")) %>%
-             dplyr::filter(
-                      sex == "female",
-                      age_group_start >= 15,
-                      (age_group_start + age_group_span) < 50
-                    ) %>%
-             dplyr::select(spectrum_region_code, sex2 = sex, age_group2, hivpop2),
-             by = "spectrum_region_code"
-           ) %>%
+      hivpop_t2 %>%
+      dplyr::left_join(get_age_groups(),
+                       by = c("age_group2" = "age_group")) %>%
+      dplyr::filter(
+        sex == "female",
+        age_group_start >= 15,
+        (age_group_start + age_group_span) < 50
+      ) %>%
+      dplyr::select(spectrum_region_code, sex2 = sex, age_group2, hivpop2),
+      by = "spectrum_region_code"
+    ) %>%
     dplyr::group_by(spectrum_region_code, sex3, age_group3) %>%
     dplyr::mutate(L_paed = hivpop3 / sum(hivpop2))
 
   paedLproj <- paedLproj %>%
     dplyr::inner_join(
-             dplyr::select(mf_model, spectrum_region_code, sex2 = sex,
-                           age_group2 = age_group, area_id, idx2 = idx),
+      dplyr::select(mf_model, spectrum_region_code, sex2 = sex,
+                    age_group2 = age_group, area_id, idx2 = idx),
       by = c("spectrum_region_code", "sex2", "age_group2")
     ) %>%
     dplyr::inner_join(
-             dplyr::select(mf_model, spectrum_region_code, sex3 = sex,
-                           age_group3 = age_group, area_id, idx3 = idx),
+      dplyr::select(mf_model, spectrum_region_code, sex3 = sex,
+                    age_group3 = age_group, area_id, idx3 = idx),
       by = c("spectrum_region_code", "sex3", "age_group3", "area_id")
     )
 
@@ -774,13 +878,13 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
     dplyr::mutate(
       L_paed = L_paed * (net_growth_ratio ^ 0.5)
     )
-  
-  Lproj_paed_t2t3 <- Matrix::sparseMatrix(i = paedLproj$idx3,
-                                     j = paedLproj$idx2,
-                                     x = paedLproj$L_paed,
-                                     dims = rep(nrow(mf_model), 2))
 
-  
+  Lproj_paed_t2t3 <- Matrix::sparseMatrix(i = paedLproj$idx3,
+                                          j = paedLproj$idx2,
+                                          x = paedLproj$L_paed,
+                                          dims = rep(nrow(mf_model), 2))
+
+
   list(Lproj_hivpop = Lproj_hivpop,
        Lproj_incid = Lproj_incid,
        Lproj_paed = Lproj_paed,
@@ -795,8 +899,8 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 #'
 #' @param spec_aggr a data from of 5-year age group aggregate Spectrum estimates
 #' @param calendar_quarter_out calendar quarter for desired output time point
-#' 
-#' 
+#'
+#'
 get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 
   quarter_id_out <- calendar_quarter_to_quarter_id(calendar_quarter_out)
@@ -805,20 +909,23 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group) %>%
     dplyr::summarise(
-             calendar_quarter = calendar_quarter_out,
-             population_spectrum = log_lin_approx(quarter_id, totpop, quarter_id_out),
-             plhiv_spectrum = log_lin_approx(quarter_id, hivpop, quarter_id_out),
-             art_current_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
-             infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
-             susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
-             unaware_spectrum = log_lin_approx(quarter_id, unaware, quarter_id_out),
-             births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out),
-             births_hivpop_spectrum = log_lin_approx(quarter_id, births_hivpop, quarter_id_out),
-             births_artpop_spectrum = log_lin_approx(quarter_id, births_artpop, quarter_id_out)
-           ) %>%
+      calendar_quarter = calendar_quarter_out,
+      population_spectrum = log_lin_approx(quarter_id, totpop, quarter_id_out),
+      plhiv_spectrum = log_lin_approx(quarter_id, hivpop, quarter_id_out),
+      ##
+      ## Note: art_current interpolates mid-year and end-year ART values
+      art_current_spectrum = log_lin_approx(c(quarter_id, quarter_id+2),
+                                            c(artpop, artpop_dec31), quarter_id_out),
+      ##
+      infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
+      susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
+      unaware_spectrum = log_lin_approx(quarter_id, unaware, quarter_id_out),
+      births_spectrum = log_lin_approx(quarter_id, births, quarter_id_out),
+      births_hivpop_spectrum = log_lin_approx(quarter_id, births_hivpop, quarter_id_out),
+      births_artpop_spectrum = log_lin_approx(quarter_id, births_artpop, quarter_id_out)
+    ) %>%
     dplyr::ungroup()
 
-  
   dplyr::select(val,
                 spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
                 population_spectrum,
@@ -848,7 +955,7 @@ log_lin_approx <- function(x, y, xout, replace_na_value = 0){
 #'
 #' @return Data frame of HIV prevalence and ART coverage among pregnant women
 #'   by single-year of age.
-#' 
+#'
 #' @details
 #'
 #' This is a wrapper for [`eppasm::agepregprev()`] and [`eppasm::agepregartcov()`].
@@ -859,11 +966,11 @@ log_lin_approx <- function(x, y, xout, replace_na_value = 0){
 extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
 
   proj_years <- fp$ss$proj_start + seq_len(fp$ss$PROJ_YEARS) - 1L
-  
+
   if (is.null(years)) {
     years <- proj_years
   }
-  
+
   if (!all(years %in% proj_years)) {
     stop("Ouput years not contained in shiny90 projection: ",
          paste0(setdiff(years, proj_years), collapse = ", "))
@@ -880,6 +987,6 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
 
   df$pregprev <- eppasm::agepregprev(mod, fp, idx$aidx, idx$yidx, idx$agspan)
   df$pregartcov <- eppasm::agepregartcov(mod, fp, idx$aidx, idx$yidx, idx$agspan)
-  
+
   df
 }
