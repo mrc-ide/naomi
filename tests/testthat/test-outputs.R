@@ -3,7 +3,7 @@ context("model outputs")
 test_that("traidure hooks work in model outputs", {
 
   out_en <- output_package(a_fit_sample, a_naomi_mf)
-  expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "September 2018", "June 2019"))
+  expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "December 2018", "June 2019"))
   expect_setequal(out_en$meta_indicator$indicator_label[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("ART coverage", "HIV prevalence"))
   expect_setequal(out_en$meta_indicator$description[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
@@ -13,7 +13,7 @@ test_that("traidure hooks work in model outputs", {
   on.exit(reset())
 
   out_fr <- output_package(a_fit_sample, a_naomi_mf)
-  expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Septembre 2018", "Juin 2019"))
+  expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Décembre 2018", "Juin 2019"))
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Prévalence du VIH", "Couverture ART"))
   expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
@@ -22,7 +22,7 @@ test_that("traidure hooks work in model outputs", {
 })
 
 
-test_that("all output stratifications are included in metatdata", {
+test_that("all output stratifications are included in meta data", {
 
   expect_setequal(a_output_full$indicators$age_group, a_output_full$meta_age_group$age_group)
   expect_setequal(a_output_full$indicators$indicator, a_output_full$meta_indicator$indicator)
@@ -74,7 +74,7 @@ test_that("subset output returns expected subset", {
   area_id_sub <- c("MWI_1_1_demo", "MWI_2_1_demo")
   sex_sub <- "both"
   age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
-  calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
+  calendar_quarter_sub <- c("CY2018Q4", "CY2019Q2")
   indicator_sub <- c("prevalence", "plhiv")
 
   sub_keep <- subset_naomi_output(a_output,
@@ -134,7 +134,7 @@ test_that("subset_output_package() saves expected output package", {
   area_id_sub <- c("MWI_1_2_demo", "MWI_2_2_demo")
   sex_sub <- "both"
   age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
-  calendar_quarter_sub <- c("CY2018Q3", "CY2019Q2")
+  calendar_quarter_sub <- c("CY2018Q4", "CY2019Q2")
   indicator_sub <- c("prevalence", "plhiv")
 
   sub_keep_file <- tempfile(fileext = ".zip")
