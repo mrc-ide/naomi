@@ -1,4 +1,3 @@
-
 # naomi 2.6.0
 
 * In construction of survivorship projection matrices, the method for interpolating annual population totals to quarter-year age group totals was revised to use Hyman monotonic interpolation of population counts.
@@ -13,6 +12,10 @@
 
 * Spectrum inputs for number on ART at end of year (Dec 31) for age 0-14, male 15+, and female 15+ are read from the PJNZ and used for model calibration. As a result, if calibration to Spectrum outputs is applied, Q4 outputs for art_current will match exactly to Spectrum. ART coverage will not be exactly the same because Spectrum uses mid-year PLHIV for the denominator and Naomi uses end-year PLHIV for the denominator.
  
+# naomi 2.5.12
+
+* Small fixes to text in Naomi summary report
+
 # naomi 2.5.11
 
 * Update defaults for current estimates period to `CY2021Q4` (December 2021) and short-term projection quarter to `CY2022Q3` (September 2022).
