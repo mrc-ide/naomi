@@ -158,9 +158,7 @@ p[names(par_val)] <- par_val
 
 v <- naomi_objective_function_r(d, p)
 
-## TODO: add these into a test
 expect_setequal(names(v$report), names(fit$mode))
 expect_equal(v$report, fit$mode[names(v$report)])
 
-skip("Skipping test for objective function value; AR1 not yet implemented")
 expect_equal(v$val, fit$objective)
