@@ -13,7 +13,7 @@
  * @param x vector of random effects.
  * @param u vector of spatial component of random effect.
  * @param sigma marginal standard deviation (>0).
- * @param phi proporiton of marginal variance explained by spatial structured 
+ * @param phi proportion of marginal variance explained by spatial structured 
  *            component u (phi \in [0, 1]).
  * @param Q scaled structure matrix for spatial component.
  * 
@@ -21,8 +21,8 @@
  * 
  * @note 
  * The $\sqrt(2\pi)^{-2*n}$ and $|Q|^{1/2}$ terms are dropped.
- * Returns the _positive_ log PDF (differetn from builtin TMB 
- * functions. Thus shoudl typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
+ * Returns the _positive_ log PDF (different from builtin TMB 
+ * functions. Thus should typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
  */ 
 template<class Type>
 Type bym2_conditional_lpdf(const vector<Type> x,
