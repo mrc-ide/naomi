@@ -1,16 +1,16 @@
 # naomi 2.6.0
 
-* In construction of survivorship projection matrices, the method for interpolating annual population totals to quarter-year age group totals was revised to use Hyman monotonic interpolation of population counts.
+* In construction of survivorship projection matrices, the method for interpolating annual population totals to quarter-year age group totals was revised to use Hyman monotonic interpolation of population counts for smoother population distributions.
 
-* Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration. For 
+* Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration.
 
-  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`.
-  - < How to output net HIV population change
-  - < Limitation: (1) does not explicitly account for migration of PLHIV between districts. (2) In some cases, masks unrealistic demographic assumptions in subnational population data.
+  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`. This is set as `TRUE` by default.
 
-* Paediatric entrant infections are scaled based on the ratio of child population to adult (15-49) female population. This approximately accounts for varying fertility rates across districts (which in principle determine different child to adult ratios).
+  Limitations of this approach: (1) It does not explicitly account for migration of PLHIV between districts. Therefore, it may 'create' or 'dissolve' infections if net population growth is greater in high prevalence districts (and vice versa). This is consistent with Spectrum and EPP handling of migration, but implications could be larger for smaller subnational areas. (2) In some cases, these net migration ratios mask unrealistic demographic assumptions in subnational population data (rather than true net migration patterns).
 
-* Spectrum inputs for number on ART at end of year (Dec 31) for age 0-14, male 15+, and female 15+ are read from the PJNZ and used for model calibration. As a result, if calibration to Spectrum outputs is applied, Q4 outputs for art_current will match exactly to Spectrum. ART coverage will not be exactly the same because Spectrum uses mid-year PLHIV for the denominator and Naomi uses end-year PLHIV for the denominator.
+* Paediatric new infections (MTCT) are distributed to districts based on the ratio of paediatric incidence rate to adult 15-49 female HIV prevalence. This implicitly assumes the same mother-to-child transmission rate for all districts; results should be interpreted accordingly.
+
+* Spectrum inputs for number on ART at end of year (Dec 31) for age 0-14, male 15+, and female 15+ are read from the PJNZ and used for model calibration. As a result, if calibration to Spectrum outputs is applied, Q4 outputs for `art_current` will match exactly to Spectrum. ART coverage will not be exactly the same because Spectrum uses mid-year PLHIV for the denominator and Naomi uses end-year PLHIV for the denominator.
  
 _Internal changes_
 

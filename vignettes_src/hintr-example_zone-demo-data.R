@@ -71,7 +71,7 @@ calibration_options <- list(
   spectrum_plhiv_calibration_strat = "sex_age_coarse",
   spectrum_artnum_calibration_level = "subnational",
   spectrum_artnum_calibration_strat = "sex_age_coarse",
-  spectrum_aware_calibration_level = "none",
+  spectrum_aware_calibration_level = "subnational",
   spectrum_aware_calibration_strat = "sex_age_coarse",
   spectrum_infections_calibration_level = "subnational",
   spectrum_infections_calibration_strat = "sex_age_coarse",
@@ -148,6 +148,8 @@ outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_aware_calibration_strat = "sex_age_coarse",
                                    spectrum_infections_calibration_level = "national", 
                                    spectrum_infections_calibration_strat = "sex_age_coarse")
+
+outputs_calib <- disaggregate_0to4_outputs(outputs_calib, naomi_mf)
 
 
 d <- tmb_inputs$data

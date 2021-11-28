@@ -241,14 +241,13 @@ naomi_objective_function_r <- function(d, p) {
   mu_rho <- as.vector(mu_rho)
 
   ## paediatric prevalence
-  ones <- rep(1.0, nrow(d$X_rho))
-
-  rho_15to49_f <- d$A_15to49f %*% plogis(mu_rho) / (d$A_15to49f %*% ones)
-  mu_rho_paed <- d$X_paed_rho_ratio %*% rho_15to49_f + d$paed_rho_ratio_offset
+  rho_15to49f_t1 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t1) / (d$X_15to49f %*% d$population_t1)
+  mu_rho_paed <- d$X_paed_rho_ratio %*% rho_15to49f_t1 + d$paed_rho_ratio_offset
   mu_rho_paed <- as.vector(mu_rho_paed)
   mu_rho_paed <- qlogis(mu_rho_paed)
   mu_rho <- mu_rho + mu_rho_paed
 
+  
   ## ART coverage time 1
 
   mu_alpha <- d$X_alpha %*% p$beta_alpha +
@@ -278,6 +277,11 @@ naomi_objective_function_r <- function(d, p) {
   mu_lambda_t1 <- as.vector(mu_lambda_t1)
 
   lambda_t1 <- exp(mu_lambda_t1)
+
+  ## Add paediatric incidence
+  lambda_paed_t1 <- as.vector(d$X_paed_lambda_ratio_t1 %*% rho_15to49f_t1)
+  lambda_t1 <- lambda_t1 + lambda_paed_t1
+
   infections_t1 <- lambda_t1 * (d$population_t1 - plhiv_t1)
 
 
@@ -312,6 +316,12 @@ naomi_objective_function_r <- function(d, p) {
   mu_lambda_t2 <- as.vector(mu_lambda_t2)
 
   lambda_t2 <- exp(mu_lambda_t2)
+
+  ## Add paediatric incidence
+  rho_15to49f_t2 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t2) / (d$X_15to49f %*% d$population_t2)  
+  lambda_paed_t2 <- as.vector(d$X_paed_lambda_ratio_t2 %*% rho_15to49f_t2)
+  lambda_t2 <- lambda_t2 + lambda_paed_t2
+
   infections_t2 <- lambda_t2 * (d$population_t2 - plhiv_t2)
 
   ## likelihood for household survey data
@@ -576,7 +586,15 @@ naomi_objective_function_r <- function(d, p) {
     d$Z_x %*% (log(rho_15to49_t3) + log(1.0 - d$omega * alpha_15to49_t3)) +
     d$Z_lambda_x %*% p$ui_lambda_x
 
-  infections_t3 <- exp(mu_lambda_t3) * (d$population_t3 - plhiv_t3)
+  lambda_t3 <- exp(mu_lambda_t3)
+
+  ## Add paediatric incidence
+  rho_15to49f_t3 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t3) / (d$X_15to49f %*% d$population_t3)  
+  lambda_paed_t3 <- as.vector(d$X_paed_lambda_ratio_t3 %*% rho_15to49f_t3)
+  lambda_t3 <- lambda_t3 + lambda_paed_t3
+
+  
+  infections_t3 <- lambda_t3 * (d$population_t3 - plhiv_t3)
 
 
   ## Note: currently assuming same district effects parameters from t2 for t3

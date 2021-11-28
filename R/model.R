@@ -587,14 +587,27 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::ungroup()
 
-  ## Paediatric prevalence ratio model
+  ## Paediatric prevalence and incidence ratio model
   mf_model <- mf_model %>%
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
+             is_paed = as.integer(age_group %in% c("Y000_004", "Y005_009", "Y010_014")),
              spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
-             paed_rho_ratio = dplyr::if_else(age_group %in% c("Y000_004", "Y005_009", "Y010_014"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             spec_prev15to49f_t2 = sum(population_t2 * spec_prev_t2 * age15to49 * female_15plus) / sum(population_t2 * age15to49 * female_15plus),
+             spec_prev15to49f_t3 = sum(population_t3 * spec_prev_t3 * age15to49 * female_15plus) / sum(population_t3 * age15to49 * female_15plus),      
+             paed_rho_ratio = is_paed * spec_prev_t1 / spec_prev15to49f_t1,
              bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
-             spec_prev15to49f_t1 = NULL
+             ##
+             ## Ratio of paediatric incidence to adult 15-49 female prevalence
+             paed_lambda_ratio_t1 = is_paed * spec_incid_t1 / spec_prev15to49f_t1,
+             paed_lambda_ratio_t2 = is_paed * spec_incid_t2 / spec_prev15to49f_t2,
+             paed_lambda_ratio_t3 = is_paed * spec_incid_t3 / spec_prev15to49f_t3,
+             ## 
+             ## Remove interim calculations
+             is_paed = NULL,
+             spec_prev15to49f_t1 = NULL,
+             spec_prev15to49f_t1 = NULL,
+             spec_prev15to49f_t3 = NULL
            ) %>%
     dplyr::ungroup()
 

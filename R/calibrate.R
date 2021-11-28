@@ -173,8 +173,8 @@ calibrate_outputs <- function(output,
                                      target_val) {
 
     ## Adjust for small numerical discrepancy
-    proportion_raw[proportion_raw >= 1 & proportion_raw < 1+1e-5] <- 0.99999
-    proportion_raw[proportion_raw <= 0 & proportion_raw > -1e-5] <- 0.00001
+    proportion_raw[proportion_raw >= 1 & proportion_raw < 1+1e-5] <- 1.0
+    proportion_raw[proportion_raw <= 0 & proportion_raw > -1e-5] <- 0.0
 
     stopifnot(proportion_raw >= 0)
     stopifnot(proportion_raw <= 1)
