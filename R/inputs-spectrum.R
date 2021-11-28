@@ -926,6 +926,15 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
     ) %>%
     dplyr::ungroup()
 
+  ## Include 31 Dec values in the art_current interpolation creates an opportunity
+  ## for inconsistent results for PLHIV, on ART, and unaware. Cap values to ensure
+  ## proportions < 1.0.
+  val <- val %>%
+    dplyr::mutate(
+      art_current_spectrum = pmin(plhiv_spectrum, art_current_spectrum),
+      unaware_spectrum = pmin(plhiv_spectrum - art_current_spectrum, unaware_spectrum)
+    )
+  
   dplyr::select(val,
                 spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
                 population_spectrum,
