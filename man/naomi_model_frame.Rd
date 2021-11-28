@@ -17,7 +17,7 @@ naomi_model_frame(
   sexes = c("male", "female"),
   omega = 0.7,
   rita_param = list(OmegaT0 = 130/365, sigma_OmegaT = ((142 - 118)/365)/(2 *
-    qnorm(0.975)), betaT0 = 0, sigma_betaT = 1e-05, ritaT = 1),
+    qnorm(0.975)), betaT0 = 0, sigma_betaT = 0.00001, ritaT = 1),
   sigma_u_sd = 1,
   artattend = TRUE,
   artattend_t2 = FALSE,
@@ -27,7 +27,8 @@ naomi_model_frame(
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
   spectrum_population_calibration = "national",
-  output_aware_plhiv = TRUE
+  output_aware_plhiv = TRUE,
+  adjust_area_growth = TRUE
 )
 }
 \arguments{

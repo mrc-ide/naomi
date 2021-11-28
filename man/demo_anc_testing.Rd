@@ -29,7 +29,7 @@ TODO: Link to demo_areas dataset
 \item{\code{anc_tested_pos}}{Number of ANC clients testing HIV postive.}
 }
 
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 510 rows and 8 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 510 rows and 10 columns.
 }
 \source{
 Department of HIV & AIDS, Minitry of Health, Malawi.
