@@ -18,8 +18,7 @@ test_that("model can be run", {
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
-               c("inputs.csv", "options.yml", "packages.csv",
-                 "unaids_navigator_checklist.csv"))
+               c("inputs.csv", "options.yml", "packages.csv"))
 })
 
 test_that("model can be run without programme data", {
@@ -53,8 +52,7 @@ test_that("model can be run without programme data", {
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
-               c("inputs.csv", "options.yml", "packages.csv",
-                 "unaids_navigator_checklist.csv"))
+               c("inputs.csv", "options.yml", "packages.csv"))
 })
 
 test_that("model fit without survey ART and survey recency data", {
@@ -457,8 +455,7 @@ test_that("Model can be run without .shiny90 file", {
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
-               c("inputs.csv", "options.yml", "packages.csv",
-                 "unaids_navigator_checklist.csv"))
+               c("inputs.csv", "options.yml", "packages.csv"))
 
   expect_setequal(names(output$output_package$meta_area),
                    c("area_level", "area_level_label", "area_id", "area_name",
