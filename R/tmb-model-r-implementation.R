@@ -705,7 +705,8 @@ naomi_objective_function_r <- function(d, p) {
 #' Returns the _positive_ log PDF (different from builtin TMB
 #' functions. Thus should typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
 #'
-
+#' @noRd
+#' 
 bym2_conditional_lpdf <- function(x, u, sigma, phi, Q) {
 
   ## constant terms omitted: -0.5 * (n + rank(Q)) * log(2*pi) + 0.5 * log|Q|
@@ -733,6 +734,8 @@ bym2_conditional_lpdf <- function(x, u, sigma, phi, Q) {
 #' ldbinom(x, size, prob)
 #' dbinom(x, size, prob, log = TRUE)
 #'
+#' @noRd
+#' 
 ldbinom <- function(x, size, prob){
   lgamma(size+1) - lgamma(x+1) - lgamma(size-x+1) +
     x*log(prob) + (size-x)*log(1-prob)
