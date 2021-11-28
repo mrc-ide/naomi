@@ -109,6 +109,8 @@ extract_pjnz_one <- function(pjnz) {
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' read_pjnz_art_dec31(pjnz)
 #'
+#' @noRd
+#' 
 read_pjnz_art_dec31 <- function(pjnz) {
 
   dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
@@ -214,6 +216,8 @@ read_pjnz_art_dec31 <- function(pjnz) {
 }
 
 #' Disaggregate the number on ART Dec 31 to single age
+#'
+#' @noRd
 #' 
 add_dec31_art <- function(spec, pjnz) {
 
