@@ -89,8 +89,8 @@ run_model <- function(data, options, validate) {
                  max_iter = options$max_iterations %||% 250,
                  progress = progress)
 
-  if(fit$convergence != 0 && !options$permissive) {
-    stop(paste("convergence error:", fit$message))
+  if(fit$convergence != 0) {
+    naomi_warning(paste("convergence error:", fit$message), "model_fit")
   }
 
   progress$finalise_fit()
@@ -112,11 +112,26 @@ run_model <- function(data, options, validate) {
   progress$complete("prepare_outputs")
   progress$print()
 
+  # Warnings for simulated outputs
+  outputs_prev <- outputs$indicators$mean[outputs$indicators$indicator == "prevalence"]
+  outputs_artcov <- outputs$indicators$mean[outputs$indicators$indicator == "art_coverage"]
+
+  if(max(outputs_prev) > 0.40) {
+    naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
+                  "model_fit")
+  }
+
+  if(max(outputs_artcov) > 1) {
+    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
+                  "model_fit")
+  }
+
   list(
     output_package = outputs,
     naomi_data = naomi_data,
     info = info
   )
+
 }
 
 build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
@@ -211,8 +226,19 @@ run_calibrate <- function(output, calibration_options) {
   attr(calibrated_output, "info") <- calibration_data$info
   indicators <- add_output_labels(calibrated_output)
 
-  naomi_warning("ART coverage greater than 100% for 10 age groups",
-                c("model_calibrate", "review_output"))
+  # Warnings for calibrated outputs
+  outputs_prev <- indicators$mean[indicators$indicator == "prevalence"]
+  outputs_artcov <- indicators$mean[indicators$indicator == "art_coverage"]
+
+  if(max(outputs_prev) > 0.4) {
+    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
+                  c("model_calibrate","review_output", "download_results"))
+  }
+
+  if(max(outputs_artcov) > 1) {
+    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
+                  c("model_calibrate","review_output", "download_results"))
+  }
 
   list(plot_data = indicators,
        calibrate_data = calibration_data)

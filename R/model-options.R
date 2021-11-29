@@ -180,6 +180,12 @@ do_validate_model_options <- function(data, options) {
     stop(t_("SHAPE_SPECTRUM_REGION_ALL_NA"))
   }
 
+  # Add warning is ART attendance is not selected
+  if(!options$artattend) {
+    naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
+                  c("model_options"))
+  }
+
   ## ## Validate PJNZ
 
   pjnz_list <- unroll_pjnz(data$pjnz$path)
