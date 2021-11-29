@@ -311,7 +311,8 @@
     "TYPE_SPECTRUM": "Spectrum",
     "TYPE_UNADJUSTED": "Unadjusted",
     "WARNING_OPTIONS_MISSING_ARTATTEND": "You have chosen to fit model without estimating neighbouring ART attendance. You may wish to review your selection to include this option.",
-    "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "HIV prevalence is higher than 40% for some age/sex dissagregates",
-    "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "ART coverage is higher than 100% for some age/sex dissagregates"
+    "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "HIV prevalence is higher than 40% for some age/sex disaggregates",
+    "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "ART coverage is higher than 100% for some age/sex disaggregates",
+    "WARNING_CONVERGENCE": "Convergence error: {{msg}}"
 }
 

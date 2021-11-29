@@ -46,47 +46,62 @@ test_that("naomi warning handler returns empty list when no warnings", {
 
 
 test_that("warning raised after false convergence", {
-
   a_fit_bad <- a_fit
   a_fit_bad$convergence <- 1
   a_fit_bad$message <- "false convergence (8)"
 
-  w <- capture_condition(
-    if(a_fit_bad$convergence != 0) {
-      naomi_warning(paste("convergence error:", fit$message), "model_fit")
-    }
-  )
+  mock_fit_tmb <- mockery::mock(a_fit_bad)
+  mock_sample_tmb <- mockery::mock(a_fit_sample)
+  mock_output_package <- mockery::mock(a_output)
 
-  expect_equal(w$text, "convergence error: false convergence (8)")
+  with_mock(
+    "naomi:::fit_tmb" = mock_fit_tmb,
+    "naomi:::sample_tmb" = mock_sample_tmb,
+    "naomi:::output_package" = mock_output_package, {
+      out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
+    })
 
+  expect_length(out$warnings, 1)
+  expect_equal(out$warnings[[1]]$text,
+               "convergence error: false convergence (8)")
 })
 
 
 test_that("warning raised if art attend is not selected", {
+  options <- a_hintr_options
+  options$artattend <- "false"
+  out <- validate_model_options(a_hintr_data, options)
 
-  options <- list(artattend = FALSE)
-
-   w <- capture_condition(
-     if(!options$artattend) {
-    naomi_warning("my warning","model_options")}
-    )
-   expect_equal(w$text, "my warning")
-
+  expect_length(out$warnings, 1)
+  expect_equal(out$warnings[[1]]$text,
+               paste0("You have chosen to fit model without estimating ",
+                      "neighbouring ART attendance. You may wish to review",
+                      " your selection to include this option."))
 })
 
 test_that("warning raised if outputs exceed threshold", {
+  mock_fit_tmb <- mockery::mock(a_fit)
+  mock_sample_tmb <- mockery::mock(a_fit_sample)
 
-  prev_vals <- c(0.08, 0.01, 0.12, 0.43)
+  output <- a_output
+  output$indicators$mean[
+    output$indicators$indicator == "prevalence"][1] <- 0.5
+  output$indicators$mean[
+    output$indicators$indicator == "art_coverage"][1] <- 1.2
+  mock_output_package <- mockery::mock(output)
 
-  w <- capture_condition(
-    if(max(prev_vals) > 0.40) {
-      naomi_warning("my warning", "model_options")}
-  )
-  expect_equal(w$text, "my warning")
+  with_mock(
+    "naomi:::fit_tmb" = mock_fit_tmb,
+    "naomi:::sample_tmb" = mock_sample_tmb,
+    "naomi:::output_package" = mock_output_package, {
+      out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
+    })
 
+  expect_length(out$warnings, 2)
+  expect_equal(
+    out$warnings[[1]]$text,
+    "HIV prevalence is higher than 40% for some age/sex disaggregates")
+  expect_equal(
+    out$warnings[[2]]$text,
+    "ART coverage is higher than 100% for some age/sex disaggregates")
 })
-
-
-
-
-

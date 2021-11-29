@@ -90,7 +90,8 @@ run_model <- function(data, options, validate) {
                  progress = progress)
 
   if(fit$convergence != 0) {
-    naomi_warning(paste("convergence error:", fit$message), "model_fit")
+    naomi_warning(t_("WARNING_CONVERGENCE", list(msg = fit$message)),
+                  "model_fit")
   }
 
   progress$finalise_fit()
@@ -113,8 +114,10 @@ run_model <- function(data, options, validate) {
   progress$print()
 
   # Warnings for simulated outputs
-  outputs_prev <- outputs$indicators$mean[outputs$indicators$indicator == "prevalence"]
-  outputs_artcov <- outputs$indicators$mean[outputs$indicators$indicator == "art_coverage"]
+  outputs_prev <- outputs$indicators$mean[
+    outputs$indicators$indicator == "prevalence"]
+  outputs_artcov <- outputs$indicators$mean[
+    outputs$indicators$indicator == "art_coverage"]
 
   if(max(outputs_prev) > 0.40) {
     naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
@@ -503,7 +506,7 @@ Progress <- R6::R6Class("Progress", list(
                                       progress = NULL,
                                       iteration = 0,
                                       start_time = NULL,
-                                      elapsed = NULL,
+                                      elapsed = as.difftime(0, units = "secs"),
 
                                       initialize = function() {
                                         self$progress <-

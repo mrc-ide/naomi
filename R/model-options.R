@@ -181,7 +181,7 @@ do_validate_model_options <- function(data, options) {
   }
 
   # Add warning is ART attendance is not selected
-  if(!options$artattend) {
+  if(!(options$artattend == "true")) {
     naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
                   c("model_options"))
   }
