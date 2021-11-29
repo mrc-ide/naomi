@@ -1,3 +1,38 @@
+# naomi 2.5.13
+* Implementation of `naomi_warnings()`
+
+# naomi 2.5.12
+
+* Small fixes to text in Naomi summary report
+
+# naomi 2.5.11
+
+* Update defaults for current estimates period to `CY2021Q4` (December 2021) and short-term projection quarter to `CY2022Q3` (September 2022).
+
+# naomi 2.5.10
+
+* Change viral load indicators to `vl_tested_12mos` and `vl_suppressed_12mos` to specify that indicators are reported for the previous 12 months even if reporting period is quarterly.
+
+# naomi 2.5.9
+
+* Fix to allow `prepare_input_time_series_art()` to accept data without art_new and vls indicators provided
+
+# naomi 2.5.8
+
+* Add _simulated_ viral load testing data to example datasets.
+
+
+# naomi 2.5.7
+
+* Throw an error from `calibrate_outputs()` if user tries to calibrate an ouptut package that has
+  already been calibrated. This is determined by whether the `output$spectrum_calibration` table 
+  exists in the output object. _In future, it would be nicer to allow user to re-calibrate an output 
+  package. This will require saving additional information to un-calibrate and re-calibrate._
+
+* Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
+
+* Add function `hintr_calibrate_plot` to return data for plotting calibrate barchart.
+
 # naomi 2.5.5
 
 * Return naomi warnings in the output from `hintr_run_model`, `hintr_calibrate` and `validate_model_options`
