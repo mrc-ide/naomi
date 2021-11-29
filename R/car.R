@@ -14,6 +14,10 @@ create_adj_matrix <- function(sh){
   if(!is(sh, "sp"))
     sh <- as(sh, "Spatial")
 
+  s2_current <- sf::sf_use_s2()
+  on.exit(sf::sf_use_s2(s2_current))
+  sf::sf_use_s2(FALSE)
+    
   nb <- spdep::poly2nb(sh)
   adj <- spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
   colnames(adj) <- rownames(adj)

@@ -1,3 +1,7 @@
+# naomi 2.5.14
+
+* Suppress s2 geometry in adjacency matrix construction.
+
 # naomi 2.5.12
 
 * Small fixes to text in Naomi summary report
