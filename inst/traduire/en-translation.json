@@ -309,6 +309,7 @@
     "INVALID_CALIBRATE_OBJECT": "Cannot get calibration plot, output does not contain calibration data",
     "TYPE_CALIBRATED": "Calibrated",
     "TYPE_SPECTRUM": "Spectrum",
-    "TYPE_UNADJUSTED": "Unadjusted"
+    "TYPE_UNADJUSTED": "Unadjusted",
+    "TYPE_RATIO": "Calibration ratio"
 }
 

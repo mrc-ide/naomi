@@ -309,5 +309,6 @@
     "ART_TOTAL_DESC": "Números sobre ART no final do ano",
     "TYPE_CALIBRATED": "calibrado",
     "TYPE_SPECTRUM": "spectrum",
-    "TYPE_UNADJUSTED": "Não ajustado"
+    "TYPE_UNADJUSTED": "Não ajustado",
+    "TYPE_RATIO": "Relação de calibração"
 }

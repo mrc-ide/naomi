@@ -327,6 +327,10 @@ data_type_labels <- function() {
     list(
       id = "raw",
       label = t_("TYPE_UNADJUSTED")
+    ),
+    list(
+      id = "calibration_ratio",
+      label = t_("TYPE_RATIO")
     )
   )
 }

@@ -649,6 +649,10 @@ test_that("can get data_type labels", {
     id = "raw",
     label = "Unadjusted"
   ))
+  expect_equal(labels[[4]], list(
+    id = "calibration_ratio",
+    label = "Calibration ratio"
+  ))
 })
 
 test_that("trying to calibrate incompatible model output returns error", {

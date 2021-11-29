@@ -298,6 +298,7 @@
     "TYPE_CALIBRATED": "Étalonné",
     "TYPE_SPECTRUM": "Spectrum",
     "TYPE_UNADJUSTED": "Non ajusté",
+    "TYPE_RATIO": "Rapport de calibrage",
     "ANC_ART_COVERAGE_DESC": "Couverture du TARV avant la première visite prénatale",
     "ANC_CLIENTS_DESC": "Nombre total de personnes fréquentant la première CPN",
     "ANC_KNOWN_POS_DESC": "Nombre de personnes séropositives aux CPN qui connaissant leur statut avant la première visite prénatale",
