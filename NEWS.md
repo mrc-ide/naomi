@@ -1,5 +1,6 @@
 # naomi 2.5.13
-* Implementation of `naomi_warnings()`
+
+* Return real warnings from model fit, model calibration and model option validation
 
 # naomi 2.5.12
 
@@ -35,10 +36,19 @@
 
 # naomi 2.5.5
 
+* Add argument `na.rm=` to `output_package()` to allow calculation of quantiles if there are missing values in the simulation. Default is `na.rm = FALSE` and `na.rm = TRUE` is to be used for debugging purposes only. Cases where missing values occur will usually indicate very poor model fits and issues that need to be addressed.
 * Return naomi warnings in the output from `hintr_run_model`, `hintr_calibrate` and `validate_model_options`
 
 # naomi 2.5.4
 
+Updates to PEPFAR Data Pack outputs.
+
+* Add age groups 50-54, 55-59, 60-64, 65+.
+* Edit format of PEPFAR data pack CSV:
+  - Add column `dataelement_uid`.
+  - Add `=""<>""` around age group values.
+* Change file name save to `pepfar_datapack_indicators_2022.csv`.
+* Separate input data aggregation and plot prepartion scripts
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
 * Separate input data aggregation and plot preparation scripts
 * Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
@@ -88,6 +98,7 @@ time series function outputs
 * Option to output summary report in French.
 
 # naomi 2.3.12
+
 * Fix to summary report to display input ANC data in description.
 * Ensure summary report pulls most recent calibration options.
 * Fix `validate_calibration_options()` typo.
