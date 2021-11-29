@@ -63,7 +63,7 @@ test_that("warning raised after false convergence", {
 
   expect_length(out$warnings, 1)
   expect_equal(out$warnings[[1]]$text,
-               "convergence error: false convergence (8)")
+               "Convergence error: false convergence (8)")
 })
 
 
