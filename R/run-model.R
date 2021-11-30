@@ -234,7 +234,7 @@ run_calibrate <- function(output, calibration_options) {
   outputs_artcov <- indicators$mean[indicators$indicator == "art_coverage"]
 
   if(max(outputs_prev) > 0.4) {
-    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
+    naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
                   c("model_calibrate","review_output", "download_results"))
   }
 
