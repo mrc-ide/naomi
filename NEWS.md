@@ -1,3 +1,7 @@
+# naomi 2.5.14
+
+* Replace `get_plot_type_label_and_description` with `get_plot_type_column_metadata` and include formatting info in response
+
 # naomi 2.5.12
 
 * Small fixes to text in Naomi summary report
