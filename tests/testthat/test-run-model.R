@@ -185,7 +185,7 @@ test_that("setting rng_seed returns same output", {
       output_indicators3$mean[output_indicators3$indicator == "prevalence"][1])
 })
 
-test_that("exceeding max_iterations convergence error or warning", {
+test_that("exceeding max_iterations raises convergence warning", {
 
   data <- a_hintr_data
 
@@ -199,8 +199,12 @@ test_that("exceeding max_iterations convergence error or warning", {
   options$max_iterations <- 5
 
   output_path <- tempfile()
-
-  expect_error(hintr_run_model(data, options, output_path))
+  out <- hintr_run_model(data, options, output_path)
+  expect_length(out$warnings, 2)
+  expect_equal(out$warnings[[1]]$text,
+               paste0("You have chosen to fit model without estimating ",
+               "neighbouring ART attendance. You may wish to review your ",
+               "selection to include this option."))
 
   options$permissive <- "true"
   output_path <- tempfile()
@@ -309,12 +313,7 @@ test_that("model run can be calibrated", {
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
-
-  expect_length(calibrated_output$warnings, 1)
-  warning <- calibrated_output$warnings[[1]]
-  expect_equal(warning$text,
-               "ART coverage greater than 100% for 10 age groups")
-  expect_equal(warning$locations, c("model_calibrate", "review_output"))
+  expect_length(calibrated_output$warnings, 0)
 
   output <- readRDS(calibrated_output$model_output_path)
   expect_equal(names(output),
