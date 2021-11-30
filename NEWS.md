@@ -2,6 +2,7 @@
 
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
 * Return warnings from model fit, model calibration and model option validation
+* Remove `permissive` option from model options, warning now returned instead of error
 
 # naomi 2.5.14
 

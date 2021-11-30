@@ -77,8 +77,6 @@
     "OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP": "Number of simulatons for generating uncertainty ranges",
     "OPTIONS_ADVANCED_SIMULATION_SEED_LABEL": "Simulation seed",
     "OPTIONS_ADVANCED_SIMULATION_SEED_HELP": "Random number generator seed for uncertainty sample",
-    "OPTIONS_ADVANCED_PERMISSIVE_LABEL": "Permissive",
-    "OPTIONS_ADVANCED_PERMISSIVE_HELP": "Select 'Yes' to allow fits with convergence or data errors",
     "OPTIONS_ADVANCED_LOGIT_MEAN_LABEL": "Logit prior mean for neighboring district attraction",
     "OPTIONS_ADVANCED_LOGIT_HELP": "Logit offset for odds of obtaining ART in neighbouring district compared to home district",
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Either supply levels, hierarchy, and boundaries, or area_merged",

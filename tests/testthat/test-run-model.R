@@ -205,10 +205,6 @@ test_that("exceeding max_iterations raises convergence warning", {
                paste0("You have chosen to fit model without estimating ",
                "neighbouring ART attendance. You may wish to review your ",
                "selection to include this option."))
-
-  options$permissive <- "true"
-  output_path <- tempfile()
-  expect_warning(hintr_run_model(data, options, output_path))
 })
 
 test_that("invalid time sequencing returns an error", {

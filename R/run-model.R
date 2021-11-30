@@ -692,13 +692,6 @@ convert_format <- function(data) {
 ## In future, refactor this to systmatically cast options based on type and set
 ## defaults if missing from metadata.
 format_options <- function(options) {
-
-  if (is.null(options$permissive)) {
-    options$permissive <- FALSE
-  } else {
-    options$permissive <- as.logical(options$permissive)
-  }
-
   ## Set default "none" calibration options if missing from options list
 
   if (is.null(options$spectrum_plhiv_calibration_level)) {

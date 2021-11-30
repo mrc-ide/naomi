@@ -77,8 +77,6 @@
     "OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP": "Nombre de simulations pour la génération de fourchettes d'incertitude",
     "OPTIONS_ADVANCED_SIMULATION_SEED_LABEL": "Graine de simulation",
     "OPTIONS_ADVANCED_SIMULATION_SEED_HELP": "Graine génératrice de nombres aléatoires pour l'échantillon d'incertitude",
-    "OPTIONS_ADVANCED_PERMISSIVE_LABEL": "Permissif",
-    "OPTIONS_ADVANCED_PERMISSIVE_HELP": "Sélectionnez « Oui » pour permettre des ajustements en cas d'erreurs de convergence ou de données.",
     "OPTIONS_ADVANCED_LOGIT_MEAN_LABEL": "Moyenne antérieure Logit relative à l'attractivité des districts voisins",
     "OPTIONS_ADVANCED_LOGIT_HELP": "Compensation logit relative aux chances d'obtenir un ART dans le district voisin par rapport au district de résidence",
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Soit les niveaux d'approvisionnement, la hiérarchie et les limites, soit area_merged",
