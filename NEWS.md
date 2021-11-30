@@ -1,7 +1,11 @@
-# naomi 2.5.14
+# naomi 2.5.15
 
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
 * Return warnings from model fit, model calibration and model option validation
+
+# naomi 2.5.14
+
+* Replace `get_plot_type_label_and_description` with `get_plot_type_column_metadata` and include formatting info in response
 
 # naomi 2.5.12
 
