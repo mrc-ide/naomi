@@ -34,7 +34,7 @@ aggregate_art <- function(art, shape) {
 
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
-  art_level <- unique(art_number$area_level)
+  art_level <- max(art_number$area_level)
   sex_level <- unique(art_number$sex)
   age_level <- unique(art_number$age_group)
   # Join ART data to hierarchy
