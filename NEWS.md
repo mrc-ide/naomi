@@ -1,3 +1,7 @@
+# naomi 2.5.17
+
+* Add UNAIDS Estimates Navigator checklist CSV to output package .zip.
+
 # naomi 2.5.16
 
 * Update colour scales to match summary report and user feedback

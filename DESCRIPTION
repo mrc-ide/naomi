@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.5.16
+Version: 2.5.17
 Authors@R: 
     person(given = "Jeff",
            family = "Eaton",
@@ -13,7 +13,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Additional_repositories:
     https://mrc-ide.github.io/drat
 Imports: 
@@ -70,4 +70,3 @@ Remotes:
     mrc-ide/eppasm,
     mrc-ide/first90release,
     reside-ic/traduire
-
