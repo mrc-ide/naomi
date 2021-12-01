@@ -1,5 +1,9 @@
 # naomi 2.5.17
 
+* Update first90 package dependency to v1.5.1 for 2022 estimates.
+
+# naomi 2.5.17
+
 * Add UNAIDS Estimates Navigator checklist CSV to output package .zip.
 
 # naomi 2.5.16

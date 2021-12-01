@@ -25,7 +25,7 @@ Imports:
     data.tree,
     dplyr,
     eppasm (>= 0.5.9),
-    first90 (>= 1.4.2),
+    first90 (>= 1.5.1),
     forcats,
     fs,
     ggplot2,
