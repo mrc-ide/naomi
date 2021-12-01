@@ -223,6 +223,7 @@ add_dec31_art <- function(spec, pjnz) {
 
   art_dec31 <- read_pjnz_art_dec31(pjnz)
 
+  ## Distribute coarse (<15/15+) ART data to 5-year age groups
   spec <- spec %>%
     dplyr::mutate(age_group_coarse = dplyr::if_else(age <= 14, "Y000_014", "Y015_999"),
                   sex_join = dplyr::if_else(age_group_coarse == "Y000_014", "both", sex)) %>%
@@ -238,7 +239,7 @@ add_dec31_art <- function(spec, pjnz) {
       art_dec31 = NULL
     )
 
-  stopifnot(sum(spec$artpop_dec31) == sum(art_dec31$art_dec31))
+  stopifnot(all.equal(sum(spec$artpop_dec31), sum(art_dec31$art_dec31)))
 
   spec
 }
