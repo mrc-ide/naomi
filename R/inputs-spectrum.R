@@ -921,6 +921,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
       art_current_spectrum = log_lin_approx(c(quarter_id, quarter_id+2),
                                             c(artpop, artpop_dec31), quarter_id_out),
       ##
+      art_current_internal_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
       infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
       susc_previous_year_spectrum = log_lin_approx(quarter_id, susc_previous_year, quarter_id_out),
       unaware_spectrum = log_lin_approx(quarter_id, unaware, quarter_id_out),
@@ -944,6 +945,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
                 population_spectrum,
                 plhiv_spectrum,
                 art_current_spectrum,
+                art_current_internal_spectrum,
                 infections_spectrum,
                 susc_previous_year_spectrum,
                 unaware_spectrum,

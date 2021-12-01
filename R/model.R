@@ -420,17 +420,28 @@ naomi_model_frame <- function(area_merged,
              prevalence = cap_prop(plhiv_spectrum / population_spectrum),
              art_coverage = cap_prop(art_current_spectrum / plhiv_spectrum),
              incidence = infections_spectrum / susc_previous_year_spectrum,
-             unaware_untreated_prop = unaware_spectrum / (plhiv_spectrum - art_current_spectrum),
+             unaware_untreated_prop = unaware_spectrum / pmax(plhiv_spectrum - art_current_spectrum, 0.0),
              unaware_untreated_prop = tidyr::replace_na(unaware_untreated_prop, 1.0),
              asfr = births_spectrum / population_spectrum,
              frr_plhiv = (births_hivpop_spectrum / plhiv_spectrum) /
                ((births_spectrum - births_hivpop_spectrum) / (population_spectrum - plhiv_spectrum)),
              frr_plhiv = tidyr::replace_na(frr_plhiv, 1.0),
-             frr_already_art = (births_artpop_spectrum / art_current_spectrum) /
-               ((births_hivpop_spectrum - births_artpop_spectrum) / (plhiv_spectrum - art_current_spectrum)),
+             ##
+             ## Note: in these calculations, using art_current_internal_spectrum which is the
+             ##   interpolation of the mid-year number on ART to avoid cases
+             ##   where this is inconsistent with the PLHIV estimate.
+             frr_already_art = (births_artpop_spectrum / art_current_internal_spectrum) /
+               ((births_hivpop_spectrum - births_artpop_spectrum) / (plhiv_spectrum - art_current_internal_spectrum)),
              frr_already_art = tidyr::replace_na(frr_already_art, 1.0)
            )
 
+  if (any(spec_indicators$frr_already_art <= 0)) {
+    stop("Invalid fertility rate ratio for women on ART calculated from Spectrum inputs. Please contact troubleshooting.")
+  }
+  if (any(spec_indicators$frr_plhiv <= 0)) {
+    stop("Invalid fertility rate ratio for women on ART calculated from Spectrum inputs. Please contact troubleshooting.")
+  }
+  
   mf_model <- mf_model %>%
     dplyr::left_join(
              spec_indicators %>%
@@ -614,6 +625,7 @@ naomi_model_frame <- function(area_merged,
   ## Remove unneeded columns from spectrum_calibration
   spectrum_calibration[["susc_previous_year_spectrum"]] <- NULL
   spectrum_calibration[["births_spectrum"]] <- NULL
+  spectrum_calibration[["art_current_internal_spectrum"]] <- NULL
 
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
