@@ -136,7 +136,7 @@ read_pjnz_art_dec31 <- function(pjnz) {
   art15plus_need <- sapply(dpsub("<NeedARTDec31 MV>", 3:4, timedat.idx), as.numeric)
   dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
 
-  if (any(art15plus_num[art15plus_isperc == 1] < 1 |
+  if (any(art15plus_num[art15plus_isperc == 1] < 0 |
           art15plus_num[art15plus_isperc == 1] > 100)) {
     stop("Invalid percentage on ART entered for adult ART")
   }
