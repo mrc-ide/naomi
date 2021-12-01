@@ -94,7 +94,10 @@ get_calibration_option_labels <- function(options) {
 #'
 #' @export
 validate_model_options <- function(data, options) {
+  handle_naomi_warnings(do_validate_model_options(data, options))
+}
 
+do_validate_model_options <- function(data, options) {
   required_options <- c("area_scope", "area_level",
                         "calendar_quarter_t1",
                         "calendar_quarter_t2",
@@ -177,6 +180,12 @@ validate_model_options <- function(data, options) {
     stop(t_("SHAPE_SPECTRUM_REGION_ALL_NA"))
   }
 
+  # Add warning is ART attendance is not selected
+  if(!(options$artattend == "true")) {
+    naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
+                  c("model_options"))
+  }
+
   ## ## Validate PJNZ
 
   pjnz_list <- unroll_pjnz(data$pjnz$path)
@@ -199,5 +208,5 @@ validate_model_options <- function(data, options) {
     }
   }
 
-  TRUE
+  list(valid = TRUE)
 }

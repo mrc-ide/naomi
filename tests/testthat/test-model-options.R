@@ -45,8 +45,10 @@ test_that("art and anc data can be omitted from model run options", {
 })
 
 test_that("validate model options returns true", {
-  expect_true(
-    validate_model_options(format_data_input(a_hintr_data), a_hintr_options))
+  out <- validate_model_options(format_data_input(a_hintr_data),
+                                a_hintr_options)
+  expect_true(out$valid)
+  expect_equal(out$warnings, list())
 })
 
 test_that("validate model options returns error for invalid", {
@@ -74,7 +76,7 @@ test_that("validate_model_options() handles NULL include_art_tX", {
                "ART attendance model can only be estimated if ART programme data are used")
 
   options$artattend <- "false"
-  expect_true(validate_model_options(format_data_input(data), options))
+  expect_true(validate_model_options(format_data_input(data), options)$valid)
 })
 
 test_that("validation error for invalid area selection", {
@@ -176,7 +178,8 @@ test_that("artattend_t2 option produces model frames", {
 test_that("validation check for spectrum region code returns error", {
 
   expect_true(
-    validate_model_options(format_data_input(a_hintr_data), a_hintr_options))
+    validate_model_options(format_data_input(a_hintr_data),
+                           a_hintr_options)$valid)
 
   areas_na_spectrum_region_code <- read_area_merged(a_hintr_data$shape)
   areas_na_spectrum_region_code$spectrum_region_code <- NA_integer_
@@ -252,7 +255,7 @@ test_that("validate_model_options() returns error if missing .shiny90", {
 
   opts <- a_hintr_options
   opts$output_aware_plhiv <- "false"
-  expect_true(validate_model_options(bad_data, opts))
+  expect_true(validate_model_options(bad_data, opts)$valid)
 })
 
 test_that("use_survey_aggregate option affects selected data", {
@@ -273,7 +276,7 @@ test_that("use_survey_aggregate option affects selected data", {
 
   input_data_aggregate <- input_data
   input_data_aggregate$survey$path <- aggregate_survey_file
-  
+
   expect_error(
     naomi_prepare_data(input_data, options_aggregate),
     "Aggregate survey data selected. Stratifications included in dataset which are not in model scope for indicator prevalence"
@@ -283,11 +286,11 @@ test_that("use_survey_aggregate option affects selected data", {
   expect_equal(nrow(naomi_data_aggregate$prev_dat), 3)
   expect_equal(nrow(naomi_data_aggregate$artcov_dat), 2)
   expect_equal(nrow(naomi_data_aggregate$recent_dat), 1)
- 
+
   ## Aggregate data with standard model options -- returns no data and an error.
   expect_error(
     naomi_prepare_data(input_data_aggregate, a_hintr_options),
     "No prevalence survey data found for survey: DEMO2016PHIA, DEMO2015DHS. Prevalence data are required for Naomi. Check your selections."
   )
-               
+
 })
