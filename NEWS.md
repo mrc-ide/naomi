@@ -1,3 +1,7 @@
+# naomi 2.5.16
+
+* Suppress s2 geometry in adjacency matrix construction.
+
 # naomi 2.5.15
 
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
@@ -7,6 +11,7 @@
 # naomi 2.5.14
 
 * Replace `get_plot_type_label_and_description` with `get_plot_type_column_metadata` and include formatting info in response
+>>>>>>> master
 
 # naomi 2.5.12
 
