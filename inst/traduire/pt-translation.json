@@ -89,8 +89,6 @@
     "OPTIONS_ADVANCED_NO_OF_SIMULATIONS_LABEL": "Número de simulações",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_HELP": "Para calcular os indicadores do conhecimento da condição de VIH é necessário incluir ficheiros .shiny90 em cada PJNZ. Se os ficheiros .shiny90 não estiverem disponíveis, selecione 'Não' para prosseguir com o ajuste do modelo.",
     "OPTIONS_ADVANCED_OUTPUT_AWARE_LABEL": "Indicadores de saída de 'conhecimento da condição de VIH'.",
-    "OPTIONS_ADVANCED_PERMISSIVE_HELP": "Selecione 'Sim' para permitir ajustes com erros de convergência ou de dados",
-    "OPTIONS_ADVANCED_PERMISSIVE_LABEL": "Permissivo",
     "OPTIONS_ADVANCED_SIMULATION_SEED_HELP": "Semente geradora de números aleatórios para amostra de incerteza",
     "OPTIONS_ADVANCED_SIMULATION_SEED_LABEL": "Semente de simulação",
     "OPTIONS_ADVANCED_USE_KISH_HELP": "Usar Kish Effective Sample Size (ESS) para a probabilidade dos dados do inquérito",
@@ -309,5 +307,9 @@
     "ART_TOTAL_DESC": "Números sobre ART no final do ano",
     "TYPE_CALIBRATED": "calibrado",
     "TYPE_SPECTRUM": "spectrum",
-    "TYPE_UNADJUSTED": "Não ajustado"
+    "TYPE_UNADJUSTED": "Não ajustado",
+    "WARNING_OPTIONS_MISSING_ARTATTEND": "Optou por se adaptar ao modelo sem estimar a assistência TARV vizinha. Poderá querer rever a sua selecção para incluir esta opção.",
+    "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "A prevalência do VIH é superior a 40% para algumas dissagregações de idade/sexo",
+    "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "A cobertura TARV é superior a 100% para algumas dissagregações de idade/sexo",
+    "WARNING_CONVERGENCE": "Erro de convergência: {{msg}}"
 }
