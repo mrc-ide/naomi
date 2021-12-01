@@ -27,7 +27,6 @@
 # naomi 2.5.12
 
 * Small fixes to text in Naomi summary report
->>>>>>> master
 
 # naomi 2.5.11
 
