@@ -34,7 +34,7 @@ aggregate_art <- function(art, shape) {
 
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
-  art_level <- unique(art_number$area_level)
+  art_level <- max(art_number$area_level)
   sex_level <- unique(art_number$sex)
   age_level <- unique(art_number$age_group)
   # Join ART data to hierarchy
@@ -349,13 +349,24 @@ prepare_input_time_series_anc <- function(anc, shape) {
 ##' @return For each plot type the label and description as a list of lists
 ##'   containing id, label and description
 ##' @export
-get_plot_type_label_and_description <- function(plot_type) {
-  lapply(plot_type, function(x) {
-    key <- toupper(x)
+get_plot_type_column_metadata <- function(plot_type) {
+  meta <- naomi_read_csv(
+    system_file("metadata", "time_series_plot_metadata.csv"),
+    col_types = readr::cols(.default = "c"))
+  meta <- meta[meta$id %in% plot_type, ]
+
+  meta$label <- traduire::translator()$replace(meta$label)
+  meta$description <- traduire::translator()$replace(meta$description)
+  ## Convert numeric columns to numbers
+  meta$accuracy <- as.numeric(meta$accuracy)
+  lapply(seq_len(nrow(meta)), function(row_number) {
+    row <- meta[row_number, ]
     list(
-      id = x,
-      label = t_(key),
-      description = t_(paste0(key, "_DESC"))
+      id = row$id,
+      label = row$label,
+      description = row$description,
+      format = row$format,
+      accuracy = row$accuracy
     )
   })
 }
