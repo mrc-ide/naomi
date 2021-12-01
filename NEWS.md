@@ -20,15 +20,19 @@ _Internal changes_
 
 # naomi 2.5.16
 
-* Suppress s2 geometry in adjacency matrix construction.
+* Update colour scales to match summary report and user feedback
 
 # naomi 2.5.15
+
+* Suppress s2 geometry in adjacency matrix construction.
+
+# naomi 2.5.14
 
 * Add `naomi_warning` helper to raise warnings which can be displayed in front end
 * Return warnings from model fit, model calibration and model option validation
 * Remove `permissive` option from model options, warning now returned instead of error
 
-# naomi 2.5.14
+# naomi 2.5.13
 
 * Replace `get_plot_type_label_and_description` with `get_plot_type_column_metadata` and include formatting info in response
 
