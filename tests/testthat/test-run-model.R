@@ -654,7 +654,7 @@ test_that("calibrate plot data can be generated", {
 
 test_that("can get data_type labels", {
   labels <- data_type_labels()
-  expect_length(labels, 3)
+  expect_length(labels, 4)
   expect_equal(labels[[1]], list(
     id = "spectrum",
     label = "Spectrum"
