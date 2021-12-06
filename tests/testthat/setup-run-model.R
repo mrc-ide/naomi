@@ -36,7 +36,6 @@ a_hintr_options <- list(
   rng_seed = 17,
   no_of_samples = 20,
   max_iter = 250,
-  permissive = "false",
   use_kish_prev = "true",
   deff_prev = 1.0,
   use_kish_artcov = "true",

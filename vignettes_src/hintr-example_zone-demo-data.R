@@ -22,7 +22,7 @@ unlink("outputs", recursive = TRUE)
 #'
 #' Fitting at five zones is for model testing data that fits quickly but represents
 #' national epidemic.
-#' 
+#'
 
 ##+ setup, message = FALSE
 
@@ -70,8 +70,7 @@ hintr_options <- list(
   output_aware_plhiv = "true",
   rng_seed = 17,
   no_of_samples = 20,
-  max_iter = 250,
-  permissive = "false"
+  max_iter = 250
 )
 
 hintr_options$outer_verbose <- TRUE

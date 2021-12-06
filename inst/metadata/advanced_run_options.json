@@ -95,28 +95,6 @@
       ]
     },
     {
-      "label": "t_(OPTIONS_ADVANCED_PERMISSIVE_LABEL)",
-      "controls": [
-        {
-          "name": "permissive",
-          "type": "select",
-          "required": true,
-          "options": [
-            {
-              "id": "true",
-              "label": "t_(OPTIONS_YES_LABEL)"
-            },
-            {
-              "id": "false",
-              "label": "t_(OPTIONS_NO_LABEL)"
-            }
-          ],
-          "value": "false",
-          "helpText": "t_(OPTIONS_ADVANCED_PERMISSIVE_HELP)"
-        }
-      ]
-    },
-    {
       "label": "t_(OPTIONS_ADVANCED_LOGIT_MEAN_LABEL)",
       "controls": [
         {
@@ -161,7 +139,7 @@
           "required": false
         }
       ]
-    },      
+    },
     {
       "label": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_LABEL)",
       "controls": [

@@ -77,8 +77,6 @@
     "OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP": "Nombre de simulations pour la génération de fourchettes d'incertitude",
     "OPTIONS_ADVANCED_SIMULATION_SEED_LABEL": "Graine de simulation",
     "OPTIONS_ADVANCED_SIMULATION_SEED_HELP": "Graine génératrice de nombres aléatoires pour l'échantillon d'incertitude",
-    "OPTIONS_ADVANCED_PERMISSIVE_LABEL": "Permissif",
-    "OPTIONS_ADVANCED_PERMISSIVE_HELP": "Sélectionnez « Oui » pour permettre des ajustements en cas d'erreurs de convergence ou de données.",
     "OPTIONS_ADVANCED_LOGIT_MEAN_LABEL": "Moyenne antérieure Logit relative à l'attractivité des districts voisins",
     "OPTIONS_ADVANCED_LOGIT_HELP": "Compensation logit relative aux chances d'obtenir un ART dans le district voisin par rapport au district de résidence",
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Soit les niveaux d'approvisionnement, la hiérarchie et les limites, soit area_merged",
@@ -310,5 +308,9 @@
     "ART_ADULT_SEX_RATIO_DESC": "Ratio femmes/hommes chez les adultes sous TARV",
     "ART_CHILD_DESC": "Nombre d'enfants (<15) sous TARV à la fin de l'année",
     "ART_PROP_U15_DESC": "Proportion d'enfants (<15) sous TARV",
-    "ART_TOTAL_DESC": "Numéros sur TARV à la fin de l'année"
+    "ART_TOTAL_DESC": "Numéros sur TARV à la fin de l'année",
+    "WARNING_OPTIONS_MISSING_ARTATTEND": "Vous avez choisi d'ajuster le modèle sans estimer la fréquentation des TARV voisines. Vous pouvez revoir votre sélection pour inclure cette option..",
+    "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 40 % pour certaines catégories d'âge et de sexe.",
+    "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour certaines catégories d'âge et de sexe.",
+    "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}"
 }

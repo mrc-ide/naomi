@@ -55,8 +55,7 @@ hintr_options <- list(
   output_aware_plhiv = "true",
   rng_seed = 17,
   no_of_samples = 20,
-  max_iter = 250,
-  permissive = "false"
+  max_iter = 250
 )
 
 calibration_options <- list(
@@ -84,3 +83,6 @@ naomi_output <- read_output_package(spectrum_download$path)
 
 datapack_path <- tempfile(fileext = ".csv")
 write_datapack_csv(naomi_output, datapack_path)
+
+navigator_path <- tempfile(fileext = ".csv")
+write_navigator_checklist(naomi_output, navigator_path)

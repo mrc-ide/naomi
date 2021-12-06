@@ -7,18 +7,21 @@ test_that("model can be run", {
                                output_path)
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(model_run$version, packageVersion("naomi"))
   expect_null(model_run$plot_data_path)
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
+
+  expect_equal(model_run$warnings, list())
 })
 
 test_that("model can be run without programme data", {
@@ -42,17 +45,18 @@ test_that("model can be run without programme data", {
   output_path <- tempfile()
   model_run <- hintr_run_model(data, options, output_path)
   expect_equal(names(model_run),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_null(model_run$plot_data_path)
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 })
 
 test_that("model fit without survey ART and survey recency data", {
@@ -181,7 +185,7 @@ test_that("setting rng_seed returns same output", {
       output_indicators3$mean[output_indicators3$indicator == "prevalence"][1])
 })
 
-test_that("exceeding max_iterations convergence error or warning", {
+test_that("exceeding max_iterations raises convergence warning", {
 
   data <- a_hintr_data
 
@@ -195,12 +199,12 @@ test_that("exceeding max_iterations convergence error or warning", {
   options$max_iterations <- 5
 
   output_path <- tempfile()
-
-  expect_error(hintr_run_model(data, options, output_path))
-
-  options$permissive <- "true"
-  output_path <- tempfile()
-  expect_warning(hintr_run_model(data, options, output_path))
+  out <- hintr_run_model(data, options, output_path)
+  expect_length(out$warnings, 2)
+  expect_equal(out$warnings[[1]]$text,
+               paste0("You have chosen to fit model without estimating ",
+               "neighbouring ART attendance. You may wish to review your ",
+               "selection to include this option."))
 })
 
 test_that("invalid time sequencing returns an error", {
@@ -226,7 +230,7 @@ test_that("model works with empty string for ANC year", {
   model_run <- hintr_run_model(a_hintr_data, options)
 
   expect_equal(names(model_run),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })
 
 test_that("input data types can be formatted", {
@@ -305,6 +309,19 @@ test_that("model run can be calibrated", {
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
+  expect_length(calibrated_output$warnings, 0)
+
+  output <- readRDS(calibrated_output$model_output_path)
+  expect_equal(names(output),
+               c("output_package", "naomi_data", "info", "warnings"))
+  expect_s3_class(output$output_package, "naomi_output")
+  expect_s3_class(output$naomi_data, "naomi_data")
+  expect_s3_class(output$naomi_data, "naomi_mf")
+  expect_equal(
+    names(output$info),
+    c("inputs.csv", "options.yml", "packages.csv", "calibration_options.yml"))
+  expect_setequal(names(output$warnings), c("model_fit", "calibrate"))
+  expect_equal(output$warnings$calibrate, calibrated_output$warnings)
 
   ## Cannot calibrate multiple times
   calibration_options <- list(
@@ -435,7 +452,7 @@ test_that("Model can be run without .shiny90 file", {
 
   opts <- a_hintr_options
   opts$output_aware_plhiv <- "false"
-  expect_true(validate_model_options(data, opts))
+  expect_true(validate_model_options(data, opts)$valid)
 
   ## Fit model without .shiny90 in PJNZ
   output_path <- tempfile()
@@ -446,16 +463,17 @@ test_that("Model can be run without .shiny90 file", {
 
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 
   output <- readRDS(model_run$model_output_path)
   expect_equal(names(output),
-               c("output_package", "naomi_data", "info"))
+               c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
   expect_s3_class(output$naomi_data, "naomi_data")
   expect_s3_class(output$naomi_data, "naomi_mf")
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
+  expect_equal(output$warnings$model_fit, model_run$warnings)
 
   expect_setequal(names(output$output_package$meta_area),
                    c("area_level", "area_level_label", "area_id", "area_name",
@@ -482,7 +500,7 @@ test_that("hintr_run_model can skip validation", {
 
   mock_validate_model_options <- mockery::mock(TRUE)
 
-  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+  with_mock("naomi:::do_validate_model_options" = mock_validate_model_options, {
     ## Don't really care about result here, just using some test that will
     ## complete relatively quickly so we can test model validation is skipped
     expect_error(hintr_run_model(format_data_input(a_hintr_data), options,
@@ -490,7 +508,7 @@ test_that("hintr_run_model can skip validation", {
   })
   mockery::expect_called(mock_validate_model_options, 0)
 
-  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+  with_mock("naomi:::do_validate_model_options" = mock_validate_model_options, {
     ## Don't really care about result here, just using some test that will
     ## complete relatively quickly so we can test model validation is skipped
     expect_error(hintr_run_model(format_data_input(a_hintr_data), options))

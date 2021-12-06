@@ -763,9 +763,11 @@ save_output <- function(filename, dir,
     write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
   }
 
+  dir.create("info")
+  write_navigator_checklist(naomi_output, "info/unaids_navigator_checklist.csv")
+
   info <- attr(naomi_output, "info")
   if (length(info) > 0L) {
-    dir.create("info")
     for (p in names(info)) {
       writeLines(trimws(info[[p]]), file.path("info", p))
     }
@@ -858,6 +860,10 @@ read_output_package <- function(path) {
   v$meta_area$name <- NULL
 
   info_files <- list.files(file.path(tmpd, "info"))
+
+  ## unaids_navigator_checklist.csv gets regenerated; don't reload
+  info_files <- setdiff(info_files, "unaids_navigator_checklist.csv")
+  
   if(length(info_files)) {
     info <- lapply(file.path(tmpd, "info", info_files), readLines)
     names(info) <- info_files
