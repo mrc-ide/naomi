@@ -136,6 +136,15 @@ naomi_model_frame <- function(area_merged,
                               spectrum_population_calibration = "national",
                               output_aware_plhiv = TRUE) {
 
+  ## Create a list of options to save out
+  model_options <- list(area_scope = scope,
+                        area_level = level,
+                        calendar_quarter_t1 = calendar_quarter1,
+                        calendar_quarter_t2 = calendar_quarter2,
+                        calendar_quarter_t3 = calendar_quarter3,
+                        artattend = artattend,
+                        artattend_t2 = artattend_t2)
+  
   ## Create area tree
   ## TODO: Get rid of reliance on data.tree
   areas <- create_areas(area_merged = area_merged)
@@ -623,6 +632,7 @@ naomi_model_frame <- function(area_merged,
             calendar_quarter3 = calendar_quarter3,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
+            model_options = model_options,
             spectrum_0to4distribution = spectrum_0to4distribution,
             output_aware_plhiv = output_aware_plhiv,
             omega = omega,
@@ -717,7 +727,7 @@ select_naomi_data <- function(naomi_mf,
 
   naomi_mf$prev_dat <- survey_mf(survey_ids = prev_survey_ids,
                                  indicator = "prevalence",
-                                 survey_hiv_indicators = survey_hiv_indicators,,
+                                 survey_hiv_indicators = survey_hiv_indicators,
                                  naomi_mf = naomi_mf,
                                  use_kish = use_kish_prev,
                                  deff = deff_prev,
@@ -771,6 +781,13 @@ select_naomi_data <- function(naomi_mf,
                                 naomi_mf$artcov_dat,
                                 naomi_mf$vls_dat)
 
+  data_options <- list(prev_survey_available = unique(survey_hiv_indicators$survey_id[survey_hiv_indicators$indicator == "prevalence"]),
+                       artcov_survey_available = unique(survey_hiv_indicators$survey_id[survey_hiv_indicators$indicator == "art_coverage"]),
+                       prev_survey_used = prev_survey_ids,
+                       artcov_survey_used = artcov_survey_ids)
+
+  naomi_mf$data_options <- data_options
+    
   class(naomi_mf) <- c("naomi_data", class(naomi_mf))
 
   naomi_mf
