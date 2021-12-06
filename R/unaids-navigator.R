@@ -1,14 +1,12 @@
 #' Write UNAIDS Estimates Navigator checklist CSV
 #'
 #' @param naomi_output a naomi_output object.
-#' @param options naomi model options
 #' @param path path to save Navigator checklist CSV.
 #'
 #' @details
 #'
 #' @export
 write_navigator_checklist <- function(naomi_output,
-                                      options,
                                       data,
                                       path) {
 
@@ -71,36 +69,39 @@ write_navigator_checklist <- function(naomi_output,
   # TODO: Compare aggregated naomi inputs to national Spectrum totals
   # This is dummy code
 
-
+  browser()
+  
   ## Check for correct model options selection
   valid_opt <- yaml::read_yaml(system.file("metadata/navigator_validation.yml", package = "naomi"))
 
+  model_options <- naomi_output$fit$model_options
+  data_options <- naomi_output$fit$data_options
+  calibration_options <- naomi_output$fit$calibration_options
+  
   ## Is most recent calendar quarter selected
-  if (options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
+  if (model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_qtr"] <- TRUE
   }
 
   ## Is future projection quarter selected
-  if (options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
+  if (model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <- TRUE
   }
 
   ## Is ART attendance selected
-  if (options$artattend) {
+  if (model_options[["artattend"]]) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- TRUE
   }
 
   ## Is scope set to national ID
   national_area_id <- naomi_output$meta_area$area_id[naomi_output$meta_area$area_level == 0]
-  if (all(options$area_scope == national_area_id)) {
+  if (all(model_options$area_scope == national_area_id)) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_area_ID_selected"] <- TRUE
   }
 
   ## Check survey
   # Does T1 calendar quarter match one survey
-  t1 <- gsub(".*?([0-9]+).*", "\\1", options$calendar_quarter_t1)
-  surveys <- gsub(".*?([0-9]+).*", "\\1", options$survey_prevalence)
-  if (t1 %in% surveys) {
+  if (model_options$calendar_quarter_t1 %in% data_options$prev_survey_quarters) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <- TRUE
   }
 
@@ -134,8 +135,6 @@ write_navigator_checklist <- function(naomi_output,
 
   ## Check for correct calibration options selection
   # Is logistic calibration selected
-
-  calibration_options <- naomi_output$fit$calibration_options
   
   if (calibration_options$calibrate_method == "logistic") {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE

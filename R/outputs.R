@@ -794,7 +794,7 @@ save_output <- function(filename, dir,
   options <- yaml::read_yaml(text = info$options.yml)
   data <- info$data
 
-  write_navigator_checklist(naomi_output, options, data,
+  write_navigator_checklist(naomi_output, data,
                             "info/unaids_navigator_checklist.csv")
 
   info_sub <- info
