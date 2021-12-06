@@ -9,7 +9,6 @@
 #' @export
 write_navigator_checklist <- function(naomi_output,
                                       options,
-                                      caibration_options,
                                       data,
                                       path) {
 
@@ -136,7 +135,9 @@ write_navigator_checklist <- function(naomi_output,
   ## Check for correct calibration options selection
   # Is logistic calibration selected
 
-  if (options$calibrate_method == "logistic") {
+  calibration_options <- naomi_output$fit$calibration_options
+  
+  if (calibration_options$calibrate_method == "logistic") {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE
   }
 
