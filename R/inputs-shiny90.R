@@ -43,7 +43,13 @@ extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
   spec <- lapply(spectrum_data, readRDS)
   spec <- lapply(spec, "[[", "data")
   fp <- first90::prepare_inputs_from_extracts(spec)
-  fp$popadjust <- FALSE
+
+  if (!exists("popadjust", fp)) {
+    ## From first90 v1.5.0 (for 2022 estimates, popadjust is read from the 
+    ## PJNZ and saved in the .shiny90 output. This is retained for backward 
+    ## compatibility with .shiny90 files created before first90 v1.5.0.
+    fp$popadjust <- FALSE
+  }
 
   proj_years <- fp$ss$proj_start + seq_len(fp$ss$PROJ_YEARS) - 1L
 
