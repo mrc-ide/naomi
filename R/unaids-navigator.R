@@ -76,27 +76,34 @@ write_navigator_checklist <- function(naomi_output,
   ## Check for correct model options selection
   valid_opt <- yaml::read_yaml(system.file("metadata/navigator_validation.yml", package = "naomi"))
 
-  # Is most recent calendar quarter selected
-  if(options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2){
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_qtr"] <- TRUE}
+  ## Is most recent calendar quarter selected
+  if (options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_qtr"] <- TRUE
+  }
 
-  # Is future projection quarter selected
-  if(options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2){
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <- TRUE}
+  ## Is future projection quarter selected
+  if (options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <- TRUE
+  }
 
-  # Is ART attendance selected
-  if(options$artattend){v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- TRUE}
+  ## Is ART attendance selected
+  if (options$artattend) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- TRUE
+  }
 
-  # Is scope set to national ID
-  scope <- options$area_scope
-  national_id <- naomi_output$meta_area$area_id[naomi_output$meta_area$area_level == 0]
-  if(scope == national_id){v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_area_ID_selected"] <- TRUE}
+  ## Is scope set to national ID
+  national_area_id <- naomi_output$meta_area$area_id[naomi_output$meta_area$area_level == 0]
+  if (all(options$area_scope == national_area_id)) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_area_ID_selected"] <- TRUE
+  }
 
   ## Check survey
   # Does T1 calendar quarter match one survey
   t1 <- gsub(".*?([0-9]+).*", "\\1", options$calendar_quarter_t1)
   surveys <- gsub(".*?([0-9]+).*", "\\1", options$survey_prevalence)
-  if(t1 %in% surveys){v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <- TRUE}
+  if (t1 %in% surveys) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <- TRUE
+  }
 
   # Is most recent survey in input data selected in options
   input_survey <- read.csv(data$survey$path)
@@ -122,44 +129,59 @@ write_navigator_checklist <- function(naomi_output,
   # Is ANC data included if available
   anc_options <- c(options$anc_prevalence_year1, options$anc_prevalence_year2)
 
-  if(TRUE || "true" %in% anc_options && !is.null(data$anc_testing)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE}
+  if (TRUE || "true" %in% anc_options && !is.null(data$anc_testing)) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE
+  }
 
   ## Check for correct calibration options selection
   # Is logistic calibration selected
 
-  if(options$calibrate_method == "logistic"){
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE}
-
-  spectrum_code <- unique(naomi_output$fit$spectrum_calibration$spectrum_region_code)
-  if(0 %in% spectrum_code){spec_level <- "nat"} else {spec_level <- "subnat"}
-
-  if(spec_level == "nat"){
-    if(calibration_options$spectrum_plhiv_calibration_level == "national"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE}
-
-    if(calibration_options$spectrum_artnum_calibration_level == "national"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE}
-
-    if(calibration_options$spectrum_aware_calibration_level == "national"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE}
-
-    if(calibration_options$spectrum_infections_calibration_level == "national"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE}
+  if (options$calibrate_method == "logistic") {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE
   }
 
-  if(spec_level == "subnat"){
-    if(calibration_options$spectrum_plhiv_calibration_level == "subnational"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE}
+  spectrum_code <- unique(naomi_output$fit$spectrum_calibration$spectrum_region_code)
 
-    if(calibration_options$spectrum_artnum_calibration_level == "subnational"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE}
+  if (0 %in% spectrum_code) {
+    spec_level <- "nat"
+  } else {
+    spec_level <- "subnat"
+  }
 
-    if(calibration_options$spectrum_aware_calibration_level == "subnational"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE}
+  if (spec_level == "nat") {
+    if (calibration_options$spectrum_plhiv_calibration_level == "national") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE
+    }
 
-    if(calibration_options$spectrum_infections_calibration_level == "subnational"){
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE}
+    if (calibration_options$spectrum_artnum_calibration_level == "national") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE
+    }
+
+    if (calibration_options$spectrum_aware_calibration_level == "national") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE
+    }
+
+    if (calibration_options$spectrum_infections_calibration_level == "national") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE
+    }
+  }
+
+  if (spec_level == "subnat") {
+    if (calibration_options$spectrum_plhiv_calibration_level == "subnational") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE
+    }
+
+    if (calibration_options$spectrum_artnum_calibration_level == "subnational") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE
+    }
+
+    if (calibration_options$spectrum_aware_calibration_level == "subnational") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE
+    }
+
+    if (calibration_options$spectrum_infections_calibration_level == "subnational") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE
+    }
   }
 
 
