@@ -287,6 +287,7 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #'
 #' @param naomi_fit Fitted naomi model
 #' @param naomi_mf Naomi model frame
+#' @param options Naomi model options
 #' @param na.rm Whether to remove NA values when calculating summary statistics, default FALSE
 #'
 #' @return List containing output indicators and metadata.
@@ -299,7 +300,8 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' review results when there are errors. `NA` values in
 #' simulated model results typically mean poor model fit or
 #' non-convergence that needs to be addressed.
-#' 
+#'
+#'
 #' @export
 output_package <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 
@@ -329,6 +331,7 @@ output_package <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   fit <- list()
   fit$spectrum_calibration <- naomi_mf$spectrum_calibration
   fit$calibration_options <- naomi_mf$calibration_options
+
 
   val <- list(
     indicators = indicators,
@@ -697,6 +700,24 @@ save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
               export_datapack = TRUE)
 }
 
+#' Save outputs to zip file
+#'
+#' @param naomi_output Naomi output object
+#' @param options Naomi model options
+#' @param filename Name of file to create
+#' @param dir Directory to create zip in
+#' @param overwrite If TRUE overwrite any existing file
+#' @param with_labels If TRUE save indicator ids with labels
+#' @param boundary_format Either geojson or shp for saving boundary as geojson
+#' or shape format
+#' @param single_csv If TRUE only output the csv of indicators, otherwise save
+#' the metadata too
+#' @param export_datapack If TRUE save CSV of PEPFAR datapack indicators.
+#'
+#' @return Path to created zip file
+#' @export
+
+
 save_output <- function(filename, dir,
                         naomi_output,
                         overwrite = FALSE,
@@ -763,13 +784,22 @@ save_output <- function(filename, dir,
     write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
   }
 
-  dir.create("info")
-  write_navigator_checklist(naomi_output, "info/unaids_navigator_checklist.csv")
 
+  dir.create("info")
   info <- attr(naomi_output, "info")
-  if (length(info) > 0L) {
-    for (p in names(info)) {
-      writeLines(trimws(info[[p]]), file.path("info", p))
+
+  options <- yaml::read_yaml(text = info$options.yml)
+  data <- info$data
+
+  write_navigator_checklist(naomi_output, options, data,
+                            "info/unaids_navigator_checklist.csv")
+
+  info_sub <- info
+  info_sub$data <- NULL
+
+  if (length(info_sub) > 0L) {
+    for (p in names(info_sub)) {
+      writeLines(trimws(info_sub[[p]]), file.path("info", p))
     }
   }
 
@@ -843,9 +873,14 @@ read_output_package <- function(path) {
   calibration_options <- readr_read_csv(file.path(tmpd, "fit/calibration_options.csv"))
   calibration_options <- setNames(calibration_options$value,
                                   calibration_options$option)
+  model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
+  model_options <- setNames(calibration_options$value,
+                                  calibration_options$option)
+
 
   fit <- list(spectrum_calibration = spectrum_calibration,
-              calibration_options = calibration_options)
+              calibration_options = calibration_options,
+              model_options = model_options)
 
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
