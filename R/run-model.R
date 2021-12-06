@@ -52,6 +52,19 @@
 hintr_run_model <- function(data, options,
                             model_output_path = tempfile(fileext = ".rds"),
                             validate = TRUE) {
+  model_run_output <- handle_naomi_warnings(
+    run_model(data, options, validate))
+  warnings <- model_run_output$warnings
+  model_run_output$warnings <- list(model_fit = warnings)
+  saveRDS(model_run_output, model_output_path)
+  build_hintr_output(
+    NULL,
+    model_output_path,
+    warnings = warnings
+  )
+}
+
+run_model <- function(data, options, validate) {
   progress <- new_progress()
   progress$start("prepare_inputs")
   progress$print()
@@ -60,7 +73,7 @@ hintr_run_model <- function(data, options,
   options <- format_options(options)
 
   if (validate) {
-    validate_model_options(data, options)
+    do_validate_model_options(data, options)
   }
 
   naomi_data <- naomi_prepare_data(data, options)
@@ -76,8 +89,9 @@ hintr_run_model <- function(data, options,
                  max_iter = options$max_iterations %||% 250,
                  progress = progress)
 
-  if(fit$convergence != 0 && !options$permissive) {
-    stop(paste("convergence error:", fit$message))
+  if(fit$convergence != 0) {
+    naomi_warning(t_("WARNING_CONVERGENCE", list(msg = fit$message)),
+                  "model_fit")
   }
 
   progress$finalise_fit()
@@ -96,26 +110,38 @@ hintr_run_model <- function(data, options,
   outputs <- output_package(fit, naomi_data)
   info <- naomi_info(data, options)
   attr(outputs, "info") <- info
-  model_run_output <- list(
+  progress$complete("prepare_outputs")
+  progress$print()
+
+  # Warnings for simulated outputs
+  outputs_prev <- outputs$indicators$mean[
+    outputs$indicators$indicator == "prevalence"]
+  outputs_artcov <- outputs$indicators$mean[
+    outputs$indicators$indicator == "art_coverage"]
+
+  if(max(outputs_prev) > 0.40) {
+    naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
+                  "model_fit")
+  }
+
+  if(max(outputs_artcov) > 1) {
+    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
+                  "model_fit")
+  }
+
+  list(
     output_package = outputs,
     naomi_data = naomi_data,
     info = info
   )
-  saveRDS(model_run_output, model_output_path)
 
-  progress$complete("prepare_outputs")
-  progress$print()
-
-  build_hintr_output(
-    NULL,
-    model_output_path
-  )
 }
 
-build_hintr_output <- function(plot_data_path, model_output_path) {
+build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
   out <- list(plot_data_path = plot_data_path,
               model_output_path = model_output_path,
-              version = packageVersion("naomi"))
+              version = packageVersion("naomi"),
+              warnings = warnings)
   class(out) <- "hintr_output"
   out
 }
@@ -146,9 +172,20 @@ assert_model_output_version <- function(obj, version = NULL) {
 #'
 #' @return Calibrated hintr_output object
 #' @export
-hintr_calibrate <- function(output, calibration_options,
-                            plot_data_path = tempfile(fileext = ".rds"),
-                            calibrate_output_path = tempfile(fileext = ".rds")) {
+hintr_calibrate <- function(
+  output, calibration_options, plot_data_path = tempfile(fileext = ".rds"),
+  calibrate_output_path = tempfile(fileext = ".rds")) {
+  out <- handle_naomi_warnings(run_calibrate(output, calibration_options))
+  warnings <- out$warnings
+  out$calibrate_data$warnings$calibrate <- warnings
+  saveRDS(out$plot_data, plot_data_path)
+  saveRDS(out$calibrate_data, calibrate_output_path)
+  build_hintr_output(plot_data_path,
+                     calibrate_output_path,
+                     warnings = warnings)
+}
+
+run_calibrate <- function(output, calibration_options) {
   assert_model_output_version(output, "2.5.7")
   validate_calibrate_options(calibration_options)
   progress <- new_simple_progress()
@@ -182,19 +219,32 @@ hintr_calibrate <- function(output, calibration_options,
   calibration_data <- list(
     output_package = calibrated_output,
     naomi_data = model_output$naomi_data,
-    info = model_output$info
+    info = model_output$info,
+    warnings = model_output$warnings
   )
   calibration_data$info$calibration_options.yml <-
     yaml::as.yaml(calibration_options)
   progress$update_progress("PROGRESS_CALIBRATE_SAVE_OUTPUT")
-  saveRDS(calibration_data, calibrate_output_path)
 
   attr(calibrated_output, "info") <- calibration_data$info
   indicators <- add_output_labels(calibrated_output)
-  saveRDS(indicators, file = plot_data_path)
 
-  build_hintr_output(plot_data_path,
-                     calibrate_output_path)
+  # Warnings for calibrated outputs
+  outputs_prev <- indicators$mean[indicators$indicator == "prevalence"]
+  outputs_artcov <- indicators$mean[indicators$indicator == "art_coverage"]
+
+  if(max(outputs_prev) > 0.4) {
+    naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
+                  c("model_calibrate","review_output", "download_results"))
+  }
+
+  if(max(outputs_artcov) > 1) {
+    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
+                  c("model_calibrate","review_output", "download_results"))
+  }
+
+  list(plot_data = indicators,
+       calibrate_data = calibration_data)
 }
 
 #' Get data for hintr calibrate plot
@@ -456,7 +506,7 @@ Progress <- R6::R6Class("Progress", list(
                                       progress = NULL,
                                       iteration = 0,
                                       start_time = NULL,
-                                      elapsed = NULL,
+                                      elapsed = as.difftime(0, units = "secs"),
 
                                       initialize = function() {
                                         self$progress <-
@@ -643,13 +693,6 @@ convert_format <- function(data) {
 ## In future, refactor this to systmatically cast options based on type and set
 ## defaults if missing from metadata.
 format_options <- function(options) {
-
-  if (is.null(options$permissive)) {
-    options$permissive <- FALSE
-  } else {
-    options$permissive <- as.logical(options$permissive)
-  }
-
   ## Set default "none" calibration options if missing from options list
 
   if (is.null(options$spectrum_plhiv_calibration_level)) {

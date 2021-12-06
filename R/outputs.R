@@ -895,6 +895,10 @@ read_output_package <- function(path) {
   v$meta_area$name <- NULL
 
   info_files <- list.files(file.path(tmpd, "info"))
+
+  ## unaids_navigator_checklist.csv gets regenerated; don't reload
+  info_files <- setdiff(info_files, "unaids_navigator_checklist.csv")
+  
   if(length(info_files)) {
     info <- lapply(file.path(tmpd, "info", info_files), readLines)
     names(info) <- info_files

@@ -1,6 +1,28 @@
-# naomi 2.5.12
+# naomi 2.5.17
 
 * Add UNAIDS Estimates Navigator checklist CSV to output package .zip.
+
+# naomi 2.5.16
+
+* Update colour scales to match summary report and user feedback
+
+# naomi 2.5.15
+
+* Suppress s2 geometry in adjacency matrix construction.
+
+# naomi 2.5.14
+
+* Add `naomi_warning` helper to raise warnings which can be displayed in front end
+* Return warnings from model fit, model calibration and model option validation
+* Remove `permissive` option from model options, warning now returned instead of error
+
+# naomi 2.5.13
+
+* Replace `get_plot_type_label_and_description` with `get_plot_type_column_metadata` and include formatting info in response
+
+# naomi 2.5.12
+
+* Small fixes to text in Naomi summary report
 
 # naomi 2.5.11
 
@@ -29,7 +51,7 @@
 * Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
 
 * Add function `hintr_calibrate_plot` to return data for plotting calibrate barchart.
-  
+
 # naomi 2.5.5
 
 * Add argument `na.rm=` to `output_package()` to allow calculation of quantiles if there are missing values in the simulation. Default is `na.rm = FALSE` and `na.rm = TRUE` is to be used for debugging purposes only. Cases where missing values occur will usually indicate very poor model fits and issues that need to be addressed.
@@ -43,7 +65,7 @@ Updates to PEPFAR Data Pack outputs.
   - Add column `dataelement_uid`.
   - Add `=""<>""` around age group values.
 * Change file name save to `pepfar_datapack_indicators_2022.csv`.
-* Separate input data aggregation and plot prepartion scripts
+* Separate input data aggregation and plot preparation scripts
 * Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
 time series function outputs
 
