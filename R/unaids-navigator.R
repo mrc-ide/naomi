@@ -9,6 +9,7 @@
 #' @export
 write_navigator_checklist <- function(naomi_output,
                                       options,
+                                      caibration_options,
                                       data,
                                       path) {
 
@@ -98,7 +99,7 @@ write_navigator_checklist <- function(naomi_output,
   if(t1 %in% surveys){v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <- TRUE}
 
   # Is most recent survey in input data selected in options
-  input_survey <- read_csv(data$survey$path, show_col_types = FALSE)
+  input_survey <- read.csv(data$survey$path)
   input_survey_ids <- unique(input_survey$survey_id)
   max_inputs_survey_year <- max(gsub(".*?([0-9]+).*", "\\1", input_survey_ids))
   options_survey_year <- gsub(".*?([0-9]+).*", "\\1", options$survey_prevalence)
@@ -134,30 +135,30 @@ write_navigator_checklist <- function(naomi_output,
   if(0 %in% spectrum_code){spec_level <- "nat"} else {spec_level <- "subnat"}
 
   if(spec_level == "nat"){
-    if(options$spectrum_plhiv_calibration_level == "national"){
+    if(calibration_options$spectrum_plhiv_calibration_level == "national"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE}
 
-    if(options$spectrum_artnum_calibration_level == "national"){
+    if(calibration_options$spectrum_artnum_calibration_level == "national"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE}
 
-    if(options$spectrum_aware_calibration_level == "national"){
+    if(calibration_options$spectrum_aware_calibration_level == "national"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE}
 
-    if(options$spectrum_infections_calibration_level == "national"){
+    if(calibration_options$spectrum_infections_calibration_level == "national"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE}
   }
 
   if(spec_level == "subnat"){
-    if(options$spectrum_plhiv_calibration_level == "subnational"){
+    if(calibration_options$spectrum_plhiv_calibration_level == "subnational"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE}
 
-    if(options$spectrum_artnum_calibration_level == "subnational"){
+    if(calibration_options$spectrum_artnum_calibration_level == "subnational"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE}
 
-    if(options$spectrum_aware_calibration_level == "subnational"){
+    if(calibration_options$spectrum_aware_calibration_level == "subnational"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE}
 
-    if(options$spectrum_infections_calibration_level == "subnational"){
+    if(calibration_options$spectrum_infections_calibration_level == "subnational"){
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE}
   }
 

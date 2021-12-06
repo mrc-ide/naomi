@@ -789,9 +789,10 @@ save_output <- function(filename, dir,
   info <- attr(naomi_output, "info")
 
   options <- yaml::read_yaml(text = info$options.yml)
+  calibration_options <- naomi_output$fit$calibration_options
   data <- info$data
 
-  write_navigator_checklist(naomi_output, options, data,
+  write_navigator_checklist(naomi_output, options, calibration_options, data,
                             "info/unaids_navigator_checklist.csv")
 
   info_sub <- info
@@ -874,8 +875,6 @@ read_output_package <- function(path) {
   calibration_options <- setNames(calibration_options$value,
                                   calibration_options$option)
   model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
-  model_options <- setNames(calibration_options$value,
-                                  calibration_options$option)
 
 
   fit <- list(spectrum_calibration = spectrum_calibration,
@@ -898,7 +897,7 @@ read_output_package <- function(path) {
 
   ## unaids_navigator_checklist.csv gets regenerated; don't reload
   info_files <- setdiff(info_files, "unaids_navigator_checklist.csv")
-  
+
   if(length(info_files)) {
     info <- lapply(file.path(tmpd, "info", info_files), readLines)
     names(info) <- info_files
