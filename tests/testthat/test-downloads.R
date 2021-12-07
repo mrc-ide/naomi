@@ -14,12 +14,9 @@ test_that("spectrum download can be created", {
 
   tmp <- tempfile()
   info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
-  info_sub <- info
-  info_sub$data <- NULL
-  info_names <- paste0("info/", names(info_sub))
   unzip(out$path, exdir = tmp, files = info_names)
   expect_equal(dir(tmp), "info")
-  expect_equal(dir(file.path(tmp, "info")), names(info_sub))
+  expect_equal(dir(file.path(tmp, "info")), names(info))
 
 
   ## # UNAIDS Navigator Checklist checks
@@ -86,7 +83,10 @@ test_that("coarse age group download can be created", {
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "pepfar_datapack_indicators_2022.csv",
       "info/", info_names, "info/unaids_navigator_checklist.csv",
-      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+      "fit/", "fit/spectrum_calibration.csv",
+      "fit/model_options.yml",
+      "fit/data_options.yml",
+      "fit/calibration_options.yml")
   )
 
   ## Check coarse age outputs saved in coarse_output_path
