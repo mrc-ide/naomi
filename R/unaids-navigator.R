@@ -121,24 +121,29 @@ write_navigator_checklist <- function(naomi_output,
   prev_survey_available <- data_options$prev_survey_available
   max_prev_survey_available <- max(gsub(".*?([0-9]+).*", "\\1", prev_survey_available))
   prev_survey_ids <- gsub(".*?([0-9]+).*", "\\1", data_options$prev_survey_ids)
-  if(max_prev_survey_available %in% prev_survey_ids) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <- TRUE}
+  if (max_prev_survey_available %in% prev_survey_ids) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <- TRUE
+  }
 
   # Is survey ART coverage included if available
-  if(data_options$artcov_survey_available %in% data_options$artcov_survey_ids) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- TRUE}
+  if (length(data_options$artcov_survey_available) == 0 ||   ## Not available -> TRUE
+      data_options$artcov_survey_ids %in% data_options$artcov_survey_available) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- TRUE
+  }
 
   ## Check ART inputs
   # Is ART data included for at least one time point
-  if(!is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1)||
-     !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_data"] <- TRUE}
+  if (!is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1) ||
+      !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_data"] <- TRUE
+  }
 
   ## Check ANC inputs
   # Is ANC data included for at least one time point
-  if(!is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
-     !is.null(naomi_output$fit$data_options$anc_prev_year_t2)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE}
+  if (!is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
+      !is.null(naomi_output$fit$data_options$anc_prev_year_t2)) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE
+  }
 
   ## Check for correct calibration options selection
   # Is logistic calibration selected
