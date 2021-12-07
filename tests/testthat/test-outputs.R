@@ -261,23 +261,57 @@ test_that("summary report can be translated", {
   }
 })
 
-test_that("navigator checklist is correct when all checks pass", {
+test_that("navigator checklist returns expected results", {
 
-  tmp <- tempfile(fileext = ".csv")
   model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
 
-  a_output <- model_output$output_package
-  a_output$fit$model_options$calendar_quarter_t2 <- "CY2021Q4"
-  a_output$fit$model_options$calendar_quarter_t3 <- "CY2022Q3"
-  a_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
-  a_output$fit$calibration_options$spectrum_aware_calibration_level <- "subnational"
-  a_output$fit$calibration_options$spectrum_infections_calibration_level <- "subnational"
+  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
+                          "ANC_is_Spectrum"            = FALSE,
+                          "Package_created"            = TRUE, 
+                          "Package_has_all_data"       = TRUE, 
+                          "Opt_recent_qtr"             = FALSE,
+                          "Opt_future_proj_qtr"        = FALSE,
+                          "Opt_area_ID_selected"       = TRUE, 
+                          "Opt_calendar_survey_match"  = TRUE, 
+                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_ART_coverage"           = TRUE, 
+                          "Opt_ANC_data"               = TRUE, 
+                          "Opt_ART_data"               = TRUE, 
+                          "Opt_ART_attendance_yes"     = FALSE,
+                          "Model_fit"                  = TRUE, 
+                          "Cal_PLHIV"                  = TRUE, 
+                          "Cal_ART"                    = FALSE,
+                          "Cal_KOS"                    = FALSE,
+                          "Cal_new_infections"         = FALSE,
+                          "Cal_method"                 = TRUE)
+    
+  tmp_checklist <- tempfile(fileext = ".csv")
+  write_navigator_checklist(model_output$output_package, tmp_checklist)
+  checklist <- read.csv(tmp_checklist)
 
-  write_navigator_checklist(a_output, tmp)
-  checklist <- read.csv(tmp)
+  expect_equal(expected_checklist[checklist$NaomiCheckPermPrimKey], expected_checklist)
 
-  expect_true(all(checklist$TrueFalse))
+  ## Construct a checklist that will return all TRUE
+
+  adj_output <- model_output$output_packag
+  
+  adj_output$fit$model_options$calendar_quarter_t2 <- "CY2021Q4"
+  adj_output$fit$model_options$calendar_quarter_t3 <- "CY2022Q3"
+  adj_output$fit$model_options$artattend_t2 <- TRUE
+
+  adj_output$fit$data_options$prev_survey_ids <- "DEMO2016PHIA"
+  adj_output$fit$data_options$prev_survey_quarters <- "CY2016Q1"
+  adj_output$fit$data_options$art_number_spectrum_aligned <- TRUE
+  adj_output$fit$data_options$anc_testing_spectrum_aligned <- TRUE
+  
+  adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
+  adj_output$fit$calibration_options$spectrum_aware_calibration_level <- "subnational"
+  adj_output$fit$calibration_options$spectrum_infections_calibration_level <- "subnational"
+
+  tmp_checklist_adj <- tempfile(fileext = ".csv")
+  write_navigator_checklist(adj_output, tmp_checklist_adj)
+  checklist_adj<- read.csv(tmp_checklist_adj)
+
+  
+  expect_true(all(checklist_adj$TrueFalse))
 })
-
-
-
