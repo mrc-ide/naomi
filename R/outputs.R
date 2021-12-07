@@ -300,7 +300,6 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' simulated model results typically mean poor model fit or
 #' non-convergence that needs to be addressed.
 #'
-#'
 #' @export
 output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
@@ -335,7 +334,6 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   fit$data_options <- naomi_data$data_options
   fit$calibration_options <- naomi_data$calibration_options
   fit$spectrum_calibration <- naomi_data$spectrum_calibration
-
   val <- list(
     indicators = indicators,
     art_attendance = art_attendance,
@@ -719,8 +717,6 @@ save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
 #'
 #' @return Path to created zip file
 #' @export
-
-
 save_output <- function(filename, dir,
                         naomi_output,
                         overwrite = FALSE,
