@@ -14,6 +14,7 @@ test_that("spectrum download can be created", {
 
   tmp <- tempfile()
   info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
+  info_names <- paste0("info/", names(info))
   unzip(out$path, exdir = tmp, files = info_names)
   expect_equal(dir(tmp), "info")
   expect_equal(dir(file.path(tmp, "info")), names(info))
