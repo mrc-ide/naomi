@@ -95,6 +95,41 @@ extract_pjnz_one <- function(pjnz) {
   spec
 }
 
+#' Extract ART and ANC testing program data inputs from Spectrum PJNZ
+#'
+#' @param pjnz_list Vector of filepaths to Spectrum PJNZ file.
+#'
+#' @return A list with a two `data.frame`s of ANC testing data and
+#'   number on ART, respectively.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' spec <- extract_pjnz_program_data(pjnz)
+#'
+#' @export
+#' 
+extract_pjnz_program_data <- function(pjnz_list) {
+
+  pjnz_list <- unroll_pjnz(pjnz_list)    
+
+  region_code <- lapply(pjnz_list, read_spectrum_region_code)
+
+  art_dec31 <- lapply(pjnz_list, read_pjnz_art_dec31) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+  
+  anc_testing <- lapply(pjnz_list, read_pjnz_anc_testing) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+
+  val <- list(art_dec31 = art_dec31, anc_testing = anc_testing)
+  class(val) <- "spec_program_data"
+
+  val
+}
+
 
 #'
 #' Read number on ART at Dec 31 from PJNZ
@@ -300,7 +335,7 @@ read_pjnz_anc_testing <- function(pjnz) {
                                    responseName = "value",
                                    stringsAsFactors = FALSE)
   anc_testing$year <- type.convert(anc_testing$year, as.is = TRUE)
-
+  anc_testing <- dplyr::filter(anc_testing, !is.na(value))
 
   anc_testing
 }

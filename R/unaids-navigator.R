@@ -65,30 +65,19 @@ write_navigator_checklist <- function(naomi_output,
   always_true_checks <- c("Package_created", "Package_has_all_data", "Model_fit")
   v$TrueFalse[v$NaomiCheckPermPrimKey %in% always_true_checks] <- TRUE
 
-  # TODO: Compare aggregated naomi inputs to national Spectrum totals
-  # This is dummy code
-
-  spec_art <- 1000
-  naomi_art <- 1000
-  spec_anc <- 500
-  naomi_anc <- 500
-
-  if (spec_art == naomi_art) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- TRUE
-  }
-
-  if (spec_anc == naomi_anc) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- TRUE
-  }
-
-
-
+  
   ## Check for correct model options selection
   valid_opt <- yaml::read_yaml(system.file("metadata/navigator_validation.yml", package = "naomi"))
 
   model_options <- naomi_output$fit$model_options
   data_options <- naomi_output$fit$data_options
   calibration_options <- naomi_output$fit$calibration_options
+
+  ## Compare aggregated naomi inputs to national Spectrum totals
+
+  v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- data_options$art_number_spectrum_aligned
+  v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- data_options$anc_testing_spectrum_aligned
+
 
   ## Is most recent calendar quarter selected
   if (naomi_output$fit$model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
