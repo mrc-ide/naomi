@@ -112,11 +112,9 @@ write_navigator_checklist <- function(naomi_output,
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <- TRUE
   }
 
-  # Is most recent survey in input data selected in options
-  prev_survey_available <- data_options$prev_survey_available
-  max_prev_survey_available <- max(gsub(".*?([0-9]+).*", "\\1", prev_survey_available))
-  prev_survey_ids <- gsub(".*?([0-9]+).*", "\\1", data_options$prev_survey_ids)
-  if (max_prev_survey_available %in% prev_survey_ids) {
+  ## Check that all surveys used are from most recent quarter available
+  most_recent_survey_available  <- max(data_options$prev_survey_available_quarters)
+  if (all(data_options$prev_survey_quarters == most_recent_survey_available)) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <- TRUE
   }
 

@@ -783,6 +783,7 @@ select_naomi_data <- function(naomi_mf,
 
   surv_df <- survey_hiv_indicators
   data_options <- list(prev_survey_available = unique(surv_df$survey_id[surv_df$indicator == "prevalence"]),
+                       prev_survey_available_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$indicator == "prevalence"]),
                        artcov_survey_available = unique(surv_df$survey_id[surv_df$indicator == "art_coverage"]),
                        prev_survey_ids = prev_survey_ids,
                        prev_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids]),
