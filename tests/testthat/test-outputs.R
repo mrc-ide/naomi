@@ -2,7 +2,7 @@ context("model outputs")
 
 test_that("traidure hooks work in model outputs", {
 
-  out_en <- output_package(a_fit_sample, a_naomi_mf)
+  out_en <- output_package(a_fit_sample, a_naomi_data)
   expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "September 2018", "June 2019"))
   expect_setequal(out_en$meta_indicator$indicator_label[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("ART coverage", "HIV prevalence"))
@@ -12,7 +12,7 @@ test_that("traidure hooks work in model outputs", {
   reset <- naomi_set_language("fr")
   on.exit(reset())
 
-  out_fr <- output_package(a_fit_sample, a_naomi_mf)
+  out_fr <- output_package(a_fit_sample, a_naomi_data)
   expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Septembre 2018", "Juin 2019"))
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Prévalence du VIH", "Couverture ART"))
@@ -212,7 +212,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
 
   bad_sample <- a_fit_sample
   bad_sample$sample$alpha_t1_out[50] <- NA
-  expect_error(output_package(bad_sample, a_naomi_mf),
+  expect_error(output_package(bad_sample, a_naomi_data),
                "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
 })
 
@@ -260,3 +260,24 @@ test_that("summary report can be translated", {
     expect_true(any(grepl(fr, content, fixed = TRUE)))
   }
 })
+
+test_that("navigator checklist is correct when all checks pass", {
+
+  tmp <- tempfile(fileext = ".csv")
+  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+
+  a_output <- model_output$output_package
+  a_output$fit$model_options$calendar_quarter_t2 <- "CY2021Q4"
+  a_output$fit$model_options$calendar_quarter_t3 <- "CY2022Q3"
+  a_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
+  a_output$fit$calibration_options$spectrum_aware_calibration_level <- "subnational"
+  a_output$fit$calibration_options$spectrum_infections_calibration_level <- "subnational"
+
+  write_navigator_checklist(a_output, tmp)
+  checklist <- read.csv(tmp)
+
+  expect_true(all(checklist$TrueFalse))
+})
+
+
+

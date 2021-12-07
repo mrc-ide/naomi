@@ -791,20 +791,14 @@ save_output <- function(filename, dir,
   dir.create("info")
   info <- attr(naomi_output, "info")
 
-  options <- yaml::read_yaml(text = info$options.yml)
-  data <- info$data
-
-  write_navigator_checklist(naomi_output, data,
-                            "info/unaids_navigator_checklist.csv")
-
-  info_sub <- info
-  info_sub$data <- NULL
-
-  if (length(info_sub) > 0L) {
-    for (p in names(info_sub)) {
-      writeLines(trimws(info_sub[[p]]), file.path("info", p))
+  if (length(info) > 0L) {
+    for (p in names(info)) {
+      writeLines(trimws(info[[p]]), file.path("info", p))
     }
   }
+
+  write_navigator_checklist(naomi_output,
+                            "info/unaids_navigator_checklist.csv")
 
   fit <- naomi_output$fit
   if(length(fit) > 0L) {

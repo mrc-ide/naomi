@@ -7,7 +7,6 @@
 #'
 #' @export
 write_navigator_checklist <- function(naomi_output,
-                                      data,
                                       path) {
 
 
@@ -69,22 +68,35 @@ write_navigator_checklist <- function(naomi_output,
   # TODO: Compare aggregated naomi inputs to national Spectrum totals
   # This is dummy code
 
-  browser()
-  
+  spec_art <- 1000
+  naomi_art <- 1000
+  spec_anc <- 500
+  naomi_anc <- 500
+
+  if (spec_art == naomi_art) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- TRUE
+  }
+
+  if (spec_anc == naomi_anc) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- TRUE
+  }
+
+
+
   ## Check for correct model options selection
   valid_opt <- yaml::read_yaml(system.file("metadata/navigator_validation.yml", package = "naomi"))
 
   model_options <- naomi_output$fit$model_options
   data_options <- naomi_output$fit$data_options
   calibration_options <- naomi_output$fit$calibration_options
-  
+
   ## Is most recent calendar quarter selected
-  if (model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
+  if (naomi_output$fit$model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_qtr"] <- TRUE
   }
 
   ## Is future projection quarter selected
-  if (model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
+  if (naomi_output$fit$model_options$calendar_quarter_t3 == valid_opt$calendar_quarter_t3) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <- TRUE
   }
 
@@ -106,36 +118,33 @@ write_navigator_checklist <- function(naomi_output,
   }
 
   # Is most recent survey in input data selected in options
-  input_survey <- read.csv(data$survey$path)
-  input_survey_ids <- unique(input_survey$survey_id)
-  max_inputs_survey_year <- max(gsub(".*?([0-9]+).*", "\\1", input_survey_ids))
-  options_survey_year <- gsub(".*?([0-9]+).*", "\\1", options$survey_prevalence)
-  if(max_inputs_survey_year %in% options_survey_year) {
+  prev_survey_available <- data_options$prev_survey_available
+  max_prev_survey_available <- max(gsub(".*?([0-9]+).*", "\\1", prev_survey_available))
+  prev_survey_ids <- gsub(".*?([0-9]+).*", "\\1", data_options$prev_survey_ids)
+  if(max_prev_survey_available %in% prev_survey_ids) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <- TRUE}
 
   # Is survey ART coverage included if available
-  input_survey_ind <- unique(input_survey$indicator)
-  if("art_coverage" %in% input_survey_ind && !is.null(options$survey_art_coverage)) {
+  if(data_options$artcov_survey_available %in% data_options$artcov_survey_ids) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- TRUE}
 
   ## Check ART inputs
-  # Is ART data included if available
-  art_options <- c(options$include_art_t1, options$include_art_t2)
-
-  if(TRUE || "true" %in% art_options && !is.null(data$art_number)) {
+  # Is ART data included for at least one time point
+  if(!is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1)||
+     !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_data"] <- TRUE}
 
   ## Check ANC inputs
-  # Is ANC data included if available
-  anc_options <- c(options$anc_prevalence_year1, options$anc_prevalence_year2)
-
-  if (TRUE || "true" %in% anc_options && !is.null(data$anc_testing)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE
-  }
+  # Is ANC data included for at least one time point
+  if(!is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
+     !is.null(naomi_output$fit$data_options$anc_prev_year_t2)) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE}
 
   ## Check for correct calibration options selection
   # Is logistic calibration selected
-  
+
+  calibration_options <- naomi_output$fit$calibration_options
+
   if (calibration_options$calibrate_method == "logistic") {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE
   }
