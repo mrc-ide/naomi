@@ -100,11 +100,6 @@ write_navigator_checklist <- function(naomi_output,
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <- TRUE
   }
 
-  ## Is ART attendance selected
-  if (model_options[["artattend"]]) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- TRUE
-  }
-
   ## Is scope set to national ID
   national_area_id <- naomi_output$meta_area$area_id[naomi_output$meta_area$area_level == 0]
   if (all(model_options$area_scope == national_area_id)) {
@@ -131,19 +126,34 @@ write_navigator_checklist <- function(naomi_output,
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- TRUE
   }
 
-  ## Check ART inputs
-  # Is ART data included for at least one time point
-  if (!is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1) ||
-      !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)) {
+  ## ## Check ART inputs
+  ## Is ART data included for at least one time point
+  has_art_t1 <- !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1)
+  has_art_t2 <- !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)
+  
+  if ( has_art_t1 || has_art_t2 ) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_data"] <- TRUE
   }
 
-  ## Check ANC inputs
-  # Is ANC data included for at least one time point
+  ## ## Check ANC inputs
+  ## Is ANC data included for at least one time point
   if (!is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
       !is.null(naomi_output$fit$data_options$anc_prev_year_t2)) {
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE
   }
+
+  ## ## Is ART attendance selected
+  ## * If ART data at both time points; artattend and artattend_t1 should be both TRUE
+  ## * If ART data at only one time point; only artattend should be TRUE
+  ## * If no ART data; both should be FALSE
+  if (has_art_t1 && has_art_t2) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- model_options[["artattend"]] && model_options[["artattend_t2"]]
+  } else if (has_art_t1 && !has_art_t2 || !has_art_t1 && has_art_t2 ) {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- model_options[["artattend"]] && !model_options[["artattend_t2"]]
+  } else {
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- !model_options[["artattend"]] && !model_options[["artattend_t2"]]
+  }
+  
 
   ## Check for correct calibration options selection
   # Is logistic calibration selected
@@ -154,9 +164,8 @@ write_navigator_checklist <- function(naomi_output,
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE
   }
 
-  spectrum_code <- unique(naomi_output$fit$spectrum_calibration$spectrum_region_code)
 
-  if (0 %in% spectrum_code) {
+  if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
     spec_level <- "nat"
   } else {
     spec_level <- "subnat"
