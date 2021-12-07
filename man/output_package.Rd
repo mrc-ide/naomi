@@ -4,12 +4,12 @@
 \alias{output_package}
 \title{Build output package from fit}
 \usage{
-output_package(naomi_fit, naomi_mf, na.rm = FALSE)
+output_package(naomi_fit, naomi_data, na.rm = FALSE)
 }
 \arguments{
 \item{naomi_fit}{Fitted naomi model}
 
-\item{naomi_mf}{Naomi model frame}
+\item{naomi_data}{Naomi model frame with data}
 
 \item{na.rm}{Whether to remove NA values when calculating summary statistics, default FALSE}
 }

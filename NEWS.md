@@ -1,3 +1,7 @@
+# naomi 2.5.18
+
+* Implement Navigator checks.
+
 # naomi 2.5.17
 
 * Update first90 package dependency to v1.5.1 for 2022 estimates.
