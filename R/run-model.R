@@ -650,8 +650,7 @@ naomi_info_packages <- function() {
 naomi_info <- function(data, options) {
   list("inputs.csv" = write_csv_string(naomi_info_input(data)),
        "options.yml" = yaml::as.yaml(options),
-       "packages.csv" = write_csv_string(naomi_info_packages()),
-       "data" = data)
+       "packages.csv" = write_csv_string(naomi_info_packages()))
 }
 
 ## Ensures data is of format
