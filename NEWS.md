@@ -1,3 +1,7 @@
+# naomi 2.5.18
+
+* Update EPP-ASM dependency to v0.5.11 with patch for reading version of .DP file (troubleshooting #2022-42).
+
 # naomi 2.5.17
 
 * Update first90 package dependency to v1.5.1 for 2022 estimates.
