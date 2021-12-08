@@ -80,7 +80,7 @@ read_survey_indicators <- function(file) {
 
 #' @rdname read_population
 #' @export
-read_art_number <- function(file) {
+read_art_number <- function(file, all_columns = FALSE) {
 
   ## !! TODO: add file format asserts
 
@@ -88,14 +88,16 @@ read_art_number <- function(file) {
 
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
+                       area_name = readr::col_character(),
                        sex = readr::col_character(),
                        age_group = readr::col_character(),
                        year = readr::col_integer(),
                        calendar_quarter = readr::col_character(),
                        art_current = readr::col_double(),
-                       art_new = readr::col_double()
+                       art_new = readr::col_double(),
+                       vl_tested_12mos = readr::col_double(),
+                       vl_suppressed_12mos = readr::col_double()
                      )
-
   val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
@@ -127,8 +129,12 @@ read_art_number <- function(file) {
   ## !! TODO: check all columns are valid calendar quarters
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
-
-  dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current)
+  if (all_columns) {
+    out <- val
+  } else {
+    out <- dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current)
+  }
+  out
 }
 
 #' @rdname read_population
