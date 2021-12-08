@@ -869,7 +869,7 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
 
   if (!adjust_area_growth) {
     net_growth_ratio_t2t3$net_growth_ratio <- 1.0
-    net_growth_ratio_t2t3$net_growth_ratio <- 1.0
+    net_growth_ratio_t2t3_aggr$net_growth_ratio <- 1.0
   }
 
 
