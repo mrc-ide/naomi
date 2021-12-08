@@ -3,7 +3,7 @@ context("test-model-fit")
 test_that("setting rng_seed returns same outputs", {
 
   a_fit_sample2 <- sample_tmb(a_fit, nsample = 30, rng_seed = 28)
-  a_output2 <- output_package(a_fit_sample2, a_naomi_mf)
+  a_output2 <- output_package(a_fit_sample2, a_naomi_data)
 
   expect_equal(a_fit_sample$sample, a_fit_sample2$sample)
   expect_equal(a_output$indicators$mean, a_output2$indicators$mean)
@@ -132,11 +132,11 @@ test_that("add_stats returns expected names and types", {
 
 test_that("output_package() works with mode, sample, or both", {
 
-  output_mode <- output_package(a_fit, a_naomi_mf)
+  output_mode <- output_package(a_fit, a_naomi_data)
 
   fit_sample_only <- a_fit_sample
   fit_sample_only$mode <- NULL
-  output_sample <- output_package(fit_sample_only, a_naomi_mf)
+  output_sample <- output_package(fit_sample_only, a_naomi_data)
 
   expect_true(all(!is.na(a_output$indicators[c("mean", "se", "median", "mode", "lower", "upper")])))
 

@@ -97,6 +97,42 @@ extract_pjnz_one <- function(pjnz) {
   spec
 }
 
+#' Extract ART and ANC testing program data inputs from Spectrum PJNZ
+#'
+#' @param pjnz_list Vector of filepaths to Spectrum PJNZ file.
+#'
+#' @return A list with a two `data.frame`s of ANC testing data and
+#'   number on ART, respectively.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' spec <- extract_pjnz_program_data(pjnz)
+#'
+#' @export
+#' 
+extract_pjnz_program_data <- function(pjnz_list) {
+
+  pjnz_list <- unroll_pjnz(pjnz_list)    
+
+  region_code <- lapply(pjnz_list, read_spectrum_region_code)
+
+  art_dec31 <- lapply(pjnz_list, read_pjnz_art_dec31) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+  
+  anc_testing <- lapply(pjnz_list, read_pjnz_anc_testing) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+
+  val <- list(art_dec31 = art_dec31, anc_testing = anc_testing)
+  class(val) <- "spec_program_data"
+
+  val
+}
+
+
 #'
 #' Read number on ART at Dec 31 from PJNZ
 #'
@@ -245,6 +281,66 @@ add_dec31_art <- function(spec, pjnz) {
 }
 
 
+#' Read ANC testing inputs from PJNZ
+#'
+#' Reads ANC testing cascade inputs from Spectrum PJNZ.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' read_pjnz_anc_testing(pjnz)
+#'
+#' @noRd
+#' 
+read_pjnz_anc_testing <- function(pjnz) {
+
+  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+  dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+  yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
+  yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
+  proj.years <- yr_start:yr_end
+  timedat.idx <- 4 + 1:length(proj.years) - 1
+
+  if (exists_dptag("<ANCTestingValues MV>")) {
+    anc_testing <- dpsub("<ANCTestingValues MV>", 2:5, timedat.idx)
+  } else if (exists_dptag("<ANCTestingValues MV2>")) {
+    anc_testing <- dpsub("<ANCTestingValues MV2>", 2:5, timedat.idx)
+  } else {
+    stop("ANC testing inputs not found in .DP file")
+  }
+  anc_testing <- sapply(anc_testing, as.integer)
+  anc_testing[anc_testing == -9999] <- NA_real_
+  
+  ## Note: these values start 1 column later than other arrays in the .DP file
+  ## If value is 0, interpret as not entered (NA)
+  if (exists_dptag("<ARVRegimen MV2>")) {
+    anc_already_art <- dpsub("<ARVRegimen MV2>", 13, timedat.idx+1)
+  } else if (exists_dptag("<ARVRegimen MV3>")) {
+    anc_already_art <- dpsub("<ARVRegimen MV3>", 13, timedat.idx+1)
+  }
+  anc_already_art <- sapply(anc_already_art, as.integer)
+  anc_already_art[anc_already_art == 0] <- NA
+
+  anc_testing <- rbind(anc_testing, anc_already_art)
+  dimnames(anc_testing) <- list(indicator = c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"),
+                                year = proj.years)
+  
+  anc_testing <- as.data.frame.table(anc_testing,
+                                   responseName = "value",
+                                   stringsAsFactors = FALSE)
+  anc_testing$year <- type.convert(anc_testing$year, as.is = TRUE)
+  anc_testing <- dplyr::filter(anc_testing, !is.na(value))
+
+  anc_testing
+}
 
 add_shiny90_unaware <- function(spec, pjnz) {
 

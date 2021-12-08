@@ -18,6 +18,15 @@ _Internal changes_
   - `REPORT()` values match C++ code exactly.
   - AR1 likelihood is not yet implemented so objective function value does not match the C++ version exactly.
 
+# naomi 2.5.18
+
+* Implement Navigator checks.
+
+# naomi 2.5.17
+
+* Update first90 package dependency to v1.5.1 for 2022 estimates.
+* Add UNAIDS Estimates Navigator checklist CSV to output package .zip.
+
 # naomi 2.5.16
 
 * Update colour scales to match summary report and user feedback

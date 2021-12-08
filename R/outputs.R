@@ -286,7 +286,7 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' Build output package from fit
 #'
 #' @param naomi_fit Fitted naomi model
-#' @param naomi_mf Naomi model frame
+#' @param naomi_data Naomi model frame with data
 #' @param na.rm Whether to remove NA values when calculating summary statistics, default FALSE
 #'
 #' @return List containing output indicators and metadata.
@@ -299,23 +299,26 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' review results when there are errors. `NA` values in
 #' simulated model results typically mean poor model fit or
 #' non-convergence that needs to be addressed.
-#' 
+#'
 #' @export
-output_package <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
+output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
-  indicators <- extract_indicators(naomi_fit, naomi_mf, na.rm = na.rm)
+  stopifnot(is(naomi_fit, "naomi_fit"))
+  stopifnot(is(naomi_data, "naomi_data"))
 
-  art_attendance <- extract_art_attendance(naomi_fit, naomi_mf, na.rm = na.rm)
+  indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
 
-  meta_area <- naomi_mf$areas %>%
-    dplyr::filter(area_id %in% unique(naomi_mf$mf_out$area_id)) %>%
+  art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
+
+  meta_area <- naomi_data$areas %>%
+    dplyr::filter(area_id %in% unique(naomi_data$mf_out$area_id)) %>%
     dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
   meta_period <- data.frame(
-    calendar_quarter = c(naomi_mf$calendar_quarter1,
-                         naomi_mf$calendar_quarter2,
-                         naomi_mf$calendar_quarter3),
+    calendar_quarter = c(naomi_data$calendar_quarter1,
+                         naomi_data$calendar_quarter2,
+                         naomi_data$calendar_quarter3),
     stringsAsFactors = FALSE
   )%>%
     dplyr::mutate(
@@ -327,9 +330,10 @@ output_package <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 
   ## # Fitting outputs
   fit <- list()
-  fit$spectrum_calibration <- naomi_mf$spectrum_calibration
-  fit$calibration_options <- naomi_mf$calibration_options
-
+  fit$model_options <- naomi_data$model_options
+  fit$data_options <- naomi_data$data_options
+  fit$calibration_options <- naomi_data$calibration_options
+  fit$spectrum_calibration <- naomi_data$spectrum_calibration
   val <- list(
     indicators = indicators,
     art_attendance = art_attendance,
@@ -697,6 +701,22 @@ save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
               export_datapack = TRUE)
 }
 
+#' Save outputs to zip file
+#'
+#' @param naomi_output Naomi output object
+#' @param options Naomi model options
+#' @param filename Name of file to create
+#' @param dir Directory to create zip in
+#' @param overwrite If TRUE overwrite any existing file
+#' @param with_labels If TRUE save indicator ids with labels
+#' @param boundary_format Either geojson or shp for saving boundary as geojson
+#' or shape format
+#' @param single_csv If TRUE only output the csv of indicators, otherwise save
+#' the metadata too
+#' @param export_datapack If TRUE save CSV of PEPFAR datapack indicators.
+#'
+#' @return Path to created zip file
+#' @export
 save_output <- function(filename, dir,
                         naomi_output,
                         overwrite = FALSE,
@@ -763,23 +783,27 @@ save_output <- function(filename, dir,
     write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
   }
 
+
+  dir.create("info")
   info <- attr(naomi_output, "info")
+
   if (length(info) > 0L) {
-    dir.create("info")
     for (p in names(info)) {
       writeLines(trimws(info[[p]]), file.path("info", p))
     }
   }
+
+  write_navigator_checklist(naomi_output,
+                            "info/unaids_navigator_checklist.csv")
 
   fit <- naomi_output$fit
   if(length(fit) > 0L) {
     dir.create("fit")
     naomi_write_csv(fit$spectrum_calibration, "fit/spectrum_calibration.csv")
 
-    naomi_write_csv(
-      data.frame(option = names(fit$calibration_options),
-                 value  = unlist(fit$calibration_options)),
-      "fit/calibration_options.csv")
+    yaml::write_yaml(fit$model_options, "fit/model_options.yml")
+    yaml::write_yaml(fit$data_options, "fit/data_options.yml")
+    yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
   }
 
   zip::zipr(path, list.files())
@@ -837,13 +861,11 @@ read_output_package <- function(path) {
   utils::unzip(path, exdir = tmpd)
 
   ## Fit list
-  spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
-  calibration_options <- readr_read_csv(file.path(tmpd, "fit/calibration_options.csv"))
-  calibration_options <- setNames(calibration_options$value,
-                                  calibration_options$option)
-
-  fit <- list(spectrum_calibration = spectrum_calibration,
-              calibration_options = calibration_options)
+  fit <- list()
+  fit$model_options <- yaml::read_yaml(file.path(tmpd,"fit/model_options.yml"))
+  fit$data_options <- yaml::read_yaml(file.path(tmpd,"fit/data_options.yml"))
+  fit$calibration_options <- yaml::read_yaml(file.path(tmpd,"fit/calibration_options.yml"))
+  fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
 
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
@@ -858,6 +880,10 @@ read_output_package <- function(path) {
   v$meta_area$name <- NULL
 
   info_files <- list.files(file.path(tmpd, "info"))
+
+  ## unaids_navigator_checklist.csv gets regenerated; don't reload
+  info_files <- setdiff(info_files, "unaids_navigator_checklist.csv")
+
   if(length(info_files)) {
     info <- lapply(file.path(tmpd, "info", info_files), readLines)
     names(info) <- info_files
