@@ -318,7 +318,6 @@ prepare_input_time_series_anc <- function(anc, shape) {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
-  browser()
   ## Check if art is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     anc <- read_anc_testing(anc)
