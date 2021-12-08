@@ -23,7 +23,7 @@ aggregate_art <- function(art, shape) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- readr::read_csv(art, show_col_types = FALSE)
+    art <- read_art_number(art, all_column = TRUE)
   }
 
   art_number <- art %>%
@@ -246,7 +246,7 @@ aggregate_anc <- function(anc, shape) {
 
   ## Check if art is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    anc <- readr::read_csv(anc, show_col_types = FALSE)
+    anc <- read_anc_testing(anc)
   }
 
   anc_testing <- anc %>%
@@ -318,6 +318,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
+  browser()
   ## Check if art is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     anc <- read_anc_testing(anc)
