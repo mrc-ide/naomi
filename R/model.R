@@ -98,6 +98,7 @@ naomi_output_frame <- function(mf_model,
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
+#' @param adjust_area_growth TRUE/FALSE: adjust PLHIV population for net change in cohort size
 #'
 #' @return Naomi model frame
 #'
@@ -135,7 +136,7 @@ naomi_model_frame <- function(area_merged,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national",
                               output_aware_plhiv = TRUE,
-                              adjust_area_growth = TRUE) {
+                              adjust_area_growth = FALSE) {
 
   ## Create a list of options to save out
   model_options <- list(area_scope = scope,
@@ -652,10 +653,12 @@ naomi_model_frame <- function(area_merged,
             Lproj_hivpop_t1t2 = Lproj$Lproj_hivpop_t1t2,
             Lproj_incid_t1t2 = Lproj$Lproj_incid_t1t2,
             Lproj_paed_t1t2 = Lproj$Lproj_paed_t1t2,
+            Lproj_netgrow_t1t2 = Lproj$Lproj_netgrow_t1t2,
             projection_duration = projection_duration,
             Lproj_hivpop_t2t3 = Lproj$Lproj_hivpop_t2t3,
             Lproj_incid_t2t3 = Lproj$Lproj_incid_t2t3,
             Lproj_paed_t2t3 = Lproj$Lproj_paed_t2t3,
+            Lproj_netgrow_t2t3 = Lproj$Lproj_netgrow_t2t3,
             projection_duration_t2t3 = projection_duration_t2t3,
             areas = area_merged,
             age_groups = age_groups,

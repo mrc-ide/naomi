@@ -4,7 +4,9 @@
 
 * Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration.
 
-  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`. This is set as `TRUE` by default.
+  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`. 
+  
+  __This is currently set as `FALSE` by default.__ Pending further testing in problematic cases.
 
   Limitations of this approach: (1) It does not explicitly account for migration of PLHIV between districts. Therefore, it may 'create' or 'dissolve' infections if net population growth is greater in high prevalence districts (and vice versa). This is consistent with Spectrum and EPP handling of migration, but implications could be larger for smaller subnational areas. (2) In some cases, these net migration ratios mask unrealistic demographic assumptions in subnational population data (rather than true net migration patterns).
 
