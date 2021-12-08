@@ -24,7 +24,7 @@ Imports:
     brio,
     data.tree,
     dplyr,
-    eppasm (>= 0.5.9),
+    eppasm (>= 0.5.11),
     first90 (>= 1.5.1),
     forcats,
     fs,

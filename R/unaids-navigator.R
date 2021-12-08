@@ -58,14 +58,13 @@ write_navigator_checklist <- function(naomi_output,
 
   v <- data.frame(NaomiCheckPermPrimKey = key,
                   NaomiCheckDes = label,
-                  TrueFalse = FALSE)
+                  TrueFalse = NA)
 
   ## Do checks
   ## These checks are always 'TRUE'
   always_true_checks <- c("Package_created", "Package_has_all_data", "Model_fit")
   v$TrueFalse[v$NaomiCheckPermPrimKey %in% always_true_checks] <- TRUE
 
-  
   ## Check for correct model options selection
   valid_opt <- yaml::read_yaml(system.file("metadata/navigator_validation.yml", package = "naomi"))
 
@@ -73,127 +72,114 @@ write_navigator_checklist <- function(naomi_output,
   data_options <- naomi_output$fit$data_options
   calibration_options <- naomi_output$fit$calibration_options
 
-  ## Compare aggregated naomi inputs to national Spectrum totals
+  if (!is.null(model_options)) {
 
-  v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- data_options$art_number_spectrum_aligned
-  v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- data_options$anc_testing_spectrum_aligned
+    ## Is most recent calendar quarter selected
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_qtr"] <-
+      naomi_output$fit$model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2
 
+    ## Is future projection quarter selected
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <-
+      naomi_output$fit$model_options$calendar_quarter_t3 == valid_opt$calendar_quarter_t3
 
-  ## Is most recent calendar quarter selected
-  if (naomi_output$fit$model_options$calendar_quarter_t2 == valid_opt$calendar_quarter_t2) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_qtr"] <- TRUE
+    ## Is scope set to national ID
+    national_area_id <- naomi_output$meta_area$area_id[naomi_output$meta_area$area_level == 0]
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_area_ID_selected"] <-
+      all(model_options$area_scope == national_area_id)
+
   }
 
-  ## Is future projection quarter selected
-  if (naomi_output$fit$model_options$calendar_quarter_t3 == valid_opt$calendar_quarter_t3) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_future_proj_qtr"] <- TRUE
-  }
+  if (!is.null(data_options)) {
 
-  ## Is scope set to national ID
-  national_area_id <- naomi_output$meta_area$area_id[naomi_output$meta_area$area_level == 0]
-  if (all(model_options$area_scope == national_area_id)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_area_ID_selected"] <- TRUE
-  }
+    ## Compare aggregated naomi inputs to national Spectrum totals
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- data_options$art_number_spectrum_aligned
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- data_options$anc_testing_spectrum_aligned
 
-  ## Check survey
-  # Does T1 calendar quarter match one survey
-  if (model_options$calendar_quarter_t1 %in% data_options$prev_survey_quarters) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <- TRUE
-  }
+    ## Check that all surveys used are from most recent quarter available
+    most_recent_survey_available  <- max(data_options$prev_survey_available_quarters)
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <-
+      all(data_options$prev_survey_quarters == most_recent_survey_available)
 
-  ## Check that all surveys used are from most recent quarter available
-  most_recent_survey_available  <- max(data_options$prev_survey_available_quarters)
-  if (all(data_options$prev_survey_quarters == most_recent_survey_available)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <- TRUE
-  }
+    # Is survey ART coverage included if available
+    is_artcov_notavail <- length(data_options$artcov_survey_available) == 0   ## Not available -> TRUE
+    is_artcov_used <- data_options$artcov_survey_ids %in% data_options$artcov_survey_available
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- is_artcov_notavail || is_artcov_used
 
-  # Is survey ART coverage included if available
-  if (length(data_options$artcov_survey_available) == 0 ||   ## Not available -> TRUE
-      data_options$artcov_survey_ids %in% data_options$artcov_survey_available) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- TRUE
-  }
-
-  ## ## Check ART inputs
-  ## Is ART data included for at least one time point
-  has_art_t1 <- !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1)
-  has_art_t2 <- !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)
-  
-  if ( has_art_t1 || has_art_t2 ) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_data"] <- TRUE
-  }
-
-  ## ## Check ANC inputs
-  ## Is ANC data included for at least one time point
-  if (!is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
-      !is.null(naomi_output$fit$data_options$anc_prev_year_t2)) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <- TRUE
-  }
-
-  ## ## Is ART attendance selected
-  ## * If ART data at both time points; artattend and artattend_t1 should be both TRUE
-  ## * If ART data at only one time point; only artattend should be TRUE
-  ## * If no ART data; both should be FALSE
-  if (has_art_t1 && has_art_t2) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- model_options[["artattend"]] && model_options[["artattend_t2"]]
-  } else if (has_art_t1 && !has_art_t2 || !has_art_t1 && has_art_t2 ) {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- model_options[["artattend"]] && !model_options[["artattend_t2"]]
-  } else {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- !model_options[["artattend"]] && !model_options[["artattend_t2"]]
-  }
-  
-
-  ## Check for correct calibration options selection
-  # Is logistic calibration selected
-
-  calibration_options <- naomi_output$fit$calibration_options
-
-  if (calibration_options$calibrate_method == "logistic") {
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- TRUE
-  }
+    ## ## Check ART inputs
+    ## Is ART data included for at least one time point
+    has_art_t1 <- !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t1)
+    has_art_t2 <- !is.null(naomi_output$fit$data_options$artnum_calendar_quarter_t2)
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_data"] <- has_art_t1 || has_art_t2
 
 
-  if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
-    spec_level <- "nat"
-  } else {
-    spec_level <- "subnat"
-  }
+    ## ## Check ANC inputs
+    ## Is ANC data included for at least one time point
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <-
+      !is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
+      !is.null(naomi_output$fit$data_options$anc_prev_year_t2)
 
-  if (spec_level == "nat") {
-    if (calibration_options$spectrum_plhiv_calibration_level == "national") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE
-    }
+    if (!is.null(model_options)) {
 
-    if (calibration_options$spectrum_artnum_calibration_level == "national") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE
-    }
+      ## Check survey
+      # Does T1 calendar quarter match one survey
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_calendar_survey_match"] <-
+        model_options$calendar_quarter_t1 %in% data_options$prev_survey_quarters
 
-    if (calibration_options$spectrum_aware_calibration_level == "national") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE
-    }
-
-    if (calibration_options$spectrum_infections_calibration_level == "national") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE
+      ## ## Is ART attendance selected
+      ## * If ART data at both time points; artattend and artattend_t1 should be both TRUE
+      ## * If ART data at only one time point; only artattend should be TRUE
+      ## * If no ART data; both should be FALSE
+      if (has_art_t1 && has_art_t2) {
+        v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- model_options[["artattend"]] && model_options[["artattend_t2"]]
+      } else if (has_art_t1 && !has_art_t2 || !has_art_t1 && has_art_t2 ) {
+        v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- model_options[["artattend"]] && !model_options[["artattend_t2"]]
+      } else {
+        v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_attendance_yes"] <- !model_options[["artattend"]] && !model_options[["artattend_t2"]]
+      }
     }
   }
 
-  if (spec_level == "subnat") {
-    if (calibration_options$spectrum_plhiv_calibration_level == "subnational") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <- TRUE
+  if (!is.null(calibration_options)) {
+    ## Check for correct calibration options selection
+    # Is logistic calibration selected
+
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- calibration_options$calibrate_method == "logistic"
+
+    if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
+      spec_level <- "nat"
+    } else {
+      spec_level <- "subnat"
     }
 
-    if (calibration_options$spectrum_artnum_calibration_level == "subnational") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <- TRUE
+    if (spec_level == "nat") {
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <-
+        calibration_options$spectrum_plhiv_calibration_level == "national"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <-
+        calibration_options$spectrum_artnum_calibration_level == "national"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <-
+        calibration_options$spectrum_aware_calibration_level == "national"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <-
+        calibration_options$spectrum_infections_calibration_level == "national"
     }
 
-    if (calibration_options$spectrum_aware_calibration_level == "subnational") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <- TRUE
-    }
+    if (spec_level == "subnat") {
 
-    if (calibration_options$spectrum_infections_calibration_level == "subnational") {
-      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <- TRUE
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <-
+        calibration_options$spectrum_plhiv_calibration_level == "subnational"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <-
+        calibration_options$spectrum_artnum_calibration_level == "subnational"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <-
+        calibration_options$spectrum_aware_calibration_level == "subnational"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <-
+        calibration_options$spectrum_infections_calibration_level == "subnational"
     }
   }
-
 
   ## Using write.csv() instead of naomi_write_csv() because writing na = "NA"
   write.csv(v, path, row.names = FALSE, na = "NA")
