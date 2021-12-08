@@ -2,6 +2,10 @@
 
 * Implement Navigator checks.
 
+# naomi 2.5.19
+
+* Use standard file reading functions in input time series (troubleshooting #2022-41).
+
 # naomi 2.5.18
 
 * Update EPP-ASM dependency to v0.5.11 with patch for reading version of .DP file (troubleshooting #2022-42).
