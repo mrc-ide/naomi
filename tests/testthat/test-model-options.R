@@ -345,3 +345,24 @@ test_that("Option adjust_area_growth affects projection matrices", {
   expect_false(all(naomi_data_TRUE$Lproj_incid == naomi_data_FALSE$Lproj_incid))
   expect_false(all(naomi_data_TRUE$Lproj_incid_t2t3 == naomi_data_FALSE$Lproj_incid_t2t3))    
 })
+
+
+test_that("Option adjust_area_growth handles cases with projection_dur >5 years", {
+
+  a_hintr_data <- format_data_input(a_hintr_data)
+  
+  a_hintr_options <- format_options(a_hintr_options)
+  options_longdur <- a_hintr_options
+  options_longdur$adjust_area_growth <- TRUE
+  options_longdur$calendar_quarter_t2 = "CY2023Q4"
+  options_longdur$calendar_quarter_t3 = "CY2024Q3"
+  options_longdur$include_art_t2 <- "false"
+  options_longdur$artattend_t2 <- "false"
+  
+  naomi_data_longdur <- naomi_prepare_data(a_hintr_data, options_longdur)
+
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_netgrow_t1t2)), 0)
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_hivpop)), 0)  
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_paed)), 0)
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_incid)), 0)
+})
