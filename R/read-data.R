@@ -88,7 +88,6 @@ read_art_number <- function(file, all_columns = FALSE) {
 
   col_spec <- readr::cols_only(
                        area_id = readr::col_character(),
-                       area_name = readr::col_character(),
                        sex = readr::col_character(),
                        age_group = readr::col_character(),
                        year = readr::col_integer(),
