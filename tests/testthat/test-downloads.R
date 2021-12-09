@@ -22,22 +22,24 @@ test_that("spectrum download can be created", {
 
   ## # UNAIDS Navigator Checklist checks
   navigator_checklist <- read.csv(unz(out$path, "info/unaids_navigator_checklist.csv"))
+
+
   expect_equal(names(navigator_checklist),
                c("NaomiCheckPermPrimKey", "NaomiCheckDes", "TrueFalse"))
 
   checklist_primkeys <- c("ART_is_Spectrum", "ANC_is_Spectrum", "Package_created",
                           "Package_has_all_data", "Opt_recent_qtr",
-                          "Opt_future_proj_qtr", "Opt_area_ID_selected", 
+                          "Opt_future_proj_qtr", "Opt_area_ID_selected",
                           "Opt_calendar_survey_match", "Opt_recent_survey_only",
                           "Opt_ART_coverage", "Opt_ANC_data", "Opt_ART_data",
                           "Opt_ART_attendance_yes", "Model_fit", "Cal_PLHIV",
                           "Cal_ART", "Cal_KOS", "Cal_new_infections", "Cal_method")
   expect_equal(navigator_checklist$NaomiCheckPermPrimKey, checklist_primkeys)
-  expect_true(all(navigator_checklist$TrueFalse %in% c(TRUE, FALSE, NA)))
+  expect_true(all(navigator_checklist$TrueFalse %in% c(TRUE, FALSE)))
   ## Check tradiure translation hooks worked
   expect_true("Calibration - method is logistic" %in% navigator_checklist$NaomiCheckDes)
 
-  
+
   outputs <- read_output_package(out$path)
   expect_true(
     all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
@@ -82,7 +84,10 @@ test_that("coarse age group download can be created", {
       "meta_age_group.csv", "meta_area.csv", "meta_indicator.csv", "meta_period.csv",
       "pepfar_datapack_indicators_2022.csv",
       "info/", info_names, "info/unaids_navigator_checklist.csv",
-      "fit/", "fit/spectrum_calibration.csv", "fit/calibration_options.csv")
+      "fit/", "fit/spectrum_calibration.csv",
+      "fit/model_options.yml",
+      "fit/data_options.yml",
+      "fit/calibration_options.yml")
   )
 
   ## Check coarse age outputs saved in coarse_output_path

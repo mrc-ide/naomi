@@ -1,3 +1,7 @@
+# naomi 2.5.20
+
+* Implement Navigator checks.
+
 # naomi 2.5.19
 
 * Use standard file reading functions in input time series (troubleshooting #2022-41).

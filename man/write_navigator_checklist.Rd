@@ -9,7 +9,7 @@ write_navigator_checklist(naomi_output, path)
 \arguments{
 \item{naomi_output}{a naomi_output object.}
 
-\item{path}{path to save Navigator checlist CSV.}
+\item{path}{path to save Navigator checklist CSV.}
 }
 \description{
 Write UNAIDS Estimates Navigator checklist CSV

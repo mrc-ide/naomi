@@ -2,7 +2,7 @@ context("model outputs")
 
 test_that("traidure hooks work in model outputs", {
 
-  out_en <- output_package(a_fit_sample, a_naomi_mf)
+  out_en <- output_package(a_fit_sample, a_naomi_data)
   expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "September 2018", "June 2019"))
   expect_setequal(out_en$meta_indicator$indicator_label[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("ART coverage", "HIV prevalence"))
@@ -12,7 +12,7 @@ test_that("traidure hooks work in model outputs", {
   reset <- naomi_set_language("fr")
   on.exit(reset())
 
-  out_fr <- output_package(a_fit_sample, a_naomi_mf)
+  out_fr <- output_package(a_fit_sample, a_naomi_data)
   expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Septembre 2018", "Juin 2019"))
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Prévalence du VIH", "Couverture ART"))
@@ -212,7 +212,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
 
   bad_sample <- a_fit_sample
   bad_sample$sample$alpha_t1_out[50] <- NA
-  expect_error(output_package(bad_sample, a_naomi_mf),
+  expect_error(output_package(bad_sample, a_naomi_data),
                "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
 })
 
@@ -259,4 +259,129 @@ test_that("summary report can be translated", {
     fr <- "%23translate%5Blang%3D%22fr%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
     expect_true(any(grepl(fr, content, fixed = TRUE)))
   }
+})
+
+test_that("navigator checklist returns expected results", {
+
+  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+
+  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
+                          "ANC_is_Spectrum"            = FALSE,
+                          "Package_created"            = TRUE,
+                          "Package_has_all_data"       = TRUE,
+                          "Opt_recent_qtr"             = FALSE,
+                          "Opt_future_proj_qtr"        = FALSE,
+                          "Opt_area_ID_selected"       = TRUE,
+                          "Opt_calendar_survey_match"  = TRUE,
+                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_ART_coverage"           = TRUE,
+                          "Opt_ANC_data"               = TRUE,
+                          "Opt_ART_data"               = TRUE,
+                          "Opt_ART_attendance_yes"     = FALSE,
+                          "Model_fit"                  = TRUE,
+                          "Cal_PLHIV"                  = TRUE,
+                          "Cal_ART"                    = FALSE,
+                          "Cal_KOS"                    = FALSE,
+                          "Cal_new_infections"         = FALSE,
+                          "Cal_method"                 = TRUE)
+
+  tmp_checklist <- tempfile(fileext = ".csv")
+  write_navigator_checklist(model_output$output_package, tmp_checklist)
+  checklist <- read.csv(tmp_checklist)
+
+  expect_equal(unname(expected_checklist[checklist$NaomiCheckPermPrimKey]),
+               checklist$TrueFalse)
+
+  ## Construct a checklist that will return all TRUE
+
+  adj_output <- model_output$output_package
+
+  adj_output$fit$model_options$calendar_quarter_t2 <- "CY2021Q4"
+  adj_output$fit$model_options$calendar_quarter_t3 <- "CY2022Q3"
+  adj_output$fit$model_options$artattend_t2 <- TRUE
+
+  adj_output$fit$data_options$prev_survey_ids <- "DEMO2016PHIA"
+  adj_output$fit$data_options$prev_survey_quarters <- "CY2016Q1"
+  adj_output$fit$data_options$art_number_spectrum_aligned <- TRUE
+  adj_output$fit$data_options$anc_testing_spectrum_aligned <- TRUE
+
+  adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
+  adj_output$fit$calibration_options$spectrum_aware_calibration_level <- "subnational"
+  adj_output$fit$calibration_options$spectrum_infections_calibration_level <- "subnational"
+
+  tmp_checklist_adj <- tempfile(fileext = ".csv")
+  write_navigator_checklist(adj_output, tmp_checklist_adj)
+  checklist_adj<- read.csv(tmp_checklist_adj)
+
+  expect_true(all(checklist_adj$TrueFalse))
+})
+
+
+test_that("navigator checklist returns results if options lists missing", {
+
+  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+  no_data_opts_output <- model_output$output_package
+
+  no_data_opts_output$fit$data_options <- NULL
+
+  expect_chklst_no_data_opts<- c("ART_is_Spectrum"            = NA,
+                                 "ANC_is_Spectrum"            = NA,
+                                 "Package_created"            = TRUE,
+                                 "Package_has_all_data"       = TRUE,
+                                 "Opt_recent_qtr"             = FALSE,
+                                 "Opt_future_proj_qtr"        = FALSE,
+                                 "Opt_area_ID_selected"       = TRUE,
+                                 "Opt_calendar_survey_match"  = NA,
+                                 "Opt_recent_survey_only"     = NA,
+                                 "Opt_ART_coverage"           = NA,
+                                 "Opt_ANC_data"               = NA,
+                                 "Opt_ART_data"               = NA,
+                                 "Opt_ART_attendance_yes"     = NA,
+                                 "Model_fit"                  = TRUE,
+                                 "Cal_PLHIV"                  = TRUE,
+                                 "Cal_ART"                    = FALSE,
+                                 "Cal_KOS"                    = FALSE,
+                                 "Cal_new_infections"         = FALSE,
+                                 "Cal_method"                 = TRUE)
+
+  tmp_checklist_no_data_opts<- tempfile(fileext = ".csv")
+  write_navigator_checklist(no_data_opts_output, tmp_checklist_no_data_opts)
+  checklist_no_data_opts <- read.csv(tmp_checklist_no_data_opts)
+
+  expect_equal(unname(expect_chklst_no_data_opts[checklist_no_data_opts$NaomiCheckPermPrimKey]),
+               checklist_no_data_opts$TrueFalse)
+
+
+  ## No model_options
+  no_model_opts_output <- model_output$output_package
+
+  no_model_opts_output$fit$model_options <- NULL
+
+  expect_chklst_no_model_opts <- c("ART_is_Spectrum"            = FALSE,
+                                   "ANC_is_Spectrum"            = FALSE,
+                                   "Package_created"            = TRUE,
+                                   "Package_has_all_data"       = TRUE,
+                                   "Opt_recent_qtr"             = NA,
+                                   "Opt_future_proj_qtr"        = NA,
+                                   "Opt_area_ID_selected"       = NA,
+                                   "Opt_calendar_survey_match"  = NA,
+                                   "Opt_recent_survey_only"     = FALSE,
+                                   "Opt_ART_coverage"           = TRUE,
+                                   "Opt_ANC_data"               = TRUE,
+                                   "Opt_ART_data"               = TRUE,
+                                   "Opt_ART_attendance_yes"     = NA,
+                                   "Model_fit"                  = TRUE,
+                                   "Cal_PLHIV"                  = TRUE,
+                                   "Cal_ART"                    = FALSE,
+                                   "Cal_KOS"                    = FALSE,
+                                   "Cal_new_infections"         = FALSE,
+                                   "Cal_method"                 = TRUE)
+
+  tmp_checklist_no_model_opts<- tempfile(fileext = ".csv")
+  write_navigator_checklist(no_model_opts_output, tmp_checklist_no_model_opts)
+  checklist_no_model_opts <- read.csv(tmp_checklist_no_model_opts)
+
+  expect_equal(unname(expect_chklst_no_model_opts[checklist_no_model_opts$NaomiCheckPermPrimKey]),
+               checklist_no_model_opts$TrueFalse)
+
 })
