@@ -67,7 +67,7 @@ calibrate,barchart,infections_ratio,mean,lower,upper,indicator,infections_ratio,
 calibrate,barchart,art_current_ratio,mean,lower,upper,indicator,art_current_ratio,t_(ART_NUMBER_ATTENDING_RATIO),1,,0.0
 calibrate,barchart,unaware_plhiv_num_ratio,mean,lower,upper,indicator,unaware_plhiv_num_ratio,t_(UNAWARE_PLHIV_NUM_RATIO),1,,0.0
 calibrate,barchart,prevalence_ratio,mean,lower,upper,indicator,prevalence_ratio,t_(HIV_PREVALENCE_RATIO),1,,0.0
-calibrate,barchart,art_coverage,mean,lower,upper,indicator,art_coverage_ratio,t_(ART_COVERAGE_RATIO),1,,0.0
-calibrate,barchart,unaware_plhiv_prop,mean,lower,upper,indicator,unaware_plhiv_prop_ratio,t_(UNAWARE_PLHIV_PROP_RATIO),1,,0.0
-calibrate,barchart,aware_plhiv_prop,mean,lower,upper,indicator,aware_plhiv_prop_ratio,t_(AWARE_PLHIV_PROP_RATIO),1,,0.0
-calibrate,barchart,incidence,mean,lower,upper,indicator,incidence_ratio,t_(INCIDENCE_RATIO),1,,0.0
+calibrate,barchart,art_coverage_ratio,mean,lower,upper,indicator,art_coverage_ratio,t_(ART_COVERAGE_RATIO),1,,0.0
+calibrate,barchart,unaware_plhiv_prop_ratio,mean,lower,upper,indicator,unaware_plhiv_prop_ratio,t_(UNAWARE_PLHIV_PROP_RATIO),1,,0.0
+calibrate,barchart,aware_plhiv_prop_ratio,mean,lower,upper,indicator,aware_plhiv_prop_ratio,t_(AWARE_PLHIV_PROP_RATIO),1,,0.0
+calibrate,barchart,incidence_ratio,mean,lower,upper,indicator,incidence_ratio,t_(INCIDENCE_RATIO),1,,0.0

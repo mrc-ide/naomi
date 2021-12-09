@@ -48,6 +48,7 @@
     "INDICATOR_LABEL_POPULATION": "Tamanho da população",
     "INDICATOR_LABEL_PREVALENCE": "Proporção da população total seropositiva",
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Número de PVVIH sem conhecimento da condição de seropositividade",
+    "INDICATOR_LABEL_UNAWARE_PLHIV_PROP": "Proporção de PVVIH sem conhecimento da condição de seropositividade",
     "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Número de PVVIH que não está em TARV",
     "OLD_MODEL_OUTPUT": "Saída de modelo desactualizada, por favor volte a executar o modelo e tente novamente",
     "LANG": "pt",
