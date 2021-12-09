@@ -23,6 +23,7 @@
     "ART_NUMBER_RESIDENTS": "Número de TARV (residentes)",
     "AWARE_PLHIV_NUM": "Número de PVVIH com conhecimento",
     "AWARE_PLHIV_PROP": "Proporção de PVVIH com conhecimento",
+    "UNAWARE_PLHIV_PROP": "Proporção de PVVIH sem conhecimento",
     "ERROR_SHINY90_MISSING_1": "O ficheiro .shiny90 não está presente para a(s) seguinte(s) projeção(ões)",
     "ERROR_SHINY90_MISSING_2": "Recarregue o PJNZ com .shiny90 incluído ou defina a opção avançada 'Output awareness of HIV status indicators' para \"No\".",
     "EXTRACT_INDICATORS_SIMULATE_ERROR": "Erro na simulação de resultados para o indicador: {{nomevar}}. Por favor, contacte o apoio para resolução de problemas.",
@@ -312,5 +313,15 @@
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Optou por se adaptar ao modelo sem estimar a assistência TARV vizinha. Poderá querer rever a sua selecção para incluir esta opção.",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "A prevalência do VIH é superior a 40% para algumas dissagregações de idade/sexo",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "A cobertura TARV é superior a 100% para algumas dissagregações de idade/sexo",
-    "WARNING_CONVERGENCE": "Erro de convergência: {{msg}}"
+    "WARNING_CONVERGENCE": "Erro de convergência: {{msg}}",
+    "POPULATION_RATIO": "População relação",
+    "PLHIV_RATIO": "PVHIV relação",
+    "NEW_INFECTIONS_RATIO": "Novas infeções relação",
+    "ART_NUMBER_ATTENDING_RATIO": "Número de TARV (frequentadores) relação",
+    "UNAWARE_PLHIV_NUM_RATIO": "Número de PVVIH sem conhecimento relação",
+    "HIV_PREVALENCE_RATIO": "Prevalência de VIH relação",
+    "ART_COVERAGE_RATIO": "Cobertura da TARV relação",
+    "UNAWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH sem conhecimento relação",
+    "AWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH com conhecimento relação",
+    "INCIDENCE_RATIO": "Incidência de VIH relação"
 }

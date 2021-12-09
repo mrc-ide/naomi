@@ -148,6 +148,7 @@
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Nombre de femmes séronégatives fréquentant les CPN testés aux CPN",
     "UNTREATED_PLHIV_NUM": "PVVIH non sous TAR",
     "AWARE_PLHIV_PROP": "Proportion de PVVIH conscients",
+    "UNAWARE_PLHIV_PROP": "Proportion de PVVIH non informés",
     "AWARE_PLHIV_NUM": "Nombre de PVVIH conscients",
     "UNAWARE_PLHIV_NUM": "Nombre de PVVIH non informés",
     "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Nombre de PVVIH non sous TAR",
@@ -312,5 +313,15 @@
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Vous avez choisi d'ajuster le modèle sans estimer la fréquentation des TARV voisines. Vous pouvez revoir votre sélection pour inclure cette option..",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 40 % pour certaines catégories d'âge et de sexe.",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour certaines catégories d'âge et de sexe.",
-    "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}"
+    "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}",
+    "POPULATION_RATIO": "Population rapport",
+    "PLHIV_RATIO": "PLHIV rapport",
+    "NEW_INFECTIONS_RATIO": "Nouvelles infections rapport",
+    "ART_NUMBER_ATTENDING_RATIO": "Nombre ART (fréquentation) rapport",
+    "UNAWARE_PLHIV_NUM_RATIO": "Nombre de PVVIH non informés rapport",
+    "HIV_PREVALENCE_RATIO": "Prévalence du VIH rapport",
+    "ART_COVERAGE_RATIO": "Couverture ART rapport",
+    "UNAWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH non informés rapport",
+    "AWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH conscients rapport",
+    "INCIDENCE_RATIO": "Incidence du VIH rapport"
 }
