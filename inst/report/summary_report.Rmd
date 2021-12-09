@@ -101,6 +101,7 @@ indicators_geom <- naomi::add_output_labels(outputs, geometry = TRUE)
 
 # Identify area_level_label for model estimates
 area_level_map <- outputs$meta_area %>%
+  sf::st_drop_geometry() %>%
   dplyr::group_by(area_level, area_level_label) %>%
   dplyr::summarise(.groups = "drop")
 

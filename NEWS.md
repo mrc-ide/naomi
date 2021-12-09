@@ -1,3 +1,7 @@
+# naomi 2.5.19
+
+* Patch to `summary_report.Rmd` to avoid spherical geometry aggregation error (troubleshooting #2022-43).
+
 # naomi 2.5.18
 
 * Update EPP-ASM dependency to v0.5.11 with patch for reading version of .DP file (troubleshooting #2022-42).
