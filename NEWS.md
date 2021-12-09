@@ -20,6 +20,10 @@ _Internal changes_
   - `REPORT()` values match C++ code exactly.
   - AR1 likelihood is not yet implemented so objective function value does not match the C++ version exactly.
 
+# naomi 2.5.21
+
+* Patch to `summary_report.Rmd` to avoid spherical geometry aggregation error (troubleshooting #2022-43).
+
 # naomi 2.5.20
 
 * Implement Navigator checks.
