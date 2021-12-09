@@ -650,6 +650,9 @@ test_that("calibrate plot data can be generated", {
                     "infections", "plhiv", "population", "unaware",
                     "prevalence", "art_coverage", "unaware_plhiv_prop",
                     "aware_plhiv_prop", "incidence"))
+
+  indicators <- readRDS(a_hintr_output$model_output_path)$output_package$indicators
+  expect_true(all(plot_data$indicator %in% indicators$indicator))
 })
 
 test_that("can get data_type labels", {
