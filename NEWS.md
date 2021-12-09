@@ -1,6 +1,10 @@
-# naomi 2.5.19
+# naomi 2.5.20
 
 * Patch to `summary_report.Rmd` to avoid spherical geometry aggregation error (troubleshooting #2022-43).
+
+# naomi 2.5.19
+
+* Use standard file reading functions in input time series (troubleshooting #2022-41).
 
 # naomi 2.5.18
 
