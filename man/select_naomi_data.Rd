@@ -32,7 +32,8 @@ select_naomi_data(
   deff_recent = 1,
   use_kish_vls = TRUE,
   deff_vls = 1,
-  use_survey_aggregate = FALSE
+  use_survey_aggregate = FALSE,
+  spec_program_data = NULL
 )
 }
 \arguments{
@@ -73,6 +74,8 @@ select_naomi_data(
 \item{deff_recent}{Approximate design effect for survey proportion recently infected.}
 
 \item{deff_vls}{Approximate design effect for survey viral load suppression.}
+
+\item{spec_program_data}{Object of class \code{"spec_program_data"} consisting of aggregated program data inputs to Spectrum. Provided for checking against Naomi inputs. If \code{NULL} then checks are not conducted.}
 
 \item{anc_clients_year_t2_num_monhts}{Number of months of reporting reflected in the year(s) recorded in \code{anc_clients_year_t2}.}
 }

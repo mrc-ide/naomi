@@ -1,3 +1,19 @@
+# naomi 2.5.21
+
+* Patch to `summary_report.Rmd` to avoid spherical geometry aggregation error (troubleshooting #2022-43).
+
+# naomi 2.5.20
+
+* Implement Navigator checks.
+
+# naomi 2.5.19
+
+* Use standard file reading functions in input time series (troubleshooting #2022-41).
+
+# naomi 2.5.18
+
+* Update EPP-ASM dependency to v0.5.11 with patch for reading version of .DP file (troubleshooting #2022-42).
+
 # naomi 2.5.17
 
 * Update first90 package dependency to v1.5.1 for 2022 estimates.

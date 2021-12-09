@@ -418,6 +418,8 @@ naomi_prepare_data <- function(data, options) {
 
   spec <- extract_pjnz_naomi(data$pjnz$path)
 
+  spec_program_data <- extract_pjnz_program_data(data$pjnz$path)
+
   if (!is.null(data$art_number)) {
     art_number <- read_art_number(data$art_number$path)
   } else {
@@ -442,17 +444,19 @@ naomi_prepare_data <- function(data, options) {
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
 
-  if(!is.null(options$include_art_t1) &&
-      as.logical(options$include_art_t1))
+  if (!is.null(options$include_art_t1) &&
+      as.logical(options$include_art_t1)) {
     artnum_calendar_quarter1 <- calendar_quarter_t1
-  else
+  } else {
     artnum_calendar_quarter1 <- NULL
+  }
 
-  if(!is.null(options$include_art_t2) &&
-      as.logical(options$include_art_t2))
+  if (!is.null(options$include_art_t2) &&
+       as.logical(options$include_art_t2)) {
     artnum_calendar_quarter2 <- calendar_quarter_t2
-  else
+  } else {
     artnum_calendar_quarter2 <- NULL
+  }
 
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
@@ -495,7 +499,8 @@ naomi_prepare_data <- function(data, options) {
     deff_recent = options[["deff_recent"]],
     use_kish_vls = options[["use_kish_vls"]],
     deff_vls = options[["deff_vls"]],
-    use_survey_aggregate = as.logical(options[["use_survey_aggregate"]])
+    use_survey_aggregate = as.logical(options[["use_survey_aggregate"]]),
+    spec_program_data = spec_program_data
   )
 
   return(naomi_data)
