@@ -1,6 +1,10 @@
-# naomi 2.5.20
+# naomi 2.5.21
 
 * Patch to `summary_report.Rmd` to avoid spherical geometry aggregation error (troubleshooting #2022-43).
+
+# naomi 2.5.20
+
+* Implement Navigator checks.
 
 # naomi 2.5.19
 

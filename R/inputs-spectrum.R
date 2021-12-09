@@ -95,6 +95,252 @@ extract_pjnz_one <- function(pjnz) {
   spec
 }
 
+#' Extract ART and ANC testing program data inputs from Spectrum PJNZ
+#'
+#' @param pjnz_list Vector of filepaths to Spectrum PJNZ file.
+#'
+#' @return A list with a two `data.frame`s of ANC testing data and
+#'   number on ART, respectively.
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' spec <- extract_pjnz_program_data(pjnz)
+#'
+#' @export
+#' 
+extract_pjnz_program_data <- function(pjnz_list) {
+
+  pjnz_list <- unroll_pjnz(pjnz_list)    
+
+  region_code <- lapply(pjnz_list, read_spectrum_region_code)
+
+  art_dec31 <- lapply(pjnz_list, read_pjnz_art_dec31) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+  
+  anc_testing <- lapply(pjnz_list, read_pjnz_anc_testing) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
+
+  val <- list(art_dec31 = art_dec31, anc_testing = anc_testing)
+  class(val) <- "spec_program_data"
+
+  val
+}
+
+
+#'
+#' Read number on ART at Dec 31 from PJNZ
+#'
+#' Reads the number on ART at December 31 from Spectrum PJNZ for children (0-14),
+#' adult (15+) males, and adult (15+) females.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' read_pjnz_art_dec31(pjnz)
+#'
+#' @noRd
+#' 
+read_pjnz_art_dec31 <- function(pjnz) {
+
+  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+  dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+  yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
+  yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
+  proj.years <- yr_start:yr_end
+  timedat.idx <- 4 + 1:length(proj.years) - 1
+
+  art15plus_isperc <- sapply(dpsub("<HAARTBySexPerNum MV>", 4:5, timedat.idx), as.integer)
+  dimnames(art15plus_isperc) <- list(sex = c("male", "female"), year = proj.years)
+
+  art15plus_num <- sapply(dpsub("<HAARTBySex MV>", 4:5, timedat.idx), as.numeric)
+  dimnames(art15plus_num) <- list(sex = c("male", "female"), year = proj.years)
+
+  art15plus_need <- sapply(dpsub("<NeedARTDec31 MV>", 3:4, timedat.idx), as.numeric)
+  dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
+
+  if (any(art15plus_num[art15plus_isperc == 1] < 0 |
+          art15plus_num[art15plus_isperc == 1] > 100)) {
+    stop("Invalid percentage on ART entered for adult ART")
+  }
+
+  art15plus_num[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_num[art15plus_isperc == 1] / 100
+
+  art15plus <- as.data.frame.table(art15plus_num,
+                                   responseName = "art_dec31",
+                                   stringsAsFactors = FALSE)
+  art15plus$age_group <- "Y015_999"
+  art15plus$year <- type.convert(art15plus$year, as.is = TRUE)
+
+
+  ## # Child number on ART
+  ##
+  ## - If age-stratified entered, use sum of three age categories
+  ## - Else, if number entered for total children 0-14 on ART, use that
+  ## - Else, if percentage entered for children 0-14 on ART, use percentage
+  ##   times children needing ART.
+  ##
+  ## Children needing ART taken from line 9 of <ChildARTCalc MV2>, interpolated
+  ## to end of year. I am not entirely sure what this calculation is, but
+  ## averaging between two years in the internal values matches the values
+  ## reported in the Spectrum ART results table for "Children needing ART (0-14)".
+  ##
+  ## The Spectrum output for number of children on ART in the table can be quite
+  ## different from the internal number on ART in the projection period. I am
+  ## not sure what explains the difference; it should be minimal impact here.
+
+  child_art_raw<- dpsub("<ChildTreatInputs MV3>", 3:6, timedat.idx)
+  child_art_raw <- sapply(child_art_raw, as.numeric)
+  child_art_raw[child_art_raw == -9999] <- NA_real_
+  colnames(child_art_raw) <- proj.years
+
+  child_art_0to14 <- child_art_raw[1,]
+  child_art_aggr <- colSums(child_art_raw[2:4,])
+
+  ## Note: these errors should never occur; don't need to be translated.
+  if (any(is.na(child_art_0to14) & is.na(child_art_aggr))) {
+    stop(paste0("No child ART input found for year: ",
+                paste0(names(which(is.na(child_art_0to14) & is.na(child_art_aggr))), collapse = ", "),
+                ". Check PJNZ file inputs"))
+  }
+
+  if (any(!is.na(child_art_0to14) & !is.na(child_art_aggr))) {
+    stop(paste0("Both aggregated and age-stratified child ART input found for year: ",
+                paste0(names(which(!is.na(child_art_0to14) & !is.na(child_art_aggr))), collapse = ", "),
+                ". Check PJNZ file inputs"))
+  }
+
+  child_art_isperc <- dpsub("<ChildARTByAgeGroupPerNum MV2>", 3, timedat.idx)
+  child_art_isperc <- as.integer(child_art_isperc)
+  names(child_art_isperc) <- proj.years
+
+  child_art_need<- dpsub("<ChildARTCalc MV2>", 9, timedat.idx)
+  child_art_need <- as.numeric(child_art_need)
+  child_art_need <- approx(proj.years, child_art_need, proj.years + 0.5, rule = 2)$y
+  names(child_art_need) <- proj.years
+
+  child_art <- dplyr::case_when(child_art_isperc == 0  & !is.na(child_art_aggr) ~ child_art_aggr,
+                                child_art_isperc == 0  & !is.na(child_art_0to14) ~ child_art_0to14,
+                                child_art_isperc == 1 ~ child_art_need * child_art_0to14 / 100)
+  names(child_art) <- proj.years
+
+  if (any(is.na(child_art))) {
+    stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
+  }
+
+  child_art <- data.frame(sex = "both",
+                          age_group = "Y000_014",
+                          year = proj.years,
+                          art_dec31 = child_art)
+
+  art_dec31 <- rbind(child_art, art15plus)
+
+  art_dec31
+}
+
+#' Disaggregate the number on ART Dec 31 to single age
+#'
+#' @noRd
+#' 
+add_dec31_art <- function(spec, pjnz) {
+
+  art_dec31 <- read_pjnz_art_dec31(pjnz)
+
+  ## Distribute coarse (<15/15+) ART data to 5-year age groups
+  spec <- spec %>%
+    dplyr::mutate(age_group_coarse = dplyr::if_else(age <= 14, "Y000_014", "Y015_999"),
+                  sex_join = dplyr::if_else(age_group_coarse == "Y000_014", "both", sex)) %>%
+    dplyr::group_by(sex_join, age_group_coarse, year) %>%
+    dplyr::mutate(art_prop = dplyr::if_else(artpop == 0, 0.0, artpop / sum(artpop))) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(art_dec31, by = c("sex_join" = "sex", "age_group_coarse" = "age_group", "year")) %>%
+    dplyr::mutate(
+      artpop_dec31 = dplyr::if_else(is.na(art_prop), 0.0, art_prop * art_dec31),
+      age_group_coarse = NULL,
+      sex_join = NULL,
+      art_prop = NULL,
+      art_dec31 = NULL
+    )
+
+  stopifnot(all.equal(sum(spec$artpop_dec31), sum(art_dec31$art_dec31)))
+
+  spec
+}
+
+
+#' Read ANC testing inputs from PJNZ
+#'
+#' Reads ANC testing cascade inputs from Spectrum PJNZ.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' read_pjnz_anc_testing(pjnz)
+#'
+#' @noRd
+#' 
+read_pjnz_anc_testing <- function(pjnz) {
+
+  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+  dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+  yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
+  yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
+  proj.years <- yr_start:yr_end
+  timedat.idx <- 4 + 1:length(proj.years) - 1
+
+  if (exists_dptag("<ANCTestingValues MV>")) {
+    anc_testing <- dpsub("<ANCTestingValues MV>", 2:5, timedat.idx)
+  } else if (exists_dptag("<ANCTestingValues MV2>")) {
+    anc_testing <- dpsub("<ANCTestingValues MV2>", 2:5, timedat.idx)
+  } else {
+    stop("ANC testing inputs not found in .DP file")
+  }
+  anc_testing <- sapply(anc_testing, as.integer)
+  anc_testing[anc_testing == -9999] <- NA_real_
+  
+  ## Note: these values start 1 column later than other arrays in the .DP file
+  ## If value is 0, interpret as not entered (NA)
+  if (exists_dptag("<ARVRegimen MV2>")) {
+    anc_already_art <- dpsub("<ARVRegimen MV2>", 13, timedat.idx+1)
+  } else if (exists_dptag("<ARVRegimen MV3>")) {
+    anc_already_art <- dpsub("<ARVRegimen MV3>", 13, timedat.idx+1)
+  }
+  anc_already_art <- sapply(anc_already_art, as.integer)
+  anc_already_art[anc_already_art == 0] <- NA
+
+  anc_testing <- rbind(anc_testing, anc_already_art)
+  dimnames(anc_testing) <- list(indicator = c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"),
+                                year = proj.years)
+  
+  anc_testing <- as.data.frame.table(anc_testing,
+                                   responseName = "value",
+                                   stringsAsFactors = FALSE)
+  anc_testing$year <- type.convert(anc_testing$year, as.is = TRUE)
+  anc_testing <- dplyr::filter(anc_testing, !is.na(value))
+
+  anc_testing
+}
+
+
 add_shiny90_unaware <- function(spec, pjnz) {
 
   if (assert_pjnz_shiny90(pjnz)) {
