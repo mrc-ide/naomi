@@ -39,6 +39,7 @@ output,barchart,plhiv,mean,lower,upper,indicator,plhiv,t_(PLHIV),1,100,0
 output,barchart,incidence,mean,lower,upper,indicator,incidence,t_(INCIDENCE),1000,,0
 output,barchart,infections,mean,lower,upper,indicator,infections,t_(NEW_INFECTIONS),1,100,0
 output,barchart,aware_plhiv_prop,mean,lower,upper,indicator,aware_plhiv_prop,t_(AWARE_PLHIV_PROP),1,,0.0%
+output,barchart,unaware_plhiv_prop,mean,lower,upper,indicator,unaware_plhiv_prop,t_(UNAWARE_PLHIV_PROP),1,,0.0%
 output,barchart,unaware_plhiv_num,mean,lower,upper,indicator,unaware_plhiv_num,t_(UNAWARE_PLHIV_NUM),1,10,0
 output,barchart,aware_plhiv_num,mean,lower,upper,indicator,aware_plhiv_num,t_(AWARE_PLHIV_NUM),1,10,0
 output,barchart,untreated_plhiv_num,mean,lower,upper,indicator,untreated_plhiv_num,t_(UNTREATED_PLHIV_NUM),1,10,0

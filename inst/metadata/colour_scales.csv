@@ -10,6 +10,7 @@ default,plhiv,interpolateReds,0,10000000,FALSE
 default,incidence,interpolateBlues,0,0.01,FALSE
 default,infections,interpolateBlues,0,40000,FALSE
 default,aware_plhiv_prop,interpolateBlues,0,1,FALSE
+default,unaware_plhiv_prop,interpolateBlues,0,1,FALSE
 default,unaware_plhiv_num,interpolateBlues,0,80000,FALSE
 default,aware_plhiv_num,interpolateBlues,0,80000,FALSE
 default,untreated_plhiv_num,interpolateGreens,0,80000,FALSE
@@ -25,6 +26,16 @@ default,anc_tested_neg,interpolateOranges,0,700000,FALSE
 default,art_new,interpolateGreens,0,80000,FALSE
 default,vl_tested_12mos,interpolatePurples,0,60000,FALSE
 default,vl_suppressed_12mos,interpolatePurples,0,60000,FALSE
+default,population_ratio,interpolateGreys,0,1.2,FALSE
+default,plhiv_ratio,interpolateReds,0,1.2,FALSE
+default,infections_ratio,interpolateBlues,0,1.2,FALSE
+default,art_current_ratio,interpolateGreens,0,1.2,FALSE
+default,unaware_plhiv_num_ratio,interpolateBlues,0,1.2,FALSE
+default,prevalence_ratio,interpolateReds,0,1.2,FALSE
+default,art_coverage_ratio,interpolateGreens,0,1.2,FALSE
+default,unaware_plhiv_prop_ratio,interpolateBlues,0,1.2,FALSE
+default,aware_plhiv_prop_ratio,interpolateBlues,0,1.2,FALSE
+default,incidence_ratio,interpolateBlues,0,1.2,FALSE
 MWI,art_current,interpolateGreens,0,80000,FALSE
 MWI,prevalence,interpolateReds,0,0.5,FALSE
 MWI,art_coverage,interpolateGreens,0,1,FALSE
