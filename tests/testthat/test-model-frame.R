@@ -58,7 +58,7 @@ test_that("population calibration options", {
                                scope = "MWI",
                                level = 4,
                                calendar_quarter1 = "CY2016Q1",
-                               calendar_quarter2 = "CY2018Q3",
+                               calendar_quarter2 = "CY2018Q4",
                                calendar_quarter3 = "CY2019Q2",
                                spectrum_population_calibration = "none")
 
@@ -81,7 +81,7 @@ test_that("population calibration options", {
                               scope = "MWI",
                               level = 4,
                               calendar_quarter1 = "CY2016Q1",
-                              calendar_quarter2 = "CY2018Q3",
+                              calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               spectrum_population_calibration = "national")
 
@@ -101,7 +101,7 @@ test_that("population calibration options", {
                                  scope = "MWI",
                                  level = 4,
                                  calendar_quarter1 = "CY2016Q1",
-                                 calendar_quarter2 = "CY2018Q3",
+                                 calendar_quarter2 = "CY2018Q4",
                                  calendar_quarter3 = "CY2019Q2",
                                  spectrum_population_calibration = "subnational")
 
@@ -121,7 +121,7 @@ test_that("population calibration options", {
                       scope = "MWI",
                       level = 4,
                       calendar_quarter1 = "CY2016Q1",
-                      calendar_quarter2 = "CY2018Q3",
+                      calendar_quarter2 = "CY2018Q4",
                       calendar_quarter3 = "CY2019Q2",
                       spectrum_population_calibration = "jibberish"),
     "spectrum_calibration_option \"jibberish\" not found."

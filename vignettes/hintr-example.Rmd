@@ -38,8 +38,8 @@ hintr_options <- list(
   area_scope = "MWI",
   area_level = "4",
   calendar_quarter_t1 = "CY2016Q1",
-  calendar_quarter_t2 = "CY2018Q3",
-  calendar_quarter_t3 = "CY2021Q3",
+  calendar_quarter_t2 = "CY2018Q4",
+  calendar_quarter_t3 = "CY2019Q3",
   survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
   survey_art_coverage = "DEMO2016PHIA",
   survey_recently_infected = "DEMO2016PHIA",
@@ -65,11 +65,11 @@ calibration_options <- list(
   spectrum_plhiv_calibration_level = "national",
   spectrum_plhiv_calibration_strat = "sex_age_group",
   spectrum_artnum_calibration_level = "national",
-  spectrum_artnum_calibration_strat = "age_coarse",
+  spectrum_artnum_calibration_strat = "sex_age_coarse",
   spectrum_aware_calibration_level = "national",
-  spectrum_aware_calibration_strat = "age_coarse",
+  spectrum_aware_calibration_strat = "sex_age_coarse",
   spectrum_infections_calibration_level = "national",
-  spectrum_infections_calibration_strat = "age_coarse",
+  spectrum_infections_calibration_strat = "sex_age_coarse",
   calibrate_method = "logistic"
 )
 

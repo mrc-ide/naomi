@@ -27,7 +27,8 @@ naomi_model_frame(
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
   spectrum_population_calibration = "national",
-  output_aware_plhiv = TRUE
+  output_aware_plhiv = TRUE,
+  adjust_area_growth = FALSE
 )
 }
 \arguments{
@@ -73,6 +74,8 @@ ids.}
 \item{logit_nu_sd}{standard deviation of logit viral load suppression.}
 
 \item{spectrum_population_calibration}{character string values "national", "subnational", "none"}
+
+\item{adjust_area_growth}{TRUE/FALSE: adjust PLHIV population for net change in cohort size}
 }
 \value{
 Naomi model frame

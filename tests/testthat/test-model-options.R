@@ -294,3 +294,77 @@ test_that("use_survey_aggregate option affects selected data", {
   )
 
 })
+
+test_that("Option adjust_area_growth affects projection matrices", {
+
+  a_hintr_data <- format_data_input(a_hintr_data)
+  
+  a_hintr_options <- format_options(a_hintr_options)
+  options_null <- a_hintr_options
+  options_null$adjust_area_growth <- NULL
+
+  naomi_data_null <- naomi_prepare_data(a_hintr_data, options_null)
+
+  ## If adjust_area_growth not provided, defaults to FALSE -> no net growth factors
+  expect_true(all(naomi_data_null$Lproj_netgrow_t1t2 == 0 |
+                  naomi_data_null$Lproj_netgrow_t1t2 == 1))
+  expect_true(all(naomi_data_null$Lproj_netgrow_t2t3 == 0 |
+                  naomi_data_null$Lproj_netgrow_t2t3 == 1))
+  
+
+  options_TRUE <- a_hintr_options
+  options_TRUE$adjust_area_growth <- TRUE
+  naomi_data_TRUE <- naomi_prepare_data(a_hintr_data, options_TRUE)
+
+  ## If adjust_area_growth = TRUE, non-zero growth factors
+  expect_true(all(diag(as.matrix(naomi_data_TRUE$Lproj_netgrow_t1t2)) != 1))
+  expect_true(all(diag(as.matrix(naomi_data_TRUE$Lproj_netgrow_t2t3)) != 1))
+
+  options_FALSE <- a_hintr_options
+  options_FALSE$adjust_area_growth <- FALSE
+  naomi_data_FALSE <- naomi_prepare_data(a_hintr_data, options_FALSE)
+
+  ## If adjust_area_growth = FALSE, non-zero growth factors
+  expect_true(all(diag(as.matrix(naomi_data_FALSE$Lproj_netgrow_t1t2)) == 1))
+  expect_true(all(diag(as.matrix(naomi_data_FALSE$Lproj_netgrow_t2t3)) == 1))
+
+  expect_equal(naomi_data_null$Lproj_hivpop, naomi_data_FALSE$Lproj_hivpop)
+  expect_equal(naomi_data_null$Lproj_hivpop_t1t2, naomi_data_FALSE$Lproj_hivpop_t1t2)
+  expect_equal(naomi_data_null$Lproj_paed, naomi_data_FALSE$Lproj_paed)
+  expect_equal(naomi_data_null$Lproj_paed_t1t2, naomi_data_FALSE$Lproj_paed_t1t2)
+  expect_equal(naomi_data_null$Lproj_incid, naomi_data_FALSE$Lproj_incid)
+  expect_equal(naomi_data_null$Lproj_incid_t1t2, naomi_data_FALSE$Lproj_incid_t1t2)
+
+  skip("Net growth ratio effect not implemented in v2.6.0; target for v2.6.1")
+  
+  ## adjust_area_growth TRUE vs. FALSE affects projections for
+  ## hivpop, paediatric, and infections
+
+  expect_false(all(naomi_data_TRUE$Lproj_hivpop == naomi_data_FALSE$Lproj_hivpop))
+  expect_false(all(naomi_data_TRUE$Lproj_hivpop_t2t3 == naomi_data_FALSE$Lproj_hivpop_t2t3))
+  expect_false(all(naomi_data_TRUE$Lproj_paed == naomi_data_FALSE$Lproj_paed))
+  expect_false(all(naomi_data_TRUE$Lproj_paed_t2t3 == naomi_data_FALSE$Lproj_paed_t2t3))
+  expect_false(all(naomi_data_TRUE$Lproj_incid == naomi_data_FALSE$Lproj_incid))
+  expect_false(all(naomi_data_TRUE$Lproj_incid_t2t3 == naomi_data_FALSE$Lproj_incid_t2t3))    
+})
+
+
+test_that("Option adjust_area_growth handles cases with projection_dur >5 years", {
+
+  a_hintr_data <- format_data_input(a_hintr_data)
+  
+  a_hintr_options <- format_options(a_hintr_options)
+  options_longdur <- a_hintr_options
+  options_longdur$adjust_area_growth <- TRUE
+  options_longdur$calendar_quarter_t2 = "CY2023Q4"
+  options_longdur$calendar_quarter_t3 = "CY2024Q3"
+  options_longdur$include_art_t2 <- "false"
+  options_longdur$artattend_t2 <- "false"
+  
+  naomi_data_longdur <- naomi_prepare_data(a_hintr_data, options_longdur)
+
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_netgrow_t1t2)), 0)
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_hivpop)), 0)  
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_paed)), 0)
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_incid)), 0)
+})
