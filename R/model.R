@@ -155,7 +155,7 @@ naomi_model_frame <- function(area_merged,
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
 
   ## Get leaves that are children of scope
-  area_id_leaves <- areas$tree$Get("leaves", traversal = "level")
+  area_id_leaves <- areas$tree$Get("leaves", traversal = "level", simplify = FALSE)
 
   if (length(setdiff(scope, names(area_id_leaves)))) {
     missing_areas = setdiff(scope, names(area_id_leaves))

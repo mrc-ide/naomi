@@ -334,6 +334,8 @@ test_that("Option adjust_area_growth affects projection matrices", {
   expect_equal(naomi_data_null$Lproj_paed_t1t2, naomi_data_FALSE$Lproj_paed_t1t2)
   expect_equal(naomi_data_null$Lproj_incid, naomi_data_FALSE$Lproj_incid)
   expect_equal(naomi_data_null$Lproj_incid_t1t2, naomi_data_FALSE$Lproj_incid_t1t2)
+
+  skip("Net growth ratio effect not implemented in v2.6.0; target for v2.6.1")
   
   ## adjust_area_growth TRUE vs. FALSE affects projections for
   ## hivpop, paediatric, and infections

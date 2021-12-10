@@ -684,14 +684,16 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("spectrum_region_code", "sex", "age_group2", "area_id")
     )
 
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
   hivpopLproj <- hivpopLproj %>%
     dplyr::left_join(
       net_growth_ratio_t1t2,
       by = c("area_id", "sex", "age_group1", "age_group2")
-    ) %>%
-    dplyr::mutate(
-      L_hivpop = L_hivpop * net_growth_ratio
     )
+  ## %>%
+  ##   dplyr::mutate(
+  ##     L_hivpop = L_hivpop * net_growth_ratio
+  ##   )
 
   Lproj_hivpop <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
                                        j = hivpopLproj$idx1,
@@ -729,14 +731,15 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("spectrum_region_code", "sex", "age_group2", "area_id")
     )
 
-  incidLproj <- incidLproj %>%
-    dplyr::left_join(
-      net_growth_ratio_t1t2,
-      by = c("area_id", "sex", "age_group_infection" = "age_group1", "age_group2")
-    ) %>%
-    dplyr::mutate(
-      L_incid = L_incid * (net_growth_ratio ^ 0.5)
-    )
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
+  ## incidLproj <- incidLproj %>%
+  ##   dplyr::left_join(
+  ##     net_growth_ratio_t1t2,
+  ##     by = c("area_id", "sex", "age_group_infection" = "age_group1", "age_group2")
+  ##   ) %>%
+  ##   dplyr::mutate(
+  ##     L_incid2 = L_incid * (net_growth_ratio ^ 0.5)
+  ##   )
 
   Lproj_incid <- Matrix::sparseMatrix(i = incidLproj$idx2,
                                       j = incidLproj$idx1,
@@ -776,14 +779,15 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("spectrum_region_code", "sex2", "age_group2", "area_id")
     )
 
-  paedLproj <- paedLproj %>%
-    dplyr::left_join(
-      dplyr::filter(net_growth_ratio_t1t2_aggr, sex == "female"),
-      by = c("area_id", "age_group1")
-    ) %>%
-    dplyr::mutate(
-      L_paed = L_paed * (net_growth_ratio ^ 0.5)
-    )
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
+  ## paedLproj <- paedLproj %>%
+  ##   dplyr::left_join(
+  ##     dplyr::filter(net_growth_ratio_t1t2_aggr, sex == "female"),
+  ##     by = c("area_id", "age_group1")
+  ##   ) %>%
+  ##   dplyr::mutate(
+  ##     L_paed = L_paed * (net_growth_ratio ^ 0.5)
+  ##   )
 
   Lproj_paed <- Matrix::sparseMatrix(i = paedLproj$idx2,
                                      j = paedLproj$idx1,
@@ -883,14 +887,16 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("spectrum_region_code", "sex", "age_group3", "area_id")
     )
 
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
   hivpopLproj <- hivpopLproj %>%
     dplyr::left_join(
       net_growth_ratio_t2t3,
       by = c("area_id", "sex", "age_group2", "age_group3")
-    ) %>%
-    dplyr::mutate(
-      L_hivpop = L_hivpop * net_growth_ratio
-    )
+      )
+  ## %>%
+  ##   dplyr::mutate(
+  ##     L_hivpop = L_hivpop * net_growth_ratio
+  ##   )
 
   Lproj_hivpop_t2t3 <- Matrix::sparseMatrix(i = hivpopLproj$idx3,
                                             j = hivpopLproj$idx2,
@@ -925,14 +931,15 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("spectrum_region_code", "sex", "age_group3", "area_id")
     )
 
-  incidLproj <- incidLproj %>%
-    dplyr::left_join(
-      net_growth_ratio_t2t3,
-      by = c("area_id", "sex", "age_group_infection" = "age_group2", "age_group3")
-    ) %>%
-    dplyr::mutate(
-      L_incid = L_incid * (net_growth_ratio ^ 0.5)
-    )
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
+  ## incidLproj <- incidLproj %>%
+  ##   dplyr::left_join(
+  ##     net_growth_ratio_t2t3,
+  ##     by = c("area_id", "sex", "age_group_infection" = "age_group2", "age_group3")
+  ##   ) %>%
+  ##   dplyr::mutate(
+  ##     L_incid = L_incid * (net_growth_ratio ^ 0.5)
+  ##   )
 
   Lproj_incid_t2t3 <- Matrix::sparseMatrix(i = incidLproj$idx3,
                                            j = incidLproj$idx2,
@@ -971,14 +978,15 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
       by = c("spectrum_region_code", "sex3", "age_group3", "area_id")
     )
 
-  paedLproj <- paedLproj %>%
-    dplyr::left_join(
-      dplyr::filter(net_growth_ratio_t2t3_aggr, sex == "female"),
-      by = c("area_id", "age_group2")
-    ) %>%
-    dplyr::mutate(
-      L_paed = L_paed * (net_growth_ratio ^ 0.5)
-    )
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
+  ## paedLproj <- paedLproj %>%
+  ##   dplyr::left_join(
+  ##     dplyr::filter(net_growth_ratio_t2t3_aggr, sex == "female"),
+  ##     by = c("area_id", "age_group2")
+  ##   ) %>%
+  ##   dplyr::mutate(
+  ##     L_paed = L_paed * (net_growth_ratio ^ 0.5)
+  ##   )
 
   Lproj_paed_t2t3 <- Matrix::sparseMatrix(i = paedLproj$idx3,
                                           j = paedLproj$idx2,
