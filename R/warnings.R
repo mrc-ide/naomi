@@ -44,16 +44,21 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
       dplyr::filter(indicator == ind, mean > threshold) %>%
       dplyr::mutate(disag = paste(calendar_quarter, area_id, sex, age_group, sep = " "))
 
-    if(ind == "prevalence"){t <- t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD")}
-    if(ind == "art_coverage"){t <- t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD")}
-    strat <- paste0(v$disag, collapse = ", ")
+    if (ind == "prevalence") {
+      key <- "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"
+    } else if (ind == "art_coverage") {
+      key <- "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"
+    } else {
+      stop("Invalid indicator, can only return warning for prevalence or art_coverage") ## or some generic warning here?
+    }
 
-    msg <- paste0(t, " ", strat)
+    msg <- t_(key, list(rows = paste0(v$disag, collapse = ", ")))
 
     naomi_warning(msg, locations)
   }
 
 }
+
 
 
 

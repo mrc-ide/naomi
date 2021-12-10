@@ -100,8 +100,8 @@ test_that("warning raised if outputs exceed threshold", {
   expect_length(out$warnings, 2)
   expect_equal(
     out$warnings[[1]]$text,
-    "HIV prevalence is higher than 40% for:  CY2016Q1 MWI_1_1_demo both Y000_004")
+    "HIV prevalence is higher than 40% for: CY2016Q1 MWI_1_1_demo both Y000_004")
   expect_equal(
     out$warnings[[2]]$text,
-    "ART coverage is higher than 100% for:  CY2016Q1 MWI_1_1_demo both Y000_004")
+    "ART coverage is higher than 100% for: CY2016Q1 MWI_1_1_demo both Y000_004")
 })
