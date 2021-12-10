@@ -70,7 +70,6 @@ test_that("write and read naomi outputs returns same thing", {
 
 test_that("subset output returns expected subset", {
 
-
   area_id_sub <- c("MWI_1_1_demo", "MWI_2_1_demo")
   sex_sub <- "both"
   age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")

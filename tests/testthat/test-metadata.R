@@ -79,8 +79,7 @@ test_that("can get plot metadata for missing country with defaults", {
                     "incidence", "infections", "plhiv", "population",
                     "recent_infected", "viral_suppression_plhiv",
                     "untreated_plhiv_num",
-                    "aware_plhiv_prop", "unaware_plhiv_prop",
-                    "aware_plhiv_num", "unaware_plhiv_num",
+                    "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
                     "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos", "anc_tested_pos",
@@ -88,8 +87,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
                     "infections_ratio", "art_current_ratio",
                     "unaware_plhiv_num_ratio", "prevalence_ratio",
-                    "art_coverage_ratio", "unaware_plhiv_prop_ratio",
-                    "aware_plhiv_prop_ratio", "incidence_ratio"))
+                    "art_coverage_ratio", "aware_plhiv_prop_ratio",
+                    "incidence_ratio"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -98,15 +97,14 @@ test_that("colour scales metadata is well formed", {
     c("art_coverage", "art_current", "art_current_residents", "prevalence",
       "viral_suppression_plhiv", "recent_infected",
       "plhiv", "incidence", "population", "infections",
-      "untreated_plhiv_num", "aware_plhiv_num", "aware_plhiv_prop",
-      "unaware_plhiv_prop", "unaware_plhiv_num",
+      "untreated_plhiv_num",
+      "aware_plhiv_num", "aware_plhiv_prop", "unaware_plhiv_num",
       "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
       "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
       "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos",
       "population_ratio", "plhiv_ratio", "infections_ratio",
       "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
-      "art_coverage_ratio", "unaware_plhiv_prop_ratio",
-      "aware_plhiv_prop_ratio", "incidence_ratio"))
+      "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -130,15 +128,14 @@ test_that("metadata is well formed", {
     "art_coverage", "art_current", "art_current_residents", "prevalence",
     "viral_suppression_plhiv", "recent_infected", "plhiv",
     "population", "incidence", "infections",
-    "untreated_plhiv_num", "unaware_plhiv_prop",
-    "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
-    "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
-    "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-    "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos",
-    "population_ratio", "plhiv_ratio", "infections_ratio",
-    "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
-    "art_coverage_ratio", "unaware_plhiv_prop_ratio",
-    "aware_plhiv_prop_ratio", "incidence_ratio"))
+    "untreated_plhiv_num", "aware_plhiv_prop", "aware_plhiv_num",
+    "unaware_plhiv_num", "anc_prevalence", "anc_art_coverage", "anc_clients",
+    "anc_plhiv", "anc_already_art", "anc_art_new", "anc_known_pos",
+    "anc_tested_pos", "anc_tested_neg", "art_new", "vl_tested_12mos",
+    "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
+    "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
+    "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
+    "incidence_ratio"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
@@ -149,7 +146,7 @@ test_that("metadata is well formed", {
                     "Proportion recently infected", "PLHIV", "Population",
                     "New infections", "HIV incidence", "ART number (residents)",
                     "ART number (attending)",
-                    "PLHIV not on ART", "Proportion PLHIV unaware",
+                    "PLHIV not on ART",
                     "Number PLHIV aware", "Proportion PLHIV aware", "Number PLHIV unaware",
                     "ANC HIV prevalence",
                     "ANC prior ART coverage", "ANC clients",
@@ -160,8 +157,8 @@ test_that("metadata is well formed", {
                     "Population ratio", "PLHIV ratio", "New infections ratio",
                     "ART number (attending) ratio",
                     "Number PLHIV unaware ratio", "HIV prevalence ratio",
-                    "ART coverage ratio", "Proportion PLHIV unaware ratio",
-                    "Proportion PLHIV aware ratio", "Incidence ratio"))
+                    "ART coverage ratio", "Proportion PLHIV aware ratio",
+                    "Incidence ratio"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
