@@ -30,17 +30,19 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
   paste0(brio::readLines(tmp), collapse = "\n")
 }
 
-suppress_one_warning <- function(expr, regexp, type = "warning") {
-  str <- switch(type,
-                "warning" = "muffleWarning",
-                "message" = "muffleMessage",
-                NA_character_)
-  stopifnot(!is.na(str))
-  
+suppress_one_warning <- function(expr, regexp) {
   withCallingHandlers(expr,
     warning = function(w) {
         if(grepl(regexp, w$message))
-          invokeRestart(str)
+          invokeRestart("muffleWarning")
+    })
+}
+
+suppress_one_message <- function(expr, regexp) {
+  withCallingHandlers(expr,
+    message = function(w) {
+        if(grepl(regexp, w$message))
+          invokeRestart("muffleMessage")
     })
 }
 

@@ -161,11 +161,16 @@ prepare_tmb_inputs <- function(naomi_data) {
   X_15to49 <- Matrix::t(sparse_model_matrix(~-1 + area_idf:age15to49, naomi_data$mf_model))
 
   ## Paediatric prevalence from 15-49 female ratio
-  A_15to49f <- Matrix::t(Matrix::sparse.model.matrix(~0 + area_idf:age15to49:as.integer(sex == "female"):population_t1, df))
+  X_15to49f <- Matrix::t(Matrix::sparse.model.matrix(~0 + area_idf:age15to49:as.integer(sex == "female"), df))
+  
   df$bin_paed_rho_model <- 1 - df$bin_rho_model
   X_paed_rho_ratio <- sparse_model_matrix(~-1 + area_idf:paed_rho_ratio:bin_paed_rho_model, df)
   paed_rho_ratio_offset <- 0.5 * df$bin_rho_model
 
+  X_paed_lambda_ratio_t1 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t1, df)
+  X_paed_lambda_ratio_t2 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t2, df)
+  X_paed_lambda_ratio_t3 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t3, df)
+  
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
 
@@ -174,6 +179,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   } else {
     f_rho_xa <- ~0
   }
+
+  ## Ratio of paediatric incidence rate to 15-49 female prevalence
 
   ## If no sex stratified prevalence data, don't estimate spatial variation in
   ## sex odds ratio
@@ -323,9 +330,13 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_lambda_t1_offset = naomi_data$mf_model$log_lambda_t1_offset,
     log_lambda_t2_offset = naomi_data$mf_model$log_lambda_t2_offset,
     ##
-    A_15to49f = A_15to49f,
+    X_15to49f = X_15to49f,
     X_paed_rho_ratio = X_paed_rho_ratio,
     paed_rho_ratio_offset = paed_rho_ratio_offset,
+    ## 
+    X_paed_lambda_ratio_t1 = X_paed_lambda_ratio_t1,
+    X_paed_lambda_ratio_t2 = X_paed_lambda_ratio_t2,
+    X_paed_lambda_ratio_t3 = X_paed_lambda_ratio_t3,
     ##
     ## Household survey input data
     x_prev = naomi_data$prev_dat$x_eff,

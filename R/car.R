@@ -16,17 +16,12 @@ create_adj_matrix <- function(sh){
 
   s2_current <- sf::sf_use_s2()
   on.exit(
-    suppress_one_warning(sf::sf_use_s2(s2_current),
-                         "Spherical geometry (s2) switched",
-                         type = "message")
+    invisible(capture.output(sf::sf_use_s2(s2_current)))
   )
-  suppress_one_warning(sf::sf_use_s2(FALSE),
-                       "Spherical geometry (s2) switched off",
-                       type = "message")
+  invisible(capture.output(sf::sf_use_s2(FALSE)))
 
-  ## suppress_one_warning(...) isn't working on spdep::poly2nb(). Maybe
-  ## because the message comes from internal call to st_intersects()?
-  nb <- suppressMessages(spdep::poly2nb(sh))
+  nb <- suppress_one_message(spdep::poly2nb(sh),
+                             "although coordinates are longitude/latitude, st_intersects assumes that they are planar")
   adj <- spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
   colnames(adj) <- rownames(adj)
 

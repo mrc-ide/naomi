@@ -98,6 +98,7 @@ naomi_output_frame <- function(mf_model,
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
+#' @param adjust_area_growth TRUE/FALSE: adjust PLHIV population for net change in cohort size
 #'
 #' @return Naomi model frame
 #'
@@ -134,7 +135,8 @@ naomi_model_frame <- function(area_merged,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national",
-                              output_aware_plhiv = TRUE) {
+                              output_aware_plhiv = TRUE,
+                              adjust_area_growth = FALSE) {
 
   ## Create a list of options to save out
   model_options <- list(area_scope = scope,
@@ -153,7 +155,7 @@ naomi_model_frame <- function(area_merged,
   data.tree::Prune(areas$tree, function(x) x$area_level <= level)
 
   ## Get leaves that are children of scope
-  area_id_leaves <- areas$tree$Get("leaves", traversal = "level")
+  area_id_leaves <- areas$tree$Get("leaves", traversal = "level", simplify = FALSE)
 
   if (length(setdiff(scope, names(area_id_leaves)))) {
     missing_areas = setdiff(scope, names(area_id_leaves))
@@ -220,11 +222,14 @@ naomi_model_frame <- function(area_merged,
              births_artpop = dplyr::if_else(is.na(asfr), 0, pregartcov * births_hivpop)
            ) %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
-    dplyr::summarise_at(
-             dplyr::vars(totpop, hivpop, artpop, infections, unaware,
-                         births, births_hivpop, births_artpop),
-             sum
-           ) %>%
+    dplyr::summarise(
+      dplyr::across(
+        c(totpop, hivpop, artpop, artpop_dec31, infections, unaware,
+          births, births_hivpop, births_artpop),
+        sum
+      ),
+      .groups = "drop"
+    ) %>%
     dplyr::ungroup()
 
   ## Add number susceptible in previous year for Spectrum incidence calculation
@@ -255,7 +260,10 @@ naomi_model_frame <- function(area_merged,
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group, year) %>%
-    dplyr::summarise_at(dplyr::vars(totpop, hivpop, artpop, infections, unaware), sum) %>%
+    dplyr::summarise(
+      dplyr::across(c(totpop, hivpop, artpop, artpop_dec31, infections, unaware), sum),
+      .groups = "drop"
+    ) %>%
     dplyr::mutate(
              births = 0,
              births_hivpop= 0,
@@ -422,17 +430,28 @@ naomi_model_frame <- function(area_merged,
              prevalence = cap_prop(plhiv_spectrum / population_spectrum),
              art_coverage = cap_prop(art_current_spectrum / plhiv_spectrum),
              incidence = infections_spectrum / susc_previous_year_spectrum,
-             unaware_untreated_prop = unaware_spectrum / (plhiv_spectrum - art_current_spectrum),
+             unaware_untreated_prop = unaware_spectrum / pmax(plhiv_spectrum - art_current_spectrum, 0.0),
              unaware_untreated_prop = tidyr::replace_na(unaware_untreated_prop, 1.0),
              asfr = births_spectrum / population_spectrum,
              frr_plhiv = (births_hivpop_spectrum / plhiv_spectrum) /
                ((births_spectrum - births_hivpop_spectrum) / (population_spectrum - plhiv_spectrum)),
              frr_plhiv = tidyr::replace_na(frr_plhiv, 1.0),
-             frr_already_art = (births_artpop_spectrum / art_current_spectrum) /
-               ((births_hivpop_spectrum - births_artpop_spectrum) / (plhiv_spectrum - art_current_spectrum)),
+             ##
+             ## Note: in these calculations, using art_current_internal_spectrum which is the
+             ##   interpolation of the mid-year number on ART to avoid cases
+             ##   where this is inconsistent with the PLHIV estimate.
+             frr_already_art = (births_artpop_spectrum / art_current_internal_spectrum) /
+               ((births_hivpop_spectrum - births_artpop_spectrum) / (plhiv_spectrum - art_current_internal_spectrum)),
              frr_already_art = tidyr::replace_na(frr_already_art, 1.0)
            )
 
+  if (any(spec_indicators$frr_already_art <= 0)) {
+    stop("Invalid fertility rate ratio for women on ART calculated from Spectrum inputs. Please contact troubleshooting.")
+  }
+  if (any(spec_indicators$frr_plhiv <= 0)) {
+    stop("Invalid fertility rate ratio for women on ART calculated from Spectrum inputs. Please contact troubleshooting.")
+  }
+  
   mf_model <- mf_model %>%
     dplyr::left_join(
              spec_indicators %>%
@@ -492,7 +511,8 @@ naomi_model_frame <- function(area_merged,
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   quarter_id3 <- calendar_quarter_to_quarter_id(calendar_quarter3)
 
-  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3)
+  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
+                        adjust_area_growth = adjust_area_growth)
   projection_duration <- (quarter_id2 - quarter_id1) / 4
   projection_duration_t2t3 <- (quarter_id3 - quarter_id2) / 4
 
@@ -588,20 +608,34 @@ naomi_model_frame <- function(area_merged,
            ) %>%
     dplyr::ungroup()
 
-  ## Paediatric prevalence ratio model
+  ## Paediatric prevalence and incidence ratio model
   mf_model <- mf_model %>%
     dplyr::group_by(area_id) %>%
     dplyr::mutate(
+             is_paed = as.integer(age_group %in% c("Y000_004", "Y005_009", "Y010_014")),
              spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
-             paed_rho_ratio = dplyr::if_else(age_group %in% c("Y000_004", "Y005_009", "Y010_014"), spec_prev_t1 / spec_prev15to49f_t1, 0),
+             spec_prev15to49f_t2 = sum(population_t2 * spec_prev_t2 * age15to49 * female_15plus) / sum(population_t2 * age15to49 * female_15plus),
+             spec_prev15to49f_t3 = sum(population_t3 * spec_prev_t3 * age15to49 * female_15plus) / sum(population_t3 * age15to49 * female_15plus),      
+             paed_rho_ratio = is_paed * spec_prev_t1 / spec_prev15to49f_t1,
              bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
-             spec_prev15to49f_t1 = NULL
+             ##
+             ## Ratio of paediatric incidence to adult 15-49 female prevalence
+             paed_lambda_ratio_t1 = is_paed * spec_incid_t1 / spec_prev15to49f_t1,
+             paed_lambda_ratio_t2 = is_paed * spec_incid_t2 / spec_prev15to49f_t2,
+             paed_lambda_ratio_t3 = is_paed * spec_incid_t3 / spec_prev15to49f_t3,
+             ## 
+             ## Remove interim calculations
+             is_paed = NULL,
+             spec_prev15to49f_t1 = NULL,
+             spec_prev15to49f_t1 = NULL,
+             spec_prev15to49f_t3 = NULL
            ) %>%
     dplyr::ungroup()
 
   ## Remove unneeded columns from spectrum_calibration
   spectrum_calibration[["susc_previous_year_spectrum"]] <- NULL
   spectrum_calibration[["births_spectrum"]] <- NULL
+  spectrum_calibration[["art_current_internal_spectrum"]] <- NULL
 
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
@@ -619,10 +653,12 @@ naomi_model_frame <- function(area_merged,
             Lproj_hivpop_t1t2 = Lproj$Lproj_hivpop_t1t2,
             Lproj_incid_t1t2 = Lproj$Lproj_incid_t1t2,
             Lproj_paed_t1t2 = Lproj$Lproj_paed_t1t2,
+            Lproj_netgrow_t1t2 = Lproj$Lproj_netgrow_t1t2,
             projection_duration = projection_duration,
             Lproj_hivpop_t2t3 = Lproj$Lproj_hivpop_t2t3,
             Lproj_incid_t2t3 = Lproj$Lproj_incid_t2t3,
             Lproj_paed_t2t3 = Lproj$Lproj_paed_t2t3,
+            Lproj_netgrow_t2t3 = Lproj$Lproj_netgrow_t2t3,
             projection_duration_t2t3 = projection_duration_t2t3,
             areas = area_merged,
             age_groups = age_groups,

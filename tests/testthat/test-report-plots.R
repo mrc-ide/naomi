@@ -5,7 +5,7 @@ test_that("map plot can be generated", {
                               indicator = "plhiv",
                               age = "Y015_999",
                               sex_disag = "both",
-                              calendar_quarter = "CY2018Q3",
+                              calendar_quarter = "CY2018Q4",
                               colour_palette = "red",
                               fig_title = "title PLHIV",
                               legend_title = "legend PLHIV"))
