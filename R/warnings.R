@@ -36,13 +36,24 @@ handle_naomi_warnings <- function(expr) {
 
 output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 
+
   val <- naomi_output$indicators$mean[naomi_output$indicators$indicator == ind]
 
   if(max(val) > threshold) {
 
+    to_upper_first <- function(x) {
+      substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+      x
+    }
+
+
     v <- naomi_output$indicators %>%
       dplyr::filter(indicator == ind, mean > threshold) %>%
-      dplyr::mutate(disag = paste(calendar_quarter, area_id, sex, age_group, sep = " "))
+      dplyr::left_join(naomi_ouput$meta_age_group, by = "age_group") %>%
+      dplyr::left_join(naomi_output$meta_area %>% sf::st_drop_geometry(), by = "area_id") %>%
+      dplyr::mutate(calendar_quarter = calendar_quarter_labels(calendar_quarter),
+                    sex = to_upper_first(sex)) %>%
+      dplyr::mutate(disag = paste(calendar_quarter, area_name, sex, age_group_label, sep = ", "))
 
     if (ind == "prevalence") {
       key <- "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"
@@ -52,7 +63,7 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
       stop("Invalid indicator, can only return warning for prevalence or art_coverage") ## or some generic warning here?
     }
 
-    msg <- t_(key, list(rows = paste0(v$disag, collapse = ", ")))
+    msg <- t_(key, list(rows = paste0(v$disag, collapse = "; ")))
 
     naomi_warning(msg, locations)
   }
