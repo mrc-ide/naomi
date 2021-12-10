@@ -280,7 +280,7 @@ test_that("navigator checklist returns expected results", {
                           "Opt_ART_attendance_yes"     = FALSE,
                           "Model_fit"                  = TRUE,
                           "Cal_PLHIV"                  = TRUE,
-                          "Cal_ART"                    = FALSE,
+                          "Cal_ART"                    = TRUE,
                           "Cal_KOS"                    = FALSE,
                           "Cal_new_infections"         = FALSE,
                           "Cal_method"                 = TRUE)
@@ -339,7 +339,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                  "Opt_ART_attendance_yes"     = NA,
                                  "Model_fit"                  = TRUE,
                                  "Cal_PLHIV"                  = TRUE,
-                                 "Cal_ART"                    = FALSE,
+                                 "Cal_ART"                    = TRUE,
                                  "Cal_KOS"                    = FALSE,
                                  "Cal_new_infections"         = FALSE,
                                  "Cal_method"                 = TRUE)
@@ -372,7 +372,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                    "Opt_ART_attendance_yes"     = NA,
                                    "Model_fit"                  = TRUE,
                                    "Cal_PLHIV"                  = TRUE,
-                                   "Cal_ART"                    = FALSE,
+                                   "Cal_ART"                    = TRUE,
                                    "Cal_KOS"                    = FALSE,
                                    "Cal_new_infections"         = FALSE,
                                    "Cal_method"                 = TRUE)
