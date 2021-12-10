@@ -130,7 +130,8 @@ naomi_mf <- naomi_model_frame(area_merged,
                               level = level,
                               calendar_quarter_t1,
                               calendar_quarter_t2,
-                              calendar_quarter_t3)
+                              calendar_quarter_t3,
+                              adjust_area_growth = TRUE)
 
 
 #' Prepare data inputs

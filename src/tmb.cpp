@@ -13,7 +13,7 @@
  * @param x vector of random effects.
  * @param u vector of spatial component of random effect.
  * @param sigma marginal standard deviation (>0).
- * @param phi proporiton of marginal variance explained by spatial structured 
+ * @param phi proportion of marginal variance explained by spatial structured 
  *            component u (phi \in [0, 1]).
  * @param Q scaled structure matrix for spatial component.
  * 
@@ -21,8 +21,8 @@
  * 
  * @note 
  * The $\sqrt(2\pi)^{-2*n}$ and $|Q|^{1/2}$ terms are dropped.
- * Returns the _positive_ log PDF (differetn from builtin TMB 
- * functions. Thus shoudl typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
+ * Returns the _positive_ log PDF (different from builtin TMB 
+ * functions. Thus should typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
  */ 
 template<class Type>
 Type bym2_conditional_lpdf(const vector<Type> x,
@@ -194,11 +194,15 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(log_lambda_t1_offset);
   DATA_VECTOR(log_lambda_t2_offset);
 
-  // Paediatric prevalence ratio model
+  // Paediatric prevalence and incidence ratio model
 
-  DATA_SPARSE_MATRIX(A_15to49f);
+  DATA_SPARSE_MATRIX(X_15to49f);
   DATA_SPARSE_MATRIX(X_paed_rho_ratio);
   DATA_VECTOR(paed_rho_ratio_offset);
+
+  DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t1);
+  DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t2);
+  DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t3);
 
   // ** Initialize nll **
   Type val(0);
@@ -480,11 +484,8 @@ Type objective_function<Type>::operator() ()
 
   // paediatric prevalence
 
-  vector<Type> ones(X_rho.rows());
-  ones.fill(1.0);
-
-  vector<Type> rho_15to49_f((A_15to49f * invlogit(mu_rho)) / (A_15to49f * ones));
-  vector<Type> mu_rho_paed(X_paed_rho_ratio * rho_15to49_f + paed_rho_ratio_offset);
+  vector<Type> rho_15to49f_t1((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t1)) / (X_15to49f * population_t1));
+  vector<Type> mu_rho_paed(X_paed_rho_ratio * rho_15to49f_t1 + paed_rho_ratio_offset);
   mu_rho_paed = logit(mu_rho_paed);
   mu_rho += mu_rho_paed;
 
@@ -515,6 +516,11 @@ Type objective_function<Type>::operator() ()
                             Z_lambda_x * ui_lambda_x);
 
   vector<Type> lambda_t1(exp(mu_lambda_t1));
+
+  // Add paediatric incidence
+  vector<Type> lambda_paed_t1(X_paed_lambda_ratio_t1 * rho_15to49f_t1);
+  lambda_t1 += lambda_paed_t1;
+  
   vector<Type> infections_t1(lambda_t1 * (population_t1 - plhiv_t1));
 
 
@@ -543,6 +549,12 @@ Type objective_function<Type>::operator() ()
                             Z_lambda_x * ui_lambda_x);
 
   vector<Type> lambda_t2(exp(mu_lambda_t2));
+
+  // Add paediatric incidence
+  vector<Type> rho_15to49f_t2((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t2)) / (X_15to49f * population_t2));  
+  vector<Type> lambda_paed_t2(X_paed_lambda_ratio_t2 * rho_15to49f_t2);
+  lambda_t2 += lambda_paed_t2;
+  
   vector<Type> infections_t2(lambda_t2 * (population_t2 - plhiv_t2));
 
   // likelihood for household survey data
@@ -824,8 +836,15 @@ Type objective_function<Type>::operator() ()
     vector<Type> mu_lambda_t3(X_lambda * beta_lambda + log_lambda_t3_offset +
 			      Z_x * vector<Type>(log(rho_15to49_t3) + log(1.0 - omega * alpha_15to49_t3)) +
 			      Z_lambda_x * ui_lambda_x);
+
+    vector<Type> lambda_t3(exp(mu_lambda_t3));
     
-    vector<Type> infections_t3(exp(mu_lambda_t3) * (population_t3 - plhiv_t3));
+    // Add paediatric incidence
+    vector<Type> rho_15to49f_t3((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t3)) / (X_15to49f * population_t3));  
+    vector<Type> lambda_paed_t3(X_paed_lambda_ratio_t3 * rho_15to49f_t3);
+    lambda_t3 += lambda_paed_t3;
+
+    vector<Type> infections_t3(lambda_t3 * (population_t3 - plhiv_t3));
 
 
     // Note: currently assuming same district effects parameters from t2 for t3

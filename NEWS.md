@@ -1,3 +1,17 @@
+# naomi 2.6.0
+
+* In construction of survivorship projection matrices, the method for interpolating annual population totals to quarter-year age group totals was revised to use Hyman monotonic interpolation of population counts for smoother population distributions.
+
+* Paediatric new infections (MTCT) are distributed to districts based on the ratio of paediatric incidence rate to adult 15-49 female HIV prevalence. This implicitly assumes the same mother-to-child transmission rate for all districts; results should be interpreted accordingly.
+
+* Spectrum inputs for number on ART at end of year (Dec 31) for age 0-14, male 15+, and female 15+ are read from the PJNZ and used for model calibration. As a result, if calibration to Spectrum outputs is applied, Q4 outputs for `art_current` will match exactly to Spectrum. ART coverage will not be exactly the same because Spectrum uses mid-year PLHIV for the denominator and Naomi uses end-year PLHIV for the denominator.
+ 
+_Internal changes_
+
+* Added R version of the Naomi model in function [`naomi_objective_function_r()`] for stepping through model line by line. 
+  - `REPORT()` values match C++ code exactly.
+  - AR1 likelihood is not yet implemented so objective function value does not match the C++ version exactly.
+
 # naomi 2.5.21
 
 * Patch to `summary_report.Rmd` to avoid spherical geometry aggregation error (troubleshooting #2022-43).

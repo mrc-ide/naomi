@@ -434,6 +434,11 @@ naomi_prepare_data <- function(data, options) {
     artnum_calendar_quarter2 <- NULL
   }
 
+
+  if(is.null(options$adjust_area_growth)) {
+    options$adjust_area_growth <- FALSE
+  }
+  
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
     population_agesex = population,
@@ -447,7 +452,8 @@ naomi_prepare_data <- function(data, options) {
     output_aware_plhiv = as.logical(options$output_aware_plhiv),
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
-    artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset)
+    artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset),
+    adjust_area_growth = options$adjust_area_growth
   )
 
   naomi_data <- select_naomi_data(
