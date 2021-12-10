@@ -12,7 +12,7 @@ read_population(file)
 
 read_survey_indicators(file)
 
-read_art_number(file)
+read_art_number(file, all_columns = FALSE)
 
 read_anc_testing(file)
 
