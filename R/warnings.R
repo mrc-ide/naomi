@@ -25,3 +25,35 @@ handle_naomi_warnings <- function(expr) {
   out$warnings <- naomi_warnings$warnings
   out
 }
+
+##' Generate naomi warning for specific strata of simulated outputs
+##'
+##'
+##' @param naomi_output
+##' @param ind Naomi output indicator
+##' @param threshold Numerical threshold to trigger warning
+##' @param locations Location where warning should be displayed in front end
+
+output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
+
+  val <- naomi_output$indicators$mean[naomi_output$indicators$indicator == ind]
+
+  if(max(val) > threshold) {
+
+    v <- naomi_output$indicators %>%
+      dplyr::filter(indicator == ind, mean > threshold) %>%
+      dplyr::mutate(disag = paste(calendar_quarter, area_id, sex, age_group, sep = " "))
+
+    if(ind == "prevalence"){t <- t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD")}
+    if(ind == "art_coverage"){t <- t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD")}
+    strat <- paste0(v$disag, collapse = ", ")
+
+    msg <- paste0(t, " ", strat)
+
+    naomi_warning(msg, locations)
+  }
+
+}
+
+
+

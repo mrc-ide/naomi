@@ -309,7 +309,7 @@
     "ART_PROP_U15_DESC": "Proportion d'enfants (<15) sous TARV",
     "ART_TOTAL_DESC": "Numéros sur TARV à la fin de l'année",
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Vous avez choisi d'ajuster le modèle sans estimer la fréquentation des TARV voisines. Vous pouvez revoir votre sélection pour inclure cette option..",
-    "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 40 % pour certaines catégories d'âge et de sexe.",
-    "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour certaines catégories d'âge et de sexe.",
+    "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 40 % pour: ",
+    "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour: .",
     "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}"
 }
