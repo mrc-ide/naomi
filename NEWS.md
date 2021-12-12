@@ -1,3 +1,7 @@
+# naomi 2.6.1
+
+* Update TZA `area_id` in `inst/datapack/datapack_psnu_area_id_map.csv` to new area hierarchy with Zone level added.
+
 # naomi 2.6.0
 
 * In construction of survivorship projection matrices, the method for interpolating annual population totals to quarter-year age group totals was revised to use Hyman monotonic interpolation of population counts for smoother population distributions.
