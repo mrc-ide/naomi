@@ -308,6 +308,7 @@
     "TYPE_CALIBRATED": "Calibrated",
     "TYPE_SPECTRUM": "Spectrum",
     "TYPE_UNADJUSTED": "Unadjusted",
+    "TYPE_RATIO": "Calibration ratio",
     "WARNING_OPTIONS_MISSING_ARTATTEND": "You have chosen to fit model without estimating neighbouring ART attendance. You may wish to review your selection to include this option.",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "HIV prevalence is higher than 40% for some age/sex disaggregates",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "ART coverage is higher than 100% for some age/sex disaggregates",
@@ -330,6 +331,15 @@
     "NAVIGATOR_CAL_ART_DESC":                     "Calibration - Spectrum ART national (subnational if Spectrum subnational)",
     "NAVIGATOR_CAL_KOS_DESC":                     "Calibration - Spectrum KOS national (subnational if Spectrum subnational)",
     "NAVIGATOR_CAL_NEW_INFECTIONS_DESC":          "Calibration - Spectrum new infections national (subnational if Spectrum subnational)",
-    "NAVIGATOR_CAL_METHOD_DESC":                  "Calibration - method is logistic"
+    "NAVIGATOR_CAL_METHOD_DESC":                  "Calibration - method is logistic",
+    "POPULATION_RATIO": "Population ratio",
+    "PLHIV_RATIO": "PLHIV ratio",
+    "NEW_INFECTIONS_RATIO": "New infections ratio",
+    "ART_NUMBER_ATTENDING_RATIO": "ART number (attending) ratio",
+    "UNAWARE_PLHIV_NUM_RATIO": "Number PLHIV unaware ratio",
+    "HIV_PREVALENCE_RATIO": "HIV prevalence ratio",
+    "ART_COVERAGE_RATIO": "ART coverage ratio",
+    "UNAWARE_PLHIV_PROP_RATIO": "Proportion PLHIV unaware ratio",
+    "AWARE_PLHIV_PROP_RATIO": "Proportion PLHIV aware ratio",
+    "INCIDENCE_RATIO": "Incidence ratio"
 }
-

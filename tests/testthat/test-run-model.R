@@ -646,15 +646,18 @@ test_that("calibrate plot data can be generated", {
                   c("National", "Northern Region", "Central Region",
                     "Southern Region"))
   expect_setequal(unique(plot_data$indicator),
-                  c("art_current", "births_artpop", "births_hivpop",
-                    "infections", "plhiv", "population", "unaware",
-                    "prevalence", "art_coverage", "unaware_plhiv_prop",
+                  c("art_current",
+                    "infections", "plhiv", "population", "unaware_plhiv_num",
+                    "prevalence", "art_coverage",
                     "aware_plhiv_prop", "incidence"))
+
+  indicators <- readRDS(a_hintr_output$model_output_path)$output_package$indicators
+  expect_true(all(plot_data$indicator %in% indicators$indicator))
 })
 
 test_that("can get data_type labels", {
   labels <- data_type_labels()
-  expect_length(labels, 3)
+  expect_length(labels, 4)
   expect_equal(labels[[1]], list(
     id = "spectrum",
     label = "Spectrum"
@@ -666,6 +669,10 @@ test_that("can get data_type labels", {
   expect_equal(labels[[3]], list(
     id = "raw",
     label = "Unadjusted"
+  ))
+  expect_equal(labels[[4]], list(
+    id = "calibration_ratio",
+    label = "Calibration ratio"
   ))
 })
 

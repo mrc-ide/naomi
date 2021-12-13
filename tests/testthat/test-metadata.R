@@ -84,7 +84,11 @@ test_that("can get plot metadata for missing country with defaults", {
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos", "anc_tested_pos",
                     "anc_tested_neg", "art_new", "vl_tested_12mos",
-                    "vl_suppressed_12mos"))
+                    "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
+                    "infections_ratio", "art_current_ratio",
+                    "unaware_plhiv_num_ratio", "prevalence_ratio",
+                    "art_coverage_ratio", "aware_plhiv_prop_ratio",
+                    "incidence_ratio"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -97,7 +101,10 @@ test_that("colour scales metadata is well formed", {
       "aware_plhiv_num", "aware_plhiv_prop", "unaware_plhiv_num",
       "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
       "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-      "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
+      "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos",
+      "population_ratio", "plhiv_ratio", "infections_ratio",
+      "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
+      "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -117,15 +124,18 @@ test_that("colour scales metadata is well formed", {
 
 test_that("metadata is well formed", {
   meta <- get_metadata()
-  expect_setequal(meta$indicator,
-                  c("art_coverage", "art_current", "art_current_residents", "prevalence",
-                    "viral_suppression_plhiv", "recent_infected", "plhiv",
-                    "population", "incidence", "infections",
-                    "untreated_plhiv_num",
-                    "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
-                    "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
-                    "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
+  expect_setequal(meta$indicator, c(
+    "art_coverage", "art_current", "art_current_residents", "prevalence",
+    "viral_suppression_plhiv", "recent_infected", "plhiv",
+    "population", "incidence", "infections",
+    "untreated_plhiv_num", "aware_plhiv_prop", "aware_plhiv_num",
+    "unaware_plhiv_num", "anc_prevalence", "anc_art_coverage", "anc_clients",
+    "anc_plhiv", "anc_already_art", "anc_art_new", "anc_known_pos",
+    "anc_tested_pos", "anc_tested_neg", "art_new", "vl_tested_12mos",
+    "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
+    "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
+    "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
+    "incidence_ratio"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
@@ -143,7 +153,12 @@ test_that("metadata is well formed", {
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
                     "ANC known positive", "ANC tested positive", "ANC tested negative",
-                    "ART new", "VL tested", "VL tests suppressed"))
+                    "ART new", "VL tested", "VL tests suppressed",
+                    "Population ratio", "PLHIV ratio", "New infections ratio",
+                    "ART number (attending) ratio",
+                    "Number PLHIV unaware ratio", "HIV prevalence ratio",
+                    "ART coverage ratio", "Proportion PLHIV aware ratio",
+                    "Incidence ratio"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
@@ -183,7 +198,8 @@ test_that("metadata synced with meta_indicator", {
              get_meta_indicator() %>%
              dplyr::select(indicator, indicator_label),
              by = c("indicator_value" = "indicator")
-           )
+           ) %>%
+    dplyr::filter(!grepl(".*_ratio", indicator_value))
 
   expect_equal(tolower(check$name), tolower(check$indicator_label))
 })
@@ -232,3 +248,4 @@ test_that("metadata format column hasn't been messed by Excel", {
   expect_setequal(meta$format[meta$indicator == "recent_infected"], "0.00%")
   expect_setequal(meta$format[meta$indicator == "aware_plhiv_prop"], "0.0%")
 })
+
