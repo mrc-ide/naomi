@@ -49,7 +49,7 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 
     v <- naomi_output$indicators %>%
       dplyr::filter(indicator == ind, mean > threshold) %>%
-      dplyr::left_join(naomi_ouput$meta_age_group, by = "age_group") %>%
+      dplyr::left_join(naomi_output$meta_age_group, by = "age_group") %>%
       dplyr::left_join(naomi_output$meta_area %>% sf::st_drop_geometry(), by = "area_id") %>%
       dplyr::mutate(calendar_quarter = calendar_quarter_labels(calendar_quarter),
                     sex = to_upper_first(sex)) %>%
