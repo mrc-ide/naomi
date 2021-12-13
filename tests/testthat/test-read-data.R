@@ -78,3 +78,23 @@ test_that("reading utils can handle files with , in numeric columns", {
   write.csv(art, t)
   expect_no_error(read_art_number(t))
 })
+
+test_that("reading utils can handle files with , in numeric columns", {
+  art <- read.csv(a_hintr_data$art_number)
+  art$art_current <- as.character(art$art_current)
+  art$art_current[1] <- "2,031"
+  art$art_current[2] <- "2.031"
+  art <- art[1:25, ]
+  t_en <- tempfile(fileext = ".csv")
+  t_fr <- tempfile(fileext = ".csv")
+  write.csv(art, t_en, row.names = FALSE)
+  write.csv2(art, t_fr, row.names = FALSE)
+  expect_no_error(art_en <- read_art_number(t_en))
+  expect_no_error(art_fr <- read_art_number(t_fr))
+  expect_type(art_en$art_current, "double")
+  expect_type(art_fr$art_current, "double")
+  expect_equal(art_en$art_current[1], 2031)
+  expect_equal(art_en$art_current[2], 2.031)
+  expect_equal(art_fr$art_current[1], 2.031)
+  expect_equal(art_fr$art_current[2], 2031)
+})
