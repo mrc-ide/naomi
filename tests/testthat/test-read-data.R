@@ -74,15 +74,6 @@ test_that("reading utils can handle files with , in numeric columns", {
   art <- read.csv(a_hintr_data$art_number)
   art$art_current <- as.character(art$art_current)
   art$art_current[1] <- "2,031"
-  t <- tempfile()
-  write.csv(art, t)
-  expect_no_error(read_art_number(t))
-})
-
-test_that("reading utils can handle files with , in numeric columns", {
-  art <- read.csv(a_hintr_data$art_number)
-  art$art_current <- as.character(art$art_current)
-  art$art_current[1] <- "2,031"
   art$art_current[2] <- "2.031"
   art <- art[1:25, ]
   t_en <- tempfile(fileext = ".csv")
