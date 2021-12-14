@@ -1,6 +1,8 @@
 # naomi 2.6.1
 * Add helper function `output_naomi_warning()` to report specific area/age/sex 
 disags that are triggering warnings in simulated outputs
+* Adds output age group 10-19 and 25-49 years.
+* Update TZA `area_id` in `inst/datapack/datapack_psnu_area_id_map.csv` to new area hierarchy with Zone level added.
 
 # naomi 2.6.0
 

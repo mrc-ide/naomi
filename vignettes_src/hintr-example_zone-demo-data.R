@@ -83,6 +83,7 @@ hintr_paths <- hintr_run_model(hintr_data, hintr_options)
 calibrated_paths <- hintr_calibrate(hintr_paths, calibration_options)
 spectrum_download <- hintr_prepare_spectrum_download(calibrated_paths)
 
+calibrate_plot_data <- hintr_calibrate_plot(calibrated_paths)
 
 #' Read output package and generate datapack export
 naomi_output <- read_output_package(hintr_paths$spectrum_path)
@@ -141,11 +142,11 @@ outputs <- output_package(fit, naomi_mf)
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",
                                    spectrum_plhiv_calibration_strat = "sex_age_coarse",
-                                   spectrum_artnum_calibration_level = "national", 
+                                   spectrum_artnum_calibration_level = "national",
                                    spectrum_artnum_calibration_strat = "sex_age_coarse",
-                                   spectrum_aware_calibration_level = "national", 
+                                   spectrum_aware_calibration_level = "national",
                                    spectrum_aware_calibration_strat = "sex_age_coarse",
-                                   spectrum_infections_calibration_level = "national", 
+                                   spectrum_infections_calibration_level = "national",
                                    spectrum_infections_calibration_strat = "sex_age_coarse")
 
 outputs_calib <- disaggregate_0to4_outputs(outputs_calib, naomi_mf)
@@ -155,7 +156,7 @@ d <- tmb_inputs$data
 par_val <- fit$par.full %>% split(names(.))
 p <- tmb_inputs$par_init
 p[names(par_val)] <- par_val
-  
+
 
 v <- naomi_objective_function_r(d, p)
 

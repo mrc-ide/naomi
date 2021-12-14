@@ -256,6 +256,13 @@ hintr_calibrate_plot <- function(output) {
                          names_to = c("indicator", "data_type"),
                          names_pattern = "(.*)_(.*)")
 
+  ## Rename indicators to match Naomi output indicators
+  dflong$indicator <- dplyr::recode(dflong$indicator, "unaware" = "unaware_plhiv_num")
+
+  ## Remove births_artpop, birth_artpop; not Naomi indicators
+  ## (Maybe later add a comparison of these with ANC testing outputs)
+  dflong <- dplyr::filter(dflong, !indicator %in% c("births_artpop", "births_hivpop"))
+  
   ## Code copied from naomi_output_frame()
 
   regions <- unique(dflong$spectrum_region_code)
@@ -320,8 +327,7 @@ hintr_calibrate_plot <- function(output) {
     dplyr::mutate(
       prevalence = plhiv / population,
       art_coverage = art_current / plhiv,
-      unaware_plhiv_prop = unaware / (plhiv - art_current),
-      aware_plhiv_prop = 1 - unaware_plhiv_prop,
+      aware_plhiv_prop = 1 - unaware_plhiv_num / plhiv,
       incidence = infections / (population - plhiv)
     ) %>%
     tidyr::pivot_longer(cols = art_current:incidence, names_to = "indicator")
@@ -357,6 +363,10 @@ data_type_labels <- function() {
     list(
       id = "raw",
       label = t_("TYPE_UNADJUSTED")
+    ),
+    list(
+      id = "calibration_ratio",
+      label = t_("TYPE_RATIO")
     )
   )
 }

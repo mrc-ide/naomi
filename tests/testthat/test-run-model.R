@@ -294,7 +294,7 @@ test_that("model run can be calibrated", {
   expect_true(!is.null(calibrated_output$plot_data_path))
   indicators_output <- readRDS(calibrated_output$plot_data_path)
   ## Total population outputs:
-  ## * 31 age groups
+  ## * 33 age groups
   ## * 3 sexes
   ## * 3 output times
   ## * 9 areas
@@ -304,8 +304,8 @@ test_that("model run can be calibrated", {
   ## 3 = number or output times
   ## 9 = number of ANC indicators
   ## 9 = number of areas
-  ## 11 = number of ANC age groups
-  expect_equal(nrow(indicators_output), 31 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 11)
+  ## 12 = number of ANC age groups
+  expect_equal(nrow(indicators_output), 33 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 12)
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
@@ -490,7 +490,7 @@ test_that("Model can be run without .shiny90 file", {
   indicators_output <- readRDS(calibrated_output$model_output_path)
   ## Check there is some data
   expect_equal(nrow(indicators_output$output_package$indicators),
-               31 * 3 * 3 * 9 * 9 + 3 * 9 * 9 * 11)
+               33 * 3 * 3 * 9 * 9 + 3 * 9 * 9 * 12)
 })
 
 test_that("hintr_run_model can skip validation", {
@@ -646,15 +646,18 @@ test_that("calibrate plot data can be generated", {
                   c("National", "Northern Region", "Central Region",
                     "Southern Region"))
   expect_setequal(unique(plot_data$indicator),
-                  c("art_current", "births_artpop", "births_hivpop",
-                    "infections", "plhiv", "population", "unaware",
-                    "prevalence", "art_coverage", "unaware_plhiv_prop",
+                  c("art_current",
+                    "infections", "plhiv", "population", "unaware_plhiv_num",
+                    "prevalence", "art_coverage",
                     "aware_plhiv_prop", "incidence"))
+
+  indicators <- readRDS(a_hintr_output$model_output_path)$output_package$indicators
+  expect_true(all(plot_data$indicator %in% indicators$indicator))
 })
 
 test_that("can get data_type labels", {
   labels <- data_type_labels()
-  expect_length(labels, 3)
+  expect_length(labels, 4)
   expect_equal(labels[[1]], list(
     id = "spectrum",
     label = "Spectrum"
@@ -666,6 +669,10 @@ test_that("can get data_type labels", {
   expect_equal(labels[[3]], list(
     id = "raw",
     label = "Unadjusted"
+  ))
+  expect_equal(labels[[4]], list(
+    id = "calibration_ratio",
+    label = "Calibration ratio"
   ))
 })
 

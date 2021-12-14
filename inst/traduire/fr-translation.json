@@ -296,6 +296,7 @@
     "TYPE_CALIBRATED": "Étalonné",
     "TYPE_SPECTRUM": "Spectrum",
     "TYPE_UNADJUSTED": "Non ajusté",
+    "TYPE_RATIO": "Rapport de calibrage",
     "ANC_ART_COVERAGE_DESC": "Couverture du TARV avant la première visite prénatale",
     "ANC_CLIENTS_DESC": "Nombre total de personnes fréquentant la première CPN",
     "ANC_KNOWN_POS_DESC": "Nombre de personnes séropositives aux CPN qui connaissant leur statut avant la première visite prénatale",
@@ -312,4 +313,14 @@
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 40 % pour: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour: {{rows}}",
     "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}"
+    "POPULATION_RATIO": "Population rapport",
+    "PLHIV_RATIO": "PLHIV rapport",
+    "NEW_INFECTIONS_RATIO": "Nouvelles infections rapport",
+    "ART_NUMBER_ATTENDING_RATIO": "Nombre ART (fréquentation) rapport",
+    "UNAWARE_PLHIV_NUM_RATIO": "Nombre de PVVIH non informés rapport",
+    "HIV_PREVALENCE_RATIO": "Prévalence du VIH rapport",
+    "ART_COVERAGE_RATIO": "Couverture ART rapport",
+    "UNAWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH non informés rapport",
+    "AWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH conscients rapport",
+    "INCIDENCE_RATIO": "Incidence du VIH rapport"
 }

@@ -308,8 +308,19 @@
     "TYPE_CALIBRATED": "calibrado",
     "TYPE_SPECTRUM": "spectrum",
     "TYPE_UNADJUSTED": "Não ajustado",
+    "TYPE_RATIO": "Relação de calibração",
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Optou por se adaptar ao modelo sem estimar a assistência TARV vizinha. Poderá querer rever a sua selecção para incluir esta opção.",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "A prevalência do VIH é superior a 40% para: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "A cobertura TARV é superior a 100% para: {{rows}}",
     "WARNING_CONVERGENCE": "Erro de convergência: {{msg}}"
+    "POPULATION_RATIO": "População relação",
+    "PLHIV_RATIO": "PVHIV relação",
+    "NEW_INFECTIONS_RATIO": "Novas infeções relação",
+    "ART_NUMBER_ATTENDING_RATIO": "Número de TARV (frequentadores) relação",
+    "UNAWARE_PLHIV_NUM_RATIO": "Número de PVVIH sem conhecimento relação",
+    "HIV_PREVALENCE_RATIO": "Prevalência de VIH relação",
+    "ART_COVERAGE_RATIO": "Cobertura da TARV relação",
+    "UNAWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH sem conhecimento relação",
+    "AWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH com conhecimento relação",
+    "INCIDENCE_RATIO": "Incidência de VIH relação"
 }
