@@ -1,3 +1,7 @@
+# naomi 2.5.4
+
+* Return input time series data in area_sort_order order
+
 # naomi 2.6.3
 
 * Adds helper function `output_naomi_warning()` to report specific area/age/sex 
