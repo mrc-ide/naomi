@@ -449,3 +449,34 @@ test_that("navigator checklist results change with different calibration options
   expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])
 
 })
+
+test_that("navigator checklist returns results for uncalibrated model output", {
+
+  out_uncalibrated <- readRDS(a_hintr_output$model_output_path)
+  tmp_checklist <- tempfile(fileext = ".csv")
+  write_navigator_checklist(out_uncalibrated$output_package, tmp_checklist)
+  checklist <- read.csv(tmp_checklist)
+
+  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
+                          "ANC_is_Spectrum"            = FALSE,
+                          "Package_created"            = TRUE,
+                          "Package_has_all_data"       = TRUE,
+                          "Opt_recent_qtr"             = FALSE,
+                          "Opt_future_proj_qtr"        = FALSE,
+                          "Opt_area_ID_selected"       = TRUE,
+                          "Opt_calendar_survey_match"  = TRUE,
+                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_ART_coverage"           = TRUE,
+                          "Opt_ANC_data"               = TRUE,
+                          "Opt_ART_data"               = TRUE,
+                          "Opt_ART_attendance_yes"     = FALSE,
+                          "Model_fit"                  = TRUE,
+                          "Cal_PLHIV"                  = NA,
+                          "Cal_ART"                    = NA,
+                          "Cal_KOS"                    = NA,
+                          "Cal_new_infections"         = NA,
+                          "Cal_method"                 = NA)
+
+  expect_equal(unname(expected_checklist[checklist$NaomiCheckPermPrimKey]),
+               checklist$TrueFalse)
+})
