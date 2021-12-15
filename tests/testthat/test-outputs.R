@@ -278,7 +278,7 @@ test_that("navigator checklist returns expected results", {
                           "Opt_ART_data"               = TRUE,
                           "Opt_ART_attendance_yes"     = FALSE,
                           "Model_fit"                  = TRUE,
-                          "Cal_PLHIV"                  = TRUE,
+                          "Cal_PLHIV"                  = FALSE,
                           "Cal_ART"                    = TRUE,
                           "Cal_KOS"                    = FALSE,
                           "Cal_new_infections"         = FALSE,
@@ -308,9 +308,13 @@ test_that("navigator checklist returns expected results", {
   adj_output$fit$calibration_options$spectrum_aware_calibration_level <- "subnational"
   adj_output$fit$calibration_options$spectrum_infections_calibration_level <- "subnational"
 
+  adj_output$fit$calibration_options$spectrum_plhiv_calibration_strat <- "sex_age_coarse"
+  adj_output$fit$calibration_options$spectrum_aware_calibration_strat <- "sex_age_coarse"
+  adj_output$fit$calibration_options$spectrum_infections_calibration_strat <- "sex_age_coarse"
+
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj<- read.csv(tmp_checklist_adj)
+  checklist_adj <- read.csv(tmp_checklist_adj)
 
   expect_true(all(checklist_adj$TrueFalse))
 })
@@ -337,7 +341,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                  "Opt_ART_data"               = NA,
                                  "Opt_ART_attendance_yes"     = NA,
                                  "Model_fit"                  = TRUE,
-                                 "Cal_PLHIV"                  = TRUE,
+                                 "Cal_PLHIV"                  = FALSE,
                                  "Cal_ART"                    = TRUE,
                                  "Cal_KOS"                    = FALSE,
                                  "Cal_new_infections"         = FALSE,
@@ -370,7 +374,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                    "Opt_ART_data"               = TRUE,
                                    "Opt_ART_attendance_yes"     = NA,
                                    "Model_fit"                  = TRUE,
-                                   "Cal_PLHIV"                  = TRUE,
+                                   "Cal_PLHIV"                  = FALSE,
                                    "Cal_ART"                    = TRUE,
                                    "Cal_KOS"                    = FALSE,
                                    "Cal_new_infections"         = FALSE,
@@ -382,5 +386,66 @@ test_that("navigator checklist returns results if options lists missing", {
 
   expect_equal(unname(expect_chklst_no_model_opts[checklist_no_model_opts$NaomiCheckPermPrimKey]),
                checklist_no_model_opts$TrueFalse)
+
+  ## No calibration_options
+  ## No model_options
+  no_calib_opts_output <- model_output$output_package
+
+  no_calib_opts_output$fit$calibration_options <- NULL
+
+  expect_chklst_no_calib_opts <- c("ART_is_Spectrum"            = FALSE,
+                                   "ANC_is_Spectrum"            = FALSE,
+                                   "Package_created"            = TRUE,
+                                   "Package_has_all_data"       = TRUE,
+                                   "Opt_recent_qtr"             = FALSE,
+                                   "Opt_future_proj_qtr"        = FALSE,
+                                   "Opt_area_ID_selected"       = TRUE,
+                                   "Opt_calendar_survey_match"  = TRUE,
+                                   "Opt_recent_survey_only"     = FALSE,
+                                   "Opt_ART_coverage"           = TRUE,
+                                   "Opt_ANC_data"               = TRUE,
+                                   "Opt_ART_data"               = TRUE,
+                                   "Opt_ART_attendance_yes"     = FALSE,
+                                   "Model_fit"                  = TRUE,
+                                   "Cal_PLHIV"                  = NA,
+                                   "Cal_ART"                    = NA,
+                                   "Cal_KOS"                    = NA,
+                                   "Cal_new_infections"         = NA,
+                                   "Cal_method"                 = NA)
+
+
+  tmp_checklist_no_calib_opts<- tempfile(fileext = ".csv")
+  write_navigator_checklist(no_calib_opts_output, tmp_checklist_no_calib_opts)
+  checklist_no_calib_opts <- read.csv(tmp_checklist_no_calib_opts)
+
+  expect_equal(unname(expect_chklst_no_calib_opts[checklist_no_calib_opts$NaomiCheckPermPrimKey]),
+               checklist_no_calib_opts$TrueFalse)
+})
+
+test_that("navigator checklist results change with different calibration options", {
+
+  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+  
+  ## Changing from "sex_age_group" to "sex_age_coarse" -> TRUE
+  adj_output <- model_output$output_package
+  adj_output$fit$calibration_options$spectrum_plhiv_calibration_strat <- "sex_age_coarse"
+  
+  tmp_checklist_adj <- tempfile(fileext = ".csv")
+  write_navigator_checklist(adj_output, tmp_checklist_adj)
+  checklist_adj <- read.csv(tmp_checklist_adj)
+
+  expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"])
+  expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])  ## Remains TRUE
+  
+  ## Changing from "subnational" to "national" -> FALSE
+  adj_output <- model_output$output_package
+  adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "national"
+  
+  tmp_checklist_adj <- tempfile(fileext = ".csv")
+  write_navigator_checklist(adj_output, tmp_checklist_adj)
+  checklist_adj <- read.csv(tmp_checklist_adj)
+
+  expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"]) ## Remains FALSE
+  expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])
 
 })

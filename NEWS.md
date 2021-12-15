@@ -1,3 +1,11 @@
+# naomi 2.6.3
+
+* Bug fix: UNAIDS navigator checklist was not checking calibration stratification `= "sex_age_coarse"` for any indicators. Add this to check.
+
+# naomi 2.6.2
+
+* Makes file reading utilities more robust replacing `readr::col_double()` with `readr::col_number()`
+
 # naomi 2.6.1
 
 * Adds output age group 10-19 and 25-49 years.
