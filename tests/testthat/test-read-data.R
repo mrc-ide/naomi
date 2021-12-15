@@ -33,7 +33,7 @@ test_that("read_art_number() allows year or calendar_quarter entry", {
 
   raw <- readr_read_csv(a_hintr_data$art_number)
   v0 <- read_art_number(a_hintr_data$art_number)
-  
+
   f1 <- tempfile(fileext = ".csv")
   dplyr::mutate(raw, year = NULL, calendar_quarter = NULL) %>%
     readr::write_csv(f1, na = "")
@@ -59,13 +59,33 @@ test_that("read_*()functions drop NA rows", {
 
   raw <- readr_read_csv(a_hintr_data$anc_testing)
   dat_with_na <- rbind(raw[1:10, ], NA, raw[11:nrow(raw), ], NA, "", c("", NA, ""), NA)
-  
+
   f1 <- tempfile(fileext = ".csv")
   readr::write_csv(dat_with_na, f1, na = "")
-  
+
   v1 <- read_anc_testing(a_hintr_data$anc_testing)
   v2 <- read_anc_testing(f1)
 
   expect_equal(nrow(raw), nrow(v2))
   expect_equal(v1, v2)
+})
+
+test_that("reading utils can handle files with , in numeric columns", {
+  art <- read.csv(a_hintr_data$art_number)
+  art$art_current <- as.character(art$art_current)
+  art$art_current[1] <- "2,031"
+  art$art_current[2] <- "2.031"
+  art <- art[1:25, ]
+  t_en <- tempfile(fileext = ".csv")
+  t_fr <- tempfile(fileext = ".csv")
+  write.csv(art, t_en, row.names = FALSE)
+  write.csv2(art, t_fr, row.names = FALSE)
+  expect_no_error(art_en <- read_art_number(t_en))
+  expect_no_error(art_fr <- read_art_number(t_fr))
+  expect_type(art_en$art_current, "double")
+  expect_type(art_fr$art_current, "double")
+  expect_equal(art_en$art_current[1], 2031)
+  expect_equal(art_en$art_current[2], 2.031)
+  expect_equal(art_fr$art_current[1], 2.031)
+  expect_equal(art_fr$art_current[2], 2031)
 })
