@@ -312,7 +312,7 @@
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Vous avez choisi d'ajuster le modèle sans estimer la fréquentation des TARV voisines. Vous pouvez revoir votre sélection pour inclure cette option..",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 40 % pour: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour: {{rows}}",
-    "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}"
+    "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}",
     "POPULATION_RATIO": "Population rapport",
     "PLHIV_RATIO": "PLHIV rapport",
     "NEW_INFECTIONS_RATIO": "Nouvelles infections rapport",
