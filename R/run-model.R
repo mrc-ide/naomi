@@ -114,20 +114,8 @@ run_model <- function(data, options, validate) {
   progress$print()
 
   # Warnings for simulated outputs
-  outputs_prev <- outputs$indicators$mean[
-    outputs$indicators$indicator == "prevalence"]
-  outputs_artcov <- outputs$indicators$mean[
-    outputs$indicators$indicator == "art_coverage"]
-
-  if(max(outputs_prev) > 0.40) {
-    naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
-                  "model_fit")
-  }
-
-  if(max(outputs_artcov) > 1) {
-    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
-                  "model_fit")
-  }
+  output_naomi_warning(outputs, "prevalence", 0.4, "model_fit")
+  output_naomi_warning(outputs, "art_coverage", 1, "model_fit")
 
   list(
     output_package = outputs,
@@ -230,18 +218,10 @@ run_calibrate <- function(output, calibration_options) {
   indicators <- add_output_labels(calibrated_output)
 
   # Warnings for calibrated outputs
-  outputs_prev <- indicators$mean[indicators$indicator == "prevalence"]
-  outputs_artcov <- indicators$mean[indicators$indicator == "art_coverage"]
-
-  if(max(outputs_prev) > 0.4) {
-    naomi_warning(t_("WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD"),
-                  c("model_calibrate","review_output", "download_results"))
-  }
-
-  if(max(outputs_artcov) > 1) {
-    naomi_warning(t_("WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD"),
-                  c("model_calibrate","review_output", "download_results"))
-  }
+  output_naomi_warning(calibrated_output, "prevalence", 0.4,
+                       c("model_calibrate","review_output", "download_results"))
+  output_naomi_warning(calibrated_output, "art_coverage", 1,
+                       c("model_calibrate","review_output", "download_results"))
 
   list(plot_data = indicators,
        calibrate_data = calibration_data)
