@@ -425,22 +425,22 @@ test_that("navigator checklist returns results if options lists missing", {
 test_that("navigator checklist results change with different calibration options", {
 
   model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
-  
+
   ## Changing from "sex_age_group" to "sex_age_coarse" -> TRUE
   adj_output <- model_output$output_package
   adj_output$fit$calibration_options$spectrum_plhiv_calibration_strat <- "sex_age_coarse"
-  
+
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
   checklist_adj <- read.csv(tmp_checklist_adj)
 
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"])
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])  ## Remains TRUE
-  
+
   ## Changing from "subnational" to "national" -> FALSE
   adj_output <- model_output$output_package
   adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "national"
-  
+
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
   checklist_adj <- read.csv(tmp_checklist_adj)
@@ -471,11 +471,11 @@ test_that("navigator checklist returns results for uncalibrated model output", {
                           "Opt_ART_data"               = TRUE,
                           "Opt_ART_attendance_yes"     = FALSE,
                           "Model_fit"                  = TRUE,
-                          "Cal_PLHIV"                  = NA,
-                          "Cal_ART"                    = NA,
-                          "Cal_KOS"                    = NA,
-                          "Cal_new_infections"         = NA,
-                          "Cal_method"                 = NA)
+                          "Cal_PLHIV"                  = FALSE,
+                          "Cal_ART"                    = FALSE,
+                          "Cal_KOS"                    = FALSE,
+                          "Cal_new_infections"         = FALSE,
+                          "Cal_method"                 = FALSE)
 
   expect_equal(unname(expected_checklist[checklist$NaomiCheckPermPrimKey]),
                checklist$TrueFalse)

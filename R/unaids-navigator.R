@@ -140,32 +140,45 @@ write_navigator_checklist <- function(naomi_output,
   }
 
   if (!is.null(calibration_options)) {
-    ## Check for correct calibration options selection
-    # Is logistic calibration selected
 
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- calibration_options$calibrate_method == "logistic"
+    if (setequal(names(calibration_options), "spectrum_population_calibration")) {
 
-    if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
-      spec_level <- "national"
+      ## If naomi_output is uncalibrated, only the spectrum_population_calibration
+      ## is completed. Since no calibrations are applied, return FALSE for calibration
+      ## checks.
+
+      calib_check_keys <- c("Cal_method", "Cal_PLHIV", "Cal_ART", "Cal_KOS", "Cal_new_infections")
+      v$TrueFalse[v$NaomiCheckPermPrimKey %in% calib_check_keys] <- FALSE
+
     } else {
-      spec_level <- "subnational"
-    }
 
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <-
-      calibration_options$spectrum_plhiv_calibration_level == spec_level &&
-      calibration_options$spectrum_plhiv_calibration_strat == "sex_age_coarse"
-    
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <-
-      calibration_options$spectrum_artnum_calibration_level == spec_level &&
-      calibration_options$spectrum_artnum_calibration_strat == "sex_age_coarse"
-    
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <-
-      calibration_options$spectrum_aware_calibration_level == spec_level &&
-      calibration_options$spectrum_aware_calibration_strat == "sex_age_coarse"
-    
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <-
-      calibration_options$spectrum_infections_calibration_level == spec_level &&
-      calibration_options$spectrum_infections_calibration_strat == "sex_age_coarse"
+      ## Check for correct calibration options selection
+      ## Is logistic calibration selected
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- calibration_options$calibrate_method == "logistic"
+
+      if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
+        spec_level <- "national"
+      } else {
+        spec_level <- "subnational"
+      }
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <-
+        calibration_options$spectrum_plhiv_calibration_level == spec_level &&
+        calibration_options$spectrum_plhiv_calibration_strat == "sex_age_coarse"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_ART"] <-
+        calibration_options$spectrum_artnum_calibration_level == spec_level &&
+        calibration_options$spectrum_artnum_calibration_strat == "sex_age_coarse"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_KOS"] <-
+        calibration_options$spectrum_aware_calibration_level == spec_level &&
+        calibration_options$spectrum_aware_calibration_strat == "sex_age_coarse"
+
+      v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_new_infections"] <-
+        calibration_options$spectrum_infections_calibration_level == spec_level &&
+        calibration_options$spectrum_infections_calibration_strat == "sex_age_coarse"
+    }
   }
 
   ## Using write.csv() instead of naomi_write_csv() because writing na = "NA"
