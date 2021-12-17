@@ -1,3 +1,7 @@
+# naomi 2.6.5
+
+* Add HIV incidence rate output to PEPFAR datapack export.
+* Add check `Cal_Population` for population calibration in UNAIDS Navigator checklist file.
 
 # naomi 2.6.4
 

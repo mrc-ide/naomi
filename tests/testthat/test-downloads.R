@@ -27,13 +27,13 @@ test_that("spectrum download can be created", {
   expect_equal(names(navigator_checklist),
                c("NaomiCheckPermPrimKey", "NaomiCheckDes", "TrueFalse"))
 
-  checklist_primkeys <- c("ART_is_Spectrum", "ANC_is_Spectrum", "Package_created",
-                          "Package_has_all_data", "Opt_recent_qtr",
-                          "Opt_future_proj_qtr", "Opt_area_ID_selected",
-                          "Opt_calendar_survey_match", "Opt_recent_survey_only",
-                          "Opt_ART_coverage", "Opt_ANC_data", "Opt_ART_data",
-                          "Opt_ART_attendance_yes", "Model_fit", "Cal_PLHIV",
-                          "Cal_ART", "Cal_KOS", "Cal_new_infections", "Cal_method")
+  checklist_primkeys <- c( "ART_is_Spectrum","ANC_is_Spectrum","Package_created",
+                           "Package_has_all_data","Opt_recent_qtr","Opt_future_proj_qtr",
+                           "Opt_area_ID_selected","Opt_calendar_survey_match","Opt_recent_survey_only",
+                           "Opt_ART_coverage","Opt_ANC_data","Opt_ART_data",
+                           "Opt_ART_attendance_yes","Model_fit","Cal_Population",
+                           "Cal_PLHIV","Cal_ART","Cal_KOS",
+                           "Cal_new_infections","Cal_method" )
   expect_equal(navigator_checklist$NaomiCheckPermPrimKey, checklist_primkeys)
   expect_true(all(navigator_checklist$TrueFalse %in% c(TRUE, FALSE)))
   ## Check tradiure translation hooks worked

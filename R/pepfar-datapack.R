@@ -124,7 +124,7 @@ write_datapack_csv <- function(naomi_output,
              age_group,
              calendar_quarter,
              value = mean,
-             rse = se / mean
+             rse = dplyr::if_else(mean == 0, 0.0, se / mean)
            )
 
   dat <- dat %>%

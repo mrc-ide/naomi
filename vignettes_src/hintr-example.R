@@ -36,7 +36,7 @@ hintr_options <- list(
   area_level = "4",
   calendar_quarter_t1 = "CY2016Q1",
   calendar_quarter_t2 = "CY2018Q3",
-  calendar_quarter_t3 = "CY2021Q3",
+  calendar_quarter_t3 = "CY2022Q3",
   survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
   survey_art_coverage = "DEMO2016PHIA",
   survey_recently_infected = "DEMO2016PHIA",
