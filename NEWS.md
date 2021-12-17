@@ -1,7 +1,12 @@
+
+# naomi 2.6.4
+
+* Bug fix: UNAIDS navigator checklist was not checking calibration stratification `= "sex_age_coarse"` for any indicators. Add this to check.
+* Return input time series data in `area_sort_order` order.
+
 # naomi 2.6.3
 
-* Adds helper function `output_naomi_warning()` to report specific area/age/sex 
-disags that are triggering warnings in simulated outputs
+* Adds helper function `output_naomi_warning()` to report specific area/age/sex disaggregates that are triggering warnings in simulated outputs.
 
 # naomi 2.6.2
 

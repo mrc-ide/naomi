@@ -211,6 +211,8 @@ prepare_input_time_series_art <- function(art, shape) {
                                                   "vl_suppressed_12mos_child","vl_coverage_child",
                                                   "vl_prop_suppressed_child")))
   }
+  art_plot_data_long <- art_plot_data_long %>%
+    dplyr::arrange(area_sort_order, calendar_quarter)
   return(art_plot_data_long)
 }
 
@@ -338,7 +340,8 @@ prepare_input_time_series_anc <- function(anc, shape) {
                   anc_art_coverage) %>%
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
-                        values_to = "value")
+                        values_to = "value") %>%
+    dplyr::arrange(area_sort_order, calendar_quarter)
   anc_plot_data
 }
 
