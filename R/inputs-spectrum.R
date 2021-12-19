@@ -695,10 +695,10 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
   ##     L_hivpop = L_hivpop * net_growth_ratio
   ##   )
 
-  Lproj_hivpop <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
-                                       j = hivpopLproj$idx1,
-                                       x = hivpopLproj$L_hivpop,
-                                       dims = rep(nrow(mf_model), 2))
+  Lproj_hivpop_t1t2 <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
+                                            j = hivpopLproj$idx1,
+                                            x = hivpopLproj$L_hivpop,
+                                            dims = rep(nrow(mf_model), 2))
 
   Lproj_netgrow_t1t2 <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
                                              j = hivpopLproj$idx1,
@@ -741,10 +741,10 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
   ##     L_incid2 = L_incid * (net_growth_ratio ^ 0.5)
   ##   )
 
-  Lproj_incid <- Matrix::sparseMatrix(i = incidLproj$idx2,
-                                      j = incidLproj$idx1,
-                                      x = incidLproj$L_incid,
-                                      dims = rep(nrow(mf_model), 2))
+  Lproj_incid_t1t2 <- Matrix::sparseMatrix(i = incidLproj$idx2,
+                                           j = incidLproj$idx1,
+                                           x = incidLproj$L_incid,
+                                           dims = rep(nrow(mf_model), 2))
 
   ## Paediatric entrants and survivors between time 1 and time 2
 
@@ -789,10 +789,10 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
   ##     L_paed = L_paed * (net_growth_ratio ^ 0.5)
   ##   )
 
-  Lproj_paed <- Matrix::sparseMatrix(i = paedLproj$idx2,
-                                     j = paedLproj$idx1,
-                                     x = paedLproj$L_paed,
-                                     dims = rep(nrow(mf_model), 2))
+  Lproj_paed_t1t2 <- Matrix::sparseMatrix(i = paedLproj$idx2,
+                                          j = paedLproj$idx1,
+                                          x = paedLproj$L_paed,
+                                          dims = rep(nrow(mf_model), 2))
 
   ## Construct Lproj t2 to t3
 
@@ -994,9 +994,9 @@ create_Lproj <- function(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                                           dims = rep(nrow(mf_model), 2))
 
 
-  list(Lproj_hivpop = Lproj_hivpop,
-       Lproj_incid = Lproj_incid,
-       Lproj_paed = Lproj_paed,
+  list(Lproj_hivpop_t1t2 = Lproj_hivpop_t1t2,
+       Lproj_incid_t1t2 = Lproj_incid_t1t2,
+       Lproj_paed_t1t2 = Lproj_paed_t1t2,
        Lproj_netgrow_t1t2= Lproj_netgrow_t1t2,
        Lproj_hivpop_t2t3 = Lproj_hivpop_t2t3,
        Lproj_incid_t2t3 = Lproj_incid_t2t3,

@@ -513,7 +513,7 @@ naomi_model_frame <- function(area_merged,
 
   Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
                         adjust_area_growth = adjust_area_growth)
-  projection_duration <- (quarter_id2 - quarter_id1) / 4
+  projection_duration_t1t2 <- (quarter_id2 - quarter_id1) / 4
   projection_duration_t2t3 <- (quarter_id3 - quarter_id2) / 4
 
   ## Adjacency matrix
@@ -647,14 +647,11 @@ naomi_model_frame <- function(area_merged,
             area_aggregation = area_aggregation,
             A_out = outf$A,
             A_anc_out = anc_outf$A,
-            Lproj_hivpop = Lproj$Lproj_hivpop,
-            Lproj_incid = Lproj$Lproj_incid,
-            Lproj_paed = Lproj$Lproj_paed,
             Lproj_hivpop_t1t2 = Lproj$Lproj_hivpop_t1t2,
             Lproj_incid_t1t2 = Lproj$Lproj_incid_t1t2,
             Lproj_paed_t1t2 = Lproj$Lproj_paed_t1t2,
             Lproj_netgrow_t1t2 = Lproj$Lproj_netgrow_t1t2,
-            projection_duration = projection_duration,
+            projection_duration_t1t2 = projection_duration_t1t2,
             Lproj_hivpop_t2t3 = Lproj$Lproj_hivpop_t2t3,
             Lproj_incid_t2t3 = Lproj$Lproj_incid_t2t3,
             Lproj_paed_t2t3 = Lproj$Lproj_paed_t2t3,

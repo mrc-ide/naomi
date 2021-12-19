@@ -65,10 +65,10 @@ Type objective_function<Type>::operator() ()
   // Population
   DATA_VECTOR(population_t1);
   DATA_VECTOR(population_t2);
-  DATA_SPARSE_MATRIX(Lproj_hivpop);
-  DATA_SPARSE_MATRIX(Lproj_incid);
-  DATA_SPARSE_MATRIX(Lproj_paed);
-  DATA_SCALAR(projection_duration);
+  DATA_SPARSE_MATRIX(Lproj_hivpop_t1t2);
+  DATA_SPARSE_MATRIX(Lproj_incid_t1t2);
+  DATA_SPARSE_MATRIX(Lproj_paed_t1t2);
+  DATA_SCALAR(projection_duration_t1t2);
 
   // Design matrices
   DATA_MATRIX(X_rho);
@@ -532,8 +532,8 @@ Type objective_function<Type>::operator() ()
                            Z_alpha_xat * u_alpha_xat);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
 
-  vector<Type> infections_t1t2((1 - exp(-lambda_t1 * projection_duration)) * (population_t1 - plhiv_t1));
-  vector<Type> plhiv_t2(Lproj_hivpop * plhiv_t1 + Lproj_incid * infections_t1t2 + Lproj_paed * plhiv_t1);
+  vector<Type> infections_t1t2((1 - exp(-lambda_t1 * projection_duration_t1t2)) * (population_t1 - plhiv_t1));
+  vector<Type> plhiv_t2(Lproj_hivpop_t1t2 * plhiv_t1 + Lproj_incid_t1t2 * infections_t1t2 + Lproj_paed_t1t2 * plhiv_t1);
 
   vector<Type> rho_t2(plhiv_t2 / population_t2);
   vector<Type> prop_art_t2(rho_t2 * alpha_t2);
