@@ -506,16 +506,28 @@ naomi_model_frame <- function(area_merged,
            )
 
 
-  ## Projection matrix
+  ## Projection matrices
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   quarter_id3 <- calendar_quarter_to_quarter_id(calendar_quarter3)
 
-  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
-                        adjust_area_growth = adjust_area_growth)
-  projection_duration_t1t2 <- (quarter_id2 - quarter_id1) / 4
-  projection_duration_t2t3 <- (quarter_id3 - quarter_id2) / 4
-
+  Lproj_t1t2 <- create_Lproj(spec = spec,
+                             mf_model = mf_model,
+                             quarter_id1 = quarter_id1,
+                             quarter_id2 = quarter_id2,
+                             population_colname1 = "population_t1",
+                             population_colname2 = "population_t2",
+                             adjust_area_growth = adjust_area_growth)
+  
+  Lproj_t2t3 <- create_Lproj(spec = spec,
+                             mf_model = mf_model,
+                             quarter_id1 = quarter_id2,
+                             quarter_id2 = quarter_id3,
+                             population_colname1 = "population_t2",
+                             population_colname2 = "population_t3",
+                             adjust_area_growth = adjust_area_growth)
+  
+  
   ## Adjacency matrix
   mf_areas_sf <- mf_areas
   mf_areas_sf$geometry <- areas$boundaries[area_id]
@@ -647,16 +659,8 @@ naomi_model_frame <- function(area_merged,
             area_aggregation = area_aggregation,
             A_out = outf$A,
             A_anc_out = anc_outf$A,
-            Lproj_hivpop_t1t2 = Lproj$Lproj_hivpop_t1t2,
-            Lproj_incid_t1t2 = Lproj$Lproj_incid_t1t2,
-            Lproj_paed_t1t2 = Lproj$Lproj_paed_t1t2,
-            Lproj_netgrow_t1t2 = Lproj$Lproj_netgrow_t1t2,
-            projection_duration_t1t2 = projection_duration_t1t2,
-            Lproj_hivpop_t2t3 = Lproj$Lproj_hivpop_t2t3,
-            Lproj_incid_t2t3 = Lproj$Lproj_incid_t2t3,
-            Lproj_paed_t2t3 = Lproj$Lproj_paed_t2t3,
-            Lproj_netgrow_t2t3 = Lproj$Lproj_netgrow_t2t3,
-            projection_duration_t2t3 = projection_duration_t2t3,
+            Lproj_t1t2 = Lproj_t1t2,
+            Lproj_t2t3 = Lproj_t2t3,
             areas = area_merged,
             age_groups = age_groups,
             sexes = sexes,
