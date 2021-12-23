@@ -1,3 +1,7 @@
+# naomi 2.6.6
+
+* Add new infections output to PEPFAR data pack export.
+
 # naomi 2.6.5
 
 * Add HIV incidence rate output to PEPFAR datapack export.
