@@ -1,3 +1,10 @@
+# naomi 2.6.7
+
+_Internal changes_
+
+* Refactor function `create_Lproj()` to avoid replicating same code for T1 -> T2 and T2 -> T3 projection.
+* Remove conversion of `sf` to `sp` object for `spdep::poly2nb()`, which now supports `sf` objects from v1.0.
+
 # naomi 2.6.5
 
 * Add HIV incidence rate output to PEPFAR datapack export.
