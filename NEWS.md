@@ -1,3 +1,7 @@
+# naomi 2.6.7
+
+* Remove non-outputted indicators from `meta_indicator` table in the output package.
+
 # naomi 2.6.6
 
 * Add new infections output to PEPFAR data pack export.
