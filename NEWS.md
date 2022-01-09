@@ -1,4 +1,4 @@
-# naomi 2.6.7
+# naomi 2.6.8
 
 _Internal changes_
 
