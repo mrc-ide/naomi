@@ -1,6 +1,7 @@
 # naomi 2.6.7
 
 * Increase threshold to trigger warning for HIV prevalence in naomi outputs.
+* Remove non-outputted indicators from `meta_indicator` table in the output package.
 
 # naomi 2.6.6
 
