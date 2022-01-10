@@ -1,3 +1,7 @@
+# naomi 2.6.7
+
+* Increase threshold to trigger warning for HIV prevalence in naomi outputs.
+
 # naomi 2.6.6
 
 * Add new infections output to PEPFAR data pack export.

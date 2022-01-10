@@ -114,7 +114,7 @@ run_model <- function(data, options, validate) {
   progress$print()
 
   # Warnings for simulated outputs
-  output_naomi_warning(outputs, "prevalence", 0.4, "model_fit")
+  output_naomi_warning(outputs, "prevalence", 0.5, "model_fit")
   output_naomi_warning(outputs, "art_coverage", 1, "model_fit")
 
   list(
@@ -218,7 +218,7 @@ run_calibrate <- function(output, calibration_options) {
   indicators <- add_output_labels(calibrated_output)
 
   # Warnings for calibrated outputs
-  output_naomi_warning(calibrated_output, "prevalence", 0.4,
+  output_naomi_warning(calibrated_output, "prevalence", 0.5,
                        c("model_calibrate","review_output", "download_results"))
   output_naomi_warning(calibrated_output, "art_coverage", 1,
                        c("model_calibrate","review_output", "download_results"))
@@ -262,7 +262,7 @@ hintr_calibrate_plot <- function(output) {
   ## Remove births_artpop, birth_artpop; not Naomi indicators
   ## (Maybe later add a comparison of these with ANC testing outputs)
   dflong <- dplyr::filter(dflong, !indicator %in% c("births_artpop", "births_hivpop"))
-  
+
   ## Code copied from naomi_output_frame()
 
   regions <- unique(dflong$spectrum_region_code)
@@ -448,7 +448,7 @@ naomi_prepare_data <- function(data, options) {
   if(is.null(options$adjust_area_growth)) {
     options$adjust_area_growth <- FALSE
   }
-  
+
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
     population_agesex = population,
