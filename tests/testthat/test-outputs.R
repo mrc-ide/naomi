@@ -497,3 +497,8 @@ test_that("navigator checklist returns results for uncalibrated model output", {
 
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])  
 })
+
+test_that("meta_indicator table contains same indicators as outputs", {
+  expect_setequal(a_output_full$meta_indicator$indicator,
+                  a_output_full$indicators$indicator)
+})
