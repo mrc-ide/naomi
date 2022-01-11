@@ -336,8 +336,8 @@ prepare_input_time_series_anc <- function(anc, shape) {
     ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id,
                   area_sort_order, age_group,  time_period, year, quarter,
-                  calendar_quarter, anc_clients, anc_prevalence, anc_known_pos,
-                  anc_art_coverage) %>%
+                  calendar_quarter, anc_clients, anc_tested, anc_tested_pos,
+                  anc_prevalence, anc_known_pos, anc_art_coverage) %>%
     tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
                         names_to = "plot",
                         values_to = "value") %>%
