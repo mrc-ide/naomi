@@ -4,12 +4,14 @@ art_adult_f,t_(ART_ADULT_F),t_(ART_ADULT_F_DESC),,0
 art_adult_m,t_(ART_ADULT_M),t_(ART_ADULT_M_DESC),,0
 art_adult,t_(ART_ADULT),t_(ART_ADULT_DESC),,0
 art_child,t_(ART_CHILD),t_(ART_CHILD_DESC),,0
-art_adult_sex_ratio,t_(ART_ADULT_SEX_RATIO),t_(ART_ADULT_SEX_RATIO_DESC),,0.0
+art_adult_sex_ratio,t_(ART_ADULT_SEX_RATIO),t_(ART_ADULT_SEX_RATIO_DESC),,0
 art_adult_child_ratio,t_(ART_ADULT_CHILD_RATIO),t_(ART_ADULT_CHILD_RATIO_DESC),,0
 art_prop_u15,t_(ART_PROP_U15),t_(ART_PROP_U15_DESC),,0%
-anc_prevalence,t_(ANC_PREVALENCE),t_(ANC_PREVALENCE_DESC),,0.0%
+anc_prevalence,t_(ANC_PREVALENCE),t_(ANC_PREVALENCE_DESC),,0.00%
 anc_art_coverage,t_(ANC_ART_COVERAGE),t_(ANC_ART_COVERAGE_DESC),,0%
 anc_clients,t_(ANC_CLIENTS),t_(ANC_CLIENTS_DESC),,0
+anc_tested,t_(ANC_TESTED),t_(ANC_TESTED_DESC),,0
+anc_tested_pos,t_(ANC_TESTED_POS),t_(ANC_TESTED_POS_DESC),,
 anc_known_pos,t_(ANC_KNOWN_POS),t_(ANC_KNOWN_POS_DESC),,0
 art_new_total,t_(ART_NEW_TOTAL),t_(ART_NEW_TOTAL_DESC),,0
 art_new_adult_f,t_(ART_NEW_ADULT_F),t_(ART_NEW_ADULT_F_DESC),,0
