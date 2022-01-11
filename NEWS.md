@@ -2,6 +2,7 @@
 
 * Increase threshold to trigger warning for HIV prevalence in naomi outputs.
 * Remove non-outputted indicators from `meta_indicator` table in the output package.
+* Add `anc_tested` and `anc_tested_pos` to anc time series plot.
 
 # naomi 2.6.6
 
