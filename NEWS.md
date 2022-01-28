@@ -1,3 +1,7 @@
+# naomi 2.6.8
+
+* Require `eppasm` v0.5.12 to avoid divide-by-zero in model computations (troubleshooting #2022-51).
+
 # naomi 2.6.7
 
 * Increase threshold to trigger warning for HIV prevalence in naomi outputs.
