@@ -1,4 +1,4 @@
-# naomi 2.6.8
+# naomi 2.6.9
 
 * Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration.
 
@@ -12,6 +12,10 @@ _Internal changes_
 
 * Refactor function `create_Lproj()` to avoid replicating same code for T1 -> T2 and T2 -> T3 projection.
 * Remove conversion of `sf` to `sp` object for `spdep::poly2nb()`, which now supports `sf` objects from v1.0.
+
+# naomi 2.6.8
+
+* Require `eppasm` v0.5.12 to avoid divide-by-zero in model computations (troubleshooting #2022-51).
 
 # naomi 2.6.7
 
