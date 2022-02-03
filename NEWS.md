@@ -1,3 +1,6 @@
+# naomi 2.6.5
+
+* Switch plot ordering to show HIV prevalence first
 
 # naomi 2.6.4
 
