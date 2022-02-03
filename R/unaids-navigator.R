@@ -30,6 +30,7 @@ write_navigator_checklist <- function(naomi_output,
            "Opt_ART_data",
            "Opt_ART_attendance_yes",
            "Model_fit",
+           "Cal_Population",
            "Cal_PLHIV",
            "Cal_ART",
            "Cal_KOS",
@@ -50,7 +51,8 @@ write_navigator_checklist <- function(naomi_output,
              t_("NAVIGATOR_OPT_ART_DATA_DESC"),
              t_("NAVIGATOR_OPT_ART_ATTENDANCE_YES_DESC"),
              t_("NAVIGATOR_MODEL_FIT_DESC"),
-             t_("NAVIGGATOR_CAL_PLHIV_DESC"),
+             t_("NAVIGATOR_CAL_POPULATION_DESC"),
+             t_("NAVIGATOR_CAL_PLHIV_DESC"),
              t_("NAVIGATOR_CAL_ART_DESC"),
              t_("NAVIGATOR_CAL_KOS_DESC"),
              t_("NAVIGATOR_CAL_NEW_INFECTIONS_DESC"),
@@ -141,6 +143,15 @@ write_navigator_checklist <- function(naomi_output,
 
   if (!is.null(calibration_options)) {
 
+    if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
+        spec_level <- "national"
+      } else {
+        spec_level <- "subnational"
+      }
+
+    v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_Population"] <-
+      calibration_options$spectrum_population_calibration == spec_level
+    
     if (setequal(names(calibration_options), "spectrum_population_calibration")) {
 
       ## If naomi_output is uncalibrated, only the spectrum_population_calibration
@@ -156,12 +167,6 @@ write_navigator_checklist <- function(naomi_output,
       ## Is logistic calibration selected
 
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_method"] <- calibration_options$calibrate_method == "logistic"
-
-      if (all(naomi_output$meta_area$spectrum_region_code == 0)) {
-        spec_level <- "national"
-      } else {
-        spec_level <- "subnational"
-      }
 
       v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_PLHIV"] <-
         calibration_options$spectrum_plhiv_calibration_level == spec_level &&

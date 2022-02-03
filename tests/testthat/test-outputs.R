@@ -278,6 +278,7 @@ test_that("navigator checklist returns expected results", {
                           "Opt_ART_data"               = TRUE,
                           "Opt_ART_attendance_yes"     = FALSE,
                           "Model_fit"                  = TRUE,
+                          "Cal_Population"             = FALSE,
                           "Cal_PLHIV"                  = FALSE,
                           "Cal_ART"                    = TRUE,
                           "Cal_KOS"                    = FALSE,
@@ -304,6 +305,7 @@ test_that("navigator checklist returns expected results", {
   adj_output$fit$data_options$art_number_spectrum_aligned <- TRUE
   adj_output$fit$data_options$anc_testing_spectrum_aligned <- TRUE
 
+  adj_output$fit$calibration_options$spectrum_population_calibration <- "subnational"
   adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
   adj_output$fit$calibration_options$spectrum_aware_calibration_level <- "subnational"
   adj_output$fit$calibration_options$spectrum_infections_calibration_level <- "subnational"
@@ -341,6 +343,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                  "Opt_ART_data"               = NA,
                                  "Opt_ART_attendance_yes"     = NA,
                                  "Model_fit"                  = TRUE,
+                                 "Cal_Population"             = FALSE,
                                  "Cal_PLHIV"                  = FALSE,
                                  "Cal_ART"                    = TRUE,
                                  "Cal_KOS"                    = FALSE,
@@ -374,6 +377,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                    "Opt_ART_data"               = TRUE,
                                    "Opt_ART_attendance_yes"     = NA,
                                    "Model_fit"                  = TRUE,
+                                   "Cal_Population"             = FALSE,
                                    "Cal_PLHIV"                  = FALSE,
                                    "Cal_ART"                    = TRUE,
                                    "Cal_KOS"                    = FALSE,
@@ -407,6 +411,7 @@ test_that("navigator checklist returns results if options lists missing", {
                                    "Opt_ART_data"               = TRUE,
                                    "Opt_ART_attendance_yes"     = FALSE,
                                    "Model_fit"                  = TRUE,
+                                   "Cal_Population"             = NA,
                                    "Cal_PLHIV"                  = NA,
                                    "Cal_ART"                    = NA,
                                    "Cal_KOS"                    = NA,
@@ -471,6 +476,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
                           "Opt_ART_data"               = TRUE,
                           "Opt_ART_attendance_yes"     = FALSE,
                           "Model_fit"                  = TRUE,
+                          "Cal_Population"             = FALSE,
                           "Cal_PLHIV"                  = FALSE,
                           "Cal_ART"                    = FALSE,
                           "Cal_KOS"                    = FALSE,
@@ -479,4 +485,20 @@ test_that("navigator checklist returns results for uncalibrated model output", {
 
   expect_equal(unname(expected_checklist[checklist$NaomiCheckPermPrimKey]),
                checklist$TrueFalse)
+
+
+  ## Change population_calibration to "subnational" -> TRUE
+  adj_output <- out_uncalibrated$output_package
+  adj_output$fit$calibration_options$spectrum_population_calibration <- "subnational"
+
+  tmp_checklist_adj <- tempfile(fileext = ".csv")
+  write_navigator_checklist(adj_output, tmp_checklist_adj)
+  checklist_adj <- read.csv(tmp_checklist_adj)
+
+  expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])  
+})
+
+test_that("meta_indicator table contains same indicators as outputs", {
+  expect_setequal(a_output_full$meta_indicator$indicator,
+                  a_output_full$indicators$indicator)
 })

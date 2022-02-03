@@ -334,13 +334,17 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   fit$data_options <- naomi_data$data_options
   fit$calibration_options <- naomi_data$calibration_options
   fit$spectrum_calibration <- naomi_data$spectrum_calibration
+
+  meta_indicator <- get_meta_indicator()
+  meta_indicator <- dplyr::filter(meta_indicator, indicator %in% indicators$indicator)
+                                     
   val <- list(
     indicators = indicators,
     art_attendance = art_attendance,
     meta_area = meta_area,
     meta_age_group = meta_age_group,
     meta_period = meta_period,
-    meta_indicator = get_meta_indicator(),
+    meta_indicator = meta_indicator,
     fit = fit
   )
 

@@ -1,6 +1,26 @@
-# naomi 2.6.5
+# naomi 2.6.9
 
 * Switch plot ordering to show HIV prevalence first
+
+# naomi 2.6.8
+
+* Require `eppasm` v0.5.12 to avoid divide-by-zero in model computations (troubleshooting #2022-51).
+
+# naomi 2.6.7
+
+* Increase threshold to trigger warning for HIV prevalence in naomi outputs.
+* Remove non-outputted indicators from `meta_indicator` table in the output package.
+* Add `anc_tested` and `anc_tested_pos` to anc time series plot.
+
+# naomi 2.6.6
+
+* Add new infections output to PEPFAR data pack export.
+
+# naomi 2.6.5
+
+* Add HIV incidence rate output to PEPFAR datapack export.
+* Add check `Cal_Population` for population calibration in UNAIDS Navigator checklist file.
+>>>>>>> master
 
 # naomi 2.6.4
 
