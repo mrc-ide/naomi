@@ -250,12 +250,21 @@ hintr_calibrate_plot <- function(output) {
   }
 
   dflong <- df %>%
+    dplyr::mutate(population_denominator = population_calibrated) %>%
     tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
                            tidyselect::ends_with("spectrum"),
                            tidyselect::ends_with("calibrated")),
                          names_to = c("indicator", "data_type"),
                          names_pattern = "(.*)_(.*)")
 
+  #' Add population_denominator to indicator for each data_type
+  dflong <- dflong %>%
+    tidyr::pivot_wider(names_from = indicator) %>%
+    tidyr::pivot_longer(
+      c(population_denominator, population, plhiv, art_current, unaware, infections),
+      names_to = "indicator"
+    )
+                 
   ## Rename indicators to match Naomi output indicators
   dflong$indicator <- dplyr::recode(dflong$indicator, "unaware" = "unaware_plhiv_num")
 
@@ -325,10 +334,11 @@ hintr_calibrate_plot <- function(output) {
   dfw <- dfexpand %>%
     tidyr::pivot_wider(names_from = indicator, values_from = value) %>%
     dplyr::mutate(
-      prevalence = plhiv / population,
+      prevalence = plhiv / dplyr::if_else(data_type == "spectrum", population, population_denominator),
       art_coverage = art_current / plhiv,
       aware_plhiv_prop = 1 - unaware_plhiv_num / plhiv,
-      incidence = infections / (population - plhiv)
+      incidence = infections / (population - plhiv),
+      population_denominator = NULL
     ) %>%
     tidyr::pivot_longer(cols = art_current:incidence, names_to = "indicator")
 
