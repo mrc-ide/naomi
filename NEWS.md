@@ -1,6 +1,7 @@
 # naomi 2.6.9
 
-* Switch plot ordering to show HIV prevalence first
+* Switch plot ordering to show HIV prevalence first.
+* Patch logic error in calibration table: use calibrated population (done pre model fitting) as denominator for raw prevalence denominator (troublshooting #2022-73)
 
 # naomi 2.6.8
 
