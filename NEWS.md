@@ -1,6 +1,6 @@
 # naomi 2.6.11
 
-* Revert plot ordering change made in 2.6.9 in favour of changing the default selected to HIV prevalence from hintr
+* Revert plot ordering change made in 2.6.9 in favour of changing the default selected to HIV prevalence from hintr.
 
 # naomi 2.6.10
 
