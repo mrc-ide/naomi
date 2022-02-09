@@ -1,6 +1,6 @@
 indicator,indicator_label,description,parameter,indicator_sort_order,anc_indicator,format,scale
-population,t_(POPULATION),t_(INDICATOR_LABEL_POPULATION),population_out,2,FALSE,,
-prevalence,t_(HIV_PREVALENCE),t_(INDICATOR_LABEL_PREVALENCE),rho_out,1,FALSE,,
+population,t_(POPULATION),t_(INDICATOR_LABEL_POPULATION),population_out,1,FALSE,,
+prevalence,t_(HIV_PREVALENCE),t_(INDICATOR_LABEL_PREVALENCE),rho_out,2,FALSE,,
 plhiv,t_(PLHIV),t_(INDICATOR_LABEL_PLHIV),plhiv_out,3,FALSE,,
 art_coverage,t_(ART_COVERAGE),t_(INDICATOR_LABEL_ART_COVERAGE),alpha_out,4,FALSE,,
 art_current_residents,t_(ART_NUMBER_RESIDENTS),t_(INDICATOR_LABEL_ART_NUM_RESIDENTS),artnum_out,5,FALSE,,

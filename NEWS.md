@@ -1,4 +1,8 @@
-# 2.6.10
+# naomi 2.6.11
+
+* Revert plot ordering change made in 2.6.9 in favour of changing the default selected to HIV prevalence from hintr.
+
+# naomi 2.6.10
 
 * MOZ `area_id` in `inst/datapack/datapack_psnu_area_id_map.csv` to new area hierarchy with separate Maputo provinces at admin-2.
 
