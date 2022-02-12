@@ -76,6 +76,8 @@ hintr_paths <- hintr_run_model(hintr_data, hintr_options)
 calibrated_paths <- hintr_calibrate(hintr_paths, calibration_options)
 spectrum_download <- hintr_prepare_spectrum_download(calibrated_paths)
 
+coarse_download <- hintr_prepare_coarse_age_group_download(calibrated_paths)
+
 #' TO DO: add summary report download
 
 #' Read output package and generate datapack export

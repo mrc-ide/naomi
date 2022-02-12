@@ -1,3 +1,7 @@
+# naomi 2.6.12
+
+* Do not save the PEPFAR Data Pack CSV for coarse age output package because the five-year age group results are not included.
+
 # naomi 2.6.11
 
 * Revert plot ordering change made in 2.6.9 in favour of changing the default selected to HIV prevalence from hintr.
