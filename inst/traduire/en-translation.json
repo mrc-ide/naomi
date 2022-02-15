@@ -1,5 +1,6 @@
 {
     "ART_ATTENDANCE_IMPOSSIBLE": "ART attendance model can only be estimated if ART programme data are used.",
+    "TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE": "Time-varying ART attendance can only be estimated if ART programme data are used at both Time 1 and Time 2.",
     "NO_COUNTRY_LEVEL_FIT": "Cannot fit model at country level. Choose a different level.",
     "MISSING_ART_DATA": "ART dataset not provided. ART data cannot be selected Yes to include.",
     "MISSING_OPTIONS": "Required model options not supplied: {{missing_options}}",

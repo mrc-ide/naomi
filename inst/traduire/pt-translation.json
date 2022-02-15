@@ -16,6 +16,7 @@
     "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Níveis de fornecimento, hierarquia e limites ou área_centrada",
     "AREAS_LEVEL_NOT_UNIQUE": "Níveis de área não únicos._x000D_ Nível duplicado: {{níveis_falta}}.",
     "ART_ATTENDANCE_IMPOSSIBLE": "O modelo de participação em TARV só pode ser estimado se forem utilizados dados do programa de TARV.",
+    "TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE": "O modelo de participação em TARV só pode ser estimado se forem utilizados dados do programa de TARV tanto no Tempo 1 quanto no Tempo 2.",
     "ART_COV_AND_VLS_SAME_SURVEY": "Não utilizar a cobertura da TARV e os dados VLS do mesmo inquérito: {{ids_inquérito}}",
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "Não utilizar a cobertura da TARV e os dados VLS dos mesmos inquéritos: {{ids_inquérito}}",
     "ART_COVERAGE": "Cobertura da TARV",
