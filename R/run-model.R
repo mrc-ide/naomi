@@ -473,7 +473,8 @@ naomi_prepare_data <- function(data, options) {
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset),
-    adjust_area_growth = options$adjust_area_growth
+    adjust_area_growth = options$adjust_area_growth,
+    rho_paed_15to49f_ratio = TRUE
   )
 
   naomi_data <- select_naomi_data(

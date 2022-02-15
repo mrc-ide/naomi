@@ -2,6 +2,8 @@
 
 * The model uses offsets from Spectrum to determine HIV prevalence in age groups outside the age range for which survey HIV prevalence are available. Stratify determination of offset age ranges by sex. This addresses situation for DHS surveys where maximum female age is 49 but maximum male age is 54 or 59.
 
+* Set default to model paediatric prevalence relative to adult female age 15-49 prevalence instead of using offsets relative to age 15-19 prevalence. This will (1) ensure same prevalence for male and female children, and (2) reduce distortions to age 15-19 prevalence arising from paediatric ART data.
+
 # naomi 2.6.12
 
 * Do not save the PEPFAR Data Pack CSV for coarse age output package because the five-year age group results are not included.
