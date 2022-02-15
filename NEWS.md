@@ -4,6 +4,8 @@
 
 * Set default to model paediatric prevalence relative to adult female age 15-49 prevalence instead of using offsets relative to age 15-19 prevalence. This will (1) ensure same prevalence for male and female children, and (2) reduce distortions to age 15-19 prevalence arising from paediatric ART data.
 
+* Expose advanced option to allow paediatric to adult prevalence ratio to vary by district (option `rho_paed_x_term`). 
+
 * Throw validation error if time-varying ART attendance is selected, but ART data are not included at both Time 1 and Time 2.
 
 # naomi 2.6.12
