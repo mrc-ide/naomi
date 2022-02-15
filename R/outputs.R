@@ -695,7 +695,7 @@ save_output_coarse_age_groups <- function(path, naomi_output,
   save_output(basename(path), dirname(path), naomi_output_sub,
               overwrite = overwrite, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE,
-              export_datapack = TRUE)
+              export_datapack = FALSE)
 }
 
 save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {

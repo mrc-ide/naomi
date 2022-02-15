@@ -250,12 +250,21 @@ hintr_calibrate_plot <- function(output) {
   }
 
   dflong <- df %>%
+    dplyr::mutate(population_denominator = population_calibrated) %>%
     tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
                            tidyselect::ends_with("spectrum"),
                            tidyselect::ends_with("calibrated")),
                          names_to = c("indicator", "data_type"),
                          names_pattern = "(.*)_(.*)")
 
+  #' Add population_denominator to indicator for each data_type
+  dflong <- dflong %>%
+    tidyr::pivot_wider(names_from = indicator) %>%
+    tidyr::pivot_longer(
+      c(population_denominator, population, plhiv, art_current, unaware, infections),
+      names_to = "indicator"
+    )
+                 
   ## Rename indicators to match Naomi output indicators
   dflong$indicator <- dplyr::recode(dflong$indicator, "unaware" = "unaware_plhiv_num")
 
@@ -325,10 +334,11 @@ hintr_calibrate_plot <- function(output) {
   dfw <- dfexpand %>%
     tidyr::pivot_wider(names_from = indicator, values_from = value) %>%
     dplyr::mutate(
-      prevalence = plhiv / population,
+      prevalence = plhiv / dplyr::if_else(data_type == "spectrum", population, population_denominator),
       art_coverage = art_current / plhiv,
       aware_plhiv_prop = 1 - unaware_plhiv_num / plhiv,
-      incidence = infections / (population - plhiv)
+      incidence = infections / (population - plhiv),
+      population_denominator = NULL
     ) %>%
     tidyr::pivot_longer(cols = art_current:incidence, names_to = "indicator")
 
@@ -444,6 +454,13 @@ naomi_prepare_data <- function(data, options) {
     artnum_calendar_quarter2 <- NULL
   }
 
+  if(is.null(options$rho_paed_x_term)) {
+    options$rho_paed_x_term <- FALSE
+  }
+
+  if(is.null(options$rho_paed_15to49f_ratio)) {
+    options$rho_paed_15to49f_ratio <- TRUE
+  }
 
   if(is.null(options$adjust_area_growth)) {
     options$adjust_area_growth <- FALSE
@@ -463,7 +480,9 @@ naomi_prepare_data <- function(data, options) {
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset),
-    adjust_area_growth = options$adjust_area_growth
+    rho_paed_x_term = as.logical(options$rho_paed_x_term),
+    rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
+    adjust_area_growth = as.logical(options$adjust_area_growth),
   )
 
   naomi_data <- select_naomi_data(

@@ -130,7 +130,7 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
-                              rho_paed_15to49f_ratio = FALSE,
+                              rho_paed_15to49f_ratio = TRUE,
                               rho_paed_x_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
@@ -908,29 +908,32 @@ update_mf_offsets <- function(naomi_mf,
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
-  ## TODO: This should handle different age_max by sex...
   get_idx <- function(mf, df) {
 
     age_max <- df %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
-      dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
-      .$age_max
+      dplyr::group_by(sex) %>%
+      dplyr::summarise(age_max = max(age_group_start + age_group_span))
 
     age_min <- df %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
-      dplyr::summarise(age_min = min(age_group_start)) %>%
-      .$age_min
+      dplyr::group_by(sex) %>%
+      dplyr::summarise(age_min = min(age_group_start))
 
     mf %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
+      dplyr::left_join(age_max, by = "sex") %>%
+      dplyr::left_join(age_min, by = "sex") %>%
+      dplyr::group_by(sex) %>%
       dplyr::transmute(idx,
                        data_range = as.integer(age_group_start >= age_min & (age_group_start + age_group_span) <= age_max),
                        upper_offset_range = as.integer((age_group_start + age_group_span) >= age_max),
                        lower_offset_range = as.integer(age_group_start <= age_min),
                        age_fct = pmin(age_group_start, max(age_group_start * data_range)),
                        age_fct = pmax(age_fct, min(age_fct / data_range, na.rm = TRUE)),
-                       age_fct = factor(age_fct))
-
+                       age_fct = factor(age_fct)) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-sex)
   }
 
 

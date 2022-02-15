@@ -1,5 +1,6 @@
 {
     "ART_ATTENDANCE_IMPOSSIBLE": "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées.",
+    "TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE": "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées à la fois au temps 1 et au temps 2.",
     "NO_COUNTRY_LEVEL_FIT": "Impossible d’ajuster le modèle au niveau du pays. Choisissez un niveau différent.",
     "MISSING_ART_DATA": "L’ensemble de données ART n'est pas fourni. Les données ART ne peuvent pas être sélectionnées, Oui pour inclure.",
     "MISSING_OPTIONS": "Les options de modèle requises ne sont pas fournies : {{missing_options}}",
