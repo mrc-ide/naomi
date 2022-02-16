@@ -1,5 +1,6 @@
 {
     "ART_ATTENDANCE_IMPOSSIBLE": "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées.",
+    "TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE": "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées à la fois au temps 1 et au temps 2.",
     "NO_COUNTRY_LEVEL_FIT": "Impossible d’ajuster le modèle au niveau du pays. Choisissez un niveau différent.",
     "MISSING_ART_DATA": "L’ensemble de données ART n'est pas fourni. Les données ART ne peuvent pas être sélectionnées, Oui pour inclure.",
     "MISSING_OPTIONS": "Les options de modèle requises ne sont pas fournies : {{missing_options}}",
@@ -344,5 +345,8 @@
     "ART_COVERAGE_RATIO": "Couverture ART rapport",
     "UNAWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH non informés rapport",
     "AWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH conscients rapport",
-    "INCIDENCE_RATIO": "Incidence du VIH rapport"
+    "INCIDENCE_RATIO": "Rapport d'incidence du VIH",
+    "OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE": "Rapport de prévalence pédiatrique variable dans l'espace",
+    "OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO": "Prévalence pédiatrique modélisée rapportée à la prévalence modélisée chez les femmes adultes",
+    "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Croissance nette de la population ajustée par district"
 }

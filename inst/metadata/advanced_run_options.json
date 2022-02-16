@@ -107,6 +107,69 @@
       ]
     },
     {
+      "label": "t_(OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE)",
+      "controls": [
+        {
+          "name": "rho_paed_x_term",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            },
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            }
+          ],
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO)",
+      "controls": [
+        {
+          "name": "rho_paed_15to49f_ratio",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            },
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            }
+          ],
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "label": "t_(OPTIONS_ADVANCED_ADJUST_AREA_GROWTH)",
+      "controls": [
+        {
+          "name": "adjust_area_growth",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            },
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            }
+          ],
+          "value": "false"
+        }
+      ]
+    },      
+    {
       "label": "t_(OPTIONS_USE_SURVEY_AGGREGATE_LABEL)",
       "controls": [
         {
