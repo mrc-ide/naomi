@@ -93,6 +93,7 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Z_alpha_xt);
   DATA_SPARSE_MATRIX(Z_alpha_xa);
   DATA_SPARSE_MATRIX(Z_alpha_xat);
+  DATA_SPARSE_MATRIX(Z_alpha_xst);
 
   DATA_SPARSE_MATRIX(Z_x);
   DATA_SPARSE_MATRIX(Z_lambda_x);
@@ -363,6 +364,10 @@ Type objective_function<Type>::operator() ()
   Type sigma_alpha_xat(exp(log_sigma_alpha_xat));
   val -= dnorm(sigma_alpha_xat, Type(0.0), Type(2.5), true) + log_sigma_alpha_xat;
 
+  PARAMETER(log_sigma_alpha_xst);
+  Type sigma_alpha_xst(exp(log_sigma_alpha_xst));
+  val -= dnorm(sigma_alpha_xst, Type(0.0), Type(2.5), true) + log_sigma_alpha_xst;
+
   PARAMETER_VECTOR(u_alpha_x);
   PARAMETER_VECTOR(us_alpha_x);
   val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
@@ -391,6 +396,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(u_alpha_xat);
   val -= dnorm(u_alpha_xat, 0.0, sigma_alpha_xat, true).sum();
+
+  PARAMETER_VECTOR(u_alpha_xst);
+  val -= dnorm(u_alpha_xst, 0.0, sigma_alpha_xst, true).sum();
 
   // * HIV incidence model *
 
@@ -529,7 +537,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> mu_alpha_t2(mu_alpha + logit_alpha_t1t2_offset +
                            X_alpha_t2 * beta_alpha_t2 +
                            Z_alpha_xt * u_alpha_xt +
-                           Z_alpha_xat * u_alpha_xat);
+                           Z_alpha_xat * u_alpha_xat +
+			   Z_alpha_xst * u_alpha_xst);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
 
   vector<Type> infections_t1t2((1 - exp(-lambda_t1 * projection_duration_t1t2)) * (population_t1 - plhiv_t1));

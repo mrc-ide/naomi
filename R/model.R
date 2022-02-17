@@ -95,6 +95,7 @@ naomi_output_frame <- function(mf_model,
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
 #' @param rho_paed_15to49f_ratio logical; to model paediatric prevalence as ratio of 15-49 female prevalence
 #' @param rho_paed_x_term logical; to include area interaction for paediatric prevalence
+#' @param alpha_xst_term logical; to include district-sex-time interaction for ART coverage. Default `FALSE`.
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
@@ -132,6 +133,7 @@ naomi_model_frame <- function(area_merged,
                               artattend_log_gamma_offset = -4,
                               rho_paed_15to49f_ratio = TRUE,
                               rho_paed_x_term = FALSE,
+                              alpha_xst_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national",
@@ -656,6 +658,7 @@ naomi_model_frame <- function(area_merged,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
             rho_paed_x_term = rho_paed_x_term,
+            alpha_xst_term = alpha_xst_term,
             area_aggregation = area_aggregation,
             A_out = outf$A,
             A_anc_out = anc_outf$A,

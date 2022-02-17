@@ -1,5 +1,9 @@
 # naomi 2.6.14
 
+* Add option for district-sex-time interaction for ART coverage. This is implemented by argument `naomi_model_frame(..., alpha_xst_term = TRUE, ...)`. 
+  The default is currently `alpha_xst_term = FALSE` for backwards compatibility. If set to `TRUE`, the model also checks that sex-stratified ART data 
+  are included at both T1 and T2.
+
 * Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration.
 
   Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`. 
