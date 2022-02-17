@@ -462,6 +462,10 @@ naomi_prepare_data <- function(data, options) {
     options$rho_paed_15to49f_ratio <- TRUE
   }
 
+  if(is.null(options$alpha_xst_term)) {
+    options$alpha_xst_term <- TRUE
+  }
+
   if(is.null(options$adjust_area_growth)) {
     options$adjust_area_growth <- FALSE
   }
@@ -482,6 +486,7 @@ naomi_prepare_data <- function(data, options) {
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset),
     rho_paed_x_term = as.logical(options$rho_paed_x_term),
     rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
+    alpha_xst_term = as.logical(options$alpha_xst_term),
     adjust_area_growth = as.logical(options$adjust_area_growth),
   )
 
