@@ -463,7 +463,7 @@ naomi_prepare_data <- function(data, options) {
   }
 
   if(is.null(options$alpha_xst_term)) {
-    options$alpha_xst_term <- TRUE
+    options$alpha_xst_term <- FALSE
   }
 
   if(is.null(options$adjust_area_growth)) {
