@@ -95,7 +95,7 @@ test_that("error message translation", {
   options$include_art_t2 <- "false"
 
   err_en <- "ART attendance model can only be estimated if ART programme data are used."
-  err_fr <- "Le modèle d’assiduité à l’ART peut uniquement être estimé si les données du programme ART sont utilisées."
+  err_fr <- "Le modèle d’assiduité de TARV peut uniquement être estimé si les données du programme ART sont utilisées."
 
   expect_error(validate_model_options(format_data_input(a_hintr_data), options),
                err_en)
@@ -298,7 +298,7 @@ test_that("use_survey_aggregate option affects selected data", {
 test_that("Option adjust_area_growth affects projection matrices", {
 
   a_hintr_data <- format_data_input(a_hintr_data)
-  
+
   a_hintr_options <- format_options(a_hintr_options)
   options_null <- a_hintr_options
   options_null$adjust_area_growth <- NULL
@@ -310,7 +310,7 @@ test_that("Option adjust_area_growth affects projection matrices", {
                   naomi_data_null$Lproj_netgrow_t1t2 == 1))
   expect_true(all(naomi_data_null$Lproj_netgrow_t2t3 == 0 |
                   naomi_data_null$Lproj_netgrow_t2t3 == 1))
-  
+
 
   options_TRUE <- a_hintr_options
   options_TRUE$adjust_area_growth <- TRUE
@@ -336,7 +336,7 @@ test_that("Option adjust_area_growth affects projection matrices", {
   expect_equal(naomi_data_null$Lproj_incid_t1t2, naomi_data_FALSE$Lproj_incid_t1t2)
 
   skip("Net growth ratio effect not implemented in v2.6.0; target for v2.6.1")
-  
+
   ## adjust_area_growth TRUE vs. FALSE affects projections for
   ## hivpop, paediatric, and infections
 
@@ -345,14 +345,14 @@ test_that("Option adjust_area_growth affects projection matrices", {
   expect_false(all(naomi_data_TRUE$Lproj_paed == naomi_data_FALSE$Lproj_paed))
   expect_false(all(naomi_data_TRUE$Lproj_paed_t2t3 == naomi_data_FALSE$Lproj_paed_t2t3))
   expect_false(all(naomi_data_TRUE$Lproj_incid == naomi_data_FALSE$Lproj_incid))
-  expect_false(all(naomi_data_TRUE$Lproj_incid_t2t3 == naomi_data_FALSE$Lproj_incid_t2t3))    
+  expect_false(all(naomi_data_TRUE$Lproj_incid_t2t3 == naomi_data_FALSE$Lproj_incid_t2t3))
 })
 
 
 test_that("Option adjust_area_growth handles cases with projection_dur >5 years", {
 
   a_hintr_data <- format_data_input(a_hintr_data)
-  
+
   a_hintr_options <- format_options(a_hintr_options)
   options_longdur <- a_hintr_options
   options_longdur$adjust_area_growth <- TRUE
@@ -360,11 +360,11 @@ test_that("Option adjust_area_growth handles cases with projection_dur >5 years"
   options_longdur$calendar_quarter_t3 = "CY2024Q3"
   options_longdur$include_art_t2 <- "false"
   options_longdur$artattend_t2 <- "false"
-  
+
   naomi_data_longdur <- naomi_prepare_data(a_hintr_data, options_longdur)
 
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_netgrow_t1t2)), 0)
-  expect_equal(sum(is.na(naomi_data_longdur$Lproj_hivpop)), 0)  
+  expect_equal(sum(is.na(naomi_data_longdur$Lproj_hivpop)), 0)
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_paed)), 0)
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_incid)), 0)
 })
