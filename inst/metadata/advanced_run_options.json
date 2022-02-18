@@ -107,7 +107,7 @@
       ]
     },
     {
-      "label": "t_(OPTIONS_ADVANCED_DISTRICT_PAED_PREVALENCE)",
+      "label": "t_(OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE)",
       "controls": [
         {
           "name": "rho_paed_x_term",

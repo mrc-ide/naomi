@@ -345,5 +345,8 @@
     "ART_COVERAGE_RATIO": "Cobertura da TARV relação",
     "UNAWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH sem conhecimento relação",
     "AWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH com conhecimento relação",
-    "INCIDENCE_RATIO": "Incidência de VIH relação"
+    "INCIDENCE_RATIO": "Incidência de VIH relação",
+    "OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE": "Razão de prevalência pediátrica espacialmente variável",
+    "OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO": "Prevalência pediátrica modelo a prevalência feminina adulta",
+    "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Ajustar o crescimento populacional líquido do distrito"
 }
