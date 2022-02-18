@@ -1,3 +1,7 @@
+# naomi 2.6.14
+
+* Replace "ART" in French and Portuguese strings with "TARV".
+
 # naomi 2.6.13
 
 * The model uses offsets from Spectrum to determine HIV prevalence in age groups outside the age range for which survey HIV prevalence are available. Stratify determination of offset age ranges by sex. This addresses situation for DHS surveys where maximum female age is 49 but maximum male age is 54 or 59.
