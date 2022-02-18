@@ -348,5 +348,6 @@
     "INCIDENCE_RATIO": "Rapport d'incidence du VIH",
     "OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE": "Rapport de prévalence pédiatrique variable dans l'espace",
     "OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO": "Prévalence pédiatrique modélisée rapportée à la prévalence modélisée chez les femmes adultes",
-    "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Croissance nette de la population ajustée par district"
+    "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Croissance nette de la population ajustée par district",
+    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "Couverture TARV interaction espace-sexe-temps"
 }

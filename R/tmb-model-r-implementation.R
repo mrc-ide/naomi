@@ -295,10 +295,10 @@ naomi_objective_function_r <- function(d, p) {
 
   alpha_t2 <- plogis(mu_alpha_t2)
 
-  infections_t1t2 <- (1 - exp(-lambda_t1 * d$projection_duration)) * (d$population_t1 - plhiv_t1)
-  plhiv_t2 <- d$Lproj_hivpop %*% plhiv_t1 +
-    d$Lproj_incid  %*% infections_t1t2 +
-    d$Lproj_paed  %*% plhiv_t1
+  infections_t1t2 <- (1 - exp(-lambda_t1 * d$projection_duration_t1t2)) * (d$population_t1 - plhiv_t1)
+  plhiv_t2 <- d$Lproj_hivpop_t1t2 %*% plhiv_t1 +
+    d$Lproj_incid_t1t2  %*% infections_t1t2 +
+    d$Lproj_paed_t1t2  %*% plhiv_t1
   plhiv_t2 <- as.vector(plhiv_t2)
 
   rho_t2 <- plhiv_t2 / d$population_t2

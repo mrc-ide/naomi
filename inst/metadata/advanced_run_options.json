@@ -149,6 +149,27 @@
       ]
     },
     {
+      "label": "t_(OPTIONS_ADVANCED_ALPHA_XST_TERM)",
+      "controls": [
+        {
+          "name": "alpha_xst_term",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "id": "false",
+              "label": "t_(OPTIONS_NO_LABEL)"
+            },
+            {
+              "id": "true",
+              "label": "t_(OPTIONS_YES_LABEL)"
+            }
+          ],
+          "value": "false"
+        }
+      ]
+    },      
+    {
       "label": "t_(OPTIONS_ADVANCED_ADJUST_AREA_GROWTH)",
       "controls": [
         {

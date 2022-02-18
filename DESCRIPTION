@@ -42,7 +42,7 @@ Imports:
     rlang,
     rmarkdown,
     sf,
-    spdep,
+    spdep (>= 1.1),
     tidyr,
     tidyselect (>= 1.0.0),
     traduire,

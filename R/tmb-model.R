@@ -192,12 +192,27 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no sex stratified ART coverage data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$sex) &
-       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &
+  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
     f_alpha_xs <- ~0
   } else {
     f_alpha_xs <- ~0 + area_idf
+  }
+
+
+  ## If flag **and** has ART by sex data at both times, estimate time x district x
+  ## sex ART odds ratio.
+  if (naomi_data$alpha_xst_term) {
+    if (!all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
+          !all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex)) {
+      stop(paste("Sex-stratified ART data are required at both Time 1 and Time 2",
+                 "to estimate district x sex x time interaction for ART coverage"))
+    }
+
+    f_alpha_xst <- ~0 + area_idf
+  } else {
+    f_alpha_xst <- ~0
   }
 
   
@@ -258,10 +273,10 @@ prepare_tmb_inputs <- function(naomi_data) {
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
-    Lproj_hivpop = naomi_data$Lproj_hivpop,
-    Lproj_incid = naomi_data$Lproj_incid,
-    Lproj_paed = naomi_data$Lproj_paed,
-    projection_duration = naomi_data$projection_duration,
+    Lproj_hivpop_t1t2 = naomi_data$Lproj_t1t2$Lproj_hivpop,
+    Lproj_incid_t1t2 = naomi_data$Lproj_t1t2$Lproj_incid,
+    Lproj_paed_t1t2 = naomi_data$Lproj_t1t2$Lproj_paed,
+    projection_duration_t1t2 = naomi_data$Lproj_t1t2$projection_duration,
     X_rho = as.matrix(sparse_model_matrix(~female_15plus, df, "bin_rho_model", TRUE)),
     X_alpha = stats::model.matrix(~female_15plus, df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
@@ -282,6 +297,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),
     Z_alpha_xa = sparse_model_matrix(f_alpha_xa, df, "age_below15"),
     Z_alpha_xat = sparse_model_matrix(f_alpha_xat, df, "age_below15"),
+    Z_alpha_xst = sparse_model_matrix(f_alpha_xst, df, "female_15plus", TRUE),
     Z_lambda_x = sparse_model_matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),
     Z_asfr_x = sparse_model_matrix(~0 + area_idf, df),
@@ -379,10 +395,10 @@ prepare_tmb_inputs <- function(naomi_data) {
     ##
     ## Time 3 projection inputs
     population_t3 = df$population_t3,
-    Lproj_hivpop_t2t3 = naomi_data$Lproj_hivpop_t2t3,
-    Lproj_incid_t2t3 = naomi_data$Lproj_incid_t2t3,
-    Lproj_paed_t2t3 = naomi_data$Lproj_paed_t2t3,
-    projection_duration_t2t3 = naomi_data$projection_duration_t2t3,
+    Lproj_hivpop_t2t3 = naomi_data$Lproj_t2t3$Lproj_hivpop,
+    Lproj_incid_t2t3 = naomi_data$Lproj_t2t3$Lproj_incid,
+    Lproj_paed_t2t3 = naomi_data$Lproj_t2t3$Lproj_paed,
+    projection_duration_t2t3 = naomi_data$Lproj_t2t3$projection_duration,
     logit_alpha_t2t3_offset = df$logit_alpha_t2t3_offset,
     log_lambda_t3_offset = df$log_lambda_t3_offset,
     ##
@@ -424,6 +440,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     u_alpha_xt = numeric(ncol(dtmb$Z_alpha_xt)),
     u_alpha_xa = numeric(ncol(dtmb$Z_alpha_xa)),
     u_alpha_xat = numeric(ncol(dtmb$Z_alpha_xat)),
+    u_alpha_xst = numeric(ncol(dtmb$Z_alpha_xst)),
     ##
     log_sigma_lambda_x = log(1.0),
     ui_lambda_x = numeric(ncol(dtmb$Z_lambda_x)),
@@ -449,6 +466,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     log_sigma_alpha_xt = log(2.5),
     log_sigma_alpha_xa = log(2.5),
     log_sigma_alpha_xat = log(2.5),
+    log_sigma_alpha_xst = log(2.5),
     ##
     OmegaT_raw = 0,
     log_betaT = 0,
@@ -515,7 +533,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "u_alpha_xs", "us_alpha_xs",
                                    "u_alpha_a", "u_alpha_as",
                                    "u_alpha_xt",
-                                   "u_alpha_xa", "u_alpha_xat",
+                                   "u_alpha_xa", "u_alpha_xat", "u_alpha_xst",
                                    ##
                                    "ui_lambda_x",
                                    "logit_nu_raw",
