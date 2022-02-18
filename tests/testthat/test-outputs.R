@@ -15,10 +15,10 @@ test_that("traidure hooks work in model outputs", {
   out_fr <- output_package(a_fit_sample, a_naomi_data)
   expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Décembre 2018", "Juin 2019"))
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
-                  c("Prévalence du VIH", "Couverture ART"))
+                  c("Prévalence du VIH", "Couverture TARV"))
   expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Proportion de la population totale séropositive",
-                    "Proportion de PLHIV sur ART (résidents)"))
+                    "Proportion de PLHIV sur TARV (résidents)"))
 })
 
 
@@ -495,7 +495,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
   write_navigator_checklist(adj_output, tmp_checklist_adj)
   checklist_adj <- read.csv(tmp_checklist_adj)
 
-  expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])  
+  expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])
 })
 
 test_that("meta_indicator table contains same indicators as outputs", {

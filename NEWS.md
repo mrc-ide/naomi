@@ -16,6 +16,7 @@ _Internal changes_
 
 * Refactor function `create_Lproj()` to avoid replicating same code for T1 -> T2 and T2 -> T3 projection.
 * Remove conversion of `sf` to `sp` object for `spdep::poly2nb()`, which now supports `sf` objects from v1.0.
+* Replace "ART" in French and Portuguese strings with "TARV".
 
 # naomi 2.6.13
 
