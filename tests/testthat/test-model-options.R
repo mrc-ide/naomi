@@ -95,7 +95,7 @@ test_that("error message translation", {
   options$include_art_t2 <- "false"
 
   err_en <- "ART attendance model can only be estimated if ART programme data are used."
-  err_fr <- "Le modèle d’assiduité de TARV peut uniquement être estimé si les données du programme ART sont utilisées."
+  err_fr <- "Le modèle d’assiduité de TARV peut uniquement être estimé si les données du programme TARV sont utilisées."
 
   expect_error(validate_model_options(format_data_input(a_hintr_data), options),
                err_en)
