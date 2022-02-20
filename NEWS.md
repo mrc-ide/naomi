@@ -1,3 +1,12 @@
+# naomi 2.7.0
+
+!!! WORK IN PROGRESS
+
+* Fitting to age-stratified ART data
+  * area x sex x age_group interaction for baseline HIV prevalence 
+  *  area x sex x age_group x time interaction for ART coverage
+
+
 # naomi 2.6.14
 
 * Add option for district-sex-time interaction for ART coverage. This is implemented by argument `naomi_model_frame(..., alpha_xst_term = TRUE, ...)`. 

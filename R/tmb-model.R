@@ -180,6 +180,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_rho_xa <- ~0
   }
 
+  message("Using development version: area x sex x age_group prevalence interaction")
+  f_rho_xa <- ~0 + age_group:sex:area_idf
+
   ## Ratio of paediatric incidence rate to 15-49 female prevalence
 
   ## If no sex stratified prevalence data, don't estimate spatial variation in
@@ -259,6 +262,11 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_alpha_xat <- ~0
   }
 
+  ## DEV COMMENT: maybe mf_model$logit_alpha_t1t2_offset should be replaced by main effects for sex
+  ## and sex age change over time
+  message("Using development version: area x sex x age_group x time ART coverage interaction")
+  f_alpha_xat <- ~0 + age_group:sex:area_idf
+
   ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
   if(nrow(naomi_data$recent_dat) == 0) {
@@ -289,14 +297,16 @@ prepare_tmb_inputs <- function(naomi_data) {
     Z_rho_xs = sparse_model_matrix(f_rho_xs, df, "female_15plus", TRUE),
     Z_rho_a = sparse_model_matrix(f_rho_a, df, "bin_rho_model", TRUE),
     Z_rho_as = sparse_model_matrix(f_rho_a, df, "female_15plus", TRUE),
-    Z_rho_xa = sparse_model_matrix(f_rho_xa, df, "age_below15"),
+    ## Z_rho_xa = sparse_model_matrix(f_rho_xa, df, "age_below15"),
+    Z_rho_xa = sparse_model_matrix(f_rho_xa, df),                    ## !! development
     Z_alpha_x = sparse_model_matrix(~0 + area_idf, df),
     Z_alpha_xs = sparse_model_matrix(f_alpha_xs, df, "female_15plus", TRUE),
     Z_alpha_a = sparse_model_matrix(f_alpha_a, df),
     Z_alpha_as = sparse_model_matrix(f_alpha_a, df, "female_15plus", TRUE),
     Z_alpha_xt = sparse_model_matrix(f_alpha_xt, df),
     Z_alpha_xa = sparse_model_matrix(f_alpha_xa, df, "age_below15"),
-    Z_alpha_xat = sparse_model_matrix(f_alpha_xat, df, "age_below15"),
+    ## Z_alpha_xat = sparse_model_matrix(f_alpha_xat, df, "age_below15"),
+    Z_alpha_xat = sparse_model_matrix(f_alpha_xat, df),                   ## !! development
     Z_alpha_xst = sparse_model_matrix(f_alpha_xst, df, "female_15plus", TRUE),
     Z_lambda_x = sparse_model_matrix(f_lambda_x, df),
     ## Z_xa = Matrix::sparse.model.matrix(~0 + area_idf:age_group_idf, df),

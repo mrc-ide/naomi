@@ -307,14 +307,16 @@ Type objective_function<Type>::operator() ()
   if(u_rho_a.size() > 0)
     val += SCALE(AR1(phi_rho_as), sigma_rho_as)(u_rho_as);
 
+  // PARAMETER_VECTOR(u_rho_xa);
+  // if (u_rho_xa.size() > 0) {
+  //   val -= dnorm(sum(u_rho_xa), Type(0.0), sigma_rho_xa * Type(0.001) * u_rho_xa.size(), true); // soft sum-to-zero constraint
+
+  //   val -= -(Q_x.rows() - Q_x_rankdef) * log_sigma_rho_xa -
+  //     0.5 / (sigma_rho_xa * sigma_rho_xa) * (u_rho_xa * (Q_x * u_rho_xa)).sum();
+  // }
+
   PARAMETER_VECTOR(u_rho_xa);
-  if (u_rho_xa.size() > 0) {
-    val -= dnorm(sum(u_rho_xa), Type(0.0), sigma_rho_xa * Type(0.001) * u_rho_xa.size(), true); // soft sum-to-zero constraint
-
-    val -= -(Q_x.rows() - Q_x_rankdef) * log_sigma_rho_xa -
-      0.5 / (sigma_rho_xa * sigma_rho_xa) * (u_rho_xa * (Q_x * u_rho_xa)).sum();
-  }
-
+  val -= dnorm(u_rho_xa, Type(0.0), sigma_rho_xa, true).sum();
 
   // * ART coverage model *
 
