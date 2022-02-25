@@ -1,3 +1,7 @@
+# naomi 2.6.15
+
+* Add PEPFAR Datim UID for Burundi.
+
 # naomi 2.6.14
 
 * Add option for district-sex-time interaction for ART coverage. This is implemented by argument `naomi_model_frame(..., alpha_xst_term = TRUE, ...)`. 
@@ -268,7 +272,7 @@ time series function outputs
 
 # naomi 2.3.5
 
-* Add PEPFAR Datim UID for Angola.
+* Add PEPFAR Datim UID for Angola.<
 
 # naomi 2.3.4
 
