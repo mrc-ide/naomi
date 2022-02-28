@@ -1,3 +1,7 @@
+# naomi 2.6.16
+
+* Bug fix: remove duplicate addition of CLHIV in T2 projection arising from paediatric incidence.
+
 # naomi 2.6.15
 
 * Add PEPFAR Datim UID for Burundi.
