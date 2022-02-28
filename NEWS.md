@@ -6,6 +6,13 @@
   * area x sex x age_group interaction for baseline HIV prevalence 
   *  area x sex x age_group x time interaction for ART coverage
 
+# naomi 2.6.16
+
+* Bug fix: remove duplicate addition of CLHIV in T2 projection arising from paediatric incidence. This was introduced in v2.6.0 when paediatric new infections were added to the outputs.
+
+# naomi 2.6.15
+
+* Add PEPFAR Datim UID for Burundi.
 
 # naomi 2.6.14
 
@@ -277,7 +284,7 @@ time series function outputs
 
 # naomi 2.3.5
 
-* Add PEPFAR Datim UID for Angola.
+* Add PEPFAR Datim UID for Angola.<
 
 # naomi 2.3.4
 
