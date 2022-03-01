@@ -22,7 +22,7 @@
               "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
             }
           ],
-          "value": "national",
+          "value": "subnational",
           "required": true,
           "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP)"
         }
