@@ -271,16 +271,17 @@ naomi_objective_function_r <- function(d, p) {
   rho_15to49_t1 <- plhiv_15to49_t1 / as.vector(d$X_15to49 %*% d$population_t1)
   alpha_15to49_t1 <- (d$X_15to49 %*% artnum_t1) / plhiv_15to49_t1
 
-  mu_lambda_t1 <- d$X_lambda %*% p$beta_lambda + d$log_lambda_t1_offset +
+  mu_lambda_t1 <- d$X_lambda %*% p$beta_lambda +
+    d$log_lambda_t1_offset +
     d$Z_x %*% (log(rho_15to49_t1) + log(1.0 - d$omega * alpha_15to49_t1)) +
     d$Z_lambda_x %*% p$ui_lambda_x
   mu_lambda_t1 <- as.vector(mu_lambda_t1)
 
-  lambda_t1 <- exp(mu_lambda_t1)
+  lambda_adult_t1 <- exp(mu_lambda_t1)
 
   ## Add paediatric incidence
   lambda_paed_t1 <- as.vector(d$X_paed_lambda_ratio_t1 %*% rho_15to49f_t1)
-  lambda_t1 <- lambda_t1 + lambda_paed_t1
+  lambda_t1 <- lambda_adult_t1 + lambda_paed_t1
 
   infections_t1 <- lambda_t1 * (d$population_t1 - plhiv_t1)
 
@@ -295,9 +296,9 @@ naomi_objective_function_r <- function(d, p) {
 
   alpha_t2 <- plogis(mu_alpha_t2)
 
-  infections_t1t2 <- (1 - exp(-lambda_t1 * d$projection_duration_t1t2)) * (d$population_t1 - plhiv_t1)
+  infections_adult_t1t2 <- (1 - exp(-lambda_adult_t1 * d$projection_duration_t1t2)) * (d$population_t1 - plhiv_t1)
   plhiv_t2 <- d$Lproj_hivpop_t1t2 %*% plhiv_t1 +
-    d$Lproj_incid_t1t2  %*% infections_t1t2 +
+    d$Lproj_incid_t1t2  %*% infections_adult_t1t2 +
     d$Lproj_paed_t1t2  %*% plhiv_t1
   plhiv_t2 <- as.vector(plhiv_t2)
 
@@ -315,12 +316,12 @@ naomi_objective_function_r <- function(d, p) {
     d$Z_lambda_x %*% p$ui_lambda_x
   mu_lambda_t2 <- as.vector(mu_lambda_t2)
 
-  lambda_t2 <- exp(mu_lambda_t2)
+  lambda_adult_t2 <- exp(mu_lambda_t2)
 
   ## Add paediatric incidence
   rho_15to49f_t2 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t2) / (d$X_15to49f %*% d$population_t2)  
   lambda_paed_t2 <- as.vector(d$X_paed_lambda_ratio_t2 %*% rho_15to49f_t2)
-  lambda_t2 <- lambda_t2 + lambda_paed_t2
+  lambda_t2 <- lambda_adult_t2 + lambda_paed_t2
 
   infections_t2 <- lambda_t2 * (d$population_t2 - plhiv_t2)
 
@@ -568,9 +569,9 @@ naomi_objective_function_r <- function(d, p) {
   mu_alpha_t3 <- mu_alpha_t2 + d$logit_alpha_t2t3_offset
   alpha_t3 <- plogis(mu_alpha_t3)
 
-  infections_t2t3 <- (1 - exp(-lambda_t2 * d$projection_duration_t2t3)) * (d$population_t2 - plhiv_t2)
+  infections_adult_t2t3 <- (1 - exp(-lambda_adult_t2 * d$projection_duration_t2t3)) * (d$population_t2 - plhiv_t2)
   plhiv_t3 <- as.vector(d$Lproj_hivpop_t2t3 %*% plhiv_t2 +
-                        d$Lproj_incid_t2t3 %*% infections_t2t3 +
+                        d$Lproj_incid_t2t3 %*% infections_adult_t2t3 +
                         d$Lproj_paed_t2t3 %*% plhiv_t2)
 
   rho_t3 <- plhiv_t3 / d$population_t3
@@ -586,12 +587,12 @@ naomi_objective_function_r <- function(d, p) {
     d$Z_x %*% (log(rho_15to49_t3) + log(1.0 - d$omega * alpha_15to49_t3)) +
     d$Z_lambda_x %*% p$ui_lambda_x
 
-  lambda_t3 <- exp(mu_lambda_t3)
+  lambda_adult_t3 <- exp(mu_lambda_t3)
 
   ## Add paediatric incidence
   rho_15to49f_t3 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t3) / (d$X_15to49f %*% d$population_t3)  
   lambda_paed_t3 <- as.vector(d$X_paed_lambda_ratio_t3 %*% rho_15to49f_t3)
-  lambda_t3 <- lambda_t3 + lambda_paed_t3
+  lambda_t3 <- lambda_adult_t3 + lambda_paed_t3
 
   
   infections_t3 <- lambda_t3 * (d$population_t3 - plhiv_t3)
