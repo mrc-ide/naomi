@@ -1,3 +1,8 @@
+# naomi 2.6.17
+
+* Add PEPFAR Datim PSNU UID for Benin.
+* Change default population calibration option selection to "Subnational". If a national file is loaded, it will simply calibrate the national file.
+
 # naomi 2.6.16
 
 * Bug fix: remove duplicate addition of CLHIV in T2 projection arising from paediatric incidence. This was introduced in v2.6.0 when paediatric new infections were added to the outputs.
