@@ -1,3 +1,8 @@
+# naomi 2.6.18
+
+* Bug fix: calibration options read into summary report from `outputs` object
+* Add test to ensure calibration options are read into summary report correctly if present
+
 # naomi 2.6.17
 
 * Add PEPFAR Datim PSNU UID for Benin.
