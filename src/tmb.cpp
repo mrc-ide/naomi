@@ -65,10 +65,10 @@ Type objective_function<Type>::operator() ()
   // Population
   DATA_VECTOR(population_t1);
   DATA_VECTOR(population_t2);
-  DATA_SPARSE_MATRIX(Lproj_hivpop);
-  DATA_SPARSE_MATRIX(Lproj_incid);
-  DATA_SPARSE_MATRIX(Lproj_paed);
-  DATA_SCALAR(projection_duration);
+  DATA_SPARSE_MATRIX(Lproj_hivpop_t1t2);
+  DATA_SPARSE_MATRIX(Lproj_incid_t1t2);
+  DATA_SPARSE_MATRIX(Lproj_paed_t1t2);
+  DATA_SCALAR(projection_duration_t1t2);
 
   // Design matrices
   DATA_MATRIX(X_rho);
@@ -93,6 +93,7 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Z_alpha_xt);
   DATA_SPARSE_MATRIX(Z_alpha_xa);
   DATA_SPARSE_MATRIX(Z_alpha_xat);
+  DATA_SPARSE_MATRIX(Z_alpha_xst);
 
   DATA_SPARSE_MATRIX(Z_x);
   DATA_SPARSE_MATRIX(Z_lambda_x);
@@ -363,6 +364,10 @@ Type objective_function<Type>::operator() ()
   Type sigma_alpha_xat(exp(log_sigma_alpha_xat));
   val -= dnorm(sigma_alpha_xat, Type(0.0), Type(2.5), true) + log_sigma_alpha_xat;
 
+  PARAMETER(log_sigma_alpha_xst);
+  Type sigma_alpha_xst(exp(log_sigma_alpha_xst));
+  val -= dnorm(sigma_alpha_xst, Type(0.0), Type(2.5), true) + log_sigma_alpha_xst;
+
   PARAMETER_VECTOR(u_alpha_x);
   PARAMETER_VECTOR(us_alpha_x);
   val -= dnorm(sum(us_alpha_x), Type(0.0), Type(0.001) * us_alpha_x.size(), true); // soft sum-to-zero constraint
@@ -391,6 +396,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(u_alpha_xat);
   val -= dnorm(u_alpha_xat, 0.0, sigma_alpha_xat, true).sum();
+
+  PARAMETER_VECTOR(u_alpha_xst);
+  val -= dnorm(u_alpha_xst, 0.0, sigma_alpha_xst, true).sum();
 
   // * HIV incidence model *
 
@@ -515,11 +523,11 @@ Type objective_function<Type>::operator() ()
                             Z_x * vector<Type>(log(rho_15to49_t1) + log(1.0 - omega * alpha_15to49_t1)) +
                             Z_lambda_x * ui_lambda_x);
 
-  vector<Type> lambda_t1(exp(mu_lambda_t1));
+  vector<Type> lambda_adult_t1(exp(mu_lambda_t1));
 
   // Add paediatric incidence
   vector<Type> lambda_paed_t1(X_paed_lambda_ratio_t1 * rho_15to49f_t1);
-  lambda_t1 += lambda_paed_t1;
+  vector<Type> lambda_t1(lambda_adult_t1 + lambda_paed_t1);
   
   vector<Type> infections_t1(lambda_t1 * (population_t1 - plhiv_t1));
 
@@ -529,11 +537,12 @@ Type objective_function<Type>::operator() ()
   vector<Type> mu_alpha_t2(mu_alpha + logit_alpha_t1t2_offset +
                            X_alpha_t2 * beta_alpha_t2 +
                            Z_alpha_xt * u_alpha_xt +
-                           Z_alpha_xat * u_alpha_xat);
+                           Z_alpha_xat * u_alpha_xat +
+			   Z_alpha_xst * u_alpha_xst);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
 
-  vector<Type> infections_t1t2((1 - exp(-lambda_t1 * projection_duration)) * (population_t1 - plhiv_t1));
-  vector<Type> plhiv_t2(Lproj_hivpop * plhiv_t1 + Lproj_incid * infections_t1t2 + Lproj_paed * plhiv_t1);
+  vector<Type> infections_adult_t1t2((1 - exp(-lambda_adult_t1 * projection_duration_t1t2)) * (population_t1 - plhiv_t1));
+  vector<Type> plhiv_t2(Lproj_hivpop_t1t2 * plhiv_t1 + Lproj_incid_t1t2 * infections_adult_t1t2 + Lproj_paed_t1t2 * plhiv_t1);
 
   vector<Type> rho_t2(plhiv_t2 / population_t2);
   vector<Type> prop_art_t2(rho_t2 * alpha_t2);
@@ -548,12 +557,12 @@ Type objective_function<Type>::operator() ()
                             Z_x * vector<Type>(log(rho_15to49_t2) + log(1.0 - omega * alpha_15to49_t2)) +
                             Z_lambda_x * ui_lambda_x);
 
-  vector<Type> lambda_t2(exp(mu_lambda_t2));
+  vector<Type> lambda_adult_t2(exp(mu_lambda_t2));
 
   // Add paediatric incidence
   vector<Type> rho_15to49f_t2((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t2)) / (X_15to49f * population_t2));  
   vector<Type> lambda_paed_t2(X_paed_lambda_ratio_t2 * rho_15to49f_t2);
-  lambda_t2 += lambda_paed_t2;
+  vector<Type> lambda_t2(lambda_adult_t2 + lambda_paed_t2);
   
   vector<Type> infections_t2(lambda_t2 * (population_t2 - plhiv_t2));
 
@@ -822,8 +831,8 @@ Type objective_function<Type>::operator() ()
     vector<Type> mu_alpha_t3(mu_alpha_t2 + logit_alpha_t2t3_offset);
     vector<Type> alpha_t3(invlogit(mu_alpha_t3));
     
-    vector<Type> infections_t2t3((1 - exp(-lambda_t2 * projection_duration_t2t3)) * (population_t2 - plhiv_t2));
-    vector<Type> plhiv_t3(Lproj_hivpop_t2t3 * plhiv_t2 + Lproj_incid_t2t3 * infections_t2t3 + Lproj_paed_t2t3 * plhiv_t2);
+    vector<Type> infections_adult_t2t3((1 - exp(-lambda_adult_t2 * projection_duration_t2t3)) * (population_t2 - plhiv_t2));
+    vector<Type> plhiv_t3(Lproj_hivpop_t2t3 * plhiv_t2 + Lproj_incid_t2t3 * infections_adult_t2t3 + Lproj_paed_t2t3 * plhiv_t2);
     
     vector<Type> rho_t3(plhiv_t3 / population_t3);
     vector<Type> prop_art_t3(rho_t3 * alpha_t3);
@@ -837,12 +846,12 @@ Type objective_function<Type>::operator() ()
 			      Z_x * vector<Type>(log(rho_15to49_t3) + log(1.0 - omega * alpha_15to49_t3)) +
 			      Z_lambda_x * ui_lambda_x);
 
-    vector<Type> lambda_t3(exp(mu_lambda_t3));
+    vector<Type> lambda_adult_t3(exp(mu_lambda_t3));
     
     // Add paediatric incidence
     vector<Type> rho_15to49f_t3((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t3)) / (X_15to49f * population_t3));  
     vector<Type> lambda_paed_t3(X_paed_lambda_ratio_t3 * rho_15to49f_t3);
-    lambda_t3 += lambda_paed_t3;
+    vector<Type> lambda_t3(lambda_adult_t3 + lambda_paed_t3);
 
     vector<Type> infections_t3(lambda_t3 * (population_t3 - plhiv_t3));
 

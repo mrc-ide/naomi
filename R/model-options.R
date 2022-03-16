@@ -174,6 +174,12 @@ do_validate_model_options <- function(data, options) {
        (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
       stop(t_("ART_ATTENDANCE_IMPOSSIBLE"))
     }
+
+    if (as.logical(options$artattend_t2) &&
+        ((is.null(options$include_art_t1) || options$include_art_t1 == "false") ||
+         (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
+      stop(t_("TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE"))
+    }    
   }
 
   if (all(is.na(area_merged$spectrum_region_code))) {

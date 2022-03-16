@@ -1,4 +1,4 @@
-﻿iso3,area_id,map_level,map_name,map_id,map_source
+iso3,area_id,map_level,map_name,map_id,map_source
 MWI,MWI_3_1_demo,3,Chitipa District,GkIwZrXy1h2,Datim
 MWI,MWI_3_2_demo,3,Karonga District,cPtvxaZqXIH,Datim
 MWI,MWI_3_5_demo,3,Nkhata Bay District,E7zpfyBt7Tw,Datim
@@ -75,7 +75,7 @@ BDI,BDI_2_39,2,DS Kiremba,SHKNwZi9tpB,Datim
 BDI,BDI_2_26,2,DS Kirundo,kqI0lzVvTpa,Datim
 BDI,BDI_2_15,2,DS Mabayi,j5hHyMdj3tP,Datim
 BDI,BDI_2_29,2,DS Makamba,BDfJLRZI6JM,Datim
-BDI,BDI_2_10,2,DS Matana,D1LszDbXnYz,Datim
+BDI,BDI_2_10lj,2,DS Matana,D1LszDbXnYz,Datim
 BDI,BDI_2_2,2,DS Mpanda,NvvIhQOAajp,Datim
 BDI,BDI_2_27,2,DS Mukenke,GLOIxffOylG,Datim
 BDI,BDI_2_32,2,DS Muramvya,EY5bbPLfUwO,Datim
@@ -89,10 +89,15 @@ BDI,BDI_2_30,2,DS Nyanza-Lac,jzftQkyzDBA,Datim
 BDI,BDI_2_42,2,DS Rumonge,iglTTNBnbxk,Datim
 BDI,BDI_2_44,2,DS Rutana,dHdpENqtN2V,Datim
 BDI,BDI_2_47,2,DS Ruyigi,QwNaultrBl7,Datim
+BDI,BDI_2_48gx,2,DS Rutovu,DBwtW7GRgh5,Datim
 BDI,BDI_2_8,2,DS Rwibaga,ZEisaRR50rX,Datim
 BDI,BDI_2_19,2,DS Ryansoro,B4nTrrOQwMw,Datim
 BDI,BDI_2_28,2,DS Vumbi,flfhn0vMg6P,Datim
 BEN,BEN,0,Benin PSNU Placeholder,ohNhyTc0gIz,Datim
+BEN,BEN_1_10oz,1,Atlantique,IvPI7oE84Vq,Datim
+BEN,BEN_1_1gz,1,Couffo,oIsqSZbfuLh,Datim
+BEN,BEN_1_3xj,1,Littoral,gCxGKwGykFI,Datim
+BEN,BEN_1_11oz,1,Mono,Wx5z1fjgoHg,Datim
 BFA,BFA,0,Burkina Faso,ZeB2eGmDfGw,Datim
 BFA,BFA_1_1,1,Boucle du Mouhoun,I1JZSfp8vcM,Datim
 BFA,BFA_1_3,1,Centre,yFhT3dGnTQZ,Datim
@@ -934,167 +939,167 @@ LSO,LSO_1_7,1,Quthing,HuwCoDZG0FY,Datim
 LSO,LSO_1_8,1,Qacha's Nek,zTaMbxvQtJ6,Datim
 LSO,LSO_1_9,1,Mokhotlong,tjhYqc1MlVo,Datim
 LSO,LSO_1_10,1,Thaba Tseka,jyhIrCoB31x,Datim
-MOZ,MOZ_2_0101,2,Kampfumu,oMVRVkQ4d6Q,Datim
-MOZ,MOZ_2_0102,2,Nlhamankulu,Pw3doHDr3sw,Datim
-MOZ,MOZ_2_0103,2,Kamaxakeni,IYDPRaPGDFu,Datim
-MOZ,MOZ_2_0104,2,Kamavota,OSrBvFsAtYz,Datim
-MOZ,MOZ_2_0105,2,Kamubukwana,itceRrMEAiB,Datim
-MOZ,MOZ_2_0106,2,Katembe,xHmtcBy8x0o,Datim
-MOZ,MOZ_2_0107,2,Kanyaka,TiaX55M0Ca2,Datim
-MOZ,MOZ_2_0201,2,Matutuine,JiyIWhXzTWd,Datim
-MOZ,MOZ_2_0202,2,Namaacha,ar9MMZxpljr,Datim
-MOZ,MOZ_2_0203,2,Boane,KipLfqm48wI,Datim
-MOZ,MOZ_2_0204,2,Matola,rPJ8B53FKqF,Datim
-MOZ,MOZ_2_0205,2,Marracuene,BdhM2BIXWgw,Datim
-MOZ,MOZ_2_0206,2,Moamba,b9sP7gLskme,Datim
-MOZ,MOZ_2_0207,2,Manhiça,FYmZonhCRcn,Datim
-MOZ,MOZ_2_0208,2,Magude,b0DaXHh8J8Q,Datim
-MOZ,MOZ_2_0301,2,Chonguene,jDWCkBXYllV,Datim
-MOZ,MOZ_2_0302,2,Xai-Xai,kKXWgaF11TT,Datim
-MOZ,MOZ_2_0303,2,Limpopo,SIgUX4PJgJD,Datim
-MOZ,MOZ_2_0304,2,Bilene,kZU2LRwlrWA,Datim
-MOZ,MOZ_2_0305,2,Mandlakaze,VjJPal9jqUi,Datim
-MOZ,MOZ_2_0306,2,Chibuto,VQM7cGAZxxK,Datim
-MOZ,MOZ_2_0307,2,Chokwe,L7h5gCdfKAF,Datim
-MOZ,MOZ_2_0308,2,Guija,Me6VFCZmgew,Datim
-MOZ,MOZ_2_0309,2,Chigubo,NFE2l2CJAiC,Datim
-MOZ,MOZ_2_0310,2,Mabalane,qD019OVbYwC,Datim
-MOZ,MOZ_2_0311,2,Massingir,WafdUke7p0k,Datim
-MOZ,MOZ_2_0312,2,Mapai,CPJg054SSVi,Datim
-MOZ,MOZ_2_0313,2,Chicualacuala,g4w1I2XuxMI,Datim
-MOZ,MOZ_2_0314,2,Massangena,hOfUeu7NQ2R,Datim
-MOZ,MOZ_2_0401,2,Zavala,nk7idKGxafr,Datim
-MOZ,MOZ_2_0402,2,Inharrime,pRR2y748unY,Datim
-MOZ,MOZ_2_0403,2,Jangamo,VGCfgWcPjUQ,Datim
-MOZ,MOZ_2_0404,2,Inhambane,OgL15C7NJo9,Datim
-MOZ,MOZ_2_0405,2,Maxixe,KtlpdTLliJg,Datim
-MOZ,MOZ_2_0406,2,Homoine,vGkKz3Vx0Nt,Datim
-MOZ,MOZ_2_0407,2,Panda,dTzshM5bexD,Datim
-MOZ,MOZ_2_0408,2,Morrumbene,hUbRsJh7Oyj,Datim
-MOZ,MOZ_2_0409,2,Massinga,zuf9ikWuKWN,Datim
-MOZ,MOZ_2_0410,2,Funhalouro,TVVHkSQr6IF,Datim
-MOZ,MOZ_2_0411,2,Vilankulo,eN26Kt2lvOM,Datim
-MOZ,MOZ_2_0412,2,Mabote,wVxPZjTP5ox,Datim
-MOZ,MOZ_2_0413,2,Inhassoro,dOgwIHGxt8L,Datim
-MOZ,MOZ_2_0414,2,Govuro,OAhW5JvumGi,Datim
-MOZ,MOZ_2_0501,2,Machanga,NPEM8us3KEs,Datim
-MOZ,MOZ_2_0502,2,Buzi,qwJ8zDHclEj,Datim
-MOZ,MOZ_2_0503,2,Chibabava,Bp2zX2SlSsT,Datim
-MOZ,MOZ_2_0504,2,Beira,c4qdq9NbKuX,Datim
-MOZ,MOZ_2_0505,2,Dondo,QJviLU1xwFA,Datim
-MOZ,MOZ_2_0506,2,Nhamatanda,aKC8chhkCCA,Datim
-MOZ,MOZ_2_0507,2,Muanza,AzFUzPztm80,Datim
-MOZ,MOZ_2_0508,2,Gorongosa,iuqTSkAZRvK,Datim
-MOZ,MOZ_2_0509,2,Marromeu,ZMR1mJVDTD8,Datim
-MOZ,MOZ_2_0510,2,Cheringoma,lZAKLVCoHVw,Datim
-MOZ,MOZ_2_0511,2,Caia,yui33D90Efv,Datim
-MOZ,MOZ_2_0512,2,Maringue,mlYjNL8jqjz,Datim
-MOZ,MOZ_2_0513,2,Chemba,xlBlEsK62tb,Datim
-MOZ,MOZ_2_0601,2,Machaze,NIDi9K5PqmV,Datim
-MOZ,MOZ_2_0602,2,Mossurize,IRbF9zWyxlL,Datim
-MOZ,MOZ_2_0603,2,Sussundenga,Bpe70vg3BZC,Datim
-MOZ,MOZ_2_0604,2,Macate,gjLmOeux9ZB,Datim
-MOZ,MOZ_2_0605,2,Gondola,X7cjhY4Bip4,Datim
-MOZ,MOZ_2_0606,2,Chimoio,RTCsjF28gNA,Datim
-MOZ,MOZ_2_0607,2,Vanduzi,ve5fI4S4kCI,Datim
-MOZ,MOZ_2_0608,2,Manica,j59u9FWJDci,Datim
-MOZ,MOZ_2_0609,2,Macossa,VOuzVI7sb0E,Datim
-MOZ,MOZ_2_0610,2,Barue,lvtegcppyBD,Datim
-MOZ,MOZ_2_0611,2,Tambara,tIcnRbD9VA5,Datim
-MOZ,MOZ_2_0612,2,Guro,I313yxsyBlq,Datim
-MOZ,MOZ_2_0701,2,Mutarara,d94VYtVMct3,Datim
-MOZ,MOZ_2_0702,2,Doa,k6gYruZ10AM,Datim
-MOZ,MOZ_2_0703,2,Changara,vJOqqNfY8zQ,Datim
-MOZ,MOZ_2_0704,2,Moatize,UE2S1UbQGn5,Datim
-MOZ,MOZ_2_0705,2,Tete,tKTswBE0Hyj,Datim
-MOZ,MOZ_2_0706,2,Marara,YRf9rpcBmnu,Datim
-MOZ,MOZ_2_0707,2,Cahora Bassa,uu7IFA6tunO,Datim
-MOZ,MOZ_2_0708,2,Magoe,qf4tOFtS27c,Datim
-MOZ,MOZ_2_0709,2,Tsangano,I9mtTPfmpqm,Datim
-MOZ,MOZ_2_0710,2,Chiuta,Wru7gAGKine,Datim
-MOZ,MOZ_2_0711,2,Maravia,rFFiVUlPDcU,Datim
-MOZ,MOZ_2_0712,2,Zumbu,sxQMns2jOMB,Datim
-MOZ,MOZ_2_0713,2,Angonia,qDeuLTyvoRX,Datim
-MOZ,MOZ_2_0714,2,Macanga,pKaj9VHiTCV,Datim
-MOZ,MOZ_2_0715,2,Chifunde,K5LimiVoQ2t,Datim
-MOZ,MOZ_2_0801,2,Chinde,A2WP9rKyeCd,Datim
-MOZ,MOZ_2_0802,2,Luabo,imEg2imKHMv,Datim
-MOZ,MOZ_2_0803,2,Inhassunge,MrzLUXqobYg,Datim
-MOZ,MOZ_2_0804,2,Quelimane,ZZlLKqhLyve,Datim
-MOZ,MOZ_2_0805,2,Mopeia,xiz4opVckuD,Datim
-MOZ,MOZ_2_0806,2,Namacurra,YDiTYO8iXlo,Datim
-MOZ,MOZ_2_0807,2,Nicoadala,MLWfwGSAExm,Datim
-MOZ,MOZ_2_0808,2,Maganja Da Costa,j7R6NW899TU,Datim
-MOZ,MOZ_2_0809,2,Mocubela,EOiaX9x1o8g,Datim
-MOZ,MOZ_2_0810,2,Mocuba,yyR3ZgRyBzQ,Datim
-MOZ,MOZ_2_0811,2,Derre,c5OMOnQ8Yuf,Datim
-MOZ,MOZ_2_0812,2,Morrumbala,eKkUVSMc9VE,Datim
-MOZ,MOZ_2_0813,2,Pebane,Ld3DBzAtu2q,Datim
-MOZ,MOZ_2_0814,2,Mulevala,iqL4lrR62dI,Datim
-MOZ,MOZ_2_0815,2,Lugela,ld9H4kG1Bnr,Datim
-MOZ,MOZ_2_0816,2,Milange,p1khrkzyj1C,Datim
-MOZ,MOZ_2_0817,2,Gile,nfk2rLcVuFx,Datim
-MOZ,MOZ_2_0818,2,Alto Molocue,SnbIkc5HFdC,Datim
-MOZ,MOZ_2_0819,2,Ile,IbTdghFlhMi,Datim
-MOZ,MOZ_2_0820,2,Namarroi,bigmUwX7nZi,Datim
-MOZ,MOZ_2_0821,2,Molumbo,ZKcg6E0YW40,Datim
-MOZ,MOZ_2_0822,2,Gurue,TNxjWVnFcH3,Datim
-MOZ,MOZ_2_0901,2,Moma,j5uYmqh5tq6,Datim
-MOZ,MOZ_2_0902,2,Larde,Bpj2lcQ3uL4,Datim
-MOZ,MOZ_2_0903,2,Angoche,xIowtHPEVqN,Datim
-MOZ,MOZ_2_0904,2,Mogovolas,EBH5pfGP97m,Datim
-MOZ,MOZ_2_0905,2,Murrupula,vbDb0zzpQej,Datim
-MOZ,MOZ_2_0906,2,Liupo,bEwMiJVVrEJ,Datim
-MOZ,MOZ_2_0907,2,Mogincual,rdJibBp1ZPV,Datim
-MOZ,MOZ_2_0908,2,Meconta,tXKwBtQqb2o,Datim
-MOZ,MOZ_2_0909,2,Nampula,jwLNNIw1MjY,Datim
-MOZ,MOZ_2_0910,2,Rapale,dhGsWCy06oC,Datim
-MOZ,MOZ_2_0911,2,Ribaue,DkiQIZm6OXK,Datim
-MOZ,MOZ_2_0912,2,Malema,RthlF0LdPnR,Datim
-MOZ,MOZ_2_0913,2,Ilha De Moçambique,zvN1CKVc0o5,Datim
-MOZ,MOZ_2_0914,2,Mossuril,twsAundvOb3,Datim
-MOZ,MOZ_2_0915,2,Monapo,ztnYInN25Ev,Datim
-MOZ,MOZ_2_0916,2,Muecate,TC4V2Gtm5am,Datim
-MOZ,MOZ_2_0917,2,Mecuburi,YLkTM4jAvvq,Datim
-MOZ,MOZ_2_0918,2,Lalaua,TpXEdX36fEz,Datim
-MOZ,MOZ_2_0919,2,Nacala,rzyQVCV9LjG,Datim
-MOZ,MOZ_2_0920,2,Nacala-A-Velha,Un8VIqAxgEx,Datim
-MOZ,MOZ_2_0921,2,Nacaroa,i25wGrBbMs1,Datim
-MOZ,MOZ_2_0922,2,Memba,dOIfGVyGIpn,Datim
-MOZ,MOZ_2_0923,2,Erati,CotlFJ64kUi,Datim
-MOZ,MOZ_2_1001,2,Mecufi,UoLzZMWjMVe,Datim
-MOZ,MOZ_2_1002,2,Chiure,xamxMtXf90S,Datim
-MOZ,MOZ_2_1003,2,Namuno,bnhBwZyeeZ2,Datim
-MOZ,MOZ_2_1004,2,Balama,C7EQJm08Lwv,Datim
-MOZ,MOZ_2_1005,2,Pemba,ekAcXW11CZ1,Datim
-MOZ,MOZ_2_1006,2,Metuge,fc2uOqmPmxj,Datim
-MOZ,MOZ_2_1007,2,Ancuabe,e29LLJAHdD1,Datim
-MOZ,MOZ_2_1008,2,Quissanga,LOKCcb4nHry,Datim
-MOZ,MOZ_2_1009,2,Ibo,vWzkPAeBxlo,Datim
-MOZ,MOZ_2_1010,2,Meluco,zOra9muIVhA,Datim
-MOZ,MOZ_2_1011,2,Montepuez,gC1CuJI7U4O,Datim
-MOZ,MOZ_2_1012,2,Macomia,NAIy78Rvj1R,Datim
-MOZ,MOZ_2_1013,2,Muidumbe,yFhTDhuvGvh,Datim
-MOZ,MOZ_2_1014,2,Mocimboa Da Praia,O2z5wEyPOg8,Datim
-MOZ,MOZ_2_1015,2,Mueda,VP9rX1d18Xv,Datim
-MOZ,MOZ_2_1016,2,Palma,YG04j6NLdOx,Datim
-MOZ,MOZ_2_1017,2,Nangade,GwyF7sE2V85,Datim
-MOZ,MOZ_2_1101,2,Cuamba,IBMUL2QvXz9,Datim
-MOZ,MOZ_2_1102,2,Mecanhelas,U7YoaJ2BQBb,Datim
-MOZ,MOZ_2_1103,2,Metarica,epuWlUacuTU,Datim
-MOZ,MOZ_2_1104,2,Mandimba,S97ZWSnm6N8,Datim
-MOZ,MOZ_2_1105,2,Nipepe,lO3xjgJ61jK,Datim
-MOZ,MOZ_2_1106,2,Maua,bQzuJ86gGEs,Datim
-MOZ,MOZ_2_1107,2,Marrupa,yz6zrfor2jA,Datim
-MOZ,MOZ_2_1108,2,Majune,ccB4ESz9ZwC,Datim
-MOZ,MOZ_2_1109,2,Ngauma,gsAweMCroa7,Datim
-MOZ,MOZ_2_1110,2,Chimbonila,AYDAvImG7tH,Datim
-MOZ,MOZ_2_1111,2,Lichinga,oWKesP8CeL0,Datim
-MOZ,MOZ_2_1112,2,Mecula,W3l4gXZtBCB,Datim
-MOZ,MOZ_2_1113,2,Mavago,WYLJVeRp9kP,Datim
-MOZ,MOZ_2_1114,2,Muembe,TbQ9Og6Mg2r,Datim
-MOZ,MOZ_2_1115,2,Sanga,Sv3e9Erafn0,Datim
-MOZ,MOZ_2_1116,2,Lago,UlTlUIybBkP,Datim
+MOZ,MOZ_3_1209,3,Kampfumu,oMVRVkQ4d6Q,Datim
+MOZ,MOZ_3_1210,3,Nlhamankulu,Pw3doHDr3sw,Datim
+MOZ,MOZ_3_1211,3,Kamaxakeni,IYDPRaPGDFu,Datim
+MOZ,MOZ_3_1212,3,Kamavota,OSrBvFsAtYz,Datim
+MOZ,MOZ_3_1213,3,Kamubukwana,itceRrMEAiB,Datim
+MOZ,MOZ_3_1214,3,Katembe,xHmtcBy8x0o,Datim
+MOZ,MOZ_3_1215,3,Kanyaka,TiaX55M0Ca2,Datim
+MOZ,MOZ_3_1206,3,Matutuine,JiyIWhXzTWd,Datim
+MOZ,MOZ_3_1208,3,Namaacha,ar9MMZxpljr,Datim
+MOZ,MOZ_3_1202,3,Boane,KipLfqm48wI,Datim
+MOZ,MOZ_3_1201,3,Matola,rPJ8B53FKqF,Datim
+MOZ,MOZ_3_1205,3,Marracuene,BdhM2BIXWgw,Datim
+MOZ,MOZ_3_1207,3,Moamba,b9sP7gLskme,Datim
+MOZ,MOZ_3_1204,3,Manhiça,FYmZonhCRcn,Datim
+MOZ,MOZ_3_1203,3,Magude,b0DaXHh8J8Q,Datim
+MOZ,MOZ_3_0313,3,Chonguene,jDWCkBXYllV,Datim
+MOZ,MOZ_3_0301,3,Xai-Xai,kKXWgaF11TT,Datim
+MOZ,MOZ_3_0312,3,Limpopo,SIgUX4PJgJD,Datim
+MOZ,MOZ_3_0302,3,Bilene,kZU2LRwlrWA,Datim
+MOZ,MOZ_3_0309,3,Mandlakaze,VjJPal9jqUi,Datim
+MOZ,MOZ_3_0303,3,Chibuto,VQM7cGAZxxK,Datim
+MOZ,MOZ_3_0306,3,Chokwe,L7h5gCdfKAF,Datim
+MOZ,MOZ_3_0307,3,Guija,Me6VFCZmgew,Datim
+MOZ,MOZ_3_0305,3,Chigubo,NFE2l2CJAiC,Datim
+MOZ,MOZ_3_0308,3,Mabalane,qD019OVbYwC,Datim
+MOZ,MOZ_3_0311,3,Massingir,WafdUke7p0k,Datim
+MOZ,MOZ_3_0314,3,Mapai,CPJg054SSVi,Datim
+MOZ,MOZ_3_0304,3,Chicualacuala,g4w1I2XuxMI,Datim
+MOZ,MOZ_3_0310,3,Massangena,hOfUeu7NQ2R,Datim
+MOZ,MOZ_3_0414,3,Zavala,nk7idKGxafr,Datim
+MOZ,MOZ_3_0405,3,Inharrime,pRR2y748unY,Datim
+MOZ,MOZ_3_0407,3,Jangamo,VGCfgWcPjUQ,Datim
+MOZ,MOZ_3_0401,3,Inhambane,OgL15C7NJo9,Datim
+MOZ,MOZ_3_0410,3,Maxixe,KtlpdTLliJg,Datim
+MOZ,MOZ_3_0404,3,Homoine,vGkKz3Vx0Nt,Datim
+MOZ,MOZ_3_0412,3,Panda,dTzshM5bexD,Datim
+MOZ,MOZ_3_0411,3,Morrumbene,hUbRsJh7Oyj,Datim
+MOZ,MOZ_3_0409,3,Massinga,zuf9ikWuKWN,Datim
+MOZ,MOZ_3_0402,3,Funhalouro,TVVHkSQr6IF,Datim
+MOZ,MOZ_3_0413,3,Vilankulo,eN26Kt2lvOM,Datim
+MOZ,MOZ_3_0408,3,Mabote,wVxPZjTP5ox,Datim
+MOZ,MOZ_3_0406,3,Inhassoro,dOgwIHGxt8L,Datim
+MOZ,MOZ_3_0403,3,Govuro,OAhW5JvumGi,Datim
+MOZ,MOZ_3_0508,3,Machanga,NPEM8us3KEs,Datim
+MOZ,MOZ_3_0502,3,Buzi,qwJ8zDHclEj,Datim
+MOZ,MOZ_3_0506,3,Chibabava,Bp2zX2SlSsT,Datim
+MOZ,MOZ_3_0501,3,Beira,c4qdq9NbKuX,Datim
+MOZ,MOZ_3_0507,3,Dondo,QJviLU1xwFA,Datim
+MOZ,MOZ_3_0511,3,Nhamatanda,aKC8chhkCCA,Datim
+MOZ,MOZ_3_0510,3,Muanza,AzFUzPztm80,Datim
+MOZ,MOZ_3_0512,3,Gorongosa,iuqTSkAZRvK,Datim
+MOZ,MOZ_3_0509,3,Marromeu,ZMR1mJVDTD8,Datim
+MOZ,MOZ_3_0505,3,Cheringoma,lZAKLVCoHVw,Datim
+MOZ,MOZ_3_0503,3,Caia,yui33D90Efv,Datim
+MOZ,MOZ_3_0513,3,Maringue,mlYjNL8jqjz,Datim
+MOZ,MOZ_3_0504,3,Chemba,xlBlEsK62tb,Datim
+MOZ,MOZ_3_0605,3,Machaze,NIDi9K5PqmV,Datim
+MOZ,MOZ_3_0608,3,Mossurize,IRbF9zWyxlL,Datim
+MOZ,MOZ_3_0612,3,Sussundenga,Bpe70vg3BZC,Datim
+MOZ,MOZ_3_0610,3,Macate,gjLmOeux9ZB,Datim
+MOZ,MOZ_3_0603,3,Gondola,X7cjhY4Bip4,Datim
+MOZ,MOZ_3_0601,3,Chimoio,RTCsjF28gNA,Datim
+MOZ,MOZ_3_0611,3,Vanduzi,ve5fI4S4kCI,Datim
+MOZ,MOZ_3_0607,3,Manica,j59u9FWJDci,Datim
+MOZ,MOZ_3_0606,3,Macossa,VOuzVI7sb0E,Datim
+MOZ,MOZ_3_0602,3,Barue,lvtegcppyBD,Datim
+MOZ,MOZ_3_0609,3,Tambara,tIcnRbD9VA5,Datim
+MOZ,MOZ_3_0604,3,Guro,I313yxsyBlq,Datim
+MOZ,MOZ_3_0711,3,Mutarara,d94VYtVMct3,Datim
+MOZ,MOZ_3_0714,3,Doa,k6gYruZ10AM,Datim
+MOZ,MOZ_3_0704,3,Changara,vJOqqNfY8zQ,Datim
+MOZ,MOZ_3_0710,3,Moatize,UE2S1UbQGn5,Datim
+MOZ,MOZ_3_0701,3,Tete,tKTswBE0Hyj,Datim
+MOZ,MOZ_3_0715,3,Marara,YRf9rpcBmnu,Datim
+MOZ,MOZ_3_0703,3,Cahora Bassa,uu7IFA6tunO,Datim
+MOZ,MOZ_3_0708,3,Magoe,qf4tOFtS27c,Datim
+MOZ,MOZ_3_0712,3,Tsangano,I9mtTPfmpqm,Datim
+MOZ,MOZ_3_0706,3,Chiuta,Wru7gAGKine,Datim
+MOZ,MOZ_3_0709,3,Maravia,rFFiVUlPDcU,Datim
+MOZ,MOZ_3_0713,3,Zumbu,sxQMns2jOMB,Datim
+MOZ,MOZ_3_0702,3,Angonia,qDeuLTyvoRX,Datim
+MOZ,MOZ_3_0707,3,Macanga,pKaj9VHiTCV,Datim
+MOZ,MOZ_3_0705,3,Chifunde,K5LimiVoQ2t,Datim
+MOZ,MOZ_3_0803,3,Chinde,A2WP9rKyeCd,Datim
+MOZ,MOZ_3_0819,3,Luabo,imEg2imKHMv,Datim
+MOZ,MOZ_3_0807,3,Inhassunge,MrzLUXqobYg,Datim
+MOZ,MOZ_3_0801,3,Quelimane,ZZlLKqhLyve,Datim
+MOZ,MOZ_3_0812,3,Mopeia,xiz4opVckuD,Datim
+MOZ,MOZ_3_0814,3,Namacurra,YDiTYO8iXlo,Datim
+MOZ,MOZ_3_0816,3,Nicoadala,MLWfwGSAExm,Datim
+MOZ,MOZ_3_0809,3,Maganja Da Costa,j7R6NW899TU,Datim
+MOZ,MOZ_3_0820,3,Mocubela,EOiaX9x1o8g,Datim
+MOZ,MOZ_3_0811,3,Mocuba,yyR3ZgRyBzQ,Datim
+MOZ,MOZ_3_0818,3,Derre,c5OMOnQ8Yuf,Datim
+MOZ,MOZ_3_0813,3,Morrumbala,eKkUVSMc9VE,Datim
+MOZ,MOZ_3_0817,3,Pebane,Ld3DBzAtu2q,Datim
+MOZ,MOZ_3_0822,3,Mulevala,iqL4lrR62dI,Datim
+MOZ,MOZ_3_0808,3,Lugela,ld9H4kG1Bnr,Datim
+MOZ,MOZ_3_0810,3,Milange,p1khrkzyj1C,Datim
+MOZ,MOZ_3_0804,3,Gile,nfk2rLcVuFx,Datim
+MOZ,MOZ_3_0802,3,Alto Molocue,SnbIkc5HFdC,Datim
+MOZ,MOZ_3_0806,3,Ile,IbTdghFlhMi,Datim
+MOZ,MOZ_3_0815,3,Namarroi,bigmUwX7nZi,Datim
+MOZ,MOZ_3_0821,3,Molumbo,ZKcg6E0YW40,Datim
+MOZ,MOZ_3_0805,3,Gurue,TNxjWVnFcH3,Datim
+MOZ,MOZ_3_0912,3,Moma,j5uYmqh5tq6,Datim
+MOZ,MOZ_3_0922,3,Larde,Bpj2lcQ3uL4,Datim
+MOZ,MOZ_3_0902,3,Angoche,xIowtHPEVqN,Datim
+MOZ,MOZ_3_0911,3,Mogovolas,EBH5pfGP97m,Datim
+MOZ,MOZ_3_0916,3,Murrupula,vbDb0zzpQej,Datim
+MOZ,MOZ_3_0923,3,Liupo,bEwMiJVVrEJ,Datim
+MOZ,MOZ_3_0910,3,Mogincual,rdJibBp1ZPV,Datim
+MOZ,MOZ_3_0907,3,Meconta,tXKwBtQqb2o,Datim
+MOZ,MOZ_3_0901,3,Nampula,jwLNNIw1MjY,Datim
+MOZ,MOZ_3_0920,3,Rapale,dhGsWCy06oC,Datim
+MOZ,MOZ_3_0921,3,Ribaue,DkiQIZm6OXK,Datim
+MOZ,MOZ_3_0906,3,Malema,RthlF0LdPnR,Datim
+MOZ,MOZ_3_0904,3,Ilha De Moçambique,zvN1CKVc0o5,Datim
+MOZ,MOZ_3_0914,3,Mossuril,twsAundvOb3,Datim
+MOZ,MOZ_3_0913,3,Monapo,ztnYInN25Ev,Datim
+MOZ,MOZ_3_0915,3,Muecate,TC4V2Gtm5am,Datim
+MOZ,MOZ_3_0908,3,Mecuburi,YLkTM4jAvvq,Datim
+MOZ,MOZ_3_0905,3,Lalaua,TpXEdX36fEz,Datim
+MOZ,MOZ_3_0917,3,Nacala,rzyQVCV9LjG,Datim
+MOZ,MOZ_3_0918,3,Nacala-A-Velha,Un8VIqAxgEx,Datim
+MOZ,MOZ_3_0919,3,Nacaroa,i25wGrBbMs1,Datim
+MOZ,MOZ_3_0909,3,Memba,dOIfGVyGIpn,Datim
+MOZ,MOZ_3_0903,3,Erati,CotlFJ64kUi,Datim
+MOZ,MOZ_3_1007,3,Mecufi,UoLzZMWjMVe,Datim
+MOZ,MOZ_3_1004,3,Chiure,xamxMtXf90S,Datim
+MOZ,MOZ_3_1013,3,Namuno,bnhBwZyeeZ2,Datim
+MOZ,MOZ_3_1003,3,Balama,C7EQJm08Lwv,Datim
+MOZ,MOZ_3_1001,3,Pemba,ekAcXW11CZ1,Datim
+MOZ,MOZ_3_1016,3,Metuge,fc2uOqmPmxj,Datim
+MOZ,MOZ_3_1002,3,Ancuabe,e29LLJAHdD1,Datim
+MOZ,MOZ_3_1017,3,Quissanga,LOKCcb4nHry,Datim
+MOZ,MOZ_3_1005,3,Ibo,vWzkPAeBxlo,Datim
+MOZ,MOZ_3_1008,3,Meluco,zOra9muIVhA,Datim
+MOZ,MOZ_3_1010,3,Montepuez,gC1CuJI7U4O,Datim
+MOZ,MOZ_3_1006,3,Macomia,"NAIy78Rvj1R",Datim
+MOZ,MOZ_3_1012,3,Muidumbe,yFhTDhuvGvh,Datim
+MOZ,MOZ_3_1009,3,Mocimboa Da Praia,O2z5wEyPOg8,Datim
+MOZ,MOZ_3_1011,3,Mueda,VP9rX1d18Xv,Datim
+MOZ,MOZ_3_1015,3,Palma,YG04j6NLdOx,Datim
+MOZ,MOZ_3_1014,3,Nangade,GwyF7sE2V85,Datim
+MOZ,MOZ_3_1102,3,Cuamba,IBMUL2QvXz9,Datim
+MOZ,MOZ_3_1110,3,Mecanhelas,U7YoaJ2BQBb,Datim
+MOZ,MOZ_3_1112,3,Metarica,epuWlUacuTU,Datim
+MOZ,MOZ_3_1106,3,Mandimba,S97ZWSnm6N8,Datim
+MOZ,MOZ_3_1115,3,Nipepe,lO3xjgJ61jK,Datim
+MOZ,MOZ_3_1108,3,Maua,bQzuJ86gGEs,Datim
+MOZ,MOZ_3_1107,3,Marrupa,yz6zrfor2jA,Datim
+MOZ,MOZ_3_1105,3,Majune,ccB4ESz9ZwC,Datim
+MOZ,MOZ_3_1114,3,Ngauma,gsAweMCroa7,Datim
+MOZ,MOZ_3_1104,3,Chimbonila,AYDAvImG7tH,Datim
+MOZ,MOZ_3_1101,3,Lichinga,oWKesP8CeL0,Datim
+MOZ,MOZ_3_1111,3,Mecula,W3l4gXZtBCB,Datim
+MOZ,MOZ_3_1109,3,Mavago,WYLJVeRp9kP,Datim
+MOZ,MOZ_3_1113,3,Muembe,TbQ9Og6Mg2r,Datim
+MOZ,MOZ_3_1116,3,Sanga,Sv3e9Erafn0,Datim
+MOZ,MOZ_3_1103,3,Lago,UlTlUIybBkP,Datim
 MWI,MWI_3_01,3,Chitipa District,GkIwZrXy1h2,Datim
 MWI,MWI_3_02,3,Karonga District,cPtvxaZqXIH,Datim
 MWI,MWI_3_03,3,Nkhata Bay District,E7zpfyBt7Tw,Datim
@@ -1123,39 +1128,39 @@ MWI,MWI_3_25,3,Thyolo District,ul0y9diGujK,Datim
 MWI,MWI_3_26,3,Chikwawa District,U8c0so51kT6,Datim
 MWI,MWI_3_27,3,Nsanje District,rpw540fmNUz,Datim
 MWI,MWI_3_28,3,Neno District,gwVYinjBAe9,Datim
-NAM,NAM_2_11,2,Andara,EU2LFjnUoDe,Datim
-NAM,NAM_2_20,2,Eenhana,S1IBLD18mtu,Datim
-NAM,NAM_2_21,2,Engela,e1a8dK5TE6S,Datim
-NAM,NAM_2_23,2,Gobabis,ho9XZGO2xwb,Datim
-NAM,NAM_2_33,2,Grootfontein,pu4bDzrPVNO,Datim
-NAM,NAM_2_02,2,Karasburg,BRlm2H3PtTw,Datim
-NAM,NAM_2_38,2,Katima Mulilo,rLlgwmoLsNZ,Datim
-NAM,NAM_2_03,2,Keetmanshoop,MoS2ZmKSIk3,Datim
-NAM,NAM_2_17,2,Khorixas,EH9NQ6mDfGj,Datim
-NAM,NAM_2_09,2,Mariental,hmJydtJou7V,Datim
-NAM,NAM_2_14,2,Nkurenkuru,INU6NqUEjiG,Datim
-NAM,NAM_2_12,2,Nyangana,EIzDG2iU7QA,Datim
-NAM,NAM_2_34,2,Okahandja,iMaVLYizifi,Datim
-NAM,NAM_2_24,2,Okahao,BOeHH7hRtfF,Datim
-NAM,NAM_2_35,2,Okakarara,zgdgaDyKL7W,Datim
-NAM,NAM_2_22,2,Okongo,vnMTivFAdYZ,Datim
-NAM,NAM_2_05,2,Omaruru,PbiAN2iuMNC,Datim
-NAM,NAM_2_30,2,Omuthiya,DbKN1FBhTpa,Datim
-NAM,NAM_2_31,2,Onandjokwe,YUe7e0hebL4,Datim
-NAM,NAM_2_18,2,Opuwo,Hb7N9vIk71A,Datim
-NAM,NAM_2_29,2,Oshakati,NUNNhuEIKSi,Datim
-NAM,NAM_2_25,2,Oshikuku,nefXINwu0Lq,Datim
-NAM,NAM_2_36,2,Otjiwarongo,BKA8mKOpaX9,Datim
-NAM,NAM_2_26,2,Outapi,KYONoFZCJgv,Datim
-NAM,NAM_2_19,2,Outjo,dZqqyXzAgDx,Datim
-NAM,NAM_2_10,2,Rehoboth,ltNu9G8IFBM,Datim
-NAM,NAM_2_13,2,Rundu,uTYaIAY3Rdg,Datim
-NAM,NAM_2_06,2,Swakopmund,o7vpmMqL7Sf,Datim
-NAM,NAM_2_27,2,Tsandi,F4beFAJLYBP,Datim
-NAM,NAM_2_32,2,Tsumeb,yC4ye65DZNI,Datim
-NAM,NAM_2_07,2,Usakos,ToudRH4CDr9,Datim
-NAM,NAM_2_08,2,Walvis Bay,BXwmiCump7T,Datim
-NAM,NAM_2_16,2,Windhoek,liTRatgsSjS,Datim
+"NAM","NAM_2_11",2,Andara,EU2LFjnUoDe,Datim
+"NAM","NAM_2_20",2,Eenhana,S1IBLD18mtu,Datim
+"NAM","NAM_2_21",2,Engela,e1a8dK5TE6S,Datim
+"NAM","NAM_2_23",2,Gobabis,ho9XZGO2xwb,Datim
+"NAM","NAM_2_33",2,Grootfontein,pu4bDzrPVNO,Datim
+"NAM","NAM_2_02",2,Karasburg,BRlm2H3PtTw,Datim
+"NAM","NAM_2_38",2,Katima Mulilo,rLlgwmoLsNZ,Datim
+"NAM","NAM_2_03",2,Keetmanshoop,MoS2ZmKSIk3,Datim
+"NAM","NAM_2_17",2,Khorixas,EH9NQ6mDfGj,Datim
+"NAM","NAM_2_09",2,Mariental,hmJydtJou7V,Datim
+"NAM","NAM_2_14",2,Nkurenkuru,INU6NqUEjiG,Datim
+"NAM","NAM_2_12",2,Nyangana,EIzDG2iU7QA,Datim
+"NAM","NAM_2_34",2,Okahandja,iMaVLYizifi,Datim
+"NAM","NAM_2_24",2,Okahao,BOeHH7hRtfF,Datim
+"NAM","NAM_2_35",2,Okakarara,zgdgaDyKL7W,Datim
+"NAM","NAM_2_22",2,Okongo,vnMTivFAdYZ,Datim
+"NAM","NAM_2_05",2,Omaruru,PbiAN2iuMNC,Datim
+"NAM","NAM_2_30",2,Omuthiya,DbKN1FBhTpa,Datim
+"NAM","NAM_2_31",2,Onandjokwe,YUe7e0hebL4,Datim
+"NAM","NAM_2_18",2,Opuwo,Hb7N9vIk71A,Datim
+"NAM","NAM_2_29",2,Oshakati,NUNNhuEIKSi,Datim
+"NAM","NAM_2_25",2,Oshikuku,nefXINwu0Lq,Datim
+"NAM","NAM_2_36",2,Otjiwarongo,BKA8mKOpaX9,Datim
+"NAM","NAM_2_26",2,Outapi,KYONoFZCJgv,Datim
+"NAM","NAM_2_19",2,Outjo,dZqqyXzAgDx,Datim
+"NAM","NAM_2_10",2,Rehoboth,ltNu9G8IFBM,Datim
+"NAM","NAM_2_13",2,Rundu,uTYaIAY3Rdg,Datim
+"NAM","NAM_2_06",2,Swakopmund,o7vpmMqL7Sf,Datim
+"NAM","NAM_2_27",2,Tsandi,F4beFAJLYBP,Datim
+"NAM","NAM_2_32",2,Tsumeb,yC4ye65DZNI,Datim
+"NAM","NAM_2_07",2,Usakos,ToudRH4CDr9,Datim
+"NAM","NAM_2_08",2,Walvis Bay,BXwmiCump7T,Datim
+"NAM","NAM_2_16",2,Windhoek,liTRatgsSjS,Datim
 NGA,NGA_2_AB,1,Abia,PSyoMabuxF4,Datim
 NGA,NGA_2_AN,1,Anambra,LXdsxJVo6Gk,Datim
 NGA,NGA_2_EB,1,Ebonyi,GBuVMaobpww,Datim

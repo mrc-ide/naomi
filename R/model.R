@@ -95,6 +95,7 @@ naomi_output_frame <- function(mf_model,
 #' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
 #' @param rho_paed_15to49f_ratio logical; to model paediatric prevalence as ratio of 15-49 female prevalence
 #' @param rho_paed_x_term logical; to include area interaction for paediatric prevalence
+#' @param alpha_xst_term logical; to include district-sex-time interaction for ART coverage. Default `FALSE`.
 #' @param logit_nu_mean mean of logit viral load suppression.
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
@@ -130,8 +131,9 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
-                              rho_paed_15to49f_ratio = FALSE,
+                              rho_paed_15to49f_ratio = TRUE,
                               rho_paed_x_term = FALSE,
+                              alpha_xst_term = FALSE,
                               logit_nu_mean = 2.0,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national",
@@ -506,16 +508,28 @@ naomi_model_frame <- function(area_merged,
            )
 
 
-  ## Projection matrix
+  ## Projection matrices
   quarter_id1 <- calendar_quarter_to_quarter_id(calendar_quarter1)
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   quarter_id3 <- calendar_quarter_to_quarter_id(calendar_quarter3)
 
-  Lproj <- create_Lproj(spec, mf_model, quarter_id1, quarter_id2, quarter_id3,
-                        adjust_area_growth = adjust_area_growth)
-  projection_duration <- (quarter_id2 - quarter_id1) / 4
-  projection_duration_t2t3 <- (quarter_id3 - quarter_id2) / 4
-
+  Lproj_t1t2 <- create_Lproj(spec = spec,
+                             mf_model = mf_model,
+                             quarter_id1 = quarter_id1,
+                             quarter_id2 = quarter_id2,
+                             population_colname1 = "population_t1",
+                             population_colname2 = "population_t2",
+                             adjust_area_growth = adjust_area_growth)
+  
+  Lproj_t2t3 <- create_Lproj(spec = spec,
+                             mf_model = mf_model,
+                             quarter_id1 = quarter_id2,
+                             quarter_id2 = quarter_id3,
+                             population_colname1 = "population_t2",
+                             population_colname2 = "population_t3",
+                             adjust_area_growth = adjust_area_growth)
+  
+  
   ## Adjacency matrix
   mf_areas_sf <- mf_areas
   mf_areas_sf$geometry <- areas$boundaries[area_id]
@@ -644,22 +658,12 @@ naomi_model_frame <- function(area_merged,
             mf_artattend = mf_artattend,
             artattend_t2 = artattend_t2,
             rho_paed_x_term = rho_paed_x_term,
+            alpha_xst_term = alpha_xst_term,
             area_aggregation = area_aggregation,
             A_out = outf$A,
             A_anc_out = anc_outf$A,
-            Lproj_hivpop = Lproj$Lproj_hivpop,
-            Lproj_incid = Lproj$Lproj_incid,
-            Lproj_paed = Lproj$Lproj_paed,
-            Lproj_hivpop_t1t2 = Lproj$Lproj_hivpop_t1t2,
-            Lproj_incid_t1t2 = Lproj$Lproj_incid_t1t2,
-            Lproj_paed_t1t2 = Lproj$Lproj_paed_t1t2,
-            Lproj_netgrow_t1t2 = Lproj$Lproj_netgrow_t1t2,
-            projection_duration = projection_duration,
-            Lproj_hivpop_t2t3 = Lproj$Lproj_hivpop_t2t3,
-            Lproj_incid_t2t3 = Lproj$Lproj_incid_t2t3,
-            Lproj_paed_t2t3 = Lproj$Lproj_paed_t2t3,
-            Lproj_netgrow_t2t3 = Lproj$Lproj_netgrow_t2t3,
-            projection_duration_t2t3 = projection_duration_t2t3,
+            Lproj_t1t2 = Lproj_t1t2,
+            Lproj_t2t3 = Lproj_t2t3,
             areas = area_merged,
             age_groups = age_groups,
             sexes = sexes,
@@ -907,29 +911,32 @@ update_mf_offsets <- function(naomi_mf,
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
-  ## TODO: This should handle different age_max by sex...
   get_idx <- function(mf, df) {
 
     age_max <- df %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
-      dplyr::summarise(age_max = max(age_group_start + age_group_span)) %>%
-      .$age_max
+      dplyr::group_by(sex) %>%
+      dplyr::summarise(age_max = max(age_group_start + age_group_span))
 
     age_min <- df %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
-      dplyr::summarise(age_min = min(age_group_start)) %>%
-      .$age_min
+      dplyr::group_by(sex) %>%
+      dplyr::summarise(age_min = min(age_group_start))
 
     mf %>%
       dplyr::left_join(get_age_groups(), by = "age_group") %>%
+      dplyr::left_join(age_max, by = "sex") %>%
+      dplyr::left_join(age_min, by = "sex") %>%
+      dplyr::group_by(sex) %>%
       dplyr::transmute(idx,
                        data_range = as.integer(age_group_start >= age_min & (age_group_start + age_group_span) <= age_max),
                        upper_offset_range = as.integer((age_group_start + age_group_span) >= age_max),
                        lower_offset_range = as.integer(age_group_start <= age_min),
                        age_fct = pmin(age_group_start, max(age_group_start * data_range)),
                        age_fct = pmax(age_fct, min(age_fct / data_range, na.rm = TRUE)),
-                       age_fct = factor(age_fct))
-
+                       age_fct = factor(age_fct)) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-sex)
   }
 
 

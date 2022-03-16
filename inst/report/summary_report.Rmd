@@ -73,11 +73,9 @@ if(grepl("\\.zip$", params$outputs)) {
   options <- unz(output_zip, "info/options.yml")
   options <- yaml::read_yaml(options)
   
-  calibration_files <- utils::unzip(output_zip, list = TRUE)
-  if("fit/calibration_options.csv" %in% calibration_files$Name) {
-    calibration_options <- unz(output_zip, "fit/calibration_options.csv")
-    calibration_options <- readr::read_csv(calibration_options)
-    calibration_options <- split(calibration_options$value, calibration_options$option)
+
+  if("calibration_options" %in% names(outputs$fit)) {
+    calibration_options <- outputs$fit$calibration_options
   } else {
     calibration_options <- options[grep("calibration", names(options))]
   }
@@ -375,7 +373,7 @@ if ("true" %in% include$art_attend) {
 ```{r, echo = FALSE, results = 'asis', include = print_fr, eval = print_fr}
 if ("true" %in% include$art_attend) {
   
-  cat(paste0("La couverture du ART est estimée en tenant compte de la mobilité 
+  cat(paste0("La couverture du TARV est estimée en tenant compte de la mobilité 
   des patients entre les districts voisins (pour ", art_attend, "). 
   \n Cela prend en compte leur lieu de résidence par opposition à
   l'emplacement de la clinique qu'ils ont fréquentée
@@ -810,7 +808,7 @@ Antiretroviral therapy coverage by district, age, and sex is estimated from hous
 
 ::: {#translate lang="fr"}
 ### Méthodes
-[Naomi](https://github.com/mrc-ide/naomi) est un modèle d'estimation à petite échelle permettant d'estimer la prévalence du VIH et des PVVIH, la couverture ART et les nouvelles infections par le VIH au niveau du district par sexe et par groupe d'âge de cinq ans. Le modèle combine des données au niveau du district sur des résultats multiples provenant de plusieurs sources dans un modèle statistique bayésien pour produire des indicateurs robustes de la charge du VIH au niveau sous-national.
+[Naomi](https://github.com/mrc-ide/naomi) est un modèle d'estimation à petite échelle permettant d'estimer la prévalence du VIH et des PVVIH, la couverture TARV et les nouvelles infections par le VIH au niveau du district par sexe et par groupe d'âge de cinq ans. Le modèle combine des données au niveau du district sur des résultats multiples provenant de plusieurs sources dans un modèle statistique bayésien pour produire des indicateurs robustes de la charge du VIH au niveau sous-national.
 
 Le modèle produit des estimations à trois moments : l'année de l'enquête démographique la plus récente, la période actuelle à laquelle les données les plus récentes sur les programmes de traitement antirétroviral et de soins prénatals sont disponibles, et des projections à court terme, un an à l'avance, à des fins de planification des programmes de lutte contre le VIH. Les estimations de la population infranationale par sexe et groupe d'âge proviennent de sources consensuelles dans chaque pays et sont ajustées pour correspondre aux populations utilisées dans Spectrum par sexe et groupe d'âge.
 
@@ -858,7 +856,7 @@ A challenge for estimating treatment coverage at district level is that persons 
 if("true" %in% include$art_attend) {
   
   cat(paste0("
-_Fréquentation du ART dans les districts voisins_\n 
+_Fréquentation du TARV dans les districts voisins_\n 
 
 Un défi dans la estimation de la couverture du traitement au niveau du district est que les personnes peuvent accéder les services de thérapie antirétrovirale dans un district différent de leur résidence, par exemple si les établissements sont plus proches ou perçus comme offrant de meilleurs services. Le modèle tient compte de la probabilité que les résidents vivant avec le VIH aient accès à une thérapie antirétrovirale dans un district voisin. L'hypothèse antérieure est que la grande majorité des personnes vivant avec le VIH auront accès au traitement antirétroviral dans leur district de résidence, mais cette probabilité peut varier en fonction des données du district concernant le nombre de personnes recevant un traitement antirétroviral par rapport à la prévalence du VIH, à la couverture du traitement antirétroviral et à la population.
              
@@ -905,7 +903,7 @@ Les estimations directes de l'incidence du VIH ne sont pas disponibles aux nivea
 
 _Estimations actuelles et projection à un an_
 
-Pour mettre à jour les estimations de l'enquête la plus récente auprès des ménages jusqu'à la période actuelle, le modèle effectue une projection en une étape de la population de l'enquête la plus récente jusqu'à la période actuelle. Les estimations de la population sont mises à jour avec les estimations officielles de la population. Le nombre de PLHIV est projeté vers l'avant sur la base des estimations de survie par province, sexe et groupe d'âge de Spectrum sur la même période (ce qui tient compte de la progression de la maladie du VIH et des effets de l'intensification du ART sur la réduction de la mortalité due au SIDA). La couverture du traitement antirétroviral est mise à jour sur la base du nombre de personnes actuellement déclarées sous traitement antirétroviral à partir des données sur la prestation de services.
+Pour mettre à jour les estimations de l'enquête la plus récente auprès des ménages jusqu'à la période actuelle, le modèle effectue une projection en une étape de la population de l'enquête la plus récente jusqu'à la période actuelle. Les estimations de la population sont mises à jour avec les estimations officielles de la population. Le nombre de PLHIV est projeté vers l'avant sur la base des estimations de survie par province, sexe et groupe d'âge de Spectrum sur la même période (ce qui tient compte de la progression de la maladie du VIH et des effets de l'intensification du TARV sur la réduction de la mortalité due au SIDA). La couverture du traitement antirétroviral est mise à jour sur la base du nombre de personnes actuellement déclarées sous traitement antirétroviral à partir des données sur la prestation de services.
 
 Pour extrapoler les estimations un an à l'avance à des fins de planification de la lutte contre le VIH, le nombre de nouvelles infections et de personnes vivant avec le VIH est calculé sur la base du taux de transmission à partir des estimations nationales ou sous-nationales de Spectrum. Le nombre de personnes sous traitement antirétroviral est projeté en calculant l'augmentation des chances de bénéficier d'un traitement antirétroviral par âge et par sexe, sur la base des projections relatives au traitement antirétroviral introduites dans Spectrum, et en appliquant cette variation des chances à chaque région infranationale.
 

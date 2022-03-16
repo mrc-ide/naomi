@@ -5,14 +5,11 @@
 #' @return an adjacency matrix with 1s and 0s
 #'
 #' @details
-#' Input `sh` can be either sf class or SpatialPolygons from `sp`. Uses `spdep`
+#' Input `sh` can be either `sf` class or SpatialPolygons from `sp`. Uses `spdep`
 #' package to convert shapefile to neighbor list to adjacency matrix.
 #' 
 #' @export
 create_adj_matrix <- function(sh){
-
-  if(!is(sh, "sp"))
-    sh <- as(sh, "Spatial")
 
   s2_current <- sf::sf_use_s2()
   on.exit(

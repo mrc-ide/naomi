@@ -695,7 +695,7 @@ save_output_coarse_age_groups <- function(path, naomi_output,
   save_output(basename(path), dirname(path), naomi_output_sub,
               overwrite = overwrite, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE,
-              export_datapack = TRUE)
+              export_datapack = FALSE)
 }
 
 save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
@@ -866,10 +866,22 @@ read_output_package <- function(path) {
 
   ## Fit list
   fit <- list()
-  fit$model_options <- yaml::read_yaml(file.path(tmpd,"fit/model_options.yml"))
-  fit$data_options <- yaml::read_yaml(file.path(tmpd,"fit/data_options.yml"))
-  fit$calibration_options <- yaml::read_yaml(file.path(tmpd,"fit/calibration_options.yml"))
-  fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
+
+  if (file.exists(file.path(tmpd,"fit/model_options.yml"))) {
+    fit$model_options <- yaml::read_yaml(file.path(tmpd,"fit/model_options.yml"))
+  }
+
+  if (file.exists(file.path(tmpd,"fit/data_options.yml"))) {
+    fit$data_options <- yaml::read_yaml(file.path(tmpd,"fit/data_options.yml"))
+  }
+
+  if (file.exists(file.path(tmpd,"fit/calibration_options.yml"))) {
+    fit$calibration_options <- yaml::read_yaml(file.path(tmpd,"fit/calibration_options.yml"))
+  }
+
+  if (file.exists(file.path(tmpd,"fit/spectrum_calibration.csv"))) {
+    fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
+  }
 
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),

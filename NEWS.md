@@ -1,3 +1,68 @@
+# naomi 2.6.18
+
+* Bug fix: calibration options read into summary report from `outputs` object
+* Add test to ensure calibration options are read into summary report correctly if present
+
+# naomi 2.6.17
+
+* Add PEPFAR Datim PSNU UID for Benin.
+* Change default population calibration option selection to "Subnational". If a national file is loaded, it will simply calibrate the national file.
+
+# naomi 2.6.16
+
+* Bug fix: remove duplicate addition of CLHIV in T2 projection arising from paediatric incidence. This was introduced in v2.6.0 when paediatric new infections were added to the outputs.
+
+# naomi 2.6.15
+
+* Add PEPFAR Datim UID for Burundi.
+
+# naomi 2.6.14
+
+* Add option for district-sex-time interaction for ART coverage. This is implemented by argument `naomi_model_frame(..., alpha_xst_term = TRUE, ...)`. 
+  The default is currently `alpha_xst_term = FALSE` for backwards compatibility. If set to `TRUE`, the model also checks that sex-stratified ART data 
+  are included at both T1 and T2.
+
+* Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration.
+
+  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`. 
+  
+  __This is currently set as `FALSE` by default.__ Pending further testing in problematic cases.
+
+  Limitations of this approach: (1) It does not explicitly account for migration of PLHIV between districts. Therefore, it may 'create' or 'dissolve' infections if net population growth is greater in high prevalence districts (and vice versa). This is consistent with Spectrum and EPP handling of migration, but implications could be larger for smaller subnational areas. (2) In some cases, these net migration ratios mask unrealistic demographic assumptions in subnational population data (rather than true net migration patterns).
+
+_Internal changes_
+
+* Refactor function `create_Lproj()` to avoid replicating same code for T1 -> T2 and T2 -> T3 projection.
+* Remove conversion of `sf` to `sp` object for `spdep::poly2nb()`, which now supports `sf` objects from v1.0.
+* Replace "ART" in French and Portuguese strings with "TARV".
+
+# naomi 2.6.13
+
+* The model uses offsets from Spectrum to determine HIV prevalence in age groups outside the age range for which survey HIV prevalence are available. Stratify determination of offset age ranges by sex. This addresses situation for DHS surveys where maximum female age is 49 but maximum male age is 54 or 59.
+
+* Set default to model paediatric prevalence relative to adult female age 15-49 prevalence instead of using offsets relative to age 15-19 prevalence. This will (1) ensure same prevalence for male and female children, and (2) reduce distortions to age 15-19 prevalence arising from paediatric ART data.
+
+* Expose advanced option to allow paediatric to adult prevalence ratio to vary by district (option `rho_paed_x_term`). 
+
+* Throw validation error if time-varying ART attendance is selected, but ART data are not included at both Time 1 and Time 2.
+
+# naomi 2.6.12
+
+* Do not save the PEPFAR Data Pack CSV for coarse age output package because the five-year age group results are not included.
+
+# naomi 2.6.11
+
+* Revert plot ordering change made in 2.6.9 in favour of changing the default selected to HIV prevalence from hintr.
+
+# naomi 2.6.10
+
+* MOZ `area_id` in `inst/datapack/datapack_psnu_area_id_map.csv` to new area hierarchy with separate Maputo provinces at admin-2.
+
+# naomi 2.6.9
+
+* Switch plot ordering to show HIV prevalence first.
+* Patch logic error in calibration table: use calibrated population (done pre model fitting) as denominator for raw prevalence denominator (troublshooting #2022-73)
+
 # naomi 2.6.8
 
 * Require `eppasm` v0.5.12 to avoid divide-by-zero in model computations (troubleshooting #2022-51).
@@ -221,7 +286,7 @@ time series function outputs
 
 # naomi 2.3.5
 
-* Add PEPFAR Datim UID for Angola.
+* Add PEPFAR Datim UID for Angola.<
 
 # naomi 2.3.4
 
