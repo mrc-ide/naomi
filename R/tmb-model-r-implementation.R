@@ -647,7 +647,7 @@ naomi_objective_function_r <- function(d, p) {
   untreated_plhiv_num_t3_out <- plhiv_t3_out - artnum_t3_out
 
   ## Calculate number of PLHIV who would attend facility in district i
-  plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% plhiv_t3) * as.vector(d$Xart_gamma %*% gamma_art_t3)
+  plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% plhiv_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)
   plhiv_attend_t3_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t3))
   untreated_plhiv_attend_t3_out <- plhiv_attend_t3_out - artattend_t3_out
 
