@@ -107,7 +107,8 @@ calibrate_outputs <- function(output,
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
     dplyr::filter(indicator %in%
-                  c("population", "plhiv", "art_current_residents", "art_current", "aware_plhiv_num", "unaware_plhiv_num", "infections")) %>%
+                    c("population", "plhiv", "art_current_residents", "art_current", "plhiv_attend", "untreated_plhiv_attend",
+                      "aware_plhiv_num", "unaware_plhiv_num", "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
@@ -240,15 +241,36 @@ calibrate_outputs <- function(output,
                                      plhiv_target,
                                      calibrate_method)
              )
+    
+    ## Calibrate PLHIV attending
+    ## Note: aggregate based on calibrated values for valmean_wide$plhiv
+    
+    plhivattend_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
+                                                  "sex_age_group")
+    
+    plhivattend_target <- valmean_wide %>%
+      dplyr::group_by_at(plhivattend_aggr_var) %>%
+      dplyr::summarise(plhivattend_target = sum(plhiv),
+                       .groups = "drop")
+    
+    valmean_wide <- valmean_wide %>%
+      dplyr::left_join(plhivattend_target, by = plhivattend_aggr_var)
+    
+    valmean_wide <- valmean_wide %>%
+      dplyr::group_by_at(plhivattend_aggr_var) %>%
+      dplyr::mutate(
+        plhiv_attend = calibrate_proportional_one(plhiv_attend,
+                                                 plhivattend_target)
+      )
   }
-
-
+  
+  
   ## Calibrate ART number
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
-
+  
   if(length(artnum_aggr_var) > 0L) {
-
+    
     artnum_target <- spectrum_calibration %>%
       dplyr::group_by_at(artnum_aggr_var) %>%
       dplyr::summarise(artnum_target = sum(art_current_spectrum),
@@ -289,6 +311,7 @@ calibrate_outputs <- function(output,
              )
   }
   valmean_wide$untreated_plhiv_num = valmean_wide$plhiv - valmean_wide$art_current_residents
+  valmean_wide$untreated_plhiv_attend = valmean_wide$plhiv_attend - valmean_wide$art_current
 
   ## Calibrate infections
   infections_aggr_var <- get_spectrum_aggr_var(spectrum_infections_calibration_level,
@@ -348,8 +371,8 @@ calibrate_outputs <- function(output,
 
   val_adj <- valmean_wide %>%
     tidyr::pivot_longer(cols = c(population, plhiv, art_current_residents, art_current,
-                                 untreated_plhiv_num, unaware_plhiv_num, aware_plhiv_num,
-                                 infections),
+                                 untreated_plhiv_num, plhiv_attend, untreated_plhiv_attend,
+                                 unaware_plhiv_num, aware_plhiv_num, infections),
                         names_to = "indicator", values_to = "adjusted")
 
 
@@ -426,6 +449,12 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter1, "untreated_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "untreated_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_num"),
+                  .expand(naomi_mf$calendar_quarter1, "plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter2, "plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter1, "untreated_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter2, "untreated_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),                  
                   .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),

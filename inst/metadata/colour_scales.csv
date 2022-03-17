@@ -13,6 +13,8 @@ default,aware_plhiv_prop,interpolateBlues,0,1,FALSE
 default,unaware_plhiv_num,interpolateBlues,0,80000,FALSE
 default,aware_plhiv_num,interpolateBlues,0,80000,FALSE
 default,untreated_plhiv_num,interpolateGreens,0,80000,FALSE
+default,plhiv_attend,interpolateReds,0,10000000,FALSE
+default,untreated_plhiv_attend,interpolateGreens,0,80000,FALSE
 default,anc_prevalence,interpolateOranges,0,0.5,FALSE
 default,anc_art_coverage,interpolateOranges,0,1,FALSE
 default,anc_clients,interpolateOranges,0,700000,FALSE
