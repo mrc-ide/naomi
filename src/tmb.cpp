@@ -649,18 +649,18 @@ Type objective_function<Type>::operator() ()
   
   // * ART attendance model *
 
-  vector<Type> gamma_art(exp(Xgamma * log_or_gamma + log_gamma_offset));
+  vector<Type> gamma_art_t1(exp(Xgamma * log_or_gamma + log_gamma_offset));
   int cum_nb = 0;
   for(int i = 0; i < n_nb.size(); i++){
     Type cum_exp_or_gamma_i = 0.0;
     for(int j = 0; j < n_nb[i]+1; j++)
-      cum_exp_or_gamma_i += gamma_art[cum_nb + i + j];
+      cum_exp_or_gamma_i += gamma_art_t1[cum_nb + i + j];
     for(int j = 0; j < n_nb[i]+1; j++)
-      gamma_art[cum_nb + i + j] /= cum_exp_or_gamma_i;
+      gamma_art_t1[cum_nb + i + j] /= cum_exp_or_gamma_i;
     cum_nb += n_nb[i];
   }
 
-  vector<Type> prop_art_ij_t1((Xart_idx * prop_art_t1) * (Xart_gamma * gamma_art));
+  vector<Type> prop_art_ij_t1((Xart_idx * prop_art_t1) * (Xart_gamma * gamma_art_t1));
   vector<Type> population_ij_t1(Xart_idx * population_t1);
 
   vector<Type> artnum_ij_t1(population_ij_t1 * prop_art_ij_t1);
@@ -716,6 +716,11 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_ij_t1_out(A_art_reside_attend * artnum_ij_t1);
     vector<Type> untreated_plhiv_num_t1_out(plhiv_t1_out - artnum_t1_out);
 
+    // Calculate number of PLHIV who attend facility in district i; denominator for artattend
+    vector<Type> plhiv_attend_ij_t1((Xart_idx * plhiv_t1) * (Xart_gamma * gamma_art_t1));
+    vector<Type> plhiv_attend_t1_out(A_out * (A_artattend_mf * plhiv_attend_ij_t1));
+    vector<Type> untreated_plhiv_attend_t1_out(plhiv_attend_t1_out - artattend_t1_out);
+
     vector<Type> unaware_plhiv_num_t1((plhiv_t1 - artnum_t1) * unaware_untreated_prop_t1);
     vector<Type> unaware_plhiv_num_t1_out(A_out * unaware_plhiv_num_t1);
     vector<Type> aware_plhiv_num_t1_out(plhiv_t1_out - unaware_plhiv_num_t1_out);
@@ -734,6 +739,11 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_t2_out(A_out * (A_artattend_mf * artnum_ij_t2));
     vector<Type> artattend_ij_t2_out(A_art_reside_attend * artnum_ij_t2);
     vector<Type> untreated_plhiv_num_t2_out(plhiv_t2_out - artnum_t2_out);
+
+    // Calculate number of PLHIV who attend facility in district i; denominator for artattend
+    vector<Type> plhiv_attend_ij_t2((Xart_idx * plhiv_t2) * (Xart_gamma * gamma_art_t2));
+    vector<Type> plhiv_attend_t2_out(A_out * (A_artattend_mf * plhiv_attend_ij_t2));
+    vector<Type> untreated_plhiv_attend_t2_out(plhiv_attend_t2_out - artattend_t2_out);
 
     vector<Type> unaware_plhiv_num_t2((plhiv_t2 - artnum_t2) * unaware_untreated_prop_t2);
     vector<Type> unaware_plhiv_num_t2_out(A_out * unaware_plhiv_num_t2);
@@ -778,6 +788,8 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_t1_out);
     REPORT(artattend_ij_t1_out);
     REPORT(untreated_plhiv_num_t1_out);
+    REPORT(plhiv_attend_t1_out);
+    REPORT(untreated_plhiv_attend_t1_out);
     REPORT(aware_plhiv_prop_t1_out);
     REPORT(aware_plhiv_num_t1_out);
     REPORT(unaware_plhiv_num_t1_out);
@@ -801,6 +813,8 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_t2_out);
     REPORT(artattend_ij_t2_out);
     REPORT(untreated_plhiv_num_t2_out);
+    REPORT(plhiv_attend_t2_out);
+    REPORT(untreated_plhiv_attend_t2_out);
     REPORT(aware_plhiv_prop_t2_out);
     REPORT(aware_plhiv_num_t2_out);
     REPORT(unaware_plhiv_num_t2_out);
@@ -887,6 +901,12 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_ij_t3_out(A_art_reside_attend * artnum_ij_t3);
     vector<Type> untreated_plhiv_num_t3_out(plhiv_t3_out - artnum_t3_out);
 
+    // Calculate number of PLHIV who attend facility in district i; denominator for artattend
+    vector<Type> plhiv_attend_ij_t3((Xart_idx * plhiv_t3) * (Xart_gamma * gamma_art_t2));    // Note: using same ART attendance as T2
+    vector<Type> plhiv_attend_t3_out(A_out * (A_artattend_mf * plhiv_attend_ij_t3));
+    vector<Type> untreated_plhiv_attend_t3_out(plhiv_attend_t3_out - artattend_t3_out);
+
+
     vector<Type> unaware_plhiv_num_t3((plhiv_t3 - artnum_t3) * unaware_untreated_prop_t3);
     vector<Type> unaware_plhiv_num_t3_out(A_out * unaware_plhiv_num_t3);
     vector<Type> aware_plhiv_num_t3_out(plhiv_t3_out - unaware_plhiv_num_t3_out);
@@ -915,6 +935,8 @@ Type objective_function<Type>::operator() ()
     REPORT(artattend_t3_out);
     REPORT(artattend_ij_t3_out);
     REPORT(untreated_plhiv_num_t3_out);
+    REPORT(plhiv_attend_t3_out);
+    REPORT(untreated_plhiv_attend_t3_out);
     REPORT(aware_plhiv_prop_t3_out);
     REPORT(aware_plhiv_num_t3_out);
     REPORT(unaware_plhiv_num_t3_out);

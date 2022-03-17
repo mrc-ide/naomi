@@ -1,3 +1,7 @@
+# naomi 2.7.0
+
+* Add indicator `plhiv_attending` reporting the estimated denominator for `art_current` based on assuming same ART attendance probabilities for untreated population as the treated population.
+
 # naomi 2.6.18
 
 * Bug fix: calibration options read into summary report from `outputs` object
