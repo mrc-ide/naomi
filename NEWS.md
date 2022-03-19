@@ -1,3 +1,7 @@
+# naomi 2.6.19
+
+* Specify incidence per 1000 outputs to be displayed with one decimal place.
+
 # naomi 2.6.18
 
 * Bug fix: calibration options read into summary report from `outputs` object
