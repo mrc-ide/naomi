@@ -105,3 +105,13 @@ test_that("warning raised if outputs exceed threshold", {
     out$warnings[[2]]$text,
     "ART coverage is higher than 100% for: March 2016, Northern, Both, 0-4")
 })
+
+test_that("warning raised if spectrum totals do not match naomi data", {
+
+  warn <- art_spectrum_warning(a_hintr_data$art_number,
+                               a_hintr_data$shape,
+                               a_hintr_data$pjnz)
+
+
+})
+

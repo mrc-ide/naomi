@@ -1,3 +1,7 @@
+# naomi 2.6.19
+
+* Add warning for spectrum totals that do not match aggregated district ART + ANC data
+
 # naomi 2.6.18
 
 * Bug fix: calibration options read into summary report from `outputs` object
