@@ -97,10 +97,10 @@ art_spectrum_warning <- function(art, shape, pjnz) {
   ## Check if art totals match spectrum totals
   art_merged <- art_number %>%
       dplyr::left_join(
-        dplyr::select(areas, area_id, spectrum_region_code),
+        dplyr::select(areas, area_id, area_name, spectrum_region_code),
         by = "area_id"
       ) %>%
-      dplyr::count(spectrum_region_code, sex, age_group, calendar_quarter,
+      dplyr::count(spectrum_region_code, sex, age_group, area_name, calendar_quarter,
                    wt = art_current, name = "value_naomi") %>%
       dplyr::inner_join(
         spec_program_data$art_dec31 %>%
@@ -111,9 +111,10 @@ art_spectrum_warning <- function(art, shape, pjnz) {
       ) %>%
     dplyr::rename(value_spectrum = art_dec31)
 
-    format_spectrum_total_warning(art_merged,
-                                  "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
-                                  location = "model_fit")
+  format_spectrum_total_warning(data_merged = art_merged,
+                                key = "WARNING_ART_NOT_EQUAL_TO_SPECTRUM",
+                                location = "model_fit",
+                                age_disag = TRUE)
 
   }
 
@@ -146,31 +147,33 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
 
   anc_merged <- anc_testing %>%
     dplyr::left_join(
-      dplyr::select(areas, area_id, spectrum_region_code),
+      dplyr::select(areas, area_id,area_name, spectrum_region_code),
       by = "area_id"
     ) %>%
     tidyr::pivot_longer(dplyr::starts_with("anc"),
                         names_to = "indicator",
                         values_to = "value_naomi") %>%
-    dplyr::count(spectrum_region_code, year, indicator,
+    dplyr::count(spectrum_region_code, age_group, area_name, year, indicator,
                  wt = value_naomi, name = "value_naomi") %>%
     dplyr::inner_join(
       spec_program_data$anc_testing %>%
         dplyr::rename("value_spectrum" = "value"),
       by = c("spectrum_region_code", "indicator", "year")
-    )
+    ) %>%
+    dplyr::mutate( sex = "female")
 
   anc_tested <- anc_merged[anc_merged$indicator == "anc_tested",]
 
   anc_tested_pos <- anc_merged[anc_merged$indicator == "anc_tested_pos",]
 
+
   # Generate warning if totals are not aligned
-  format_spectrum_total_warning(anc_tested,
-                                "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
+  format_spectrum_total_warning(data_merged = anc_tested,
+                                key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
                                 location = "model_fit")
 
-  format_spectrum_total_warning(anc_tested_pos,
-                                "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
+  format_spectrum_total_warning(data_merged = anc_tested_pos,
+                                key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
                                 location = "model_fit")
 
 }
@@ -184,25 +187,38 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
 ##' @param data_merged Aggregated program data merged with spectrum totals
 ##' @param key Translation key for warnings
 ##' @param location Location where warning should be displayed
+##' @param age_sex Logical if age and sex should be inlcuded in warning labels. Default is FALSE.
 
-format_spectrum_total_warning <- function(data_merged, msg, location) {
+format_spectrum_total_warning <- function(data_merged, key, location, age_disag = FALSE) {
 
   aligned <- all(data_merged$value_naomi == data_merged$value_spectrum)
 
   if(!(aligned)) {
-    v <- data_merged %>%
+
+    if(age_disag) {
+      # Add sex/age label to year-area warning label
+      df <- data_merged %>%
+        dplyr::mutate(id = paste(year, age_group, area_name,
+                                 "[ naomi:", value_naomi, "]",
+                                 "[ spectrum:",value_spectrum, "]",
+                                 sep = " "))
+
+    } else {
+      # Only print out year-area name warning label
+      df <- data_merged %>%
+        dplyr::mutate(id = paste(year,  area_name,
+                                 "[ naomi:", value_naomi,"]",
+                                 "[ spectrum:",value_spectrum, "]",
+                                 sep = " "))}
+
+    v <- df %>%
       dplyr::filter(!(value_naomi %in% unique(value_spectrum))) %>%
-      dplyr::mutate(id = paste(year,
-                               "naomi:", value_naomi,
-                               "spectrum:",value_spectrum,
-                               sep = " ")) %>%
       dplyr::arrange(dplyr::desc(year))
 
-    key <- msg
 
-    # warn <- t_(key, list(rows = paste0(v$id, collapse = "; ")))
+    msg <- paste0(t_(key), paste0(v$id, collapse = "; ") )
 
-    naomi_warning(warn, "model_fit")
+    naomi_warning(msg, location)
 
   }
 }
