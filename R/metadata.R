@@ -79,11 +79,9 @@ get_metadata <- function() {
   ## Remove a single leading or trailing "
   data$format <- sub("^\"", "", data$format)
   data$format <- sub("\"$", "", data$format)
-  
+
   ## TODO: refactor these into one location (issue #145)
   other_data <- get_meta_indicator()
-
-
 
   data <- data %>%
     dplyr::left_join(
