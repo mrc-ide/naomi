@@ -76,8 +76,14 @@ get_metadata <- function() {
   data$accuracy <- as.numeric(data$accuracy)
   data$scale <- as.numeric(data$scale)
 
+  ## Remove a single leading or trailing "
+  data$format <- sub("^\"", "", data$format)
+  data$format <- sub("\"$", "", data$format)
+  
   ## TODO: refactor these into one location (issue #145)
   other_data <- get_meta_indicator()
+
+
 
   data <- data %>%
     dplyr::left_join(

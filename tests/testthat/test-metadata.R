@@ -247,5 +247,10 @@ test_that("metadata format column hasn't been messed by Excel", {
   expect_setequal(meta$format[meta$indicator == "anc_art_coverage"], "0.0%")
   expect_setequal(meta$format[meta$indicator == "recent_infected"], "0.00%")
   expect_setequal(meta$format[meta$indicator == "aware_plhiv_prop"], "0.0%")
+
+  ## Also, 0.0 gets parsed by Excel as 0. To avoid this, 0.0 for the incidence
+  ## indicator is wrapped in quotes. This checks regression against that.
+  expect_setequal(meta$format[meta$indicator == "incidence"], "0.0")
+  
 })
 
