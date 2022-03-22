@@ -199,16 +199,16 @@ format_spectrum_total_warning <- function(data_merged, key, location, age_disag 
       # Add sex/age label to year-area warning label
       df <- data_merged %>%
         dplyr::mutate(id = paste(year, age_group, area_name,
-                                 "[ naomi:", value_naomi, "]",
-                                 "[ spectrum:",value_spectrum, "]",
+                                 "naomi:", value_naomi,
+                                 "spectrum:",value_spectrum,
                                  sep = " "))
 
     } else {
       # Only print out year-area name warning label
       df <- data_merged %>%
         dplyr::mutate(id = paste(year,  area_name,
-                                 "[ naomi:", value_naomi,"]",
-                                 "[ spectrum:",value_spectrum, "]",
+                                 "naomi:", value_naomi,
+                                 "spectrum:",value_spectrum,
                                  sep = " "))}
 
     v <- df %>%
