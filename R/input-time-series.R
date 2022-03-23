@@ -360,6 +360,12 @@ get_plot_type_column_metadata <- function(plot_type) {
 
   meta$label <- traduire::translator()$replace(meta$label)
   meta$description <- traduire::translator()$replace(meta$description)
+
+  ## Remove a single leading or trailing "
+  ## We quote to avoid excel changing these to e.g. to replace 0.0 with 0
+  meta$format <- sub("^\"", "", meta$format)
+  meta$format <- sub("\"$", "", meta$format)
+
   ## Convert numeric columns to numbers
   meta$accuracy <- as.numeric(meta$accuracy)
   lapply(seq_len(nrow(meta)), function(row_number) {

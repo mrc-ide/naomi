@@ -251,6 +251,50 @@ test_that("metadata format column hasn't been messed by Excel", {
   ## Also, 0.0 gets parsed by Excel as 0. To avoid this, 0.0 for the incidence
   ## indicator is wrapped in quotes. This checks regression against that.
   expect_setequal(meta$format[meta$indicator == "incidence"], "0.0")
-  
+
 })
 
+test_that("time series metadata format column hasn't been messed by Excel", {
+
+  ## When opening inst/metadata/time_series_plot_metadata.csv in MS Excel,
+  ## the format column is 'helpfully' parsed and converts 0.0% to a generic
+  ## percentage formatted cell.
+  ## The value 0.0% is displayed as 0.00% (perhaps dependent on local settings),
+  ## and when resaved as CSV 0.0% is saved as 0.00%.
+  ##
+  ## Also, 0.0 gets parsed by Excel as 0. To avoid this, 0.0 for the incidence
+  ## indicator is wrapped in quotes. This checks regression against that.
+  ##
+  ## This test exist to make sure this hasn't happened inadvertently.
+  ## Be thoughtful before idly updating the values in these tests to make the
+  ## test pass!
+
+  meta <- get_plot_type_column_metadata("art_total")
+  expect_equal(meta[[1]]$format, "0")
+  meta <- get_plot_type_column_metadata("art_prop_u15")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("anc_prevalence")
+  expect_equal(meta[[1]]$format, "0.00%")
+  meta <- get_plot_type_column_metadata("anc_art_coverage")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_total")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_adult_f")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_adult_m")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_adult")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_child")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_total")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_adult_f")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_adult_m")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_adult")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_child")
+  expect_equal(meta[[1]]$format, "0%")
+})
