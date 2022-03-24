@@ -1,3 +1,7 @@
+# naomi 2.6.20
+
+* Add area hierarchy into time series plot data
+
 # naomi 2.6.19
 
 * Specify incidence per 1000 outputs to be displayed with one decimal place.
