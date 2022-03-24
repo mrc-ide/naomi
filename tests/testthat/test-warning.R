@@ -105,3 +105,37 @@ test_that("warning raised if outputs exceed threshold", {
     out$warnings[[2]]$text,
     "ART coverage is higher than 100% for: March 2016, Northern, Both, 0-4")
 })
+
+test_that("warning raised if spectrum totals do not match naomi data", {
+
+
+  ## ART warning: Contains correctly translated warning
+  art_w <- handle_naomi_warnings(
+    art_spectrum_warning(a_hintr_data$art_number,
+                         a_hintr_data$shape,
+                         a_hintr_data$pjnz))
+
+
+  expect_true(any(grepl("Naomi ART current not equal to Spectrum: 2018 Y000_014 Northern",
+                        art_w$warnings[[1]]$text)))
+
+  expect_length(art_w$warnings, 1)
+
+  ## ANC warning: Contains correctly translated warning
+  anc_w <- handle_naomi_warnings(
+    anc_spectrum_warning(a_hintr_data$anc_testing,
+                         a_hintr_data$shape,
+                         a_hintr_data$pjnz))
+
+
+  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum: 2018 Northern",
+                        anc_w$warnings[[1]]$text)))
+
+  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum: 2018 Northern",
+                        anc_w$warnings[[2]]$text)))
+
+  expect_length(anc_w$warnings, 2)
+
+
+})
+

@@ -1,6 +1,6 @@
 # naomi 2.6.19
 
-* Specify incidence per 1000 outputs to be displayed with one decimal place.
+* Add warning for spectrum totals that do not match aggregated district ART + ANC data
 
 # naomi 2.6.18
 

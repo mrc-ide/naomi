@@ -12,7 +12,8 @@
 ##'
 ##' @export
 
-aggregate_art <- function(art, shape) {
+aggregate_art <- function(art, shape, pjnz = NULL) {
+
 
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
@@ -24,6 +25,45 @@ aggregate_art <- function(art, shape) {
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     art <- read_art_number(art, all_column = TRUE)
+  }
+
+  ## Check if art totals match spectrum totals
+  if(!is.null(pjnz)) {
+
+    art_merged <- art %>%
+      dplyr::left_join(
+        dplyr::select(shape, area_id, spectrum_region_code),
+        by = "area_id"
+      ) %>%
+      dplyr::count(spectrum_region_code, sex, age_group, calendar_quarter,
+                   wt = art_current, name = "art_current_naomi") %>%
+      dplyr::inner_join(
+        spec_program_data$art_dec31 %>%
+          dplyr::mutate(
+            calendar_quarter = paste0("CY", year, "Q4"),
+            year = NULL
+          ),
+        by = c("spectrum_region_code", "sex", "age_group", "calendar_quarter")
+      )
+
+    art_number_spectrum_aligned <- all(art_merged$art_current_naomi == art_merged$art_dec31)
+
+    if(!(art_number_spectrum_aligned)) {
+        v <- art_merged %>%
+        filter(!(art_current_naomi %in% unique(art_dec31))) %>%
+          mutate(id = paste(calendar_quarter,
+                            "naomi:", art_current_naomi,
+                            "spectrum:",art_dec31,
+                            sep = " "))
+
+        key <- "WARNING_ART_INPUTS_NOT_EQUAL_TO_SPECTRUM"
+
+        msg <- t_(key, list(rows = paste0(v$id, collapse = "; ")))
+
+        naomi_warning(msg, "model_fit")
+
+    }
+
   }
 
   art_number <- art %>%
@@ -245,11 +285,7 @@ aggregate_anc <- function(anc, shape) {
     areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
   }
 
-  if(inherits(shape, "sf")) {
-    areas <- shape %>% sf::st_drop_geometry()
-  }
-
-  ## Check if art is object or file path
+  ## Check if anc is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     anc <- read_anc_testing(anc)
   }
