@@ -6,7 +6,7 @@ test_that("ART data can be aggregated", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
-                    "time_period", "year", "quarter", "calendar_quarter",
+                    "time_period", "year", "quarter", "calendar_quarter", "area_hierarchy",
                     "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
 
 
@@ -36,7 +36,7 @@ test_that("data can be formatted for ART input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name",  "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order",  "time_period", "year",
-                    "quarter","calendar_quarter","plot", "value"))
+                    "quarter","calendar_quarter", "area_hierarchy", "plot", "value"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
@@ -53,7 +53,7 @@ test_that("ANC data can be aggregated", {
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
                     "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
-                    "anc_tested_pos" ))
+                    "anc_tested_pos", "area_hierarchy"))
 
 
   # Time period has correct format
@@ -80,7 +80,7 @@ test_that("data can be formatted for ANC input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "age_group", "time_period",
-                    "year","quarter", "calendar_quarter","plot", "value"))
+                    "year","quarter", "calendar_quarter","plot", "value", "area_hierarchy" ))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
@@ -221,3 +221,4 @@ test_that("anc input time series can handle data with NA rows", {
   ## Check that NA entry has been removed
   expect_true(!any(is.na(unique(data$age_group))))
 })
+
