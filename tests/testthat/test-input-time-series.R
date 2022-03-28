@@ -25,6 +25,11 @@ test_that("ART data can be aggregated", {
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(art_number$area_level)]
   expect_equal(unique(data$area_level), shape_level)
 
+  ## Area hierarchy is formatted correctly
+  expect_match(data$area_hierarchy, "[\\w\\-/ ]+", all = TRUE, perl = TRUE)
+  slash_count <- lengths(regmatches(data$area_hierarchy,
+                                    gregexpr("/", data$area_hierarchy)))
+  expect_equal(slash_count, data$area_level)
 })
 
 
@@ -70,6 +75,12 @@ test_that("ANC data can be aggregated", {
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(anc_testing$area_level)]
   expect_equal(unique(data$area_level), shape_level)
+
+  ## Area hierarchy is formatted correctly
+  expect_match(data$area_hierarchy, "[\\w\\-/ ]+", all = TRUE, perl = TRUE)
+  slash_count <- lengths(regmatches(data$area_hierarchy,
+                                    gregexpr("/", data$area_hierarchy)))
+  expect_equal(slash_count, data$area_level)
 })
 
 
