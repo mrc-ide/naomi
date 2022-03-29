@@ -2,8 +2,9 @@ naomi_warning <- function(text, locations) {
   ## If you want to add a new location here then let one of the developers know
   ## we will need to make sure the front end knows where to display the
   ## new location
-  match_values(locations, c("model_options", "model_fit", "model_calibrate",
-                           "review_output", "download_results"))
+  match_values(locations, c("review_inputs", "model_options", "model_fit",
+                            "model_calibrate", "review_output",
+                            "download_results"))
   warn <- list(
     text = text,
     locations = locations
@@ -113,7 +114,7 @@ art_spectrum_warning <- function(art, shape, pjnz) {
 
   format_spectrum_total_warning(data_merged = art_merged,
                                 key = "WARNING_ART_NOT_EQUAL_TO_SPECTRUM",
-                                location = "model_fit",
+                                location = "review_inputs",
                                 age_disag = TRUE)
 
   }
@@ -170,11 +171,12 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
   # Generate warning if totals are not aligned
   format_spectrum_total_warning(data_merged = anc_tested,
                                 key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
-                                location = "model_fit")
+                                location = "review_inputs")
 
-  format_spectrum_total_warning(data_merged = anc_tested_pos,
-                                key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
-                                location = "model_fit")
+  format_spectrum_total_warning(
+    data_merged = anc_tested_pos,
+    key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
+    location = "review_inputs")
 
 }
 
@@ -199,28 +201,33 @@ format_spectrum_total_warning <- function(data_merged, key, location, age_disag 
     if(age_disag) {
       # Add sex/age label to year-area warning label
       df <- data_merged %>%
-        dplyr::mutate(id = paste(year, age_group, area_name,
-                                 "naomi:", value_naomi,
-                                 "spectrum:",value_spectrum,
-                                 sep = " "))
+        dplyr::mutate(label = paste(year, age_group, area_name,
+                                    "naomi:", value_naomi,
+                                    "spectrum:",value_spectrum,
+                                    sep = " "))
 
     } else {
       # Only print out year-area name warning label
       df <- data_merged %>%
-        dplyr::mutate(id = paste(year,  area_name,
-                                 "naomi:", value_naomi,
-                                 "spectrum:",value_spectrum,
-                                 sep = " "))}
-
+        dplyr::mutate(label = paste(year,  area_name,
+                                    "naomi:", value_naomi,
+                                    "spectrum:",value_spectrum,
+                                    sep = " "))}
     v <- df %>%
       dplyr::filter(!(value_naomi %in% unique(value_spectrum))) %>%
       dplyr::arrange(dplyr::desc(year))
 
-
-    msg <- paste0(t_(key), paste0(v$id, collapse = "; ") )
+    n_regions <- nrow(v)
+    if (n_regions > 3) {
+      warning <- paste0(v$label[1:3], collapse = "; ")
+      warning <- paste(warning,
+                       t_("WARNING_ADDITIONAL", list(count = n_regions - 3)))
+    } else {
+      warning <- paste0(v$label, collapse = "; ")
+    }
+    msg <- paste0(t_(key), list(warnings = warning))
 
     naomi_warning(msg, location)
-
   }
 }
 

@@ -106,36 +106,57 @@ test_that("warning raised if outputs exceed threshold", {
     "ART coverage is higher than 100% for: March 2016, Northern, Both, 0-4")
 })
 
-test_that("warning raised if spectrum totals do not match naomi data", {
-
-
-  ## ART warning: Contains correctly translated warning
+test_that("ART warning raised if spectrum totals do not match naomi data", {
   art_w <- handle_naomi_warnings(
     art_spectrum_warning(a_hintr_data$art_number,
                          a_hintr_data$shape,
                          a_hintr_data$pjnz))
 
-
-  expect_true(any(grepl("Naomi ART current not equal to Spectrum: 2018 Y000_014 Northern",
-                        art_w$warnings[[1]]$text)))
-
   expect_length(art_w$warnings, 1)
+  expect_equal(art_w$warnings[[1]]$locations, "review_inputs")
+  expect_true(grepl("Naomi ART current not equal to Spectrum",
+                    art_w$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Northern",
+                    art_w$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Central-East",
+                    art_w$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Central-West",
+                    art_w$warnings[[1]]$text))
+  expect_true(grepl("and \\d+ more",
+                    art_w$warnings[[1]]$text))
 
-  ## ANC warning: Contains correctly translated warning
+})
+
+test_that("ANC warning raised if spectrum totals do not match naomi data", {
   anc_w <- handle_naomi_warnings(
     anc_spectrum_warning(a_hintr_data$anc_testing,
                          a_hintr_data$shape,
                          a_hintr_data$pjnz))
 
-
-  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum: 2018 Northern",
-                        anc_w$warnings[[1]]$text)))
-
-  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum: 2018 Northern",
-                        anc_w$warnings[[2]]$text)))
-
   expect_length(anc_w$warnings, 2)
 
+  expect_equal(anc_w$warnings[[1]]$locations, "review_inputs")
+  expect_true(grepl("Naomi ANC testing not equal to Spectrum",
+                    anc_w$warnings[[1]]$text))
+  expect_true(grepl("2018 Northern",
+                    anc_w$warnings[[1]]$text))
+  expect_true(grepl("2018 Central-East",
+                    anc_w$warnings[[1]]$text))
+  expect_true(grepl("2018 Central-West",
+                    anc_w$warnings[[1]]$text))
+  expect_true(grepl("and \\d+ more",
+                    anc_w$warnings[[1]]$text))
 
+  expect_equal(anc_w$warnings[[2]]$locations, "review_inputs")
+  expect_true(grepl("Naomi ANC tested positive not equal to Spectrum",
+                    anc_w$warnings[[2]]$text))
+  expect_true(grepl("2018 Northern",
+                    anc_w$warnings[[2]]$text))
+  expect_true(grepl("2018 Central-East",
+                    anc_w$warnings[[2]]$text))
+  expect_true(grepl("2018 Central-West",
+                    anc_w$warnings[[2]]$text))
+  expect_true(grepl("and \\d+ more",
+                    anc_w$warnings[[2]]$text))
 })
 
