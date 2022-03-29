@@ -88,7 +88,7 @@ art_spectrum_warning <- function(art, shape, pjnz) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art_number <- read_art_number(art, all_column = TRUE)
+    art_number <- read_art_number(art, all_columns = TRUE)
   }
 
   ## Read in spectrum programme data
@@ -188,6 +188,7 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
 ##' @param key Translation key for warnings
 ##' @param location Location where warning should be displayed
 ##' @param age_sex Logical if age and sex should be inlcuded in warning labels. Default is FALSE.
+##' @keywords internal
 
 format_spectrum_total_warning <- function(data_merged, key, location, age_disag = FALSE) {
 
