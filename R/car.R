@@ -13,9 +13,11 @@ create_adj_matrix <- function(sh){
 
   s2_current <- sf::sf_use_s2()
   on.exit(
-    invisible(capture.output(sf::sf_use_s2(s2_current)))
+    invisible(suppress_one_message(capture.output(sf::sf_use_s2(s2_current)),
+              "Spherical geometry \\(s2\\) switched"))
   )
-  invisible(capture.output(sf::sf_use_s2(FALSE)))
+  invisible(suppress_one_message(capture.output(sf::sf_use_s2(FALSE)),
+            "Spherical geometry \\(s2\\) switched"))
 
   nb <- suppress_one_message(spdep::poly2nb(sh),
                              "although coordinates are longitude/latitude, st_intersects assumes that they are planar")
