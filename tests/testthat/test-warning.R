@@ -9,9 +9,9 @@ test_that("naomi warning can be raised", {
 
 test_that("error thrown if location unknown", {
   expect_error(naomi_warning("my warning", "custom_location"),
-               paste0("locations must be one of 'model_options', ",
-                      "'model_fit', 'model_calibrate', 'review_output', ",
-                      "'download_results'"))
+               paste0("locations must be one of 'review_inputs', ",
+                      "'model_options', 'model_fit', 'model_calibrate', ",
+                      "'review_output', 'download_results'"))
 })
 
 test_that("naomi warnings can be handled", {
