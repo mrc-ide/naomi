@@ -39,8 +39,7 @@ aggregate_art <- function(art, shape) {
   age_level <- unique(art_number$age_group)
   # Join ART data to hierarchy
   art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
-    dplyr::left_join(art_number, by = "area_id") %>%
-    tidyr::unite(area_hierarchy, tidyselect::starts_with("area_name"), remove = "F", sep = "/")
+    dplyr::left_join(art_number, by = "area_id")
 
 
   # Aggregate based on what columns exist in dataset
@@ -51,7 +50,7 @@ aggregate_art <- function(art, shape) {
   aggregate_data_art <- function(col_name) {
     df <- art_number_wide %>%
       dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
-                      year, quarter, calendar_quarter, area_hierarchy) %>%
+                      year, quarter, calendar_quarter) %>%
       dplyr::summarise_at(dplyr::vars(cols_keep), ~sum(.), .groups = "drop") %>%
       dplyr::rename(area_id = `eval(as.name(col_name))`)
   }
@@ -66,7 +65,11 @@ aggregate_art <- function(art, shape) {
                      by = "area_id" ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group,time_period, year, quarter,
-                  calendar_quarter, dplyr::everything())
+                  calendar_quarter, dplyr::everything()) %>%
+    dplyr::ungroup()
+
+  art_long$area_hierarchy <- build_hierarchy_label(art_long)
+
 
   return(art_long)
 }
@@ -296,7 +299,10 @@ aggregate_anc <- function(anc, shape) {
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group, time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
-                  anc_tested,anc_tested_pos, area_hierarchy)
+                  anc_tested,anc_tested_pos, area_hierarchy) %>%
+    dplyr::ungroup()
+
+  anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
 
 }
 
@@ -384,3 +390,55 @@ get_plot_type_column_metadata <- function(plot_type) {
     )
   })
 }
+
+
+##' Return the translated label & description for a set of plot types
+##'
+##' @param meta_areas dataframe containing
+##'
+##' @return For each plot type the label and description as a list of lists
+##'   containing id, label and description
+##' @export
+
+build_hierarchy_label <- function(meta_areas) {
+
+  area_ids <- dplyr::select(meta_areas, area_id, parent_area_id, area_name) %>%
+    dplyr::distinct() %>%
+    as.data.frame()
+
+  seen <- new.env(parent = emptyenv())
+
+  get_label <- function(area_id) {
+
+    if (!is.null(seen[[area_id]])) {
+      return(seen[[area_id]])
+    }
+
+    sub <- area_ids[area_ids$area_id == area_id,]
+
+    parent_id <- unique(sub$parent_area_id)
+
+    if (is.na(parent_id)) {
+      return(NA_character_)
+    }
+
+    parent_label <- get_label(parent_id)
+
+    if (!is.na(parent_label)) {
+      parent_label <- paste0(parent_label, "/")
+      label <- paste0(parent_label, sub$area_name)
+    } else{
+      label <- sub$area_name
+    }
+
+    seen[[area_id]] <- label
+    label
+
+  }
+
+  vapply(meta_areas$area_id, get_label, character(1), USE.NAMES = FALSE)
+
+}
+
+
+
