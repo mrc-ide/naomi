@@ -107,10 +107,9 @@ test_that("warning raised if outputs exceed threshold", {
 })
 
 test_that("ART warning raised if spectrum totals do not match naomi data", {
-  art_w <- handle_naomi_warnings(
-    art_spectrum_warning(a_hintr_data$art_number,
-                         a_hintr_data$shape,
-                         a_hintr_data$pjnz))
+  art_w <- hintr_validate_art(a_hintr_data$art_number,
+                              a_hintr_data$shape,
+                              a_hintr_data$pjnz)
 
   expect_length(art_w$warnings, 1)
   expect_equal(art_w$warnings[[1]]$locations, "review_inputs")
@@ -128,10 +127,9 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
 })
 
 test_that("ANC warning raised if spectrum totals do not match naomi data", {
-  anc_w <- handle_naomi_warnings(
-    anc_spectrum_warning(a_hintr_data$anc_testing,
-                         a_hintr_data$shape,
-                         a_hintr_data$pjnz))
+  anc_w <- hintr_validate_anc(a_hintr_data$anc_testing,
+                              a_hintr_data$shape,
+                              a_hintr_data$pjnz)
 
   expect_length(anc_w$warnings, 2)
 

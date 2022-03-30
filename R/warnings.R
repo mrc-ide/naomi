@@ -70,6 +70,19 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 
 }
 
+##' Run validation for ART input
+##'
+##' This can throw validation errors or warnings which will be shown to user
+##' in naomi web app
+##'
+##' @param art Path to file containing ART data or ART data object
+##' @param shape Path to file containing geojson areas data or areas data object
+##' @param pjnz Path to zip file containing spectrum pjnz file/s
+##' @export
+hintr_validate_art <- function(art, shape, pjnz) {
+  handle_naomi_warnings(art_spectrum_warning(art, shape, pjnz))
+}
+
 ##' Compare aggregated district ART inputs + spectrum totals
 ##'
 ##' Generate warning if aggregated district art totals do not match spectrum totals
@@ -77,7 +90,7 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 ##' @param art Path to file containing ART data or ART data object
 ##' @param shape Path to file containing geojson areas data or areas data object
 ##' @param pjnz Path to zip file containing spectrum pjnz file/s
-##' @export
+##' @keywords internal
 art_spectrum_warning <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
@@ -117,7 +130,20 @@ art_spectrum_warning <- function(art, shape, pjnz) {
                                 location = "review_inputs",
                                 age_disag = TRUE)
 
-  }
+}
+
+##' Run validation for ANC input
+##'
+##' This can throw validation errors or warnings which will be shown to user
+##' in naomi web app
+##'
+##' @param anc Path to file containing ANC data or ANC data object
+##' @param shape Path to file containing geojson areas data or areas data object
+##' @param pjnz Path to zip file containing spectrum pjnz file/s
+##' @export
+hintr_validate_anc <- function(anc, shape, pjnz) {
+  handle_naomi_warnings(anc_spectrum_warning(anc, shape, pjnz))
+}
 
 ##' Compare aggregated district ANC inputs + spectrum totals
 ##'
@@ -126,7 +152,7 @@ art_spectrum_warning <- function(art, shape, pjnz) {
 ##' @param anc Path to file containing ANC data or ANC data object
 ##' @param shape Path to file containing geojson areas data or areas data object
 ##' @param pjnz Path to zip file containing spectrum pjnz file/s
-##' @export
+##' @keywords internal
 anc_spectrum_warning <- function(anc, shape, pjnz) {
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
