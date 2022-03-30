@@ -77,7 +77,7 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 ##' @param art Path to file containing ART data or ART data object
 ##' @param shape Path to file containing geojson areas data or areas data object
 ##' @param pjnz Path to zip file containing spectrum pjnz file/s
-
+##' @export
 art_spectrum_warning <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
@@ -126,7 +126,7 @@ art_spectrum_warning <- function(art, shape, pjnz) {
 ##' @param anc Path to file containing ANC data or ANC data object
 ##' @param shape Path to file containing geojson areas data or areas data object
 ##' @param pjnz Path to zip file containing spectrum pjnz file/s
-
+##' @export
 anc_spectrum_warning <- function(anc, shape, pjnz) {
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
