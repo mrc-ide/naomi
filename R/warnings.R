@@ -128,7 +128,6 @@ art_spectrum_warning <- function(art, shape, pjnz) {
 ##' @param pjnz Path to zip file containing spectrum pjnz file/s
 
 anc_spectrum_warning <- function(anc, shape, pjnz) {
-
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
@@ -145,7 +144,6 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
   spec_program_data <- extract_pjnz_program_data(pjnz)
 
   ## Check if art totals match spectrum totals
-
   anc_merged <- anc_testing %>%
     dplyr::left_join(
       dplyr::select(areas, area_id,area_name, spectrum_region_code),
@@ -167,7 +165,6 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
 
   anc_tested_pos <- anc_merged[anc_merged$indicator == "anc_tested_pos",]
 
-
   # Generate warning if totals are not aligned
   format_spectrum_total_warning(data_merged = anc_tested,
                                 key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
@@ -177,7 +174,6 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
     data_merged = anc_tested_pos,
     key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
     location = "review_inputs")
-
 }
 
 ##' Format spectrum total warnings
@@ -185,45 +181,37 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
 ##' Format warnings with translated key to be displayed when spectrum totals
 ##' do not match aggregated district level programme data
 ##'
-##' @param aligned True if all spectrum and aggregate totals match
 ##' @param data_merged Aggregated program data merged with spectrum totals
 ##' @param key Translation key for warnings
 ##' @param location Location where warning should be displayed
-##' @param age_sex Logical if age and sex should be inlcuded in warning labels. Default is FALSE.
+##' @param age_disag Logical if age should be included in warning labels. Default is FALSE.
 ##' @keywords internal
+format_spectrum_total_warning <- function(data_merged, key, location,
+                                          age_disag = FALSE) {
 
-format_spectrum_total_warning <- function(data_merged, key, location, age_disag = FALSE) {
-
-  aligned <- all(data_merged$value_naomi == data_merged$value_spectrum)
-
-  if(!(aligned)) {
-
-    if(age_disag) {
-      # Add sex/age label to year-area warning label
-      df <- data_merged %>%
-        dplyr::mutate(label = paste(year, age_group, area_name,
-                                    "naomi:", value_naomi,
-                                    "spectrum:",value_spectrum,
-                                    sep = " "))
-
+  df <- data_merged %>%
+    dplyr::filter(!(value_naomi == value_spectrum)) %>%
+    dplyr::arrange(dplyr::desc(year))
+  if(nrow(df) > 0) {
+    if (age_disag) {
+      df$label <- paste(df$year, df$age_group, df$area_name,
+            "naomi:", df$value_naomi,
+            "spectrum:", df$value_spectrum,
+            sep = " ")
     } else {
-      # Only print out year-area name warning label
-      df <- data_merged %>%
-        dplyr::mutate(label = paste(year,  area_name,
-                                    "naomi:", value_naomi,
-                                    "spectrum:",value_spectrum,
-                                    sep = " "))}
-    v <- df %>%
-      dplyr::filter(!(value_naomi %in% unique(value_spectrum))) %>%
-      dplyr::arrange(dplyr::desc(year))
+      df$label <- paste(df$year, df$area_name,
+            "naomi:", df$value_naomi,
+            "spectrum:", df$value_spectrum,
+            sep = " ")
+    }
 
-    n_regions <- nrow(v)
+    n_regions <- nrow(df)
     if (n_regions > 3) {
-      warning <- paste0(v$label[1:3], collapse = "; ")
+      warning <- paste0(df[1:3, "label"], collapse = "; ")
       warning <- paste(warning,
                        t_("WARNING_ADDITIONAL", list(count = n_regions - 3)))
     } else {
-      warning <- paste0(v$label, collapse = "; ")
+      warning <- paste0(df$label, collapse = "; ")
     }
     msg <- paste0(t_(key), list(warnings = warning))
 
