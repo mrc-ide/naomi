@@ -7,7 +7,7 @@
 #' @details
 #' Input `sh` can be either `sf` class or SpatialPolygons from `sp`. Uses `spdep`
 #' package to convert shapefile to neighbor list to adjacency matrix.
-#' 
+#'
 #' @export
 create_adj_matrix <- function(sh){
 
@@ -24,25 +24,27 @@ create_adj_matrix <- function(sh){
 
   adj
 }
-    
-    
+
+
 #' Create edgelist from adjacency matrix
+#'
+#' @param adj_matrix Adjacency matrix
 #'
 #' @export
 create_edge_list <- function(adj_matrix) {
 
   w <- adj_matrix
-  
+
   ## convert W to a sparse matrix if not already sparse.
   if(!is(w, "sparseMatrix"))
     w <- Matrix(w, sparse = TRUE)
-  
+
   w[upper.tri(w)] <- 0
-  
+
   ## pull out adjacency pairs from W
   edges <- summary(w)  # analagous to `which(w == 1, arr.ind = TRUE)` on dense matrix
   edges <- edges[,grep("^i$|^j$", colnames(edges))]
-  
+
   edges
 }
 
@@ -55,7 +57,7 @@ create_edge_list <- function(adj_matrix) {
 #' @param A Linear constraint for Q.
 #' @param eps Value of the small constant added to the diagonal of Q for
 #'   invertibility.
-#' 
+#'
 #' @details
 #'
 #' This implements the same thing as [`INLA::inla.scale.model`]. The marginal
