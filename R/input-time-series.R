@@ -23,7 +23,7 @@ aggregate_art <- function(art, shape) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_column = TRUE)
+    art <- read_art_number(art, all_columns = TRUE)
   }
 
   art_number <- art %>%
@@ -69,9 +69,7 @@ aggregate_art <- function(art, shape) {
     dplyr::ungroup()
 
   art_long$area_hierarchy <- build_hierarchy_label(art_long)
-
-
-  return(art_long)
+  art_long
 }
 
 
@@ -99,7 +97,7 @@ prepare_input_time_series_art <- function(art, shape) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_column = TRUE)
+    art <- read_art_number(art, all_columns = TRUE)
   }
 
 
@@ -303,7 +301,7 @@ aggregate_anc <- function(anc, shape) {
     dplyr::ungroup()
 
   anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
-
+  anc_long
 }
 
 

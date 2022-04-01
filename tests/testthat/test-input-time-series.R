@@ -26,10 +26,21 @@ test_that("ART data can be aggregated", {
   expect_equal(unique(data$area_level), shape_level)
 
   ## Area hierarchy is formatted correctly
-  expect_match(data$area_hierarchy, "[\\w\\-/ ]+", all = TRUE, perl = TRUE)
-  slash_count <- lengths(regmatches(data$area_hierarchy,
-                                    gregexpr("/", data$area_hierarchy)))
-  expect_equal(slash_count, data$area_level)
+  check_hierarchy_format <- function(hierarchy) {
+    is.na(hierarchy) | grepl("[\\w\\-/ ]+", hierarchy, perl = TRUE)
+  }
+  expect_true(all(check_hierarchy_format(data$area_hierarchy)))
+
+  ## Check no of / in hierarchy is correct i.e. the label is for the correct
+  ## level. For country level values should be NA
+  ## For below country level values should have no of / equal to 1 less
+  ## than their area level
+  na_hierarchy <- data[is.na(data$area_hierarchy), ]
+  expect_true(all(na_hierarchy$area_level == 0))
+  hierarchy <- data[!is.na(data$area_hierarchy), ]
+  slash_count <- lengths(regmatches(hierarchy$area_hierarchy,
+                                    gregexpr("/", hierarchy$area_hierarchy)))
+  expect_equal(slash_count, hierarchy$area_level - 1)
 })
 
 
@@ -77,10 +88,21 @@ test_that("ANC data can be aggregated", {
   expect_equal(unique(data$area_level), shape_level)
 
   ## Area hierarchy is formatted correctly
-  expect_match(data$area_hierarchy, "[\\w\\-/ ]+", all = TRUE, perl = TRUE)
-  slash_count <- lengths(regmatches(data$area_hierarchy,
-                                    gregexpr("/", data$area_hierarchy)))
-  expect_equal(slash_count, data$area_level)
+  check_hierarchy_format <- function(hierarchy) {
+    is.na(hierarchy) | grepl("[\\w\\-/ ]+", hierarchy, perl = TRUE)
+  }
+  expect_true(all(check_hierarchy_format(data$area_hierarchy)))
+
+  ## Check no of / in hierarchy is correct i.e. the label is for the correct
+  ## level. For country level values should be NA
+  ## For below country level values should have no of / equal to 1 less
+  ## than their area level
+  na_hierarchy <- data[is.na(data$area_hierarchy), ]
+  expect_true(all(na_hierarchy$area_level == 0))
+  hierarchy <- data[!is.na(data$area_hierarchy), ]
+  slash_count <- lengths(regmatches(hierarchy$area_hierarchy,
+                                    gregexpr("/", hierarchy$area_hierarchy)))
+  expect_equal(slash_count, hierarchy$area_level - 1)
 })
 
 
