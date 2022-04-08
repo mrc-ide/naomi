@@ -270,7 +270,7 @@ test_that("time series metadata format column hasn't been messed by Excel", {
   ## test pass!
 
   meta <- get_plot_type_column_metadata("art_total")
-  expect_equal(meta[[1]]$format, "0")
+  expect_equal(meta[[1]]$format, "0,0")
   meta <- get_plot_type_column_metadata("art_prop_u15")
   expect_equal(meta[[1]]$format, "0%")
   meta <- get_plot_type_column_metadata("anc_prevalence")

@@ -156,14 +156,14 @@ test_that("can get plot type descriptions from key", {
       id = "art_total",
       label = "ART count",
       description = "Number on ART at the end of calendar year",
-      format = "0",
+      format = "0,0",
       accuracy = NA_integer_
     ),
     list(
       id = "art_child",
       label = "ART paediatric",
       description = "Number of children (<15) on ART at the end of calendar year",
-      format = "0",
+      format = "0,0",
       accuracy = NA_integer_
     )
   ))
