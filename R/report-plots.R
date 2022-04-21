@@ -160,22 +160,24 @@ pop_pyramid_outputs <- function(naomi_output,
 
 
 
-#' Create district bar plot
-#'
-#' @param naomi_output  Naomi output object or path to naomi output zip folder
-#' @param calendar_quarter Naomi projection quarter to filter data to, default is calendar_quarter_t2
-#' @param colour_palette Names or hexcode value for colours to differentiate districts with values above and below the national average. Can be specified as a preset colour palette using "red", "green" and "blue" or manually as a named list: cols <- c(above_colour = "red", below_colour = "blue").
-#' @param x_title Title for the figure x axis, blank by default
-#' @param y_title Title for the figure y axis, default is "Age Group"
-#' @param fig_title Title for the figure, blank by default,
-#' @param above_label Label for districts with values higher than national average, default is "Above"
-#' @param below_label Label for districts with values higher than national average, default is "Below"
-#'
+##' Create district bar plot
+##'
+##' @param naomi_output  Naomi output object or path to naomi output zip folder
+##' @param indicator Indicator to plot
+##' @param age Age group to plot
+##' @param sex_disag Sexes to plot
+##' @param level Area level to plot, default all
+##' @param calendar_quarter Naomi projection quarter to filter data to, default is calendar_quarter_t2
+##' @param label_format Label format for y labels
+##' @param colour_palette Names or hexcode value for colours to differentiate districts with values above and below the national average. Can be specified as a preset colour palette using "red", "green" and "blue" or manually as a named list: cols <- c(above_colour = "red", below_colour = "blue").
+##' @param x_title Title for the figure x axis, blank by default
+##' @param fig_title Title for the figure, blank by default,
+##' @param legend_title Title for the legend
+##' @param above_label Label for districts with values higher than national average, default is "Above"
+##' @param below_label Label for districts with values higher than national average, default is "Below"
+##'
 ##' @return
 ##' @export
-
-
-
 district_barplot <- function(naomi_output,
                              indicator,
                              age,

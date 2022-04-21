@@ -1,6 +1,10 @@
-# naomi 2.6.20
+# naomi 2.6.22
 
 * Add area hierarchy into time series plot data
+
+# naomi 2.6.21
+
+* Add warning for spectrum totals that do not match aggregated district ART + ANC data
 
 # naomi 2.6.19
 

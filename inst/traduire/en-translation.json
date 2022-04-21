@@ -350,5 +350,9 @@
     "OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE": "Spatially varying paediatric prevalence ratio",
     "OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO": "Model paediatric prevalence to adult female prevalence",
     "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Adjust district net population growth",
-    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "ART coverage space-sex-time interaction"
+    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "ART coverage space-sex-time interaction",
+    "WARNING_ART_NOT_EQUAL_TO_SPECTRUM": "Naomi ART current not equal to Spectrum: {{warnings}}",
+    "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
+    "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
+    "WARNING_ADDITIONAL": "and {{count}} more"
 }
