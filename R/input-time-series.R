@@ -394,7 +394,6 @@ get_plot_type_column_metadata <- function(plot_type) {
 ##' @return For each plot type the label and description as a list of lists
 ##'   containing id, label and description
 ##' @export
-
 build_hierarchy_label <- function(meta_areas) {
 
   area_ids <- dplyr::select(meta_areas, area_id, parent_area_id, area_name) %>%
@@ -404,19 +403,15 @@ build_hierarchy_label <- function(meta_areas) {
   seen <- new.env(parent = emptyenv())
 
   get_label <- function(area_id) {
-
     if (!is.null(seen[[area_id]])) {
       return(seen[[area_id]])
     }
 
     sub <- area_ids[area_ids$area_id == area_id,]
-
     parent_id <- unique(sub$parent_area_id)
-
     if (is.na(parent_id)) {
       return(NA_character_)
     }
-
     parent_label <- get_label(parent_id)
 
     if (!is.na(parent_label)) {
@@ -425,14 +420,19 @@ build_hierarchy_label <- function(meta_areas) {
     } else{
       label <- sub$area_name
     }
-
     seen[[area_id]] <- label
     label
-
   }
 
-  vapply(meta_areas$area_id, get_label, character(1), USE.NAMES = FALSE)
+  labels <- vapply(meta_areas$area_id, get_label, character(1),
+                   USE.NAMES = FALSE)
 
+  ## We do not include top level country name in the hierarchy for brevity,
+  ## but we want to include it where it is the country level region instead
+  ## of just an empty label
+  root_name <- area_ids[is.na(area_ids$parent_area_id), "area_name"]
+  labels[is.na(labels)] <- root_name
+  labels
 }
 
 
