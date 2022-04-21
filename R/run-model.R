@@ -257,14 +257,14 @@ hintr_calibrate_plot <- function(output) {
                          names_to = c("indicator", "data_type"),
                          names_pattern = "(.*)_(.*)")
 
-  #' Add population_denominator to indicator for each data_type
+  ## Add population_denominator to indicator for each data_type
   dflong <- dflong %>%
     tidyr::pivot_wider(names_from = indicator) %>%
     tidyr::pivot_longer(
       c(population_denominator, population, plhiv, art_current, unaware, infections),
       names_to = "indicator"
     )
-                 
+
   ## Rename indicators to match Naomi output indicators
   dflong$indicator <- dplyr::recode(dflong$indicator, "unaware" = "unaware_plhiv_num")
 

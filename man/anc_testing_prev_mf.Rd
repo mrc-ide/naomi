@@ -23,8 +23,6 @@ artnum_mf(calendar_quarter, art_number, naomi_mf)
 \item{naomi_mf}{Naomi model frame}
 
 \item{calendar_quarter}{Calendar quarter}
-
-\item{art_number}{Number on ART}
 }
 \value{
 Calculated prevalence

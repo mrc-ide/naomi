@@ -16,6 +16,6 @@ an adjacency matrix with 1s and 0s
 Create adjacency matrix from spatial polygons
 }
 \details{
-Input \code{sh} can be either sf class or SpatialPolygons from \code{sp}. Uses \code{spdep}
+Input \code{sh} can be either \code{sf} class or SpatialPolygons from \code{sp}. Uses \code{spdep}
 package to convert shapefile to neighbor list to adjacency matrix.
 }

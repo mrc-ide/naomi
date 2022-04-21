@@ -7,7 +7,10 @@ test_that("calibrated model matches end-year Spectrum ART", {
 
   tmpf <- tempfile()
   unzip(a_hintr_data$pjnz, exdir = tmpf)
-  art_dec31 <- lapply(list.files(tmpf, full.names = TRUE), read_pjnz_art_dec31)
+  art_dec31 <- lapply(list.files(tmpf, full.names = TRUE), function(pjnz) {
+    dp <- read_dp(pjnz)
+    read_dp_art_dec31(dp)
+  })
 
   art_dec31_2018 <- lapply(art_dec31, dplyr::filter, year == 2018) %>%
     dplyr::bind_rows() %>%

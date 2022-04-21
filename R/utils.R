@@ -3,11 +3,12 @@ naomi_write_csv <- function(...) {
 }
 
 naomi_read_csv <- function(file, ..., col_types = readr::cols()) {
-  as.data.frame(csv_reader(file, TRUE)(file, ..., col_types = col_types))
+  as.data.frame(csv_reader(file, TRUE)(file, ..., col_types = col_types,
+                                       progress = FALSE))
 }
 
 readr_read_csv <- function(file, ..., col_types = readr::cols()) {
-  csv_reader(file, TRUE)(file, ..., col_types = col_types)
+  csv_reader(file, TRUE)(file, ..., col_types = col_types, progress = FALSE)
 }
 
 csv_reader <- function(file, readr = FALSE) {

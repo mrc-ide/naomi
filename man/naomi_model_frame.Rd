@@ -22,8 +22,9 @@ naomi_model_frame(
   artattend = TRUE,
   artattend_t2 = FALSE,
   artattend_log_gamma_offset = -4,
-  rho_paed_15to49f_ratio = FALSE,
+  rho_paed_15to49f_ratio = TRUE,
   rho_paed_x_term = FALSE,
+  alpha_xst_term = FALSE,
   logit_nu_mean = 2,
   logit_nu_sd = 0.3,
   spectrum_population_calibration = "national",
@@ -68,6 +69,8 @@ ids.}
 \item{rho_paed_15to49f_ratio}{logical; to model paediatric prevalence as ratio of 15-49 female prevalence}
 
 \item{rho_paed_x_term}{logical; to include area interaction for paediatric prevalence}
+
+\item{alpha_xst_term}{logical; to include district-sex-time interaction for ART coverage. Default \code{FALSE}.}
 
 \item{logit_nu_mean}{mean of logit viral load suppression.}
 
