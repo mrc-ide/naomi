@@ -20,24 +20,31 @@ extract_pjnz_naomi <- function(pjnz_list) {
   spec
 }
 
-unroll_pjnz <-  function(pjnz_list) {
-
-  ## If meets conditions, treat as zipped list of PJNZ.
-  ## * Single file
-  ## * Does not contain a .DP or .PJN file
-  if(length(pjnz_list) == 1) {
-    file_names <- utils::unzip(pjnz_list, list = TRUE)$Name
-    exts <- tolower(tools::file_ext(file_names))
-    is_pjnz <- any("dp" %in% exts) || any("pjn" %in% exts)
-
-    if(!is_pjnz) {
-      pjnzdir <- tempfile()
-      utils::unzip(pjnz_list, exdir = pjnzdir)
-      pjnz_list <- list.files(pjnzdir, full.names = TRUE)
+unroll_pjnz <-  function(path) {
+  if (!is_pjnz(path)) {
+    unzip_dir <- tempfile("pjnz_unzip")
+    dir.create(unzip_dir)
+    zip::unzip(path, exdir = unzip_dir)
+    pjnz_paths <- list.files(unzip_dir, full.names = TRUE)
+    are_pjnz <- vlapply(pjnz_paths, is_pjnz)
+    if (!any(are_pjnz)) {
+      stop(t_("PJNZ_INVALID_ZIP"))
     }
+    pjnz_paths <- pjnz_paths[are_pjnz]
+  } else {
+    pjnz_paths <- path
   }
+  pjnz_paths
+}
 
-  pjnz_list
+is_pjnz <- function(path) {
+  tryCatch({
+    files <- zip::zip_list(path)
+    any(grepl("*.DP", files$filename))
+  },
+  error = function(e) {
+    return(FALSE)
+  })
 }
 
 
