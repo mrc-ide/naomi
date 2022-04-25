@@ -40,7 +40,7 @@ test_that("assert_pjnz_shiny90 validates shiny90 case-insensitively", {
 
   expect_false(assert_pjnz_shiny90(tmp_not_shiny90z))
 
-  ## Case insensitive 
+  ## Case insensitive
   tmp_shiny90 <- tempfile(fileext = ".sHiNy90")
   file.create(tmp_shiny90)
   tmp_shiny90z <- tempfile(fileext = ".PJNZ")
@@ -53,4 +53,9 @@ test_that("read_spectrum_projection_name() returns projection name", {
 
   pjnz <- system_file("extdata/demo_mwi2019.PJNZ")
   expect_equal(read_spectrum_projection_name(pjnz), "Malawi_2019_v22_MM_BF")
+})
+
+test_that("error thrown if zip contains non PJNZ files", {
+  error <- expect_error(unroll_pjnz(file.path("refdata", "invalid_files.zip")))
+  expect_equal(error$message, "Zip contains no PJNZ files")
 })

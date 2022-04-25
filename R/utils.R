@@ -92,3 +92,7 @@ match_values <- function(args, choices, name = deparse(substitute(args))) {
   }
   args
 }
+
+vlapply <- function(X, FUN, ...) {
+  vapply(X, FUN, ..., FUN.VALUE = logical(1))
+}
