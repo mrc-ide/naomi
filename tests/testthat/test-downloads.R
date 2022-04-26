@@ -128,3 +128,30 @@ test_that("summary report download can be created", {
   expect_equal(messages$progress[[1]]$message,
                "Generating summary report")
 })
+
+
+test_that("comparison report download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_comparison_report_download(
+        a_hintr_output_calibrated))
+  })
+  expect_true(file.exists(out$path))
+
+  expect_type(out$metadata$description, "character")
+  expect_length(out$metadata$description, 1)
+  expect_equal(out$metadata$areas, "MWI")
+
+  expect_true(file.size(out$path) > 2000)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS",
+                        brio::readLines(out$path))))
+  expect_true(any(grepl(basename(a_hintr_data$pjnz),
+                        brio::readLines(out$path))))
+  expect_true(any(grepl("Central", brio::readLines(out$path))))
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message,
+               "Generating comparison report")
+})

@@ -69,3 +69,30 @@ hintr_prepare_summary_report_download <- function(
     )
   )
 }
+
+#' Prepare comparison report download
+#'
+#' @param hintr_output object
+#' @param path Path to save output file
+#'
+#' @return Path to output file and metadata for file
+#' @export
+hintr_prepare_comparison_report_download <- function(
+  output, path = tempfile(fileext = ".html")) {
+  assert_model_output_version(output)
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_COMPARISON")
+  model_output <- readRDS(output$model_output_path)
+  options <- yaml::read_yaml(text = model_output$info$options.yml)
+  list(
+    ## Just using the summary report as a placeholder - eventually
+    ## this will call a separate method to generate comparison report
+    path = generate_output_summary_report(path, output$model_output_path,
+                                          quiet = TRUE),
+    metadata = list(
+      description = build_comparison_report_description(options),
+      areas = options$area_scope,
+      type = "comparison"
+    )
+  )
+}

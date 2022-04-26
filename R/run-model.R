@@ -264,7 +264,7 @@ hintr_calibrate_plot <- function(output) {
       c(population_denominator, population, plhiv, art_current, unaware, infections),
       names_to = "indicator"
     )
-                 
+
   ## Rename indicators to match Naomi output indicators
   dflong$indicator <- dplyr::recode(dflong$indicator, "unaware" = "unaware_plhiv_num")
 
@@ -812,6 +812,11 @@ build_output_description <- function(options) {
 
 build_summary_report_description <- function(options) {
   build_description("Naomi summary report uploaded from Naomi web app",
+                    options)
+}
+
+build_comparison_report_description <- function(options) {
+  build_description("Naomi comparison report uploaded from Naomi web app",
                     options)
 }
 

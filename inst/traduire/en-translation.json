@@ -184,6 +184,7 @@
     "PROGRESS_DOWNLOAD_SPECTRUM": "Generating output zip download",
     "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
     "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
+    "PROGRESS_DOWNLOAD_COMPARISON": "Generating comparison report",
     "PLHIV_MAP_PLOT_TITLE": "People living with HIV (15+)",
     "ART_CURRENT_MAP_PLOT_TITLE": "Residents receiving ART (15+)",
     "INFECTIONS_MAP_PLOT_TITLE": "Annual HIV infections (15+)",
