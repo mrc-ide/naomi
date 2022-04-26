@@ -1,3 +1,7 @@
+# naomi 2.6.23
+
+* Add area hierarchy into time series plot data
+
 # naomi 2.6.22
 
 * Ignore non PJNZ files when listing contents of uploaded zip, to stop naomi trying to read from __MACOSX folder that macs add to zip files
