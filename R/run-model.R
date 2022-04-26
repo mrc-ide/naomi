@@ -257,7 +257,7 @@ hintr_calibrate_plot <- function(output) {
                          names_to = c("indicator", "data_type"),
                          names_pattern = "(.*)_(.*)")
 
-  #' Add population_denominator to indicator for each data_type
+  ## Add population_denominator to indicator for each data_type
   dflong <- dflong %>%
     tidyr::pivot_wider(names_from = indicator) %>%
     tidyr::pivot_longer(

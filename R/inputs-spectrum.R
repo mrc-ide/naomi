@@ -20,24 +20,31 @@ extract_pjnz_naomi <- function(pjnz_list) {
   spec
 }
 
-unroll_pjnz <-  function(pjnz_list) {
-
-  ## If meets conditions, treat as zipped list of PJNZ.
-  ## * Single file
-  ## * Does not contain a .DP or .PJN file
-  if(length(pjnz_list) == 1) {
-    file_names <- utils::unzip(pjnz_list, list = TRUE)$Name
-    exts <- tolower(tools::file_ext(file_names))
-    is_pjnz <- any("dp" %in% exts) || any("pjn" %in% exts)
-
-    if(!is_pjnz) {
-      pjnzdir <- tempfile()
-      utils::unzip(pjnz_list, exdir = pjnzdir)
-      pjnz_list <- list.files(pjnzdir, full.names = TRUE)
+unroll_pjnz <-  function(path) {
+  if (!is_pjnz(path)) {
+    unzip_dir <- tempfile("pjnz_unzip")
+    dir.create(unzip_dir)
+    zip::unzip(path, exdir = unzip_dir)
+    pjnz_paths <- list.files(unzip_dir, full.names = TRUE)
+    are_pjnz <- vlapply(pjnz_paths, is_pjnz)
+    if (!any(are_pjnz)) {
+      stop(t_("PJNZ_INVALID_ZIP"))
     }
+    pjnz_paths <- pjnz_paths[are_pjnz]
+  } else {
+    pjnz_paths <- path
   }
+  pjnz_paths
+}
 
-  pjnz_list
+is_pjnz <- function(path) {
+  tryCatch({
+    files <- zip::zip_list(path)
+    any(grepl("*.DP", files$filename))
+  },
+  error = function(e) {
+    return(FALSE)
+  })
 }
 
 
@@ -79,7 +86,7 @@ extract_pjnz_one <- function(pjnz) {
   spec <- dplyr::left_join(spec, pregprev, by = c("age", "sex", "year"))
 
   spec <- add_dec31_art(spec, pjnz)
-  
+
   spec <- add_shiny90_unaware(spec, pjnz)
 
 
@@ -109,23 +116,23 @@ extract_pjnz_one <- function(pjnz) {
 #' spec <- extract_pjnz_program_data(pjnz)
 #'
 #' @export
-#' 
+#'
 extract_pjnz_program_data <- function(pjnz_list) {
-
-  pjnz_list <- unroll_pjnz(pjnz_list)    
+  pjnz_list <- unroll_pjnz(pjnz_list)
 
   region_code <- lapply(pjnz_list, read_spectrum_region_code)
 
-  art_dec31 <- lapply(pjnz_list, read_pjnz_art_dec31) %>%
-    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
-    dplyr::bind_rows() %>%
-    dplyr::select(spectrum_region_code, dplyr::everything())
-  
-  anc_testing <- lapply(pjnz_list, read_pjnz_anc_testing) %>%
+  dp_list <- lapply(pjnz_list, read_dp)
+
+  art_dec31 <- lapply(dp_list, read_dp_art_dec31) %>%
     Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
     dplyr::bind_rows() %>%
     dplyr::select(spectrum_region_code, dplyr::everything())
 
+  anc_testing <- lapply(dp_list, read_dp_anc_testing) %>%
+    Map(dplyr::mutate, ., spectrum_region_code = region_code) %>%
+    dplyr::bind_rows() %>%
+    dplyr::select(spectrum_region_code, dplyr::everything())
   val <- list(art_dec31 = art_dec31, anc_testing = anc_testing)
   class(val) <- "spec_program_data"
 
@@ -139,18 +146,16 @@ extract_pjnz_program_data <- function(pjnz_list) {
 #' Reads the number on ART at December 31 from Spectrum PJNZ for children (0-14),
 #' adult (15+) males, and adult (15+) females.
 #'
-#' @param pjnz path to PJNZ file
+#' @param dp dp data from PJNZ file
 #'
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
-#' read_pjnz_art_dec31(pjnz)
+#' dp <- read_dp(pjnz)
+#' read_dp_art_dec31(dp)
 #'
 #' @noRd
-#' 
-read_pjnz_art_dec31 <- function(pjnz) {
-
-  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
-  dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+#'
+read_dp_art_dec31 <- function(dp) {
 
   exists_dptag <- function(tag, tagcol = 1) {
     tag %in% dp[, tagcol]
@@ -254,10 +259,11 @@ read_pjnz_art_dec31 <- function(pjnz) {
 #' Disaggregate the number on ART Dec 31 to single age
 #'
 #' @noRd
-#' 
+#'
 add_dec31_art <- function(spec, pjnz) {
 
-  art_dec31 <- read_pjnz_art_dec31(pjnz)
+  dp <- read_dp(pjnz)
+  art_dec31 <- read_dp_art_dec31(dp)
 
   ## Distribute coarse (<15/15+) ART data to 5-year age groups
   spec <- spec %>%
@@ -289,14 +295,11 @@ add_dec31_art <- function(spec, pjnz) {
 #'
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
-#' read_pjnz_anc_testing(pjnz)
+#' read_dp_anc_testing(pjnz)
 #'
 #' @noRd
-#' 
-read_pjnz_anc_testing <- function(pjnz) {
-
-  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
-  dp <- read.csv(unz(pjnz, dpfile), as.is = TRUE)
+#'
+read_dp_anc_testing <- function(dp) {
 
   exists_dptag <- function(tag, tagcol = 1) {
     tag %in% dp[, tagcol]
@@ -318,7 +321,7 @@ read_pjnz_anc_testing <- function(pjnz) {
   }
   anc_testing <- sapply(anc_testing, as.integer)
   anc_testing[anc_testing == -9999] <- NA_real_
-  
+
   ## Note: these values start 1 column later than other arrays in the .DP file
   ## If value is 0, interpret as not entered (NA)
   if (exists_dptag("<ARVRegimen MV2>")) {
@@ -332,7 +335,7 @@ read_pjnz_anc_testing <- function(pjnz) {
   anc_testing <- rbind(anc_testing, anc_already_art)
   dimnames(anc_testing) <- list(indicator = c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"),
                                 year = proj.years)
-  
+
   anc_testing <- as.data.frame.table(anc_testing,
                                    responseName = "value",
                                    stringsAsFactors = FALSE)
@@ -526,7 +529,7 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
       art_current_spectrum = pmin(plhiv_spectrum, art_current_spectrum),
       unaware_spectrum = pmin(plhiv_spectrum - art_current_spectrum, unaware_spectrum)
     )
-  
+
   dplyr::select(val,
                 spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
                 population_spectrum,
@@ -591,4 +594,9 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
   df$pregartcov <- eppasm::agepregartcov(mod, fp, idx$aidx, idx$yidx, idx$agspan)
 
   df
+}
+
+read_dp <- function(pjnz) {
+  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+  read.csv(unz(pjnz, dpfile), as.is = TRUE)
 }

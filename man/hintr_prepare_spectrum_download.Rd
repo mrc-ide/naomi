@@ -7,9 +7,9 @@
 hintr_prepare_spectrum_download(output, path = tempfile(fileext = ".zip"))
 }
 \arguments{
-\item{path}{Path to save output file}
+\item{output}{hintr output object}
 
-\item{hintr_output}{object}
+\item{path}{Path to save output file}
 }
 \value{
 Path to output file and metadata for file
