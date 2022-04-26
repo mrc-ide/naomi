@@ -240,17 +240,14 @@ aggregate_anc <- function(anc, shape) {
   ## Recursively aggregate ANC data up from lowest level of programm data provided
   # Level to aggregate from
 
-
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
-  }
-
-  if(inherits(shape, "sf")) {
+  } else {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
-  ## Check if art is object or file path
+  ## Check if anc is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     anc <- read_anc_testing(anc)
   }

@@ -349,5 +349,10 @@
     "OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE": "Rapport de prévalence pédiatrique variable dans l'espace",
     "OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO": "Prévalence pédiatrique modélisée rapportée à la prévalence modélisée chez les femmes adultes",
     "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Croissance nette de la population ajustée par district",
-    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "Couverture TARV interaction espace-sexe-temps"
+    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "Couverture TARV interaction espace-sexe-temps",
+    "WARNING_ART_NOT_EQUAL_TO_SPECTRUM": "Naomi ART current not equal to Spectrum: {{warnings}}",
+    "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
+    "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
+    "WARNING_ADDITIONAL": "and {{count}} more",
+    "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ"
 }

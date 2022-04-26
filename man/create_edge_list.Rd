@@ -6,6 +6,9 @@
 \usage{
 create_edge_list(adj_matrix)
 }
+\arguments{
+\item{adj_matrix}{Adjacency matrix}
+}
 \description{
 Create edgelist from adjacency matrix
 }

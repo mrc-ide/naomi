@@ -16,3 +16,4 @@
 ^tests/testthat/testdata/fit.RDS$
 ^docker$
 ^buildkite$
+^images$
