@@ -232,6 +232,7 @@
     "PROGRESS_DOWNLOAD_SPECTRUM": "Geração de saída zip download",
     "PROGRESS_DOWNLOAD_COARSE": "Geração de resultados grosseiros",
     "PROGRESS_DOWNLOAD_SUMMARY": "Elaboração de relatório de síntese",
+    "PROGRESS_DOWNLOAD_COMPARISON": "Elaboração de relatório de comparação",
     "CANNOT_RECALIBRATE": "A calibração não pode ser executada de novo para este modelo de ajuste, por favor, execute de novo o passo de ajuste.",
     "INVALID_ART_TIME_PERIOD": "Dados trimestrais não fornecidos para todos os desagregados ou dados anuais duplicados fornecidos para todos os desagregados.",
     "ART_TOTAL": "Contagem de TARV",

@@ -815,6 +815,11 @@ build_summary_report_description <- function(options) {
                     options)
 }
 
+build_comparison_report_description <- function(options) {
+  build_description("Naomi comparison report uploaded from Naomi web app",
+                    options)
+}
+
 build_description <- function(type_text, options) {
   write_options <- function(name, value) {
     sprintf("%s - %s", name, value)

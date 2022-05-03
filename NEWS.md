@@ -1,3 +1,7 @@
+# naomi 2.6.34
+
+* Add `hintr_prepare_comparison_report_download` function to generate comparison summary report
+
 # naomi 2.6.23
 
 * Add area hierarchy into time series plot data
