@@ -1,4 +1,8 @@
-# naomi 2.6.34
+# naomi 2.6.25
+
+* Fix formatting of spectrum warnings
+
+# naomi 2.6.24
 
 * Add `hintr_prepare_comparison_report_download` function to generate comparison summary report
 

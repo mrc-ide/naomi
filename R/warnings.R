@@ -218,6 +218,7 @@ format_spectrum_total_warning <- function(data_merged, key, location,
   df <- data_merged %>%
     dplyr::filter(!(value_naomi == value_spectrum)) %>%
     dplyr::arrange(dplyr::desc(year))
+  df <- as.data.frame(df)
   if(nrow(df) > 0) {
     if (age_disag) {
       df$label <- paste(df$year, df$age_group, df$area_name,
