@@ -41,6 +41,17 @@ test_that("ART data can be aggregated", {
   slash_count <- lengths(regmatches(hierarchy$area_hierarchy,
                                     gregexpr("/", hierarchy$area_hierarchy)))
   expect_equal(slash_count, hierarchy$area_level - 1)
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id,sex,age_group, time_period, calendar_quarter) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
+
+
 })
 
 
@@ -56,6 +67,15 @@ test_that("data can be formatted for ART input time series", {
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id, time_period, calendar_quarter, plot) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
 })
 
 
@@ -103,6 +123,15 @@ test_that("ANC data can be aggregated", {
   slash_count <- lengths(regmatches(hierarchy$area_hierarchy,
                                     gregexpr("/", hierarchy$area_hierarchy)))
   expect_equal(slash_count, hierarchy$area_level - 1)
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id,sex,age_group, time_period, calendar_quarter) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
 })
 
 
@@ -117,6 +146,15 @@ test_that("data can be formatted for ANC input time series", {
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id, time_period, calendar_quarter, plot) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
 })
 
 
