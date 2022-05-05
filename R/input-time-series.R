@@ -259,22 +259,21 @@ aggregate_anc <- function(anc, shape) {
                   calendar_quarter = paste0("CY", time_period, quarter),
                   sex = "female")
 
-  ## Recursively aggregate ART data up from lowest level of programme data provided
+  ## Recursively aggregate ANC data up from lowest level of programme data provided
   # Level to aggregate from
   anc_level <- levels(as.factor(anc_testing$area_level))
-  # Join ART data to hierarchy
+  # Join ANC data to hierarchy
   anc_testing_wide <- dplyr::left_join(
     anc_testing,
     spread_areas(areas %>% dplyr::filter(area_level <= anc_level)),
-    by = "area_id") %>%
-    tidyr::unite(area_hierarchy, tidyselect::starts_with("area_name"), remove = "F", sep = "/")
+    by = "area_id")
 
 
   # Function to aggregate based on area_id[0-9]$ columns in hierarchy
   aggregate_data_anc <- function(col_name) {
     df <- anc_testing_wide %>%
       dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
-                      year, quarter, calendar_quarter, area_hierarchy) %>%
+                      year, quarter, calendar_quarter) %>%
       dplyr::summarise(anc_clients = sum(anc_clients, na.rm = TRUE),
                        anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
                        anc_already_art = sum(anc_already_art, na.rm = TRUE),
@@ -294,7 +293,7 @@ aggregate_anc <- function(anc, shape) {
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group, time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
-                  anc_tested,anc_tested_pos, area_hierarchy) %>%
+                  anc_tested,anc_tested_pos) %>%
     dplyr::ungroup()
 
   anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
