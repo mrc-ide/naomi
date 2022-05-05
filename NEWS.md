@@ -1,6 +1,7 @@
 # naomi 2.6.25
 
-* Fix formatting of spectrum warnings
+* Fix anc aggregation
+* Add tests for aggregation and time series inouts scripts to ensure unique strata
 
 # naomi 2.6.24
 
