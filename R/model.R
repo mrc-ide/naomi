@@ -129,6 +129,7 @@ naomi_model_frame <- function(area_merged,
                                                 ritaT        = 1.0),
                               sigma_u_sd = 1.0,
                               artattend = TRUE,
+                              adjacency = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
                               rho_paed_15to49f_ratio = TRUE,
@@ -530,16 +531,6 @@ naomi_model_frame <- function(area_merged,
                              adjust_area_growth = adjust_area_growth)
 
 
-  ## Adjacency matrix
-  mf_areas_sf <- mf_areas
-  mf_areas_sf$geometry <- areas$boundaries[area_id]
-  mf_areas_sf <- sf::st_as_sf(mf_areas_sf)
-  M <- create_adj_matrix(mf_areas_sf)
-
-
-  ## Scaled  precision matrix for 'BYM2' model.
-  Q  <- scale_gmrf_precision(diag(rowSums(M)) - M)
-
   ## Model output
 
   area_aggregation <- create_area_aggregation(model_area_ids = mf_model$area_id,
@@ -554,6 +545,46 @@ naomi_model_frame <- function(area_merged,
   anc_age_groups <- anc_age_groups[["age_group"]]
 
   anc_outf <- naomi_output_frame(mf_model, area_aggregation, anc_age_groups, "female")
+
+
+
+  ## Adjacency matrix
+  if(!(adjacency)) {
+
+
+    # Create distance matrix using centroids
+    mf_areas_sf <- mf_areas
+    mf_areas_sf$geometry <- areas$boundaries[area_id]
+    mf_areas_sf <- sf::st_as_sf(mf_areas_sf)
+    cent <- sf::st_centroid(mf_areas_sf)
+    distM <- sf::st_distance(cent, cent)
+    # Limit movement between centroids max 100km apart
+    max <- 100000
+    units(max) <- "m"
+    logicalM <- distM > max
+    M <- 1 * logicalM
+
+    ## Scaled  precision matrix for 'BYM2' model.
+    Q  <- scale_gmrf_precision(diag(rowSums(M)) - M)
+
+    print("Distance matrix created")
+
+
+  } else {
+
+    # Create adjacency matrix
+    mf_areas_sf <- mf_areas
+    mf_areas_sf$geometry <- areas$boundaries[area_id]
+    mf_areas_sf <- sf::st_as_sf(mf_areas_sf)
+    M <- create_adj_matrix(mf_areas_sf)
+
+    ## Scaled  precision matrix for 'BYM2' model.
+    Q  <- scale_gmrf_precision(diag(rowSums(M)) - M)
+
+    print("Adjacency matrix created")
+
+  }
+
 
 
   ## ART attendance model
@@ -593,7 +624,6 @@ naomi_model_frame <- function(area_merged,
 
 
   ## Incidence model
-
   mf_model <- mf_model %>%
     dplyr::group_by(area_id) %>%
     dplyr::mutate(

@@ -437,6 +437,7 @@ naomi_prepare_data <- function(data, options) {
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
 
+
   ## VLS survey data not supported by model options
   vls_survey_ids <- NULL
 
@@ -470,6 +471,16 @@ naomi_prepare_data <- function(data, options) {
     options$adjust_area_growth <- FALSE
   }
 
+  # Developmental art attending model options
+  if(is.null(options$artattend_method)) {
+    artattend_method <- options$artattend_method
+  } else {
+    artattend_method <- "default"
+  }
+
+  adjacency_spec <- options$adjacency
+
+
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
     population_agesex = population,
@@ -488,6 +499,7 @@ naomi_prepare_data <- function(data, options) {
     rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
     alpha_xst_term = as.logical(options$alpha_xst_term),
     adjust_area_growth = as.logical(options$adjust_area_growth),
+    adjacency = adjacency_spec
   )
 
   naomi_data <- select_naomi_data(
