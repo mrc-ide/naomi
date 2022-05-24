@@ -2,9 +2,11 @@ context("downloads")
 
 test_that("spectrum download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  notes <- "these are my\nmultiline notes"
   with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
-      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated))
+      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
+                                             notes = notes))
   })
   expect_true(file.exists(out$path))
 
@@ -62,6 +64,12 @@ test_that("spectrum download can be created", {
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message,
                "Generating output zip download")
+
+  ## Notes are saved
+  t <- tempfile()
+  unzip(out$path, "notes.txt", exdir = t)
+  saved_notes <- readLines(file.path(t, "notes.txt"))
+  expect_equal(saved_notes, c("these are my", "multiline notes"))
 })
 
 test_that("coarse age group download can be created", {
