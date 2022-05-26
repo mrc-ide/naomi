@@ -459,7 +459,7 @@ naomi_model_frame <- function(area_merged,
   if (any(spec_indicators$frr_plhiv <= 0)) {
     stop("Invalid fertility rate ratio for women on ART calculated from Spectrum inputs. Please contact troubleshooting.")
   }
-  
+
   mf_model <- mf_model %>%
     dplyr::left_join(
              spec_indicators %>%
@@ -526,7 +526,7 @@ naomi_model_frame <- function(area_merged,
                              population_colname1 = "population_t1",
                              population_colname2 = "population_t2",
                              adjust_area_growth = adjust_area_growth)
-  
+
   Lproj_t2t3 <- create_Lproj(spec = spec,
                              mf_model = mf_model,
                              quarter_id1 = quarter_id2,
@@ -534,8 +534,8 @@ naomi_model_frame <- function(area_merged,
                              population_colname1 = "population_t2",
                              population_colname2 = "population_t3",
                              adjust_area_growth = adjust_area_growth)
-  
-  
+
+
   ## Adjacency matrix
   mf_areas_sf <- mf_areas
   mf_areas_sf$geometry <- areas$boundaries[area_id]
@@ -635,7 +635,7 @@ naomi_model_frame <- function(area_merged,
              is_paed = as.integer(age_group %in% c("Y000_004", "Y005_009", "Y010_014")),
              spec_prev15to49f_t1 = sum(population_t1 * spec_prev_t1 * age15to49 * female_15plus) / sum(population_t1 * age15to49 * female_15plus),
              spec_prev15to49f_t2 = sum(population_t2 * spec_prev_t2 * age15to49 * female_15plus) / sum(population_t2 * age15to49 * female_15plus),
-             spec_prev15to49f_t3 = sum(population_t3 * spec_prev_t3 * age15to49 * female_15plus) / sum(population_t3 * age15to49 * female_15plus),      
+             spec_prev15to49f_t3 = sum(population_t3 * spec_prev_t3 * age15to49 * female_15plus) / sum(population_t3 * age15to49 * female_15plus),
              paed_rho_ratio = is_paed * spec_prev_t1 / spec_prev15to49f_t1,
              bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
              ##
@@ -643,7 +643,7 @@ naomi_model_frame <- function(area_merged,
              paed_lambda_ratio_t1 = is_paed * spec_incid_t1 / spec_prev15to49f_t1,
              paed_lambda_ratio_t2 = is_paed * spec_incid_t2 / spec_prev15to49f_t2,
              paed_lambda_ratio_t3 = is_paed * spec_incid_t3 / spec_prev15to49f_t3,
-             ## 
+             ##
              ## Remove interim calculations
              is_paed = NULL,
              spec_prev15to49f_t1 = NULL,
@@ -737,32 +737,36 @@ naomi_model_frame <- function(area_merged,
 #' @seealso [demo_survey_hiv_indicators], [demo_anc_testing], [demo_art_number], [convert_quarter_id]
 #'
 #' @export
-select_naomi_data <- function(naomi_mf,
-                              survey_hiv_indicators,
-                              anc_testing,
-                              art_number,
-                              prev_survey_ids,
-                              artcov_survey_ids,
-                              recent_survey_ids,
-                              vls_survey_ids = NULL,
-                              artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
-                              artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
-                              anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
-                              anc_clients_year_t2_num_months = 12,
-                              anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter1"]])),
-                              anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
-                              anc_artcov_year_t1 = anc_prev_year_t1,
-                              anc_artcov_year_t2 = anc_prev_year_t2,
-                              use_kish_prev = TRUE,
-                              deff_prev = 1.0,
-                              use_kish_artcov = TRUE,
-                              deff_artcov = 1.0,
-                              use_kish_recent = TRUE,
-                              deff_recent = 1.0,
-                              use_kish_vls = TRUE,
-                              deff_vls = 1.0,
-                              use_survey_aggregate = FALSE,
-                              spec_program_data = NULL) {
+select_naomi_data <- function(
+  naomi_mf,
+  survey_hiv_indicators,
+  anc_testing,
+  art_number,
+  prev_survey_ids,
+  artcov_survey_ids,
+  recent_survey_ids,
+  vls_survey_ids = NULL,
+  artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
+  artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
+  anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(
+    naomi_mf[["calendar_quarter2"]])),
+  anc_clients_year_t2_num_months = 12,
+  anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(
+    naomi_mf[["calendar_quarter1"]])),
+  anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(
+    naomi_mf[["calendar_quarter2"]])),
+  anc_artcov_year_t1 = anc_prev_year_t1,
+  anc_artcov_year_t2 = anc_prev_year_t2,
+  use_kish_prev = TRUE,
+  deff_prev = 1.0,
+  use_kish_artcov = TRUE,
+  deff_artcov = 1.0,
+  use_kish_recent = TRUE,
+  deff_recent = 1.0,
+  use_kish_vls = TRUE,
+  deff_vls = 1.0,
+  use_survey_aggregate = FALSE,
+  spec_program_data = NULL) {
 
   stopifnot(is(naomi_mf, "naomi_mf"))
 
@@ -770,7 +774,7 @@ select_naomi_data <- function(naomi_mf,
   ## Return NA if spec_program_data not provided
   anc_testing_spectrum_aligned <- NA
   art_number_spectrum_aligned <- NA
-  
+
   if (!is.null(spec_program_data)) {
     stopifnot(is(spec_program_data, "spec_program_data"))
 
@@ -784,7 +788,7 @@ select_naomi_data <- function(naomi_mf,
         tidyr::pivot_longer(dplyr::starts_with("anc"),
                             names_to = "indicator",
                             values_to = "value_naomi") %>%
-        dplyr::count(spectrum_region_code, year, indicator, 
+        dplyr::count(spectrum_region_code, year, indicator,
                      wt = value_naomi, name = "value_naomi") %>%
         dplyr::inner_join(
           spec_program_data$anc_testing %>%
@@ -793,7 +797,7 @@ select_naomi_data <- function(naomi_mf,
         )
 
       anc_testing_spectrum_aligned <- all(anc_merged$value_naomi == anc_merged$value_spectrum)
-      
+
     } else {
       ## If no ANC testing data, return TRUE
       anc_testing_spectrum_aligned <- TRUE
@@ -818,12 +822,12 @@ select_naomi_data <- function(naomi_mf,
         )
 
       art_number_spectrum_aligned <- all(art_merged$art_current_naomi == art_merged$art_dec31)
-      
+
     } else {
       ## If no ANC testing data, return TRUE
       art_number_spectrum_aligned <- TRUE
     }
-  } 
+  }
 
   common_surveys <- intersect(artcov_survey_ids, vls_survey_ids)
   if (length(common_surveys)) {
@@ -1134,7 +1138,6 @@ survey_mf <- function(survey_ids,
 #'
 #' @param year Calendar year
 #' @param anc_testing ART data frame
-#' @param art_number Number on ART
 #' @param naomi_mf Naomi model frame
 #' @return Calculated prevalence
 #'

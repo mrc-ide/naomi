@@ -2,6 +2,35 @@
 
 * Add indicator `plhiv_attending` reporting the estimated denominator for `art_current` based on assuming same ART attendance probabilities for untreated population as the treated population.
 
+# naomi 2.6.26
+
+* `hintr_prepare_spectrum_download` now takes arg `notes` for arbitrary notes which will be added into the output zip
+
+# naomi 2.6.25
+
+* Fix anc aggregation
+* Add tests for aggregation and time series inouts scripts to ensure unique strata
+
+# naomi 2.6.24
+
+* Add `hintr_prepare_comparison_report_download` function to generate comparison summary report
+
+# naomi 2.6.23
+
+* Add area hierarchy into time series plot data
+
+# naomi 2.6.22
+
+* Ignore non PJNZ files when listing contents of uploaded zip, to stop naomi trying to read from __MACOSX folder that macs add to zip files
+
+# naomi 2.6.21
+
+* Add warning for spectrum totals that do not match aggregated district ART + ANC data
+
+# naomi 2.6.19
+
+* Specify incidence per 1000 outputs to be displayed with one decimal place.
+
 # naomi 2.6.18
 
 * Bug fix: calibration options read into summary report from `outputs` object

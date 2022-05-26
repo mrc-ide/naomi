@@ -343,7 +343,7 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
   meta_indicator <- get_meta_indicator()
   meta_indicator <- dplyr::filter(meta_indicator, indicator %in% indicators$indicator)
-                                     
+
   val <- list(
     indicators = indicators,
     art_attendance = art_attendance,
@@ -668,6 +668,7 @@ subset_naomi_output <- function(naomi_output,
 #' @param naomi_output Naomi output object
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
+#' @param notes Notes to include in output zip
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson
@@ -681,14 +682,20 @@ subset_naomi_output <- function(naomi_output,
 save_output_package <- function(naomi_output,
                                 filename,
                                 dir,
+                                notes = NULL,
                                 overwrite = FALSE,
                                 with_labels = FALSE,
                                 boundary_format = "geojson",
                                 single_csv = FALSE,
                                 export_datapack = !single_csv) {
 
-  save_output(filename, dir, naomi_output, overwrite,
-              with_labels, boundary_format, single_csv, export_datapack)
+  save_output(filename, dir, naomi_output,
+              notes = notes,
+              overwrite = overwrite,
+              with_labels = with_labels,
+              boundary_format = boundary_format,
+              single_csv = single_csv,
+              export_datapack = export_datapack)
 }
 
 save_output_coarse_age_groups <- function(path, naomi_output,
@@ -704,8 +711,9 @@ save_output_coarse_age_groups <- function(path, naomi_output,
               export_datapack = FALSE)
 }
 
-save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
-  save_output(basename(path), dirname(path), naomi_output,
+save_output_spectrum <- function(path, naomi_output, notes = NULL,
+                                 overwrite = FALSE) {
+  save_output(basename(path), dirname(path), naomi_output, notes,
               overwrite = overwrite, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE,
               export_datapack = TRUE)
@@ -717,6 +725,7 @@ save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
 #' @param options Naomi model options
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
+#' @param notes Notes to include in output zip
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson
@@ -729,6 +738,7 @@ save_output_spectrum <- function(path, naomi_output, overwrite = FALSE) {
 #' @export
 save_output <- function(filename, dir,
                         naomi_output,
+                        notes = NULL,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
@@ -748,7 +758,6 @@ save_output <- function(filename, dir,
     stop(paste(
       "File", path, "already exists. Set overwrite = TRUE to write output."))
   }
-
   naomi_output$indicators <- remove_output_labels(naomi_output)
   naomi_output$art_attendance <- remove_art_attendance_labels(naomi_output)
 
@@ -765,6 +774,11 @@ save_output <- function(filename, dir,
   old <- setwd(tmpd)
   on.exit(setwd(old))
   naomi_write_csv(indicators, "indicators.csv")
+
+  if (!is.null(notes)) {
+    assert_scalar_character(notes)
+    writeLines(notes, "notes.txt")
+  }
 
   if(!single_csv) {
     naomi_write_csv(art_attendance, "art_attendance.csv")
@@ -814,6 +828,10 @@ save_output <- function(filename, dir,
     yaml::write_yaml(fit$model_options, "fit/model_options.yml")
     yaml::write_yaml(fit$data_options, "fit/data_options.yml")
     yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
+  }
+
+  if (!is.null(notes)) {
+
   }
 
   zip::zipr(path, list.files())

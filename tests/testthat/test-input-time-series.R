@@ -6,7 +6,7 @@ test_that("ART data can be aggregated", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
-                    "time_period", "year", "quarter", "calendar_quarter",
+                    "time_period", "year", "quarter", "calendar_quarter", "area_hierarchy",
                     "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
 
 
@@ -25,6 +25,33 @@ test_that("ART data can be aggregated", {
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(art_number$area_level)]
   expect_equal(unique(data$area_level), shape_level)
 
+  ## Area hierarchy is formatted correctly
+  check_hierarchy_format <- function(hierarchy) {
+    grepl("[\\w\\-/ ]+", hierarchy, perl = TRUE)
+  }
+  expect_true(all(check_hierarchy_format(data$area_hierarchy)))
+
+  ## Check no of / in hierarchy is correct i.e. the label is for the correct
+  ## level. For country level values should be the area name
+  ## For below country level values should have no of / equal to 1 less
+  ## than their area level
+  country_level <- data[data$area_level == 0, ]
+  expect_true(all(country_level$area_hierarchy == country_level$area_name))
+  hierarchy <-  data[data$area_level > 0, ]
+  slash_count <- lengths(regmatches(hierarchy$area_hierarchy,
+                                    gregexpr("/", hierarchy$area_hierarchy)))
+  expect_equal(slash_count, hierarchy$area_level - 1)
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id,sex,age_group, time_period, calendar_quarter) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
+
+
 })
 
 
@@ -36,10 +63,19 @@ test_that("data can be formatted for ART input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name",  "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order",  "time_period", "year",
-                    "quarter","calendar_quarter","plot", "value"))
+                    "quarter","calendar_quarter", "area_hierarchy", "plot", "value"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id, time_period, calendar_quarter, plot) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
 })
 
 
@@ -53,7 +89,7 @@ test_that("ANC data can be aggregated", {
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
                     "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
-                    "anc_tested_pos" ))
+                    "anc_tested_pos", "area_hierarchy"))
 
 
   # Time period has correct format
@@ -70,6 +106,32 @@ test_that("ANC data can be aggregated", {
   # Check data has been aggregated from baseline to lowest level in hierarchy
   shape_level <- unique(shape$area_level)[unique(shape$area_level) <= unique(anc_testing$area_level)]
   expect_equal(unique(data$area_level), shape_level)
+
+  ## Area hierarchy is formatted correctly
+  check_hierarchy_format <- function(hierarchy) {
+    grepl("[\\w\\-/ ]+", hierarchy, perl = TRUE)
+  }
+  expect_true(all(check_hierarchy_format(data$area_hierarchy)))
+
+  ## Check no of / in hierarchy is correct i.e. the label is for the correct
+  ## level. For country level values should be the area name
+  ## For below country level values should have no of / equal to 1 less
+  ## than their area level
+  country_level <- data[data$area_level == 0, ]
+  expect_true(all(country_level$area_hierarchy == country_level$area_name))
+  hierarchy <-  data[data$area_level > 0, ]
+  slash_count <- lengths(regmatches(hierarchy$area_hierarchy,
+                                    gregexpr("/", hierarchy$area_hierarchy)))
+  expect_equal(slash_count, hierarchy$area_level - 1)
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id,sex,age_group, time_period, calendar_quarter) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
 })
 
 
@@ -80,10 +142,19 @@ test_that("data can be formatted for ANC input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "age_group", "time_period",
-                    "year","quarter", "calendar_quarter","plot", "value"))
+                    "year","quarter", "calendar_quarter","plot", "value", "area_hierarchy" ))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
+
+  ## Check that there is only a single age_group, time_period + quater value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id, time_period, calendar_quarter, plot) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
 })
 
 
@@ -156,14 +227,14 @@ test_that("can get plot type descriptions from key", {
       id = "art_total",
       label = "ART count",
       description = "Number on ART at the end of calendar year",
-      format = "0",
+      format = "0,0",
       accuracy = NA_integer_
     ),
     list(
       id = "art_child",
       label = "ART paediatric",
       description = "Number of children (<15) on ART at the end of calendar year",
-      format = "0",
+      format = "0,0",
       accuracy = NA_integer_
     )
   ))
@@ -221,3 +292,4 @@ test_that("anc input time series can handle data with NA rows", {
   ## Check that NA entry has been removed
   expect_true(!any(is.na(unique(data$age_group))))
 })
+
