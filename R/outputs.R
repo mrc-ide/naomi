@@ -885,8 +885,8 @@ read_output_package <- function(path) {
   ## Fit list
   fit <- list()
 
-  if (file.exists(file.path(tmpd,"fit/model_options.yml"))) {
-    fit$model_options <- yaml::read_yaml(file.path(tmpd,"fit/model_options.yml"))
+  if (file.exists(file.path(tmpd,"info/options.yml"))) {
+    fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
   }
 
   if (file.exists(file.path(tmpd,"fit/data_options.yml"))) {
