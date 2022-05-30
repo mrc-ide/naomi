@@ -103,7 +103,8 @@ prepare_tmb_inputs <- function(naomi_data,
 
   if(xgamma_spec == "home_pull"){
 
-    # Xgamma = ADD IN
+    Xgamma <- sparse_model_matrix(~0 + attend_area_idf, naomi_data$mf_artattend)
+
 
   } else {
     Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
