@@ -130,6 +130,7 @@ naomi_model_frame <- function(area_merged,
                               sigma_u_sd = 1.0,
                               artattend = TRUE,
                               adjacency = TRUE,
+                              max_distance = 0,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
                               rho_paed_15to49f_ratio = TRUE,
@@ -559,7 +560,7 @@ naomi_model_frame <- function(area_merged,
     cent <- sf::st_centroid(mf_areas_sf)
     distM <- sf::st_distance(cent, cent)
     # Limit movement between centroids max 100km apart
-    max <- 100000
+    max <- max_distance
     units(max) <- "m"
     logicalM <- distM > max
     M <- 1 * logicalM
