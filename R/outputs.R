@@ -184,7 +184,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
-                calendar_quarter, indicator, mean, se, median, mode, lower, upper)
+                calendar_quarter, indicator, mean, se, median, mode, lower, upper) %>%
+    dplyr::mutate(data_type = "model_estimate")
 }
 
 extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
@@ -338,6 +339,8 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   meta_indicator <- get_meta_indicator()
   meta_indicator <- dplyr::filter(meta_indicator, indicator %in% indicators$indicator)
 
+  model_inputs <- extract_naomi_inputs(naomi_data)
+
   val <- list(
     indicators = indicators,
     art_attendance = art_attendance,
@@ -345,7 +348,8 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
     meta_age_group = meta_age_group,
     meta_period = meta_period,
     meta_indicator = meta_indicator,
-    fit = fit
+    fit = fit,
+    model_inputs = model_inputs
   )
 
   class(val) <- "naomi_output"

@@ -838,7 +838,7 @@ select_naomi_data <- function(
                                  deff = deff_prev,
                                  use_aggregate = use_survey_aggregate)
 
-  if (nrow(naomi_mf$prev_dat) == 0) {
+  if (nrow(naomi_mf$prev_dat$model_input) == 0) {
     stop("No prevalence survey data found for survey: ",
          paste0(prev_survey_ids, collapse = ", "),
          ". Prevalence data are required for Naomi. Check your selections.")
@@ -882,9 +882,9 @@ select_naomi_data <- function(
   naomi_mf$artnum_t2_dat <- artnum_mf(artnum_calendar_quarter_t2, art_number, naomi_mf)
 
   naomi_mf <- update_mf_offsets(naomi_mf,
-                                naomi_mf$prev_dat,
-                                naomi_mf$artcov_dat,
-                                naomi_mf$vls_dat)
+                                naomi_mf$prev_dat$model_input,
+                                naomi_mf$artcov_dat$model_input,
+                                naomi_mf$vls_dat$model_input)
 
   surv_df <- survey_hiv_indicators
   data_options <- list(prev_survey_available = unique(surv_df$survey_id[surv_df$indicator == "prevalence"]),
@@ -1090,15 +1090,16 @@ survey_mf <- function(survey_ids,
 
   eligible_age_groups <- get_age_groups() %>%
     dplyr::filter(
-             age_group_start >= min_age,
-             age_group_start + age_group_span <= max_age
-           )
-  dat <- survey_hiv_indicators %>%
-    dplyr::filter(
-             survey_id %in% survey_ids,
-             indicator == !!indicator,
-             age_group %in% eligible_age_groups$age_group
-           )
+      age_group_start >= min_age,
+      age_group_start + age_group_span <= max_age
+    )
+
+  survey_dat <- dplyr::filter(survey_hiv_indicators, indicator == !!indicator)
+
+  dat <- survey_dat %>% dplyr::filter(
+    survey_id %in% survey_ids,
+    age_group %in% eligible_age_groups$age_group
+  )
 
   if (!use_aggregate) {
     ## Filter data to finest area / sex / age_group stratification
@@ -1118,14 +1119,23 @@ survey_mf <- function(survey_ids,
     ##  to throw the error earlier here.
   }
 
-    dat <- dat %>%
+  #  Tag rows not selected as model inputs
+  excluded <- setdiff(survey_dat, dat)
+  excluded$data_type <- "raw_excluded"
+
+  #  Tag row selected as model inputs
+  dat$data_type <- "raw_included"
+  all_dat <- rbind(dat, excluded)
+
+  model_dat <- dat %>%
     dplyr::mutate(n = n_observations,
                   n_eff = if(use_kish) n_eff_kish else n,
                   n_eff = n_eff / deff,
                   x_eff = n_eff * estimate) %>%
     dplyr::select(area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
 
-  dat
+  survey_out <- list(raw_input  = all_dat,
+                     model_input = model_dat)
 }
 
 #' Prepare Model Frames for Programme Datasets
@@ -1149,6 +1159,9 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       anc_prev_n = integer(0),
       stringsAsFactors = FALSE
     )
+
+    anc_prev_dat_out <- list(model_input = anc_prev_dat)
+
   } else {
 
     if (!all(year %in% anc_testing$year)) {
@@ -1165,13 +1178,25 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                              by = "area_id"
                            )
     ## Drop any observations with NA in required columns
-    anc_prev_dat <- anc_prev_dat %>%
-      dplyr::filter(
+    anc_prev_dat <- dplyr::filter(anc_prev_dat,
                year %in% !!year,
                !is.na(anc_known_pos),
                !is.na(anc_tested_pos),
                !is.na(anc_tested)
-             ) %>%
+             )
+
+
+    #  Tag rows not selected as model inputs
+    excluded <- setdiff(anc_testing, anc_prev_dat)
+    excluded$data_type <- "raw_excluded"
+
+    #  Tag row selected as model inputs
+    anc_prev_dat$data_type <- "raw_included"
+
+    all_dat <- rbind(anc_prev_dat, excluded)
+
+    # Process selected data inputs as model inputs
+    model_input <- anc_prev_dat %>%
       dplyr::group_by(area_id, age_group) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested), sum) %>%
       dplyr::ungroup() %>%
@@ -1184,12 +1209,16 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                anc_prev_n = anc_known_pos + anc_tested
              )
 
-    if(any(anc_prev_dat$anc_prev_x > anc_prev_dat$anc_prev_n))
+    if(any(model_input$anc_prev_x > model_input$anc_prev_n))
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
+
+    anc_prev_dat_out <- list(raw_input = all_dat,
+                             model_input = model_input)
 
   }
 
-  anc_prev_dat
+
+
 }
 
 
@@ -1208,6 +1237,8 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       anc_artcov_n = integer(0),
       stringsAsFactors = FALSE
     )
+
+    anc_artcov_dat_out <- list(model_input = anc_artcov_dat)
   } else {
 
     if (!all(year %in% anc_testing$year)) {
@@ -1230,7 +1261,20 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
                !is.na(anc_known_pos),
                !is.na(anc_tested_pos),
                !is.na(anc_already_art)
-             )  %>%
+             )
+
+    #  Tag rows not selected as model inputs
+    excluded <- setdiff(anc_testing, anc_artcov_dat)
+
+    excluded$data_type <- "raw_excluded"
+
+    #  Tag row selected as model inputs
+    anc_artcov_dat$data_type <- "raw_included"
+
+    all_dat <- rbind(anc_artcov_dat, excluded)
+
+    # Process selected data inputs as model inputs
+    model_input <- anc_artcov_dat %>%
       dplyr::group_by(area_id, age_group) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_already_art), sum) %>%
       dplyr::ungroup() %>%
@@ -1244,13 +1288,16 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
                anc_artcov_n = anc_total_pos
              )
 
-    if(any(anc_artcov_dat$anc_artcov_x > anc_artcov_dat$anc_artcov_n)) {
+    if(any(model_input$anc_artcov_x > model_input$anc_artcov_n)) {
       stop(t_("ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE"))
     }
 
+    anc_artcov_dat_out <- list(raw_input = all_dat,
+                               model_input = model_input)
+
   }
 
-  anc_artcov_dat
+  anc_artcov_dat_out
 }
 
 #' @rdname anc_testing_prev_mf
@@ -1268,6 +1315,7 @@ anc_testing_clients_mf <- function(year, anc_testing, naomi_mf, num_months) {
       anc_clients_pys_offset = numeric(0),
       stringsAsFactors = FALSE
     )
+    anc_clients_dat_out <- list(model_input = anc_clients_dat)
   } else {
 
     if (!all(year %in% anc_testing$year)) {
@@ -1288,7 +1336,19 @@ anc_testing_clients_mf <- function(year, anc_testing, naomi_mf, num_months) {
       dplyr::filter(
                year %in% !!year,
                !is.na(anc_clients)
-             )  %>%
+             )
+
+    #  Tag rows not selected as model inputs
+    excluded <- setdiff(anc_testing, anc_clients_dat)
+    excluded$data_type <- "raw_excluded"
+
+    #  Tag row selected as model inputs
+    anc_clients_dat$data_type <- "raw_included"
+
+    all_dat <- rbind(anc_clients_dat, excluded)
+
+    # Process selected data inputs as model inputs
+    model_input <- anc_clients_dat %>%
       dplyr::group_by(area_id, age_group) %>%
       dplyr::summarise_at(dplyr::vars(anc_clients), sum) %>%
       dplyr::ungroup() %>%
@@ -1300,9 +1360,12 @@ anc_testing_clients_mf <- function(year, anc_testing, naomi_mf, num_months) {
                anc_clients_x = anc_clients,
                anc_clients_pys_offset = log(num_months / 12),
                )
+
+    anc_clients_dat_out <- list(raw_input = all_dat,
+                                model_input = model_input)
   }
 
-  anc_clients_dat
+  anc_clients_dat_out
 }
 
 
@@ -1333,6 +1396,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       art_current = integer(0),
       stringsAsFactors = FALSE
     )
+    artnum_dat_out <- list(model_input = artnum_dat)
   } else {
 
     out_quarter_id <- calendar_quarter_to_quarter_id(calendar_quarter)
@@ -1362,15 +1426,19 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
     if (out_quarter_id %in% dat$quarter_id) {
       dat <- dplyr::filter(dat, quarter_id == out_quarter_id)
+      #  Tag row selected as model inputs
+      dat$data_type <- "raw_included"
     } else {
     dat <- dat %>%
       dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
-                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y) %>%
-      dplyr::ungroup() %>%
+                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y,
+                       .groups = "drop") %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter)
+    #  Tag row selected as model inputs
+    dat$data_type <- "interpolated_included"
     }
 
     if (nrow(dat) == 0) {
@@ -1378,7 +1446,22 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
               list(calendar_quarter = calendar_quarter)))
     }
 
-    artnum_dat <- dat %>%
+    #  Tag rows not selected as model inputs
+    cols <- c("area_id", "sex", "age_group" , "art_current", "calendar_quarter")
+    dat$calendar_quarter <- calendar_quarter
+
+    excluded <- dplyr::anti_join(
+      art_number %>% dplyr::select(dplyr::all_of(cols)),
+      dat %>% dplyr::select(dplyr::all_of(cols)),
+      by = cols)
+
+    excluded$data_type <- "raw_excluded"
+
+
+    all_dat <- rbind(dat %>% dplyr::select(all_of(cols), data_type), excluded)
+
+    # Process selected data inputs as model inputs
+    model_input <- dat %>%
       dplyr::transmute(
                area_id,
                sex,
@@ -1386,7 +1469,82 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
                artnum_idx = dplyr::row_number(),
                art_current
              )
+
+    artnum_dat_out <- list(raw_input = all_dat,
+                           model_input = model_input)
+
   }
 
-  artnum_dat
+  artnum_dat_out
+
 }
+
+
+
+#' @param naomi_data Naomi object of class "naomi_data" and "naomi_mf"
+#'
+#' @details
+#'
+
+#'
+#' @export
+
+# YOUAREHERE
+
+extract_naomi_inputs <- function(naomi_data){
+
+  stopifnot(is(naomi_data, "naomi_data"))
+  stopifnot(is(naomi_data, "naomi_mf"))
+
+  # Collate and format data inputs to match outputs with coumn names:
+  #  "area_id", "sex" , "age_group" , "calendar_quarter", "indicator","mean",
+  # "se" ,"median" , "mode" , "lower" , "upper"
+
+   format_inputs_to_outputs <- function(dat) {
+
+     indicators <- c("art_current", "art_new", "vl_tested_12mos", "vl_supressed_12mos",
+                     "anc_clients", "anc_known_pos","anc_already_art", "anc_tested",
+                     "anc_tested_pos")
+
+
+     ind <- intersect(colnames(dat), indicators)
+
+     long <- dat %>% dplyr::ungroup() %>%
+       dplyr::select(area_id,  sex , age_group, calendar_quarter, data_type, all_of(ind)) %>%
+       tidyr::pivot_longer(cols = all_of(ind),
+                           names_to = "indicator", values_to = "mean") %>%
+       dplyr::mutate(se = NA_real_ ,median = NA_real_ , mode = NA_real_ ,
+                     lower = NA_real_ , upper = NA_real_)
+
+
+   }
+
+   # Collate and format ART data
+   art_dat <- rbind(naomi_data$artnum_t1_dat$raw_input,
+                    naomi_data$artnum_t2_dat$raw_input)
+
+   art_long <- format_inputs_to_outputs(art_dat)
+
+  # Collate and format ANC data
+  anc_dat <- rbind(naomi_data$anc_artcov_t1_dat$raw_input,
+                   naomi_data$anc_artcov_t2_dat$raw_input) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4"), sex = "female")
+
+  anc_long <- format_inputs_to_outputs(anc_dat)
+
+  # Collate and format survey_data
+  survey_dat <- rbind(naomi_data$prev_dat$raw_input,
+                      naomi_data$artcov_dat$raw_input,
+                      naomi_data$recent_dat$raw_input,
+                      naomi_data$vls_dat$raw_input) %>%
+    dplyr::mutate(median = NA_real_, mode = NA_real_) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter = survey_mid_calendar_quarter,
+                  indicator, data_type, mean = estimate, se = std_error,lower = ci_lower,
+                  upper = ci_upper, median, mode)
+
+  inputs_formatted <- rbind(survey_dat, art_long)
+
+}
+
+
