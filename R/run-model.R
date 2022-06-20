@@ -418,11 +418,13 @@ naomi_prepare_data <- function(data, options) {
 
   if (!is.null(data$art_number)) {
     art_number <- read_art_number(data$art_number$path)
+    art_spectrum_warning(art_number, area_merged, spec_program_data)
   } else {
     art_number <- NULL
   }
   if (!is.null(data$anc_testing)) {
     anc_testing <- read_anc_testing(data$anc_testing$path)
+    anc_spectrum_warning(anc_testing, area_merged, spec_program_data)
   } else {
     anc_testing <- NULL
   }

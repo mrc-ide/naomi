@@ -212,7 +212,8 @@ test_that("calibration options used in summary report if present", {
   t <- tempfile(fileext = ".html")
   generate_output_summary_report(t, zip$path, quiet = TRUE)
   content <- brio::readLines(t)
-  expect_true(any(grepl("Sex and 5-year age group", content)))
+  expect_true(any(grepl("Sex and 5-year age group",
+                        paste0(content, collapse = " "))))
 })
 
 test_that("output_package() catches error if NA in simulated sample.", {
