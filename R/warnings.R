@@ -102,14 +102,16 @@ art_spectrum_warning <- function(art, shape, pjnz) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art_number <- read_art_number(art, all_columns = TRUE)
+    art <- read_art_number(art, all_columns = TRUE)
   }
 
-  ## Read in spectrum programme data
-  spec_program_data <- extract_pjnz_program_data(pjnz)
+  ## PJNZ either object or file path
+  if (!inherits(pjnz, "spec_program_data")) {
+    pjnz <- extract_pjnz_program_data(pjnz)
+  }
 
   ## Check if art totals match spectrum totals
-  art_merged <- art_number %>%
+  art_merged <- art %>%
       dplyr::left_join(
         dplyr::select(areas, area_id, area_name, spectrum_region_code),
         by = "area_id"
@@ -117,7 +119,7 @@ art_spectrum_warning <- function(art, shape, pjnz) {
       dplyr::count(spectrum_region_code, sex, age_group, area_name, calendar_quarter,
                    wt = art_current, name = "value_naomi") %>%
       dplyr::inner_join(
-        spec_program_data$art_dec31 %>%
+        pjnz$art_dec31 %>%
           dplyr::mutate(
             calendar_quarter = paste0("CY", year, "Q4")
           ),
@@ -163,14 +165,16 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
 
   ## Check if anc is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    anc_testing <- read_anc_testing(anc)
+    anc <- read_anc_testing(anc)
   }
 
-  ## Read in spectrum programme data
-  spec_program_data <- extract_pjnz_program_data(pjnz)
+  ## PJNZ either object or file path
+  if (!inherits(pjnz, "spec_program_data")) {
+    pjnz <- extract_pjnz_program_data(pjnz)
+  }
 
   ## Check if art totals match spectrum totals
-  anc_merged <- anc_testing %>%
+  anc_merged <- anc %>%
     dplyr::left_join(
       dplyr::select(areas, area_id,area_name, spectrum_region_code),
       by = "area_id"
@@ -181,7 +185,7 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
     dplyr::count(spectrum_region_code, age_group, area_name, year, indicator,
                  wt = value_naomi, name = "value_naomi") %>%
     dplyr::inner_join(
-      spec_program_data$anc_testing %>%
+      pjnz$anc_testing %>%
         dplyr::rename("value_spectrum" = "value"),
       by = c("spectrum_region_code", "indicator", "year")
     ) %>%
