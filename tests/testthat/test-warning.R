@@ -61,8 +61,14 @@ test_that("warning raised after false convergence", {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
-  expect_length(out$warnings, 1)
-  expect_equal(out$warnings[[1]]$text,
+  expect_length(out$warnings, 4)
+  expect_match(out$warnings[[1]]$text,
+               "Naomi ART current not equal to Spectrum")
+  expect_match(out$warnings[[2]]$text,
+               "Naomi ANC testing not equal to Spectrum")
+  expect_match(out$warnings[[3]]$text,
+               "Naomi ANC tested positive not equal to Spectrum")
+  expect_equal(out$warnings[[4]]$text,
                "Convergence error: false convergence (8)")
 })
 
@@ -97,12 +103,17 @@ test_that("warning raised if outputs exceed threshold", {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
-  expect_length(out$warnings, 2)
+  expect_length(out$warnings, 5)
+  msgs <- lapply(out$warnings, function(x) x$text)
+  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
+                        msgs)))
   expect_equal(
-    out$warnings[[1]]$text,
+    out$warnings[[4]]$text,
     "HIV prevalence is higher than 50% for: March 2016, Northern, Both, 0-4")
   expect_equal(
-    out$warnings[[2]]$text,
+    out$warnings[[5]]$text,
     "ART coverage is higher than 100% for: March 2016, Northern, Both, 0-4")
 })
 
