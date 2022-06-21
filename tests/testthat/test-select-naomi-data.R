@@ -30,3 +30,39 @@ test_that("select ANC programme data returns expected rows", {
 
 })
 
+test_that("Full data inputs and filtered data inputs do not intersect", {
+
+  quiet_semi_join <- function(x,y){suppressMessages(dplyr::semi_join(x,y))}
+
+  check_filtered_inputs <- function(raw_input, model_input){
+    # Filter raw input for excluded observations
+    excluded <- raw_input[raw_input$data_type == "raw_excluded",]
+    included <- model_input
+    # Check that there are no overlaps between model input data and excluded data
+    expect_equal(nrow(quiet_semi_join(included, excluded)), 0)
+    }
+
+  # Survey data
+  check_filtered_inputs(a_naomi_data$prev_dat$raw_input,
+                        a_naomi_data$prev_dat$model_input)
+
+  # ANC data
+  check_filtered_inputs(a_naomi_data$anc_prev_t1_dat$raw_input,
+                        a_naomi_data$anc_prev_t1_dat$model_input)
+
+
+  check_filtered_inputs(a_naomi_data$anc_artcov_t1_dat$raw_input,
+                        a_naomi_data$anc_artcov_t1_dat$model_input)
+
+  check_filtered_inputs(a_naomi_data$anc_clients_t2_dat$raw_input,
+                        a_naomi_data$anc_clients_t2_dat$model_input)
+
+  # ART data
+  check_filtered_inputs(a_naomi_data$artnum_t1_dat$raw_input,
+                        a_naomi_data$artnum_t1_dat$model_input)
+
+
+
+})
+
+
