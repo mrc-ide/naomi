@@ -46,9 +46,7 @@ prepare_tmb_inputs <- function(naomi_data) {
                   age_group,
                   idx)
 
-    dat <- dplyr::rename(anc_obs_dat,
-                         attend_area_id = area_id,
-                         artnum_idx = obs_idx)
+    dat <- dplyr::rename(anc_obs_dat, attend_area_id = area_id)
 
     Amat <- create_artattend_Amat(
       dat,
@@ -72,7 +70,6 @@ prepare_tmb_inputs <- function(naomi_data) {
                     idx)
 
     survey_dat$attend_area_id <- survey_dat$area_id
-    survey_dat$artnum_idx <- seq_len(nrow(survey_dat))
 
     Amat <- create_artattend_Amat(
       survey_dat,
@@ -143,8 +140,7 @@ prepare_tmb_inputs <- function(naomi_data) {
              reside_area_id,
              attend_area_id,
              sex = "both",
-             age_group = "Y000_999",
-             artnum_idx = dplyr::row_number()
+             age_group = "Y000_999"
            ) %>%
     create_artattend_Amat(age_groups = naomi_data$age_groups,
                           sexes = naomi_data$sexes,
@@ -698,7 +694,6 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
   as.matrix(Matrix::t(v))
 }
 
-
 create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation,
                                   df_art_attend, by_residence = FALSE, by_survey = FALSE) {
 
@@ -712,6 +707,13 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   id_vars <- by_vars
   if (by_survey) {
     id_vars <- c(id_vars, "survey_id")
+  }
+
+
+  if(!("artnum_idx" %in% colnames(artnum_df))) {
+
+    artnum_df$artnum_idx <- seq_len(nrow(artnum_df))
+
   }
 
   A_artnum <- artnum_df %>%
@@ -756,7 +758,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   ## Check no areas with duplicated reporting
   art_duplicated_check <- A_artnum %>%
     dplyr::group_by_at(id_vars) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::filter(n > 1)
 
   if (nrow(art_duplicated_check)) {
