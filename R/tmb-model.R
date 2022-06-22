@@ -180,7 +180,7 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no sex stratified prevalence data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$sex)) {
+  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$model_input$sex)) {
     f_rho_xs <- ~0
   } else {
     f_rho_xs <- ~0 + area_idf
@@ -188,9 +188,9 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no sex stratified ART coverage data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$sex) &&
-       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
-       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
+  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$model_input$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$model_input$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$model_input$sex) ) {
     f_alpha_xs <- ~0
   } else {
     f_alpha_xs <- ~0 + area_idf
@@ -200,8 +200,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   ## If flag **and** has ART by sex data at both times, estimate time x district x
   ## sex ART odds ratio.
   if (naomi_data$alpha_xst_term) {
-    if (!all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
-          !all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex)) {
+    if (!all(c("male", "female") %in% naomi_data$artnum_t1_dat$model_input$sex) &&
+          !all(c("male", "female") %in% naomi_data$artnum_t2_dat$model_input$sex)) {
       stop(paste("Sex-stratified ART data are required at both Time 1 and Time 2",
                  "to estimate district x sex x time interaction for ART coverage"))
     }
