@@ -11,26 +11,6 @@ prepare_tmb_inputs <- function(naomi_data) {
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
 
-  create_anc_Amat <- function(naomi_mf, asfr_col, population_col) {
-
-    A <- naomi_data$mf_model %>%
-      dplyr::transmute(
-               area_id,
-               area_idx,
-               idx,
-               births = !!rlang::sym(asfr_col) * !!rlang::sym(population_col)
-             ) %>%
-      {
-      Matrix::spMatrix(nrow(naomi_data$mf_areas),
-                       nrow(naomi_data$mf_model),
-                       .$area_idx,
-                       .$idx,
-                       .$births)
-    }
-
-    A
-  }
-
   ## ANC observation aggregation matrices
   ##
   ## TODO: Refactor code to make the function create_artattend_Amat() more generic.

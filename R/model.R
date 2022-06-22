@@ -1476,7 +1476,7 @@ extract_naomi_inputs <- function(naomi_data){
 
   # Collate and format data inputs to match outputs with column names:
   #  "area_id", "sex" , "age_group" , "calendar_quarter", "indicator","mean",
-  # "se" ,"median" , "mode" , "lower" , "upper"
+  # "se" ,"median" , "mode" , "lower" , "upper", "data_type"
 
   format_inputs_to_outputs <- function(dat, source = "programme_data") {
 
@@ -1487,7 +1487,7 @@ extract_naomi_inputs <- function(naomi_data){
 
     ind <- intersect(colnames(dat), indicators)
 
-    long <- dat %>% dplyr::ungroup() %>%
+    long <- dat %>%
       dplyr::select(area_id,  sex , age_group, calendar_quarter, data_type, all_of(ind)) %>%
       tidyr::pivot_longer(cols = all_of(ind),
                           names_to = "indicator", values_to = "mean") %>%
@@ -1497,31 +1497,46 @@ extract_naomi_inputs <- function(naomi_data){
 
   }
 
-  # Collate and format ART data
-  art_dat <- rbind(naomi_data$artnum_t1_dat$raw_input,
-                   naomi_data$artnum_t2_dat$raw_input)
-
-  art_long <- format_inputs_to_outputs(art_dat)
-
-  # Collate and format ANC data
-  anc_dat <- rbind(naomi_data$anc_artcov_t1_dat$raw_input,
-                   naomi_data$anc_artcov_t2_dat$raw_input) %>%
-    dplyr::distinct() %>%
-    dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4"), sex = "female")
-
-  anc_long <- format_inputs_to_outputs(anc_dat)
-
   # Collate and format survey_data
-  survey_dat <- rbind(naomi_data$prev_dat$raw_input,
-                      naomi_data$artcov_dat$raw_input,
-                      naomi_data$recent_dat$raw_input,
-                      naomi_data$vls_dat$raw_input) %>%
+  input_dat <- rbind(naomi_data$prev_dat$raw_input,
+                     naomi_data$artcov_dat$raw_input,
+                     naomi_data$recent_dat$raw_input,
+                     naomi_data$vls_dat$raw_input) %>%
     dplyr::mutate(median = NA_real_, mode = NA_real_) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter = survey_mid_calendar_quarter,
                   indicator, data_type, mean = estimate, se = std_error,lower = ci_lower,
                   upper = ci_upper, median, mode, source = survey_id)
 
-  inputs_formatted <- rbind(survey_dat, art_long)
+
+  # Collate and format ART data
+  art_dat <- rbind(naomi_data$artnum_t1_dat$raw_input,
+                   naomi_data$artnum_t2_dat$raw_input)
+
+  if(!is.null(art_dat) && nrow(art_dat) > 1) {
+    art_long <- format_inputs_to_outputs(art_dat)
+
+    input_dat <- rbind(input_dat, art_long)
+  }
+
+
+  # Collate and format ANC data
+  anc_dat <- rbind(naomi_data$anc_artcov_t1_dat$raw_input,
+                   naomi_data$anc_artcov_t2_dat$raw_input)
+
+  if(!is.null(anc_dat) && nrow(anc_dat) > 1) {
+
+    anc_dat <- anc_dat %>%
+      dplyr::distinct() %>%
+      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4"), sex = "female")
+
+    anc_long <- format_inputs_to_outputs(anc_dat)
+
+    input_dat <- rbind(input_dat, anc_long)
+
+
+  }
+
+  input_dat
 
 }
 
