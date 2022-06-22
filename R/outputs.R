@@ -374,7 +374,7 @@ add_output_labels <- function(naomi_output, geometry = FALSE) {
 
   indicators <- naomi_output$indicators %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, indicator,
-                  mean, se, median, mode, lower, upper)
+                  mean, se, median, mode, lower, upper, data_type)
 
   if (geometry) {
     meta_area <- naomi_output$meta_area %>%
@@ -449,7 +449,8 @@ add_output_labels <- function(naomi_output, geometry = FALSE) {
                                   median,
                                   mode,
                                   lower,
-                                  upper)
+                                  upper,
+                                  data_type)
     }
 
   }
@@ -463,7 +464,7 @@ remove_output_labels <- function(naomi_output) {
                 age_group,
                 calendar_quarter,
                 indicator,
-                mean, se, median, mode, lower, upper)
+                mean, se, median, mode, lower, upper, data_type)
 }
 
 add_art_attendance_labels <- function(naomi_output) {
@@ -785,6 +786,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
     naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
+    naomi_write_csv(naomi_output$model_inputs, "model_inputs.csv")
 
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
 
@@ -912,7 +914,8 @@ read_output_package <- function(path) {
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
-    fit = fit
+    fit = fit,
+    model_inputs = readr_read_csv(file.path(tmpd, "model_inputs.csv"))
   )
 
   v$meta_area$name <- NULL
