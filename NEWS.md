@@ -1,3 +1,7 @@
+# naomi 2.6.27
+
+* Return full data inputs to `naomi_data`, naomi output object and output zip
+
 # naomi 2.6.26
 
 * `hintr_prepare_spectrum_download` now takes arg `notes` for arbitrary notes which will be added into the output zip
