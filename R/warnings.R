@@ -127,10 +127,11 @@ art_spectrum_warning <- function(art, shape, pjnz) {
       ) %>%
     dplyr::rename(value_spectrum = art_dec31)
 
-  format_spectrum_total_warning(data_merged = art_merged,
-                                key = "WARNING_ART_NOT_EQUAL_TO_SPECTRUM",
-                                location = "review_inputs",
-                                age_disag = TRUE)
+  format_spectrum_total_warning(
+    data_merged = art_merged,
+    key = "WARNING_ART_NOT_EQUAL_TO_SPECTRUM",
+    location = "model_calibrate",
+    age_disag = TRUE)
 
 }
 
@@ -196,14 +197,15 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
   anc_tested_pos <- anc_merged[anc_merged$indicator == "anc_tested_pos",]
 
   # Generate warning if totals are not aligned
-  format_spectrum_total_warning(data_merged = anc_tested,
-                                key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
-                                location = "review_inputs")
+  format_spectrum_total_warning(
+    data_merged = anc_tested,
+    key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
+    location = "model_calibrate")
 
   format_spectrum_total_warning(
     data_merged = anc_tested_pos,
     key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
-    location = "review_inputs")
+    location = "model_calibrate")
 }
 
 ##' Format spectrum total warnings

@@ -1,3 +1,7 @@
+# naomi 2.6.27
+
+* Move ANC and ART spectrum data mismatch warnings to be shown on model calibrate page
+
 # naomi 2.6.26
 
 * `hintr_prepare_spectrum_download` now takes arg `notes` for arbitrary notes which will be added into the output zip
