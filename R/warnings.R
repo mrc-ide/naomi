@@ -130,7 +130,7 @@ art_spectrum_warning <- function(art, shape, pjnz) {
   format_spectrum_total_warning(
     data_merged = art_merged,
     key = "WARNING_ART_NOT_EQUAL_TO_SPECTRUM",
-    location = "model_calibrate",
+    location = c("model_calibrate", "review_output"),
     age_disag = TRUE)
 
 }
@@ -200,12 +200,12 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
   format_spectrum_total_warning(
     data_merged = anc_tested,
     key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
-    location = "model_calibrate")
+    location = c("model_calibrate", "review_output"))
 
   format_spectrum_total_warning(
     data_merged = anc_tested_pos,
     key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
-    location = "model_calibrate")
+    location = c("model_calibrate", "review_output"))
 }
 
 ##' Format spectrum total warnings

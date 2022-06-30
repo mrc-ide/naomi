@@ -1,6 +1,6 @@
 # naomi 2.6.27
 
-* Move ANC and ART spectrum data mismatch warnings to be shown on model calibrate page
+* Move ANC and ART spectrum data mismatch warnings to be shown on model calibrate and review result pages
 
 # naomi 2.6.26
 
