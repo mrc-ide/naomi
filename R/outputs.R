@@ -878,6 +878,45 @@ generate_output_summary_report <- function(report_path,
 }
 
 
+#' Generate and save summary report at specified path
+#'
+#' @param report_path Path to save summary report at
+#' @param outputs Path to model outputs rds or zip file
+#' @param quiet Suppress printing of the pandoc command line
+#'
+#' @return Path to summary report
+#' @keywords internal
+generate_comparison_report <- function(report_path,
+                                           outputs,
+                                           quiet = FALSE) {
+  report_filename <- basename(report_path)
+  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+  output_file_path <- normalizePath(outputs, mustWork = TRUE)
+  ## Render uses relative paths to locate the html file. The package author
+  ## advises against using output_dir see:
+  ## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
+  ## so set up a temp directory with all report sources and generate from there
+  ## then copy report to destination
+  tmpd <- tempfile()
+  dir.create(tmpd)
+  on.exit(unlink(tmpd, recursive = TRUE))
+  withr::with_dir(tmpd, {
+    fs::file_copy(list.files(system_file("report"), full.names = TRUE), ".")
+    style <- brio::readLines("styles.css")
+    style <- traduire::translator()$replace(style)
+    writeLines(style, "styles.css")
+    rmarkdown::render("comparison_report.Rmd",
+                      params = list(outputs = output_file_path,
+                                    lang = t_("LANG")),
+                      output_file = report_filename,
+                      quiet = quiet
+    )
+
+    fs::file_copy(report_filename, report_path_dir, overwrite = TRUE)
+  })
+  report_path
+}
+
 #' @rdname save_output_package
 #' @param path Path to output zip file.
 #' @export
