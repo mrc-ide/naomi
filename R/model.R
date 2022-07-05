@@ -1520,8 +1520,26 @@ extract_naomi_inputs <- function(naomi_data){
 
 
   # Collate and format ANC data
-  anc_dat <- rbind(naomi_data$anc_artcov_t1_dat$raw_input,
-                   naomi_data$anc_artcov_t2_dat$raw_input)
+
+  anc_keep_cols <- c("area_id", "age_group", "sex" ,"year", "anc_clients", "anc_known_pos",
+                 "anc_already_art", "anc_tested","anc_tested_pos", "anc_clients", "data_type")
+
+
+
+  anc_artcov_dat <- rbind(naomi_data$anc_artcov_t1_dat$raw_input,
+                           naomi_data$anc_artcov_t2_dat$raw_input)
+  anc_prev_dat <- rbind(naomi_data$anc_prev_t1_dat$raw_input,
+                        naomi_data$anc_prev_t2_dat$raw_input)
+
+  silence_cols <- intersect(colnames(anc_artcov_dat),
+                            colnames(anc_prev_dat))
+
+  anc_dat <- dplyr::left_join(anc_artcov_dat %>%
+                     dplyr::select(intersect(colnames(anc_artcov_dat), anc_keep_cols)),
+                     anc_prev_dat %>%
+                     dplyr::select(intersect(colnames(anc_prev_dat), anc_keep_cols)),
+                     by = silence_cols)
+
 
   if(!is.null(anc_dat) && nrow(anc_dat) > 1) {
 
