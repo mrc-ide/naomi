@@ -179,7 +179,7 @@ do_validate_model_options <- function(data, options) {
         ((is.null(options$include_art_t1) || options$include_art_t1 == "false") ||
          (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
       stop(t_("TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE"))
-    }    
+    }
   }
 
   if (all(is.na(area_merged$spectrum_region_code))) {
@@ -215,4 +215,15 @@ do_validate_model_options <- function(data, options) {
   }
 
   list(valid = TRUE)
+}
+
+##' Get option defaults for a specific country
+##'
+##' @param iso3 iso3 code for the country
+##'
+##' @return The option defaults for country, if no defaults found then
+##'
+##' @export
+get_country_option_defaults <- function() {
+  read.csv(system_file("metadata", "option_defaults.csv"))
 }
