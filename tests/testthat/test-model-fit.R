@@ -75,7 +75,7 @@ test_that("model fit with no ART data at T2", {
     tmb_inputs <- prepare_tmb_inputs(naomi_data)
     fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 
-    expect_equal(nrow(naomi_data$artnum_t2_dat$model_input), 0)
+    expect_equal(nrow(naomi_data$artnum_t2_dat), 0)
     expect_equal(tmb_inputs$par_init$beta_alpha_t2, numeric(0))
     expect_equal(tmb_inputs$par_init$u_alpha_xt, numeric(0))
     expect_equal(ncol(tmb_inputs$data$Z_alpha_xt), 0)
@@ -89,7 +89,7 @@ test_that("model fit with no ART data at T2", {
 test_that("extract_indicators returns expected names and types", {
 
   ind_colnames <- c("area_id", "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean", "se", "median", "mode", "lower", "upper", "data_type")
+                    "mean", "se", "median", "mode", "lower", "upper")
 
   ind1 <- extract_indicators(a_fit, a_naomi_mf)
   expect_setequal(names(ind1), ind_colnames)

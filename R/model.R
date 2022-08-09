@@ -937,7 +937,7 @@ select_naomi_data <- function(
   artnum_t2_tagged <- artnum_mf(artnum_calendar_quarter_t2, art_number, naomi_mf)
 
   artnum_t1_dat <- artnum_t1_tagged$model_input
-  artnum_t2_dat <- artnum_t1_tagged$model_input
+  artnum_t2_dat <- artnum_t2_tagged$model_input
 
 
   # Add data into naomi_mf
@@ -983,6 +983,7 @@ select_naomi_data <- function(
                           survey_artcov_tagged$raw_input,
                           survey_recent_tagged$raw_input,
                           survey_vls_tagged$raw_input)
+
   artnum_full_mf <- rbind(artnum_t1_tagged$raw_input,
                           artnum_t2_tagged$raw_input) %>%
     dplyr::distinct()
@@ -997,6 +998,7 @@ select_naomi_data <- function(
 
   naomi_mf
 }
+
 
 
 
@@ -1385,7 +1387,32 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       art_current = integer(0),
       stringsAsFactors = FALSE
     )
-    artnum_dat_out <- list(model_input = artnum_dat)
+
+    if(is.null(calendar_quarter) && is.null(art_number) || is.null(art_number)) {
+      ## No number on ART data and no year specified
+      raw_input <- data.frame(
+        area_id = character(0),
+        sex = character(0),
+        age_group = character(0),
+        art_current = integer(0),
+        calendar_quarter = character(0),
+        source = character(0),
+        naomi_input = character(0),
+        stringsAsFactors = FALSE)
+    }
+
+    if(!is.null(art_number)) {
+      ## No number on ART data and no year specified
+      raw_input  <- aggregate_art(art_number, naomi_mf$areas) %>%
+        dplyr::mutate(
+          source = "programme",
+          naomi_input = FALSE) %>%
+        dplyr::select(area_id, sex, age_group, art_current, calendar_quarter,
+                      source, naomi_input)
+    }
+
+    artnum_dat_out <- list(model_input = artnum_dat,
+                           raw_input = raw_input)
   } else {
 
     out_quarter_id <- calendar_quarter_to_quarter_id(calendar_quarter)

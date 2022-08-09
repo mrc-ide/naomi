@@ -584,7 +584,7 @@ remove_output_labels <- function(naomi_output) {
                 age_group,
                 calendar_quarter,
                 indicator,
-                mean, se, median, mode, lower, upper, data_type)
+                mean, se, median, mode, lower, upper)
 }
 
 add_art_attendance_labels <- function(naomi_output) {
