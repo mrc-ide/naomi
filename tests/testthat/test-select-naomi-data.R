@@ -30,39 +30,37 @@ test_that("select ANC programme data returns expected rows", {
 
 })
 
-test_that("Full data inputs and filtered data inputs do not intersect", {
+test_that("Data inputs aggregated and tagged correctly", {
 
   quiet_semi_join <- function(x,y){suppressMessages(dplyr::semi_join(x,y))}
 
-  check_filtered_inputs <- function(raw_input, model_input){
-    # Filter raw input for excluded observations
-    excluded <- raw_input[raw_input$data_type == "raw_excluded",]
-    included <- model_input
-    # Check that there are no overlaps between model input data and excluded data
-    expect_equal(nrow(quiet_semi_join(included, excluded)), 0)
-    }
-
+  # Model inputs do not intersect with excluded data
   # Survey data
-  check_filtered_inputs(a_naomi_data$prev_dat$raw_input,
-                        a_naomi_data$prev_dat$model_input)
-
-  # ANC data
-  check_filtered_inputs(a_naomi_data$anc_prev_t1_dat$raw_input,
-                        a_naomi_data$anc_prev_t1_dat$model_input)
-
-
-  check_filtered_inputs(a_naomi_data$anc_artcov_t1_dat$raw_input,
-                        a_naomi_data$anc_artcov_t1_dat$model_input)
-
-  check_filtered_inputs(a_naomi_data$anc_clients_t2_dat$raw_input,
-                        a_naomi_data$anc_clients_t2_dat$model_input)
+  survey_tagged <- a_naomi_data$model_inputs$survey_full_mf
+  survey_excluded <- dplyr::filter(survey_tagged, naomi_input == FALSE)
+  survey_included <- dplyr::filter(survey_tagged, naomi_input == TRUE)
+  expect_equal(nrow(quiet_semi_join(survey_included, survey_excluded)), 0)
 
   # ART data
-  check_filtered_inputs(a_naomi_data$artnum_t1_dat$raw_input,
-                        a_naomi_data$artnum_t1_dat$model_input)
+  artnum_tagged <- a_naomi_data$model_inputs$artnum_full_mf
+  artnum_excluded <- dplyr::filter(artnum_tagged, naomi_input == FALSE)
+  artnum_included <- dplyr::filter(artnum_tagged, naomi_input == TRUE)
+  expect_equal(nrow(quiet_semi_join(artnum_included, artnum_excluded)), 0)
 
+  # ANC data
+  anc_tagged <- a_naomi_data$model_inputs$artnum_full_
+  anc_excluded <- dplyr::filter(anc_tagged, naomi_input == FALSE)
+  anc_included <- dplyr::filter(anc_tagged, naomi_input == TRUE)
+  expect_equal(nrow(quiet_semi_join(anc_included, anc_excluded)), 0)
 
+  # Excluded data contains aggregated area_id/age/sex strata and included data
+  # contains strata specified in model options
+
+  aggregated_ids <- a_area_merged[a_area_merged$area_level < 4,]$area_id
+  model_input_ids <- a_area_merged[a_area_merged$area_level == 4,]$area_id
+
+  expect_true(!any(aggregated_ids %in% unique(survey_included$area_id)))
+  expect_true(!any(aggregated_ids %in% unique(artnum_included$area_id)))
+  expect_true(!any(aggregated_ids %in% unique(anc_included$area_id)))
 
 })
-
-

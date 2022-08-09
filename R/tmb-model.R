@@ -64,16 +64,16 @@ prepare_tmb_inputs <- function(naomi_data) {
     Amat
   }
 
-  A_anc_clients_t2 <- create_anc_Amat(naomi_data$anc_clients_t2_dat$model_input)
-  A_anc_prev_t1 <- create_anc_Amat(naomi_data$anc_prev_t1_dat$model_input)
-  A_anc_prev_t2 <- create_anc_Amat(naomi_data$anc_prev_t2_dat$model_input)
-  A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat$model_input)
-  A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat$model_input)
+  A_anc_clients_t2 <- create_anc_Amat(naomi_data$anc_clients_t2_dat)
+  A_anc_prev_t1 <- create_anc_Amat(naomi_data$anc_prev_t1_dat)
+  A_anc_prev_t2 <- create_anc_Amat(naomi_data$anc_prev_t2_dat)
+  A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat)
+  A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat)
 
-  A_prev <- create_survey_Amat(naomi_data$prev_dat$model_input)
-  A_artcov <- create_survey_Amat(naomi_data$artcov_dat$model_input)
-  A_vls <- create_survey_Amat(naomi_data$vls_dat$model_input)
-  A_recent <- create_survey_Amat(naomi_data$recent_dat$model_input)
+  A_prev <- create_survey_Amat(naomi_data$prev_dat)
+  A_artcov <- create_survey_Amat(naomi_data$artcov_dat)
+  A_vls <- create_survey_Amat(naomi_data$vls_dat)
+  A_recent <- create_survey_Amat(naomi_data$recent_dat)
 
   ## ART attendance aggregation
 
@@ -94,14 +94,14 @@ prepare_tmb_inputs <- function(naomi_data) {
   Xart_gamma <- sparse_model_matrix(~0 + attend_idf, df_art_attend)
   Xart_idx <- sparse_model_matrix(~0 + idf, df_art_attend)
 
-  A_artattend_t1 <- create_artattend_Amat(artnum_df = dplyr::rename(naomi_data$artnum_t1_dat$model_input, attend_area_id = area_id),
+  A_artattend_t1 <- create_artattend_Amat(artnum_df = dplyr::rename(naomi_data$artnum_t1_dat, attend_area_id = area_id),
                                           age_groups = naomi_data$age_groups,
                                           sexes = naomi_data$sexes,
                                           area_aggregation = naomi_data$area_aggregation,
                                           df_art_attend = df_art_attend,
                                           by_residence = FALSE)
 
-  A_artattend_t2 <- create_artattend_Amat(artnum_df = dplyr::rename(naomi_data$artnum_t2_dat$model_input, attend_area_id = area_id),
+  A_artattend_t2 <- create_artattend_Amat(artnum_df = dplyr::rename(naomi_data$artnum_t2_dat, attend_area_id = area_id),
                                           age_groups = naomi_data$age_groups,
                                           sexes = naomi_data$sexes,
                                           area_aggregation = naomi_data$area_aggregation,
@@ -160,7 +160,7 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no sex stratified prevalence data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$model_input$sex)) {
+  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$sex)) {
     f_rho_xs <- ~0
   } else {
     f_rho_xs <- ~0 + area_idf
@@ -168,9 +168,9 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no sex stratified ART coverage data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$model_input$sex) &&
-       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$model_input$sex) &&
-       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$model_input$sex) ) {
+  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
     f_alpha_xs <- ~0
   } else {
     f_alpha_xs <- ~0 + area_idf
@@ -180,8 +180,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   ## If flag **and** has ART by sex data at both times, estimate time x district x
   ## sex ART odds ratio.
   if (naomi_data$alpha_xst_term) {
-    if (!all(c("male", "female") %in% naomi_data$artnum_t1_dat$model_input$sex) &&
-          !all(c("male", "female") %in% naomi_data$artnum_t2_dat$model_input$sex)) {
+    if (!all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
+          !all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex)) {
       stop(paste("Sex-stratified ART data are required at both Time 1 and Time 2",
                  "to estimate district x sex x time interaction for ART coverage"))
     }
@@ -197,8 +197,8 @@ prepare_tmb_inputs <- function(naomi_data) {
   ## T1 ART data may be either survey or programme
   ##
 
-  has_t1_art <- nrow(naomi_data$artcov_dat$model_input) > 0 | nrow(naomi_data$artnum_t1_dat$model_input) > 0
-  has_t2_art <- nrow(naomi_data$artnum_t2_dat$model_input) > 0
+  has_t1_art <- nrow(naomi_data$artcov_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
+  has_t2_art <- nrow(naomi_data$artnum_t2_dat) > 0
 
   if( !has_t1_art | !has_t2_art ) {
     f_alpha_t2 <- ~0
@@ -211,11 +211,11 @@ prepare_tmb_inputs <- function(naomi_data) {
   }
 
   ## Paediatric ART coverage random effects
-  artnum_t1_dat <- naomi_data$artnum_t1_dat$model_input %>%
+  artnum_t1_dat <- naomi_data$artnum_t1_dat %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
 
-  artnum_t2_dat <- naomi_data$artnum_t2_dat$model_input %>%
+  artnum_t2_dat <- naomi_data$artnum_t2_dat %>%
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
 
@@ -237,7 +237,7 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
-  if(nrow(naomi_data$recent_dat$model_input) == 0) {
+  if(nrow(naomi_data$recent_dat) == 0) {
     f_lambda <- ~0
     f_lambda_x <- ~0
   } else {
@@ -331,41 +331,41 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_paed_lambda_ratio_t3 = X_paed_lambda_ratio_t3,
     ##
     ## Household survey input data
-    x_prev = naomi_data$prev_dat$model_input$x_eff,
-    n_prev = naomi_data$prev_dat$model_input$n_eff,
+    x_prev = naomi_data$prev_dat$x_eff,
+    n_prev = naomi_data$prev_dat$n_eff,
     A_prev = A_prev,
-    x_artcov = naomi_data$artcov_dat$model_input$x_eff,
-    n_artcov = naomi_data$artcov_dat$model_input$n_eff,
+    x_artcov = naomi_data$artcov_dat$x_eff,
+    n_artcov = naomi_data$artcov_dat$n_eff,
     A_artcov = A_artcov,
-    x_vls = naomi_data$vls_dat$model_input$x_eff,
-    n_vls = naomi_data$vls_dat$model_input$n_eff,
+    x_vls = naomi_data$vls_dat$x_eff,
+    n_vls = naomi_data$vls_dat$n_eff,
     A_vls = A_vls,
-    x_recent = naomi_data$recent_dat$model_input$x_eff,
-    n_recent = naomi_data$recent_dat$model_input$n_eff,
+    x_recent = naomi_data$recent_dat$x_eff,
+    n_recent = naomi_data$recent_dat$n_eff,
     A_recent = A_recent,
     ##
     ## ANC testing input data
-    x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$model_input$anc_clients_x,
-    offset_anc_clients_t2 = naomi_data$anc_clients_t2_dat$model_input$anc_clients_pys_offset,
+    x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,
+    offset_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_pys_offset,
     A_anc_clients_t2 = A_anc_clients_t2,
-    x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$model_input$anc_prev_x,
-    n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$model_input$anc_prev_n,
+    x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_x,
+    n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_n,
     A_anc_prev_t1 = A_anc_prev_t1,
-    x_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$model_input$anc_artcov_x,
-    n_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$model_input$anc_artcov_n,
+    x_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_x,
+    n_anc_artcov_t1 = naomi_data$anc_artcov_t1_dat$anc_artcov_n,
     A_anc_artcov_t1 = A_anc_artcov_t1,
-    x_anc_prev_t2 = naomi_data$anc_prev_t2_dat$model_input$anc_prev_x,
-    n_anc_prev_t2 = naomi_data$anc_prev_t2_dat$model_input$anc_prev_n,
+    x_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_x,
+    n_anc_prev_t2 = naomi_data$anc_prev_t2_dat$anc_prev_n,
     A_anc_prev_t2 = A_anc_prev_t2,
-    x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$model_input$anc_artcov_x,
-    n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$model_input$anc_artcov_n,
+    x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_x,
+    n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
     A_anc_artcov_t2 = A_anc_artcov_t2,
     ##
     ## Number on ART input data
     A_artattend_t1 = A_artattend_t1,
-    x_artnum_t1 = naomi_data$artnum_t1_dat$model_input$art_current,
+    x_artnum_t1 = naomi_data$artnum_t1_dat$art_current,
     A_artattend_t2 = A_artattend_t2,
-    x_artnum_t2 = naomi_data$artnum_t2_dat$model_input$art_current,
+    x_artnum_t2 = naomi_data$artnum_t2_dat$art_current,
     A_artattend_mf = A_artattend_mf,
     A_art_reside_attend = A_art_reside_attend,
     ##

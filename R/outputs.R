@@ -184,8 +184,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
-                calendar_quarter, indicator, mean, se, median, mode, lower, upper) %>%
-    dplyr::mutate(data_type = "model_estimate")
+                calendar_quarter, indicator, mean, se, median, mode, lower, upper)
 }
 
 extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
@@ -283,6 +282,126 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   dplyr::bind_rows(v_t1, v_t2)
 }
 
+#' Align model data inputs and model estimates
+#'
+#' @param naomi_data Naomi object of class "naomi_data" and "naomi_mf"
+#' @param indicators Naomi indicators created by `extract_indicators()`
+#' @param meta_areas
+#'
+#' @details
+#'
+#'
+#' @export
+
+
+align_inputs_outputs <- function(naomi_data, indicators, meta_area){
+
+  stopifnot(inherits(naomi_data, "naomi_data"))
+  stopifnot(inherits(naomi_data, "naomi_mf"))
+
+  # Format survey data
+  inputs <- naomi_data$model_inputs$survey_full_mf %>%
+    dplyr::mutate(median = NA_real_, mode = NA_real_,
+                  year = calendar_quarter_to_year(survey_mid_calendar_quarter)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter = survey_mid_calendar_quarter,
+                  year, indicator, naomi_input, mean = estimate, se = std_error,
+                  lower = ci_lower, upper = ci_upper, median, mode, source = survey_id)
+
+  # If ART data provided, format ART data and add to inputs
+  if(!is.null(naomi_data$model_inputs$artnum_full_mf)){
+
+    art <- naomi_data$model_inputs$artnum_full_mf %>%
+      dplyr::mutate(indicator = "art_current", se = NA_real_ ,median = NA_real_ ,
+                    mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
+                    year = calendar_quarter_to_year(calendar_quarter)) %>%
+      dplyr::select(mean = art_current, dplyr::everything())
+
+    inputs <- rbind(inputs, art)
+  }
+
+  # If ANC data provided, format ART data and add to inputs
+  if(!is.null(naomi_data$model_inputs$anc_full_mf)) {
+
+    anc <- naomi_data$model_inputs$anc_full_mf %>%
+      dplyr::mutate(source = "programme", se = NA_real_ ,median = NA_real_ ,
+                    mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
+                    calendar_quarter = paste0("CY", year, "Q4")) %>%
+      dplyr::select(mean = value, dplyr::everything())
+
+    inputs <- rbind(inputs, anc)
+
+  }
+
+
+  # Filter inputs for:
+  #  - Years contained in model outputs
+  #  - Area levels contained in model outputs
+  #  - Subset of indicators that can be compared to model outputs
+  options <- naomi_data$model_options
+
+  calendar_quarter1 <- options$calendar_quarter_t1
+  calendar_quarter2 <- options$calendar_quarter_t2
+  year1 <- calendar_quarter_to_year(calendar_quarter1)
+  year2 <- calendar_quarter_to_year(calendar_quarter2)
+
+  level <- options$area_level
+
+  meta_area <- meta_area %>%
+    dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id) %>%
+    sf::st_drop_geometry()
+
+ indicator_keep <- c("prevalence", "art_coverage", "art_current", "anc_prevalence",
+                 "anc_art_coverage")
+
+ inputs_sub <- inputs %>%
+    dplyr::left_join(meta_area, by = "area_id") %>%
+    dplyr::filter(indicator %in% indicator_keep,
+                  area_level <= level,
+                  year %in% c(year1, year2)) %>%
+    dplyr::mutate(source = paste0(source," ", calendar_quarter),
+                  calendar_quarter = dplyr::case_when(
+                    year == year1 ~ calendar_quarter1,
+                    year == year2 ~ calendar_quarter2),
+                  indicator = dplyr::case_when(
+                    indicator == "anc_prevalence" ~ "anc_prevalence_age_matched",
+                    indicator == "anc_art_coverage" ~ "anc_art_coverage_age_matched",
+                    TRUE ~ indicator)) %>%
+    dplyr::select(-c(naomi_input))
+
+  # Filter outputs for:
+  #  - Indicator/age/sex/year bands present in inputs
+
+  # Get age and sex matched outputs for ANC comparison
+  anc_compare <- indicators %>%
+    dplyr::filter(indicator %in% c("prevalence","art_coverage"),
+                  sex == "female", age_group == "Y015_049") %>%
+    dplyr::mutate(
+      indicator = dplyr::case_when(
+      indicator == "prevalence" ~ "anc_prevalence_age_matched",
+      indicator == "art_coverage" ~ "anc_art_coverage_age_matched"),
+      source = paste0("Naomi estimate ", calendar_quarter, " females 15-49"),
+      year = calendar_quarter_to_year(calendar_quarter))
+
+  outputs <- indicators %>%
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter),
+                  source = paste0("Naomi estimate ", calendar_quarter)) %>%
+    dplyr::filter(!indicator %in% c("anc_prevalence", "anc_art_coverage")) %>%
+    dplyr::bind_rows(anc_compare) %>%
+    dplyr::left_join(meta_area, by = "area_id") %>%
+    dplyr::select(colnames(inputs_sub))
+
+
+  # Join to get intersecting strata
+  join_cols <- c("area_id", "sex", "age_group", "indicator", "calendar_quarter")
+
+  meta_join <- dplyr::semi_join(outputs %>% dplyr::select(join_cols),
+                                inputs_sub %>% dplyr::select(join_cols),
+                                by = join_cols)
+
+
+  inputs_outputs <- rbind(outputs %>% dplyr::semi_join(meta_join, by = join_cols),
+                          inputs_sub %>% dplyr::semi_join(meta_join, by = join_cols))
+  }
 
 #' Build output package from fit
 #'
@@ -313,7 +432,9 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
   meta_area <- naomi_data$areas %>%
     dplyr::filter(area_id %in% unique(naomi_data$mf_out$area_id)) %>%
-    dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
+    dplyr::select(area_level, area_level_label, area_id, area_name,
+                  parent_area_id, spectrum_region_code, area_sort_order,
+                  center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
   meta_period <- data.frame(
@@ -339,7 +460,7 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   meta_indicator <- get_meta_indicator()
   meta_indicator <- dplyr::filter(meta_indicator, indicator %in% indicators$indicator)
 
-  model_inputs <- extract_naomi_inputs(naomi_data)
+  inputs_outputs <- align_inputs_outputs(naomi_data, indicators, meta_area)
 
   val <- list(
     indicators = indicators,
@@ -349,7 +470,7 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
     meta_period = meta_period,
     meta_indicator = meta_indicator,
     fit = fit,
-    model_inputs = model_inputs
+    inputs_outputs = inputs_outputs
   )
 
   class(val) <- "naomi_output"
@@ -374,7 +495,7 @@ add_output_labels <- function(naomi_output, geometry = FALSE) {
 
   indicators <- naomi_output$indicators %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, indicator,
-                  mean, se, median, mode, lower, upper, data_type)
+                  mean, se, median, mode, lower, upper)
 
   if (geometry) {
     meta_area <- naomi_output$meta_area %>%
@@ -449,8 +570,7 @@ add_output_labels <- function(naomi_output, geometry = FALSE) {
                                   median,
                                   mode,
                                   lower,
-                                  upper,
-                                  data_type)
+                                  upper)
     }
 
   }

@@ -511,3 +511,23 @@ test_that("meta_indicator table contains same indicators as outputs", {
   expect_setequal(a_output_full$meta_indicator$indicator,
                   a_output_full$indicators$indicator)
 })
+
+test_that("one input and output for each area_id/age/sex/indicator/period combination", {
+
+  inputs_outputs <- a_output_calib$inputs_outputs
+
+  dups <- inputs_outputs %>%
+    dplyr::group_by(area_id, sex, age_group, calendar_quarter, indicator) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::filter(n != 2)
+
+  expect_equal(nrow(dups), 0)
+
+})
+
+
+
+
+
+
+
