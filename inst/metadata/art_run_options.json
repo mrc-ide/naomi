@@ -20,6 +20,7 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
+          "value": "<+include_art_t1_default+>",
           "required": true
         },
         {
@@ -37,6 +38,7 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
+          "value": "<+include_art_t2_default+>",
           "required": true
         }
       ]
@@ -58,7 +60,7 @@
               "label": "t_(OPTIONS_YES_LABEL)"
             }
           ],
-          "value": "true",
+          "value": "<+artattend_default+>",
           "helpText": "t_(OPTIONS_ART_NEIGHBOURING_DISTRICT_HELP)"
         }
       ]
@@ -80,7 +82,7 @@
               "label": "t_(OPTIONS_YES_LABEL)"
             }
           ],
-          "value": "true",
+          "value": "<+artattend_t2_default+>",
           "helpText": "t_(OPTIONS_ART_TIME_VARYING_ART_ATTEND_HELP)"
         }
       ]

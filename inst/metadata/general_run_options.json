@@ -9,8 +9,8 @@
           "name": "area_scope",
           "type": "multiselect",
           "options":
-            <+area_scope_options+>,
-          "value": <+area_scope_default+>,
+            "<+area_scope_options+>",
+          "value": "<+area_scope_default+>",
           "required": true
         }
       ]
@@ -22,8 +22,8 @@
           "name": "area_level",
           "type": "select",
           "options":
-            <+area_level_options+>,
-          "value": <+area_level_default+>,
+            "<+area_level_options+>",
+          "value": "<+area_level_default+>",
           "required": true
         }
       ]
@@ -35,8 +35,8 @@
           "name": "calendar_quarter_t2",
           "type": "select",
           "options":
-            <+calendar_quarter_t2_options+>,
-          "value": "CY2021Q4",
+            "<+calendar_quarter_t2_options+>",
+          "value": "<+calendar_quarter_t2_default+>",
           "required": true
         }
       ]
@@ -47,7 +47,7 @@
         {
           "name": "calendar_quarter_t3",
           "type": "select",
-          "value": "CY2022Q3",
+          "value": "<+calendar_quarter_t3_default+>",
           "helpText": "t_(OPTIONS_OUTPUT_PROJECTION_QUARTER_HELP)",
           "required": true,
           "options": [
@@ -114,7 +114,7 @@
             {
               "id": "CY2023Q4",
               "label": "t_(MONTH_DECEMBER) 2023"
-            }	      
+            }
           ]
         }
       ]

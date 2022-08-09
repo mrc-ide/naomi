@@ -9,8 +9,8 @@
           "name": "calendar_quarter_t1",
           "type": "select",
           "options":
-            <+calendar_quarter_t1_options+>,
-          "value": <+calendar_quarter_t1_default+>,
+            "<+calendar_quarter_t1_options+>",
+          "value": "<+calendar_quarter_t1_default+>",
           "required": true
         }
       ]
@@ -22,8 +22,8 @@
           "name": "survey_prevalence",
           "type": "multiselect",
           "options":
-            <+survey_prevalence_options+>,
-          "value": <+survey_prevalence_default+>,
+            "<+survey_prevalence_options+>",
+          "value": "<+survey_prevalence_default+>",
           "required": true
         }
       ]
@@ -35,8 +35,8 @@
           "name": "survey_art_coverage",
           "type": "multiselect",
           "options":
-            <+survey_art_coverage_options+>,
-          "value": <+survey_art_coverage_default+>,
+            "<+survey_art_coverage_options+>",
+          "value": "<+survey_art_coverage_default+>",
           "required": false
         }
       ]

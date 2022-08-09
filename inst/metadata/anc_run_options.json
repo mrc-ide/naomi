@@ -11,8 +11,8 @@
           "type": "select",
           "helpText": "t_(OPTIONS_T2_HELP)",
           "options":
-            <+anc_prevalence_year2_options+>,
-          "value": <+anc_prevalence_year2_default+>,
+            "<+anc_prevalence_year2_options+>",
+          "value": "<+anc_prevalence_year2_default+>",
           "required": false
         }
       ]
@@ -23,7 +23,7 @@
         {
           "name": "anc_clients_year2_num_months",
           "type": "select",
-          "value": "12",
+          "value": "<+anc_clients_year2_num_months_default+>",
           "helpText": "t_(OPTIONS_ANC_MONTHS_HELP)",
           "required": true,
           "options": [
@@ -88,8 +88,8 @@
           "type": "select",
           "helpText": "t_(OPTIONS_T1_HELP)",
           "options":
-            <+anc_prevalence_year1_options+>,
-          "value": <+anc_prevalence_year1_default+>,
+            "<+anc_prevalence_year1_options+>",
+          "value": "<+anc_prevalence_year1_default+>",
           "required": false
         },
         {
@@ -98,8 +98,8 @@
           "type": "select",
           "helpText": "t_(OPTIONS_T2_HELP)",
           "options":
-            <+anc_prevalence_year2_options+>,
-          "value": <+anc_prevalence_year2_default+>,
+            "<+anc_prevalence_year2_options+>",
+          "value": "<+anc_prevalence_year2_default+>",
           "required": false
         }
       ]
@@ -113,8 +113,8 @@
           "type": "select",
           "helpText": "t_(OPTIONS_T1_HELP)",
           "options":
-            <+anc_art_coverage_year1_options+>,
-          "value": <+anc_art_coverage_year1_default+>,
+            "<+anc_art_coverage_year1_options+>",
+          "value": "<+anc_art_coverage_year1_default+>",
           "required": false
         },
         {
@@ -123,8 +123,8 @@
           "type": "select",
           "helpText": "t_(OPTIONS_T2_HELP)",
           "options":
-            <+anc_art_coverage_year2_options+>,
-          "value": <+anc_art_coverage_year2_default+>,
+            "<+anc_art_coverage_year2_options+>",
+          "value": "<+anc_art_coverage_year2_default+>",
           "required": false
         }
       ]

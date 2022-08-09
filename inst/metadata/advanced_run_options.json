@@ -22,7 +22,7 @@
               "label": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_SUBNATIONAL)"
             }
           ],
-          "value": "subnational",
+          "value": "<+spectrum_population_calibration_default+>",
           "required": true,
           "helpText": "t_(OPTIONS_CALIBRATION_ADJUST_TO_SPECTRUM_POPULATION_HELP)"
         }
@@ -42,7 +42,7 @@
         {
           "name": "output_aware_plhiv",
           "type": "select",
-          "value": "true",
+          "value": "<+output_aware_plhiv_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_OUTPUT_AWARE_HELP)",
           "options": [
             {
@@ -64,7 +64,7 @@
         {
           "name": "max_iterations",
           "type": "number",
-          "value": 250,
+          "value": "<+max_iterations_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_MAX_ITERATIONS_HELP)",
           "required": true
         }
@@ -76,7 +76,7 @@
         {
           "name": "no_of_samples",
           "type": "number",
-          "value": 1000,
+          "value": "<+no_of_samples_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_NO_OF_SIMULATIONS_HELP)",
           "required": true
         }
@@ -88,7 +88,7 @@
         {
           "name": "rng_seed",
           "type": "number",
-          "value": 28,
+          "value": "<+rng_seed_default+>",
           "required": false,
           "helpText": "t_(OPTIONS_ADVANCED_SIMULATION_SEED_HELP)"
         }
@@ -101,7 +101,7 @@
           "name": "artattend_log_gamma_offset",
           "type": "number",
           "required": true,
-          "value": -4,
+          "value": "<+artattend_log_gamma_offset_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_LOGIT_HELP)"
         }
       ]
@@ -123,7 +123,7 @@
               "label": "t_(OPTIONS_YES_LABEL)"
             }
           ],
-          "value": "false"
+          "value": "<+rho_paed_x_term_default+>"
         }
       ]
     },
@@ -144,7 +144,7 @@
               "label": "t_(OPTIONS_YES_LABEL)"
             }
           ],
-          "value": "true"
+          "value": "<+rho_paed_15to49f_ratio_default+>"
         }
       ]
     },
@@ -165,10 +165,10 @@
               "label": "t_(OPTIONS_YES_LABEL)"
             }
           ],
-          "value": "false"
+          "value": "<+alpha_xst_term_default+>"
         }
       ]
-    },      
+    },
     {
       "label": "t_(OPTIONS_ADVANCED_ADJUST_AREA_GROWTH)",
       "controls": [
@@ -186,10 +186,10 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
-          "value": "false"
+          "value": "<+adjust_area_growth_default+>"
         }
       ]
-    },      
+    },
     {
       "label": "t_(OPTIONS_USE_SURVEY_AGGREGATE_LABEL)",
       "controls": [
@@ -207,7 +207,7 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
-          "value": "false",
+          "value": "<+use_survey_aggregate_default+>",
           "helpText": "t_(OPTIONS_USE_SURVEY_AGGREGATE_HELP)"
         }
       ]
@@ -219,7 +219,8 @@
           "name": "survey_recently_infected",
           "type": "multiselect",
           "options":
-            <+survey_recently_infected_options+>,
+            "<+survey_recently_infected_options+>",
+          "value": "<+survey_recently_infected_default+>",
           "required": false
         }
       ]
@@ -242,7 +243,7 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
-          "value": "true",
+          "value": "<+use_kish_prev_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
         },
         {
@@ -250,7 +251,7 @@
           "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
-          "value": 1.0,
+          "value": "<+deff_prev_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_DEFF_PREVALENCE_HELP)"
         }
       ]
@@ -273,7 +274,7 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
-          "value": "true",
+          "value": "<+use_kish_artcov_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
         },
         {
@@ -281,7 +282,7 @@
           "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
-          "value": 1.0,
+          "value": "<+deff_artcov_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_DEFF_ART_COVERAGE_HELP)"
         }
       ]
@@ -304,7 +305,7 @@
               "label": "t_(OPTIONS_NO_LABEL)"
             }
           ],
-          "value": "true",
+          "value": "<+use_kish_recent_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_USE_KISH_HELP)"
         },
         {
@@ -312,7 +313,7 @@
           "label": "t_(OPTIONS_ADVANCED_ESS_SCALING_LABEL)",
           "type": "number",
           "required": true,
-          "value": 1.0,
+          "value": "<+deff_recent_default+>",
           "helpText": "t_(OPTIONS_ADVANCED_DEFF_PROPORTION_RECENT_HELP)"
         }
       ]
