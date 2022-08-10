@@ -1470,57 +1470,6 @@ UGA:
   alpha_xst_term: 'false'
   adjust_area_growth: 'false'
 
-ZAF:
-  area_scope: ZAF
-  area_level: '2'
-  calendar_quarter_t2: CY2020Q3
-  calendar_quarter_t3: CY2021Q3
-  calendar_quarter_t1: CY2017Q2
-  survey_prevalence:
-  - ZAF2016DHS
-  - ZAF2017HSRC
-  survey_art_coverage: ZAF2017HSRC
-  survey_recently_infected: ZAF2017HSRC
-  use_survey_aggregate: 'false'
-  include_art_t1: 'true'
-  include_art_t2: 'true'
-  artattend: 'true'
-  artattend_t2: 'true'
-  anc_clients_year2: '2019'
-  anc_clients_year2_num_months: '12'
-  anc_prevalence_year1: '2017'
-  anc_prevalence_year2: '2019'
-  anc_art_coverage_year1: '2017'
-  anc_art_coverage_year2: '2019'
-  spectrum_population_calibration: subnational
-  output_aware_plhiv: 'true'
-  max_iterations: .na.integer
-  no_of_samples: 20
-  rng_seed: 20
-  permissive: 'true'
-  artattend_log_gamma_offset: -4
-  use_kish_prev: 'true'
-  deff_prev: 1
-  use_kish_artcov: 'true'
-  deff_artcov: 1
-  use_kish_recent: 'true'
-  deff_recent: 1
-  spectrum_plhiv_calibration_level: none
-  spectrum_plhiv_calibration_strat: sex_age_group
-  spectrum_artnum_calibration_level: none
-  spectrum_artnum_calibration_strat: age_coarse
-  spectrum_aware_calibration_level: none
-  spectrum_aware_calibration_strat: age_coarse
-  spectrum_infections_calibration_level: none
-  spectrum_infections_calibration_strat: age_coarse
-  calibrate_method: ''
-  deff_vls: .na.real
-  use_kish_vls: ''
-  rho_paed_x_term: 'false'
-  rho_paed_15to49f_ratio: 'true'
-  alpha_xst_term: 'false'
-  adjust_area_growth: 'false'
-
 ZMB:
   area_scope: ZMB
   area_level: '2'
