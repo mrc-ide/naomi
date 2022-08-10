@@ -1,3 +1,7 @@
+# naomi 2.6.28
+
+* Add country specific model option defaults
+
 # naomi 2.6.27
 
 * Move ANC and ART spectrum data mismatch warnings to be shown on model calibrate and review result pages
