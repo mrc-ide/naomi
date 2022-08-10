@@ -123,7 +123,8 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
                               a_hintr_data$pjnz)
 
   expect_length(art_w$warnings, 1)
-  expect_equal(art_w$warnings[[1]]$locations, "review_inputs")
+  expect_equal(art_w$warnings[[1]]$locations,
+               c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ART current not equal to Spectrum",
                     art_w$warnings[[1]]$text))
   expect_true(grepl("2018 Y000_014 Northern",
@@ -144,7 +145,8 @@ test_that("ANC warning raised if spectrum totals do not match naomi data", {
 
   expect_length(anc_w$warnings, 2)
 
-  expect_equal(anc_w$warnings[[1]]$locations, "review_inputs")
+  expect_equal(anc_w$warnings[[1]]$locations,
+               c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ANC testing not equal to Spectrum",
                     anc_w$warnings[[1]]$text))
   expect_true(grepl("2018 Northern",
@@ -156,7 +158,8 @@ test_that("ANC warning raised if spectrum totals do not match naomi data", {
   expect_true(grepl("and \\d+ more",
                     anc_w$warnings[[1]]$text))
 
-  expect_equal(anc_w$warnings[[2]]$locations, "review_inputs")
+  expect_equal(anc_w$warnings[[2]]$locations,
+               c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ANC tested positive not equal to Spectrum",
                     anc_w$warnings[[2]]$text))
   expect_true(grepl("2018 Northern",

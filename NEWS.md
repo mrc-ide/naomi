@@ -1,6 +1,10 @@
-# naomi 2.6.27
+# naomi 2.6.28
 
 * Return full data inputs to `naomi_data`, naomi output object and output zip
+
+# naomi 2.6.27
+
+* Move ANC and ART spectrum data mismatch warnings to be shown on model calibrate and review result pages
 
 # naomi 2.6.26
 
