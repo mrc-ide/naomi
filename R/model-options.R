@@ -225,5 +225,5 @@ do_validate_model_options <- function(data, options) {
 ##'
 ##' @export
 get_country_option_defaults <- function() {
-  read.csv(system_file("metadata", "option_defaults.csv"))
+  yaml::read_yaml(system_file("metadata", "default_options.yml"))
 }

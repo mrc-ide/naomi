@@ -367,3 +367,20 @@ test_that("Option adjust_area_growth handles cases with projection_dur >5 years"
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_t1t2$Lproj_paed)), 0)
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_t1t2$Lproj_incid)), 0)
 })
+
+test_that("country option defaults are complete", {
+  options <- get_country_option_defaults()
+
+  expect_type(options, "list")
+  ## Use iso3 as labels
+  expect_true(all(vapply(names(options), nchar, numeric(1)) == 3))
+
+  ## All options are set for all countries
+  all_options <- c()
+  for (opts in options) {
+    all_options <- union(all_options, names(opts))
+  }
+  for (opts in options) {
+    expect_true(all(all_options %in% names(opts)))
+  }
+})
