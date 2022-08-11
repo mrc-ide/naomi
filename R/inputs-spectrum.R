@@ -56,7 +56,7 @@ extract_pjnz_one <- function(pjnz) {
   specres <- eppasm::read_hivproj_output(pjnz)
 
   specfp <- eppasm:::create_spectrum_fixpar(projp, demp)
-  specfp$eppmod <- "directincid"
+  specfp$eppmod <- "directincid_hts"
   specfp$incidinput <- eppasm::incid(specres)
   specfp$incidpopage <- 0L  ## age 15-49
 
