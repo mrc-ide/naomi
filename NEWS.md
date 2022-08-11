@@ -1,6 +1,10 @@
-# naomi 2.6.28
+# naomi 2.6.29
 
 * Return full data inputs to `naomi_data`, naomi output object and output zip
+
+# naomi 2.6.28 
+
+* Patch for incidence input argument in EPP-ASM simulation for `eppasm_v0.6.2`.
 
 # naomi 2.6.27
 
