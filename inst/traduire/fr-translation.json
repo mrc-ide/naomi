@@ -355,5 +355,6 @@
     "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
     "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
     "WARNING_ADDITIONAL": "and {{count}} more",
-    "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ"
+    "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
+    "WARNING_NO_UNCERTAINTY": "Unable to generate uncertainty bounds for model estimates. Please review model inputs and model options."
 }
