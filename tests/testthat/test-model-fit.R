@@ -148,6 +148,25 @@ test_that("output_package() works with mode, sample, or both", {
                a_output$indicators[c("mean", "se", "median", "lower", "upper")])
 })
 
+test_that("extract_indicators returns mode on error", {
+
+  a_fit_bad_sample <- a_fit_sample
+  a_fit_bad_sample$sample$anc_alpha_t2_out[1,] <- NA_real_
+
+  out_bad <- output_package(a_fit_bad_sample, a_naomi_data)
+  out_good <- output_package(a_fit_sample, a_naomi_data)
+
+  # For sample with NAs, mode is returned and mean is NA
+  expect_true("mode" %in% class(out_bad$indicators))
+  expect_true(all(is.na(out$indicators$mean)))
+
+  # For sample without NAs, mode and mode returned
+  expect_true("mean" %in% class(out_good$indicators))
+  expect_true(all(!is.na(out_good$indicators$mean)))
+
+
+})
+
 
 test_that("model fit with aggregate survey data", {
 
@@ -220,7 +239,7 @@ test_that("model fit with aggregate survey data", {
                                     artnum_calendar_quarter_t1 = NULL,
                                     artnum_calendar_quarter_t2 = NULL,
                                     use_survey_aggregate = TRUE)
-    
+
     tmb_inputs <- prepare_tmb_inputs(naomi_data)
     fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 
@@ -263,7 +282,7 @@ test_that("model fit with aggregate survey data", {
                                     artnum_calendar_quarter_t1 = NULL,
                                     artnum_calendar_quarter_t2 = NULL,
                                     use_survey_aggregate = TRUE)
-    
+
     tmb_inputs <- prepare_tmb_inputs(naomi_data)
     fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 
