@@ -22,6 +22,7 @@ Imports:
     TMB,
     assertthat,
     brio,
+    csvy,
     data.tree,
     dplyr,
     eppasm (>= 0.5.12),

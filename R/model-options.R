@@ -219,11 +219,18 @@ do_validate_model_options <- function(data, options) {
 
 ##' Get option defaults for a specific country
 ##'
-##' @param iso3 iso3 code for the country
+##' @param iso3
 ##'
 ##' @return The option defaults for country, if no defaults found then
 ##'
 ##' @export
-get_country_option_defaults <- function() {
-  yaml::read_yaml(system_file("metadata", "default_options.yml"))
+get_country_option_defaults <- function(iso3) {
+  data <- csvy::read_csvy(system_file("metadata", "default_options.csv"))
+  lapply(seq_len(nrow(data)), function(row_no) {
+    options <- as.list(data[row_no])
+  })
+  rownames(data) <- data$iso3
+  data$iso3 <- NULL
+  data
 }
+

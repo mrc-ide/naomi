@@ -368,19 +368,15 @@ test_that("Option adjust_area_growth handles cases with projection_dur >5 years"
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_t1t2$Lproj_incid)), 0)
 })
 
-test_that("country option defaults are complete", {
+test_that("country option defaults can be retrieved", {
   options <- get_country_option_defaults()
 
-  expect_type(options, "list")
-  ## Use iso3 as labels
-  expect_true(all(vapply(names(options), nchar, numeric(1)) == 3))
+  ## Some very simple test that data has been properly read
+  expect_s3_class(options, "data.frame")
+  expect_true(nrow(options) > 10)
+  expect_true(all(c("area_scope", "area_level") %in% colnames(options)))
 
-  ## All options are set for all countries
-  all_options <- c()
-  for (opts in options) {
-    all_options <- union(all_options, names(opts))
-  }
-  for (opts in options) {
-    expect_true(all(all_options %in% names(opts)))
-  }
+  ## Rownames are set correctly
+  expect_true(all(nchar(rownames(options)) == 3))
+  expect_true(!("iso3" %in% colnames(options)))
 })
