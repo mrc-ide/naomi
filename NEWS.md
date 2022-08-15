@@ -1,3 +1,7 @@
+# naomi 2.7
+
+* Report likelihood for model fit
+
 # naomi 2.6.28
 
 * Patch for incidence input argument in EPP-ASM simulation for `eppasm_v0.6.2`.
