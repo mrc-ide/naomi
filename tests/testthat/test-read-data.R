@@ -101,17 +101,16 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' column", 
   new1$births_facility <- NULL
 
   f1 <- tempfile(fileext = ".csv")
-  readr::write_csv(new, f1, na = "")
+  readr::write_csv(new1, f1, na = "")
 
   anc_missing_known_neg <- read_anc_testing(f1)
 
   expect_equal(anc_missing_known_neg$anc_known_neg, rep(0.0, nrow(anc_new)))
   expect_null(anc_missing_known_neg[["births_facility"]])
 
-  ## TODO: Insert test that calculating anc_prevalence using `raw` and `anc_missing_known_neg` gives same results
-  expect_true(FALSE)  ## Dummy test failure as placeholder for prevalence calculation check
-
-
+  expect_equal(calculate_anc_prevalence(raw),
+               calculate_anc_prevalence(anc_missing_known_neg))
+              
   ## Column anc_known_neg exists, but all values NA
   new2 <- raw
   new2$anc_tested <- raw$anc_tested + raw$anc_known_neg
@@ -119,14 +118,13 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' column", 
   new2$births_facility <- NULL
 
   f2 <- tempfile(fileext = ".csv")
-  readr::write_csv(new, f2, na = "")
+  readr::write_csv(new2, f2, na = "")
 
   anc_na_known_neg <- read_anc_testing(f2)
 
   expect_equal(anc_na_known_neg$anc_known_neg, rep(0.0, nrow(anc_new)))
   expect_null(anc_na_known_neg[["births_facility"]])
 
-  ## TODO: Insert test that calculating anc_prevalence using `raw` and `anc_na_known_neg` gives same results
-  expect_true(FALSE)  ## Dummy test failure as placeholder for prevalence calculation check
-
+  expect_equal(calculate_anc_prevalence(raw),
+               calculate_anc_prevalence(anc_na_known_neg))
 })
