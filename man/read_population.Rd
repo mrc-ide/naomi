@@ -24,3 +24,7 @@ read_area_merged(file)
 \description{
 Read Naomi structured input files
 }
+\examples{
+anc_path <- system_file("extdata/demo_anc_testing.csv")
+anc_testing <- read_anc_testing(anc_path)
+}
