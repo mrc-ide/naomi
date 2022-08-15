@@ -137,6 +137,10 @@ read_art_number <- function(file, all_columns = FALSE) {
 }
 
 #' @rdname read_population
+#'
+#' @examples
+#' anc_path <- system_file("extdata/demo_anc_testing.csv")
+#' anc_testing <- read_anc_testing(anc_path)
 #' @export
 read_anc_testing <- function(file) {
 
@@ -153,7 +157,9 @@ read_anc_testing <- function(file) {
                        anc_known_pos = readr::col_number(),
                        anc_already_art = readr::col_number(),
                        anc_tested = readr::col_number(),
-                       anc_tested_pos = readr::col_number()
+                       anc_tested_pos = readr::col_number(),
+                       anc_known_neg = readr::col_number(),
+                       births_facility = readr::col_number()
                      )
 
   val <- readr_read_csv(file, col_types = col_spec)
@@ -167,6 +173,10 @@ read_anc_testing <- function(file) {
   if(length(missing_cols))
     stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
 
+  if ( !("anc_known_neg" %in% names(val)) ||
+         all(is.na(val[["anc_known_neg"]])) ) {
+    val[["anc_known_neg"]] <- 0
+  }
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
