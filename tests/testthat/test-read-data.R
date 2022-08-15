@@ -105,7 +105,7 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' column", 
 
   anc_missing_known_neg <- read_anc_testing(f1)
 
-  expect_equal(anc_missing_known_neg$anc_known_neg, rep(0.0, nrow(anc_new)))
+  expect_equal(anc_missing_known_neg$anc_known_neg, rep(0.0, nrow(raw)))
   expect_null(anc_missing_known_neg[["births_facility"]])
 
   expect_equal(calculate_anc_prevalence(raw),
@@ -122,7 +122,7 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' column", 
 
   anc_na_known_neg <- read_anc_testing(f2)
 
-  expect_equal(anc_na_known_neg$anc_known_neg, rep(0.0, nrow(anc_new)))
+  expect_equal(anc_na_known_neg$anc_known_neg, rep(0.0, nrow(raw)))
   expect_null(anc_na_known_neg[["births_facility"]])
 
   expect_equal(calculate_anc_prevalence(raw),
