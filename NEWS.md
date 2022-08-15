@@ -1,3 +1,7 @@
+# naomi 2.7
+
+* Report likelihood for model fit
+
 # naomi 2.7.5
 
 * Adjust incidence projection for changing incidence trend between T1 and T2.

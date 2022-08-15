@@ -566,7 +566,6 @@ Type objective_function<Type>::operator() ()
   vector<Type> infections_t2(lambda_t2 * (population_t2 - plhiv_t2));
 
   // likelihood for household survey data
-
   vector<Type> rho_obs_t1((A_prev * plhiv_t1) / (A_prev * population_t1));
   // val -= dbinom(x_prev, n_prev, rho_obs_t1, true).sum();
   vector<Type> hhs_prev_ll = dbinom(x_prev, n_prev, rho_obs_t1, true);
@@ -637,19 +636,37 @@ Type objective_function<Type>::operator() ()
   // likelihood for ANC testing observations
 
   vector<Type> anc_clients_obs_t2((A_anc_clients_t2 * anc_clients_t2) * exp(offset_anc_clients_t2));
-  val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
+  // val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
+  vector<Type> anc_clients_obs_t2_ll = dpois(x_anc_clients_t2, anc_clients_obs_t2, true);
+  val -= sum(anc_clients_obs_t2_ll);
+  REPORT(anc_clients_obs_t2_ll);
 
   vector<Type> anc_rho_obs_t1(A_anc_prev_t1 * anc_plhiv_t1 / (A_anc_prev_t1 * anc_clients_t1));
-  val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
+  // val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
+  vector<Type> anc_rho_obs_t1_ll = dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true);
+  val -= sum(anc_rho_obs_t1_ll);
+  REPORT(anc_rho_obs_t1_ll);
+
 
   vector<Type> anc_alpha_obs_t1(A_anc_artcov_t1 * anc_already_art_t1 / (A_anc_artcov_t1 * anc_plhiv_t1));
-  val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
+  // val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
+  vector<Type> anc_alpha_obs_t1_ll = dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true);
+  val -= sum(anc_rho_obs_t1_ll);
+  REPORT(anc_rho_obs_t1_ll);
+
 
   vector<Type> anc_rho_obs_t2(A_anc_prev_t2 * anc_plhiv_t2 / (A_anc_prev_t2 * anc_clients_t2));
-  val -= dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true).sum();
+  // val -= dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true).sum();
+  vector<Type> anc_rho_obs_t2_ll = dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true);
+  val -= sum(anc_rho_obs_t2_ll);
+  REPORT(anc_rho_obs_t2_ll)
+
 
   vector<Type> anc_alpha_obs_t2(A_anc_artcov_t2 * anc_already_art_t2 / (A_anc_artcov_t2 * anc_plhiv_t2));
-  val -= dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true).sum();
+  // val -= dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true).sum();
+  vector<Type> anc_alpha_obs_t2_ll = dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true);
+  val -= sum(anc_alpha_obs_t2_ll);
+  REPORT(anc_alpha_obs_t2_ll);
 
 
   // * ART attendance model *
