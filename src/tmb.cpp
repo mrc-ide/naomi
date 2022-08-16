@@ -571,13 +571,13 @@ Type objective_function<Type>::operator() ()
   // val -= dbinom(x_prev, n_prev, rho_obs_t1, true).sum();
   vector<Type> hhs_prev_ll = dbinom(x_prev, n_prev, rho_obs_t1, true);
   val -= sum(hhs_prev_ll);
-  REPORT(hhs_prev_ll);
+
 
   vector<Type> alpha_obs_t1((A_artcov * artnum_t1) / (A_artcov * plhiv_t1));
   // val -= dbinom(x_artcov, n_artcov, alpha_obs_t1, true).sum();
   vector<Type> hhs_artcov_ll = dbinom(x_artcov, n_artcov, alpha_obs_t1, true);
   val -= sum(hhs_artcov_ll);
-  REPORT(hhs_artcov_ll);
+
 
   vector<Type> vls_obs_t1(nu * (A_vls * artnum_t1) / (A_vls * plhiv_t1));
   val -= dbinom(x_vls, n_vls, vls_obs_t1, true).sum();
@@ -640,34 +640,30 @@ Type objective_function<Type>::operator() ()
   // val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
   vector<Type> anc_clients_obs_t2_ll = dpois(x_anc_clients_t2, anc_clients_obs_t2, true);
   val -= sum(anc_clients_obs_t2_ll);
-  REPORT(anc_clients_obs_t2_ll);
+
 
   vector<Type> anc_rho_obs_t1(A_anc_prev_t1 * anc_plhiv_t1 / (A_anc_prev_t1 * anc_clients_t1));
   // val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
   vector<Type> anc_rho_obs_t1_ll = dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true);
   val -= sum(anc_rho_obs_t1_ll);
-  REPORT(anc_rho_obs_t1_ll);
 
 
   vector<Type> anc_alpha_obs_t1(A_anc_artcov_t1 * anc_already_art_t1 / (A_anc_artcov_t1 * anc_plhiv_t1));
   // val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
   vector<Type> anc_alpha_obs_t1_ll = dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true);
   val -= sum(anc_rho_obs_t1_ll);
-  REPORT(anc_rho_obs_t1_ll);
 
 
   vector<Type> anc_rho_obs_t2(A_anc_prev_t2 * anc_plhiv_t2 / (A_anc_prev_t2 * anc_clients_t2));
   // val -= dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true).sum();
   vector<Type> anc_rho_obs_t2_ll = dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true);
   val -= sum(anc_rho_obs_t2_ll);
-  REPORT(anc_rho_obs_t2_ll)
 
 
   vector<Type> anc_alpha_obs_t2(A_anc_artcov_t2 * anc_already_art_t2 / (A_anc_artcov_t2 * anc_plhiv_t2));
   // val -= dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true).sum();
   vector<Type> anc_alpha_obs_t2_ll = dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true);
   val -= sum(anc_alpha_obs_t2_ll);
-  REPORT(anc_alpha_obs_t2_ll);
 
 
   // * ART attendance model *
@@ -694,7 +690,7 @@ Type objective_function<Type>::operator() ()
   // val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
   vector<Type> artnumt1_ll = dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true);
   val -= sum(artnumt1_ll);
-  REPORT(artnumt1_ll);
+
 
 
   vector<Type> gamma_art_t2(exp(Xgamma * log_or_gamma + Xgamma_t2 * log_or_gamma_t1t2 + log_gamma_offset));
@@ -719,13 +715,14 @@ Type objective_function<Type>::operator() ()
   // val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));
   vector<Type> artnumt2_ll = dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true);
   val -= sum(artnumt2_ll);
-  REPORT(artnumt2_ll);
+
 
   // Calculate model outputs
 
   DATA_SPARSE_MATRIX(A_out);
   DATA_SPARSE_MATRIX(A_anc_out);
   DATA_INTEGER(calc_outputs);
+  DATA_INTEGER(report_likelihood);
 
   // Proportion unaware among the untreated population
   // Fixed input from Spectrum
@@ -959,6 +956,19 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_tested_neg_t3_out);
     REPORT(anc_rho_t3_out);
     REPORT(anc_alpha_t3_out);
+  }
+
+  if(report_likelihood){
+
+    REPORT(hhs_prev_ll);
+    REPORT(hhs_artcov_ll);
+    REPORT(artnumt2_ll);
+    REPORT(artnumt1_ll);
+    REPORT(anc_rho_obs_t1_ll);
+    REPORT(anc_rho_obs_t2_ll)
+    REPORT(anc_alpha_obs_t2_ll);
+    REPORT(anc_clients_obs_t2_ll);
+
   }
 
   return val;
