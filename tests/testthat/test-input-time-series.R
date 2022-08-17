@@ -89,7 +89,7 @@ test_that("ANC data can be aggregated", {
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
                     "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
-                    "anc_tested_pos", "area_hierarchy"))
+                    "anc_tested_pos","anc_known_neg","births_facility", "area_hierarchy"))
 
 
   # Time period has correct format
@@ -142,7 +142,11 @@ test_that("data can be formatted for ANC input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "age_group", "time_period",
-                    "year","quarter", "calendar_quarter","plot", "value", "area_hierarchy" ))
+                    "year","quarter", "calendar_quarter","plot", "value", "area_hierarchy"))
+
+  expect_setequal(unique(data$plot),
+                  c("anc_clients" , "anc_tested", "anc_tested_pos","anc_prevalence",
+                    "anc_known_pos","anc_known_neg","anc_art_coverage","births_facility"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
@@ -286,7 +290,7 @@ test_that("anc input time series can handle data with NA rows", {
   ## This is a regression test for issue #41 Mozambique
   data <- read.csv(a_hintr_data$anc_testing)
   t <- tempfile(fileext = ".csv")
-  data <- rbind(data, c("", "", "", NA, NA, NA, NA, NA, NA))
+  data <- rbind(data, c("", "", "", NA, NA, NA, NA, NA, NA, NA, NA))
   write.csv(data, t, row.names = FALSE)
   data <- prepare_input_time_series_anc(t, a_hintr_data$shape)
   ## Check that NA entry has been removed

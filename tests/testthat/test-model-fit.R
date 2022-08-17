@@ -153,7 +153,7 @@ test_that("model fit with aggregate survey data", {
 
   ## Test cases:
   ## - Aggregate areas, age/sex stratified data
-  ## - Aggregate areas and age, sex stratified dataii
+  ## - Aggregate areas and age, sex stratified data
   ## - Aggregate area/age/sex
 
   # 1. Aggregate areas, age/sex stratified data
