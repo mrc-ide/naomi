@@ -886,13 +886,14 @@ select_naomi_data <- function(
     anc_full_mf <- anc_aggreagted %>%
       dplyr::group_by(area_id, age_group, year) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested,
-                                      anc_already_art, anc_clients), sum) %>%
+                                      anc_already_art, anc_clients, anc_known_neg,
+                                      births_facility), sum) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(
         sex = "female",
         anc_total_pos = anc_known_pos + anc_tested_pos,
         anc_prev_x = anc_known_pos + anc_tested_pos,
-        anc_prev_n = anc_known_pos + anc_tested,
+        anc_prev_n = anc_known_pos + anc_tested + anc_known_neg,
         anc_artcov_x = anc_already_art,
         anc_artcov_n = anc_total_pos,
         anc_clients_x = anc_clients,

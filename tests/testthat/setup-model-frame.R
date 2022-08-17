@@ -18,7 +18,7 @@ a_naomi_data <- select_naomi_data(a_naomi_mf,
                                   demo_survey_hiv_indicators,
                                   demo_anc_testing,
                                   demo_art_number,
-                                  prev_survey_ids = c("DEMO2016PHIA"),
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
                                   artcov_survey_ids = "DEMO2016PHIA",
                                   recent_survey_ids = "DEMO2016PHIA")
 
