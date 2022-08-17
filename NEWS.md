@@ -1,3 +1,11 @@
+# naomi 2.6.28
+
+* Patch for incidence input argument in EPP-ASM simulation for `eppasm_v0.6.2`.
+
+# naomi 2.6.27
+
+* Move ANC and ART spectrum data mismatch warnings to be shown on model calibrate and review result pages
+
 # naomi 2.6.26
 
 * `hintr_prepare_spectrum_download` now takes arg `notes` for arbitrary notes which will be added into the output zip
