@@ -906,7 +906,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
     naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
-    naomi_write_csv(naomi_output$model_inputs, "model_inputs.csv")
+    naomi_write_csv(naomi_output$inputs_outputs, "inputs_outputs.csv")
 
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
 
@@ -1066,6 +1066,8 @@ read_output_package <- function(path) {
     fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
   }
 
+  if(file.exists(file.path(tmpd, "inputs_outputs.csv")))
+
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
     art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
@@ -1074,7 +1076,7 @@ read_output_package <- function(path) {
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
     fit = fit,
-    model_inputs = readr_read_csv(file.path(tmpd, "model_inputs.csv"))
+    inputs_outputs = readr_read_csv(file.path(tmpd, "inputs_outputs.csv"))
   )
 
   v$meta_area$name <- NULL

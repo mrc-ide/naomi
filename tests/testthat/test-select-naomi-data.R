@@ -2,31 +2,93 @@ context("test-select-naomi-data")
 
 test_that("select ANC programme data returns expected rows", {
 
-  anc_testing <- read_anc_testing(system_file("extdata/demo_anc_testing.csv"))
-
-  anc_testing_prev_mf <- anc_testing_prev_mf(2017, anc_testing, a_naomi_mf)
-  expect_equal(nrow(anc_testing_prev_mf$model_input), nrow(a_naomi_mf$mf_areas))
-
-  anc_testing_artcov_mf <- anc_testing_artcov_mf(2017, anc_testing, a_naomi_mf)
-  expect_equal(nrow(anc_testing_artcov_mf$model_input),nrow(a_naomi_mf$mf_areas))
+  # Test output created by anc_testing_prev_mf()
+  expect_equal(nrow(a_naomi_data$anc_prev_t1_dat), nrow(a_naomi_mf$mf_areas))
+  # Test output created by anc_testing_artcov_mf()
+  expect_equal(nrow(a_naomi_data$anc_artcov_t1_dat),nrow(a_naomi_mf$mf_areas))
+  # Test output created by anc_testing_clients_mf()
+  expect_equal(nrow(a_naomi_data$anc_artcov_t1_dat),nrow(a_naomi_mf$mf_areas))
 
   ## Year not in data
-  expect_error(nrow(anc_testing_prev_mf(2000, anc_testing, a_naomi_mf)),
-               "ANC testing data not found for year 2000")
-  expect_error(nrow(anc_testing_artcov_mf(2000, anc_testing, a_naomi_mf)),
-               "ANC testing data not found for year 2000")
+  # Test output created by anc_testing_prev_mf()
+  expect_error(
+    select_naomi_data(a_naomi_mf,
+                      demo_survey_hiv_indicators,
+                      anc_testing = demo_anc_testing,
+                      demo_art_number,
+                      prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                      artcov_survey_ids = "DEMO2016PHIA",
+                      recent_survey_ids = "DEMO2016PHIA",
+                      anc_prev_year_t1 = 2000),
+    "ANC testing data not found for year 2000")
+
+  # Test output created by anc_testing_artcov_mf()
+  expect_error(
+    select_naomi_data(a_naomi_mf,
+                      demo_survey_hiv_indicators,
+                      anc_testing = demo_anc_testing,
+                      demo_art_number,
+                      prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                      artcov_survey_ids = "DEMO2016PHIA",
+                      recent_survey_ids = "DEMO2016PHIA",
+                      anc_artcov_year_t1 = 1999),
+    "ANC testing data not found for year 1999")
+
+  # Test output created by anc_testing_clients_mf()
+  expect_error(
+    select_naomi_data(a_naomi_mf,
+                      demo_survey_hiv_indicators,
+                      anc_testing = demo_anc_testing,
+                      demo_art_number,
+                      prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                      artcov_survey_ids = "DEMO2016PHIA",
+                      recent_survey_ids = "DEMO2016PHIA",
+                      anc_clients_year_t2 = 1992),
+    "ANC testing data not found for year 1992")
+
+
+
+
+
+
 
   ## NULL data provided
-  anc_testing_prev_mf <- anc_testing_prev_mf(2017, NULL, a_naomi_mf)
-  expect_equal(nrow(anc_testing_prev_mf$model_input), 0)
-  anc_testing_artcov_mf <- anc_testing_artcov_mf(2017, NULL, a_naomi_mf)
-  expect_equal(nrow(anc_testing_artcov_mf$model_input), 0)
+  naomi_data_null_anc <- select_naomi_data(a_naomi_mf,
+                                    demo_survey_hiv_indicators,
+                                    anc_testing = NULL,
+                                    demo_art_number,
+                                    prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                    artcov_survey_ids = "DEMO2016PHIA",
+                                    recent_survey_ids = "DEMO2016PHIA")
+
+  # Test output created by anc_testing_prev_mf()
+  expect_equal(nrow(naomi_data_null_anc$anc_prev_t1_dat),0)
+  # Test output created by anc_testing_artcov_mf()
+  expect_equal(nrow(naomi_data_null_anc$anc_artcov_t1_dat),0)
+  # Test output created by anc_testing_clients_mf()
+  expect_equal(nrow(naomi_data_null_anc$anc_artcov_t1_dat),0)
 
   ## NULL year provided
-  anc_testing_prev_mf <- anc_testing_prev_mf(NULL, anc_testing, a_naomi_mf)
-  expect_equal(nrow(anc_testing_prev_mf$model_input), 0)
-  anc_testing_artcov_mf <- anc_testing_artcov_mf(NULL, anc_testing, a_naomi_mf)
-  expect_equal(nrow(anc_testing_artcov_mf$model_input), 0)
+
+  naomi_data_null_anc_year <- select_naomi_data(a_naomi_mf,
+                                           demo_survey_hiv_indicators,
+                                           anc_testing = demo_anc_testing,
+                                           demo_art_number,
+                                           prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                           artcov_survey_ids = "DEMO2016PHIA",
+                                           recent_survey_ids = "DEMO2016PHIA",
+                                           anc_prev_year_t1 = NULL,
+                                           anc_prev_year_t2 = NULL,
+                                           anc_artcov_year_t1 = NULL,
+                                           anc_artcov_year_t2 = NULL,
+                                           anc_clients_year_t2 = NULL)
+
+  # Test output created by anc_testing_prev_mf()
+  expect_equal(nrow(naomi_data_null_anc_year$anc_prev_t1_dat),0)
+  # Test output created by anc_testing_artcov_mf()
+  expect_equal(nrow(naomi_data_null_anc_year$anc_artcov_t1_dat),0)
+  # Test output created by anc_testing_clients_mf()
+  expect_equal(nrow(naomi_data_null_anc_year$anc_artcov_t1_dat),0)
 
 })
 
@@ -64,3 +126,4 @@ test_that("Data inputs aggregated and tagged correctly", {
   expect_true(!any(aggregated_ids %in% unique(anc_included$area_id)))
 
 })
+

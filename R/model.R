@@ -874,10 +874,10 @@ select_naomi_data <- function(
                                 use_aggregate = use_survey_aggregate)
 
 
-  # Aggregate, tag and subset ART inputs according to model option specifications
+  # Aggregate, tag and subset ANC inputs according to model option specifications
   if(is.null(anc_testing)) {
-
     anc_model_mf <- NULL
+    anc_tagged <- NULL
   } else {
 
     anc_aggreagted <- aggregate_anc(anc_testing, naomi_mf$areas)
@@ -1256,8 +1256,7 @@ anc_testing_prev_mf <- function(year, anc_model_mf) {
       missing_years <- setdiff(year, anc_model_mf$year)
       stop(t_("ANC_DATA_MISSING_FOR_YEAR",
               list(missing_year = paste(missing_years, collapse = ", ")),
-              count = length(missing_years)))
-    }
+              count = length(missing_years))) }
 
 
     ## Filter for T1 or T2 specified in model scope
@@ -1265,18 +1264,16 @@ anc_testing_prev_mf <- function(year, anc_model_mf) {
       dplyr::filter(
         year %in% !!year,
         indicator %in% c("anc_prev_x", "anc_prev_n")
-        ) %>%
+      ) %>%
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
       dplyr::select("area_id", "sex", "age_group", "anc_prev_x", "anc_prev_n")
 
     if(any(anc_sub$anc_prev_x > anc_sub$anc_prev_n))
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
 
+    anc_sub
 
   }
-
-  anc_sub
-
 }
 
 
@@ -1316,9 +1313,11 @@ anc_testing_artcov_mf <- function(year, anc_model_mf) {
     if(any(anc_sub$anc_artcov_x > anc_sub$anc_artcov_n)) {
       stop(t_("ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE"))
     }
+
+    anc_sub
   }
 
-  anc_sub
+
 }
 
 #' @rdname anc_testing_prev_mf
@@ -1354,9 +1353,9 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
       dplyr::select("area_id", "sex", "age_group", "anc_clients_x", "anc_clients_pys_offset")
 
-  }
+    anc_sub
 
-  anc_sub
+  }
 
 }
 
