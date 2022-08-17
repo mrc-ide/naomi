@@ -52,7 +52,7 @@ test_that("write and read hintr outputs returns same thing", {
 test_that("write and read naomi outputs returns same thing", {
 
   tmpf <- tempfile(fileext = ".zip")
-  save_output_package(a_output_full, basename(tmpf), dirname(tmpf), overwrite = TRUE)
+  save_output_package(a_output_full, basename(tmpf), dirname(tmpf))
 
   read1 <- read_output_package(tmpf)
 
