@@ -138,7 +138,7 @@ hintr_calibrate_plot <- function(output) {
 #' @export
 hintr_comparison_plot <- function(output) {
   assert_model_output_version(output, "2.7.1")
-  calibration_path <- output$model_output_path
-  calibration_data <- readRDS(calibration_path)
-  calibration_data$output_package$inputs_outputs
+  output_path <- output$model_output_path
+  output_data <- readRDS(output_path)
+  output_data$output_package$inputs_outputs
 }
