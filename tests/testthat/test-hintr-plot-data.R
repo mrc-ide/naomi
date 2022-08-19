@@ -31,3 +31,13 @@ test_that("comparison plot returns useful error if run with old naomi output", {
   expect_error(hintr_comparison_plot(hintr_output),
                "Model output out of date please re-run model and try again")
 })
+
+test_that("there is metadata for every indicator in comparison data", {
+  plot_data <- hintr_comparison_plot(a_hintr_output)
+  indicators <- unique(plot_data$indicator)
+
+  metadata <- get_metadata()
+  comparison <- metadata[metadata$data_type == "comparison" &
+                           metadata$plot_type == "barchart", ]
+  expect_setequal(indicators, comparison$indicator)
+})

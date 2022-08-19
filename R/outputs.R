@@ -394,8 +394,10 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   # Join to get intersecting strata
   join_cols <- c("area_id", "sex", "age_group", "indicator", "calendar_quarter")
 
-  meta_join <- dplyr::semi_join(outputs %>% dplyr::select(join_cols),
-                                inputs_sub %>% dplyr::select(join_cols),
+  meta_join <- dplyr::semi_join(outputs %>%
+                                  dplyr::select(dplyr::all_of(join_cols)),
+                                inputs_sub %>%
+                                  dplyr::select(dplyr::all_of(join_cols)),
                                 by = join_cols)
 
 
