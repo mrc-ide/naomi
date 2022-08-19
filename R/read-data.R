@@ -162,7 +162,7 @@ read_anc_testing <- function(file) {
                        births_facility = readr::col_number()
                      )
 
-  val <- readr_read_csv(file, col_types = col_spec)
+  val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
   stopifnot(na.omit(val$year) %% 1 == 0)
   val$year <- as.integer(val$year)
