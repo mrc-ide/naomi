@@ -27,6 +27,8 @@ TODO: Link to demo_areas dataset
 \item{\code{anc_already_art}}{Number of ANC clients already on ART prior to first ANC visit.}
 \item{\code{anc_tested}}{Number of ANC clients tested for HIV and received result.}
 \item{\code{anc_tested_pos}}{Number of ANC clients testing HIV postive.}
+\item{\code{anc_known_pos}}{Number of ANC clients not tested for HIV due to documented recent HIV negative status (optional).}
+\item{\code{births_facility}}{Number of life births recorded at health facilities..}
 }
 
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 510 rows and 10 columns.

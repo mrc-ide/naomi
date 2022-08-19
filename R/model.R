@@ -1170,10 +1170,11 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                year %in% !!year,
                !is.na(anc_known_pos),
                !is.na(anc_tested_pos),
-               !is.na(anc_tested)
+               !is.na(anc_tested),
+               !is.na(anc_known_neg),
              ) %>%
       dplyr::group_by(area_id, age_group) %>%
-      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested), sum) %>%
+      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested, anc_known_neg), sum) %>%
       dplyr::ungroup() %>%
       dplyr::transmute(
                area_id,
@@ -1181,7 +1182,7 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
                age_group,
                obs_idx = dplyr::row_number(),
                anc_prev_x = anc_known_pos + anc_tested_pos,
-               anc_prev_n = anc_known_pos + anc_tested
+               anc_prev_n = anc_known_pos + anc_tested + anc_known_neg
              )
 
     if(any(anc_prev_dat$anc_prev_x > anc_prev_dat$anc_prev_n))
