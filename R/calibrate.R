@@ -460,9 +460,7 @@ calibrate_outputs <- function(output,
              mode = mode * ratio,
              lower = lower * ratio,
              upper = upper * ratio,
-             ratio = NULL,
-             data_type = "model_estimate"
-           )
+             ratio = NULL)
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 
