@@ -1,6 +1,6 @@
 # naomi 2.7.1
 
-* If `births_facility` in ANC data is missing or `NA` it will be replaced by `0` when reading input
+* If `births_facility` in ANC data is missing it will be replaced by `NA` when reading input so input time series aggregation passes
 
 # naomi 2.7.0
 
