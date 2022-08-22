@@ -178,8 +178,7 @@ read_anc_testing <- function(file) {
     val[["anc_known_neg"]] <- 0
   }
 
-  if ( !("births_facility" %in% names(val)) ||
-       all(is.na(val[["births_facility"]])) ) {
+  if ( !("births_facility" %in% names(val)) ) {
     val[["births_facility"]] <- NA_real_
   }
 
