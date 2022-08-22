@@ -296,4 +296,3 @@ test_that("anc input time series can handle data with NA rows", {
   ## Check that NA entry has been removed
   expect_true(!any(is.na(unique(data$age_group))))
 })
-

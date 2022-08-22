@@ -178,6 +178,11 @@ read_anc_testing <- function(file) {
     val[["anc_known_neg"]] <- 0
   }
 
+  if ( !("births_facility" %in% names(val)) ||
+       all(is.na(val[["births_facility"]])) ) {
+    val[["births_facility"]] <- 0
+  }
+
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
   val

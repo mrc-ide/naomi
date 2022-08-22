@@ -1,3 +1,7 @@
+# naomi 2.7.1
+
+* If `births_facility` in ANC data is missing or `NA` it will be replaced by `0` when reading input
+
 # naomi 2.7.0
 
 Updates for 2023 UNAIDS estimates (Dec 2022 - Mar 2023).
