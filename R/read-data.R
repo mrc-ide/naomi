@@ -180,7 +180,7 @@ read_anc_testing <- function(file) {
 
   if ( !("births_facility" %in% names(val)) ||
        all(is.na(val[["births_facility"]])) ) {
-    val[["births_facility"]] <- 0
+    val[["births_facility"]] <- NA_real_
   }
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
