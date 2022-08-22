@@ -178,6 +178,10 @@ read_anc_testing <- function(file) {
     val[["anc_known_neg"]] <- 0
   }
 
+  if ( !("births_facility" %in% names(val)) ) {
+    val[["births_facility"]] <- NA_real_
+  }
+
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
 
   val
