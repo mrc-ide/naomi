@@ -90,7 +90,7 @@ test_that("reading utils can handle files with , in numeric columns", {
   expect_equal(art_fr$art_current[2], 2031)
 })
 
-test_that("read_anc_testing() handles data set without 'anc_known_neg' column", {
+test_that("read_anc_testing() handles data set without 'anc_known_neg' or 'births_facility' columns", {
 
   raw <- read_anc_testing(system_file("extdata/demo_anc_testing.csv"))
 
@@ -106,11 +106,12 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' column", 
   anc_missing_known_neg <- read_anc_testing(f1)
 
   expect_equal(anc_missing_known_neg$anc_known_neg, rep(0.0, nrow(raw)))
-  expect_null(anc_missing_known_neg[["births_facility"]])
+  expect_equal(anc_missing_known_neg[["births_facility"]],
+               rep(NA_real_, nrow(raw)))
 
   expect_equal(calculate_anc_prevalence(raw),
                calculate_anc_prevalence(anc_missing_known_neg))
-              
+
   ## Column anc_known_neg exists, but all values NA
   new2 <- raw
   new2$anc_tested <- raw$anc_tested + raw$anc_known_neg
@@ -123,7 +124,7 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' column", 
   anc_na_known_neg <- read_anc_testing(f2)
 
   expect_equal(anc_na_known_neg$anc_known_neg, rep(0.0, nrow(raw)))
-  expect_null(anc_na_known_neg[["births_facility"]])
+  expect_equal(anc_na_known_neg[["births_facility"]], rep(NA_real_, nrow(raw)))
 
   expect_equal(calculate_anc_prevalence(raw),
                calculate_anc_prevalence(anc_na_known_neg))

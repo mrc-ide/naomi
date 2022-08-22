@@ -297,3 +297,22 @@ test_that("anc input time series can handle data with NA rows", {
   expect_true(!any(is.na(unique(data$age_group))))
 })
 
+
+test_that("ANC data without births_facility can be aggregated", {
+  anc <- read_anc_testing(a_hintr_data$anc_testing)
+  anc$births_facility <- NULL
+  t <- tempfile(fileext = ".csv")
+  readr::write_csv(anc, t, na = "")
+
+  data <- aggregate_anc(t, a_hintr_data$shape)
+
+  expect_true(nrow(data) > 50) ## Check that we have read out some data
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name", "area_level","area_level_label",
+                    "parent_area_id", "area_sort_order", "sex", "age_group",
+                    "time_period", "year", "quarter", "calendar_quarter",
+                    "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
+                    "anc_tested_pos","anc_known_neg","births_facility", "area_hierarchy"))
+
+  expect_equal(data$births_facility, rep(0, nrow(data)))
+})
