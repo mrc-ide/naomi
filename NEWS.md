@@ -1,6 +1,10 @@
-# naomi 2.7.1
+# naomi 2.7.2
 
 * Return full data inputs to `naomi_data`, naomi output object and output zip
+
+# naomi 2.7.1
+
+* If `births_facility` in ANC data is missing it will be replaced by `NA` when reading input so input time series aggregation passes
 
 # naomi 2.7.0
 
