@@ -1,6 +1,17 @@
-# naomi 2.7
+# naomi 2.7.1
 
-* Report likelihood for model fit
+* If `births_facility` in ANC data is missing it will be replaced by `NA` when reading input so input time series aggregation passes
+
+# naomi 2.7.0
+
+Updates for 2023 UNAIDS estimates (Dec 2022 - Mar 2023).
+
+* Add fields to ANC routine testing data specification and example data sets:
+  * `anc_known_neg`: Number of women who were not tested for HIV at antenatal visit because they had a recent documented HIV negative test. 
+     - This is only recorded by some countries HMIS. The column may be missing or blank if this is not captured within national ANC testing guidelines and reporting.
+	 - If the column is missing or `NA` in data input, it will be replaced by values `0` in reading input.
+	 - Value `anc_known_neg` is added to denominator for calcuating `anc_prevalence`.
+  * `births_facility`: The number of live births recorded at health facilities. This is added for triangulation with trend in number of ANC visits for data review purposes. Currently not used in modelling.
 
 # naomi 2.6.28
 
