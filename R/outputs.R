@@ -300,7 +300,7 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   stopifnot(inherits(naomi_data, "naomi_mf"))
 
   # Format survey data
-  inputs <- naomi_data$model_inputs$survey_full_mf %>%
+  inputs <- naomi_data$full_data$survey_full_mf %>%
     dplyr::mutate(median = NA_real_, mode = NA_real_,
                   year = calendar_quarter_to_year(survey_mid_calendar_quarter)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter = survey_mid_calendar_quarter,
@@ -308,9 +308,9 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
                   lower = ci_lower, upper = ci_upper, median, mode, source = survey_id)
 
   # If ART data provided, format ART data and add to inputs
-  if(!is.null(naomi_data$model_inputs$artnum_full_mf)){
+  if(!is.null(naomi_data$full_data$artnum_full_mf)){
 
-    art <- naomi_data$model_inputs$artnum_full_mf %>%
+    art <- naomi_data$full_data$artnum_full_mf %>%
       dplyr::mutate(indicator = "art_current", se = NA_real_ ,median = NA_real_ ,
                     mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
                     year = calendar_quarter_to_year(calendar_quarter)) %>%
@@ -320,9 +320,9 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   }
 
   # If ANC data provided, format ART data and add to inputs
-  if(!is.null(naomi_data$model_inputs$anc_full_mf)) {
+  if(!is.null(naomi_data$full_data$anc_full_mf)) {
 
-    anc <- naomi_data$model_inputs$anc_full_mf %>%
+    anc <- naomi_data$full_data$anc_full_mf %>%
       dplyr::mutate(source = "programme", se = NA_real_ ,median = NA_real_ ,
                     mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
                     calendar_quarter = paste0("CY", year, "Q4")) %>%

@@ -98,19 +98,19 @@ test_that("Data inputs aggregated and tagged correctly", {
 
   # Model inputs do not intersect with excluded data
   # Survey data
-  survey_tagged <- a_naomi_data$model_inputs$survey_full_mf
+  survey_tagged <- a_naomi_data$full_data$survey_full_mf
   survey_excluded <- dplyr::filter(survey_tagged, naomi_input == FALSE)
   survey_included <- dplyr::filter(survey_tagged, naomi_input == TRUE)
   expect_equal(nrow(quiet_semi_join(survey_included, survey_excluded)), 0)
 
   # ART data
-  artnum_tagged <- a_naomi_data$model_inputs$artnum_full_mf
+  artnum_tagged <- a_naomi_data$full_data$artnum_full_mf
   artnum_excluded <- dplyr::filter(artnum_tagged, naomi_input == FALSE)
   artnum_included <- dplyr::filter(artnum_tagged, naomi_input == TRUE)
   expect_equal(nrow(quiet_semi_join(artnum_included, artnum_excluded)), 0)
 
   # ANC data
-  anc_tagged <- a_naomi_data$model_inputs$artnum_full_
+  anc_tagged <- a_naomi_data$full_data$artnum_full_
   anc_excluded <- dplyr::filter(anc_tagged, naomi_input == FALSE)
   anc_included <- dplyr::filter(anc_tagged, naomi_input == TRUE)
   expect_equal(nrow(quiet_semi_join(anc_included, anc_excluded)), 0)

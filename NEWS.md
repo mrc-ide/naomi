@@ -1,7 +1,7 @@
 # naomi 2.7.2
 
 * Restructure functions that subset model input data based on logic in model options:
- - In `select_naomi_data()`: Provide an annotated version of all input data provided with data tagged as `raw_included`, `raw_excluded` and `interpolated_inlcuded`. Individual data frames for survey, ART and ANC inputs are added to `naomi-data` in a list named `model_inputs`.
+ - In `select_naomi_data()`: Provide an annotated version of all input data provided with data tagged as `raw_included`, `raw_excluded` and `interpolated_inlcuded`. Individual data frames for survey, ART and ANC inputs are added to `naomi-data` in a list named `full_data`.
   - In `output_package()`: Create a long dataframe containing matched data inputs and model outputs with `align_inputs_output()`. This adds a new object to the naomi output package that may used to compare model estimates and data inputs for T1 and T2.
 
 # naomi 2.7.1

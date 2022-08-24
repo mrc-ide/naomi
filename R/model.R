@@ -989,11 +989,11 @@ select_naomi_data <- function(
                           artnum_t2_tagged$raw_input) %>%
     dplyr::distinct()
 
-  model_inputs <- list(survey_full_mf = survey_full_mf,
+  full_data <- list(survey_full_mf = survey_full_mf,
                        artnum_full_mf = artnum_full_mf,
                        anc_full_mf = anc_tagged$raw_input)
 
-  naomi_mf$model_inputs <- model_inputs
+  naomi_mf$full_data <- full_data
 
   class(naomi_mf) <- c("naomi_data", class(naomi_mf))
 
