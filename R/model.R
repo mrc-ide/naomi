@@ -980,18 +980,35 @@ select_naomi_data <- function(
   naomi_mf$data_options <- data_options
 
   # Combine and add full tagged data
+  meta_areas <- naomi_mf$areas %>%
+    dplyr::select(area_id, area_level) %>%
+    sf::st_drop_geometry()
+
+
   survey_full_mf <- rbind(survey_prev_tagged$raw_input,
                           survey_artcov_tagged$raw_input,
                           survey_recent_tagged$raw_input,
-                          survey_vls_tagged$raw_input)
+                          survey_vls_tagged$raw_input) %>%
+    dplyr::left_join(meta_areas, by = "area_id") %>%
+    dplyr::arrange(area_level, area_id, survey_id, survey_mid_calendar_quarter)%>%
+    dplyr::select(-c(area_level))
+
 
   artnum_full_mf <- rbind(artnum_t1_tagged$raw_input,
                           artnum_t2_tagged$raw_input) %>%
-    dplyr::distinct()
+    dplyr::distinct() %>%
+    dplyr::left_join(meta_areas, by = "area_id") %>%
+    dplyr::arrange(area_level, area_id, calendar_quarter) %>%
+    dplyr::select(-c(area_level))
+
+  anc_full_mf = anc_tagged$raw_input %>%
+    dplyr::left_join(meta_areas, by = "area_id") %>%
+    dplyr::arrange(area_level, area_id, year) %>%
+    dplyr::select(-c(area_level))
 
   full_data <- list(survey_full_mf = survey_full_mf,
                        artnum_full_mf = artnum_full_mf,
-                       anc_full_mf = anc_tagged$raw_input)
+                       anc_full_mf = anc_full_mf)
 
   naomi_mf$full_data <- full_data
 
@@ -1246,6 +1263,7 @@ anc_testing_prev_mf <- function(year, anc_model_mf) {
       area_id = character(0),
       sex = character(0),
       age_group = character(0),
+      obs_idx = integer(0),
       anc_prev_x = integer(0),
       anc_prev_n = integer(0),
       stringsAsFactors = FALSE
@@ -1267,7 +1285,8 @@ anc_testing_prev_mf <- function(year, anc_model_mf) {
         indicator %in% c("anc_prev_x", "anc_prev_n")
       ) %>%
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
-      dplyr::select("area_id", "sex", "age_group", "anc_prev_x", "anc_prev_n")
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group","obs_idx","anc_prev_x", "anc_prev_n")
 
     if(any(anc_sub$anc_prev_x > anc_sub$anc_prev_n))
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
@@ -1288,6 +1307,7 @@ anc_testing_artcov_mf <- function(year, anc_model_mf) {
       area_id = character(0),
       sex = character(0),
       age_group = character(0),
+      obs_idx = integer(0),
       anc_artcov_x = integer(0),
       anc_artcov_n = integer(0),
       stringsAsFactors = FALSE
@@ -1309,7 +1329,8 @@ anc_testing_artcov_mf <- function(year, anc_model_mf) {
         indicator %in% c("anc_artcov_x", "anc_artcov_n")
       ) %>%
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
-      dplyr::select("area_id", "sex", "age_group", "anc_artcov_x", "anc_artcov_n")
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group", "obs_idx", "anc_artcov_x", "anc_artcov_n")
 
     if(any(anc_sub$anc_artcov_x > anc_sub$anc_artcov_n)) {
       stop(t_("ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE"))
@@ -1331,6 +1352,7 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
       area_id = character(0),
       sex = character(0),
       age_group = character(0),
+      obs_idx = integer(0),
       anc_clients_x = integer(0),
       anc_clients_pys_offset = numeric(0),
       stringsAsFactors = FALSE
@@ -1352,7 +1374,8 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
         indicator %in% c("anc_clients_x", "anc_clients_pys_offset")
       ) %>%
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
-      dplyr::select("area_id", "sex", "age_group", "anc_clients_x", "anc_clients_pys_offset")
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group","obs_idx","anc_clients_x", "anc_clients_pys_offset")
 
     anc_sub
 
