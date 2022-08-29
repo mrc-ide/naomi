@@ -1,5 +1,43 @@
 # naomi 2.7.2
 
+* Adjust incidence projection for changing incidence trend between T1 and T2.
+  
+  Previously, new infections by age were calculated as:
+    `(1 - exp(-lambda_t1 * duration)) * hiv_negative_t1`.
+  This implicitly assumed that incidence rate and HIV negative population size
+  were constant over the period from T1 to T2. This was reasonably okay for 
+  short periods, but less acceptable when time from T1 to T2 becomes many years.
+  In settings with declining infections, this approach will tend to over-estimate
+  the number of PLHIV at T2.
+  
+  New approach calculates infections in one year by age and sex based on `lambda_t1` 
+  and then extrapolates to the number of infections between T1 and T2 based on 
+  the ratio of the number of infections occurring in Spectrum between T1 and T2 
+  to the number of infections in the year preceding T1 (Spectrum definition for
+  infections). This calculation also accounts for the number progressing from the 
+  age group at infection to the age group at T2 based on Spectrum infections by
+  cohort (same as previous implementation).
+  
+  The model accounts for impact of different ART coverage levels at T1 on 
+  district-level transmission rate and incidence, but does not account for 
+  differential change in ART coverage between T1 and T2. That is, a larger scale-up
+  in ART in district A than district B between T1 and T2 would not result in a 
+  larger relative decline in incidence in A than B during this period.
+  
+  The model does not explicitly account for mortality among infections between
+  T1 and T2, but this is implicitly handled how new infections are subtracted
+  away from the cohort survival probabilities for PLHIV at baseline.
+  
+  Better handling of incidence changes over time and mortality probably 
+  need a more complete simulation model rather than the single time jump
+  approximation.
+
+* Related to the previous change, the age-specific incidence rate for distributing
+  new infections by age uses *current year* HIV negative population as 
+  denominator instead of *previous year* HIV negative population as denominator
+  (used by Spectrum). This is for consistency with current time population
+  denominator used in internal incidence simulation.
+
 * Handle adjacency matrix construction for case with single area.
 
 # naomi 2.7.1
