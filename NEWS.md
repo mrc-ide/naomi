@@ -1,3 +1,7 @@
+# naomi 2.7.2
+
+* Handle adjacency matrix construction for case with single area.
+
 # naomi 2.7.1
 
 * If `births_facility` in ANC data is missing it will be replaced by `NA` when reading input so input time series aggregation passes

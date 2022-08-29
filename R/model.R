@@ -538,7 +538,7 @@ naomi_model_frame <- function(area_merged,
 
 
   ## Scaled  precision matrix for 'BYM2' model.
-  Q  <- scale_gmrf_precision(diag(rowSums(M)) - M)
+  Q  <- scale_gmrf_precision(diag(rowSums(M), nrow = nrow(M), ncol = ncol(M)) - M)
 
   ## Model output
 
