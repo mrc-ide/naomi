@@ -47,11 +47,6 @@ test_that("select ANC programme data returns expected rows", {
     "ANC testing data not found for year 1992")
 
 
-
-
-
-
-
   ## NULL data provided
   naomi_data_null_anc <- select_naomi_data(a_naomi_mf,
                                     demo_survey_hiv_indicators,

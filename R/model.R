@@ -873,11 +873,16 @@ select_naomi_data <- function(
                                 deff = deff_vls,
                                 use_aggregate = use_survey_aggregate)
 
+  # Meta areas
+  meta_areas <- naomi_mf$areas %>%
+    dplyr::select(area_id, area_level) %>%
+    sf::st_drop_geometry()
 
   # Aggregate, tag and subset ANC inputs according to model option specifications
   if(is.null(anc_testing)) {
-    anc_model_mf <- NULL
+    anc_full_mf <- NULL
     anc_tagged <- NULL
+
   } else {
 
     anc_aggreagted <- aggregate_anc(anc_testing, naomi_mf$areas)
@@ -920,6 +925,11 @@ select_naomi_data <- function(
       )
 
     anc_tagged <- tag_data_inputs(anc_full_mf, anc_model_mf, colnames(anc_model_mf))
+
+    anc_full_mf = anc_tagged$raw_input %>%
+      dplyr::left_join(meta_areas, by = "area_id") %>%
+      dplyr::arrange(area_level, area_id, year) %>%
+      dplyr::select(-c(area_level))
 
     }
 
@@ -980,11 +990,6 @@ select_naomi_data <- function(
   naomi_mf$data_options <- data_options
 
   # Combine and add full tagged data
-  meta_areas <- naomi_mf$areas %>%
-    dplyr::select(area_id, area_level) %>%
-    sf::st_drop_geometry()
-
-
   survey_full_mf <- rbind(survey_prev_tagged$raw_input,
                           survey_artcov_tagged$raw_input,
                           survey_recent_tagged$raw_input,
@@ -999,11 +1004,6 @@ select_naomi_data <- function(
     dplyr::distinct() %>%
     dplyr::left_join(meta_areas, by = "area_id") %>%
     dplyr::arrange(area_level, area_id, calendar_quarter) %>%
-    dplyr::select(-c(area_level))
-
-  anc_full_mf = anc_tagged$raw_input %>%
-    dplyr::left_join(meta_areas, by = "area_id") %>%
-    dplyr::arrange(area_level, area_id, year) %>%
     dplyr::select(-c(area_level))
 
   full_data <- list(survey_full_mf = survey_full_mf,

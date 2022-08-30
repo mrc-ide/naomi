@@ -344,6 +344,9 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   year1 <- calendar_quarter_to_year(calendar_quarter1)
   year2 <- calendar_quarter_to_year(calendar_quarter2)
 
+  if(is.null(year1)){year1 <- "NULL_t1"}
+  if(is.null(year2)){year2 <- "NULL_t2"}
+
   level <- options$area_level
 
   meta_area <- meta_area %>%
