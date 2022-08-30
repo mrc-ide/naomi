@@ -13,6 +13,11 @@ create_Lproj <- function(spec, mf_model,
                          population_colname1, population_colname2,
                          adjust_area_growth = TRUE) {
 
+  ## Remove paediatric infections; these are not handled through the incidence, so should
+  ## not be subtracted when calculating PLHIV survivorship.
+  spec$infections[spec$age < 10] <- 0.0
+  
+  
   spec_quarter <- spec %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L),
                   year = NULL) %>%
@@ -44,6 +49,7 @@ create_Lproj <- function(spec, mf_model,
                   age_group2 = age_quarter_to_age_group(quarter_id2 - cohort_quarter))
 
 
+    
   infections_cohort <- spec_quarter %>%
     ## Subtract 4 quarters to move infections from end year to forthcoming year
     dplyr::mutate(cohort_quarter = quarter_id - age_quarter,
