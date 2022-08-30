@@ -282,6 +282,131 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   dplyr::bind_rows(v_t1, v_t2)
 }
 
+#' Align model data inputs and model estimates
+#'
+#' @param naomi_data Naomi object of class "naomi_data" and "naomi_mf"
+#' @param indicators Naomi indicators created by `extract_indicators()`
+#' @param meta_areas
+#'
+#' @details
+#'
+#'
+#' @export
+
+
+align_inputs_outputs <- function(naomi_data, indicators, meta_area){
+
+  stopifnot(inherits(naomi_data, "naomi_data"))
+  stopifnot(inherits(naomi_data, "naomi_mf"))
+
+  # Format survey data
+  inputs <- naomi_data$full_data$survey_full_mf %>%
+    dplyr::mutate(median = NA_real_, mode = NA_real_,
+                  year = calendar_quarter_to_year(survey_mid_calendar_quarter)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter = survey_mid_calendar_quarter,
+                  year, indicator, naomi_input, mean = estimate, se = std_error,
+                  lower = ci_lower, upper = ci_upper, median, mode, source = survey_id)
+
+  # If ART data provided, format ART data and add to inputs
+  if(!is.null(naomi_data$full_data$artnum_full_mf)){
+
+    art <- naomi_data$full_data$artnum_full_mf %>%
+      dplyr::mutate(indicator = "art_current", se = NA_real_ ,median = NA_real_ ,
+                    mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
+                    year = calendar_quarter_to_year(calendar_quarter)) %>%
+      dplyr::select(mean = art_current, dplyr::everything())
+
+    inputs <- rbind(inputs, art)
+  }
+
+  # If ANC data provided, format ART data and add to inputs
+  if(!is.null(naomi_data$full_data$anc_full_mf)) {
+
+    anc <- naomi_data$full_data$anc_full_mf %>%
+      dplyr::mutate(source = "programme", se = NA_real_ ,median = NA_real_ ,
+                    mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
+                    calendar_quarter = paste0("CY", year, "Q4")) %>%
+      dplyr::select(mean = value, dplyr::everything())
+
+    inputs <- rbind(inputs, anc)
+
+  }
+
+
+  # Filter inputs for:
+  #  - Years contained in model outputs
+  #  - Area levels contained in model outputs
+  #  - Subset of indicators that can be compared to model outputs
+  options <- naomi_data$model_options
+
+  calendar_quarter1 <- options$calendar_quarter_t1
+  calendar_quarter2 <- options$calendar_quarter_t2
+  year1 <- calendar_quarter_to_year(calendar_quarter1)
+  year2 <- calendar_quarter_to_year(calendar_quarter2)
+
+  if(is.null(year1)){year1 <- "NULL_t1"}
+  if(is.null(year2)){year2 <- "NULL_t2"}
+
+  level <- options$area_level
+
+  meta_area <- meta_area %>%
+    dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id) %>%
+    sf::st_drop_geometry()
+
+ indicator_keep <- c("prevalence", "art_coverage", "art_current", "anc_prevalence",
+                 "anc_art_coverage")
+
+ inputs_sub <- inputs %>%
+    dplyr::left_join(meta_area, by = "area_id") %>%
+    dplyr::filter(indicator %in% indicator_keep,
+                  area_level <= level,
+                  year %in% c(year1, year2)) %>%
+    dplyr::mutate(source = paste0(source," ", calendar_quarter),
+                  calendar_quarter = dplyr::case_when(
+                    year == year1 ~ calendar_quarter1,
+                    year == year2 ~ calendar_quarter2),
+                  indicator = dplyr::case_when(
+                    indicator == "anc_prevalence" ~ "anc_prevalence_age_matched",
+                    indicator == "anc_art_coverage" ~ "anc_art_coverage_age_matched",
+                    TRUE ~ indicator)) %>%
+    dplyr::select(-c(naomi_input))
+
+  # Filter outputs for:
+  #  - Indicator/age/sex/year bands present in inputs
+
+  # Get age and sex matched outputs for ANC comparison
+  anc_compare <- indicators %>%
+    dplyr::filter(indicator %in% c("prevalence","art_coverage"),
+                  sex == "female", age_group == "Y015_049") %>%
+    dplyr::mutate(
+      indicator = dplyr::case_when(
+      indicator == "prevalence" ~ "anc_prevalence_age_matched",
+      indicator == "art_coverage" ~ "anc_art_coverage_age_matched"),
+      source = paste0("Naomi estimate ", calendar_quarter, " females 15-49"),
+      year = calendar_quarter_to_year(calendar_quarter))
+
+  outputs <- indicators %>%
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter),
+                  source = paste0("Naomi estimate ", calendar_quarter)) %>%
+    dplyr::filter(!indicator %in% c("anc_prevalence", "anc_art_coverage")) %>%
+    dplyr::bind_rows(anc_compare) %>%
+    dplyr::left_join(meta_area, by = "area_id") %>%
+    dplyr::select(colnames(inputs_sub))
+
+
+  # Join to get intersecting strata
+  join_cols <- c("area_id", "sex", "age_group", "indicator", "calendar_quarter")
+
+  meta_join <- dplyr::semi_join(outputs %>%
+                                  dplyr::select(dplyr::all_of(join_cols)),
+                                inputs_sub %>%
+                                  dplyr::select(dplyr::all_of(join_cols)),
+                                by = join_cols)
+
+
+  inputs_outputs <- rbind(outputs %>% dplyr::semi_join(meta_join, by = join_cols),
+                          inputs_sub %>% dplyr::semi_join(meta_join, by = join_cols))
+  }
 
 #' Build output package from fit
 #'
@@ -312,7 +437,9 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
   meta_area <- naomi_data$areas %>%
     dplyr::filter(area_id %in% unique(naomi_data$mf_out$area_id)) %>%
-    dplyr::select(area_level, area_level_label, area_id, area_name, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y, geometry) %>%
+    dplyr::select(area_level, area_level_label, area_id, area_name,
+                  parent_area_id, spectrum_region_code, area_sort_order,
+                  center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
   meta_period <- data.frame(
@@ -338,6 +465,8 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   meta_indicator <- get_meta_indicator()
   meta_indicator <- dplyr::filter(meta_indicator, indicator %in% indicators$indicator)
 
+  inputs_outputs <- align_inputs_outputs(naomi_data, indicators, meta_area)
+
   val <- list(
     indicators = indicators,
     art_attendance = art_attendance,
@@ -345,7 +474,8 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
     meta_age_group = meta_age_group,
     meta_period = meta_period,
     meta_indicator = meta_indicator,
-    fit = fit
+    fit = fit,
+    inputs_outputs = inputs_outputs
   )
 
   class(val) <- "naomi_output"
@@ -781,6 +911,7 @@ save_output <- function(filename, dir,
     naomi_write_csv(naomi_output$meta_age_group, "meta_age_group.csv")
     naomi_write_csv(naomi_output$meta_period, "meta_period.csv")
     naomi_write_csv(naomi_output$meta_indicator, "meta_indicator.csv")
+    naomi_write_csv(naomi_output$inputs_outputs, "inputs_outputs.csv")
 
     naomi_output$meta_area$name <- naomi_output$meta_area$area_id
 
@@ -872,6 +1003,45 @@ generate_output_summary_report <- function(report_path,
 }
 
 
+#' Generate and save summary report at specified path
+#'
+#' @param report_path Path to save summary report at
+#' @param outputs Path to model outputs rds or zip file
+#' @param quiet Suppress printing of the pandoc command line
+#'
+#' @return Path to summary report
+#' @keywords internal
+generate_comparison_report <- function(report_path,
+                                           outputs,
+                                           quiet = FALSE) {
+  report_filename <- basename(report_path)
+  report_path_dir <- normalizePath(dirname(report_path), mustWork = TRUE)
+  output_file_path <- normalizePath(outputs, mustWork = TRUE)
+  ## Render uses relative paths to locate the html file. The package author
+  ## advises against using output_dir see:
+  ## https://github.com/rstudio/rmarkdown/issues/587#issuecomment-168437646
+  ## so set up a temp directory with all report sources and generate from there
+  ## then copy report to destination
+  tmpd <- tempfile()
+  dir.create(tmpd)
+  on.exit(unlink(tmpd, recursive = TRUE))
+  withr::with_dir(tmpd, {
+    fs::file_copy(list.files(system_file("report"), full.names = TRUE), ".")
+    style <- brio::readLines("styles.css")
+    style <- traduire::translator()$replace(style)
+    writeLines(style, "styles.css")
+    rmarkdown::render("comparison_report.Rmd",
+                      params = list(outputs = output_file_path,
+                                    lang = t_("LANG")),
+                      output_file = report_filename,
+                      quiet = quiet
+    )
+
+    fs::file_copy(report_filename, report_path_dir, overwrite = TRUE)
+  })
+  report_path
+}
+
 #' @rdname save_output_package
 #' @param path Path to output zip file.
 #' @export
@@ -901,6 +1071,8 @@ read_output_package <- function(path) {
     fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
   }
 
+  if(file.exists(file.path(tmpd, "inputs_outputs.csv")))
+
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
     art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
@@ -908,7 +1080,8 @@ read_output_package <- function(path) {
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
-    fit = fit
+    fit = fit,
+    inputs_outputs = readr_read_csv(file.path(tmpd, "inputs_outputs.csv"))
   )
 
   v$meta_area$name <- NULL

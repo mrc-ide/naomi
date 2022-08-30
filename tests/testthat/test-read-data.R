@@ -58,7 +58,8 @@ test_that("read_art_number() allows year or calendar_quarter entry", {
 test_that("read_*()functions drop NA rows", {
 
   raw <- readr_read_csv(a_hintr_data$anc_testing)
-  dat_with_na <- rbind(raw[1:10, ], NA, raw[11:nrow(raw), ], NA, "", c("", NA, ""), NA)
+  dat_with_na <- rbind(raw[1:10, ], NA, raw[11:nrow(raw), ], NA, "",
+                       c("", NA, rep("", 9)), NA)
 
   f1 <- tempfile(fileext = ".csv")
   readr::write_csv(dat_with_na, f1, na = "")
