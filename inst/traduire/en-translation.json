@@ -356,5 +356,7 @@
     "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
     "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
     "WARNING_ADDITIONAL": "and {{count}} more",
-    "PJNZ_INVALID_ZIP": "Zip contains no PJNZ files"
+    "PJNZ_INVALID_ZIP": "Zip contains no PJNZ files",
+    "ANC_PREVALENCE_AGE_MATCHED": "ANC prevalence age matched",
+    "ANC_ART_COVERAGE_AGE_MATCHED": "ANC ART coverage age matched"
 }

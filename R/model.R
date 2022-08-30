@@ -822,7 +822,7 @@ select_naomi_data <- function(
             count = length(common_surveys)))
   }
 
-  naomi_mf$prev_dat <- survey_mf(survey_ids = prev_survey_ids,
+  survey_prev_tagged <- survey_mf(survey_ids = prev_survey_ids,
                                  indicator = "prevalence",
                                  survey_hiv_indicators = survey_hiv_indicators,
                                  naomi_mf = naomi_mf,
@@ -830,13 +830,15 @@ select_naomi_data <- function(
                                  deff = deff_prev,
                                  use_aggregate = use_survey_aggregate)
 
-  if (nrow(naomi_mf$prev_dat) == 0) {
+
+
+  if (nrow(survey_prev_tagged$model_input) == 0) {
     stop("No prevalence survey data found for survey: ",
          paste0(prev_survey_ids, collapse = ", "),
          ". Prevalence data are required for Naomi. Check your selections.")
   }
 
-  naomi_mf$artcov_dat <- survey_mf(survey_ids = artcov_survey_ids,
+  survey_artcov_tagged <- survey_mf(survey_ids = artcov_survey_ids,
                                    indicator = "art_coverage",
                                    survey_hiv_indicators = survey_hiv_indicators,,
                                    naomi_mf = naomi_mf,
@@ -844,7 +846,7 @@ select_naomi_data <- function(
                                    deff = deff_artcov,
                                    use_aggregate = use_survey_aggregate)
 
-  naomi_mf$recent_dat <- survey_mf(survey_ids = recent_survey_ids,
+  survey_recent_tagged <- survey_mf(survey_ids = recent_survey_ids,
                                    indicator = "recent_infected",
                                    survey_hiv_indicators = survey_hiv_indicators,
                                    naomi_mf = naomi_mf,
@@ -854,7 +856,8 @@ select_naomi_data <- function(
                                    max_age = 80,
                                    use_aggregate = use_survey_aggregate)
 
-  naomi_mf$vls_dat <- survey_mf(survey_ids = vls_survey_ids,
+
+  survey_vls_tagged <- survey_mf(survey_ids = vls_survey_ids,
                                 indicator = "viral_suppression_plhiv",
                                 survey_hiv_indicators = survey_hiv_indicators,
                                 naomi_mf = naomi_mf,
@@ -862,16 +865,99 @@ select_naomi_data <- function(
                                 deff = deff_vls,
                                 use_aggregate = use_survey_aggregate)
 
-  naomi_mf$anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_testing, naomi_mf)
-  naomi_mf$anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_testing, naomi_mf)
+  # Meta areas
+  meta_areas <- naomi_mf$areas %>%
+    dplyr::select(area_id, area_level) %>%
+    sf::st_drop_geometry()
 
-  naomi_mf$anc_clients_t2_dat <- anc_testing_clients_mf(anc_clients_year_t2, anc_testing, naomi_mf,
-                                                        anc_clients_year_t2_num_months)
-  naomi_mf$anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_testing, naomi_mf)
-  naomi_mf$anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_testing, naomi_mf)
+  # Aggregate, tag and subset ANC inputs according to model option specifications
+  if(is.null(anc_testing)) {
+    anc_full_mf <- NULL
+    anc_tagged <- NULL
 
-  naomi_mf$artnum_t1_dat <- artnum_mf(artnum_calendar_quarter_t1, art_number, naomi_mf)
-  naomi_mf$artnum_t2_dat <- artnum_mf(artnum_calendar_quarter_t2, art_number, naomi_mf)
+  } else {
+
+    anc_aggreagted <- aggregate_anc(anc_testing, naomi_mf$areas)
+
+    ## Calculate model inputs for all data provided
+    anc_full_mf <- anc_aggreagted %>%
+      dplyr::group_by(area_id, age_group, year) %>%
+      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested,
+                                      anc_already_art, anc_clients, anc_known_neg,
+                                      births_facility), sum) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(
+        sex = "female",
+        anc_total_pos = anc_known_pos + anc_tested_pos,
+        anc_prev_x = anc_known_pos + anc_tested_pos,
+        anc_prev_n = anc_known_pos + anc_tested + anc_known_neg,
+        anc_artcov_x = anc_already_art,
+        anc_artcov_n = anc_total_pos,
+        anc_clients_x = anc_clients,
+        anc_clients_pys_offset = log(anc_clients_year_t2_num_months/ 12),
+        anc_prevalence = anc_prev_x/anc_prev_n,
+        anc_art_coverage = anc_artcov_x/ anc_artcov_n) %>%
+      dplyr::select(area_id, age_group, year, sex, dplyr::everything()) %>%
+      tidyr::pivot_longer(cols = anc_known_pos:anc_art_coverage,
+                          names_to = "indicator", values_to = "value")
+
+    anc_years <- c(anc_prev_year_t1, anc_prev_year_t2,
+                   anc_artcov_year_t1, anc_artcov_year_t2,
+                   anc_clients_year_t2)
+
+    # Drop  NAs and filter for years contained in model options scope
+    anc_model_mf <- anc_full_mf %>%
+      dplyr::filter(
+        !is.na(value),
+        year %in% anc_years
+      ) %>%
+      dplyr::semi_join(
+        naomi_mf$mf_model,
+        by = "area_id"
+      )
+
+    anc_tagged <- tag_data_inputs(anc_full_mf, anc_model_mf, colnames(anc_model_mf))
+
+    anc_full_mf = anc_tagged$raw_input %>%
+      dplyr::left_join(meta_areas, by = "area_id") %>%
+      dplyr::arrange(area_level, area_id, year) %>%
+      dplyr::select(-c(area_level))
+
+    }
+
+
+  anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_tagged$model_input)
+  anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_tagged$model_input)
+
+  anc_clients_t2_dat <- anc_testing_clients_mf(anc_clients_year_t2, anc_tagged$model_input)
+
+  anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_tagged$model_input)
+  anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_tagged$model_input)
+
+  # Aggregate, interpolate, tag and subset ART inputs according to model option specifications
+
+  artnum_t1_tagged <- artnum_mf(artnum_calendar_quarter_t1, art_number, naomi_mf)
+  artnum_t2_tagged <- artnum_mf(artnum_calendar_quarter_t2, art_number, naomi_mf)
+
+  artnum_t1_dat <- artnum_t1_tagged$model_input
+  artnum_t2_dat <- artnum_t2_tagged$model_input
+
+
+  # Add data into naomi_mf
+  naomi_mf$prev_dat <- survey_prev_tagged$model_input
+  naomi_mf$artcov_dat <- survey_artcov_tagged$model_input
+  naomi_mf$recent_dat <- survey_recent_tagged$model_input
+  naomi_mf$vls_dat <- survey_vls_tagged$model_input
+
+  naomi_mf$anc_prev_t1_dat <- anc_prev_t1_dat
+  naomi_mf$anc_artcov_t1_dat <- anc_artcov_t1_dat
+  naomi_mf$anc_clients_t2_dat <- anc_clients_t2_dat
+  naomi_mf$anc_prev_t2_dat <- anc_prev_t2_dat
+  naomi_mf$anc_artcov_t2_dat <- anc_artcov_t2_dat
+
+  naomi_mf$artnum_t1_dat <- artnum_t1_dat
+  naomi_mf$artnum_t2_dat <- artnum_t2_dat
+
 
   naomi_mf <- update_mf_offsets(naomi_mf,
                                 naomi_mf$prev_dat,
@@ -895,10 +981,36 @@ select_naomi_data <- function(
 
   naomi_mf$data_options <- data_options
 
+  # Combine and add full tagged data
+  survey_full_mf <- rbind(survey_prev_tagged$raw_input,
+                          survey_artcov_tagged$raw_input,
+                          survey_recent_tagged$raw_input,
+                          survey_vls_tagged$raw_input) %>%
+    dplyr::left_join(meta_areas, by = "area_id") %>%
+    dplyr::arrange(area_level, area_id, survey_id, survey_mid_calendar_quarter)%>%
+    dplyr::select(-c(area_level))
+
+
+  artnum_full_mf <- rbind(artnum_t1_tagged$raw_input,
+                          artnum_t2_tagged$raw_input) %>%
+    dplyr::distinct() %>%
+    dplyr::left_join(meta_areas, by = "area_id") %>%
+    dplyr::arrange(area_level, area_id, calendar_quarter) %>%
+    dplyr::select(-c(area_level))
+
+  full_data <- list(survey_full_mf = survey_full_mf,
+                       artnum_full_mf = artnum_full_mf,
+                       anc_full_mf = anc_full_mf)
+
+  naomi_mf$full_data <- full_data
+
   class(naomi_mf) <- c("naomi_data", class(naomi_mf))
 
   naomi_mf
 }
+
+
+
 
 update_mf_offsets <- function(naomi_mf,
                               prev_dat = NULL,
@@ -1082,23 +1194,34 @@ survey_mf <- function(survey_ids,
 
   eligible_age_groups <- get_age_groups() %>%
     dplyr::filter(
-             age_group_start >= min_age,
-             age_group_start + age_group_span <= max_age
-           )
-  dat <- survey_hiv_indicators %>%
-    dplyr::filter(
-             survey_id %in% survey_ids,
-             indicator == !!indicator,
-             age_group %in% eligible_age_groups$age_group
-           )
+      age_group_start >= min_age,
+      age_group_start + age_group_span <= max_age
+    )
+
+  ## Filter for specified indicators
+  survey_dat <- dplyr::filter(survey_hiv_indicators, indicator == !!indicator)
+
+
+  ## Calculate strata weights for all survey data provided
+  full_survey <- survey_dat %>%
+    dplyr::mutate(n = n_observations,
+                  n_eff = if(use_kish) n_eff_kish else n,
+                  n_eff = n_eff / deff,
+                  x_eff = n_eff * estimate) %>%
+    dplyr::filter(age_group %in% eligible_age_groups$age_group)
+
+  ## Filter data for specified survey ID
+  filtered_survey <- full_survey %>%
+    dplyr::filter(survey_id %in% survey_ids)
+
 
   if (!use_aggregate) {
     ## Filter data to finest area / sex / age_group stratification
-    dat <- dplyr::semi_join(dat, naomi_mf$mf_model,
+    filtered_survey <- dplyr::semi_join(filtered_survey, naomi_mf$mf_model,
                             by = c("area_id", "sex", "age_group"))
   } else {
     ## Check that all of the aggregates are in the coarser stratification
-    check <- dplyr::anti_join(dat, naomi_mf$mf_out,
+    check <- dplyr::anti_join(filtered_survey, naomi_mf$mf_out,
                               by = c("area_id", "sex", "age_group"))
     if (nrow(check) > 0) {
       stop("Aggregate survey data selected. Stratifications included in dataset which ",
@@ -1110,15 +1233,11 @@ survey_mf <- function(survey_ids,
     ##  to throw the error earlier here.
   }
 
-    dat <- dat %>%
-    dplyr::mutate(n = n_observations,
-                  n_eff = if(use_kish) n_eff_kish else n,
-                  n_eff = n_eff / deff,
-                  x_eff = n_eff * estimate) %>%
-    dplyr::select(area_id, age_group, sex, survey_id, n, n_eff, x_eff, estimate, std_error)
+  survey_out <- tag_data_inputs(full_survey, filtered_survey,
+                                cols = c("area_id", "age_group", "sex", "survey_id",
+                                         "n", "n_eff", "x_eff", "estimate", "std_error"))
 
-  dat
-}
+  }
 
 #' Prepare Model Frames for Programme Datasets
 #'
@@ -1128,9 +1247,9 @@ survey_mf <- function(survey_ids,
 #' @return Calculated prevalence
 #'
 #' @export
-anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
+anc_testing_prev_mf <- function(year, anc_model_mf) {
 
-  if(is.null(anc_testing) || is.null(year)) {
+  if(is.null(anc_model_mf) || is.null(year)) {
     ## No ANC prevalence data used
     anc_prev_dat <- data.frame(
       area_id = character(0),
@@ -1141,56 +1260,40 @@ anc_testing_prev_mf <- function(year, anc_testing, naomi_mf) {
       anc_prev_n = integer(0),
       stringsAsFactors = FALSE
     )
+
   } else {
 
-    if (!all(year %in% anc_testing$year)) {
-      missing_years <- setdiff(year, anc_testing$year)
+    if (!all(year %in% anc_model_mf$year)) {
+      missing_years <- setdiff(year, anc_model_mf$year)
       stop(t_("ANC_DATA_MISSING_FOR_YEAR",
               list(missing_year = paste(missing_years, collapse = ", ")),
-              count = length(missing_years)))
-    }
+              count = length(missing_years))) }
 
-    ## Filter observations contained in model scope
-    anc_prev_dat <- dplyr::semi_join(
-                             anc_testing,
-                             naomi_mf$area_aggregation,
-                             by = "area_id"
-                           )
-    ## Drop any observations with NA in required columns
-    anc_prev_dat <- anc_prev_dat %>%
+
+    ## Filter for T1 or T2 specified in model scope
+    anc_sub <- anc_model_mf %>%
       dplyr::filter(
-               year %in% !!year,
-               !is.na(anc_known_pos),
-               !is.na(anc_tested_pos),
-               !is.na(anc_tested),
-               !is.na(anc_known_neg),
-             ) %>%
-      dplyr::group_by(area_id, age_group) %>%
-      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested, anc_known_neg), sum) %>%
-      dplyr::ungroup() %>%
-      dplyr::transmute(
-               area_id,
-               sex = "female",
-               age_group,
-               obs_idx = dplyr::row_number(),
-               anc_prev_x = anc_known_pos + anc_tested_pos,
-               anc_prev_n = anc_known_pos + anc_tested + anc_known_neg
-             )
+        year %in% !!year,
+        indicator %in% c("anc_prev_x", "anc_prev_n")
+      ) %>%
+      tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group","obs_idx","anc_prev_x", "anc_prev_n")
 
-    if(any(anc_prev_dat$anc_prev_x > anc_prev_dat$anc_prev_n))
+    if(any(anc_sub$anc_prev_x > anc_sub$anc_prev_n))
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
 
-  }
+    anc_sub
 
-  anc_prev_dat
+  }
 }
 
 
 #' @rdname anc_testing_prev_mf
 #' @export
-anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
+anc_testing_artcov_mf <- function(year, anc_model_mf) {
 
-  if(is.null(anc_testing) || is.null(year)) {
+  if(is.null(anc_model_mf) || is.null(year)) {
     ## No ANC ART coverage data used
     anc_artcov_dat <- data.frame(
       area_id = character(0),
@@ -1201,56 +1304,41 @@ anc_testing_artcov_mf <- function(year, anc_testing, naomi_mf) {
       anc_artcov_n = integer(0),
       stringsAsFactors = FALSE
     )
+
   } else {
 
-    if (!all(year %in% anc_testing$year)) {
-      missing_years <- setdiff(year, anc_testing$year)
+    if (!all(year %in% anc_model_mf$year)) {
+      missing_years <- setdiff(year, anc_model_mf$year)
       stop(t_("ANC_DATA_MISSING_FOR_YEAR",
               list(missing_year = paste(missing_years, collapse = ", ")),
               count = length(missing_years)))
     }
 
     ## Filter observations contained in model scope
-    anc_artcov_dat <- dplyr::semi_join(
-                               anc_testing,
-                               naomi_mf$area_aggregation,
-                               by = "area_id"
-                             )
-    ## Drop any observations with NA in required columns
-    anc_artcov_dat <- anc_artcov_dat %>%
+    anc_sub <- anc_model_mf %>%
       dplyr::filter(
-               year %in% !!year,
-               !is.na(anc_known_pos),
-               !is.na(anc_tested_pos),
-               !is.na(anc_already_art)
-             )  %>%
-      dplyr::group_by(area_id, age_group) %>%
-      dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_already_art), sum) %>%
-      dplyr::ungroup() %>%
-      dplyr::mutate(anc_total_pos = anc_known_pos + anc_tested_pos) %>%
-      dplyr::transmute(
-               area_id,
-               sex = "female",
-               age_group,
-               obs_idx = dplyr::row_number(),
-               anc_artcov_x = anc_already_art,
-               anc_artcov_n = anc_total_pos
-             )
+        year %in% !!year,
+        indicator %in% c("anc_artcov_x", "anc_artcov_n")
+      ) %>%
+      tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group", "obs_idx", "anc_artcov_x", "anc_artcov_n")
 
-    if(any(anc_artcov_dat$anc_artcov_x > anc_artcov_dat$anc_artcov_n)) {
+    if(any(anc_sub$anc_artcov_x > anc_sub$anc_artcov_n)) {
       stop(t_("ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE"))
     }
 
+    anc_sub
   }
 
-  anc_artcov_dat
+
 }
 
 #' @rdname anc_testing_prev_mf
 #' @export
-anc_testing_clients_mf <- function(year, anc_testing, naomi_mf, num_months) {
+anc_testing_clients_mf <- function(year, anc_model_mf) {
 
-  if(is.null(anc_testing) || is.null(year)) {
+  if(is.null(anc_model_mf) || is.null(year)) {
     ## No data on number of ANC clients used
     anc_clients_dat <- data.frame(
       area_id = character(0),
@@ -1261,45 +1349,34 @@ anc_testing_clients_mf <- function(year, anc_testing, naomi_mf, num_months) {
       anc_clients_pys_offset = numeric(0),
       stringsAsFactors = FALSE
     )
+
   } else {
 
-    if (!all(year %in% anc_testing$year)) {
-      missing_years <- setdiff(year, anc_testing$year)
+    if (!all(year %in% anc_model_mf$year)) {
+      missing_years <- setdiff(year, anc_model_mf$year)
       stop(t_("ANC_DATA_MISSING_FOR_YEAR",
               list(missing_year = paste(missing_years, collapse = ", ")),
               count = length(missing_years)))
     }
 
-    ## Filter observations contained in model scope
-    anc_clients_dat <- dplyr::semi_join(
-                                anc_testing,
-                                naomi_mf$area_aggregation,
-                                by = "area_id"
-                              )
-    ## Drop any observations with NA in required columns
-    anc_clients_dat <- anc_clients_dat %>%
+    ## Filter for T1 or T2 specified in model scope
+    anc_sub <- anc_model_mf %>%
       dplyr::filter(
-               year %in% !!year,
-               !is.na(anc_clients)
-             )  %>%
-      dplyr::group_by(area_id, age_group) %>%
-      dplyr::summarise_at(dplyr::vars(anc_clients), sum) %>%
-      dplyr::ungroup() %>%
-      dplyr::transmute(
-               area_id,
-               sex = "female",
-               age_group,
-               obs_idx = dplyr::row_number(),
-               anc_clients_x = anc_clients,
-               anc_clients_pys_offset = log(num_months / 12),
-               )
+        year %in% !!year,
+        indicator %in% c("anc_clients_x", "anc_clients_pys_offset")
+      ) %>%
+      tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group","obs_idx","anc_clients_x", "anc_clients_pys_offset")
+
+    anc_sub
+
   }
 
-  anc_clients_dat
 }
 
 
-#' @rdname anc_testing_prev_mf
+#' @rdname artnum_mf
 #'
 #' @param calendar_quarter Calendar quarter
 #'
@@ -1322,24 +1399,49 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       area_id = character(0),
       sex = character(0),
       age_group = character(0),
-      artnum_idx = integer(0),
       art_current = integer(0),
       stringsAsFactors = FALSE
     )
+
+    if(is.null(calendar_quarter) && is.null(art_number) || is.null(art_number)) {
+      ## No number on ART data and no year specified
+      raw_input <- data.frame(
+        area_id = character(0),
+        sex = character(0),
+        age_group = character(0),
+        art_current = integer(0),
+        calendar_quarter = character(0),
+        source = character(0),
+        naomi_input = character(0),
+        stringsAsFactors = FALSE)
+    }
+
+    if(!is.null(art_number)) {
+      ## No number on ART data and no year specified
+      raw_input  <- aggregate_art(art_number, naomi_mf$areas) %>%
+        dplyr::mutate(
+          source = "programme",
+          naomi_input = FALSE) %>%
+        dplyr::select(area_id, sex, age_group, art_current, calendar_quarter,
+                      source, naomi_input)
+    }
+
+    artnum_dat_out <- list(model_input = artnum_dat,
+                           raw_input = raw_input)
   } else {
 
     out_quarter_id <- calendar_quarter_to_quarter_id(calendar_quarter)
 
+    # Check for duplicated reporting before aggregating data
     dat <- art_number %>%
       dplyr::semi_join(
         naomi_mf$area_aggregation,
         by = "area_id"
       ) %>%
       dplyr::mutate(
-               quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
+        quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
       )
 
-    ## Check no areas with duplicated reporting
     art_duplicated_check <- dat %>%
       dplyr::left_join(
         naomi_mf$area_aggregation,
@@ -1353,33 +1455,99 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
                  paste(unique(art_duplicated_check$model_area_id), collapse = ", ")))
     }
 
-    if (out_quarter_id %in% dat$quarter_id) {
-      dat <- dplyr::filter(dat, quarter_id == out_quarter_id)
+
+    # Aggregate program data
+    aggregated_artnum <- aggregate_art(art_number, naomi_mf$areas) %>%
+      dplyr::mutate(
+        quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
+      )
+
+    cols <- c("area_id","sex","age_group","art_current")
+
+    # Select or interpolate ART data for all admin levels
+    if (out_quarter_id %in% aggregated_artnum$quarter_id) {
+      full_artnum <- dplyr::filter(aggregated_artnum, quarter_id == out_quarter_id) %>%
+        dplyr::select(all_of(cols))
+      #  Tag row selected as model inputs
+      full_artnum$calendar_quarter <- calendar_quarter
+      full_artnum$source <- "programme"
     } else {
-    dat <- dat %>%
+    full_artnum <- aggregated_artnum %>%
       dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
-                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y) %>%
-      dplyr::ungroup() %>%
+                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y,
+                       .groups = "drop") %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
-                    out_quarter_id <= max_data_quarter)
+                    out_quarter_id <= max_data_quarter) %>%
+      dplyr::select(all_of(cols))
+    #  Tag row selected as model inputs
+    full_artnum$calendar_quarter <- calendar_quarter
+    full_artnum$source <- "interpolated"
     }
 
-    if (nrow(dat) == 0) {
+    if (nrow(full_artnum) == 0) {
       stop(t_("NO_ART_DATA_FOR_QUARTER",
               list(calendar_quarter = calendar_quarter)))
     }
 
-    artnum_dat <- dat %>%
-      dplyr::transmute(
-               area_id,
-               sex,
-               age_group,
-               artnum_idx = dplyr::row_number(),
-               art_current
-             )
+
+    ## Calculate model inputs for all data provided
+    ## Filter observations contained in model scope
+    filtered_artnum <- dplyr::semi_join(
+      full_artnum,
+      naomi_mf$mf_model,
+      by = "area_id"
+    ) %>%
+      dplyr::mutate(naomi_input = TRUE)
+
+    #  Get intersecting colnames to silence anti_join message
+    col_names <- intersect(names(full_artnum), names(filtered_artnum))
+
+    excluded <- dplyr::anti_join(full_artnum, filtered_artnum, by = col_names) %>%
+      dplyr::mutate(naomi_input = FALSE)
+
+
+    artnum_full_mf <- rbind(filtered_artnum, excluded)
+    artnum_sub <- dplyr::select(filtered_artnum,
+                                     area_id, sex, age_group, art_current)
+
+    artnum_out <- list(raw_input = artnum_full_mf,
+                      model_input = artnum_sub)
+
   }
 
-  artnum_dat
 }
+
+
+
+
+#' @param full_data Raw model input data
+#' @param filtered_data Model input data filtered by model option specifications
+#'
+
+
+tag_data_inputs <- function(full_data, filtered_data, cols = list()) {
+
+  #  Get intersecting colnames to silence anti_join message
+  col_names <- intersect(names(full_data), names(filtered_data))
+
+  excluded <- dplyr::anti_join(full_data, filtered_data, by = col_names)
+  excluded$naomi_input <- FALSE
+
+
+  #  Tag row selected as model inputs
+  keep_cols <- cols
+  filtered_data$naomi_input <- TRUE
+
+  all_data <- rbind(filtered_data, excluded)
+
+  # Select columns relevant for model inputs
+  model_input <- dplyr::select(filtered_data, all_of(cols))
+
+  out <- list(raw_input  = all_data,
+              model_input = model_input)
+
+}
+
+

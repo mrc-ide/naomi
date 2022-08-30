@@ -11,26 +11,6 @@ prepare_tmb_inputs <- function(naomi_data) {
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
 
-  create_anc_Amat <- function(naomi_mf, asfr_col, population_col) {
-
-    A <- naomi_data$mf_model %>%
-      dplyr::transmute(
-               area_id,
-               area_idx,
-               idx,
-               births = !!rlang::sym(asfr_col) * !!rlang::sym(population_col)
-             ) %>%
-      {
-      Matrix::spMatrix(nrow(naomi_data$mf_areas),
-                       nrow(naomi_data$mf_model),
-                       .$area_idx,
-                       .$idx,
-                       .$births)
-    }
-
-    A
-  }
-
   ## ANC observation aggregation matrices
   ##
   ## TODO: Refactor code to make the function create_artattend_Amat() more generic.
@@ -46,9 +26,7 @@ prepare_tmb_inputs <- function(naomi_data) {
                   age_group,
                   idx)
 
-    dat <- dplyr::rename(anc_obs_dat,
-                         attend_area_id = area_id,
-                         artnum_idx = obs_idx)
+    dat <- dplyr::rename(anc_obs_dat, attend_area_id = area_id)
 
     Amat <- create_artattend_Amat(
       dat,
@@ -72,8 +50,7 @@ prepare_tmb_inputs <- function(naomi_data) {
                     idx)
 
     survey_dat$attend_area_id <- survey_dat$area_id
-    survey_dat$artnum_idx <- seq_len(nrow(survey_dat))
-    
+
     Amat <- create_artattend_Amat(
       survey_dat,
       age_groups = naomi_data$age_groups,
@@ -97,7 +74,7 @@ prepare_tmb_inputs <- function(naomi_data) {
   A_artcov <- create_survey_Amat(naomi_data$artcov_dat)
   A_vls <- create_survey_Amat(naomi_data$vls_dat)
   A_recent <- create_survey_Amat(naomi_data$recent_dat)
-  
+
   ## ART attendance aggregation
 
   Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
@@ -143,8 +120,7 @@ prepare_tmb_inputs <- function(naomi_data) {
              reside_area_id,
              attend_area_id,
              sex = "both",
-             age_group = "Y000_999",
-             artnum_idx = dplyr::row_number()
+             age_group = "Y000_999"
            ) %>%
     create_artattend_Amat(age_groups = naomi_data$age_groups,
                           sexes = naomi_data$sexes,
@@ -162,7 +138,7 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   ## Paediatric prevalence from 15-49 female ratio
   X_15to49f <- Matrix::t(Matrix::sparse.model.matrix(~0 + area_idf:age15to49:as.integer(sex == "female"), df))
-  
+
   df$bin_paed_rho_model <- 1 - df$bin_rho_model
   X_paed_rho_ratio <- sparse_model_matrix(~-1 + area_idf:paed_rho_ratio:bin_paed_rho_model, df)
   paed_rho_ratio_offset <- 0.5 * df$bin_rho_model
@@ -170,7 +146,7 @@ prepare_tmb_inputs <- function(naomi_data) {
   X_paed_lambda_ratio_t1 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t1, df)
   X_paed_lambda_ratio_t2 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t2, df)
   X_paed_lambda_ratio_t3 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t3, df)
-  
+
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
 
@@ -215,7 +191,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     f_alpha_xst <- ~0
   }
 
-  
+
   ## If no ART data at both time points, do not fit a change in ART coverage. Use
   ## logit difference in ART coverage from Spectrum.
   ## T1 ART data may be either survey or programme
@@ -223,7 +199,7 @@ prepare_tmb_inputs <- function(naomi_data) {
 
   has_t1_art <- nrow(naomi_data$artcov_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
   has_t2_art <- nrow(naomi_data$artnum_t2_dat) > 0
-  
+
   if( !has_t1_art | !has_t2_art ) {
     f_alpha_t2 <- ~0
     f_alpha_xt <- ~0
@@ -348,7 +324,7 @@ prepare_tmb_inputs <- function(naomi_data) {
     X_15to49f = X_15to49f,
     X_paed_rho_ratio = X_paed_rho_ratio,
     paed_rho_ratio_offset = paed_rho_ratio_offset,
-    ## 
+    ##
     X_paed_lambda_ratio_t1 = X_paed_lambda_ratio_t1,
     X_paed_lambda_ratio_t2 = X_paed_lambda_ratio_t2,
     X_paed_lambda_ratio_t3 = X_paed_lambda_ratio_t3,
@@ -416,9 +392,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     beta_anc_alpha = numeric(1),
     beta_anc_rho_t2 = numeric(1),
     beta_anc_alpha_t2 = numeric(1),
-    u_rho_x = numeric(ncol(dtmb$Z_rho_x)),    
+    u_rho_x = numeric(ncol(dtmb$Z_rho_x)),
     us_rho_x = numeric(ncol(dtmb$Z_rho_x)),
-    u_rho_xs = numeric(ncol(dtmb$Z_rho_xs)),    
+    u_rho_xs = numeric(ncol(dtmb$Z_rho_xs)),
     us_rho_xs = numeric(ncol(dtmb$Z_rho_xs)),
     u_rho_a = numeric(ncol(dtmb$Z_rho_a)),
     u_rho_as = numeric(ncol(dtmb$Z_rho_as)),
@@ -429,9 +405,9 @@ prepare_tmb_inputs <- function(naomi_data) {
     ui_anc_rho_xt = numeric(ncol(dtmb$Z_ancrho_x)),
     ui_anc_alpha_xt = numeric(ncol(dtmb$Z_ancalpha_x)),
     ##
-    u_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),    
+    u_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),
     us_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),
-    u_alpha_xs = numeric(ncol(dtmb$Z_alpha_xs)),    
+    u_alpha_xs = numeric(ncol(dtmb$Z_alpha_xs)),
     us_alpha_xs = numeric(ncol(dtmb$Z_alpha_xs)),
     u_alpha_a = numeric(ncol(dtmb$Z_alpha_a)),
     u_alpha_as = numeric(ncol(dtmb$Z_alpha_as)),
@@ -696,7 +672,6 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
   as.matrix(Matrix::t(v))
 }
 
-
 create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation,
                                   df_art_attend, by_residence = FALSE, by_survey = FALSE) {
 
@@ -710,6 +685,13 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   id_vars <- by_vars
   if (by_survey) {
     id_vars <- c(id_vars, "survey_id")
+  }
+
+
+  if(!("artnum_idx" %in% colnames(artnum_df))) {
+
+    artnum_df$artnum_idx <- seq_len(nrow(artnum_df))
+
   }
 
   A_artnum <- artnum_df %>%
@@ -754,7 +736,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   ## Check no areas with duplicated reporting
   art_duplicated_check <- A_artnum %>%
     dplyr::group_by_at(id_vars) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::filter(n > 1)
 
   if (nrow(art_duplicated_check)) {
@@ -771,7 +753,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
            )
 
   A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars)
-  
+
   A_artnum <- A_artnum %>%
     {
       Matrix::spMatrix(nrow(artnum_df),

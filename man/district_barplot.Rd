@@ -47,6 +47,9 @@ district_barplot(
 
 \item{below_label}{Label for districts with values higher than national average, default is "Below"}
 }
+\value{
+
+}
 \description{
 Create district bar plot
 }
