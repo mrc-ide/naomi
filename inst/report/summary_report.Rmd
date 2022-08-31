@@ -73,11 +73,9 @@ if(grepl("\\.zip$", params$outputs)) {
   options <- unz(output_zip, "info/options.yml")
   options <- yaml::read_yaml(options)
   
-  calibration_files <- utils::unzip(output_zip, list = TRUE)
-  if("fit/calibration_options.csv" %in% calibration_files$Name) {
-    calibration_options <- unz(output_zip, "fit/calibration_options.csv")
-    calibration_options <- readr::read_csv(calibration_options)
-    calibration_options <- split(calibration_options$value, calibration_options$option)
+
+  if("calibration_options" %in% names(outputs$fit)) {
+    calibration_options <- outputs$fit$calibration_options
   } else {
     calibration_options <- options[grep("calibration", names(options))]
   }

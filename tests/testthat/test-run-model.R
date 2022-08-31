@@ -21,7 +21,12 @@ test_that("model can be run", {
                c("inputs.csv", "options.yml", "packages.csv"))
   expect_equal(output$warnings$model_fit, model_run$warnings)
 
-  expect_equal(model_run$warnings, list())
+  expect_length(model_run$warnings, 3)
+  msgs <- lapply(model_run$warnings, function(x) x$text)
+  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
+                        msgs)))
 })
 
 test_that("model can be run without programme data", {
@@ -200,11 +205,17 @@ test_that("exceeding max_iterations raises convergence warning", {
 
   output_path <- tempfile()
   out <- hintr_run_model(data, options, output_path)
-  expect_length(out$warnings, 2)
+  expect_length(out$warnings, 5)
   expect_equal(out$warnings[[1]]$text,
                paste0("You have chosen to fit model without estimating ",
                "neighbouring ART attendance. You may wish to review your ",
                "selection to include this option."))
+
+  msgs <- lapply(out$warnings, function(x) x$text)
+  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
+                        msgs)))
 })
 
 test_that("invalid time sequencing returns an error", {
@@ -634,25 +645,6 @@ test_that("assert_model_output_version ensures model version up to date", {
                "Model output out of date please re-run model and try again")
   expect_true(assert_model_output_version(output, "2.5.3"))
   expect_true(assert_model_output_version(output))
-})
-
-test_that("calibrate plot data can be generated", {
-  plot_data <- hintr_calibrate_plot(a_hintr_output)
-  expect_setequal(names(plot_data),
-                  c("spectrum_region_code", "spectrum_region_name", "sex",
-                    "age_group", "calendar_quarter", "indicator", "mean",
-                    "data_type"))
-  expect_setequal(unique(plot_data$spectrum_region_name),
-                  c("National", "Northern Region", "Central Region",
-                    "Southern Region"))
-  expect_setequal(unique(plot_data$indicator),
-                  c("art_current",
-                    "infections", "plhiv", "population", "unaware_plhiv_num",
-                    "prevalence", "art_coverage",
-                    "aware_plhiv_prop", "incidence"))
-
-  indicators <- readRDS(a_hintr_output$model_output_path)$output_package$indicators
-  expect_true(all(plot_data$indicator %in% indicators$indicator))
 })
 
 test_that("can get data_type labels", {

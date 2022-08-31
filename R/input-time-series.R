@@ -23,7 +23,7 @@ aggregate_art <- function(art, shape) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_column = TRUE)
+    art <- read_art_number(art, all_columns = TRUE)
   }
 
   art_number <- art %>%
@@ -51,7 +51,8 @@ aggregate_art <- function(art, shape) {
     df <- art_number_wide %>%
       dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
                       year, quarter, calendar_quarter) %>%
-      dplyr::summarise_at(dplyr::vars(cols_keep), ~sum(.)) %>%
+      dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(.),
+                          .groups = "drop") %>%
       dplyr::rename(area_id = `eval(as.name(col_name))`)
   }
 
@@ -65,9 +66,11 @@ aggregate_art <- function(art, shape) {
                      by = "area_id" ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group,time_period, year, quarter,
-                  calendar_quarter, dplyr::everything())
+                  calendar_quarter, dplyr::everything()) %>%
+    dplyr::ungroup()
 
-  return(art_long)
+  art_long$area_hierarchy <- build_hierarchy_label(art_long)
+  art_long
 }
 
 
@@ -95,7 +98,7 @@ prepare_input_time_series_art <- function(art, shape) {
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_column = TRUE)
+    art <- read_art_number(art, all_columns = TRUE)
   }
 
 
@@ -108,7 +111,7 @@ prepare_input_time_series_art <- function(art, shape) {
   ## Shape data for plot
   art_plot_data <- art_long %>%
     dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
-                    area_sort_order,time_period, year, quarter, calendar_quarter) %>%
+                    area_sort_order,time_period, year, quarter, calendar_quarter,area_hierarchy) %>%
     dplyr::summarise(
       art_total = sum(art_current, na.rm = TRUE),
       art_adult = sum(art_current * as.integer(age_group == "Y015_999"), na.rm = TRUE),
@@ -128,7 +131,7 @@ prepare_input_time_series_art <- function(art, shape) {
 
     art_new_data <- art_long %>%
       dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
-                      area_sort_order,time_period, year, quarter, calendar_quarter) %>%
+                      area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) %>%
       dplyr::summarise(
         art_new_total = sum(art_new, na.rm = TRUE),
         art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = TRUE),
@@ -142,7 +145,8 @@ prepare_input_time_series_art <- function(art, shape) {
                                by = c("area_id", "area_name", "area_level",
                                       "area_level_label", "parent_area_id",
                                       "area_sort_order", "time_period",
-                                      "year", "quarter", "calendar_quarter"))
+                                      "year", "quarter", "calendar_quarter",
+                                      "area_hierarchy"))
   }
 
   # if VL columns exist in art data, calculate variables
@@ -150,7 +154,7 @@ prepare_input_time_series_art <- function(art, shape) {
 
     vl_data <- art_long %>%
       dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
-                      area_sort_order,time_period, year, quarter, calendar_quarter) %>%
+                      area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) %>%
       dplyr::summarise(
         vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = TRUE),
         vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = TRUE),
@@ -168,7 +172,8 @@ prepare_input_time_series_art <- function(art, shape) {
                                by = c("area_id", "area_name", "area_level",
                                       "area_level_label", "parent_area_id",
                                       "area_sort_order", "time_period",
-                                      "year", "quarter", "calendar_quarter")) %>%
+                                      "year", "quarter", "calendar_quarter",
+                                      "area_hierarchy")) %>%
       dplyr::mutate(
         vl_coverage_total = vl_tested_12mos_total/ art_total,
         vl_coverage_adult = vl_tested_12mos_adult / art_adult,
@@ -187,7 +192,7 @@ prepare_input_time_series_art <- function(art, shape) {
   art_plot_data_long <- art_plot_data %>%
     tidyr::pivot_longer(cols = !c(area_id, area_name, area_level, area_level_label,
                                   parent_area_id, area_sort_order, time_period,
-                                  year, quarter, calendar_quarter),
+                                  year, quarter, calendar_quarter, area_hierarchy),
                         names_to = "plot",
                         values_to = "value") %>%
     dplyr::mutate_at(dplyr::vars(value), ~replace(., is.nan(.), 0))
@@ -236,17 +241,14 @@ aggregate_anc <- function(anc, shape) {
   ## Recursively aggregate ANC data up from lowest level of programm data provided
   # Level to aggregate from
 
-
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
-  }
-
-  if(inherits(shape, "sf")) {
+  } else {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
-  ## Check if art is object or file path
+  ## Check if anc is object or file path
   if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     anc <- read_anc_testing(anc)
   }
@@ -258,14 +260,15 @@ aggregate_anc <- function(anc, shape) {
                   calendar_quarter = paste0("CY", time_period, quarter),
                   sex = "female")
 
-  ## Recursively aggregate ART data up from lowest level of programme data provided
+  ## Recursively aggregate ANC data up from lowest level of programme data provided
   # Level to aggregate from
   anc_level <- levels(as.factor(anc_testing$area_level))
-  # Join ART data to hierarchy
+  # Join ANC data to hierarchy
   anc_testing_wide <- dplyr::left_join(
     anc_testing,
     spread_areas(areas %>% dplyr::filter(area_level <= anc_level)),
     by = "area_id")
+
 
   # Function to aggregate based on area_id[0-9]$ columns in hierarchy
   aggregate_data_anc <- function(col_name) {
@@ -277,6 +280,8 @@ aggregate_anc <- function(anc, shape) {
                        anc_already_art = sum(anc_already_art, na.rm = TRUE),
                        anc_tested = sum(anc_tested, na.rm = TRUE),
                        anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
+                       anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
+                       births_facility = sum(births_facility, na.rm = TRUE),
                        .groups = 'drop') %>%
       dplyr::rename(area_id = `eval(as.name(col_name))`)
   }
@@ -291,8 +296,11 @@ aggregate_anc <- function(anc, shape) {
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group, time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
-                  anc_tested,anc_tested_pos)
+                  anc_tested,anc_tested_pos, anc_known_neg, births_facility) %>%
+    dplyr::ungroup()
 
+  anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
+  anc_long
 }
 
 
@@ -326,10 +334,10 @@ prepare_input_time_series_anc <- function(anc, shape) {
   }
 
   anc_long <- aggregate_anc(anc, shape)## Shape data for plot
-  anc_plot_data <- anc_long %>%
+  anc_plot_data_long <- anc_long %>%
     dplyr::mutate(
       anc_total_pos = anc_known_pos + anc_tested_pos,
-      anc_status = anc_known_pos + anc_tested,
+      anc_status = anc_known_pos + anc_tested + anc_known_neg,
       anc_prevalence = anc_total_pos / anc_status,
       anc_art_among_known = anc_already_art / anc_known_pos,
       anc_art_coverage = anc_already_art / anc_total_pos
@@ -337,12 +345,13 @@ prepare_input_time_series_anc <- function(anc, shape) {
     dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id,
                   area_sort_order, age_group,  time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_tested, anc_tested_pos,
-                  anc_prevalence, anc_known_pos, anc_art_coverage) %>%
-    tidyr::pivot_longer(cols = dplyr::starts_with("anc"),
+                  anc_prevalence, anc_known_pos, anc_known_neg,
+                  anc_art_coverage, births_facility, area_hierarchy) %>%
+    tidyr::pivot_longer(cols = c(dplyr::starts_with("anc"),"births_facility"),
                         names_to = "plot",
                         values_to = "value") %>%
     dplyr::arrange(area_sort_order, calendar_quarter)
-  anc_plot_data
+  return(anc_plot_data_long)
 }
 
 ##' Return the translated label & description for a set of plot types
@@ -360,6 +369,12 @@ get_plot_type_column_metadata <- function(plot_type) {
 
   meta$label <- traduire::translator()$replace(meta$label)
   meta$description <- traduire::translator()$replace(meta$description)
+
+  ## Remove a single leading or trailing "
+  ## We quote to avoid excel changing these to e.g. to replace 0.0 with 0
+  meta$format <- sub("^\"", "", meta$format)
+  meta$format <- sub("\"$", "", meta$format)
+
   ## Convert numeric columns to numbers
   meta$accuracy <- as.numeric(meta$accuracy)
   lapply(seq_len(nrow(meta)), function(row_number) {
@@ -373,3 +388,55 @@ get_plot_type_column_metadata <- function(plot_type) {
     )
   })
 }
+
+
+##' Return the translated label & description for a set of plot types
+##'
+##' @param meta_areas dataframe containing
+##'
+##' @return For each plot type the label and description as a list of lists
+##'   containing id, label and description
+##' @export
+build_hierarchy_label <- function(meta_areas) {
+
+  area_ids <- dplyr::select(meta_areas, area_id, parent_area_id, area_name) %>%
+    dplyr::distinct() %>%
+    as.data.frame()
+
+  seen <- new.env(parent = emptyenv())
+
+  get_label <- function(area_id) {
+    if (!is.null(seen[[area_id]])) {
+      return(seen[[area_id]])
+    }
+
+    sub <- area_ids[area_ids$area_id == area_id,]
+    parent_id <- unique(sub$parent_area_id)
+    if (is.na(parent_id)) {
+      return(NA_character_)
+    }
+    parent_label <- get_label(parent_id)
+
+    if (!is.na(parent_label)) {
+      parent_label <- paste0(parent_label, "/")
+      label <- paste0(parent_label, sub$area_name)
+    } else{
+      label <- sub$area_name
+    }
+    seen[[area_id]] <- label
+    label
+  }
+
+  labels <- vapply(meta_areas$area_id, get_label, character(1),
+                   USE.NAMES = FALSE)
+
+  ## We do not include top level country name in the hierarchy for brevity,
+  ## but we want to include it where it is the country level region instead
+  ## of just an empty label
+  root_name <- area_ids[is.na(area_ids$parent_area_id), "area_name"]
+  labels[is.na(labels)] <- root_name
+  labels
+}
+
+
+

@@ -88,7 +88,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "infections_ratio", "art_current_ratio",
                     "unaware_plhiv_num_ratio", "prevalence_ratio",
                     "art_coverage_ratio", "aware_plhiv_prop_ratio",
-                    "incidence_ratio"))
+                    "incidence_ratio", "anc_prevalence_age_matched",
+                    "anc_art_coverage_age_matched"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -104,7 +105,8 @@ test_that("colour scales metadata is well formed", {
       "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos",
       "population_ratio", "plhiv_ratio", "infections_ratio",
       "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
-      "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio"))
+      "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio",
+      "anc_prevalence_age_matched", "anc_art_coverage_age_matched"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -135,12 +137,14 @@ test_that("metadata is well formed", {
     "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
     "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
     "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
-    "incidence_ratio"))
+    "incidence_ratio", "anc_prevalence_age_matched",
+    "anc_art_coverage_age_matched"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
   expect_true(all(meta$data_type %in%
-                    c("survey", "anc", "programme", "output", "calibrate")))
+                    c("survey", "anc", "programme", "output", "calibrate",
+                      "comparison")))
   expect_setequal(meta$name,
                   c("HIV prevalence", "ART coverage", "Viral load suppression",
                     "Proportion recently infected", "PLHIV", "Population",
@@ -158,7 +162,8 @@ test_that("metadata is well formed", {
                     "ART number (attending) ratio",
                     "Number PLHIV unaware ratio", "HIV prevalence ratio",
                     "ART coverage ratio", "Proportion PLHIV aware ratio",
-                    "Incidence ratio"))
+                    "Incidence ratio", "ANC prevalence age matched",
+                    "ANC ART coverage age matched"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
@@ -247,5 +252,54 @@ test_that("metadata format column hasn't been messed by Excel", {
   expect_setequal(meta$format[meta$indicator == "anc_art_coverage"], "0.0%")
   expect_setequal(meta$format[meta$indicator == "recent_infected"], "0.00%")
   expect_setequal(meta$format[meta$indicator == "aware_plhiv_prop"], "0.0%")
+
+  ## Also, 0.0 gets parsed by Excel as 0. To avoid this, 0.0 for the incidence
+  ## indicator is wrapped in quotes. This checks regression against that.
+  expect_setequal(meta$format[meta$indicator == "incidence"], "0.0")
+
 })
 
+test_that("time series metadata format column hasn't been messed by Excel", {
+
+  ## When opening inst/metadata/time_series_plot_metadata.csv in MS Excel,
+  ## the format column is 'helpfully' parsed and converts 0.0% to a generic
+  ## percentage formatted cell.
+  ## The value 0.0% is displayed as 0.00% (perhaps dependent on local settings),
+  ## and when resaved as CSV 0.0% is saved as 0.00%.
+  ##
+  ## Also, 0.0 gets parsed by Excel as 0. To avoid this, 0.0 for the incidence
+  ## indicator is wrapped in quotes. This checks regression against that.
+  ##
+  ## This test exist to make sure this hasn't happened inadvertently.
+  ## Be thoughtful before idly updating the values in these tests to make the
+  ## test pass!
+
+  meta <- get_plot_type_column_metadata("art_total")
+  expect_equal(meta[[1]]$format, "0,0")
+  meta <- get_plot_type_column_metadata("art_prop_u15")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("anc_prevalence")
+  expect_equal(meta[[1]]$format, "0.00%")
+  meta <- get_plot_type_column_metadata("anc_art_coverage")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_total")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_adult_f")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_adult_m")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_adult")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_prop_suppressed_child")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_total")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_adult_f")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_adult_m")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_adult")
+  expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("vl_coverage_child")
+  expect_equal(meta[[1]]$format, "0%")
+})

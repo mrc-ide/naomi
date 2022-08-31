@@ -4,12 +4,18 @@
 \alias{hintr_prepare_spectrum_download}
 \title{Prepare spectrum download}
 \usage{
-hintr_prepare_spectrum_download(output, path = tempfile(fileext = ".zip"))
+hintr_prepare_spectrum_download(
+  output,
+  path = tempfile(fileext = ".zip"),
+  notes = NULL
+)
 }
 \arguments{
+\item{output}{hintr output object}
+
 \item{path}{Path to save output file}
 
-\item{hintr_output}{object}
+\item{notes}{User added notes from front end of app as a string}
 }
 \value{
 Path to output file and metadata for file

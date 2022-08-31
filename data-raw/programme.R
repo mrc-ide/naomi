@@ -40,6 +40,7 @@ demo_anc_testing <- read_csv(here("data-raw/programme/mwi_dha_ancrt.csv"))
 
 demo_anc_testing <- demo_anc_testing %>%
   rename(area_name = district32) %>%
+  filter(year <= 2017 | year == 2018 & quarter %in% 1:3) %>%
   left_join(
     demo_area_hierarchy %>%
     filter(area_level == 4) %>%
@@ -48,7 +49,8 @@ demo_anc_testing <- demo_anc_testing %>%
   ) %>%
   mutate(age_group = "Y015_049") %>%
   group_by(area_id, area_name, age_group, year) %>%
-  summarise_at(vars(anc_clients, anc_known_pos, anc_already_art, anc_tested, anc_tested_pos), sum)
+  summarise_at(vars(anc_clients, anc_known_pos, anc_already_art, anc_tested, anc_tested_pos, anc_known_neg, births_facility), sum) %>%
+  ungroup()
 
 demo_art_number <- read_csv(here("data-raw/programme/mwi_dha_arttot.csv"))
 

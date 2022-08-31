@@ -232,6 +232,7 @@
     "PROGRESS_DOWNLOAD_SPECTRUM": "Téléchargement du zip de sortie",
     "PROGRESS_DOWNLOAD_COARSE": "Génération d'un téléchargement à sortie grossière",
     "PROGRESS_DOWNLOAD_SUMMARY": "Générer un rapport de synthèse",
+    "PROGRESS_DOWNLOAD_COMPARISON": "Générer un rapport de comparaison",
     "CANNOT_RECALIBRATE": "L'étalonnage ne peut pas être relancé pour cet ajustement de modèle, veuillez relancer l'étape d'ajustement.",
     "INVALID_ART_TIME_PERIOD": "Données trimestrielles non fournies pour tous les désagrégats ou données annuelles dupliquées fournies pour tous les désagrégats.",
     "ART_TOTAL": "Numéros sur TARV",
@@ -244,7 +245,7 @@
     "ART_PROP_U15": "Proportion d'enfants (<15) sous TARV par rapport aux adultes",
     "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence CPN",
-    "ANC_ART_COVERAGE": "Couverture de TARV au CPN ",
+    "ANC_ART_COVERAGE": "Couverture de TARV au CPN",
     "ART_NEW_TOTAL": "TARV (Nouveau)",
     "ART_NEW_TOTAL_DESC": "Nombre initié sur TARV",
     "ART_NEW_ADULT_F": "Femmes sous TARV (Nouveau)",
@@ -349,5 +350,12 @@
     "OPTIONS_ADVANCED_SPATIAL_PAED_PREVALENCE": "Rapport de prévalence pédiatrique variable dans l'espace",
     "OPTIONS_ADVANCED_PAED_15TO49F_PREVALENCE_RATIO": "Prévalence pédiatrique modélisée rapportée à la prévalence modélisée chez les femmes adultes",
     "OPTIONS_ADVANCED_ADJUST_AREA_GROWTH": "Croissance nette de la population ajustée par district",
-    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "Couverture TARV interaction espace-sexe-temps"
+    "OPTIONS_ADVANCED_ALPHA_XST_TERM": "Couverture TARV interaction espace-sexe-temps",
+    "WARNING_ART_NOT_EQUAL_TO_SPECTRUM": "Naomi ART current not equal to Spectrum: {{warnings}}",
+    "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
+    "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
+    "WARNING_ADDITIONAL": "and {{count}} more",
+    "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
+    "ANC_PREVALENCE_AGE_MATCHED": "Prévalence CPN appariés par âge",
+    "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge"
 }

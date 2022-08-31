@@ -23,22 +23,29 @@ district_barplot(
 \arguments{
 \item{naomi_output}{Naomi output object or path to naomi output zip folder}
 
+\item{indicator}{Indicator to plot}
+
+\item{age}{Age group to plot}
+
+\item{sex_disag}{Sexes to plot}
+
+\item{level}{Area level to plot, default all}
+
 \item{calendar_quarter}{Naomi projection quarter to filter data to, default is calendar_quarter_t2}
+
+\item{label_format}{Label format for y labels}
 
 \item{x_title}{Title for the figure x axis, blank by default}
 
 \item{fig_title}{Title for the figure, blank by default,}
+
+\item{legend_title}{Title for the legend}
 
 \item{colour_palette}{Names or hexcode value for colours to differentiate districts with values above and below the national average. Can be specified as a preset colour palette using "red", "green" and "blue" or manually as a named list: cols <- c(above_colour = "red", below_colour = "blue").}
 
 \item{above_label}{Label for districts with values higher than national average, default is "Above"}
 
 \item{below_label}{Label for districts with values higher than national average, default is "Below"}
-
-\item{y_title}{Title for the figure y axis, default is "Age Group"}
-}
-\value{
-
 }
 \description{
 Create district bar plot

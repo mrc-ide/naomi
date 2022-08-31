@@ -2,9 +2,11 @@ context("downloads")
 
 test_that("spectrum download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  notes <- "these are my\nmultiline notes"
   with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
-      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated))
+      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
+                                             notes = notes))
   })
   expect_true(file.exists(out$path))
 
@@ -62,6 +64,12 @@ test_that("spectrum download can be created", {
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message,
                "Generating output zip download")
+
+  ## Notes are saved
+  t <- tempfile()
+  unzip(out$path, "notes.txt", exdir = t)
+  saved_notes <- readLines(file.path(t, "notes.txt"))
+  expect_equal(saved_notes, c("these are my", "multiline notes"))
 })
 
 test_that("coarse age group download can be created", {
@@ -86,7 +94,7 @@ test_that("coarse age group download can be created", {
       "fit/", "fit/spectrum_calibration.csv",
       "fit/model_options.yml",
       "fit/data_options.yml",
-      "fit/calibration_options.yml")
+      "fit/calibration_options.yml", "inputs_outputs.csv")
   )
 
   ## Check coarse age outputs saved in coarse_output_path
@@ -127,4 +135,31 @@ test_that("summary report download can be created", {
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message,
                "Generating summary report")
+})
+
+
+test_that("comparison report download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_comparison_report_download(
+        a_hintr_output_calibrated))
+  })
+  expect_true(file.exists(out$path))
+
+  expect_type(out$metadata$description, "character")
+  expect_length(out$metadata$description, 1)
+  expect_equal(out$metadata$areas, "MWI")
+
+  expect_true(file.size(out$path) > 2000)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS",
+                        brio::readLines(out$path))))
+  expect_true(any(grepl(basename(a_hintr_data$pjnz),
+                        brio::readLines(out$path))))
+  expect_true(any(grepl("Central", brio::readLines(out$path))))
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message,
+               "Generating comparison report")
 })

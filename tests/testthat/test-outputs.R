@@ -207,6 +207,15 @@ test_that("can generate summary report from zip file", {
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
+test_that("calibration options used in summary report if present", {
+  zip <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
+  t <- tempfile(fileext = ".html")
+  generate_output_summary_report(t, zip$path, quiet = TRUE)
+  content <- brio::readLines(t)
+  expect_true(any(grepl("Sex and 5-year age group",
+                        paste0(content, collapse = " "))))
+})
+
 test_that("output_package() catches error if NA in simulated sample.", {
 
   bad_sample <- a_fit_sample
@@ -502,3 +511,23 @@ test_that("meta_indicator table contains same indicators as outputs", {
   expect_setequal(a_output_full$meta_indicator$indicator,
                   a_output_full$indicators$indicator)
 })
+
+test_that("one input and output for each area_id/age/sex/indicator/period combination", {
+
+  inputs_outputs <- a_output_calib$inputs_outputs
+
+  dups <- inputs_outputs %>%
+    dplyr::group_by(area_id, sex, age_group, calendar_quarter, indicator) %>%
+    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::filter(n != 2)
+
+  expect_equal(nrow(dups), 0)
+
+})
+
+
+
+
+
+
+
