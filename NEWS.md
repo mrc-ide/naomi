@@ -1,10 +1,14 @@
-# naomi 2.7.4
+# naomi 2.7.5
 
 !!! WORK IN PROGRESS
 
 * Fitting to age-stratified ART data
   * area x sex x age_group interaction for baseline HIV prevalence 
   *  area x sex x age_group x time interaction for ART coverage
+
+# naomi 2.7.4
+
+* Patch `aggregate_anc()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
 
 # naomi 2.7.3
 

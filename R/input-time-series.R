@@ -253,6 +253,13 @@ aggregate_anc <- function(anc, shape) {
     anc <- read_anc_testing(anc)
   }
 
+  ## Select only required columns; to avoid column name clash with
+  ## any additional columns in ANC data set
+  anc <- anc %>%
+    dplyr::select(area_id, age_group, year, anc_clients, anc_known_pos, 
+                  anc_already_art, anc_tested, anc_tested_pos, anc_known_neg, 
+                  births_facility)
+    
   anc_testing <- anc %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(time_period = as.character(year),
