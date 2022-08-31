@@ -1,6 +1,6 @@
 # naomi 2.7.4
 
-* Patch `aggregate_anc()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
+* Patch `aggregate_anc()` and `aggregate_art()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
 
 # naomi 2.7.2
 
