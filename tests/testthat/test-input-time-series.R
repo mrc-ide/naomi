@@ -316,3 +316,21 @@ test_that("ANC data without births_facility can be aggregated", {
 
   expect_equal(data$births_facility, rep(0, nrow(data)))
 })
+
+test_that("aggregate_anc() discards additional columns", {
+
+  anc <- read_anc_testing(a_hintr_data$anc_testing)
+  anc$area_level <- 4
+
+  data <- aggregate_anc(anc, a_hintr_data$shape)
+  
+  expect_true(nrow(data) > 50) ## Check that we have read out some data
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name", "area_level","area_level_label",
+                    "parent_area_id", "area_sort_order", "sex", "age_group",
+                    "time_period", "year", "quarter", "calendar_quarter",
+                    "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
+                    "anc_tested_pos","anc_known_neg","births_facility", "area_hierarchy"))
+
+
+})
