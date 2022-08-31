@@ -31,7 +31,7 @@ aggregate_art <- function(art, shape) {
   cols_keep <- intersect(cols_list, colnames(art))
 
   art <- art %>%
-    dplyr::select(area_id, sex, age_group, year, calendar_quarter,
+    dplyr::select(area_id, sex, age_group, calendar_quarter,
                   dplyr::any_of(cols_list))
   
   art_number <- art %>%
