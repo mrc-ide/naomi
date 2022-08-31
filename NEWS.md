@@ -1,4 +1,4 @@
-# naomi 2.7.3
+# naomi 2.7.4
 
 * Adjust incidence projection for changing incidence trend between T1 and T2.
   
@@ -45,6 +45,11 @@
     smoothing on cumulative infections.	
 
 * Handle adjacency matrix construction for case with single area.
+
+
+# naomi 2.7.3
+
+* Patch `aggregate_anc()` and `aggregate_art()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
 
 # naomi 2.7.2
 
