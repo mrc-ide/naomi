@@ -11,7 +11,7 @@ calculate_prevalence_art_coverage <- function(data) {
 }
 
 calculate_anc_prevalence <- function(data) {
-  (data$anc_known_pos + data$anc_tested_pos) / (data$anc_known_pos + data$anc_tested)
+  (data$anc_known_pos + data$anc_tested_pos) / (data$anc_known_pos + data$anc_tested + data$anc_known_neg)
 }
 
 calculate_anc_art_coverage <- function(data) {

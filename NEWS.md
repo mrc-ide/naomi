@@ -1,3 +1,28 @@
+# naomi 2.7.3
+
+* Patch `aggregate_anc()` and `aggregate_art()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
+
+# naomi 2.7.2
+
+* Restructure functions that subset model input data based on logic in model options:
+ - In `select_naomi_data()`: Provide an annotated version of all input data provided with data tagged as `raw_included`, `raw_excluded` and `interpolated_inlcuded`. Individual data frames for survey, ART and ANC inputs are added to `naomi-data` in a list named `full_data`.
+  - In `output_package()`: Create a long dataframe containing matched data inputs and model outputs with `align_inputs_output()`. This adds a new object to the naomi output package that may used to compare model estimates and data inputs for T1 and T2.
+
+# naomi 2.7.1
+
+* If `births_facility` in ANC data is missing it will be replaced by `NA` when reading input so input time series aggregation passes
+
+# naomi 2.7.0
+
+Updates for 2023 UNAIDS estimates (Dec 2022 - Mar 2023).
+
+* Add fields to ANC routine testing data specification and example data sets:
+  * `anc_known_neg`: Number of women who were not tested for HIV at antenatal visit because they had a recent documented HIV negative test. 
+     - This is only recorded by some countries HMIS. The column may be missing or blank if this is not captured within national ANC testing guidelines and reporting.
+	 - If the column is missing or `NA` in data input, it will be replaced by values `0` in reading input.
+	 - Value `anc_known_neg` is added to denominator for calcuating `anc_prevalence`.
+  * `births_facility`: The number of live births recorded at health facilities. This is added for triangulation with trend in number of ANC visits for data review purposes. Currently not used in modelling.
+
 # naomi 2.6.28
 
 * Patch for incidence input argument in EPP-ASM simulation for `eppasm_v0.6.2`.

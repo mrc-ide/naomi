@@ -88,7 +88,8 @@ test_that("can get plot metadata for missing country with defaults", {
                     "infections_ratio", "art_current_ratio",
                     "unaware_plhiv_num_ratio", "prevalence_ratio",
                     "art_coverage_ratio", "aware_plhiv_prop_ratio",
-                    "incidence_ratio"))
+                    "incidence_ratio", "anc_prevalence_age_matched",
+                    "anc_art_coverage_age_matched"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -104,7 +105,8 @@ test_that("colour scales metadata is well formed", {
       "anc_tested_neg", "art_new", "vl_tested_12mos", "vl_suppressed_12mos",
       "population_ratio", "plhiv_ratio", "infections_ratio",
       "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
-      "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio"))
+      "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio",
+      "anc_prevalence_age_matched", "anc_art_coverage_age_matched"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -135,12 +137,14 @@ test_that("metadata is well formed", {
     "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
     "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
     "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
-    "incidence_ratio"))
+    "incidence_ratio", "anc_prevalence_age_matched",
+    "anc_art_coverage_age_matched"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
   expect_true(all(meta$data_type %in%
-                    c("survey", "anc", "programme", "output", "calibrate")))
+                    c("survey", "anc", "programme", "output", "calibrate",
+                      "comparison")))
   expect_setequal(meta$name,
                   c("HIV prevalence", "ART coverage", "Viral load suppression",
                     "Proportion recently infected", "PLHIV", "Population",
@@ -158,7 +162,8 @@ test_that("metadata is well formed", {
                     "ART number (attending) ratio",
                     "Number PLHIV unaware ratio", "HIV prevalence ratio",
                     "ART coverage ratio", "Proportion PLHIV aware ratio",
-                    "Incidence ratio"))
+                    "Incidence ratio", "ANC prevalence age matched",
+                    "ANC ART coverage age matched"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",

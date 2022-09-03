@@ -245,7 +245,7 @@
     "ART_PROP_U15": "Proportion d'enfants (<15) sous TARV par rapport aux adultes",
     "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence CPN",
-    "ANC_ART_COVERAGE": "Couverture de TARV au CPN ",
+    "ANC_ART_COVERAGE": "Couverture de TARV au CPN",
     "ART_NEW_TOTAL": "TARV (Nouveau)",
     "ART_NEW_TOTAL_DESC": "Nombre initié sur TARV",
     "ART_NEW_ADULT_F": "Femmes sous TARV (Nouveau)",
@@ -356,5 +356,7 @@
     "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
     "WARNING_ADDITIONAL": "and {{count}} more",
     "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
-    "WARNING_NO_UNCERTAINTY": "Unable to generate uncertainty bounds for model estimates. Please review model inputs and model options."
+    "ANC_PREVALENCE_AGE_MATCHED": "Prévalence CPN appariés par âge",
+    "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge",
+    "WARNING_NO_UNCERTAINTY": "Unable to generate uncertainty bounds for model estimates. Please review model inputs and model options."    
 }

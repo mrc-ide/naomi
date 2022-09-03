@@ -8,6 +8,7 @@ save_output(
   filename,
   dir,
   naomi_output,
+  notes = NULL,
   overwrite = FALSE,
   with_labels = FALSE,
   boundary_format = "geojson",
@@ -21,6 +22,8 @@ save_output(
 \item{dir}{Directory to create zip in}
 
 \item{naomi_output}{Naomi output object}
+
+\item{notes}{Notes to include in output zip}
 
 \item{overwrite}{If TRUE overwrite any existing file}
 

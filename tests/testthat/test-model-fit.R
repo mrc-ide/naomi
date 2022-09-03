@@ -143,7 +143,7 @@ test_that("output_package() works with mode, sample, or both", {
   expect_true(all(is.na(output_mode$indicators[c("mean", "se", "median", "lower", "upper")])))
   expect_equal(output_mode$indicators$mode, a_output$indicators$mode)
 
-  expect_true(all(is.na(output_mode$mode)))
+  expect_true(all(is.na(output_sample$indicators$mode)))
   expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
                a_output$indicators[c("mean", "se", "median", "lower", "upper")])
 })
@@ -172,7 +172,7 @@ test_that("model fit with aggregate survey data", {
 
   ## Test cases:
   ## - Aggregate areas, age/sex stratified data
-  ## - Aggregate areas and age, sex stratified dataii
+  ## - Aggregate areas and age, sex stratified data
   ## - Aggregate area/age/sex
 
   # 1. Aggregate areas, age/sex stratified data
