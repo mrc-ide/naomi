@@ -157,11 +157,11 @@ test_that("extract_indicators returns mode on error", {
   out_good <- output_package(a_fit_sample, a_naomi_data)
 
   # For sample with NAs, mode is returned and mean is NA
-  expect_true("mode" %in% class(out_bad$indicators))
-  expect_true(all(is.na(out$indicators$mean)))
+  expect_is(out_bad$indicators, "mode")
+  expect_true(all(is.na(out_bad$indicators$mean)))
 
   # For sample without NAs, mode and mode returned
-  expect_true("mean" %in% class(out_good$indicators))
+  expect_is(out_good$indicators, "mean")
   expect_true(all(!is.na(out_good$indicators$mean)))
 
 

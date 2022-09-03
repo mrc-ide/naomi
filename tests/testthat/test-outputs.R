@@ -220,8 +220,12 @@ test_that("output_package() catches error if NA in simulated sample.", {
 
   bad_sample <- a_fit_sample
   bad_sample$sample$alpha_t1_out[50] <- NA
-  expect_error(output_package(bad_sample, a_naomi_data),
-               "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
+  out_bad <- output_package(bad_sample, a_naomi_data)
+
+  expect_is(out_bad$indicators, "mode")
+  ## !! TODO: This should still return as a warning, correct?
+  ## expect_warning(<FILL IN HERE>,
+  ##              "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
 })
 
 test_that("summary report can be translated", {
