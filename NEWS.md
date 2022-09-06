@@ -1,6 +1,6 @@
 # naomi 2.7.4
 
-* Translate quarter label and indicator label in download generation
+* Translate period and indicator metadata when generating output zip
 
 # naomi 2.7.3
 
