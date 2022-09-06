@@ -518,10 +518,13 @@ add_output_labels <- function(naomi_output, geometry = FALSE) {
     dplyr::select(age_group, age_group_label, age_group_sort_order)
   indicators <- dplyr::left_join(indicators, meta_age_group, by = "age_group")
 
-  indicators <- dplyr::left_join(indicators, naomi_output$meta_period,
-                                 by = "calendar_quarter")
+  indicators$quarter_label <- calendar_quarter_labels(
+    indicators$calendar_quarter)
 
-  meta_indicators <- naomi_output$meta_indicator %>%
+  ## Get meta_indicator fresh instead of from naomi_output object so that we
+  ## use the current set language for the indicator labels instead of
+  ## the language that was used when naomi_output object was created
+  meta_indicators <- get_meta_indicator() %>%
     dplyr::select(indicator, indicator_label, indicator_sort_order)
   indicators <- dplyr::left_join(indicators, meta_indicators, by = "indicator")
 
@@ -616,7 +619,7 @@ add_art_attendance_labels <- function(naomi_output) {
              dplyr::select(age_group, age_group_label, age_group_sort_order),
              by = "age_group"
            ) %>%
-    dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
+    dplyr::mutate(quarter_label = calendar_quarter_labels(calendar_quarter)) %>%
     dplyr::arrange(
              reside_area_sort_order,
              attend_area_sort_order,

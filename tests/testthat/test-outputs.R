@@ -525,9 +525,22 @@ test_that("one input and output for each area_id/age/sex/indicator/period combin
 
 })
 
+test_that("writing output package translates labels", {
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
 
+  read <- read_output_package(out$path)
+  ## area_level_label comes from input data (not translated)
+  expect_true("Prévalence du VIH" %in% read$indicators$indicator_label)
+  expect_setequal(read$indicators$quarter_label,
+                  c("Mars 2016", "Décembre 2018", "Juin 2019"))
+  ## age group label currently doesn't have translations
+  expect_true("all ages" %in% read$indicators$age_group_label)
 
-
-
+  expect_setequal(read$art_attendance$quarter_label,
+                  c("Mars 2016", "Décembre 2018"))
+  expect_true("all ages" %in% read$art_attendance$age_group_label)
+})
 
 

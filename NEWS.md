@@ -1,3 +1,7 @@
+# naomi 2.7.4
+
+* Translate quarter label and indicator label in download generation
+
 # naomi 2.7.3
 
 * Patch `aggregate_anc()` and `aggregate_art()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
