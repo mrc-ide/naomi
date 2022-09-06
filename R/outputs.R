@@ -961,10 +961,6 @@ save_output <- function(filename, dir,
     yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
   }
 
-  if (!is.null(notes)) {
-
-  }
-
   zip::zipr(path, list.files())
   path
 }
