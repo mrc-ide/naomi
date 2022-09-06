@@ -442,17 +442,9 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
                   center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
-  meta_period <- data.frame(
-    calendar_quarter = c(naomi_data$calendar_quarter1,
-                         naomi_data$calendar_quarter2,
-                         naomi_data$calendar_quarter3),
-    stringsAsFactors = FALSE
-  )%>%
-    dplyr::mutate(
-             quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
-             quarter_label = naomi::quarter_year_labels(quarter_id)
-           )
-
+  meta_period <- get_period_metadata(c(naomi_data$calendar_quarter1,
+                                       naomi_data$calendar_quarter2,
+                                       naomi_data$calendar_quarter3))
   meta_age_group <- get_age_groups()
 
   ## # Fitting outputs
@@ -518,13 +510,10 @@ add_output_labels <- function(naomi_output, geometry = FALSE) {
     dplyr::select(age_group, age_group_label, age_group_sort_order)
   indicators <- dplyr::left_join(indicators, meta_age_group, by = "age_group")
 
-  indicators$quarter_label <- calendar_quarter_labels(
-    indicators$calendar_quarter)
+  indicators <- dplyr::left_join(indicators, naomi_output$meta_period,
+                                 by = "calendar_quarter")
 
-  ## Get meta_indicator fresh instead of from naomi_output object so that we
-  ## use the current set language for the indicator labels instead of
-  ## the language that was used when naomi_output object was created
-  meta_indicators <- get_meta_indicator() %>%
+  meta_indicators <- naomi_output$meta_indicator %>%
     dplyr::select(indicator, indicator_label, indicator_sort_order)
   indicators <- dplyr::left_join(indicators, meta_indicators, by = "indicator")
 
@@ -619,7 +608,7 @@ add_art_attendance_labels <- function(naomi_output) {
              dplyr::select(age_group, age_group_label, age_group_sort_order),
              by = "age_group"
            ) %>%
-    dplyr::mutate(quarter_label = calendar_quarter_labels(calendar_quarter)) %>%
+    dplyr::left_join(naomi_output$meta_period, by = "calendar_quarter") %>%
     dplyr::arrange(
              reside_area_sort_order,
              attend_area_sort_order,
@@ -887,6 +876,20 @@ save_output <- function(filename, dir,
   }
   naomi_output$indicators <- remove_output_labels(naomi_output)
   naomi_output$art_attendance <- remove_art_attendance_labels(naomi_output)
+
+  ## re-fetch metadata so that it is in the users current language if they
+  ## have switched between running the fit and generating output
+  ## only need to do this for indicators and period, meta_age_group is not
+  ## translated and meta_area comes from input data so won't change
+  meta_indicator <- get_meta_indicator()
+  meta_indicator <- dplyr::filter(meta_indicator, indicator %in% naomi_output$indicators$indicator)
+  naomi_output$meta_indicator <- meta_indicator
+
+  meta_period <- get_period_metadata(
+    c(naomi_output$fit$model_options$calendar_quarter_t1,
+      naomi_output$fit$model_options$calendar_quarter_t2,
+      naomi_output$fit$model_options$calendar_quarter_t3))
+  naomi_output$meta_period <- meta_period
 
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
@@ -1236,4 +1239,15 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
   output$indicators <- indicators
 
   output
+}
+
+get_period_metadata <- function(calendar_quarters) {
+  data.frame(
+    calendar_quarter = calendar_quarters,
+    stringsAsFactors = FALSE
+  ) %>%
+    dplyr::mutate(
+      quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+      quarter_label = quarter_year_labels(quarter_id)
+    )
 }
