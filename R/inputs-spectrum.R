@@ -15,7 +15,7 @@ extract_pjnz_naomi <- function(pjnz_list) {
 
   spec <- lapply(pjnz_list, extract_pjnz_one) %>%
     dplyr::bind_rows() %>%
-    dplyr::select(spectrum_region_code, spectrum_region_name, dplyr::everything())
+    dplyr::select(spectrum_country, spectrum_region_code, spectrum_region_name, dplyr::everything())
 
   spec
 }
@@ -89,17 +89,9 @@ extract_pjnz_one <- function(pjnz) {
 
   spec <- add_shiny90_unaware(spec, pjnz)
 
-
-  spectrum_region_code <- read_spectrum_region_code(pjnz)
-
-  if (spectrum_region_code == 0) {
-    spectrum_region_name <- eppasm::read_country(pjnz)
-  } else {
-    spectrum_region_name <- read_spectrum_region_name(pjnz)
-  }
-
-  spec$spectrum_region_code <- spectrum_region_code
-  spec$spectrum_region_name <- spectrum_region_name
+  spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
+  spec$spectrum_region_name <- read_spectrum_region_name(pjnz)
+  spec$spectrum_country <- eppasm::read_country(pjnz)
 
   spec
 }

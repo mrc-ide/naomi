@@ -1,3 +1,7 @@
+# naomi 2.7.4
+
+* Add country name to `extract_pjnz_one()`. Presently country name is not extracted when subnational Spectrum files are used.
+
 # naomi 2.7.3
 
 * Patch `aggregate_anc()` and `aggregate_art()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
