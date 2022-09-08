@@ -1,3 +1,7 @@
+# naomi 2.7.4
+
+* Re-fetch meta data when output zip is generated so that output zip contents in `indicators.csv` and `meta_*.csv` are in the language selected by the user at the time of generation.
+
 # naomi 2.7.3
 
 * Patch `aggregate_anc()` and `aggregate_art()`: select required columns when joining to prevent inadvertent column name clash due to extra columns (e.g. `area_level`).
