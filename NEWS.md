@@ -1,4 +1,4 @@
-# naomi 2.7.4
+# naomi 2.7.5
 
 * Adjust incidence projection for changing incidence trend between T1 and T2.
   
@@ -46,6 +46,9 @@
 
 * Handle adjacency matrix construction for case with single area.
 
+# naomi 2.7.4
+
+* Re-fetch meta data when output zip is generated so that output zip contents in `indicators.csv` and `meta_*.csv` are in the language selected by the user at the time of generation.
 
 # naomi 2.7.3
 
