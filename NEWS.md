@@ -1,6 +1,6 @@
 # naomi 2.7.4
 
-* Translate period and indicator metadata when generating output zip
+* Re-fetch meta data when output zip is generated so that output zip contents in `indicators.csv` and `meta_*.csv` are in the language selected by the user at the time of generation.
 
 # naomi 2.7.3
 
