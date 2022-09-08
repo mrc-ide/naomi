@@ -442,17 +442,9 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
                   center_x, center_y, geometry) %>%
     sf::st_as_sf()
 
-  meta_period <- data.frame(
-    calendar_quarter = c(naomi_data$calendar_quarter1,
-                         naomi_data$calendar_quarter2,
-                         naomi_data$calendar_quarter3),
-    stringsAsFactors = FALSE
-  )%>%
-    dplyr::mutate(
-             quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
-             quarter_label = naomi::quarter_year_labels(quarter_id)
-           )
-
+  meta_period <- get_period_metadata(c(naomi_data$calendar_quarter1,
+                                       naomi_data$calendar_quarter2,
+                                       naomi_data$calendar_quarter3))
   meta_age_group <- get_age_groups()
 
   ## # Fitting outputs
@@ -885,6 +877,20 @@ save_output <- function(filename, dir,
   naomi_output$indicators <- remove_output_labels(naomi_output)
   naomi_output$art_attendance <- remove_art_attendance_labels(naomi_output)
 
+  ## re-fetch metadata so that it is in the users current language if they
+  ## have switched between running the fit and generating output
+  ## only need to do this for indicators and period, meta_age_group is not
+  ## translated and meta_area comes from input data so won't change
+  meta_indicator <- get_meta_indicator()
+  meta_indicator <- dplyr::filter(meta_indicator, indicator %in% naomi_output$indicators$indicator)
+  naomi_output$meta_indicator <- meta_indicator
+
+  meta_period <- get_period_metadata(
+    c(naomi_output$fit$model_options$calendar_quarter_t1,
+      naomi_output$fit$model_options$calendar_quarter_t2,
+      naomi_output$fit$model_options$calendar_quarter_t3))
+  naomi_output$meta_period <- meta_period
+
   if (with_labels) {
     indicators <- add_output_labels(naomi_output)
     art_attendance <- add_art_attendance_labels(naomi_output)
@@ -953,10 +959,6 @@ save_output <- function(filename, dir,
     yaml::write_yaml(fit$model_options, "fit/model_options.yml")
     yaml::write_yaml(fit$data_options, "fit/data_options.yml")
     yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
-  }
-
-  if (!is.null(notes)) {
-
   }
 
   zip::zipr(path, list.files())
@@ -1233,4 +1235,15 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
   output$indicators <- indicators
 
   output
+}
+
+get_period_metadata <- function(calendar_quarters) {
+  data.frame(
+    calendar_quarter = calendar_quarters,
+    stringsAsFactors = FALSE
+  ) %>%
+    dplyr::mutate(
+      quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+      quarter_label = quarter_year_labels(quarter_id)
+    )
 }

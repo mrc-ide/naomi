@@ -1,6 +1,10 @@
-# naomi 2.7.4
+# naomi 2.7.5
 
 * Add country name to `extract_pjnz_one()`. Presently country name is not extracted when subnational Spectrum files are used.
+
+# naomi 2.7.4
+
+* Re-fetch meta data when output zip is generated so that output zip contents in `indicators.csv` and `meta_*.csv` are in the language selected by the user at the time of generation.
 
 # naomi 2.7.3
 
