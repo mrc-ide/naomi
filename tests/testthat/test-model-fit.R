@@ -148,25 +148,6 @@ test_that("output_package() works with mode, sample, or both", {
                a_output$indicators[c("mean", "se", "median", "lower", "upper")])
 })
 
-test_that("extract_indicators returns mode on error", {
-
-  a_fit_bad_sample <- a_fit_sample
-  a_fit_bad_sample$sample$anc_alpha_t2_out[1,] <- NA_real_
-
-  out_bad <- output_package(a_fit_bad_sample, a_naomi_data)
-  out_good <- output_package(a_fit_sample, a_naomi_data)
-
-  # For sample with NAs, mode is returned and mean is NA
-  expect_is(out_bad$indicators, "mode")
-  expect_true(all(is.na(out_bad$indicators$mean)))
-
-  # For sample without NAs, mode and mode returned
-  expect_is(out_good$indicators, "mean")
-  expect_true(all(!is.na(out_good$indicators$mean)))
-
-
-})
-
 
 test_that("model fit with aggregate survey data", {
 
