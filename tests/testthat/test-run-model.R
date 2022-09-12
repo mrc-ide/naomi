@@ -647,25 +647,6 @@ test_that("assert_model_output_version ensures model version up to date", {
   expect_true(assert_model_output_version(output))
 })
 
-test_that("calibrate plot data can be generated", {
-  plot_data <- hintr_calibrate_plot(a_hintr_output)
-  expect_setequal(names(plot_data),
-                  c("spectrum_region_code", "spectrum_region_name", "sex",
-                    "age_group", "calendar_quarter", "indicator", "mean",
-                    "data_type"))
-  expect_setequal(unique(plot_data$spectrum_region_name),
-                  c("National", "Northern Region", "Central Region",
-                    "Southern Region"))
-  expect_setequal(unique(plot_data$indicator),
-                  c("art_current",
-                    "infections", "plhiv", "population", "unaware_plhiv_num",
-                    "prevalence", "art_coverage",
-                    "aware_plhiv_prop", "incidence"))
-
-  indicators <- readRDS(a_hintr_output$model_output_path)$output_package$indicators
-  expect_true(all(plot_data$indicator %in% indicators$indicator))
-})
-
 test_that("can get data_type labels", {
   labels <- data_type_labels()
   expect_length(labels, 4)

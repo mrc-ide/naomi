@@ -143,7 +143,7 @@ test_that("output_package() works with mode, sample, or both", {
   expect_true(all(is.na(output_mode$indicators[c("mean", "se", "median", "lower", "upper")])))
   expect_equal(output_mode$indicators$mode, a_output$indicators$mode)
 
-  expect_true(all(is.na(output_mode$mode)))
+  expect_true(all(is.na(output_sample$indicators$mode)))
   expect_equal(output_sample$indicators[c("mean", "se", "median", "lower", "upper")],
                a_output$indicators[c("mean", "se", "median", "lower", "upper")])
 })
@@ -220,7 +220,7 @@ test_that("model fit with aggregate survey data", {
                                     artnum_calendar_quarter_t1 = NULL,
                                     artnum_calendar_quarter_t2 = NULL,
                                     use_survey_aggregate = TRUE)
-    
+
     tmb_inputs <- prepare_tmb_inputs(naomi_data)
     fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 
@@ -263,7 +263,7 @@ test_that("model fit with aggregate survey data", {
                                     artnum_calendar_quarter_t1 = NULL,
                                     artnum_calendar_quarter_t2 = NULL,
                                     use_survey_aggregate = TRUE)
-    
+
     tmb_inputs <- prepare_tmb_inputs(naomi_data)
     fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 

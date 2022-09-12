@@ -26,6 +26,14 @@ aggregate_art <- function(art, shape) {
     art <- read_art_number(art, all_columns = TRUE)
   }
 
+  # Aggregate based on what columns exist in dataset
+  cols_list <- c("art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos")
+  cols_keep <- intersect(cols_list, colnames(art))
+
+  art <- art %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter,
+                  dplyr::any_of(cols_list))
+  
   art_number <- art %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
@@ -42,16 +50,13 @@ aggregate_art <- function(art, shape) {
     dplyr::left_join(art_number, by = "area_id")
 
 
-  # Aggregate based on what columns exist in dataset
-  cols_list <- c("art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos")
-  cols_keep <- intersect(cols_list, colnames(art))
-
   # Function to aggregate based on area_id[0-9]$ columns in hierarchy
   aggregate_data_art <- function(col_name) {
     df <- art_number_wide %>%
       dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
                       year, quarter, calendar_quarter) %>%
-      dplyr::summarise_at(dplyr::vars(cols_keep), ~sum(.), .groups = "drop") %>%
+      dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(.),
+                          .groups = "drop") %>%
       dplyr::rename(area_id = `eval(as.name(col_name))`)
   }
 
@@ -59,10 +64,13 @@ aggregate_art <- function(art, shape) {
   art_long <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE) %>%
     lapply(function(x) aggregate_data_art(x))  %>%
     dplyr::bind_rows() %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id, area_name, area_level,
-                                             area_level_label, parent_area_id,
-                                             area_sort_order),
-                     by = "area_id" ) %>%
+    dplyr::left_join(
+      areas %>%
+        dplyr::select(area_id, area_name, area_level,
+                      area_level_label, parent_area_id,
+                      area_sort_order),
+      by = "area_id"
+    ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group,time_period, year, quarter,
                   calendar_quarter, dplyr::everything()) %>%
@@ -252,6 +260,13 @@ aggregate_anc <- function(anc, shape) {
     anc <- read_anc_testing(anc)
   }
 
+  ## Select only required columns; to avoid column name clash with
+  ## any additional columns in ANC data set
+  anc <- anc %>%
+    dplyr::select(area_id, age_group, year, anc_clients, anc_known_pos, 
+                  anc_already_art, anc_tested, anc_tested_pos, anc_known_neg, 
+                  births_facility)
+    
   anc_testing <- anc %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(time_period = as.character(year),
