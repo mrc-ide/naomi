@@ -1,3 +1,7 @@
+# naomi 2.7.6
+* Report mode when sampling returns improbable values and uncertainty cannot be generated.
+  - This will throw a warning after running `output_package()` in `hintr_run_model()` that   will display a warning on the model fit page of the web application.
+
 # naomi 2.7.5
 
 * Adjust incidence projection for changing incidence trend between T1 and T2.
