@@ -486,9 +486,11 @@ sparse_model_matrix <- function(formula, data, binary_interaction = 1,
 }
 
 make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
-                         progress = NULL) {
+                         progress = NULL,
+                         report_likelihood = 1L) {
 
   data$calc_outputs <- as.integer(calc_outputs)
+  data$report_likelihood <- as.integer(report_likelihood)
 
   obj <- TMB::MakeADFun(data = data,
                         parameters = par,
