@@ -568,13 +568,11 @@ Type objective_function<Type>::operator() ()
 
   // likelihood for household survey data
   vector<Type> rho_obs_t1((A_prev * plhiv_t1) / (A_prev * population_t1));
-  // val -= dbinom(x_prev, n_prev, rho_obs_t1, true).sum();
   vector<Type> hhs_prev_ll = dbinom(x_prev, n_prev, rho_obs_t1, true);
   val -= sum(hhs_prev_ll);
 
 
   vector<Type> alpha_obs_t1((A_artcov * artnum_t1) / (A_artcov * plhiv_t1));
-  // val -= dbinom(x_artcov, n_artcov, alpha_obs_t1, true).sum();
   vector<Type> hhs_artcov_ll = dbinom(x_artcov, n_artcov, alpha_obs_t1, true);
   val -= sum(hhs_artcov_ll);
 
@@ -637,31 +635,26 @@ Type objective_function<Type>::operator() ()
   // likelihood for ANC testing observations
 
   vector<Type> anc_clients_obs_t2((A_anc_clients_t2 * anc_clients_t2) * exp(offset_anc_clients_t2));
-  // val -= dpois(x_anc_clients_t2, anc_clients_obs_t2, true).sum();
   vector<Type> anc_clients_obs_t2_ll = dpois(x_anc_clients_t2, anc_clients_obs_t2, true);
   val -= sum(anc_clients_obs_t2_ll);
 
 
   vector<Type> anc_rho_obs_t1(A_anc_prev_t1 * anc_plhiv_t1 / (A_anc_prev_t1 * anc_clients_t1));
-  // val -= dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true).sum();
   vector<Type> anc_rho_obs_t1_ll = dbinom(x_anc_prev_t1, n_anc_prev_t1, anc_rho_obs_t1, true);
   val -= sum(anc_rho_obs_t1_ll);
 
 
   vector<Type> anc_alpha_obs_t1(A_anc_artcov_t1 * anc_already_art_t1 / (A_anc_artcov_t1 * anc_plhiv_t1));
-  // val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
   vector<Type> anc_alpha_obs_t1_ll = dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true);
   val -= sum(anc_rho_obs_t1_ll);
 
 
   vector<Type> anc_rho_obs_t2(A_anc_prev_t2 * anc_plhiv_t2 / (A_anc_prev_t2 * anc_clients_t2));
-  // val -= dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true).sum();
   vector<Type> anc_rho_obs_t2_ll = dbinom(x_anc_prev_t2, n_anc_prev_t2, anc_rho_obs_t2, true);
   val -= sum(anc_rho_obs_t2_ll);
 
 
   vector<Type> anc_alpha_obs_t2(A_anc_artcov_t2 * anc_already_art_t2 / (A_anc_artcov_t2 * anc_plhiv_t2));
-  // val -= dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true).sum();
   vector<Type> anc_alpha_obs_t2_ll = dbinom(x_anc_artcov_t2, n_anc_artcov_t2, anc_alpha_obs_t2, true);
   val -= sum(anc_alpha_obs_t2_ll);
 
@@ -687,7 +680,6 @@ Type objective_function<Type>::operator() ()
   vector<Type> sd_A_j_t1(A_artattend_t1 * vector<Type>(population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1)));
   sd_A_j_t1 = sd_A_j_t1.sqrt();
 
-  // val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
   vector<Type> artnumt1_ll = dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true);
   val -= sum(artnumt1_ll);
 
@@ -712,7 +704,6 @@ Type objective_function<Type>::operator() ()
   vector<Type> sd_A_j_t2(A_artattend_t2 * vector<Type>(population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2)));
   sd_A_j_t2 = sd_A_j_t2.sqrt();
 
-  // val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));
   vector<Type> artnumt2_ll = dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true);
   val -= sum(artnumt2_ll);
 
