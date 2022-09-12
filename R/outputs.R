@@ -188,9 +188,9 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 
   #  Add a class to indicate if uncertainty has been generated
   if(!is.null(naomi_fit$sample)) {
-    class(out) <- c("mean", "tbl_df", "tbl","data.frame")
+    class(out) <- c("naomi_indicators_mean", "tbl_df", "tbl","data.frame")
   } else {
-    class(out) <- c("mode", "tbl_df", "tbl","data.frame")
+    class(out) <- c("naomi_indicators_mode", "tbl_df", "tbl","data.frame")
   }
 
   out

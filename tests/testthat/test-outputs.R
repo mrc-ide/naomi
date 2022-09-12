@@ -235,7 +235,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
 
   # For sample with NAs:
   # Class is "mode"
-  expect_is(out_bad$indicators, "mode")
+  expect_is(out_bad$indicators, "naomi_indicators_mode")
   # Upper + lower limits NA
   expect_true(all(is.na(out_bad$indicators$upper)))
   expect_true(all(is.na(out_bad$indicators$lower)))
@@ -250,7 +250,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
 
   # For sample without NAs:
   # Class is "mean":
-  expect_is(out_good$indicators, "mean")
+  expect_is(out_good$indicators, "naomi_indicators_mean")
   # No NAs in indicators
   expect_true(all(!is.na(out_good$indicators$mean)))
   # Mean not equal to mode (
