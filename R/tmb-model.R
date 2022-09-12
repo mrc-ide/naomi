@@ -6,30 +6,10 @@
 #'
 #' @seealso [select_naomi_data]
 #' @export
-prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
+prepare_tmb_inputs <- function(naomi_data) {
 
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
-
-  create_anc_Amat <- function(naomi_mf, asfr_col, population_col) {
-
-    A <- naomi_data$mf_model %>%
-      dplyr::transmute(
-               area_id,
-               area_idx,
-               idx,
-               births = !!rlang::sym(asfr_col) * !!rlang::sym(population_col)
-             ) %>%
-      {
-      Matrix::spMatrix(nrow(naomi_data$mf_areas),
-                       nrow(naomi_data$mf_model),
-                       .$area_idx,
-                       .$idx,
-                       .$births)
-    }
-
-    A
-  }
 
   ## ANC observation aggregation matrices
   ##
@@ -40,15 +20,13 @@ prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
   create_anc_Amat <- function(anc_obs_dat) {
 
     df_attend_anc <- naomi_data$mf_model %>%
-    dplyr::select(reside_area_id = area_id,
-                  attend_area_id = area_id,
-                  sex,
-                  age_group,
-                  idx)
+      dplyr::select(reside_area_id = area_id,
+                    attend_area_id = area_id,
+                    sex,
+                    age_group,
+                    idx)
 
-    dat <- dplyr::rename(anc_obs_dat,
-                         attend_area_id = area_id,
-                         artnum_idx = obs_idx)
+    dat <- dplyr::rename(anc_obs_dat, attend_area_id = area_id)
 
     Amat <- create_artattend_Amat(
       dat,
@@ -72,7 +50,6 @@ prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
                     idx)
 
     survey_dat$attend_area_id <- survey_dat$area_id
-    survey_dat$artnum_idx <- seq_len(nrow(survey_dat))
 
     Amat <- create_artattend_Amat(
       survey_dat,
@@ -140,12 +117,11 @@ prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
 
   A_art_reside_attend <- naomi_data$mf_artattend %>%
     dplyr::transmute(
-             reside_area_id,
-             attend_area_id,
-             sex = "both",
-             age_group = "Y000_999",
-             artnum_idx = dplyr::row_number()
-           ) %>%
+      reside_area_id,
+      attend_area_id,
+      sex = "both",
+      age_group = "Y000_999"
+    ) %>%
     create_artattend_Amat(age_groups = naomi_data$age_groups,
                           sexes = naomi_data$sexes,
                           area_aggregation = naomi_data$area_aggregation,
@@ -205,7 +181,7 @@ prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
   ## sex ART odds ratio.
   if (naomi_data$alpha_xst_term) {
     if (!all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
-          !all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex)) {
+        !all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex)) {
       stop(paste("Sex-stratified ART data are required at both Time 1 and Time 2",
                  "to estimate district x sex x time interaction for ART coverage"))
     }
@@ -404,9 +380,7 @@ prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
     ##
     A_out = naomi_data$A_out,
     A_anc_out = naomi_data$A_anc_out,
-    calc_outputs = 1L,
-    # Report likelihood
-    report_likelihood = report_likelihood
+    calc_outputs = 1L
   )
 
 
@@ -577,7 +551,7 @@ fit_tmb <- function(tmb_input,
                     inner_verbose = FALSE,
                     max_iter = 250,
                     progress = NULL
-                    ) {
+) {
 
   stopifnot(inherits(tmb_input, "naomi_tmb_input"))
 
@@ -700,7 +674,6 @@ rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(m
   as.matrix(Matrix::t(v))
 }
 
-
 create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation,
                                   df_art_attend, by_residence = FALSE, by_survey = FALSE) {
 
@@ -716,34 +689,41 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
     id_vars <- c(id_vars, "survey_id")
   }
 
+
+  if(!("artnum_idx" %in% colnames(artnum_df))) {
+
+    artnum_df$artnum_idx <- seq_len(nrow(artnum_df))
+
+  }
+
   A_artnum <- artnum_df %>%
     dplyr::select(tidyselect::all_of(id_vars), artnum_idx) %>%
     dplyr::rename(artdat_age_group = age_group,
                   artdat_sex = sex) %>%
     dplyr::left_join(
-             get_age_groups() %>%
-             dplyr::transmute(
-                      artdat_age_group = age_group,
-                      artdat_age_start = age_group_start,
-                      artdat_age_end = age_group_start + age_group_span
-                    ),
-             by = "artdat_age_group"
-           ) %>%
+      get_age_groups() %>%
+        dplyr::transmute(
+          artdat_age_group = age_group,
+          artdat_age_start = age_group_start,
+          artdat_age_end = age_group_start + age_group_span
+        ),
+      by = "artdat_age_group"
+    ) %>%
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(
-             get_age_groups() %>%
-             dplyr::filter(age_group %in% age_groups)
-           ) %>%
+      get_age_groups() %>%
+        dplyr::filter(age_group %in% age_groups)
+    ) %>%
     dplyr::filter(
-             artdat_age_start <= age_group_start,
-             age_group_start + age_group_span <= artdat_age_end
-           ) %>%
+      artdat_age_start <= age_group_start,
+      age_group_start + age_group_span <= artdat_age_end
+    ) %>%
     dplyr::left_join(
-             data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
-                        sex = c("male", "female", "male", "female", "both"),
-                        stringsAsFactors = FALSE) %>%
-             dplyr::filter(sex %in% sexes),
-             by = "artdat_sex"
+      data.frame(artdat_sex = c("male", "female", "both", "both", "both"),
+                 sex = c("male", "female", "male", "female", "both"),
+                 stringsAsFactors = FALSE) %>%
+        dplyr::filter(sex %in% sexes),
+      by = "artdat_sex"
     )
 
   ## Map artattend_area_id to model_area_id
@@ -758,7 +738,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   ## Check no areas with duplicated reporting
   art_duplicated_check <- A_artnum %>%
     dplyr::group_by_at(id_vars) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::filter(n > 1)
 
   if (nrow(art_duplicated_check)) {
@@ -770,9 +750,9 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   df_art_attend <- df_art_attend %>%
     dplyr::select(tidyselect::all_of(by_vars)) %>%
     dplyr::mutate(
-             Aidx = dplyr::row_number(),
-             value = 1
-           )
+      Aidx = dplyr::row_number(),
+      value = 1
+    )
 
   A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars)
 
