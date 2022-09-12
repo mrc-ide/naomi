@@ -448,14 +448,13 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
                       naomi_warning(t_("WARNING_NO_UNCERTAINTY"),
                                     c("model_fit"))
 
-                      # If error in simulating outputs - remove sample
+                      # If error in simulating outputs: remove sample
                       # and return mode for all indicators
                       naomi_fit$sample <- NULL
-                      extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
-
-
+                      df <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
+                      df$mean <- df$mode
+                      df
                       })
-
 
   art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
 
