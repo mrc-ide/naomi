@@ -252,7 +252,6 @@ prepare_tmb_inputs <- function(naomi_data) {
     Lproj_hivpop_t1t2 = naomi_data$Lproj_t1t2$Lproj_hivpop,
     Lproj_incid_t1t2 = naomi_data$Lproj_t1t2$Lproj_incid,
     Lproj_paed_t1t2 = naomi_data$Lproj_t1t2$Lproj_paed,
-    projection_duration_t1t2 = naomi_data$Lproj_t1t2$projection_duration,
     X_rho = as.matrix(sparse_model_matrix(~female_15plus, df, "bin_rho_model", TRUE)),
     X_alpha = stats::model.matrix(~female_15plus, df),
     X_alpha_t2 = stats::model.matrix(f_alpha_t2, df),
@@ -374,7 +373,6 @@ prepare_tmb_inputs <- function(naomi_data) {
     Lproj_hivpop_t2t3 = naomi_data$Lproj_t2t3$Lproj_hivpop,
     Lproj_incid_t2t3 = naomi_data$Lproj_t2t3$Lproj_incid,
     Lproj_paed_t2t3 = naomi_data$Lproj_t2t3$Lproj_paed,
-    projection_duration_t2t3 = naomi_data$Lproj_t2t3$projection_duration,
     logit_alpha_t2t3_offset = df$logit_alpha_t2t3_offset,
     log_lambda_t3_offset = df$log_lambda_t3_offset,
     ##

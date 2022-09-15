@@ -357,5 +357,6 @@
     "WARNING_ADDITIONAL": "and {{count}} more",
     "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
     "ANC_PREVALENCE_AGE_MATCHED": "Prévalence CPN appariés par âge",
-    "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge"
+    "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge",
+    "WARNING_NO_UNCERTAINTY": "Unable to generate uncertainty bounds for model estimates. Mode reported in place of mean. Please review model inputs and model options."
 }

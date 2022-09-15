@@ -1,3 +1,55 @@
+# naomi 2.7.6
+* Report mode when sampling returns improbable values and uncertainty cannot be generated.
+  - This will throw a warning after running `output_package()` in `hintr_run_model()` that   will display a warning on the model fit page of the web application.
+
+# naomi 2.7.5
+
+* Adjust incidence projection for changing incidence trend between T1 and T2.
+  
+  Previously, new infections by age were calculated as:
+    `(1 - exp(-lambda_t1 * duration)) * hiv_negative_t1`.
+  This implicitly assumed that incidence rate and HIV negative population size
+  were constant over the period from T1 to T2. This was reasonably okay for 
+  short periods, but less acceptable when time from T1 to T2 becomes many years.
+  In settings with declining infections, this approach will tend to over-estimate
+  the number of PLHIV at T2.
+  
+  New approach calculates infections in one year by age and sex based on `lambda_t1` 
+  and then extrapolates to the number of infections between T1 and T2 based on 
+  the ratio of the number of infections occurring in Spectrum between T1 and T2 
+  to the number of infections in the year preceding T1 (Spectrum definition for
+  infections). This calculation also accounts for the number progressing from the 
+  age group at infection to the age group at T2 based on Spectrum infections by
+  cohort (same as previous implementation).
+  
+  The model accounts for impact of different ART coverage levels at T1 on 
+  district-level transmission rate and incidence, but does not account for 
+  differential change in ART coverage between T1 and T2. That is, a larger scale-up
+  in ART in district A than district B between T1 and T2 would not result in a 
+  larger relative decline in incidence in A than B during this period.
+  
+  The model does not explicitly account for mortality among infections between
+  T1 and T2, but this is implicitly handled how new infections are subtracted
+  away from the cohort survival probabilities for PLHIV at baseline.
+  
+  Better handling of incidence changes over time and mortality probably 
+  need a more complete simulation model rather than the single time jump
+  approximation.
+
+* Related to the previous change: 
+  - The age-specific incidence rate for distributing   - The age-specific incidence 
+    rate for distributingnew infections by age (`spec_incid_t1`, etc. in the result 
+    of `naomi_model_frame()`) uses *current year* HIV negative population as 
+    denominator instead of *previous year* HIV negative population as denominator 
+    (used by Spectrum). This is for consistency with current time population 
+    denominator used in internal incidence simulation.
+  - Infections are gradauted to quarters over _periods_ rather than by _cohort_
+    such that all infections remain within the same age as they are reported 
+    in single-age Spectrum outputs. Graduation is done via monotonic (Hyman)
+    smoothing on cumulative infections.	
+
+* Handle adjacency matrix construction for case with single area.
+
 # naomi 2.7.4
 
 * Re-fetch meta data when output zip is generated so that output zip contents in `indicators.csv` and `meta_*.csv` are in the language selected by the user at the time of generation.
@@ -23,8 +75,8 @@ Updates for 2023 UNAIDS estimates (Dec 2022 - Mar 2023).
 * Add fields to ANC routine testing data specification and example data sets:
   * `anc_known_neg`: Number of women who were not tested for HIV at antenatal visit because they had a recent documented HIV negative test. 
      - This is only recorded by some countries HMIS. The column may be missing or blank if this is not captured within national ANC testing guidelines and reporting.
-	 - If the column is missing or `NA` in data input, it will be replaced by values `0` in reading input.
-	 - Value `anc_known_neg` is added to denominator for calcuating `anc_prevalence`.
+     - If the column is missing or `NA` in data input, it will be replaced by values `0` in reading input.
+     - Value `anc_known_neg` is added to denominator for calcuating `anc_prevalence`.
   * `births_facility`: The number of live births recorded at health facilities. This is added for triangulation with trend in number of ANC visits for data review purposes. Currently not used in modelling.
 
 # naomi 2.6.28
@@ -567,13 +619,13 @@ outputs for district-level ANC testing cascade.
   and a district-level random effect to scale overall fertility rate.
   * The number of months reflected in ANC client reporting is used as an offset
     for the number of clients such that predicted number of clients are projected
-	annual total.
+    annual total.
   * Results explicitly represent __number of ANC clients__, calibrated based on the number 
     in the current year data. No distinction between number of births versus ANC clients
-	are made. Results should not be used for estimating PMTCT coverage (for example).
+    are made. Results should not be used for estimating PMTCT coverage (for example).
   * Currently only a single time point is used for ANC clients estimates and projections.
     The future projection is closely linked to the accuracy of current year data; 
-	uncertainty around the estimate and projection are not appropriately quantified.
+    uncertainty around the estimate and projection are not appropriately quantified.
 
 * Age-specific fertility rate ratios (FRR) for HIV positive relative to HIV 
   negative pregnant women and women already on ART relative to untreated HIV 
