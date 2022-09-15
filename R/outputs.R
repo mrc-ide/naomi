@@ -183,17 +183,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_anc_est_t3
                 )
 
-  out <- dplyr::select(out, names(naomi_mf$mf_out),
+  dplyr::select(out, names(naomi_mf$mf_out),
                 calendar_quarter, indicator, mean, se, median, mode, lower, upper)
-
-  #  Add a class to indicate if uncertainty has been generated
-  if(!is.null(naomi_fit$sample)) {
-    class(out) <- c("naomi_indicators_mean", "tbl_df", "tbl","data.frame")
-  } else {
-    class(out) <- c("naomi_indicators_mode", "tbl_df", "tbl","data.frame")
-  }
-
-  out
 }
 
 extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
@@ -440,21 +431,7 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   stopifnot(is(naomi_fit, "naomi_fit"))
   stopifnot(is(naomi_data, "naomi_data"))
 
-  indicators <-  tryCatch(
-    extract_indicators(naomi_fit, naomi_data, na.rm = na.rm) ,
-                    "error" = function(e) {
-
-                      # Display warning
-                      naomi_warning(t_("WARNING_NO_UNCERTAINTY"),
-                                    c("model_fit"))
-
-                      # If error in simulating outputs: remove sample
-                      # and return mode for all indicators
-                      naomi_fit$sample <- NULL
-                      df <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
-                      df$mean <- df$mode
-                      df
-                      })
+  indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
 
   art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
 

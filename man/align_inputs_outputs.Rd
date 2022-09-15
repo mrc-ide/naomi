@@ -16,3 +16,6 @@ align_inputs_outputs(naomi_data, indicators, meta_area)
 \description{
 Align model data inputs and model estimates
 }
+\details{
+
+}

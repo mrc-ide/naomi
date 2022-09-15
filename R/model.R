@@ -234,6 +234,17 @@ naomi_model_frame <- function(area_merged,
     ) %>%
     dplyr::ungroup()
 
+  ## Add number susceptible in previous year for Spectrum incidence calculation
+  group_vars <- c("spectrum_region_code", "year", "sex", "age_group")
+
+  spec_aggr <- spec_aggr %>%
+    dplyr::left_join(
+             dplyr::mutate(spec_aggr, susc_previous_year = totpop - hivpop,
+                           year = year + 1) %>%
+             dplyr::select(tidyselect::all_of(group_vars), susc_previous_year),
+             by = group_vars
+           )
+
   spectrum_calibration <- dplyr::bind_rows(
                                    get_spec_aggr_interpolation(spec_aggr, calendar_quarter1) %>%
                                    dplyr::mutate(time_step = "quarter1"),
@@ -258,7 +269,8 @@ naomi_model_frame <- function(area_merged,
     dplyr::mutate(
              births = 0,
              births_hivpop= 0,
-             births_artpop = 0
+             births_artpop = 0,
+             susc_previous_year = 0
            ) %>%
     dplyr::ungroup()
 
@@ -402,7 +414,7 @@ naomi_model_frame <- function(area_merged,
   ##
   ## TODO::insert flag to aggregate national or regional
 
-  cap_prop <- function(x, min = 0.00001, max = 0.99999) {
+  cap_prop <- function(x, min = 0.001, max = 0.999) {
     if(!is.na(min))
       x <- pmax(x, min)
     if(!is.na(max))
@@ -419,12 +431,7 @@ naomi_model_frame <- function(area_merged,
              calendar_quarter,
              prevalence = cap_prop(plhiv_spectrum / population_spectrum),
              art_coverage = cap_prop(art_current_spectrum / plhiv_spectrum),
-             ##
-             ## Note: Incidence calculation uses **current year** HIV negative population
-             ##   as denominator for incidence calculation because this is what is applied
-             ##   when doing Naomi model projection. (Unlike Spectrum output incidence
-             ##   which uses previous year HIV negative population.)
-             incidence = infections_spectrum / (population_spectrum - plhiv_spectrum),
+             incidence = infections_spectrum / susc_previous_year_spectrum,
              unaware_untreated_prop = unaware_spectrum / pmax(plhiv_spectrum - art_current_spectrum, 0.0),
              unaware_untreated_prop = tidyr::replace_na(unaware_untreated_prop, 1.0),
              asfr = births_spectrum / population_spectrum,
@@ -531,7 +538,7 @@ naomi_model_frame <- function(area_merged,
 
 
   ## Scaled  precision matrix for 'BYM2' model.
-  Q  <- scale_gmrf_precision(diag(rowSums(M), nrow = nrow(M), ncol = ncol(M)) - M)
+  Q  <- scale_gmrf_precision(diag(rowSums(M)) - M)
 
   ## Model output
 
@@ -640,6 +647,7 @@ naomi_model_frame <- function(area_merged,
     dplyr::ungroup()
 
   ## Remove unneeded columns from spectrum_calibration
+  spectrum_calibration[["susc_previous_year_spectrum"]] <- NULL
   spectrum_calibration[["births_spectrum"]] <- NULL
   spectrum_calibration[["art_current_internal_spectrum"]] <- NULL
 

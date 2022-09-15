@@ -19,14 +19,10 @@ create_adj_matrix <- function(sh){
   invisible(suppress_one_message(capture.output(sf::sf_use_s2(FALSE)),
             "Spherical geometry \\(s2\\) switched"))
 
-  if (nrow(sh) == 1) {
-    adj <- matrix(0, dimnames = list(sh$area_id, sh$area_id))
-  } else {
-    nb <- suppress_one_message(spdep::poly2nb(sh),
-                               "although coordinates are longitude/latitude, st_intersects assumes that they are planar")
-    adj <- spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
-    colnames(adj) <- rownames(adj)
-  }
+  nb <- suppress_one_message(spdep::poly2nb(sh),
+                             "although coordinates are longitude/latitude, st_intersects assumes that they are planar")
+  adj <- spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
+  colnames(adj) <- rownames(adj)
 
   adj
 }
