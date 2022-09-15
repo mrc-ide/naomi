@@ -296,7 +296,7 @@ naomi_objective_function_r <- function(d, p) {
 
   alpha_t2 <- plogis(mu_alpha_t2)
 
-  infections_adult_t1t2 <- (1 - exp(-lambda_adult_t1 * d$projection_duration_t1t2)) * (d$population_t1 - plhiv_t1)
+  infections_adult_t1t2 <- lambda_adult_t1 * (d$population_t1 - plhiv_t1)
   plhiv_t2 <- d$Lproj_hivpop_t1t2 %*% plhiv_t1 +
     d$Lproj_incid_t1t2  %*% infections_adult_t1t2 +
     d$Lproj_paed_t1t2  %*% plhiv_t1
@@ -584,7 +584,7 @@ naomi_objective_function_r <- function(d, p) {
   mu_alpha_t3 <- mu_alpha_t2 + d$logit_alpha_t2t3_offset
   alpha_t3 <- plogis(mu_alpha_t3)
 
-  infections_adult_t2t3 <- (1 - exp(-lambda_adult_t2 * d$projection_duration_t2t3)) * (d$population_t2 - plhiv_t2)
+  infections_adult_t2t3 <- lambda_adult_t2 * (d$population_t2 - plhiv_t2)
   plhiv_t3 <- as.vector(d$Lproj_hivpop_t2t3 %*% plhiv_t2 +
                         d$Lproj_incid_t2t3 %*% infections_adult_t2t3 +
                         d$Lproj_paed_t2t3 %*% plhiv_t2)

@@ -152,3 +152,4 @@ expect_file_different <- function(path_object, path_expected) {
   expect_false(isTRUE(all.equal(object_md5, expected_md5,
                                 check.attributes = FALSE)))
 }
+

@@ -68,7 +68,6 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Lproj_hivpop_t1t2);
   DATA_SPARSE_MATRIX(Lproj_incid_t1t2);
   DATA_SPARSE_MATRIX(Lproj_paed_t1t2);
-  DATA_SCALAR(projection_duration_t1t2);
 
   // Design matrices
   DATA_MATRIX(X_rho);
@@ -541,7 +540,7 @@ Type objective_function<Type>::operator() ()
 			   Z_alpha_xst * u_alpha_xst);
   vector<Type> alpha_t2(invlogit(mu_alpha_t2));
 
-  vector<Type> infections_adult_t1t2((1 - exp(-lambda_adult_t1 * projection_duration_t1t2)) * (population_t1 - plhiv_t1));
+  vector<Type> infections_adult_t1t2(lambda_adult_t1 * (population_t1 - plhiv_t1));
   vector<Type> plhiv_t2(Lproj_hivpop_t1t2 * plhiv_t1 + Lproj_incid_t1t2 * infections_adult_t1t2 + Lproj_paed_t1t2 * plhiv_t1);
 
   vector<Type> rho_t2(plhiv_t2 / population_t2);
@@ -838,14 +837,13 @@ Type objective_function<Type>::operator() ()
     DATA_SPARSE_MATRIX(Lproj_hivpop_t2t3);
     DATA_SPARSE_MATRIX(Lproj_incid_t2t3);
     DATA_SPARSE_MATRIX(Lproj_paed_t2t3);
-    DATA_SCALAR(projection_duration_t2t3);
     DATA_VECTOR(logit_alpha_t2t3_offset);
     DATA_VECTOR(log_lambda_t3_offset);
 
     vector<Type> mu_alpha_t3(mu_alpha_t2 + logit_alpha_t2t3_offset);
     vector<Type> alpha_t3(invlogit(mu_alpha_t3));
     
-    vector<Type> infections_adult_t2t3((1 - exp(-lambda_adult_t2 * projection_duration_t2t3)) * (population_t2 - plhiv_t2));
+    vector<Type> infections_adult_t2t3(lambda_adult_t2 * (population_t2 - plhiv_t2));
     vector<Type> plhiv_t3(Lproj_hivpop_t2t3 * plhiv_t2 + Lproj_incid_t2t3 * infections_adult_t2t3 + Lproj_paed_t2t3 * plhiv_t2);
     
     vector<Type> rho_t3(plhiv_t3 / population_t3);

@@ -4,16 +4,13 @@
 \alias{anc_testing_prev_mf}
 \alias{anc_testing_artcov_mf}
 \alias{anc_testing_clients_mf}
-\alias{artnum_mf}
 \title{Prepare Model Frames for Programme Datasets}
 \usage{
-anc_testing_prev_mf(year, anc_testing, naomi_mf)
+anc_testing_prev_mf(year, anc_model_mf)
 
-anc_testing_artcov_mf(year, anc_testing, naomi_mf)
+anc_testing_artcov_mf(year, anc_model_mf)
 
-anc_testing_clients_mf(year, anc_testing, naomi_mf, num_months)
-
-artnum_mf(calendar_quarter, art_number, naomi_mf)
+anc_testing_clients_mf(year, anc_model_mf)
 }
 \arguments{
 \item{year}{Calendar year}
@@ -21,17 +18,10 @@ artnum_mf(calendar_quarter, art_number, naomi_mf)
 \item{anc_testing}{ART data frame}
 
 \item{naomi_mf}{Naomi model frame}
-
-\item{calendar_quarter}{Calendar quarter}
 }
 \value{
 Calculated prevalence
 }
 \description{
 Prepare Model Frames for Programme Datasets
-}
-\details{
-Number on ART at desired quarter are linearly interpolated within the dataset.
-If the desired quarter is before the earliest data, the first value may
-be carried back by up to one year (four quarters). Data are never carried forward
 }

@@ -87,7 +87,7 @@ calibrate_outputs <- function(output,
          "You cannot re-calibrate outputs. ",
          "Please provide uncalibrated output package.")
   }
-  
+
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
 
   mf <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group) %>%
@@ -404,7 +404,7 @@ calibrate_outputs <- function(output,
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::left_join(val_adj_aggr_wide, by = group_vars)
 
-  
+
   spectrum_calibration <- spectrum_calibration %>%
     dplyr::select(spectrum_region_code, spectrum_region_name, sex, age_group, calendar_quarter,
                   population_spectrum, population_raw, population_calibrated,
@@ -489,8 +489,7 @@ calibrate_outputs <- function(output,
              mode = mode * ratio,
              lower = lower * ratio,
              upper = upper * ratio,
-             ratio = NULL
-           )
+             ratio = NULL)
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 

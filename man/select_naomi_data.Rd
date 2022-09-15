@@ -15,13 +15,13 @@ select_naomi_data(
   vls_survey_ids = NULL,
   artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
   artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
- 
-    anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
+  anc_clients_year_t2 =
+    year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
   anc_clients_year_t2_num_months = 12,
- 
-    anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter1"]])),
- 
-    anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
+  anc_prev_year_t1 =
+    year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter1"]])),
+  anc_prev_year_t2 =
+    year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
   anc_artcov_year_t1 = anc_prev_year_t1,
   anc_artcov_year_t2 = anc_prev_year_t2,
   use_kish_prev = TRUE,
