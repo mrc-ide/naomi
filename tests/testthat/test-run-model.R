@@ -205,11 +205,16 @@ test_that("exceeding max_iterations raises convergence warning", {
 
   output_path <- tempfile()
   out <- hintr_run_model(data, options, output_path)
+
   expect_length(out$warnings, 5)
+
   expect_equal(out$warnings[[1]]$text,
                paste0("You have chosen to fit model without estimating ",
                "neighbouring ART attendance. You may wish to review your ",
                "selection to include this option."))
+
+  expect_equal(out$warnings[[5]]$text,
+               paste0("Convergence error: iteration limit reached without convergence (10)"))
 
   msgs <- lapply(out$warnings, function(x) x$text)
   expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
