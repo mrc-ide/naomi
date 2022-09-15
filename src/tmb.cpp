@@ -650,7 +650,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> anc_alpha_obs_t1(A_anc_artcov_t1 * anc_already_art_t1 / (A_anc_artcov_t1 * anc_plhiv_t1));
   // val -= dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true).sum();
   vector<Type> anc_alpha_obs_t1_ll = dbinom(x_anc_artcov_t1, n_anc_artcov_t1, anc_alpha_obs_t1, true);
-  val -= sum(anc_rho_obs_t1_ll);
+  val -= sum(anc_alpha_obs_t1_ll);
 
 
   vector<Type> anc_rho_obs_t2(A_anc_prev_t2 * anc_plhiv_t2 / (A_anc_prev_t2 * anc_clients_t2));
@@ -687,8 +687,8 @@ Type objective_function<Type>::operator() ()
   sd_A_j_t1 = sd_A_j_t1.sqrt();
 
   // val -= sum(dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true));
-  vector<Type> artnumt1_ll = dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true);
-  val -= sum(artnumt1_ll);
+  vector<Type> artnum_t1_ll = dnorm(x_artnum_t1, A_j_t1, sd_A_j_t1, true);
+  val -= sum(artnum_t1_ll);
 
 
 
@@ -712,8 +712,8 @@ Type objective_function<Type>::operator() ()
   sd_A_j_t2 = sd_A_j_t2.sqrt();
 
   // val -= sum(dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true));
-  vector<Type> artnumt2_ll = dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true);
-  val -= sum(artnumt2_ll);
+  vector<Type> artnum_t2_ll = dnorm(x_artnum_t2, A_j_t2, sd_A_j_t2, true);
+  val -= sum(artnum_t2_ll);
 
 
   // Calculate model outputs
@@ -960,8 +960,8 @@ Type objective_function<Type>::operator() ()
 
     REPORT(hhs_prev_ll);
     REPORT(hhs_artcov_ll);
-    REPORT(artnumt2_ll);
-    REPORT(artnumt1_ll);
+    REPORT(artnum_t2_ll);
+    REPORT(artnum_t1_ll);
     REPORT(anc_rho_obs_t1_ll);
     REPORT(anc_rho_obs_t2_ll)
     REPORT(anc_alpha_obs_t2_ll);
