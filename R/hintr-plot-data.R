@@ -140,5 +140,10 @@ hintr_comparison_plot <- function(output) {
   assert_model_output_version(output, "2.7.1")
   output_path <- output$model_output_path
   output_data <- readRDS(output_path)
+  if (is.null(output_data$output_package$inputs_outputs)) {
+    ## This can happen if a user has an old model output, then recalibrates
+    ## it will update the version to latest but this output will not exist
+    stop(t_("OLD_MODEL_OUTPUT"))
+  }
   output_data$output_package$inputs_outputs
 }
