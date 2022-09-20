@@ -1,6 +1,6 @@
 # naomi 2.7.6
 
-* `hintr_comparison_plot` will error if comparison plot data does not exist.
+* `hintr_comparison_plot()` will error if comparison plot data does not exist.
   This will avoid a class of obscure errors being shown to end user.
 
 # naomi 2.7.5

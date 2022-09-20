@@ -29,7 +29,7 @@ test_that("comparison plot returns useful error if run with old naomi output", {
   hintr_output <- a_hintr_output
   hintr_output$version <- "2.7.0"
   expect_error(hintr_comparison_plot(hintr_output),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
 })
 
 test_that("comparison plot returns useful error if no input output data", {
@@ -40,7 +40,7 @@ test_that("comparison plot returns useful error if no input output data", {
   hintr_output <- a_hintr_output
   hintr_output$model_output_path <- t
   expect_error(hintr_comparison_plot(hintr_output),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
 })
 
 test_that("there is metadata for every indicator in comparison data", {
