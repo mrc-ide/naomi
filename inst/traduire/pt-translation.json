@@ -50,7 +50,7 @@
     "INDICATOR_LABEL_PREVALENCE": "Proporção da população total seropositiva",
     "INDICATOR_LABEL_UNAWARE_PLHIV_NUM": "Número de PVVIH sem conhecimento da condição de seropositividade",
     "INDICATOR_LABEL_UNTREATED_PLHIV_NUM": "Número de PVVIH que não está em TARV",
-    "OLD_MODEL_OUTPUT": "Saída de modelo desactualizada, por favor volte a executar o modelo e tente novamente",
+    "OLD_MODEL_OUTPUT": "Saída de modelo desactualizada, por favor volte a executar o modelo e tente novamente.",
     "LANG": "pt",
     "MISSING_ART_DATA": "Conjunto de dados de TARV não fornecido. Os dados de TARV não podem ser selecionados. Sim para incluir.",
     "MISSING_CALIBRATION_OPTIONS": "A calibração não pode ser executada, opções em falta para {{falta}}.",
@@ -355,5 +355,7 @@
     "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
     "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
     "WARNING_ADDITIONAL": "and {{count}} more",
-    "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ"
+    "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ",
+    "ANC_PREVALENCE_AGE_MATCHED": "Prevalência do CPN idade compatível",
+    "ANC_ART_COVERAGE_AGE_MATCHED": "Cobertura TARV arte em CPN idade compatível"
 }

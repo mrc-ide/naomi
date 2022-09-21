@@ -25,14 +25,20 @@ test_that("get_age_group_out() returns expected groups", {
 })
 
 test_that("artnum_mf() returns expected number of records", {
-  expect_equal(nrow(artnum_mf("CY2016Q1", NULL, a_naomi_mf)), 0L)
-  expect_equal(nrow(artnum_mf(NULL, demo_art_number, a_naomi_mf)), 0L)
-  expect_equal(nrow(artnum_mf("CY2016Q1", NULL, a_naomi_mf)), 0L)
-  expect_named(artnum_mf(NULL, demo_art_number, a_naomi_mf),
-               c("area_id", "sex", "age_group", "artnum_idx", "art_current"))
-  expect_equal(nrow(artnum_mf("CY2016Q1", demo_art_number, a_naomi_mf)), 14L)
-  expect_named(artnum_mf("CY2016Q1", demo_art_number, a_naomi_mf),
-               c("area_id", "sex", "age_group", "artnum_idx", "art_current"))
+  mf <- artnum_mf("CY2016Q1", NULL, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 0L)
+  mf <- artnum_mf(NULL, demo_art_number, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 0L)
+  mf <- artnum_mf("CY2016Q1", NULL, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 0L)
+  mf <- artnum_mf(NULL, demo_art_number, a_naomi_mf)
+  expect_named(mf$model_input,
+               c("area_id", "sex", "age_group", "art_current"))
+  mf <- artnum_mf("CY2016Q1", demo_art_number, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 14L)
+  mf <- artnum_mf("CY2016Q1", demo_art_number, a_naomi_mf)
+  expect_named(mf$model_input,
+               c("area_id", "sex", "age_group", "art_current"))
 })
 
 test_that("artnum_mf() throws errors for invalid inputs", {
@@ -44,7 +50,8 @@ test_that("artnum_mf() throws errors for invalid inputs", {
 
 test_that("artnum_mf() works with single quarter ART data", {
   data_art_single_quarter <- dplyr::filter(demo_art_number, calendar_quarter == "CY2017Q4")
-  expect_equal(nrow(artnum_mf("CY2017Q4", data_art_single_quarter, a_naomi_mf)), 14L)
+  mf <- artnum_mf("CY2017Q4", data_art_single_quarter, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 14L)
 })
 
 
@@ -136,10 +143,10 @@ test_that("survey design effect scales effect sample size", {
   mf1 <- survey_mf("DEMO2016PHIA", "prevalence", demo_survey_hiv_indicators, a_naomi_mf, use_kish = FALSE, deff = 1.0)
   mf2 <- survey_mf("DEMO2016PHIA", "prevalence", demo_survey_hiv_indicators, a_naomi_mf, use_kish = FALSE, deff = 2.5)
 
-  expect_equal(mf1$n, mf1$n_eff)
-  expect_equal(mf2$n, mf2$n_eff * 2.5)
-  expect_equal(mf1$n_eff, 2.5 * mf2$n_eff)
-  expect_equal(mf1$x_eff, 2.5 * mf2$x_eff)
+  expect_equal(mf1$model_input$n, mf1$model_input$n_eff)
+  expect_equal(mf2$model_input$n, mf2$model_input$n_eff * 2.5)
+  expect_equal(mf1$model_input$n_eff, 2.5 * mf2$model_input$n_eff)
+  expect_equal(mf1$model_input$x_eff, 2.5 * mf2$model_input$x_eff)
 })
 
 test_that("use_kish returns Kish effective sample size", {
@@ -154,7 +161,7 @@ test_that("use_kish returns Kish effective sample size", {
                       demo_survey_hiv_indicators,
                       a_naomi_mf,
                       use_kish = FALSE)
-  
+
   mf_kish <- survey_mf("DEMO2016PHIA",
                        "prevalence",
                        demo_survey_hiv_indicators,
@@ -168,13 +175,13 @@ test_that("use_kish returns Kish effective sample size", {
                               use_kish = TRUE,
                               deff = 2.5)
 
-  expect_equal(mf_default$n_eff, mf_kish$n_eff)
-  expect_true(all(mf_kish$n_eff < mf_srs$n_eff | mf_srs$n_eff == 1))
-  expect_equal(mf_kish_scaled$n_eff * 2.5, mf_kish$n_eff)
-  
-  expect_equal(mf_default$x_eff, mf_kish$x_eff)
-  expect_true(all(mf_kish$x_eff < mf_srs$x_eff | mf_srs$x_eff == 0))
-  expect_equal(mf_kish_scaled$x_eff * 2.5, mf_kish$x_eff)
+  expect_equal(mf_default$model_input$n_eff, mf_kish$model_input$n_eff)
+  expect_true(all(mf_kish$model_input$n_eff < mf_srs$model_input$n_eff | mf_srs$model_input$n_eff == 1))
+  expect_equal(mf_kish_scaled$model_input$n_eff * 2.5, mf_kish$model_input$n_eff)
+
+  expect_equal(mf_default$model_input$x_eff, mf_kish$model_input$x_eff)
+  expect_true(all(mf_kish$model_input$x_eff < mf_srs$model_input$x_eff | mf_srs$model_input$x_eff == 0))
+  expect_equal(mf_kish_scaled$model_input$x_eff * 2.5, mf_kish$model_input$x_eff)
 })
 
 test_that("select_naomi_data() returns expected stratifications", {
@@ -208,24 +215,28 @@ test_that("survey_mf(..., use_aggregate) option returns expected results", {
                                     age_group %in% c("Y000_014", "Y015_049"),
                                     sex == "both",
                                     grepl("MWI_1", area_id))
-
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf)), 0)
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)), 0)
+  mf <- survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 0)
+  mf <- survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)
+  expect_equal(nrow(mf$model_input), 0)
   expect_error(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey, a_naomi_mf, use_aggregate = TRUE)),
                "Aggregate survey data selected. Stratifications included in dataset which are not in model scope for indicator prevalence")
 
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf)), 0)
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)), 0)
+  mf <- survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf)
+  expect_equal(nrow(mf$model_input), 0)
+  mf <- survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf, use_aggregate = FALSE)
+  expect_equal(nrow(mf$model_input), 0)
   expect_error(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey, a_naomi_mf, use_aggregate = TRUE)),
                "Aggregate survey data selected. Stratifications included in dataset which are not in model scope for indicator art_coverage")
 
   aggregate_survey_good <- dplyr::filter(aggregate_survey, area_id == "MWI_1_1_demo")
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey_good, a_naomi_mf, use_aggregate = TRUE)),
+  mf <- survey_mf("DEMO2016PHIA", "prevalence", aggregate_survey_good, a_naomi_mf, use_aggregate = TRUE)
+  expect_equal(nrow(mf$model_input),
                nrow(dplyr::filter(aggregate_survey_good, indicator == "prevalence", survey_id == "DEMO2016PHIA")))
-
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey_good, a_naomi_mf, use_aggregate = TRUE)),
+  mf <- survey_mf("DEMO2016PHIA", "art_coverage", aggregate_survey_good, a_naomi_mf, use_aggregate = TRUE)
+  expect_equal(nrow(mf$model_input),
                nrow(dplyr::filter(aggregate_survey_good, indicator == "art_coverage", survey_id == "DEMO2016PHIA")))
-
-  expect_equal(nrow(survey_mf("DEMO2016PHIA", "recent_infected", aggregate_survey_good, a_naomi_mf,
-                              min_age = 15, max_age = 50, use_aggregate = TRUE)), 1)
+  mf <- survey_mf("DEMO2016PHIA", "recent_infected", aggregate_survey_good, a_naomi_mf,
+                       min_age = 15, max_age = 50, use_aggregate = TRUE)
+  expect_equal(nrow(mf$model_input), 1)
 })
