@@ -1,6 +1,10 @@
-# naomi 2.7.6
+# naomi 2.7.7
 * Report mode when sampling returns improbable values and uncertainty cannot be generated.
   - This will throw a warning after running `output_package()` in `hintr_run_model()` that   will display a warning on the model fit page of the web application.
+
+# naomi 2.7.6
+* `hintr_comparison_plot()` will error if comparison plot data does not exist.
+  This will avoid a class of obscure errors being shown to end user.
 
 # naomi 2.7.5
 
