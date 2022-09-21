@@ -456,7 +456,13 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
                       df
                       })
 
-  art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
+
+  if(inherits(indicators, "naomi_indicators_mode")){
+
+    art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = TRUE)
+  } else {
+    art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
+  }
 
   meta_area <- naomi_data$areas %>%
     dplyr::filter(area_id %in% unique(naomi_data$mf_out$area_id)) %>%
