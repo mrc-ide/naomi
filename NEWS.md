@@ -1,3 +1,8 @@
+# naomi 2.7.8
+
+* Subset model options in `naomi_fit` object do not contain advanced options. Updates `read_output_package()` function to read in full model options when available in the model output zip
+* Adds README to output zip describing outputs zip files
+
 # naomi 2.7.6
 
 * `hintr_comparison_plot()` will error if comparison plot data does not exist.
