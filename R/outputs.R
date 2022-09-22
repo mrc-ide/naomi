@@ -446,7 +446,7 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
                       # Display warning
                       naomi_warning(t_("WARNING_NO_UNCERTAINTY"),
-                                    c("model_fit"))
+                                    c("model_fit", "model_calibrate", "review_output"))
 
                       # If error in simulating outputs: remove sample
                       # and return mode for all indicators

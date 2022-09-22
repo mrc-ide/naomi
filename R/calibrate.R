@@ -499,17 +499,35 @@ calibrate_outputs <- function(output,
     val
   }
 
-  out <- out %>%
-    dplyr::left_join(adj_props, by = byv) %>%
-    dplyr::mutate(
-             mean = adjust_prop(mean, log_odds),
-             se = adjust_prop_se(se, mean, log_odds),
-             median = adjust_prop(median, log_odds),
-             mode = adjust_prop(mode, log_odds),
-             lower = adjust_prop(lower, log_odds),
-             upper = adjust_prop(upper, log_odds),
-             log_odds = NULL
-           )
+  if(inherits(indicators, "naomi_indicators_mode")) {
+
+    out <- out %>%
+      dplyr::left_join(adj_props, by = byv) %>%
+      dplyr::mutate(
+        mean = adjust_prop(mean, log_odds),
+        se = NA_real_,
+        median = NA_real_,
+        mode = adjust_prop(mode, log_odds),
+        lower = NA_real_,
+        upper = NA_real_,
+        log_odds = NULL
+      )
+
+  } else {
+
+    out <- out %>%
+      dplyr::left_join(adj_props, by = byv) %>%
+      dplyr::mutate(
+        mean = adjust_prop(mean, log_odds),
+        se = adjust_prop_se(se, mean, log_odds),
+        median = adjust_prop(median, log_odds),
+        mode = adjust_prop(mode, log_odds),
+        lower = adjust_prop(lower, log_odds),
+        upper = adjust_prop(upper, log_odds),
+        log_odds = NULL
+      )
+
+  }
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 
