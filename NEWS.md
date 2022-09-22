@@ -1,5 +1,10 @@
-# naomi 2.7.6
+# naomi 2.7.7
 * Save out likelihood to model fit object
+
+# naomi 2.7.6
+
+* `hintr_comparison_plot()` will error if comparison plot data does not exist.
+  This will avoid a class of obscure errors being shown to end user.
 
 # naomi 2.7.5
 
