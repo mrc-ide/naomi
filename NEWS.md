@@ -1,11 +1,5 @@
-# naomi 2.7.7
-* Save out likelihood to model fit object
-
-
 # naomi 2.7.6
-* Report mode when sampling returns improbable values and uncertainty cannot be generated.
-  - This will throw a warning after running `output_package()` in `hintr_run_model()` that will display a warning on the model fit page of the web application.
-
+* Save out likelihood to model fit object
 
 # naomi 2.7.5
 
