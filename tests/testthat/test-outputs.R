@@ -245,7 +245,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
   expect_equal(out_bad$warnings[[1]]$text,
                "Unable to generate uncertainty bounds for model estimates. Mode reported in place of mean. Please review model inputs and model options.")
   expect_equal(out_bad$warnings[[1]]$locations,
-               "model_fit")
+               c("model_fit", "model_calibrate", "review_output"))
 
 
   # For sample without NAs:
