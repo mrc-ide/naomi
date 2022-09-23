@@ -1,0 +1,42 @@
+---
+output: md_document
+params:
+  output_dir: "/var/folders/vk/s5m946h57g3dk4rm43k1zk2m0000gn/T//Rtmp2sXfWV/file2ae41bd72870"
+---
+
+### Naomi output file directory
+
+```{r, echo = FALSE}
+fs::dir_tree(params$output_dir)
+```
+
+The following files have been generated as part of a Naomi model fit:
+
+**fit**: 
+
+  * calibration_options.yml: Specifications for calibration of Naomi estimates to Spectrum totals.
+  * data_options.yml: Specifications for inclusion of model inputs.
+  * model_options.yml: Specfications for model fit parameters.
+  * spectrum_calibration: Tabular dataset of calibrated and an uncalibrated model outputs.
+  
+**info**:
+
+  * unaids_navigator_checklist: Navigator checklist.
+  * model_options.yml: Full model options (including advanced options).
+
+
+Files containing naomi model outputs:
+
+  * indicators.csv: Naomi model outputs.
+  * art_attendance.csv: Tabular dataset of ART patient movement between neighbouring admin areas.
+  * inputs_outputs.csv: Model data inputs aligned with model estimates.
+  * pepfar_datapack_indicators.csv: PEPFAR district-level datapack extract 
+
+
+Metadata on naomi model specifications: 
+
+  * boundaries.geojson: Boundary file used in model fit.
+  * meta_age_group.csv: Age stratification inlcuded in model fit.
+  * meta_area.csv: Admin areas inlcuded in model fit.
+  * meta_period: Time periods included in model fit.
+

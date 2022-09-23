@@ -543,4 +543,21 @@ test_that("writing output package translates labels", {
   expect_true("all ages" %in% read$art_attendance$age_group_label)
 })
 
+test_that("output file README generated in output zip", {
+
+  out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
+
+  # README saved to output zip
+  tmpd <- tempdir()
+  unzip(out$path, exdir = tmpd)
+  expect_true("README.md" %in% list.files(tmpd))
+
+  # READE contains text
+  t <- file.path(tmpd, "README.md")
+  expect_true(file.size(t) > 1500)
+  content <- brio::readLines(t)
+  expect_true(any(grepl("├── art_attendance.csv", content)))
+  expect_true(any(grepl("The following files have been generated as part of a Naomi model fit:" , content)))
+
+})
 

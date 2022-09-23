@@ -961,6 +961,12 @@ save_output <- function(filename, dir,
     yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
   }
 
+  # Generate README of output folder contents
+  rmarkdown::render(system_file("report/README.Rmd"),
+                    output_dir = tmpd,
+                    params = list(output_dir = tmpd),
+                    quiet = TRUE)
+
   zip::zipr(path, list.files())
   path
 }
