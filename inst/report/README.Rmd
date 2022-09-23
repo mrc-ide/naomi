@@ -1,7 +1,7 @@
 ---
 output: md_document
 params:
-  output_dir: "/var/folders/vk/s5m946h57g3dk4rm43k1zk2m0000gn/T//Rtmp2sXfWV/file2ae41bd72870"
+  output_dir: output_dir
 ---
 
 ### Naomi output file directory
