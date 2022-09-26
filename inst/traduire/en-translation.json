@@ -18,6 +18,8 @@
     "NEW_INFECTIONS": "New infections",
     "ANC_HIV_PREVALENCE": "ANC HIV prevalence",
     "ANC_PRIOR_ART_COVERAGE": "ANC prior ART coverage",
+    "AREAS_AREA_LEVEL_HIERARCHY_BOUNDARIES_MISSING": "Either supply levels, hierarchy, and boundaries, or area_merged",
+    "AREAS_LEVEL_NOT_UNIQUE": "Area levels not unique.\nDuplicated level: {{missing_levels}}",
     "MONTH_MARCH": "March",
     "MONTH_JUNE": "June",
     "MONTH_SEPTEMBER": "September",
