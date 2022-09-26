@@ -1,4 +1,9 @@
+# naomi 2.7.8
+
+* Remove `get_calibration_option_labels()`, `get_model_calibration_options()` and `get_model_options_template()`. Model options specification has been refactored into naomi.options package.
+
 # naomi 2.7.7
+
 * Report log likelihood in model fit object
 
 # naomi 2.7.6
