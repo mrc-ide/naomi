@@ -4,7 +4,7 @@
 \alias{prepare_tmb_inputs}
 \title{Prepare inputs for TMB model.}
 \usage{
-prepare_tmb_inputs(naomi_data)
+prepare_tmb_inputs(naomi_data, report_likelihood = 1L)
 }
 \arguments{
 \item{naomi_data}{Naomi data object}

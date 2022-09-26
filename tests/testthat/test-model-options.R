@@ -1,49 +1,5 @@
 context("model-options")
 
-test_that("can get valid model run options template", {
-  options <- get_model_options_template(TRUE, TRUE)
-  expect_length(options, 5)
-  expect_equal(names(options), c("general", "survey", "anc", "art", "advanced"))
-  expect_true(any(grepl("General", options$general)))
-  expect_true(any(grepl("<\\+area_scope_options\\+>", options$general)))
-  expect_true(any(grepl("<\\+area_level_options\\+>", options$general)))
-  expect_true(any(grepl("<\\+calendar_quarter_t2_options\\+>", options$general)))
-
-  expect_true(any(grepl("Survey", options$survey)))
-  expect_true(any(grepl("<\\+calendar_quarter_t1_options\\+>", options$survey)))
-  expect_true(any(grepl("<\\+survey_prevalence_options\\+>", options$survey)))
-  expect_true(any(grepl("<\\+survey_art_coverage_options\\+>", options$survey)))
-
-  expect_true(any(grepl("ART", options$art)))
-  expect_true(any(grepl("ANC", options$anc)))
-  expect_true(any(grepl("<\\+anc_prevalence_year1_options\\+>", options$anc)))
-  expect_true(any(grepl("<\\+anc_prevalence_year2_options\\+>", options$anc)))
-  expect_true(any(grepl("<\\+anc_art_coverage_year1_options\\+>", options$anc)))
-  expect_true(any(grepl("<\\+anc_art_coverage_year2_options\\+>", options$anc)))
-
-  expect_true(any(grepl("Advanced", options$advanced)))
-})
-
-test_that("art and anc data can be omitted from model run options", {
-  options <- get_model_options_template(FALSE, FALSE)
-  expect_length(options, 3)
-  expect_equal(names(options), c("general", "survey", "advanced"))
-  expect_true(any(grepl("General", options$general)))
-  expect_true(any(grepl("<\\+area_scope_options\\+>", options$general)))
-  expect_true(any(grepl("<\\+area_level_options\\+>", options$general)))
-  expect_true(any(grepl("<\\+calendar_quarter_t2_options\\+>", options$general)))
-
-  expect_true(any(grepl("Survey", options$survey)))
-  expect_true(any(grepl("<\\+calendar_quarter_t1_options\\+>", options$survey)))
-  expect_true(any(grepl("<\\+survey_prevalence_options\\+>", options$survey)))
-  expect_true(any(grepl("<\\+survey_art_coverage_options\\+>", options$survey)))
-
-  expect_false(any(grepl("ART", options$art)))
-  expect_false(any(grepl("ANC", options$anc)))
-
-  expect_true(any(grepl("Advanced", options$advanced)))
-})
-
 test_that("validate model options returns true", {
   out <- validate_model_options(format_data_input(a_hintr_data),
                                 a_hintr_options)
@@ -117,24 +73,6 @@ test_that("check for required model options", {
                "Required model options not supplied: calendar_quarter_t1, calendar_quarter_t2, calendar_quarter_t3, survey_prevalence")
 })
 
-test_that("model options template can be translated", {
-  reset <- naomi_set_language("fr")
-  on.exit(reset())
-
-  options <- get_model_options_template(TRUE, TRUE)
-  expect_true(any(grepl("Généralités", options$general)))
-  expect_false(any(grepl("General", options$general)))
-  expect_true(any(grepl("Sélectionnez les options générales du modèle :", options$general)))
-  expect_false(any(grepl("Select general model options:", options$general)))
-
-  reset()
-  options <- get_model_options_template(TRUE, TRUE)
-  expect_false(any(grepl("Généralités", options$general)))
-  expect_true(any(grepl("General", options$general)))
-  expect_false(any(grepl("Sélectionnez les options générales du modèle :", options$general)))
-  expect_true(any(grepl("Select general model options:", options$general)))
-})
-
 test_that("artattend_t2 option produces model frames", {
 
   input_data <- format_data_input(a_hintr_data)
@@ -205,37 +143,6 @@ test_that("validation check for spectrum region code returns error", {
     format_data_input(data_bad_spectrum_region_code), a_hintr_options),
                "Some spectrum region code in your shape file are not in PJNZ extracts. Please update your shape file to include the correct codes")
 
-})
-
-test_that("can get model calibration options", {
-  options <- get_model_calibration_options()
-  expect_length(options, 1)
-  expect_true(any(grepl("Calibration options", options)))
-})
-
-test_that("can get model calibration options label from ID", {
-  options <- list(spectrum_population_calibration_level = "subnational",
-                  spectrum_plhiv_calibration_strat = "sex_age_group" ,
-                  spectrum_artnum_calibration_level = "none",
-                  spectrum_artnum_calibration_strat = "age_coarse",
-                  spectrum_aware_calibration_level = "none",
-                  spectrum_aware_calibration_strat = "age_coarse",
-                  spectrum_infections_calibration_level = "none",
-                  spectrum_infections_calibration_strat ="age_coarse",
-                  calibrate_method = "logistic")
-  options_map <- get_calibration_option_labels(options)
-
-  expect_length(options_map, length(options))
-  expect_equal(options_map, list(
-    spectrum_population_calibration_level = "Subnational",
-    spectrum_plhiv_calibration_strat = "Sex and 5-year age group",
-    spectrum_artnum_calibration_level = "None",
-    spectrum_artnum_calibration_strat = "Age <15 / 15+",
-    spectrum_aware_calibration_level = "None",
-    spectrum_aware_calibration_strat = "Age <15 / 15+",
-    spectrum_infections_calibration_level = "None",
-    spectrum_infections_calibration_strat ="Age <15 / 15+",
-    calibrate_method = "Logistic"))
 })
 
 test_that("validate_model_options() returns error if missing .shiny90", {
