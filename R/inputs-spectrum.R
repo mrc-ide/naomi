@@ -15,7 +15,7 @@ extract_pjnz_naomi <- function(pjnz_list) {
 
   spec <- lapply(pjnz_list, extract_pjnz_one) %>%
     dplyr::bind_rows() %>%
-    dplyr::select(spectrum_country, spectrum_region_code, spectrum_region_name, dplyr::everything())
+    dplyr::select(iso3, spectrum_country, spectrum_region_code, spectrum_region_name, dplyr::everything())
 
   spec
 }
@@ -92,6 +92,7 @@ extract_pjnz_one <- function(pjnz) {
   spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
   spec$spectrum_region_name <- read_spectrum_region_name(pjnz)
   spec$spectrum_country <- eppasm::read_country(pjnz)
+  spec$iso3 <- eppasm::read_iso3(pjnz)
 
   spec
 }

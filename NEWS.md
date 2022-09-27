@@ -1,6 +1,6 @@
 # naomi 2.7.5
 
-* Add country name to `extract_pjnz_one()`. Presently country name is not extracted when subnational Spectrum files are used.
+* Add country name and ISO3 code to `extract_pjnz_one()`.
 
 # naomi 2.7.4
 
