@@ -14,6 +14,3 @@ write_navigator_checklist(naomi_output, path)
 \description{
 Write UNAIDS Estimates Navigator checklist CSV
 }
-\details{
-
-}

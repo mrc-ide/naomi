@@ -13,10 +13,16 @@ create_Lproj <- function(spec, mf_model,
                          population_colname1, population_colname2,
                          adjust_area_growth = TRUE) {
 
+  ## Remove paediatric infections; these are not handled through the incidence, so should
+  ## not be subtracted when calculating PLHIV survivorship.
+  spec$infections[spec$age < 10] <- 0.0
+  
+  
   spec_quarter <- spec %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L),
                   year = NULL) %>%
-    dplyr::filter(dplyr::between(quarter_id, quarter_id1 - 4, quarter_id2 + 8)) %>%
+    dplyr::filter(dplyr::between(quarter_id, quarter_id1 - 8, quarter_id2 + 8)) %>%
+    dplyr::arrange(spectrum_region_code, quarter_id, sex, age) %>%
     dplyr::group_by(spectrum_region_code, quarter_id, sex) %>%
     dplyr::summarise(
       age_quarter = 0:(400-1),
@@ -43,25 +49,22 @@ create_Lproj <- function(spec, mf_model,
                   age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
                   age_group2 = age_quarter_to_age_group(quarter_id2 - cohort_quarter))
 
-
+  ## Graduate infections over period quarters within each age
   infections_cohort <- spec_quarter %>%
-    ## Subtract 4 quarters to move infections from end year to forthcoming year
-    dplyr::mutate(cohort_quarter = quarter_id - age_quarter,
-                  age_quarter = NULL,
-                  quarter_id = quarter_id - 4) %>%
-    tidyr::crossing(quarter = 0:3) %>%
-    dplyr::mutate(quarter_id = quarter_id + quarter,
-                  quarter = NULL,
-                  infections = infections / 4,
-                  age_quarter = quarter_id - cohort_quarter)
-
-  ## Put half the new infections in the next age group
-  infections_cohort <- infections_cohort %>%
-    dplyr::mutate(infections = infections / 2) %>%
-    dplyr::bind_rows(
-      dplyr::mutate(., age_quarter = age_quarter + 1)
+    dplyr::arrange(spectrum_region_code, sex, age_quarter, quarter_id) %>% 
+    dplyr::group_by(spectrum_region_code, sex, age_quarter) %>%
+    dplyr::summarise(
+      quarter_id_out = seq.int(quarter_id1 - 4, quarter_id2 + 3),
+      infections = graduate_mono(infections, c(min(quarter_id)-4, quarter_id), quarter_id_out),
+      .groups = "drop"
     ) %>%
-    dplyr::filter(quarter_id >= quarter_id1,
+    dplyr::rename(quarter_id = quarter_id_out) %>%
+    dplyr::mutate(cohort_quarter = quarter_id - age_quarter)
+    
+  
+  ## Aggregate infections according to age group at T1, age group at T2 aand age at infection
+  infections_cohort <- infections_cohort %>%  
+    dplyr::filter(quarter_id >= quarter_id1 - 4,
                   quarter_id < quarter_id2 + 4) %>%
     dplyr::mutate(age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
                   age_group2 = age_quarter_to_age_group(quarter_id2 - cohort_quarter),
@@ -119,7 +122,10 @@ create_Lproj <- function(spec, mf_model,
                  wt = hivpop, name = "hivpop2")
 
   infections_t1t2 <- infections_cohort %>%
-    dplyr::filter(quarter_id < quarter_id2) %>%
+    dplyr::filter(
+      quarter_id >= quarter_id1,
+      quarter_id < quarter_id2
+    ) %>%
     dplyr::count(spectrum_region_code, sex, age_group1, age_group2,
                  wt = infections, name = "infections_t1t2")
 
@@ -151,7 +157,6 @@ create_Lproj <- function(spec, mf_model,
       population1 = NULL,
       population2 = NULL
     )
-
 
   totpop_spec_t1 <- hivpop %>%
     dplyr::filter(quarter_id == quarter_id1) %>%
@@ -218,17 +223,27 @@ create_Lproj <- function(spec, mf_model,
                                         dims = rep(nrow(mf_model), 2))
 
   infections_age_t2 <- infections_cohort %>%
-    dplyr::filter(quarter_id < quarter_id2) %>%
+    dplyr::filter(
+      quarter_id >= quarter_id1,
+      quarter_id < quarter_id2
+    ) %>%
     dplyr::count(spectrum_region_code, sex, age_group_infection, age_group2,
                  wt = infections, name = "infections_age_t2")
 
-  infections_age <- infections_cohort %>%
-    dplyr::filter(quarter_id < quarter_id2) %>%
+  ## This uses the number of infections in the previous year because incidence
+  ## relates to Spectrum incidence calculation, which is infections during
+  ## the previous year
+
+  infections_age_1year <- infections_cohort %>%
+  dplyr::filter(
+    quarter_id >= quarter_id1 - 4,
+    quarter_id < quarter_id1
+  ) %>%
     dplyr::count(spectrum_region_code, sex, age_group_infection,
                  wt = infections, name = "infections_age")
 
   incidLproj <- infections_age_t2 %>%
-    dplyr::left_join(infections_age,
+    dplyr::left_join(infections_age_1year,
                      by = c("spectrum_region_code", "sex", "age_group_infection")) %>%
     dplyr::mutate(
       L_incid = dplyr::if_else(infections_age == 0, 0, infections_age_t2 / infections_age)
@@ -307,7 +322,5 @@ create_Lproj <- function(spec, mf_model,
   list(Lproj_hivpop = Lproj_hivpop,
        Lproj_incid = Lproj_incid,
        Lproj_paed = Lproj_paed,
-       Lproj_netgrow= Lproj_netgrow,       
-       projection_duration = (quarter_id2 - quarter_id1) / 4)
-
+       Lproj_netgrow= Lproj_netgrow)
 }

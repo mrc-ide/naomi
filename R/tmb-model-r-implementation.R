@@ -247,7 +247,7 @@ naomi_objective_function_r <- function(d, p) {
   mu_rho_paed <- qlogis(mu_rho_paed)
   mu_rho <- mu_rho + mu_rho_paed
 
-  
+
   ## ART coverage time 1
 
   mu_alpha <- d$X_alpha %*% p$beta_alpha +
@@ -296,7 +296,7 @@ naomi_objective_function_r <- function(d, p) {
 
   alpha_t2 <- plogis(mu_alpha_t2)
 
-  infections_adult_t1t2 <- (1 - exp(-lambda_adult_t1 * d$projection_duration_t1t2)) * (d$population_t1 - plhiv_t1)
+  infections_adult_t1t2 <- lambda_adult_t1 * (d$population_t1 - plhiv_t1)
   plhiv_t2 <- d$Lproj_hivpop_t1t2 %*% plhiv_t1 +
     d$Lproj_incid_t1t2  %*% infections_adult_t1t2 +
     d$Lproj_paed_t1t2  %*% plhiv_t1
@@ -319,7 +319,7 @@ naomi_objective_function_r <- function(d, p) {
   lambda_adult_t2 <- exp(mu_lambda_t2)
 
   ## Add paediatric incidence
-  rho_15to49f_t2 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t2) / (d$X_15to49f %*% d$population_t2)  
+  rho_15to49f_t2 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t2) / (d$X_15to49f %*% d$population_t2)
   lambda_paed_t2 <- as.vector(d$X_paed_lambda_ratio_t2 %*% rho_15to49f_t2)
   lambda_t2 <- lambda_adult_t2 + lambda_paed_t2
 
@@ -328,10 +328,12 @@ naomi_objective_function_r <- function(d, p) {
   ## likelihood for household survey data
 
   rho_obs_t1 <- as.vector(d$A_prev %*% plhiv_t1) / as.vector(d$A_prev %*% d$population_t1)
-  val <- val - sum(ldbinom(d$x_prev, d$n_prev, rho_obs_t1))
+  hhs_prev_ll <-  ldbinom(d$x_prev, d$n_prev, rho_obs_t1)
+  val <- val - sum(hhs_prev_ll)
 
   alpha_obs_t1 <- as.vector(d$A_artcov %*% artnum_t1) / as.vector(d$A_artcov %*% plhiv_t1)
-  val <- val - sum(ldbinom(d$x_artcov, d$n_artcov, alpha_obs_t1))
+  hhs_artcov_ll <- ldbinom(d$x_artcov, d$n_artcov, alpha_obs_t1)
+  val <- val - sum(hhs_artcov_ll)
 
   vls_obs_t1 <- nu * as.vector(d$A_vls %*% artnum_t1) / as.vector(d$A_vls %*% plhiv_t1)
   val <- val - sum(ldbinom(d$x_vls, d$n_vls, vls_obs_t1))
@@ -342,7 +344,7 @@ naomi_objective_function_r <- function(d, p) {
   pR_lambda_obs_t1 <- pR_infections_obs_t1 / (pR_population_obs_t1 - pR_plhiv_obs_t1)
   pR_rho_obs_t1 <- pR_plhiv_obs_t1 / pR_population_obs_t1
   pR <- 1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
-                    (OmegaT - betaT * d$ritaT) + betaT))
+                      (OmegaT - betaT * d$ritaT) + betaT))
   val <- val - sum(ldbinom(d$x_recent, d$n_recent, pR))
 
 
@@ -395,19 +397,24 @@ naomi_objective_function_r <- function(d, p) {
   ## likelihood for ANC testing observations
 
   anc_clients_obs_t2 <- as.vector(d$A_anc_clients_t2 %*% anc_clients_t2) * exp(d$offset_anc_clients_t2)
-  val <- val - sum(dpois(d$x_anc_clients_t2, anc_clients_obs_t2, TRUE))
+  anc_clients_obs_t2_ll <- dpois(d$x_anc_clients_t2, anc_clients_obs_t2, TRUE)
+  val <- val - sum(anc_clients_obs_t2_ll)
 
   anc_rho_obs_t1 <- as.vector(d$A_anc_prev_t1 %*% anc_plhiv_t1) / as.vector(d$A_anc_prev_t1 %*% anc_clients_t1)
-  val <- val - sum(ldbinom(d$x_anc_prev_t1, d$n_anc_prev_t1, anc_rho_obs_t1))
+  anc_rho_obs_t1_ll <- ldbinom(d$x_anc_prev_t1, d$n_anc_prev_t1, anc_rho_obs_t1)
+  val <- val - sum(anc_rho_obs_t1_ll)
 
   anc_alpha_obs_t1 <- as.vector(d$A_anc_artcov_t1 %*% anc_already_art_t1) / as.vector(d$A_anc_artcov_t1 %*% anc_plhiv_t1)
-  val <- val - sum(ldbinom(d$x_anc_artcov_t1, d$n_anc_artcov_t1, anc_alpha_obs_t1))
+  anc_alpha_obs_t1_ll <- ldbinom(d$x_anc_artcov_t1, d$n_anc_artcov_t1, anc_alpha_obs_t1)
+  val <- val - sum(anc_alpha_obs_t1_ll)
 
   anc_rho_obs_t2 <- as.vector(d$A_anc_prev_t2 %*% anc_plhiv_t2) / as.vector(d$A_anc_prev_t2 %*% anc_clients_t2)
-  val <- val - sum(ldbinom(d$x_anc_prev_t2, d$n_anc_prev_t2, anc_rho_obs_t2))
+  anc_rho_obs_t2_ll <- ldbinom(d$x_anc_prev_t2, d$n_anc_prev_t2, anc_rho_obs_t2)
+  val <- val - sum(anc_rho_obs_t2_ll)
 
   anc_alpha_obs_t2 <- as.vector(d$A_anc_artcov_t2 %*% anc_already_art_t2) / as.vector(d$A_anc_artcov_t2 %*% anc_plhiv_t2)
-  val <- val - sum(ldbinom(d$x_anc_artcov_t2, d$n_anc_artcov_t2, anc_alpha_obs_t2))
+  anc_alpha_obs_t2_ll <- ldbinom(d$x_anc_artcov_t2, d$n_anc_artcov_t2, anc_alpha_obs_t2)
+  val <- val - sum(anc_alpha_obs_t2_ll)
 
 
   ## * ART attendance model *
@@ -428,7 +435,9 @@ naomi_objective_function_r <- function(d, p) {
   sd_A_j_t1 <- d$A_artattend_t1 %*% (population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1))
   sd_A_j_t1 <- sqrt(as.vector(sd_A_j_t1))
 
-  val <- val - sum(dnorm(d$x_artnum_t1, A_j_t1, sd_A_j_t1, TRUE))
+  artnum_t1_ll <- dnorm(d$x_artnum_t1, A_j_t1, sd_A_j_t1, TRUE)
+  val <- val - sum(artnum_t1_ll)
+
 
   gamma_art_t2 <- exp(as.vector(d$Xgamma %*% p$log_or_gamma + d$Xgamma_t2 %*% p$log_or_gamma_t1t2 + d$log_gamma_offset))
   cum_nb <- 0
@@ -446,7 +455,8 @@ naomi_objective_function_r <- function(d, p) {
   sd_A_j_t2 <- d$A_artattend_t2 %*% (population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2))
   sd_A_j_t2 <- sqrt(as.vector(sd_A_j_t2))
 
-  val <- val - sum(dnorm(d$x_artnum_t2, A_j_t2, sd_A_j_t2, TRUE))
+  artnum_t2_ll <- dnorm(d$x_artnum_t2, A_j_t2, sd_A_j_t2, TRUE)
+  val <- val - sum(artnum_t2_ll)
 
   ## **Calculate model outputs**
 
@@ -562,17 +572,17 @@ naomi_objective_function_r <- function(d, p) {
                     anc_rho_t2_out                 = anc_rho_t2_out,
                     anc_alpha_t2_out               = anc_alpha_t2_out)
 
- 
+
   ## Projection to time 3
   ## No data involved, so calculated after likelihood
 
   mu_alpha_t3 <- mu_alpha_t2 + d$logit_alpha_t2t3_offset
   alpha_t3 <- plogis(mu_alpha_t3)
 
-  infections_adult_t2t3 <- (1 - exp(-lambda_adult_t2 * d$projection_duration_t2t3)) * (d$population_t2 - plhiv_t2)
+  infections_adult_t2t3 <- lambda_adult_t2 * (d$population_t2 - plhiv_t2)
   plhiv_t3 <- as.vector(d$Lproj_hivpop_t2t3 %*% plhiv_t2 +
-                        d$Lproj_incid_t2t3 %*% infections_adult_t2t3 +
-                        d$Lproj_paed_t2t3 %*% plhiv_t2)
+                          d$Lproj_incid_t2t3 %*% infections_adult_t2t3 +
+                          d$Lproj_paed_t2t3 %*% plhiv_t2)
 
   rho_t3 <- plhiv_t3 / d$population_t3
   prop_art_t3 <- rho_t3 * alpha_t3
@@ -590,11 +600,11 @@ naomi_objective_function_r <- function(d, p) {
   lambda_adult_t3 <- exp(mu_lambda_t3)
 
   ## Add paediatric incidence
-  rho_15to49f_t3 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t3) / (d$X_15to49f %*% d$population_t3)  
+  rho_15to49f_t3 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t3) / (d$X_15to49f %*% d$population_t3)
   lambda_paed_t3 <- as.vector(d$X_paed_lambda_ratio_t3 %*% rho_15to49f_t3)
   lambda_t3 <- lambda_adult_t3 + lambda_paed_t3
 
-  
+
   infections_t3 <- lambda_t3 * (d$population_t3 - plhiv_t3)
 
 
@@ -674,9 +684,18 @@ naomi_objective_function_r <- function(d, p) {
                     anc_rho_t3_out                 = anc_rho_t3_out,
                     anc_alpha_t3_out               = anc_alpha_t3_out)
 
+  report_likelihood <- list(hhs_prev_ll           = hhs_prev_ll,
+                            hhs_artcov_ll         = hhs_artcov_ll,
+                            artnum_t2_ll          = artnum_t2_ll,
+                            artnum_t1_ll          = artnum_t1_ll,
+                            anc_rho_obs_t1_ll     = anc_rho_obs_t1_ll,
+                            anc_rho_obs_t2_ll     = anc_rho_obs_t2_ll,
+                            anc_alpha_obs_t2_ll   = anc_alpha_obs_t2_ll,
+                            anc_clients_obs_t2_ll = anc_clients_obs_t2_ll)
+
 
   v <- list(val = unname(val),
-       report = c(report_t1, report_t2, report_t3))
+            report = c(report_t1, report_t2, report_t3, report_likelihood))
 }
 
 #' Log posterior density of BYM2
@@ -707,7 +726,7 @@ naomi_objective_function_r <- function(d, p) {
 #' functions. Thus should typically be implemented as `nll -= bym2_conditional_lpdf(...)`.
 #'
 #' @noRd
-#' 
+#'
 bym2_conditional_lpdf <- function(x, u, sigma, phi, Q) {
 
   ## constant terms omitted: -0.5 * (n + rank(Q)) * log(2*pi) + 0.5 * log|Q|
@@ -736,7 +755,7 @@ bym2_conditional_lpdf <- function(x, u, sigma, phi, Q) {
 #' dbinom(x, size, prob, log = TRUE)
 #'
 #' @noRd
-#' 
+#'
 ldbinom <- function(x, size, prob){
   lgamma(size+1) - lgamma(x+1) - lgamma(size-x+1) +
     x*log(prob) + (size-x)*log(1-prob)
