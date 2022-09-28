@@ -94,7 +94,7 @@ test_that("coarse age group download can be created", {
       "fit/", "fit/spectrum_calibration.csv",
       "fit/model_options.yml",
       "fit/data_options.yml",
-      "fit/calibration_options.yml", "inputs_outputs.csv")
+      "fit/calibration_options.yml", "inputs_outputs.csv", "README.md")
   )
 
   ## Check coarse age outputs saved in coarse_output_path
@@ -163,3 +163,4 @@ test_that("comparison report download can be created", {
   expect_equal(messages$progress[[1]]$message,
                "Generating comparison report")
 })
+
