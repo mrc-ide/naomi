@@ -6,7 +6,7 @@
 #'
 #' @seealso [select_naomi_data]
 #' @export
-prepare_tmb_inputs <- function(naomi_data) {
+prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
 
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
@@ -378,7 +378,8 @@ prepare_tmb_inputs <- function(naomi_data) {
     ##
     A_out = naomi_data$A_out,
     A_anc_out = naomi_data$A_anc_out,
-    calc_outputs = 1L
+    calc_outputs = 1L,
+    report_likelihood = report_likelihood
   )
 
 
