@@ -16,7 +16,6 @@
 
 * Report log likelihood in model fit object
 
-
 # naomi 2.7.6
 
 * `hintr_comparison_plot()` will error if comparison plot data does not exist.
