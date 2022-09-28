@@ -63,6 +63,7 @@ test_that("error thrown if zip contains non PJNZ files", {
 
 test_that("extract_pjnz_naomi() returns country and region name", {
 
+  ## Test when using subnational Spectrum file
   pjnz_zone <- system_file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip")
   spec <- extract_pjnz_naomi(pjnz_zone)
 
@@ -70,4 +71,13 @@ test_that("extract_pjnz_naomi() returns country and region name", {
   expect_setequal(spec$spectrum_country, "Malawi")
   expect_setequal(spec$spectrum_region_code, c(10, 11, 12))
   expect_setequal(spec$spectrum_region_name, c("Northern Region", "Central Region", "Southern Region"))
+
+  ## Test when using national Spectrum file
+  pjnz_nat <- system_file("extdata/demo_mwi2019.pjnz")
+  spec <- extract_pjnz_naomi(pjnz_nat)
+
+  expect_setequal(spec$iso3, "MWI")
+  expect_setequal(spec$spectrum_country, "Malawi")
+  expect_setequal(spec$spectrum_region_code, 0)
+  expect_setequal(spec$spectrum_region_name, "Malawi")
 })
