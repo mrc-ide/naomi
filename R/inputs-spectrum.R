@@ -89,8 +89,16 @@ extract_pjnz_one <- function(pjnz) {
 
   spec <- add_shiny90_unaware(spec, pjnz)
 
-  spec$spectrum_region_code <- read_spectrum_region_code(pjnz)
-  spec$spectrum_region_name <- read_spectrum_region_name(pjnz)
+
+
+  spectrum_region_code <- read_spectrum_region_code(pjnz)
+  if (spectrum_region_code == 0) {
+    spectrum_region_name <- eppasm::read_country(pjnz)
+  } else {
+    spectrum_region_name <- read_spectrum_region_name(pjnz)
+  }
+  spec$spectrum_region_code <- spectrum_region_code
+  spec$spectrum_region_name <- spectrum_region_name
   spec$spectrum_country <- eppasm::read_country(pjnz)
   spec$iso3 <- eppasm::read_iso3(pjnz)
 
