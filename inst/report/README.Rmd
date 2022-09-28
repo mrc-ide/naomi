@@ -7,7 +7,13 @@ params:
 ### Naomi output file directory
 
 ```{r, echo = FALSE}
-fs::dir_tree(params$output_dir)
+## Set dir to params$output_dir and then print tree relative to this
+## fs::dir_tree uses the path arg as the text for the first node
+## but this will be the path at time of generation i.e. the path
+## to the dir on the server, not the path relative to output zip which
+## the user will be looking at. So print relative path "." to avoid
+## including confusing path as top level node
+withr::with_dir(params$output_dir, fs::dir_tree("."))
 ```
 
 The following files have been generated as part of a Naomi model fit:
