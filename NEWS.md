@@ -1,6 +1,31 @@
-# naomi 2.7.7
+# naomi 2.7.12
 * Report mode when sampling returns improbable values and uncertainty cannot be generated.
   - This will throw a warning after running `output_package()` in `hintr_run_model()` that   will display a warning on the model fit page of the web application.
+
+# naomi 2.7.11
+
+* Remove `get_calibration_option_labels()`, `get_model_calibration_options()` and `get_model_options_template()`. Model options specification has been refactored into naomi.options package.
+
+# naomi 2.7.10
+
+* Subset model options in `naomi_fit` object do not contain advanced options. Updates `read_output_package()` function to read in full model options when available in the model output zip
+* Adds README to output zip describing outputs zip files
+* Add backwards compatibility for old versions of coarse output zip
+
+# naomi 2.7.9
+
+* Add country name and ISO3 code to `extract_pjnz_one()`.
+
+# naomi 2.7.8
+
+* Add indicator `plhiv_attending` reporting the estimated denominator for `art_current` based on assuming same ART attendance probabilities for untreated population as the treated population. This give estimates for the predicted number of PLHIV ‘in the ART catchment’ for a district and the number of untreated PLHIV in the catchment. This is an effort to address the recurring issue that the TX_CURR value that is provided to Data Pack does not correspond to the district PLHIV denominator, and to provide an output more directly useful for setting a district treatment targets.
+
+# naomi 2.7.7
+
+* Report log likelihood in model fit object
+
+# naomi 2.7.6
+>>>>>>> master
 
 # naomi 2.7.6
 * `hintr_comparison_plot()` will error if comparison plot data does not exist.

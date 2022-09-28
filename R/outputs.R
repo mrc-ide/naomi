@@ -79,6 +79,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "artnum_t1_out" = "art_current_residents",
                      "artattend_t1_out" = "art_current",
                      "untreated_plhiv_num_t1_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t1_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t1_out" = "untreated_plhiv_attend",
                      "lambda_t1_out" = "incidence",
                      "infections_t1_out" = "infections")
 
@@ -89,6 +91,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "artnum_t2_out" = "art_current_residents",
                      "artattend_t2_out" = "art_current",
                      "untreated_plhiv_num_t2_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t2_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t2_out" = "untreated_plhiv_attend",
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
@@ -99,6 +103,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "artnum_t3_out" = "art_current_residents",
                      "artattend_t3_out" = "art_current",
                      "untreated_plhiv_num_t3_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t3_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t3_out" = "untreated_plhiv_attend",
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
@@ -990,6 +996,12 @@ save_output <- function(filename, dir,
     yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
   }
 
+  # Generate README of output folder contents
+  rmarkdown::render(system_file("report/README.Rmd"),
+                    output_dir = tmpd,
+                    params = list(output_dir = tmpd),
+                    quiet = TRUE)
+
   zip::zipr(path, list.files())
   path
 }
@@ -1086,8 +1098,15 @@ read_output_package <- function(path) {
   ## Fit list
   fit <- list()
 
-  if (file.exists(file.path(tmpd,"fit/model_options.yml"))) {
-    fit$model_options <- yaml::read_yaml(file.path(tmpd,"fit/model_options.yml"))
+  if (file.exists(file.path(tmpd,"info/options.yml"))) {
+    # If hintr_output saved: Full model options available in "info"
+    fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
+  } else if (file.exists(file.path(tmpd, "fit/model_options.yml"))) {
+    # If naomi_output saved: Subset model options available in fit object
+    fit$model_options <- yaml::read_yaml(file.path(tmpd, "fit/model_options.yml"))
+  } else if (file.exists(file.path(tmpd, "info/options.yml"))) {
+    # Backwards compatibility for old version of coarse output zip
+    fit$model_options <- yaml::read_yaml(file.path(tmpd, "info/options.yml"))
   }
 
   if (file.exists(file.path(tmpd,"fit/data_options.yml"))) {
@@ -1096,13 +1115,14 @@ read_output_package <- function(path) {
 
   if (file.exists(file.path(tmpd,"fit/calibration_options.yml"))) {
     fit$calibration_options <- yaml::read_yaml(file.path(tmpd,"fit/calibration_options.yml"))
+  } else if (file.exists(file.path(tmpd,"fit/calibration_options.csv"))) {
+    # Backwards compatibility for old version of coarse output zip
+    fit$calibration_options <- readr_read_csv(file.path(tmpd, "fit/calibration_options.csv"))
   }
 
   if (file.exists(file.path(tmpd,"fit/spectrum_calibration.csv"))) {
     fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
   }
-
-  if(file.exists(file.path(tmpd, "inputs_outputs.csv")))
 
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
@@ -1111,9 +1131,12 @@ read_output_package <- function(path) {
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
-    fit = fit,
-    inputs_outputs = readr_read_csv(file.path(tmpd, "inputs_outputs.csv"))
+    fit = fit
   )
+
+  if(file.exists(file.path(tmpd, "inputs_outputs.csv"))) {
+    v$inputs_outputs <- readr_read_csv(file.path(tmpd, "inputs_outputs.csv"))
+  }
 
   v$meta_area$name <- NULL
 
