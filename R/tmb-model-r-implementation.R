@@ -471,6 +471,11 @@ naomi_objective_function_r <- function(d, p) {
   artattend_ij_t1_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t1)
   untreated_plhiv_num_t1_out <- plhiv_t1_out - artnum_t1_out
 
+  ## Calculate number of PLHIV who would attend facility in district i
+  plhiv_attend_ij_t1 <- as.vector(d$Xart_idx %*% plhiv_t1) * as.vector(d$Xart_gamma %*% gamma_art)
+  plhiv_attend_t1_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t1))
+  untreated_plhiv_attend_t1_out <- plhiv_attend_t1_out - artattend_t1_out
+
   unaware_plhiv_num_t1 <- (plhiv_t1 - artnum_t1) * d$unaware_untreated_prop_t1
   unaware_plhiv_num_t1_out <- as.vector(d$A_out %*% unaware_plhiv_num_t1)
   aware_plhiv_num_t1_out <- plhiv_t1_out - unaware_plhiv_num_t1_out
@@ -489,6 +494,12 @@ naomi_objective_function_r <- function(d, p) {
   artattend_t2_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% artnum_ij_t2))
   artattend_ij_t2_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t2)
   untreated_plhiv_num_t2_out <- plhiv_t2_out - artnum_t2_out
+
+  ## Calculate number of PLHIV who would attend facility in district i
+  plhiv_attend_ij_t2 <- as.vector(d$Xart_idx %*% plhiv_t2) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_t2_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t2))
+  untreated_plhiv_attend_t2_out <- plhiv_attend_t2_out - artattend_t2_out
+
 
   unaware_plhiv_num_t2 <- (plhiv_t2 - artnum_t2) * d$unaware_untreated_prop_t2
   unaware_plhiv_num_t2_out <- as.vector(d$A_out %*% unaware_plhiv_num_t2)
@@ -534,6 +545,8 @@ naomi_objective_function_r <- function(d, p) {
                     artattend_t1_out               = artattend_t1_out,
                     artattend_ij_t1_out            = artattend_ij_t1_out,
                     untreated_plhiv_num_t1_out     = untreated_plhiv_num_t1_out,
+                    plhiv_attend_t1_out            = plhiv_attend_t1_out,
+                    untreated_plhiv_attend_t1_out  = untreated_plhiv_attend_t1_out,
                     aware_plhiv_prop_t1_out        = aware_plhiv_prop_t1_out,
                     aware_plhiv_num_t1_out         = aware_plhiv_num_t1_out,
                     unaware_plhiv_num_t1_out       = unaware_plhiv_num_t1_out,
@@ -557,6 +570,8 @@ naomi_objective_function_r <- function(d, p) {
                     artattend_t2_out               = artattend_t2_out,
                     artattend_ij_t2_out            = artattend_ij_t2_out,
                     untreated_plhiv_num_t2_out     = untreated_plhiv_num_t2_out,
+                    plhiv_attend_t2_out            = plhiv_attend_t2_out,
+                    untreated_plhiv_attend_t2_out  = untreated_plhiv_attend_t2_out,
                     aware_plhiv_prop_t2_out        = aware_plhiv_prop_t2_out,
                     aware_plhiv_num_t2_out         = aware_plhiv_num_t2_out,
                     unaware_plhiv_num_t2_out       = unaware_plhiv_num_t2_out,
@@ -641,6 +656,12 @@ naomi_objective_function_r <- function(d, p) {
   artattend_ij_t3_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t3)
   untreated_plhiv_num_t3_out <- plhiv_t3_out - artnum_t3_out
 
+  ## Calculate number of PLHIV who would attend facility in district i
+  plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% plhiv_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_t3_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t3))
+  untreated_plhiv_attend_t3_out <- plhiv_attend_t3_out - artattend_t3_out
+
+
   unaware_plhiv_num_t3 <- (plhiv_t3 - artnum_t3) * d$unaware_untreated_prop_t3
   unaware_plhiv_num_t3_out <- as.vector(d$A_out %*% unaware_plhiv_num_t3)
   aware_plhiv_num_t3_out <- plhiv_t3_out - unaware_plhiv_num_t3_out
@@ -669,6 +690,8 @@ naomi_objective_function_r <- function(d, p) {
                     artattend_t3_out               = artattend_t3_out,
                     artattend_ij_t3_out            = artattend_ij_t3_out,
                     untreated_plhiv_num_t3_out     = untreated_plhiv_num_t3_out,
+                    plhiv_attend_t3_out            = plhiv_attend_t3_out,
+                    untreated_plhiv_attend_t3_out  = untreated_plhiv_attend_t3_out,
                     aware_plhiv_prop_t3_out        = aware_plhiv_prop_t3_out,
                     aware_plhiv_num_t3_out         = aware_plhiv_num_t3_out,
                     unaware_plhiv_num_t3_out       = unaware_plhiv_num_t3_out,

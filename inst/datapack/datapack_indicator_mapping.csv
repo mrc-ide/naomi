@@ -14,3 +14,5 @@ art_coverage,TX_CURR_SUBNAT.Rt.T_1,TX_CURR_SUBNAT.Rt.T_1,ART coverage,FALSE
 aware_plhiv_num,nF19GOjcnoD,DIAGNOSED_SUBNAT.T_1,Number of PLHIV aware of HIV positive status,TRUE
 incidence,Incidence_SUBNAT.Rt.T_1,Incidence_SUBNAT.Rt.T_1,HIV incidnece rate per year,FALSE
 infections,NEW_INFECTIONS_SUBNAT.T_1,NEW_INFECTIONS_SUBNAT.T_1,New infections per year,TRUE
+plhiv_attend,plhiv_attend,plhiv_attend,Number of PLHIV in ART catchment,TRUE
+untreated_plhiv_attend,untreated_plhiv_attend,untreated_plhiv_attend,Number of untreated PLHIV in ART catchment,TRUE
