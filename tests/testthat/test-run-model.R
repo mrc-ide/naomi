@@ -314,14 +314,14 @@ test_that("model run can be calibrated", {
   ## * 3 sexes
   ## * 3 output times
   ## * 9 areas
-  ## * 12 indicators
+  ## * 14 indicators
   ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
   ## 9 = number of areas
   ## 12 = number of ANC age groups
-  expect_equal(nrow(indicators_output), 33 * 3 * 3 * 9 * 12 + 3 * 9 * 9 * 12)
+  expect_equal(nrow(indicators_output), 33 * 3 * 3 * 9 * 14 + 3 * 9 * 9 * 12)
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
@@ -407,7 +407,7 @@ test_that("re-calibrating an already calibrated output throws error", {
 
 test_that("useful error returned when model output can't be calibrated", {
   expect_error(hintr_calibrate(NULL, list(test = "option")),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
 })
 
 test_that("progress can report on model fit", {
@@ -505,8 +505,9 @@ test_that("Model can be run without .shiny90 file", {
 
   indicators_output <- readRDS(calibrated_output$model_output_path)
   ## Check there is some data
+  ## 11 indicators (3 fewer because missing awareness of status indicators
   expect_equal(nrow(indicators_output$output_package$indicators),
-               33 * 3 * 3 * 9 * 9 + 3 * 9 * 9 * 12)
+               33 * 3 * 3 * 9 * 11 + 3 * 9 * 9 * 12)
 })
 
 test_that("hintr_run_model can skip validation", {
@@ -643,11 +644,11 @@ test_that("validate_calibrate_options errors if required options are missing", {
 test_that("assert_model_output_version ensures model version up to date", {
   expect_true(assert_model_output_version(a_hintr_output))
   expect_error(assert_model_output_version(list(version = "123")),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
   output <- a_hintr_output
   output$version <- "2.5.3"
   expect_error(assert_model_output_version(output, "2.5.4"),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
   expect_true(assert_model_output_version(output, "2.5.3"))
   expect_true(assert_model_output_version(output))
 })
@@ -688,6 +689,6 @@ test_that("trying to calibrate incompatible model output returns error", {
                                a_hintr_calibration_options,
                                plot_data_path,
                                calibration_output_path),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
 })
 

@@ -1,3 +1,16 @@
+# naomi 2.7.8
+
+* Add indicator `plhiv_attending` reporting the estimated denominator for `art_current` based on assuming same ART attendance probabilities for untreated population as the treated population. This give estimates for the predicted number of PLHIV ‘in the ART catchment’ for a district and the number of untreated PLHIV in the catchment. This is an effort to address the recurring issue that the TX_CURR value that is provided to Data Pack does not correspond to the district PLHIV denominator, and to provide an output more directly useful for setting a district treatment targets.
+
+# naomi 2.7.7
+
+* Report log likelihood in model fit object
+
+# naomi 2.7.6
+
+* `hintr_comparison_plot()` will error if comparison plot data does not exist.
+  This will avoid a class of obscure errors being shown to end user.
+
 # naomi 2.7.5
 
 * Adjust incidence projection for changing incidence trend between T1 and T2.
