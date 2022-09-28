@@ -73,7 +73,7 @@ test_that("extract_pjnz_naomi() returns country and region name", {
   expect_setequal(spec$spectrum_region_name, c("Northern Region", "Central Region", "Southern Region"))
 
   ## Test when using national Spectrum file
-  pjnz_nat <- system_file("extdata/demo_mwi2019.pjnz")
+  pjnz_nat <- system_file("extdata/demo_mwi2019.PJNZ")
   spec <- extract_pjnz_naomi(pjnz_nat)
 
   expect_setequal(spec$iso3, "MWI")
