@@ -121,6 +121,8 @@ write_navigator_checklist <- function(naomi_output,
       !is.null(naomi_output$fit$data_options$anc_prev_year_t2)
 
     if (!is.null(model_options)) {
+      model_options$artattend <- as.logical(model_options$artattend)
+      model_options$artattend <- as.logical(model_options$artattend_t2)
 
       ## Check survey
       # Does T1 calendar quarter match one survey
@@ -151,7 +153,7 @@ write_navigator_checklist <- function(naomi_output,
 
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Cal_Population"] <-
       calibration_options$spectrum_population_calibration == spec_level
-    
+
     if (setequal(names(calibration_options), "spectrum_population_calibration")) {
 
       ## If naomi_output is uncalibrated, only the spectrum_population_calibration

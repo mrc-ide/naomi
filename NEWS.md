@@ -1,3 +1,9 @@
+# naomi 2.7.10
+
+* Subset model options in `naomi_fit` object do not contain advanced options. Updates `read_output_package()` function to read in full model options when available in the model output zip
+* Adds README to output zip describing outputs zip files
+* Add backwards compatibility for old versions of coarse output zip
+
 # naomi 2.7.9
 
 * Add country name and ISO3 code to `extract_pjnz_one()`.
