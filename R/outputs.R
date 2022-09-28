@@ -1066,11 +1066,12 @@ read_output_package <- function(path) {
   if (file.exists(file.path(tmpd,"info/options.yml"))) {
     # If hintr_output saved: Full model options available in "info"
     fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
-  } else {
-    # If naomi_output saved: Subset model options avlaible in fit object
-    if(file.exists(file.path(tmpd, "fit/model_options.yml"))) {
-      fit$model_options <- yaml::read_yaml(file.path(tmpd, "fit/model_options.yml"))
-    }
+  } else if (file.exists(file.path(tmpd, "fit/model_options.yml"))) {
+    # If naomi_output saved: Subset model options available in fit object
+    fit$model_options <- yaml::read_yaml(file.path(tmpd, "fit/model_options.yml"))
+  } else if (file.exists(file.path(tmpd, "info/options.yml"))) {
+    # Backwards compatibility for old version of coarse output zip
+    fit$model_options <- yaml::read_yaml(file.path(tmpd, "info/options.yml"))
   }
 
   if (file.exists(file.path(tmpd,"fit/data_options.yml"))) {
@@ -1079,13 +1080,14 @@ read_output_package <- function(path) {
 
   if (file.exists(file.path(tmpd,"fit/calibration_options.yml"))) {
     fit$calibration_options <- yaml::read_yaml(file.path(tmpd,"fit/calibration_options.yml"))
+  } else if (file.exists(file.path(tmpd,"fit/calibration_options.csv"))) {
+    # Backwards compatibility for old version of coarse output zip
+    fit$calibration_options <- readr_read_csv(file.path(tmpd, "fit/calibration_options.csv"))
   }
 
   if (file.exists(file.path(tmpd,"fit/spectrum_calibration.csv"))) {
     fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
   }
-
-  if(file.exists(file.path(tmpd, "inputs_outputs.csv")))
 
   v <- list(
     indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
@@ -1094,9 +1096,12 @@ read_output_package <- function(path) {
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
     meta_period = readr_read_csv(file.path(tmpd, "meta_period.csv")),
     meta_indicator = readr_read_csv(file.path(tmpd, "meta_indicator.csv")),
-    fit = fit,
-    inputs_outputs = readr_read_csv(file.path(tmpd, "inputs_outputs.csv"))
+    fit = fit
   )
+
+  if(file.exists(file.path(tmpd, "inputs_outputs.csv"))) {
+    v$inputs_outputs <- readr_read_csv(file.path(tmpd, "inputs_outputs.csv"))
+  }
 
   v$meta_area$name <- NULL
 
