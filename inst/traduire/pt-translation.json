@@ -258,12 +258,9 @@
     "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ",
     "ANC_PREVALENCE_AGE_MATCHED": "Prevalência do CPN idade compatível",
     "ANC_ART_COVERAGE_AGE_MATCHED": "Cobertura TARV arte em CPN idade compatível",
-<<<<<<< HEAD
-    "WARNING_NO_UNCERTAINTY": "Unable to generate uncertainty bounds for model estimates. Mode reported in place of mean. Please review model inputs and model options."
-=======
     "PLHIV_ATTEND": "PLHIV (ART catchment)",
     "INDICATOR_LABEL_PLHIV_ATTEND": "Number of PLHIV in area ART catchment",
     "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
-    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment"
->>>>>>> master
+    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment",
+    "WARNING_NO_UNCERTAINTY": "Unable to generate uncertainty bounds for model estimates. Mode reported in place of mean. Please review model inputs and model options."    
 }
