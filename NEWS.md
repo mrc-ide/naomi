@@ -1,3 +1,7 @@
+# naomi 2.7.11
+
+* Remove `get_calibration_option_labels()`, `get_model_calibration_options()` and `get_model_options_template()`. Model options specification has been refactored into naomi.options package.
+
 # naomi 2.7.10
 
 * Subset model options in `naomi_fit` object do not contain advanced options. Updates `read_output_package()` function to read in full model options when available in the model output zip

@@ -309,7 +309,7 @@ if (sum(is.na(programme_data)) <3 ) {
 
 ```{r, echo = FALSE, results = 'asis'}
 # Translate calibration options to human readable
-calibration_options <- naomi::get_calibration_option_labels(calibration_options)
+calibration_options <- naomi.options::get_calibration_option_labels(calibration_options)
 calibration_df <- stack(calibration_options)
 
 text <- tibble::tribble(
