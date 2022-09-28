@@ -357,5 +357,9 @@
     "WARNING_ADDITIONAL": "and {{count}} more",
     "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
     "ANC_PREVALENCE_AGE_MATCHED": "Prévalence CPN appariés par âge",
-    "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge"
+    "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge",
+    "PLHIV_ATTEND": "PLHIV (ART catchment)",
+    "INDICATOR_LABEL_PLHIV_ATTEND": "Number of PLHIV in area ART catchment",
+    "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
+    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment"
 }
