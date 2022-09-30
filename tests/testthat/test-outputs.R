@@ -230,7 +230,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
                                              na.rm = TRUE)
 
   out_bad <- handle_naomi_warnings(output_package(a_fit_bad_sample, a_naomi_data))
-  out_bout_good <- handle_naomi_warnings(output_package(a_fit_sample, a_naomi_data))
+  out_out_good <- handle_naomi_warnings(output_package(a_fit_sample, a_naomi_data))
 
   # For sample with NAs:
   # Class is "mode"
