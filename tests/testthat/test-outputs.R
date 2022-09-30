@@ -230,7 +230,7 @@ test_that("output_package() catches error if NA in simulated sample.", {
                                              na.rm = TRUE)
 
   out_bad <- handle_naomi_warnings(output_package(a_fit_bad_sample, a_naomi_data))
-  out_good <- handle_naomi_warnings(output_package(a_fit_sample, a_naomi_data))
+  out_bout_good <- handle_naomi_warnings(output_package(a_fit_sample, a_naomi_data))
 
   # For sample with NAs:
   # Class is "mode"
@@ -256,6 +256,23 @@ test_that("output_package() catches error if NA in simulated sample.", {
   good_ind <- out_good$indicators[out_good$indicators$indicator == "prevalence",]
   expect_true(all(good_ind$mean != good_ind$mode))
 
+  # Error thrown when invalid mode values are calibrated
+  bad_indicators <- out_bad$indicators %>%
+    dplyr::mutate(mean = dplyr::case_when(
+      indicator == "art_coverage" & sex == "female" & calendar_quarter == "CY2019Q2" & age_group == "Y035_039" & area_id == "MWI_4_7_demo" ~ 1.14,
+      indicator == "prevalence" & sex == "female" &  calendar_quarter == "CY2019Q2" & age_group == "Y035_039" & area_id == "MWI_4_7_demo" ~ -0.01,
+      TRUE ~ mean))
+
+
+  out_bad$indicators <- bad_indicators
+
+  expect_error(calibrate_outputs(out_bad, a_naomi_data,
+                                      "national", "sex_age_coarse",
+                                      "national", "sex_age_coarse",
+                                      "national", "sex_age_coarse",
+                                      "national", "sex_age_coarse",
+                                      calibrate_method = "logistic"),
+               "Unable to calibrate model outputs due to invalid mode estimates\n HIV prevalence < 0%:    June 2019, Likoma, Female, 35-39\n ART coverage > 100%:    June 2019, Likoma, Female, 35-39")
 })
 
 test_that("summary report can be translated", {

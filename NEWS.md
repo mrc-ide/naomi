@@ -1,6 +1,7 @@
 # naomi 2.7.12
 * Report mode when sampling returns improbable values and uncertainty cannot be generated.
-  - This will throw a warning after running `output_package()` in `hintr_run_model()` that   will display a warning on the model fit page of the web application.
+  - This will throw a warning after running `output_package()` in `hintr_run_model()` that will display a warning on the model fit page of the web application.
+* Error when invalid mode estimates (prevalence < 0% and ART coverage > 100%) are calibrated
 
 # naomi 2.7.11
 
