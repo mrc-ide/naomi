@@ -511,9 +511,7 @@ calibrate_outputs <- function(output,
              by = byv
            ) %>%
     dplyr::mutate(
-             log_odds = dplyr::if_else(adjusted == 0, 0, qlogis(adjusted) - qlogis(raw)),
-             raw = NULL,
-             adjusted = NULL
+             log_odds = dplyr::if_else(adjusted == 0, 0, qlogis(adjusted) - qlogis(raw))
            )
 
   adjust_prop <- function(val, log_odds) {
@@ -617,7 +615,7 @@ get_spectrum_aggr_var <- function(level, strat) {
 
 validate_mode_values <- function(naomi_output){
 
-  if(inherits(indicators, "naomi_indicators_mode")) {
+  if(inherits(naomi_output$indicators, "naomi_indicators_mode")) {
 
     v <- naomi_output$indicator %>%
       dplyr::filter(
