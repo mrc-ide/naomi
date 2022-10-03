@@ -217,10 +217,62 @@ test_that("calibration options used in summary report if present", {
 
 test_that("output_package() catches error if NA in simulated sample.", {
 
-  bad_sample <- a_fit_sample
-  bad_sample$sample$alpha_t1_out[50] <- NA
-  expect_error(output_package(bad_sample, a_naomi_data),
-               "Error simulating output for indicator: alpha_t1_out. Please contact support for troubleshooting.")
+  a_fit_bad_sample <- a_fit_sample
+  a_fit_bad_sample$sample$anc_alpha_t2_out[1,] <- NA_real_
+
+  # Error thrown when extract_indicators() run with NAs in sample
+  expect_error(extract_indicators(a_fit_bad_sample, a_naomi_mf),
+               "Error simulating output for indicator: anc_alpha_t2_out. Please contact support for troubleshooting")
+
+
+  # No error thrown when extract_indicators() run with NAs in sample + na.rm = TRUE
+  indicators_bad_na.rm <- extract_indicators(a_fit_bad_sample, a_naomi_mf,
+                                             na.rm = TRUE)
+
+  out_bad <- handle_naomi_warnings(output_package(a_fit_bad_sample, a_naomi_data))
+  out_out_good <- handle_naomi_warnings(output_package(a_fit_sample, a_naomi_data))
+
+  # For sample with NAs:
+  # Class is "mode"
+  expect_is(out_bad$indicators, "naomi_indicators_mode")
+  # Upper + lower limits NA
+  expect_true(all(is.na(out_bad$indicators$upper)))
+  expect_true(all(is.na(out_bad$indicators$lower)))
+  # Mean replaced with mode
+  expect_equal(out_bad$indicators$mean, out_bad$indicators$mode)
+  # Warning generated
+  expect_equal(out_bad$warnings[[1]]$text,
+               "Unable to generate uncertainty bounds for model estimates. Mode reported in place of mean. Please review model inputs and model options.")
+  expect_equal(out_bad$warnings[[1]]$locations,
+               c("model_fit", "model_calibrate", "review_output"))
+
+
+  # For sample without NAs:
+  # Class is "mean":
+  expect_is(out_good$indicators, "naomi_indicators_mean")
+  # No NAs in indicators
+  expect_true(all(!is.na(out_good$indicators$mean)))
+  # Mean not equal to mode (
+  good_ind <- out_good$indicators[out_good$indicators$indicator == "prevalence",]
+  expect_true(all(good_ind$mean != good_ind$mode))
+
+  # Error thrown when invalid mode values are calibrated
+  bad_indicators <- out_bad$indicators %>%
+    dplyr::mutate(mean = dplyr::case_when(
+      indicator == "art_coverage" & sex == "female" & calendar_quarter == "CY2019Q2" & age_group == "Y035_039" & area_id == "MWI_4_7_demo" ~ 1.14,
+      indicator == "prevalence" & sex == "female" &  calendar_quarter == "CY2019Q2" & age_group == "Y035_039" & area_id == "MWI_4_7_demo" ~ -0.01,
+      TRUE ~ mean))
+
+
+  out_bad$indicators <- bad_indicators
+
+  expect_error(calibrate_outputs(out_bad, a_naomi_data,
+                                      "national", "sex_age_coarse",
+                                      "national", "sex_age_coarse",
+                                      "national", "sex_age_coarse",
+                                      "national", "sex_age_coarse",
+                                      calibrate_method = "logistic"),
+               "Unable to calibrate model outputs due to invalid mode estimates\n HIV prevalence < 0%:    June 2019, Likoma, Female, 35-39\n ART coverage > 100%:    June 2019, Likoma, Female, 35-39")
 })
 
 test_that("summary report can be translated", {

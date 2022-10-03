@@ -81,12 +81,13 @@ calibrate_outputs <- function(output,
   stopifnot(inherits(naomi_mf, "naomi_mf"))
   stopifnot(calibrate_method %in% c("logistic", "proportional"))
 
-
   if (!is.null(output[["spectrum_calibration"]])) {
     stop("Outputs have already been calibrated. ",
          "You cannot re-calibrate outputs. ",
          "Please provide uncalibrated output package.")
   }
+
+  validate_mode_values(output)
 
   group_vars <- c("spectrum_region_code", "calendar_quarter", "sex", "age_group")
 
@@ -241,21 +242,21 @@ calibrate_outputs <- function(output,
                                      plhiv_target,
                                      calibrate_method)
              )
-    
+
     ## Calibrate PLHIV attending
     ## Note: aggregate based on calibrated values for valmean_wide$plhiv
-    
+
     plhivattend_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                                   "sex_age_group")
-    
+
     plhivattend_target <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::summarise(plhivattend_target = sum(plhiv),
                        .groups = "drop")
-    
+
     valmean_wide <- valmean_wide %>%
       dplyr::left_join(plhivattend_target, by = plhivattend_aggr_var)
-    
+
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::mutate(
@@ -263,14 +264,14 @@ calibrate_outputs <- function(output,
                                                  plhivattend_target)
       )
   }
-  
-  
+
+
   ## Calibrate ART number
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
-  
+
   if(length(artnum_aggr_var) > 0L) {
-    
+
     artnum_target <- spectrum_calibration %>%
       dplyr::group_by_at(artnum_aggr_var) %>%
       dplyr::summarise(artnum_target = sum(art_current_spectrum),
@@ -451,10 +452,10 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter2, "plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter1, "untreated_plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter2, "untreated_plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),
@@ -510,9 +511,7 @@ calibrate_outputs <- function(output,
              by = byv
            ) %>%
     dplyr::mutate(
-             log_odds = dplyr::if_else(adjusted == 0, 0, qlogis(adjusted) - qlogis(raw)),
-             raw = NULL,
-             adjusted = NULL
+             log_odds = dplyr::if_else(adjusted == 0, 0, qlogis(adjusted) - qlogis(raw))
            )
 
   adjust_prop <- function(val, log_odds) {
@@ -528,17 +527,35 @@ calibrate_outputs <- function(output,
     val
   }
 
-  out <- out %>%
-    dplyr::left_join(adj_props, by = byv) %>%
-    dplyr::mutate(
-             mean = adjust_prop(mean, log_odds),
-             se = adjust_prop_se(se, mean, log_odds),
-             median = adjust_prop(median, log_odds),
-             mode = adjust_prop(mode, log_odds),
-             lower = adjust_prop(lower, log_odds),
-             upper = adjust_prop(upper, log_odds),
-             log_odds = NULL
-           )
+  if(inherits(indicators, "naomi_indicators_mode")) {
+
+    out <- out %>%
+      dplyr::left_join(adj_props, by = byv) %>%
+      dplyr::mutate(
+        mean = adjust_prop(mean, log_odds),
+        se = NA_real_,
+        median = NA_real_,
+        mode = adjust_prop(mode, log_odds),
+        lower = NA_real_,
+        upper = NA_real_,
+        log_odds = NULL
+      )
+
+  } else {
+
+    out <- out %>%
+      dplyr::left_join(adj_props, by = byv) %>%
+      dplyr::mutate(
+        mean = adjust_prop(mean, log_odds),
+        se = adjust_prop_se(se, mean, log_odds),
+        median = adjust_prop(median, log_odds),
+        mode = adjust_prop(mode, log_odds),
+        lower = adjust_prop(lower, log_odds),
+        upper = adjust_prop(upper, log_odds),
+        log_odds = NULL
+      )
+
+  }
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 
@@ -587,4 +604,49 @@ get_spectrum_aggr_var <- function(level, strat) {
   aggr_vars <- c(aggr_vars, stratvar)
 
   aggr_vars
+}
+
+#' Validate model estimates when mode values are reported
+#'
+#' @param output Naomi model output package produced by [`output_package()`].
+#'
+
+
+
+validate_mode_values <- function(naomi_output){
+
+  if(inherits(naomi_output$indicators, "naomi_indicators_mode")) {
+
+    v <- naomi_output$indicator %>%
+      dplyr::filter(
+        indicator == "prevalence" & mean < 0 |
+          indicator == "art_coverage" & mean > 1 )
+
+    if(nrow(v) > 1){
+
+      to_upper_first <- function(x) {
+        substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+        x
+      }
+
+      labels <- tibble::tribble(
+        ~indicator,         ~prefix,
+        "prevalence", t_("INVALID_MODE_PREV"),
+        "art_coverage", t_("INVALID_MODE_ART_COVERAGE"))
+
+      text <- v %>%
+        dplyr::left_join(naomi_output$meta_age_group, by = "age_group") %>%
+        dplyr::left_join(naomi_output$meta_area %>% sf::st_drop_geometry(), by = "area_id") %>%
+        dplyr::mutate(calendar_quarter = calendar_quarter_labels(calendar_quarter),
+                      sex = to_upper_first(sex)) %>%
+        dplyr::mutate(disag = paste(calendar_quarter, area_name, sex, age_group_label, sep = ", ")) %>%
+        dplyr::left_join(labels, by = "indicator") %>%
+        dplyr::arrange(desc(indicator))
+
+      stop(paste(t_("CALIBRATION_ERROR_INVALID_MODE_VALUES")),
+           paste("\n", text$prefix, " ", text$disag))
+    }
+
+  }
+
 }

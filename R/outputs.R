@@ -189,8 +189,17 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_anc_est_t3
                 )
 
-  dplyr::select(out, names(naomi_mf$mf_out),
+  out <- dplyr::select(out, names(naomi_mf$mf_out),
                 calendar_quarter, indicator, mean, se, median, mode, lower, upper)
+
+  #  Add a class to indicate if uncertainty has been generated
+  if(!is.null(naomi_fit$sample)) {
+    class(out) <- c("naomi_indicators_mean", "tbl_df", "tbl","data.frame")
+  } else {
+    class(out) <- c("naomi_indicators_mode", "tbl_df", "tbl","data.frame")
+  }
+
+  out
 }
 
 extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
@@ -437,9 +446,29 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
   stopifnot(is(naomi_fit, "naomi_fit"))
   stopifnot(is(naomi_data, "naomi_data"))
 
-  indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
+  indicators <-  tryCatch(
+    extract_indicators(naomi_fit, naomi_data, na.rm = na.rm) ,
+                    "error" = function(e) {
 
-  art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
+                      # Display warning
+                      naomi_warning(t_("WARNING_NO_UNCERTAINTY"),
+                                    c("model_fit", "model_calibrate", "review_output"))
+
+                      # If error in simulating outputs: remove sample
+                      # and return mode for all indicators
+                      naomi_fit$sample <- NULL
+                      df <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
+                      df$mean <- df$mode
+                      df
+                      })
+
+
+  if(inherits(indicators, "naomi_indicators_mode")){
+
+    art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = TRUE)
+  } else {
+    art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
+  }
 
   meta_area <- naomi_data$areas %>%
     dplyr::filter(area_id %in% unique(naomi_data$mf_out$area_id)) %>%
