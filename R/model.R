@@ -1594,7 +1594,7 @@ aggregate_model_inputs <- function(data, level) {
     stop(t_("AGRREGATE_POP_ERROR"))
   } else {
     subset_pop <- dplyr::filter(aggregated_pop, area_level == level)
-    pop_path <- file.path(tmp, paste0("population_level", area_level, ".csv"))
+    pop_path <- file.path(tmp, paste0("population_level", level, ".csv"))
     readr::write_csv(subset_pop, pop_path)
   }
 
@@ -1609,7 +1609,7 @@ aggregate_model_inputs <- function(data, level) {
       stop(t_("AGRREGATE_ART_ERROR"))
     } else {
       subset_art <- dplyr::filter(aggregated_art, area_level == level)
-      art_path <- file.path(tmp, paste0("art_number_level", area_level, ".csv"))
+      art_path <- file.path(tmp, paste0("art_number_level", level, ".csv"))
       readr::write_csv(subset_art, art_path)
 
     }
@@ -1629,7 +1629,7 @@ aggregate_model_inputs <- function(data, level) {
       stop(t_("AGRREGATE_ANC_ERROR"))
     } else {
       subset_anc <- dplyr::filter(aggregated_anc, area_level == level)
-      anc_path <- file.path(tmp, paste0("anc_testing_level", area_level, ".csv"))
+      anc_path <- file.path(tmp, paste0("anc_testing_level", level, ".csv"))
       readr::write_csv(subset_anc, anc_path)
     }
 
