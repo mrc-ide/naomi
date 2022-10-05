@@ -33,7 +33,7 @@ aggregate_art <- function(art, shape) {
   art <- art %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter,
                   dplyr::any_of(cols_list))
-  
+
   art_number <- art %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
@@ -263,10 +263,10 @@ aggregate_anc <- function(anc, shape) {
   ## Select only required columns; to avoid column name clash with
   ## any additional columns in ANC data set
   anc <- anc %>%
-    dplyr::select(area_id, age_group, year, anc_clients, anc_known_pos, 
-                  anc_already_art, anc_tested, anc_tested_pos, anc_known_neg, 
+    dplyr::select(area_id, age_group, year, anc_clients, anc_known_pos,
+                  anc_already_art, anc_tested, anc_tested_pos, anc_known_neg,
                   births_facility)
-    
+
   anc_testing <- anc %>%
     dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
     dplyr::mutate(time_period = as.character(year),
@@ -452,5 +452,65 @@ build_hierarchy_label <- function(meta_areas) {
   labels
 }
 
+aggregate_pop <- function(pop_agesex, shape) {
+
+  ## Recursively aggregate ANC data up from lowest level of programm data provided
+  # Level to aggregate from
+
+  ## Check if shape is object or file path
+  if(!inherits(shape, "sf")) {
+    areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
+  } else {
+    areas <- shape %>% sf::st_drop_geometry()
+  }
+
+  ## Check if anc is object or file path
+  if(!inherits(pop_agesex, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    pop_agesex <- readr_read_csv(pop_agesex)
+  }
+
+  ## Select only required columns; to avoid column name clash with
+  ## any additional columns in ANC data set
+
+
+  pop <- pop_agesex %>%
+    dplyr::select(area_id, sex, age_group, source, calendar_quarter, population) %>%
+    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id")
+
+
+  ## Recursively aggregate ANC data up from lowest level of programme data provided
+  # Level to aggregate from
+  pop_level <- levels(as.factor(pop$area_level))
+  # Join ANC data to hierarchy
+  pop_wide <- dplyr::left_join(
+    pop,
+    spread_areas(areas %>% dplyr::filter(area_level <= pop_level)),
+    by = "area_id")
+
+
+  # Function to aggregate based on area_id[0-9]$ columns in hierarchy
+  aggregate_data_pop <- function(col_name) {
+    df <- pop_wide %>%
+      dplyr::group_by(eval(as.name(col_name)), sex, age_group, source,
+                      calendar_quarter) %>%
+      dplyr::summarise(population = sum(population, na.rm = TRUE),
+                       .groups = 'drop') %>%
+      dplyr::rename(area_id = `eval(as.name(col_name))`)
+  }
+
+  # Aggregated data frame
+  pop_long <- grep("^area_id*\\s*[0-9]$", colnames(pop_wide), value = TRUE) %>%
+    lapply(function(x) aggregate_data_pop(x))  %>%
+    dplyr::bind_rows() %>%
+    dplyr::left_join(areas %>% dplyr::select(area_id,area_name, area_level,
+                                             area_level_label, parent_area_id,
+                                             area_sort_order), by = "area_id") %>%
+    dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
+                  area_sort_order, sex, age_group, calendar_quarter, population) %>%
+    dplyr::ungroup()
+
+  pop_long$asfr <- NA_real_
+  pop_long
+}
 
 

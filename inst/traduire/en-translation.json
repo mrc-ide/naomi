@@ -262,5 +262,8 @@
     "PLHIV_ATTEND": "PLHIV (ART catchment)",
     "INDICATOR_LABEL_PLHIV_ATTEND": "Number of PLHIV in area ART catchment",
     "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
-    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment"
+    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment",
+    "AGRREGATE_POP_ERROR": "Cannot aggregate data to level lower tha avalible popoulation data",
+    "AGRREGATE_ART_ERROR": "Cannot aggregate data to level lower tha avalible ART data",
+    "AGRREGATE_ANC_ERROR": "Cannot aggregate data to level lower tha avalible ANC data"
 }

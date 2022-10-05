@@ -1557,3 +1557,96 @@ tag_data_inputs <- function(full_data, filtered_data, cols = list()) {
 }
 
 
+#' Aggregate naomi data inputs
+#'
+#' This aggreagtes naomi data inputs to run the model with data at a specified admin level.
+#'
+#' @param data List of paths to input data files.
+#' @param level Area level to aggregate data to
+#'
+#' @details
+#'
+#' The `data` argument must be a list specifying paths to the following:
+#'
+#' * `shape`
+#' * `population`
+#' * `survey data`
+#' * `anc_testing` (optional)
+#' * `art_number` (optional)
+
+#' @return Paths to aggreagted output files
+#' @export
+
+
+aggregate_model_inputs <- function(data, level) {
+
+  shape <- read_area_merged(data$shape)
+  population <- read_population(data$population)
+  survey <- read_survey_indicators(data$survey)
+
+
+  tmp <- tempdir()
+
+  # Aggregate pop data
+  aggregated_pop <- aggregate_pop(pop, shape)
+
+  if(level < min(aggregated_pop$area_level)) {
+    stop(t_("AGRREGATE_POP_ERROR"))
+  } else {
+    subset_pop <- dplyr::filter(aggregated_pop, area_level == level)
+    pop_path <- file.path(tmp, paste0("population_level", area_level, ".csv"))
+    readr::write_csv(subset_pop, pop_path)
+  }
+
+
+  # Aggregate ART data
+  if (!is.null(data$art_number)) {
+
+    art_number <- read_art_number(data$art_number)
+    aggregated_art <- aggregate_art(art_number, shape)
+
+    if(level < min(aggregated_art$area_level)) {
+      stop(t_("AGRREGATE_ART_ERROR"))
+    } else {
+      subset_art <- dplyr::filter(aggregated_art, area_level == level)
+      art_path <- file.path(tmp, paste0("art_number_level", area_level, ".csv"))
+      readr::write_csv(subset_art, art_path)
+
+    }
+
+  } else {
+    art_path <- NULL
+  }
+
+
+  # Aggregate ANC data
+  if (!is.null(data$anc_testing)) {
+
+    anc_testing <- read_anc_testing(data$anc_testing)
+    aggregated_anc <- aggregate_anc(anc_testing, shape)
+
+    if(level < min(aggregated_anc$area_level)) {
+      stop(t_("AGRREGATE_ANC_ERROR"))
+    } else {
+      subset_anc <- dplyr::filter(aggregated_anc, area_level == level)
+      anc_path <- file.path(tmp, paste0("anc_testing_level", area_level, ".csv"))
+      readr::write_csv(subset_anc, anc_path)
+    }
+
+  } else {
+    anc_path <- NULL
+  }
+
+
+
+  data <- list(pjnz = data$pjnz,
+               shape = data$shape,
+               survey = data$survey,
+               population = pop_path,
+               art_number = art_path,
+               anc_testing = anc_path)
+
+  data
+
+}
+
