@@ -506,7 +506,7 @@ aggregate_pop <- function(pop_agesex, shape) {
                                              area_level_label, parent_area_id,
                                              area_sort_order), by = "area_id") %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
-                  area_sort_order, sex, age_group, calendar_quarter, population) %>%
+                  area_sort_order, sex, age_group, calendar_quarter,source, population) %>%
     dplyr::ungroup()
 
   pop_long$asfr <- NA_real_
