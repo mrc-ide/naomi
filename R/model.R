@@ -1588,7 +1588,7 @@ aggregate_model_inputs <- function(data, level) {
   tmp <- tempdir()
 
   # Aggregate pop data
-  aggregated_pop <- aggregate_pop(pop, shape)
+  aggregated_pop <- aggregate_pop(population, shape)
 
   if(level < min(aggregated_pop$area_level)) {
     stop(t_("AGRREGATE_POP_ERROR"))
