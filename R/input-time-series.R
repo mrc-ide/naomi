@@ -475,8 +475,8 @@ aggregate_pop <- function(pop_agesex, shape) {
 
   pop <- pop_agesex %>%
     dplyr::select(area_id, sex, age_group, source, calendar_quarter, population) %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id")
-
+    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
+    dplyr::filter(area_level == max(pop$area_level))
 
   ## Recursively aggregate ANC data up from lowest level of programme data provided
   # Level to aggregate from
