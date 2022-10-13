@@ -1,7 +1,7 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
 Version: 2.7.12
-Authors@R: 
+Authors@R:
     person(given = "Jeff",
            family = "Eaton",
            role = c("aut", "cre"),
@@ -16,7 +16,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Additional_repositories:
     https://mrc-ide.r-universe.dev
-Imports: 
+Imports:
     Matrix,
     R6,
     TMB,
@@ -49,7 +49,7 @@ Imports:
     yaml,
     zip,
     zoo
-Suggests: 
+Suggests:
     DiagrammeR,
     covr,
     datamodelr,
@@ -60,7 +60,7 @@ Suggests:
     tidyverse,
     viridis
 VignetteBuilder: knitr
-LinkingTo: 
+LinkingTo:
     RcppEigen,
     TMB
 Remotes:
