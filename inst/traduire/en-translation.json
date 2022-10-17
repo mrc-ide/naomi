@@ -113,8 +113,8 @@
     "ART_SURVEY_PREFIX": "National household survey data on ART coverage from",
     "INFECTIONS_SURVEY_PREFIX": "National household survey data on new HIV infections from",
     "ARTNUM_CALIBRATION_LEVEL_LABEL": "ART number calibration level: ",
-    "ARTNUM_CALIBRATION_STRATA_LABEL":"ART number calibration strata: ",
-    "STATUS_CALIBRATION_LEVEL_LABEL":"Status known calibration level: ",
+    "ARTNUM_CALIBRATION_STRATA_LABEL": "ART number calibration strata: ",
+    "STATUS_CALIBRATION_LEVEL_LABEL": "Status known calibration level: ",
     "STATUS_CALIBRATION_STRATA_LABEL": "Status known calibration strata: ",
     "INFECTIONS_CALIBRATION_LEVEL_LABEL": "New infections calibration level: ",
     "INFECTIONS_CALIBRATION_STRATA_LABEL": "New infections calibration strata: ",
@@ -241,7 +241,7 @@
     "NAVIGATOR_CAL_ART_DESC": "Calibration - Spectrum ART national (subnational if Spectrum subnational)",
     "NAVIGATOR_CAL_KOS_DESC": "Calibration - Spectrum KOS national (subnational if Spectrum subnational)",
     "NAVIGATOR_CAL_NEW_INFECTIONS_DESC": "Calibration - Spectrum new infections national (subnational if Spectrum subnational)",
-    "NAVIGATOR_CAL_METHOD_DESC":  "Calibration - method is logistic",
+    "NAVIGATOR_CAL_METHOD_DESC": "Calibration - method is logistic",
     "POPULATION_RATIO": "Population ratio",
     "PLHIV_RATIO": "PLHIV ratio",
     "NEW_INFECTIONS_RATIO": "New infections ratio",
@@ -262,5 +262,7 @@
     "PLHIV_ATTEND": "PLHIV (ART catchment)",
     "INDICATOR_LABEL_PLHIV_ATTEND": "Number of PLHIV in area ART catchment",
     "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
-    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment"
+    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment",
+    "BIRTHS_CLIENTS_RATIO": "Births-clients ratio",
+    "BIRTHS_CLIENTS_RATIO_DESC": "Ratio of births at facility to ANC clients"
 }

@@ -1,3 +1,7 @@
+# naomi 2.7.12
+
+* Add input time series indicator showing ratio of ANC births to ANC clients
+
 # naomi 2.7.11
 
 * Remove `get_calibration_option_labels()`, `get_model_calibration_options()` and `get_model_options_template()`. Model options specification has been refactored into naomi.options package.
@@ -28,48 +32,48 @@
 # naomi 2.7.5
 
 * Adjust incidence projection for changing incidence trend between T1 and T2.
-  
+
   Previously, new infections by age were calculated as:
     `(1 - exp(-lambda_t1 * duration)) * hiv_negative_t1`.
   This implicitly assumed that incidence rate and HIV negative population size
-  were constant over the period from T1 to T2. This was reasonably okay for 
+  were constant over the period from T1 to T2. This was reasonably okay for
   short periods, but less acceptable when time from T1 to T2 becomes many years.
   In settings with declining infections, this approach will tend to over-estimate
   the number of PLHIV at T2.
-  
-  New approach calculates infections in one year by age and sex based on `lambda_t1` 
-  and then extrapolates to the number of infections between T1 and T2 based on 
-  the ratio of the number of infections occurring in Spectrum between T1 and T2 
+
+  New approach calculates infections in one year by age and sex based on `lambda_t1`
+  and then extrapolates to the number of infections between T1 and T2 based on
+  the ratio of the number of infections occurring in Spectrum between T1 and T2
   to the number of infections in the year preceding T1 (Spectrum definition for
-  infections). This calculation also accounts for the number progressing from the 
+  infections). This calculation also accounts for the number progressing from the
   age group at infection to the age group at T2 based on Spectrum infections by
   cohort (same as previous implementation).
-  
-  The model accounts for impact of different ART coverage levels at T1 on 
-  district-level transmission rate and incidence, but does not account for 
+
+  The model accounts for impact of different ART coverage levels at T1 on
+  district-level transmission rate and incidence, but does not account for
   differential change in ART coverage between T1 and T2. That is, a larger scale-up
-  in ART in district A than district B between T1 and T2 would not result in a 
+  in ART in district A than district B between T1 and T2 would not result in a
   larger relative decline in incidence in A than B during this period.
-  
+
   The model does not explicitly account for mortality among infections between
   T1 and T2, but this is implicitly handled how new infections are subtracted
   away from the cohort survival probabilities for PLHIV at baseline.
-  
-  Better handling of incidence changes over time and mortality probably 
+
+  Better handling of incidence changes over time and mortality probably
   need a more complete simulation model rather than the single time jump
   approximation.
 
-* Related to the previous change: 
-  - The age-specific incidence rate for distributing   - The age-specific incidence 
-    rate for distributingnew infections by age (`spec_incid_t1`, etc. in the result 
-    of `naomi_model_frame()`) uses *current year* HIV negative population as 
-    denominator instead of *previous year* HIV negative population as denominator 
-    (used by Spectrum). This is for consistency with current time population 
+* Related to the previous change:
+  - The age-specific incidence rate for distributing   - The age-specific incidence
+    rate for distributingnew infections by age (`spec_incid_t1`, etc. in the result
+    of `naomi_model_frame()`) uses *current year* HIV negative population as
+    denominator instead of *previous year* HIV negative population as denominator
+    (used by Spectrum). This is for consistency with current time population
     denominator used in internal incidence simulation.
   - Infections are gradauted to quarters over _periods_ rather than by _cohort_
-    such that all infections remain within the same age as they are reported 
+    such that all infections remain within the same age as they are reported
     in single-age Spectrum outputs. Graduation is done via monotonic (Hyman)
-    smoothing on cumulative infections.	
+    smoothing on cumulative infections.
 
 * Handle adjacency matrix construction for case with single area.
 
@@ -96,7 +100,7 @@
 Updates for 2023 UNAIDS estimates (Dec 2022 - Mar 2023).
 
 * Add fields to ANC routine testing data specification and example data sets:
-  * `anc_known_neg`: Number of women who were not tested for HIV at antenatal visit because they had a recent documented HIV negative test. 
+  * `anc_known_neg`: Number of women who were not tested for HIV at antenatal visit because they had a recent documented HIV negative test.
      - This is only recorded by some countries HMIS. The column may be missing or blank if this is not captured within national ANC testing guidelines and reporting.
      - If the column is missing or `NA` in data input, it will be replaced by values `0` in reading input.
      - Value `anc_known_neg` is added to denominator for calcuating `anc_prevalence`.
@@ -159,14 +163,14 @@ Updates for 2023 UNAIDS estimates (Dec 2022 - Mar 2023).
 
 # naomi 2.6.14
 
-* Add option for district-sex-time interaction for ART coverage. This is implemented by argument `naomi_model_frame(..., alpha_xst_term = TRUE, ...)`. 
-  The default is currently `alpha_xst_term = FALSE` for backwards compatibility. If set to `TRUE`, the model also checks that sex-stratified ART data 
+* Add option for district-sex-time interaction for ART coverage. This is implemented by argument `naomi_model_frame(..., alpha_xst_term = TRUE, ...)`.
+  The default is currently `alpha_xst_term = FALSE` for backwards compatibility. If set to `TRUE`, the model also checks that sex-stratified ART data
   are included at both T1 and T2.
 
 * Add term to PLHIV projection from T1 to T2 and T2 to T3 to account for district-level net migration. The term is the ratio of the change in the cohort population at district level divided by the national level cohort change. The national level cohort change from Spectrum accounts for mortality and international net migration.
 
-  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`. 
-  
+  Applying the ratio is controlled by the argument `adjust_area_growth = TRUE` to `naomi_model_frame()`.
+
   __This is currently set as `FALSE` by default.__ Pending further testing in problematic cases.
 
   Limitations of this approach: (1) It does not explicitly account for migration of PLHIV between districts. Therefore, it may 'create' or 'dissolve' infections if net population growth is greater in high prevalence districts (and vice versa). This is consistent with Spectrum and EPP handling of migration, but implications could be larger for smaller subnational areas. (2) In some cases, these net migration ratios mask unrealistic demographic assumptions in subnational population data (rather than true net migration patterns).
@@ -183,7 +187,7 @@ _Internal changes_
 
 * Set default to model paediatric prevalence relative to adult female age 15-49 prevalence instead of using offsets relative to age 15-19 prevalence. This will (1) ensure same prevalence for male and female children, and (2) reduce distortions to age 15-19 prevalence arising from paediatric ART data.
 
-* Expose advanced option to allow paediatric to adult prevalence ratio to vary by district (option `rho_paed_x_term`). 
+* Expose advanced option to allow paediatric to adult prevalence ratio to vary by district (option `rho_paed_x_term`).
 
 * Throw validation error if time-varying ART attendance is selected, but ART data are not included at both Time 1 and Time 2.
 
@@ -249,10 +253,10 @@ _Internal changes_
 * Paediatric new infections (MTCT) are distributed to districts based on the ratio of paediatric incidence rate to adult 15-49 female HIV prevalence. This implicitly assumes the same mother-to-child transmission rate for all districts; results should be interpreted accordingly.
 
 * Spectrum inputs for number on ART at end of year (Dec 31) for age 0-14, male 15+, and female 15+ are read from the PJNZ and used for model calibration. As a result, if calibration to Spectrum outputs is applied, Q4 outputs for `art_current` will match exactly to Spectrum. ART coverage will not be exactly the same because Spectrum uses mid-year PLHIV for the denominator and Naomi uses end-year PLHIV for the denominator.
- 
+
 _Internal changes_
 
-* Added R version of the Naomi model in function [`naomi_objective_function_r()`] for stepping through model line by line. 
+* Added R version of the Naomi model in function [`naomi_objective_function_r()`] for stepping through model line by line.
   - `REPORT()` values match C++ code exactly.
   - AR1 likelihood is not yet implemented so objective function value does not match the C++ version exactly.
 
@@ -319,8 +323,8 @@ _Internal changes_
 # naomi 2.5.7
 
 * Throw an error from `calibrate_outputs()` if user tries to calibrate an ouptut package that has
-  already been calibrated. This is determined by whether the `output$spectrum_calibration` table 
-  exists in the output object. _In future, it would be nicer to allow user to re-calibrate an output 
+  already been calibrated. This is determined by whether the `output$spectrum_calibration` table
+  exists in the output object. _In future, it would be nicer to allow user to re-calibrate an output
   package. This will require saving additional information to un-calibrate and re-calibrate._
 
 * Save calibrated count outputs at Spectrum region level in the `spectrum_calibration.csv` outputs.
@@ -341,7 +345,7 @@ Updates to PEPFAR Data Pack outputs.
   - Add `=""<>""` around age group values.
 * Change file name save to `pepfar_datapack_indicators_2022.csv`.
 * Separate input data aggregation and plot preparation scripts
-* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input 
+* Remove `time_step` and add `year`, `quarter` and `calendar_quarter` in input
 time series function outputs
 
 # naomi 2.5.3
@@ -364,7 +368,7 @@ time series function outputs
 # naomi 2.4.2
 
 * Add Portuguese translations
-* Move summary plot functions into naomi package 
+* Move summary plot functions into naomi package
 
 # naomi 2.4.1
 
@@ -413,16 +417,16 @@ time series function outputs
 
 # naomi 2.3.7
 
-* When selecting ART data in `artnum_mf()`, if exact ART quarter is found in the 
-  data, filter those data instead of interpolating. This is more efficient and 
+* When selecting ART data in `artnum_mf()`, if exact ART quarter is found in the
+  data, filter those data instead of interpolating. This is more efficient and
   avoids interpolation error if only a single quarter of data are uploaded.
 
 # naomi 2.3.6
 
-* If ART data are not available at both times, do not estimate overall or district-level 
-  change in ART coverage. Previously this was only restricted if there were no ART at 
+* If ART data are not available at both times, do not estimate overall or district-level
+  change in ART coverage. Previously this was only restricted if there were no ART at
   Time 2; not the case where ART at time 2 but not at time 1.
-* It no sex-stratified ART data from any source, do not estimate difference between adult 
+* It no sex-stratified ART data from any source, do not estimate difference between adult
   female and male ART coverage.
 
 # naomi 2.3.5
@@ -451,11 +455,11 @@ time series function outputs
 # naomi 2.3.0
 
 * Implement 'logistic' scaling option for [`calibrate_outputs()`] such that estimates are
-  adjusted on logistic scale by fine district/sex/age group to ensure proportions do 
+  adjusted on logistic scale by fine district/sex/age group to ensure proportions do
   not go above 100%.
   - Note: implementation does not yet handle uncertainty ranges. Those might still go above
     100%.
-* Fix to model calibration for number aware of status to align with proportion aware 
+* Fix to model calibration for number aware of status to align with proportion aware
   of status and number unaware of status.
 
 
@@ -474,7 +478,7 @@ time series function outputs
 
 # naomi 2.2.2
 
-* Fix summary report map colour scales 
+* Fix summary report map colour scales
 
 # naomi 2.2.1
 
@@ -482,34 +486,34 @@ time series function outputs
 
 # naomi 2.2.0
 
-* Implement survey data likelihood as flexible aggregation over areas / sex / age groups, 
+* Implement survey data likelihood as flexible aggregation over areas / sex / age groups,
   similar to likelihood for number on ART and ANC testing.
-  
-* Adjust flexibility of random effects specification based on granularity of available 
+
+* Adjust flexibility of random effects specification based on granularity of available
   survey data when using aggregate survey data.
-  - If only age 15-49 data are available, do not estimate age effects; use Spectrum 
+  - If only age 15-49 data are available, do not estimate age effects; use Spectrum
     odds ratio as offset pattern for all ages.
   - If only both sexes data are available, do not estimate district x sex interaction.
-  
+
 * Add _advanced_ model option `use_survey_aggregate` to select use of aggregate uploaded
   survey dataset.
 
 * Reparameterise random effects to be scaled to the linear predictor, as implemented
-  by INLA parameterisation. That is now: mu = beta0 + u_i; u_i ~ N(0, sigma) instead of 
-  the previous parameterisation: mu = beta0 + u_i * sigma; u_i ~ N(0, 1). 
-  
-  This does not change the model at all, reduces the fitting time noticeably 
-  because the starting values for the linear predictor for the 'inner optimisation' 
-  step do not change resulting from steps in the hyperparameters. 
-  
-  Implementation for the BYM2 model follows the sparsity preserving conditional 
+  by INLA parameterisation. That is now: mu = beta0 + u_i; u_i ~ N(0, sigma) instead of
+  the previous parameterisation: mu = beta0 + u_i * sigma; u_i ~ N(0, 1).
+
+  This does not change the model at all, reduces the fitting time noticeably
+  because the starting values for the linear predictor for the 'inner optimisation'
+  step do not change resulting from steps in the hyperparameters.
+
+  Implementation for the BYM2 model follows the sparsity preserving conditional
   parameterisation described by Riebler _et al._ in Section 3.4.
 
 * Update PEPFAR Data Pack export:
   * Only return future projection outputs except for `art_current` for current estimates.
   * Manually code `art_current` at current estimates as indicator_code `TX_CURR_SUBNAT.R`.
   * Return number aware of status instead of proportion aware of status (DIAGNOSED_SUBNAT.T_1).
-  
+
 * Update CIV Datim UID mapping for new 113 health districts.
 
 # naomi 2.1.14
@@ -522,12 +526,12 @@ time series function outputs
 
 # naomi 2.1.12
 
-* Update dependency first90 v1.4.2 which ensures backwards compatibility for 
+* Update dependency first90 v1.4.2 which ensures backwards compatibility for
   previous .shiny90 files.
-  
+
 # naomi 2.1.11
 
-* Catch error if output package construction returns NA error when calculating 
+* Catch error if output package construction returns NA error when calculating
   quantiles and return the REPORTed indicator that threw error (#180).
 * Replace unaware_untreated_prop = 1.0 if ART coverage is 100% in a particular
   Spectrum age group (support ticket 11).
@@ -555,9 +559,9 @@ time series function outputs
 # naomi 2.1.6
 
 * Summary report logic error corrected
-* Patch front end issue if anc_clients_year2 is selected and unselected, 
+* Patch front end issue if anc_clients_year2 is selected and unselected,
   resulting in `anc_clients_year2` passed to model.
-* Patch issue arising if no ART data is uploaded and R gets confused 
+* Patch issue arising if no ART data is uploaded and R gets confused
   about an option not supplied due to autocompletion of list$name.
 
 # naomi 2.1.5
@@ -573,11 +577,11 @@ time series function outputs
 
 ### Awareness of HIV status
 
-* If a .shiny90 file is included, the _first90_ package is used to calculate the 
+* If a .shiny90 file is included, the _first90_ package is used to calculate the
   proportion of untreated PLHIV who are aware of their HIV status by sex and age
   group.
-* To estimate the proportion aware of status at the district, this proportion 
-  is applied to the estimated untreated population in each district. This is 
+* To estimate the proportion aware of status at the district, this proportion
+  is applied to the estimated untreated population in each district. This is
   added to the ART coverage to estimate the total proportion aware of status at
   district level by age and sex.
 
@@ -585,9 +589,9 @@ time series function outputs
   * `untreated_plhiv_num`: Number of untreated PLHIV (the 'treatment gap').
   * `aware_plhiv_prop`: Proportion of PLHIV aware of HIV positive status ('first 90' indicator).
   * `unaware_plhiv_num`: Number of PLHIV who are not aware of their HIV positive status.
-  
-* Add model option `output_aware_plhiv` in 'Advanced options'. If no `.shiny90` file is present 
-  in the PJNZ, this must be set to `FALSE`. An error is raised by `validate_model_options()` 
+
+* Add model option `output_aware_plhiv` in 'Advanced options'. If no `.shiny90` file is present
+  in the PJNZ, this must be set to `FALSE`. An error is raised by `validate_model_options()`
   prompting this if no `.shiny90` file is found inside the PJNZ.
 
 
@@ -600,7 +604,7 @@ time series function outputs
 
 * Update demo datasets to distinguish clearly from Malawi. Rename files as `demo_` and
   affix `_demo` to the end of the area IDs.
-* Add argument `quantile(..., names = FALSE)` in the funciton `add_stats()` for computation 
+* Add argument `quantile(..., names = FALSE)` in the funciton `add_stats()` for computation
   of posterior quantiles. This gives a decent speedup in producing the outptus package.
 
 
@@ -614,7 +618,7 @@ time series function outputs
 * Add option for outputting awareness of HIV status in 'Advanced options'.
 * Change "Population calibration options" to "Population calibration" for consistent with other block labels.
 
-# naomi 2.1.0 
+# naomi 2.1.0
 
 This release revises the modelling of ANC prevalence and ART coverage and produces
 outputs for district-level ANC testing cascade.
@@ -633,45 +637,45 @@ outputs for district-level ANC testing cascade.
   * `anc_known_pos`: Number of HIV positive ANC attendees aware of HIV status prior to first ANC.
   * `anc_tested_pos`: Number of HIV positive ANC attendees tested HIV positive during ANC.
   * `anc_known_pos`: Number of HIV negative ANC attendees.
-  
+
   Currently these indicators are calculated assuming that the number of 'known positive' ANC
   attendees are the same as the number already on ART.
-  
-* Added a likelihood for the number of ANC clients observed in current year as a 
+
+* Added a likelihood for the number of ANC clients observed in current year as a
   function of district population size, age-specific ferility rate (fixed inputs),
   and a district-level random effect to scale overall fertility rate.
   * The number of months reflected in ANC client reporting is used as an offset
     for the number of clients such that predicted number of clients are projected
     annual total.
-  * Results explicitly represent __number of ANC clients__, calibrated based on the number 
+  * Results explicitly represent __number of ANC clients__, calibrated based on the number
     in the current year data. No distinction between number of births versus ANC clients
     are made. Results should not be used for estimating PMTCT coverage (for example).
   * Currently only a single time point is used for ANC clients estimates and projections.
-    The future projection is closely linked to the accuracy of current year data; 
+    The future projection is closely linked to the accuracy of current year data;
     uncertainty around the estimate and projection are not appropriately quantified.
 
-* Age-specific fertility rate ratios (FRR) for HIV positive relative to HIV 
-  negative pregnant women and women already on ART relative to untreated HIV 
-  positive women are calculated from Spectrum model outputs (using EPP-ASM 
+* Age-specific fertility rate ratios (FRR) for HIV positive relative to HIV
+  negative pregnant women and women already on ART relative to untreated HIV
+  positive women are calculated from Spectrum model outputs (using EPP-ASM
   simulation) and included in regression equations for ANC prevalence and ANC
   ART coverage, respectively.
-  
+
 * Aggregation of ANC testing data observations generalized using same approach as aggregation
   of number currently on ART observations. This means that:
   - ANC testing observations can be input for coarser areas, for example admin 1.
   - Age-stratified ANC testing data can be input, for example 5-year age groups.
 
-  Age-stratified ANC testing do not yet inform national or district level estimates for 
+  Age-stratified ANC testing do not yet inform national or district level estimates for
   age-specific fertility or HIV/ART fertility rate ratios.
-    
+
 Additional changes:
 
 * Use Kish effective sample size in likelihood for household survey data.
 
 * Update summary report with additional styling, number formatting, and methods overview.
 
-* Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and 
-  read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was 
+* Streamline function `extract_pjnz_naomi()` to reduce the number of calls to unzip and
+  read .DP file by getting all outputs from [`eppasm::read_hivproj_output()`] which was
   utilised; remove dependency on `specio`.
 
 # naomi 2.0.7
@@ -688,7 +692,7 @@ Additional changes:
   * Add drop down to select 'number of months' included in ANC testing data reporting.
   * Add select option to use Kish design effect in survey data likelihood.
   * Select most recent `survey_mid_calendar_quarter` as survey run option.
-  
+
 # naomi 2.0.5
 
 * Report iteration number and elapsed time from model fit
@@ -721,29 +725,29 @@ Version 2.0 established for 2021 UNAIDS estimates. Changes are not guaranteed to
   - ANC testing dataset: `ancrt_*` changed to `anc_*`.
   - ART programme data: `current_art` changed to `art_current` and `art_new` column added.
   - Survey HIV indicators: make several column names more human readable.
-* Add Kish effective sample size approximation (`sum(weights) ^ 2 / sum(weights ^ 2)`) 
+* Add Kish effective sample size approximation (`sum(weights) ^ 2 / sum(weights ^ 2)`)
   to survey indicators dataset in field `n_eff_kish`.
 * Harmonise indicator names in survey dataset with outputs (`prevalence`, `art_coverage`).
 * Rename calculated ANC input indicators to `anc_prevalence` and `anc_art_coverage`.
 * Harmonise ART number output indicators with ART input data indicators:
   - `art_num_attend` becomes `art_current`.
   - `art_num_residents` becomes `art_current_residents`.
-  
+
 Internal changes:
 
 * Move several metadata tables to CSV tables saved in `inst/metadata/` rather than
   scripted functions.
   - `meta_age_group.csv` accessed by `get_age_groups()`.
   - `meta_indicator.csv` accessed by `get_meta_indicator()`.
-  - Data Pack ID mapping tables: `datapack_indicator_mapping.csv`, 
+  - Data Pack ID mapping tables: `datapack_indicator_mapping.csv`,
     `datapack_agegroup_mapping.csv`, `datapack_sex_mapping.csv`.
 
 
 # naomi 1.0.11
 
-* Add a basic vignette showing example script for running `hintr_run_model()` 
+* Add a basic vignette showing example script for running `hintr_run_model()`
   for reproducing web app workflow.
-  
+
 # naomi 1.0.10
 
 * Edit `summary_report.Rmd` to remove `age_group_id`.
@@ -782,7 +786,7 @@ Internal changes:
 
 # naomi 1.0.0
 
-* Move tmbstan and INLA models to naomi.extensions repo as they add heavyweight 
+* Move tmbstan and INLA models to naomi.extensions repo as they add heavyweight
   dependencies which are not required for the main model to run
 
 # naomi 0.0.72
@@ -790,7 +794,7 @@ Internal changes:
 * Added function `create_adj_matrix()` to create an adjacency matrix from a shape file.
 * Added function `scale_gmrf_precision()` to scale precision matrix such that geometric
   mean of marginal variance is one. This mirrors the behaviour of `INLA::inla.scale.model()`.
-* Remove dependency on INLA package. Now prompted to install if `fit_inla()` is 
+* Remove dependency on INLA package. Now prompted to install if `fit_inla()` is
   called and the package is not found.
 
 # naomi 0.0.71
@@ -799,11 +803,11 @@ Internal changes:
 
 # naomi 0.0.70
 
-* Use summary output download function to download a Naomi output package with 
-  coarse age groups only: 15-49, 15-64, 15+, 50+, 00+, 00-64, 00-14, 15-24, 
+* Use summary output download function to download a Naomi output package with
+  coarse age groups only: 15-49, 15-64, 15+, 50+, 00+, 00-64, 00-14, 15-24,
   25-34, 35-49, 50-64, 65+.
 
-# naomi 0.0.69 
+# naomi 0.0.69
 
 * Add functions `subset_output_package()` to subset and re-save a zipped Naomi output package.
 
@@ -835,7 +839,7 @@ Internal changes:
 * Update default Spectrum calibration option to "national".
 * Update default time-varying ART attendance "yes".
 
-# naomi 0.0.63 
+# naomi 0.0.63
 
 * Change age_group_label for ages 0-4 and 5-9 to 00-04 and 05-09 for Data Pack.
 
@@ -912,16 +916,16 @@ Formatting updates requested for Data Pack 2019:
 # naomi 0.0.46
 
 * Add TMB-Stan model fitting, with and without Laplace approximation.
-* Add INLA model fitting. 
+* Add INLA model fitting.
 
 This is for development and comparison purposes, not for production use.
 
 # naomi 0.0.45
 
 * Remove age_group_id, indicator_id, and quarter_id from model frames; use human readable age_group, indicator, and calendar_quarter everywhere.
-* Output number of ART attendees between every district pair. Currently output at 
+* Output number of ART attendees between every district pair. Currently output at
   estimation level only.
-* spread_areas() allows an sf object as argument and returns boundaries for wide 
+* spread_areas() allows an sf object as argument and returns boundaries for wide
   format areas if provided.
 * No sex differences in prevalence, ART coverage, or incidence for age below 15 years.
 * Cap Spectrum ART coverage between 0.001 and 0.999 to avoid logit transformation NaN errors.

@@ -222,7 +222,7 @@
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "A prevalência do VIH é superior a 50% para: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "A cobertura TARV é superior a 100% para: {{rows}}",
     "WARNING_CONVERGENCE": "Erro de convergência: {{msg}}",
-        "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi número de clientes de ANC 2015 a apresentar é Spectrum cascata de testes de ANC",
+    "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi número de clientes de ANC 2015 a apresentar é Spectrum cascata de testes de ANC",
     "NAVIGATOR_PACKAGE_CREATED_DESC": "Pacote Naomi criado",
     "NAVIGATOR_PACKAGE_HAS_ALL_DATA_DESC": "O pacote Naomi tem todos os dados do upload ou ADR",
     "NAVIGATOR_OPT_RECENT_QTR_DESC": "Opções de modelo - Trimestre de calendário mais recente seleccionado",
@@ -261,5 +261,7 @@
     "PLHIV_ATTEND": "PLHIV (ART catchment)",
     "INDICATOR_LABEL_PLHIV_ATTEND": "Number of PLHIV in area ART catchment",
     "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
-    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment"
+    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment",
+    "BIRTHS_CLIENTS_RATIO": "Relação nascimentos-clientes",
+    "BIRTHS_CLIENTS_RATIO_DESC": "Rácio de nascimentos nas instalações para clientes CPN"
 }

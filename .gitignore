@@ -17,4 +17,5 @@ vignettes_src/cache
 vignettes_src/model-workflow_cache
 vignettes_src/model-workflow.Rmd
 .~lock*
-tests/testthat/testdata/fit.RDS
+tests/testthat/testdata/fit.RDS#
+.vscode
