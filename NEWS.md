@@ -1,6 +1,10 @@
-# naomi 2.7.12
+# naomi 2.7.13
 
 * Add input time series indicator showing ratio of ANC births to ANC clients
+
+# naomi 2.7.12
+
+* Fix name and tooltip of `art_adult_child_ratio` indicator. This is ratio of adults to children not paediatric sex ratio.
 
 # naomi 2.7.11
 
