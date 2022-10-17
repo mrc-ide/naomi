@@ -1,3 +1,7 @@
+# naomi 2.7.12
+
+* Fix name and tooltip of `art_adult_child_ratio` indicator. This is ratio of adults to children not paediatric sex ratio.
+
 # naomi 2.7.11
 
 * Remove `get_calibration_option_labels()`, `get_model_calibration_options()` and `get_model_options_template()`. Model options specification has been refactored into naomi.options package.
