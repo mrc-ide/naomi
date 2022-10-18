@@ -354,3 +354,15 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
                     "area_hierarchy", "art_current", "art_new",
                     "vl_tested_12mos", "vl_suppressed_12mos"))
 })
+
+test_that("there is metadata for every indicator", {
+  anc <- prepare_input_time_series_anc(a_hintr_data$anc_testing,
+                                       a_hintr_data$shape)
+  art <- prepare_input_time_series_art(a_hintr_data$art_number,
+                                       a_hintr_data$shape)
+  plot_types <- unique(c(anc$plot, art$plot))
+  metadata <- naomi_read_csv(
+    system_file("metadata", "time_series_plot_metadata.csv"),
+    col_types = readr::cols(.default = "c"))
+  expect_setequal(plot_types, metadata$id)
+})
