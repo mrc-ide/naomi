@@ -84,12 +84,17 @@ test_that("ANC data can be aggregated", {
                         a_hintr_data$shape)
 
   expect_true(nrow(data) > 50) ## Check that we have read out some data
-  expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level","area_level_label",
-                    "parent_area_id", "area_sort_order", "sex", "age_group",
-                    "time_period", "year", "quarter", "calendar_quarter",
-                    "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
-                    "anc_tested_pos","anc_known_neg","births_facility", "area_hierarchy"))
+  expect_setequal(
+    colnames(data),
+    c(
+      "area_id", "area_name", "area_level", "area_level_label",
+      "parent_area_id", "area_sort_order", "sex", "age_group",
+      "time_period", "year", "quarter", "calendar_quarter",
+      "anc_clients", "anc_known_pos", "anc_already_art", "anc_tested",
+      "anc_tested_pos", "anc_known_neg", "births_facility",
+      "area_hierarchy"
+    )
+  )
 
 
   # Time period has correct format
@@ -128,7 +133,7 @@ test_that("ANC data can be aggregated", {
   ## each area_id
 
   dup_strata <- data %>%
-    dplyr::group_by(area_id,sex,age_group, time_period, calendar_quarter) %>%
+    dplyr::group_by(area_id, sex, age_group, time_period, calendar_quarter) %>%
     dplyr::filter(dplyr::n() > 1)
 
   expect_true(nrow(dup_strata) == 0)
@@ -141,12 +146,14 @@ test_that("data can be formatted for ANC input time series", {
   expect_true(nrow(data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(data),
                   c("area_id", "area_name", "area_level", "area_level_label",
-                    "parent_area_id", "area_sort_order", "age_group", "time_period",
-                    "year","quarter", "calendar_quarter","plot", "value", "area_hierarchy"))
+                    "parent_area_id", "area_sort_order", "age_group",
+                    "time_period", "year", "quarter", "calendar_quarter",
+                    "plot", "value", "area_hierarchy"))
 
   expect_setequal(unique(data$plot),
-                  c("anc_clients" , "anc_tested", "anc_tested_pos","anc_prevalence",
-                    "anc_known_pos","anc_known_neg","anc_art_coverage","births_facility"))
+                  c("anc_clients", "anc_tested", "anc_tested_pos",
+                    "anc_prevalence", "anc_known_pos", "anc_known_neg",
+                    "anc_art_coverage", "births_clients_ratio", "births_facility"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
@@ -308,11 +315,12 @@ test_that("ANC data without births_facility can be aggregated", {
 
   expect_true(nrow(data) > 50) ## Check that we have read out some data
   expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level","area_level_label",
+                  c("area_id", "area_name", "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
-                    "anc_tested_pos","anc_known_neg","births_facility", "area_hierarchy"))
+                    "anc_clients", "anc_known_pos", "anc_already_art",
+                    "anc_tested", "anc_tested_pos", "anc_known_neg",
+                    "births_facility", "area_hierarchy"))
 
   expect_equal(data$births_facility, rep(0, nrow(data)))
 })
@@ -323,14 +331,15 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
   anc$area_level <- 4
 
   data <- aggregate_anc(anc, a_hintr_data$shape)
-  
+
   expect_true(nrow(data) > 50) ## Check that we have read out some data
   expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level","area_level_label",
+                  c("area_id", "area_name", "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "anc_clients", "anc_known_pos" , "anc_already_art", "anc_tested",
-                    "anc_tested_pos","anc_known_neg","births_facility", "area_hierarchy"))
+                    "anc_clients", "anc_known_pos", "anc_already_art",
+                    "anc_tested", "anc_tested_pos", "anc_known_neg",
+                    "births_facility", "area_hierarchy"))
 
   art <- readr::read_csv(a_hintr_data$art_number)
   art$area_level <- 4
@@ -338,8 +347,9 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
 
   expect_true(nrow(data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(data),
-                  c("area_id", "area_name",  "area_level","area_level_label",
+                  c("area_id", "area_name",  "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
-                    "time_period", "year", "quarter", "calendar_quarter", "area_hierarchy",
-                    "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
+                    "time_period", "year", "quarter", "calendar_quarter",
+                    "area_hierarchy", "art_current", "art_new",
+                    "vl_tested_12mos", "vl_suppressed_12mos"))
 })

@@ -261,5 +261,7 @@
     "PLHIV_ATTEND": "PLHIV (ART catchment)",
     "INDICATOR_LABEL_PLHIV_ATTEND": "Number of PLHIV in area ART catchment",
     "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
-    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment"
+    "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment",
+    "BIRTHS_CLIENTS_RATIO": "Relação nascimentos-clientes",
+    "BIRTHS_CLIENTS_RATIO_DESC": "Rácio de nascimentos nas instalações para clientes CPN"
 }
