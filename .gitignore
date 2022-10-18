@@ -19,3 +19,4 @@ vignettes_src/model-workflow.Rmd
 .~lock*
 tests/testthat/testdata/fit.RDS#
 .vscode
+.Rprofile

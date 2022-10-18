@@ -312,7 +312,6 @@ aggregate_anc <- function(anc, shape) {
                   area_sort_order, sex, age_group, time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
                   anc_tested, anc_tested_pos, anc_known_neg, births_facility) %>%
-    dplyr::mutate(births_clients_ratio = births_facility / anc_clients) %>%
     dplyr::ungroup()
 
   anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
@@ -356,14 +355,16 @@ prepare_input_time_series_anc <- function(anc, shape) {
       anc_status = anc_known_pos + anc_tested + anc_known_neg,
       anc_prevalence = anc_total_pos / anc_status,
       anc_art_among_known = anc_already_art / anc_known_pos,
-      anc_art_coverage = anc_already_art / anc_total_pos
+      anc_art_coverage = anc_already_art / anc_total_pos,
+      births_clients_ratio = births_facility / anc_clients
     ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id,
                   area_sort_order, age_group,  time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_tested, anc_tested_pos,
                   anc_prevalence, anc_known_pos, anc_known_neg,
-                  anc_art_coverage, births_facility, area_hierarchy) %>%
-    tidyr::pivot_longer(cols = c(dplyr::starts_with("anc"),"births_facility"),
+                  anc_art_coverage, births_facility, births_clients_ratio,
+                  area_hierarchy) %>%
+    tidyr::pivot_longer(cols = c(dplyr::starts_with("anc"), "births_facility", "births_clients_ratio"),
                         names_to = "plot",
                         values_to = "value") %>%
     dplyr::arrange(area_sort_order, calendar_quarter)
