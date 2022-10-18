@@ -303,4 +303,6 @@ test_that("time series metadata format column hasn't been messed by Excel", {
   expect_equal(meta[[1]]$format, "0%")
   meta <- get_plot_type_column_metadata("vl_coverage_child")
   expect_equal(meta[[1]]$format, "0%")
+  meta <- get_plot_type_column_metadata("births_clients_ratio")
+  expect_equal(meta[[1]]$format, "0%")
 })
