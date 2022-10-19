@@ -323,7 +323,6 @@ test_that("ANC data without births_facility can be aggregated", {
                     "births_facility", "area_hierarchy"))
 
   expect_equal(data$births_facility, rep(0, nrow(data)))
-  expect_equal(data$births_clients_ratio, rep(0, nrow(data)))
 })
 
 test_that("aggregate_anc() and aggregate_art() discard additional columns", {
