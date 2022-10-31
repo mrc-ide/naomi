@@ -305,13 +305,26 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   stopifnot(inherits(naomi_data, "naomi_data"))
   stopifnot(inherits(naomi_data, "naomi_mf"))
 
+  options <- naomi_data$model_options
+
+  calendar_quarter1 <- options$calendar_quarter_t1
+  calendar_quarter2 <- options$calendar_quarter_t2
+  year1 <- calendar_quarter_to_year(calendar_quarter1)
+  year2 <- calendar_quarter_to_year(calendar_quarter2)
+
   # Format survey data
   inputs <- naomi_data$full_data$survey_full_mf %>%
-    dplyr::mutate(median = NA_real_, mode = NA_real_,
-                  year = calendar_quarter_to_year(survey_mid_calendar_quarter)) %>%
+    dplyr::filter(survey_id %in% naomi_data$data_options$prev_survey_ids) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter = survey_mid_calendar_quarter,
-                  year, indicator, naomi_input, mean = estimate, se = std_error,
-                  lower = ci_lower, upper = ci_upper, median, mode, source = survey_id)
+                  indicator, naomi_input, mean = estimate, se = std_error,
+                  lower = ci_lower, upper = ci_upper, source = survey_id) %>%
+    # Calendar quarter == calendar quarter T1 to line up multiple surveys
+    dplyr::mutate(calendar_quarter = calendar_quarter1,
+                  median = NA_real_,  mode = NA_real_,
+                  year = calendar_quarter_to_year(calendar_quarter))
+
+
+
 
   # If ART data provided, format ART data and add to inputs
   if(!is.null(naomi_data$full_data$artnum_full_mf)){
@@ -343,12 +356,6 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   #  - Years contained in model outputs
   #  - Area levels contained in model outputs
   #  - Subset of indicators that can be compared to model outputs
-  options <- naomi_data$model_options
-
-  calendar_quarter1 <- options$calendar_quarter_t1
-  calendar_quarter2 <- options$calendar_quarter_t2
-  year1 <- calendar_quarter_to_year(calendar_quarter1)
-  year2 <- calendar_quarter_to_year(calendar_quarter2)
 
   if(is.null(year1)){year1 <- "NULL_t1"}
   if(is.null(year2)){year2 <- "NULL_t2"}
@@ -961,7 +968,6 @@ save_output <- function(filename, dir,
   if(length(fit) > 0L) {
     dir.create("fit")
     naomi_write_csv(fit$spectrum_calibration, "fit/spectrum_calibration.csv")
-
     yaml::write_yaml(fit$model_options, "fit/model_options.yml")
     yaml::write_yaml(fit$data_options, "fit/data_options.yml")
     yaml::write_yaml(fit$calibration_options, "fit/calibration_options.yml")
@@ -1017,7 +1023,7 @@ generate_output_summary_report <- function(report_path,
 }
 
 
-#' Generate and save summary report at specified path
+#' Generate and save comparison report at specified path
 #'
 #' @param report_path Path to save summary report at
 #' @param outputs Path to model outputs rds or zip file

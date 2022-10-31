@@ -1,0 +1,547 @@
+---
+params:
+  outputs: NA
+  lang: NA
+output:
+  html_document:
+    css: styles.css
+    includes:
+      in_header: header.html
+    anchor_sections: no
+---
+
+```{r setup, include = FALSE}
+print_fr <- FALSE
+print_en <- FALSE
+print_pt <- FALSE
+if (params$lang == "fr") {
+  print_fr <- TRUE
+  title <- "Naomi rapport de synthèse"
+} else if (params$lang == "pt") {
+  print_pt <- TRUE
+  title <- "Naomi relatório de síntese"
+} else {
+  print_en <- TRUE
+  title <- "Naomi comparison report"
+}
+```
+
+---
+title: `r title`
+---
+
+```{r read_outputs, echo=FALSE, message = FALSE, warning = FALSE}
+#Set limit for scientific notation
+options(scipen=10000000)
+
+outputs <- params$outputs
+
+# Read files if hintr rds provided
+if(grepl("\\.rds$", params$outputs)) {
+  
+  model_object <- readRDS(outputs)
+  outputs <- model_object$output_package
+  inputs <- readr::read_csv(model_object$info$inputs.csv, show_col_types = FALSE)
+  options <- yaml::read_yaml(text = model_object$info$options.yml)
+  packages <- readr::read_csv(model_object$info$packages.csv, show_col_types = FALSE)
+  version <- packages[packages$name == "naomi", ]$version
+  outputs$version <- version
+  
+  calibration_files <- names(model_object$info)
+  if("calibration_options.yml" %in% calibration_files) {
+    calibration_options <- yaml::read_yaml(text = model_object$info$calibration_options.yml)
+  } else {
+    # In the event there is no calibration options, add in defaults:
+    calibration_options <- tibble::tribble( ~option, ~value, 
+                                    "spectrum_population_calibration", "none",         
+                                    "spectrum_plhiv_calibration_level","subnational", 
+                                    "spectrum_plhiv_calibration_strat","sex_age_group",
+                                    "spectrum_artnum_calibration_level","national",     
+                                    "spectrum_artnum_calibration_strat","age_coarse",   
+                                    "spectrum_aware_calibration_level","national",     
+                                    "spectrum_aware_calibration_strat","age_coarse",   
+                                    "spectrum_infections_calibration_level","none",         
+                                    "spectrum_infections_calibration_strat","age_coarse",  
+                                    "calibrate_method","logistic")
+  }
+}
+
+# Read files if zipped output package provided
+if(grepl("\\.zip$", params$outputs)) {
+  output_zip <- params$outputs
+  outputs <- naomi::read_output_package(output_zip)
+  inputs <- unz(output_zip, "info/inputs.csv") 
+  inputs <- read.csv(inputs)
+  options <- unz(output_zip, "info/options.yml")
+  options <- yaml::read_yaml(options)
+  
+  packages <- unz(output_zip, "info/packages.csv")
+  packages <- readr::read_csv(packages, show_col_types = FALSE)
+  version <- packages[packages$name == "naomi", ]$version
+  outputs$version <- version
+  
+  
+
+  if("calibration_options" %in% names(outputs$fit)) {
+    calibration_options <- outputs$fit$calibration_options
+  } else {
+    calibration_options <- options[grep("calibration", names(options))]
+  }
+}
+
+# Grab inputs and model options from model output zip file
+# # concatenating strings where more than one option may be selected
+report_date <- format(Sys.Date(), "%d-%m-%Y")
+t1 <- options$calendar_quarter_t1
+t2 <- options$calendar_quarter_t2
+iso <- options$area_scope
+quarter_t1 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t1,]$quarter_label
+quarter_t2 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t2,]$quarter_label
+level <- as.integer(options$area_level)
+spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
+
+
+# Identify area_level_label for model estimates
+area_level_map <- outputs$meta_area %>%
+  sf::st_drop_geometry() %>%
+  dplyr::group_by(area_level, area_level_label) %>%
+  dplyr::summarise(.groups = "drop")
+
+area_level_label <- area_level_map$area_level_label[area_level_map$area_level == level]
+
+country <- paste0(outputs$meta_area$area_name[outputs$meta_area$area_id == iso],
+                  sep = "", collapse = "")
+
+# Determine if and when programme data has been included 
+include <- tibble::tibble(
+  art = list(options$include_art_t1, options$include_art_t2),
+  art_year = list(quarter_t1, quarter_t2),
+  art_attend = list(options$artattend, options$artattend_t2)
+) %>%
+  dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
+  dplyr::mutate_all(list(~dplyr::na_if(., "")))
+
+# Select years where programme data is included
+collapse_and <- " and "
+if (print_fr) { collapse_and <- " et "} else if (print_pt) { collapse_and <- " e "}
+
+# ART data included
+if("true" %in% include$art) {
+  df <- include %>% dplyr::filter(art == "true")
+  art_year <- paste0(df$art_year, sep = "", collapse = collapse_and)
+} else { art_year <- NA }
+
+# ART attendance reallocation is implemented
+if("true" %in% include$art_attend ) {
+  df <- include %>% dplyr::filter(art_attend == "true")
+  art_attend <- paste0(df$art_year, sep = "", collapse = collapse_and)
+} else { art_attend <- NA }
+
+# ANC ART programme data included
+anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2) 
+anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_art_options)) {
+  anc_art <- paste0(anc_art_options, sep = "", collapse = collapse_and)
+} else { anc_art <- NA }
+
+# ANC prev programme data
+anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+
+if(length(anc_prev_options)) {
+  anc_prev <- paste0(anc_prev_options, sep = "", collapse = collapse_and)
+} else { anc_prev <- NA }
+
+
+```
+
+
+```{r, echo = FALSE, results = 'asis'}
+
+if (print_en) {
+  cat(paste0("## ", country, " Subnational HIV Estimates \n"))
+  cat(paste0("Naomi estimates for **", quarter_t2, "** (report generated ", report_date, ")"))
+}
+
+if (print_fr) {
+  cat(paste0("## ", country, " Subnational HIV Estimates \n"))
+  cat(paste0("Naomi estimates for **", quarter_t2, "** (report generated ", report_date, ")"))
+}
+
+if (print_pt) {
+  cat(paste0("## ", country, " Subnational HIV Estimates \n"))
+  cat(paste0("Naomi estimates for **", quarter_t2, "** (report generated ", report_date, ")"))
+}
+
+```
+
+::: {#translate lang="en"}
+
+### Methods
+[Naomi](https://onlinelibrary.wiley.com/doi/10.1002/jia2.25788) is a small-area estimation model for estimating HIV prevalence and PLHIV, ART coverage, and new HIV infections at district level by sex and five-year age group. The model combines district-level data about multiple outcomes from several sources in a Bayesian statistical model to produce robust indicators of subnational HIV burden.
+
+
+:::
+
+
+
+```{r, echo = FALSE, results = 'asis'}
+
+if (print_en) {
+  cat("### Comparison of Naomi model estimates to data inputs  \n")
+  cat("\n### Household Survey \n")
+}
+
+if (print_fr) {
+  cat("### Comparison of Naomi model estimates to data inputs  \n")
+  cat("\n### Household Survey \n")
+}
+
+if (print_pt) {
+  cat("### Comparison of Noami model estimates to data inputs  \n")
+  cat("\n### Household Survey \n")
+}
+
+```
+
+::: {#translate lang="en"}
+
+Cross-sectional estimates for HIV prevalence, ART coverage, and HIV incidence are produced at the mid-point of the most recent nationally representative household survey. For HIV prevalence, the model is calibrated to survey data about HIV prevalence by subnational level, sex, and five-year age group from the most recent population-based survey (for example [Population HIV Impact Assessment survey](https://phia.icap.columbia.edu/) or [Demographic and Health Survey](https://dhsprogram.com/)). 
+
+:::
+
+```{r, echo = FALSE, results = 'asis'}
+
+if (print_en) {
+  cat("This report compares Naomi estimates for ", quarter_t2, "to the following population-baes survey(s): \n")
+  cat("\n### Household Survey \n")
+}
+
+if (print_fr) {
+  cat("This report compares Naomi estimates for ", quarter_t2, "to the following population-baes survey(s): \n")
+  cat("\n### Household Survey \n")
+}
+
+if (print_pt) {
+  cat("This report compares Naomi estimates for ", quarter_t2, "to the following population-baes survey(s): \n")
+  cat("\n### Household Survey \n")
+}
+```
+
+
+
+```{r, echo = FALSE, results = 'asis'}
+survey_prev <- paste0(options$survey_prevalence, collapse = ", ")
+survey_art <- paste0(options$survey_art_coverage, collapse = ", ")
+survey_recent <- paste0(options$survey_recently_infected, collapse = ", ")
+
+text <- tibble::tibble(prefix = c(t_("PREVALENCE_SURVEY_PREFIX"), 
+                                  t_("ART_SURVEY_PREFIX")), 
+                        source = c(survey_prev,
+                                   survey_art)) %>%
+  dplyr::filter(source != "")
+cat(paste0("* ", text$prefix, " _", text$source, "_"), sep = "\n")
+
+
+```
+
+::: {#translate lang="en"}
+We anticipate that the Naomi estimates will be closely aligned with the survey estimates at a national level. Some variation is expected between model estimates and survey estimates at lower Admin levels where survey estimates may be sparse for certain age and sex groups. 
+:::
+
+::: {#translate lang="fr"}
+We anticipate that the Naomi estimates will be closely aligned with the survey estimates at a national level. Some variation is expected between model estimates and survey estimates at lower Admin levels where survey estimates may be sparse for certain age and sex groups. 
+:::
+
+::: {#translate lang="pt"}
+We anticipate that the Naomi estimates will be closely aligned with the survey estimates at a national level. Some variation is expected between model estimates and survey estimates at lower Admin levels where survey estimates may be sparse for certain age and sex groups. 
+:::
+
+```{r, echo = FALSE, results = 'asis'}
+
+if (print_en) {cat("\n### Geographic distribution \n")}
+if (print_fr) {cat("\n### Geographic distribution \n")}
+if (print_pt) {cat("\n### Geographic distribution \n")}
+
+```
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, out.width  =  "90%", results = 'asis'}
+
+data <- outputs$inputs_outputs
+calendar_quarter1 <- options$calendar_quarter_t1
+calendar_quarter2 <- options$calendar_quarter_t2
+
+#  Barplot prevalence
+fig1 <- bar_plotly (data, 
+                    ind = "prevalence", 
+                    quarter = calendar_quarter1)
+
+#  Barplot ART coverage
+fig2 <- bar_plotly (data, 
+                    ind = "art_coverage", 
+                    quarter = calendar_quarter1) 
+
+htmltools::div(
+  style = "display: flex; flex-direction: column",
+  htmltools::div(fig1, style = "width: 80%;"),
+  htmltools::div(fig2, style = "width: 80%"), 
+)
+
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, out.width  =  "90%", results = 'asis'}
+
+
+survey_prev1 <- options$survey_prevalence[1]
+survey_prev2 <- options$survey_prevalence[2]
+
+#  Scatter plot survey prevalence
+fig1 <-  scatter_plotly(data, 
+                       ind = "prevalence", 
+                       quarter = calendar_quarter1, 
+                       input_data = survey_prev1, 
+                       input_data_type = "survey")
+
+
+#  Scatter plot survey ART coverage
+fig2 <-  scatter_plotly(data, 
+                       ind = "art_coverage", 
+                       quarter = calendar_quarter1, 
+                       input_data = survey_art, 
+                       input_data_type = "survey")
+
+
+
+if(is.null(survey_prev2)) {
+  
+  # A single prevalence survey
+  
+  htmltools::div(
+    style = "display: flex;",
+    htmltools::div(fig1, style = "width: 45%;"),
+    htmltools::div(fig2, style = "width: 45%"), 
+  )
+  
+} else {
+  
+  # Multiple prevalence surveys
+  
+  fig1B <-  scatter_plotly(data, 
+                       ind = "prevalence", 
+                       quarter = calendar_quarter1, 
+                       input_data = survey_prev2, 
+                       input_data_type = "survey")
+  
+  
+  prev_plots <-   htmltools::div(
+    style = "display: flex;",
+    htmltools::div(fig1B, style = "width: 45%;"),
+    htmltools::div(fig1, style = "width: 45%"), 
+  )
+  
+  htmltools::div(
+    style = "display: flex; flex-direction: column",
+    prev_plots,
+    htmltools::div(fig2, style = "width: 45%")
+  )
+}
+ 
+```
+
+```{r, echo = FALSE, results = 'asis'}
+
+if (print_en) {cat("\n### Age distribution \n")}
+if (print_fr) {cat("\n### Age distribution \n")}
+if (print_pt) {cat("\n### Age distribution \n")}
+
+```
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, out.width  =  "90%", results = 'asis'}
+
+
+#  Barplot prevalence
+fig1 <- age_bar_plotly (data, 
+                    ind = "prevalence", 
+                    quarter = calendar_quarter1)
+
+#  Barplot ART coverage
+fig2 <- age_bar_plotly (data, 
+                    ind = "art_coverage", 
+                    quarter = calendar_quarter1) 
+
+  htmltools::div(
+    style = "display: flex; flex-direction: column",
+    htmltools::div(fig1, style = "width: 70%"),
+    htmltools::div(fig2, style = "width: 70%")
+    )
+
+```
+::: {#translate lang="en"}
+*Static images of individual plots can be downloaded by hovering on the right hand corner*
+:::
+
+::: {#translate lang="fr"}
+*Static images of individual plots can be downloaded by hovering on the right hand corner*
+:::
+
+::: {#translate lang="pt"}
+*Static images of individual plots can be downloaded by hovering on the right hand corner*
+:::
+
+```{r, echo = FALSE, results= 'asis', include = print_en, eval = print_en}
+programme_data <- c(art_year, anc_prev, anc_art)
+
+if (sum(is.na(programme_data)) <3 ) {
+  
+   cat(paste0("\n### Routinely collected programme data: \n", sep = "\n"))
+  
+   cat(paste0("For the HIV prevalence and ART coverage components of the model, ART service delivery numbers inform subnational estimates for the number of PLHIV. Since the Household survey sample size in each district is relatively small, routinely reported data about HIV prevalence among pregnant women attending their first antenatal care visit, extracted from the national health information system, are used to improve estimates of the spatial pattern of HIV. \n" , sep = "\n"))
+   
+   
+   cat(paste0("\nThis report compares Naomi estimates to: \n", sep = "\n"))
+  
+  text2 <- tibble::tibble(prefix = c("National programme data on numbers on ART for ",
+                                  "National programme data on ANC HIV prevalence for ", 
+                                  "National programme data on ANC ART coverage for "
+                                  ), 
+                       source = c(art_year,
+                                  anc_prev, 
+                                  anc_art)) %>% tidyr::drop_na()
+
+  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  
+ cat(paste0("The plots below compare ANC programme to age and sex matched estimates of the general population produced by Naomi. While these data should be positively correlated, we expect higher HIV prevalence and ART coverage in all females ages 15-49 relative to women attending antenatal services."  , sep = "\n"))
+  
+}
+
+
+```
+  
+```{r, echo = FALSE, results= 'asis', include = print_fr, eval = print_fr}
+programme_data <- c(art_year, anc_prev, anc_art)
+
+if (sum(is.na(programme_data)) <3 ) {
+  
+  cat(paste0("\n### Données du programme opérationnel: \n", sep = "\n"))
+  
+  text2 <- tibble::tibble(prefix = c("Données national sur la couverture TARV pour ",
+                                  "Données national sur la prévalence du VIH parmi CPN pour ", 
+                                  "Données national sur la couverture du TARV parmi CPN pour "
+                                  ), 
+                       source = c(art_year,
+                                  anc_prev, 
+                                  anc_art)) %>% tidyr::drop_na()
+
+  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  
+}
+
+```
+
+  
+```{r, echo = FALSE, results= 'asis', include = print_pt, eval = print_pt}
+programme_data <- c(art_year, anc_prev, anc_art)
+
+if (sum(is.na(programme_data)) <3 ) {
+  
+  cat(paste0("\n### Dados do programa operacional: \n", sep = "\n"))
+  
+  text2 <- tibble::tibble(prefix = c("Dados do programa nacional sobre a cobertura de TARV para ",
+                                  "Dados do programa nacional sobre a prevalência de VIH na CPN para ", 
+                                  "Dados do programa nacional sobre a cobertura de TARV na CPN para "
+                                  ), 
+                       source = c(art_year,
+                                  anc_prev, 
+                                  anc_art)) %>% tidyr::drop_na()
+  
+  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  
+     
+  
+}
+
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, out.width  =  "90%", results = 'asis'}
+
+#-------------------------------------------------------------------------------
+# ANC data: interactive scatter plot
+#-------------------------------------------------------------------------------
+anc_t1 <- !is.null(outputs$fit$data_options$anc_prev_year_t1)
+anc_t2 <- !is.null(outputs$fit$data_options$anc_prev_year_t2)
+
+if(anc_t1 && anc_t2) {
+  t1 <- outputs$fit$data_options$anc_prev_year_t1
+  t2 <- outputs$fit$data_options$anc_prev_year_t2
+  
+  #  Scatter plot ANC prevalence
+  fig1 <-  scatter_plotly(data, 
+                          ind = "anc_prevalence_age_matched", 
+                          quarter = calendar_quarter1, 
+                          input_data = paste0("ANC ", t1) , 
+                          input_data_type = "ANC programme",
+                          sex_disag = "female")
+  
+  fig2 <-  scatter_plotly(data, 
+                          ind = "anc_prevalence_age_matched", 
+                          quarter = calendar_quarter2, 
+                          input_data = paste0("ANC ", t2) , 
+                          input_data_type = "ANC programme",
+                          sex_disag = "female")
+  
+  
+  # Scatter plot ANC ART coverage
+  
+  fig3 <-  scatter_plotly(data, 
+                          ind = "anc_art_coverage_age_matched", 
+                          quarter = calendar_quarter1, 
+                          input_data = paste0("ANC ",t1), 
+                          input_data_type = "ANC programme",
+                          sex_disag = "female")
+  
+  fig4 <-  scatter_plotly(data, 
+                          ind = "anc_art_coverage_age_matched", 
+                          quarter = calendar_quarter2, 
+                          input_data = paste0("ANC ",t2), 
+                          input_data_type = "ANC programme",
+                          sex_disag = "female")
+  
+  
+  prev_plots <-   htmltools::div(
+    style = "display: flex;",
+    htmltools::div(fig1, style = "width: 40%;"), 
+    htmltools::div(fig2, style = "width: 40%;")
+  )
+  
+  art_plots <-   htmltools::div(
+    style = "display: flex;",
+    htmltools::div(fig3, style = "width: 40%;"), 
+    htmltools::div(fig4, style = "width: 40%;")
+  )
+  
+  htmltools::div(
+    style = "display: flex; flex-direction: column",
+    prev_plots,
+    art_plots
+  )
+  
+  
+  
+  }
+
+
+ 
+```
+
+
+
+
+::: {#translate lang="en"}
+_Version_
+
+The Naomi model is supported by [UNAIDS](https://www.unaids.org/en) and developed and maintained by the [MRC Centre for Global Infectious Disease Analysis](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis) at Imperial College London. The model receives technical guidance from the [UNAIDS Reference Group on Estimates, Modelling, and Projections](http://epidem.org/). The model was first used in 2020 and continues to be developed responsive to new data and HIV strategic information needs.
+:::
+

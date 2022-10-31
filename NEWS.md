@@ -1,3 +1,9 @@
+# naomi 2.7.14
+
+* Add function to generate html report comparing naomi model estimates with input data:
+  - The comparison report is generated with the function `generate_comparison_report()` that requires     a naomi output file saved as an .Rds or output zip file created by `hintr_run_model()`
+  - The report calls exported plotting functions that will generate interactive plotly figures from       the `inputs_outputs` dataset in the naomi outputs including `bar_plotly()`, `age_bar_plotly()` and     `scatter_plotly`.
+  
 # naomi 2.7.13
 
 * Add input time series indicator showing ratio of ANC births to ANC clients

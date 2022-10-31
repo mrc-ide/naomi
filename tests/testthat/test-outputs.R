@@ -515,20 +515,22 @@ test_that("one input and output for each area_id/age/sex/indicator/period combin
 
   inputs_outputs <- a_output_calib$inputs_outputs
 
+  # For all indicators excluding prevalence (where there are multiple surveys),
+  # test for a single input/output comparison per area_id/age/sex/indicator/period combination
+
   dups <- inputs_outputs %>%
     dplyr::group_by(area_id, sex, age_group, calendar_quarter, indicator) %>%
     dplyr::summarise(n = dplyr::n()) %>%
-    dplyr::filter(n != 2)
+    dplyr::filter(indicator != "prevalence", n != 2)
 
   expect_equal(nrow(dups), 0)
-
 })
+
 
 test_that("writing output package translates labels", {
   reset <- naomi_set_language("fr")
   on.exit(reset())
   out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
-
   read <- read_output_package(out$path)
   ## area_level_label comes from input data (not translated)
   expect_true("Prévalence du VIH" %in% read$indicators$indicator_label)
@@ -558,5 +560,27 @@ test_that("output file README generated in output zip", {
   expect_true(any(grepl("├── art_attendance.csv", content)))
   expect_true(any(grepl("The following files have been generated as part of a Naomi model fit:" , content)))
 
+})
+
+test_that("can generate comparison report from rds file", {
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, a_hintr_output_calibrated$model_output_path,
+                             quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  content <- brio::readLines(t)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
+  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
+})
+
+test_that("can generate summary report from zip file", {
+  zip <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, zip$path, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  content <- brio::readLines(t)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
+  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
