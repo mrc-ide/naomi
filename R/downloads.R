@@ -31,8 +31,8 @@ hintr_prepare_spectrum_download <- function(output,
 #'
 #' @return Path to output file and metadata for file
 #' @export
-hintr_prepare_coarse_age_group_download <- function(
-  output, path = tempfile(fileext = ".zip")) {
+hintr_prepare_coarse_age_group_download <- function(output,
+                                                    path = tempfile(fileext = ".zip")) {
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_COARSE")
@@ -54,8 +54,8 @@ hintr_prepare_coarse_age_group_download <- function(
 #'
 #' @return Path to output file and metadata for file
 #' @export
-hintr_prepare_summary_report_download <- function(
-  output, path = tempfile(fileext = ".html")) {
+hintr_prepare_summary_report_download <- function(output,
+                                                  path = tempfile(fileext = ".html")) {
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_SUMMARY")
@@ -63,7 +63,7 @@ hintr_prepare_summary_report_download <- function(
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     path = generate_output_summary_report(path, output$model_output_path,
-                                          quiet = TRUE),
+      quiet = TRUE),
     metadata = list(
       description = build_summary_report_description(options),
       areas = options$area_scope,
@@ -79,8 +79,8 @@ hintr_prepare_summary_report_download <- function(
 #'
 #' @return Path to output file and metadata for file
 #' @export
-hintr_prepare_comparison_report_download <- function(
-  output, path = tempfile(fileext = ".html")) {
+hintr_prepare_comparison_report_download <- function(output,
+                                                     path = tempfile(fileext = ".html")) {
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_COMPARISON")
@@ -89,8 +89,8 @@ hintr_prepare_comparison_report_download <- function(
   list(
     ## Just using the summary report as a placeholder - eventually
     ## this will call a separate method to generate comparison report
-    path = generate_output_summary_report(path, output$model_output_path,
-                                          quiet = TRUE),
+    path = generate_comparison_report(path, output$model_output_path,
+      quiet = TRUE),
     metadata = list(
       description = build_comparison_report_description(options),
       areas = options$area_scope,
