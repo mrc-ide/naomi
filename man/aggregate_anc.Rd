@@ -14,7 +14,8 @@ aggregate_anc(anc, shape)
 \value{
 Aggregated ANC data containing columns area_id, area_name, area_level,
 area_level_label, sex,age_group, time_period, year, quarter, calendar_quarter,
-anc_clients, anc_known_pos, anc_already_art, anc_tested and anc_tested_pos
+anc_clients, anc_known_neg, anc_already_art, anc_tested and anc_tested_pos,
+births_clients_ratio
 }
 \description{
 Take ANC and shape file paths or data files and aggregate
