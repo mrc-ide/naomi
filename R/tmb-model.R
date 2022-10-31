@@ -1,12 +1,16 @@
 #' Prepare inputs for TMB model.
 #'
 #' @param naomi_data  Naomi data object
+#' @param report_likelihood Option to report likelihood in fit object (default true).
+#' @param anchor_home_district Option to include random effect home district attractiveness to retain residents on ART within home districts (default true).
 #'
 #' @return Inputs ready for TMB model
 #'
 #' @seealso [select_naomi_data]
 #' @export
-prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
+prepare_tmb_inputs <- function(naomi_data,
+                               report_likelihood = 1L,
+                               anchor_home_district = TRUE) {
 
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
@@ -76,9 +80,15 @@ prepare_tmb_inputs <- function(naomi_data, report_likelihood = 1L) {
   A_recent <- create_survey_Amat(naomi_data$recent_dat)
 
   ## ART attendance aggregation
+  # Default model for ART attending: Anchor home district = add random effect for home district
 
-  Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
-                                naomi_data$mf_artattend)
+  if(anchor_home_district) {
+    Xgamma <- naomi:::sparse_model_matrix(~0 + attend_area_idf, naomi_data$mf_artattend)
+  } else {
+    Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
+                                  naomi_data$mf_artattend)
+  }
+
   if(naomi_data$artattend_t2) {
     Xgamma_t2 <- Xgamma
   } else {
