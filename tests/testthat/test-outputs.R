@@ -583,4 +583,3 @@ test_that("can generate summary report from zip file", {
   expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
-
