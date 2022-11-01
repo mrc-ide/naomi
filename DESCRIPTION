@@ -35,6 +35,7 @@ Imports:
     magrittr,
     mvtnorm,
     naomi.options (>= 0.1.2),
+    plotly,
     prettyunits,
     readr (>= 2.0.1),
     rmarkdown,

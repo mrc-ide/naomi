@@ -338,8 +338,6 @@ bar_plotly <- function(df,
                        age_disag = "Y015_049",
                        sex_disag  = "both") {
 
-  suppressMessages(library(plotly))
-
   remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
                       "autoScale2d", "resetScale2d", "hoverClosestCartesian",
                       "hoverCompareCartesian", "zoom")
@@ -427,8 +425,6 @@ bar_plotly <- function(df,
 age_bar_plotly <- function(df,
                            ind,
                            quarter) {
-
-  suppressMessages(library(plotly))
 
   remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
                       "autoScale2d", "resetScale2d", "hoverClosestCartesian",
@@ -531,8 +527,6 @@ scatter_plotly <- function(df,
                            input_data_type,
                            age_disag = "Y015_049",
                            sex_disag  = "both") {
-
-  suppressMessages(library(plotly))
 
   remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
                       "autoScale2d", "resetScale2d", "hoverClosestCartesian",
@@ -682,8 +676,3 @@ scatter_plotly <- function(df,
   final_plot
 
 }
-
-
-
-
-
