@@ -596,8 +596,8 @@ scatter_plotly <- function(df,
                           text = ~paste('</br>', area_name,
                                         '</br> Survey estimate: ', round(input*100, 2), "%",
                                         '</br> Model estimate: ', round(output*100, 2), "%")) %>%
-    layout(legend = list(title = list(text = "Area Level",
-                                      font = list(size = 10))),
+    plotly::layout(legend = list(title = list(text = "Area Level",
+                                              font = list(size = 10))),
            title = list(text = plot_title,
                         font = list(size = 13, colour = "black", face = "bold")),
            margin = mrg,
@@ -605,22 +605,25 @@ scatter_plotly <- function(df,
                               text = paste0("*Dotted lines contain model estimates that are within ",
                                             range, "% of ", input_data_type," estimates."),
                               showarrow = F, xref='paper', yref='paper',
-                              font=list(size=10, color="grey"))) %>%
-    config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
+                              font = list(size=10, color="grey"))) %>%
+    plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
   if(grepl("prevalence", ind)) {
     final_plot <- plot %>%
-      add_segments( x= 0, y= 0,
-                    xend = max, yend = max,
-                    line = list(color = "grey", width = 0.05),
-                    showlegend = FALSE) %>%
-      add_segments( x= 0.05, y= 0, xend = max + 0.05, yend = max,
-                    line = list(color = "grey", width = 0.05, dash = "dash"),
-                    showlegend = FALSE) %>%
-      add_segments( x= 0, y= 0.05, xend = max -0.05 , yend = max,
-                    line = list(color = "grey", width = 0.05, dash = "dash"),
-                    showlegend = FALSE) %>%
-      layout(
+      plotly::add_segments(
+        x = 0, y = 0,
+        xend = max, yend = max,
+        line = list(color = "grey", width = 0.05),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = 0.05, y  = 0, xend = max + 0.05, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = 0, y = 0.05, xend = max - 0.05, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::layout(
         yaxis = list(tickformat = ".0%", tickmode = "array",
                      title = list(text = input_data, font = list(size = 10)),
                      range = c(0, max),
@@ -643,16 +646,19 @@ scatter_plotly <- function(df,
 
   if(grepl("art_coverage", ind)) {
     final_plot <- plot %>%
-      add_segments( x= min, y= min, xend = max, yend = max,
-                    line = list(color = "grey", width = 0.05),
-                    showlegend = FALSE) %>%
-      add_segments( x= min + 0.1, y= min, xend = max +0.1, yend = max,
-                    line = list(color = "grey", width = 0.05, dash = "dash"),
-                    showlegend = FALSE) %>%
-      add_segments( x= min - 0.1, y= min, xend = max - 0.1, yend = max,
-                    line = list(color = "grey", width = 0.05, dash = "dash"),
-                    showlegend = FALSE) %>%
-      layout(
+      plotly::add_segments(
+        x = min, y= min, xend = max, yend = max,
+        line = list(color = "grey", width = 0.05),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = min + 0.1, y = min, xend = max + 0.1, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = min - 0.1, y = min, xend = max - 0.1, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::layout(
         yaxis = list(tickformat = ".0%", tickmode = "array",
                      title = list(text = input_data, font = list(size = 10)),
                      range = c(min, max),
@@ -674,5 +680,4 @@ scatter_plotly <- function(df,
   }
 
   final_plot
-
 }
