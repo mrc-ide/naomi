@@ -308,17 +308,18 @@ district_barplot <- function(naomi_output,
 #' @param var
 
 
-dropdown_buttons <- function(df, var){
+dropdown_buttons <- function(df, var) {
 
   levels <- unique(df[[var]])
   n <- length(levels)
   buttons <- vector("list", n)
 
-  for(i in 1:n){
-    buttons[[i]] <- list(method="restyle",
-                         args=list("transforms[0].value",
+  for (i in 1:n) {
+    buttons[[i]] <- list(method = "restyle",
+                         args = list("transforms[0].value",
                                    levels[i]),
-                         label=levels[i])}
+                         label = levels[i])
+  }
   buttons
 }
 
@@ -359,7 +360,8 @@ bar_plotly <- function(df,
   } else if (ind == "art_coverage") {
     title <- "ART coverage"
   }
-  plot_title <- paste("<b>", title, ": ", "Household survey vs. ", output_source, "<b>")
+  plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
+    output_source, "<b>")
 
 
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
@@ -371,14 +373,15 @@ bar_plotly <- function(df,
     data = plot_data,
     type = "bar",
     color = ~ as.factor(source),
-    colors = c("#07bbc1","#f68e1f", "#87c440"),
+    colors = c("#07bbc1", "#f68e1f", "#87c440"),
     x = ~area_name,
     y = ~mean,
     hoverinfo = "text",
     text = ~paste("</br>", area_name,
                   "</br>", source,
-                  "</br>", round(mean*100, 2),
-                  " (", round(upper*100, 2), "-", round(lower*100, 2),  "%)"),
+                  "</br>", round(mean * 100, 2),
+                  " (", round(upper * 100, 2), "-",
+                  round(lower * 100, 2),  "%)"),
     error_y = ~list(symmetric = FALSE,
                     arrayminus = mean - lower,
                     array = upper - mean,
@@ -456,7 +459,8 @@ age_bar_plotly <- function(df,
   } else if (ind == "art_coverage") {
     title <- "ART coverage"
   }
-  plot_title <- paste("<b>", title, ": ", "Household survey vs. ", output_source, "<b>")
+  plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
+    output_source, "<b>")
 
 
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
@@ -467,14 +471,15 @@ age_bar_plotly <- function(df,
   final_plot <- plot_ly(data = plot_data,
                         type = "bar",
                         color = ~ as.factor(source),
-                        colors = c( "#07bbc1","#f68e1f", "#87c440"),
+                        colors = c("#07bbc1", "#f68e1f", "#87c440"),
                         x = ~age_group_label,
                         y = ~mean,
                         hoverinfo = "text",
                         text = ~paste("</br>", age_group_label,
                                       "</br>", source,
-                                      "</br>", round(mean*100, 2),
-                                      " (", round(upper*100, 2), "-", round(lower*100, 2),  "%)"),
+                                      "</br>", round(mean * 100, 2),
+                                      " (", round(upper * 100, 2), "-",
+                                      round(lower * 100, 2),  "%)"),
                         error_y = ~list(symmetric = FALSE,
                                         arrayminus = mean - lower,
                                         array = upper - mean,
@@ -551,13 +556,13 @@ scatter_plotly <- function(df,
 
 
   # Get ranges for axis
-  if(grepl("prevalence", ind)){
+  if (grepl("prevalence", ind)) {
     max <- max(plot_data$mean) + 0.02
     range <- "5"
     title <- "HIV prevalence"
   }
 
-  if(grepl("art_coverage", ind)){
+  if (grepl("art_coverage", ind)) {
     max <- max(plot_data$mean) + 0.05
     min <- min(plot_data$mean) - 0.05
     range <- "10"
@@ -565,7 +570,7 @@ scatter_plotly <- function(df,
   }
 
   # Filter for correct survey in case of multiple surveys
-  if(input_data_type == "survey"){
+  if (input_data_type == "survey") {
     plot_data <- plot_data %>%
       dplyr::filter(source %in% c(input_source, output_source))
   }
@@ -573,12 +578,18 @@ scatter_plotly <- function(df,
 
   age_groups <- get_age_groups()
   age_label <- age_groups[age_groups$age_group == unique(plot_data$age_group), ]$age_group_label
-  if(sex_disag == "both"){sex_label = "all"}else{sex_label = sex_disag}
+  if (sex_disag == "both") {
+    sex_label <- "all"
+  } else {
+    sex_label <- sex_disag
+  }
 
   plot_title <- paste("<b>", title, ": ", input_data, " vs. ", output_source,
-                      "</br><sub> (", sex_label, ",", age_label,")</sub><br>")
+                      "</br><sub> (", sex_label, ",", age_label, ")</sub><br>")
 
-  if(grepl("anc", ind)) {output_source <- paste0(output_source, " females 15-49")}
+  if (grepl("anc", ind)) {
+    output_source <- paste0(output_source, " females 15-49")
+  }
 
 
   plot_data_wide <- plot_data %>%
@@ -591,16 +602,16 @@ scatter_plotly <- function(df,
   mrg <- list(l = 100, r = 150, b = 70, t = 100)
 
   plot <- plotly::plot_ly(data = plot_data_wide,
-                          x= ~ output,
-                          y= ~ input,
+                          x = ~ output,
+                          y = ~ input,
                           color = ~area_level_label,
                           colors = c("#f68e1f", "#07bbc1", "#FFE800"),
-                          type='scatter',
-                          mode='markers',
-                          hoverinfo = 'text',
-                          text = ~paste('</br>', area_name,
-                                        '</br> Survey estimate: ', round(input*100, 2), "%",
-                                        '</br> Model estimate: ', round(output*100, 2), "%")) %>%
+                          type = "scatter",
+                          mode = "markers",
+                          hoverinfo = "text",
+                          text = ~paste("</br>", area_name,
+                                        "</br> Survey estimate: ", round(input*100, 2), "%",
+                                        "</br> Model estimate: ", round(output*100, 2), "%")) %>%
     plotly::layout(legend = list(title = list(text = "Area Level",
                                               font = list(size = 10))),
            title = list(text = plot_title,
@@ -609,11 +620,11 @@ scatter_plotly <- function(df,
            annotations = list(x = -0.1, y = -0.3,
                               text = paste0("*Dotted lines contain model estimates that are within ",
                                             range, "% of ", input_data_type," estimates."),
-                              showarrow = F, xref='paper', yref='paper',
+                              showarrow = F, xref = "paper", yref = "paper",
                               font = list(size=10, color="grey"))) %>%
     plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
-  if(grepl("prevalence", ind)) {
+  if (grepl("prevalence", ind)) {
     final_plot <- plot %>%
       plotly::add_segments(
         x = 0, y = 0,
@@ -632,27 +643,27 @@ scatter_plotly <- function(df,
         yaxis = list(tickformat = ".0%", tickmode = "array",
                      title = list(text = input_data, font = list(size = 10)),
                      range = c(0, max),
-                     zerolinecolor = 'ffff',
+                     zerolinecolor = "ffff",
                      zerolinewidth = 1,
-                     gridcolor = 'ffff',
-                     showline= T,
-                     linewidth=1,
-                     linecolor='black'),
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"),
         xaxis = list(tickformat = ".0%",
                      title = list(text = output_source, font = list(size = 10)),
                      range = c(0, max + 0.05),
-                     zerolinecolor = 'ffff',
+                     zerolinecolor = "ffff",
                      zerolinewidth = 1,
-                     gridcolor = 'ffff',
-                     showline= T,
-                     linewidth=1,
-                     linecolor='black'))
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"))
   }
 
-  if(grepl("art_coverage", ind)) {
+  if (grepl("art_coverage", ind)) {
     final_plot <- plot %>%
       plotly::add_segments(
-        x = min, y= min, xend = max, yend = max,
+        x = min, y = min, xend = max, yend = max,
         line = list(color = "grey", width = 0.05),
         showlegend = FALSE) %>%
       plotly::add_segments(
@@ -667,21 +678,21 @@ scatter_plotly <- function(df,
         yaxis = list(tickformat = ".0%", tickmode = "array",
                      title = list(text = input_data, font = list(size = 10)),
                      range = c(min, max),
-                     zerolinecolor = 'ffff',
+                     zerolinecolor = "ffff",
                      zerolinewidth = 1,
-                     gridcolor = 'ffff',
-                     showline= T,
-                     linewidth=1,
-                     linecolor='black'),
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"),
         xaxis = list(tickformat = ".0%",
                      title = list(text = output_source, font = list(size = 10)),
                      range = c(min, max + 0.05),
-                     zerolinecolor = 'ffff',
+                     zerolinecolor = "ffff",
                      zerolinewidth = 1,
-                     gridcolor = 'ffff',
-                     showline= T,
-                     linewidth=1,
-                     linecolor='black'))
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"))
   }
 
   final_plot
