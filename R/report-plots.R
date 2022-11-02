@@ -597,7 +597,7 @@ scatter_plotly <- function(df,
     dplyr::select(area_id, area_name, area_level_label, sex, age_group,
                   calendar_quarter, indicator, mean, data_type) %>%
     tidyr::pivot_wider(names_from = data_type, values_from = mean) %>%
-    filter(!is.na(input))
+    dplyr::filter(!is.na(input))
 
   mrg <- list(l = 100, r = 150, b = 70, t = 100)
 
