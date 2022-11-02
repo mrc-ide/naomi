@@ -354,8 +354,11 @@ bar_plotly <- function(df,
 
   buttons <- dropdown_buttons(plot_data, "area_level_label")
 
-  if(ind == "prevalence"){title <- "HIV prevalence"}
-  if(ind == "art_coverage"){title <- "ART coverage"}
+  if (ind == "prevalence") {
+    title <- "HIV prevalence"
+  } else if (ind == "art_coverage") {
+    title <- "ART coverage"
+  }
   plot_title <- paste("<b>", title, ": ", "Household survey vs. ", output_source, "<b>")
 
 
@@ -364,30 +367,31 @@ bar_plotly <- function(df,
   plot_data <- plot_data[order(plot_data$source), ]
 
 
-  final_plot <- plot_ly(data = plot_data,
-          type = 'bar',
-          color = ~ as.factor(source),
-          colors = c( "#07bbc1","#f68e1f", "#87c440"),
-          x = ~area_name,
-          y = ~mean,
-          hoverinfo = 'text',
-          text = ~paste('</br>', area_name,
-                        '</br>', source,
-                        '</br>', round(mean*100, 2),
-                        " (", round(upper*100, 2), "-", round(lower*100, 2),  "%)"),
-          error_y = ~list(symmetric = FALSE,
-                          arrayminus = mean - lower,
-                          array = upper - mean,
-                          color = "#000000"),
-          transforms = list(
-            list(
-              type = 'filter',
-              target = ~area_level_label,
-              operation = '=',
-              value = sort(plot_data$area_level_label)[1]))) %>%
-    layout(
+  final_plot <- plotly::plot_ly(
+    data = plot_data,
+    type = "bar",
+    color = ~ as.factor(source),
+    colors = c("#07bbc1","#f68e1f", "#87c440"),
+    x = ~area_name,
+    y = ~mean,
+    hoverinfo = "text",
+    text = ~paste("</br>", area_name,
+                  "</br>", source,
+                  "</br>", round(mean*100, 2),
+                  " (", round(upper*100, 2), "-", round(lower*100, 2),  "%)"),
+    error_y = ~list(symmetric = FALSE,
+                    arrayminus = mean - lower,
+                    array = upper - mean,
+                    color = "#000000"),
+    transforms = list(
+                   list(
+                   type = "filter",
+                   target = ~area_level_label,
+                   operation = "=",
+                   value = sort(plot_data$area_level_label)[1]))) %>%
+    plotly::layout(
       margin = mrg,
-      xaxis = list(type = 'category',
+      xaxis = list(type = "category",
                    categoryarray =  ~source,
                    categoryorder = "array",
                    title = list(text = "")),
@@ -400,7 +404,7 @@ bar_plotly <- function(df,
                                  font = list(size = 10))),
       updatemenus = list(
         list(
-          type = 'dropdown',
+          type = "dropdown",
           y = 1.2,
           x  = 0.2,
           active = 0,
@@ -408,10 +412,9 @@ bar_plotly <- function(df,
         )
       )
     ) %>%
-    config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
+    plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
   suppressWarnings(final_plot)
-
 }
 
 #' Plotly barplot comparing age distribution of survey inputs and naomi outputs
@@ -448,8 +451,11 @@ age_bar_plotly <- function(df,
 
   buttons <- dropdown_buttons(plot_data, "sex")
 
-  if(ind == "prevalence"){title <- "HIV prevalence"}
-  if(ind == "art_coverage"){title <- "ART coverage"}
+  if (ind == "prevalence") {
+    title <- "HIV prevalence"
+  } else if (ind == "art_coverage") {
+    title <- "ART coverage"
+  }
   plot_title <- paste("<b>", title, ": ", "Household survey vs. ", output_source, "<b>")
 
 
@@ -459,15 +465,15 @@ age_bar_plotly <- function(df,
 
 
   final_plot <- plot_ly(data = plot_data,
-                        type = 'bar',
+                        type = "bar",
                         color = ~ as.factor(source),
                         colors = c( "#07bbc1","#f68e1f", "#87c440"),
                         x = ~age_group_label,
                         y = ~mean,
-                        hoverinfo = 'text',
-                        text = ~paste('</br>', age_group_label,
-                                      '</br>', source,
-                                      '</br>', round(mean*100, 2),
+                        hoverinfo = "text",
+                        text = ~paste("</br>", age_group_label,
+                                      "</br>", source,
+                                      "</br>", round(mean*100, 2),
                                       " (", round(upper*100, 2), "-", round(lower*100, 2),  "%)"),
                         error_y = ~list(symmetric = FALSE,
                                         arrayminus = mean - lower,
@@ -475,13 +481,13 @@ age_bar_plotly <- function(df,
                                         color = "#000000"),
                         transforms = list(
                           list(
-                            type = 'filter',
+                            type = "filter",
                             target = ~sex,
-                            operation = '=',
+                            operation = "=",
                             value = sort(plot_data$sex)[1]))) %>%
     layout(
       margin = mrg,
-      xaxis = list(type = 'category',
+      xaxis = list(type = "category",
                    categoryarray =  ~age_group_label,
                    categoryorder = "array",
                    title = list(text = "")),
@@ -494,7 +500,7 @@ age_bar_plotly <- function(df,
                                  font = list(size = 10))),
       updatemenus = list(
         list(
-          type = 'dropdown',
+          type = "dropdown",
           y = 1.2,
           x  = 0.2,
           active = 0,
@@ -505,7 +511,6 @@ age_bar_plotly <- function(df,
     config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
   suppressWarnings(final_plot)
-
 }
 
 #' Plotly scatterplot data inputs and naomi outputs
