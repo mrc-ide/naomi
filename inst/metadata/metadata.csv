@@ -76,5 +76,5 @@ calibrate,barchart,incidence_ratio,mean,lower,upper,indicator,incidence_ratio,t_
 comparison,barchart,prevalence,mean,lower,upper,indicator,prevalence,t_(HIV_PREVALENCE),1,,"""0.0%"""
 comparison,barchart,art_coverage,mean,lower,upper,indicator,art_coverage,t_(ART_COVERAGE),1,,"""0.0%"""
 comparison,barchart,art_current,mean,lower,upper,indicator,art_current,t_(ART_NUMBER_ATTENDING),1,100,"""0,0"""
-comparison,barchart,anc_prevalence_age_matched,mean,lower,upper,indicator,prevalence,t_(ANC_PREVALENCE_AGE_MATCHED),1,,"""0.0%"""
-comparison,barchart,anc_art_coverage_age_matched,mean,lower,upper,indicator,art_current,t_(ANC_ART_COVERAGE_AGE_MATCHED),1,100,"""0,0"""
+comparison,barchart,anc_prevalence_age_matched,mean,lower,upper,indicator,anc_prevalence_age_matched,t_(ANC_PREVALENCE_AGE_MATCHED),1,,"""0.0%"""
+comparison,barchart,anc_art_coverage_age_matched,mean,lower,upper,indicator,anc_art_coverage_age_matched,t_(ANC_ART_COVERAGE_AGE_MATCHED),1,100,"""0,0"""
