@@ -1,3 +1,7 @@
+# naomi 2.7.14
+
+* Fix comparison barchart ANC age matched indicators, these were pointing to the wrong indicator data.
+
 # naomi 2.7.13
 
 * Add input time series indicator showing ratio of ANC births to ANC clients
