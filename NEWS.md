@@ -1,3 +1,12 @@
+# naomi 2.7.14
+
+Update for Spectrum v6.2 with calendar year projection period instead of mid-year 
+projection.
+
+* Requires `eppasm >= 0.7.0` and `first90 >= 1.6.1` which incorporate code updates 
+  for calendar year projection.
+* Add demo PJNZ files saved in Spectrum 6.2 beta 29.
+  
 # naomi 2.7.13
 
 * Add input time series indicator showing ratio of ANC births to ANC clients
@@ -26,7 +35,7 @@
 
 # naomi 2.7.7
 
-* Report log likelihood in model fit object
+* Report log likelihood in model fit object.
 
 # naomi 2.7.6
 
