@@ -197,15 +197,18 @@ test_that("metadata synced with meta_indicator", {
 
   metadata <- get_metadata()
 
+  ## meta_indicator is used for the output zip and naomi needs
+  ## metadata is used for hintr plotting. We want to include
+  ## info about all output values in meta_indicator, but not
+  ## input metadata so strip out any input data types
   check <- metadata %>%
-    dplyr::filter(data_type == "output") %>%
+    dplyr::filter(!(data_type %in% c("survey", "programme", "anc"))) %>%
     dplyr::distinct(name, indicator_value) %>%
     dplyr::full_join(
              get_meta_indicator() %>%
              dplyr::select(indicator, indicator_label),
              by = c("indicator_value" = "indicator")
-           ) %>%
-    dplyr::filter(!grepl(".*_ratio", indicator_value))
+           )
 
   expect_equal(tolower(check$name), tolower(check$indicator_label))
 })
