@@ -468,7 +468,7 @@ age_bar_plotly <- function(df,
   plot_data <- plot_data[order(plot_data$age_group_sort_order), ]
 
 
-  final_plot <- plot_ly(data = plot_data,
+  final_plot <- plotly::plot_ly(data = plot_data,
                         type = "bar",
                         color = ~ as.factor(source),
                         colors = c("#07bbc1", "#f68e1f", "#87c440"),
@@ -490,7 +490,7 @@ age_bar_plotly <- function(df,
                             target = ~sex,
                             operation = "=",
                             value = sort(plot_data$sex)[1]))) %>%
-    layout(
+    plotly::layout(
       margin = mrg,
       xaxis = list(type = "category",
                    categoryarray =  ~age_group_label,
@@ -513,7 +513,7 @@ age_bar_plotly <- function(df,
         )
       )
     ) %>%
-    config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
+    plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
   suppressWarnings(final_plot)
 }

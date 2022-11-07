@@ -1,7 +1,7 @@
 ---
 params:
-  outputs: NA
-  lang: NA
+  outputs: "/var/folders/vk/s5m946h57g3dk4rm43k1zk2m0000gn/T//RtmpQx5p42/file551d122c769a.rds"
+  lang: "en"
 output:
   html_document:
     css: styles.css
@@ -180,7 +180,6 @@ if (print_pt) {
 
 ### Methods
 [Naomi](https://onlinelibrary.wiley.com/doi/10.1002/jia2.25788) is a small-area estimation model for estimating HIV prevalence and PLHIV, ART coverage, and new HIV infections at district level by sex and five-year age group. The model combines district-level data about multiple outcomes from several sources in a Bayesian statistical model to produce robust indicators of subnational HIV burden.
-
 
 :::
 
