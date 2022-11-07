@@ -1,3 +1,11 @@
+# naomi 2.7.15
+
+* Add and known negative and births facility inicators to input time series
+
+# naomi 2.7.14
+
+* Fix comparison barchart ANC age matched indicators, these were pointing to the wrong indicator data.
+
 # naomi 2.7.13
 
 * Add input time series indicator showing ratio of ANC births to ANC clients
