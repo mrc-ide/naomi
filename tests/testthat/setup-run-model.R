@@ -32,6 +32,7 @@ a_hintr_options <- list(
   artattend = "true",
   artattend_t2 = "false",
   artattend_log_gamma_offset = -4L,
+  anchor_home_district = TRUE,
   output_aware_plhiv = "true",
   rng_seed = 17,
   no_of_samples = 20,

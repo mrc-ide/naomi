@@ -92,7 +92,8 @@ naomi_output_frame <- function(mf_model,
 #' @param sigma_u_sd sigma_u_sd
 #' @param artattend logical; whether to estimate neighboring district ART attendance
 #' @param artattend_t2 logical; whether to allow time-varying neighboring district ART attendance
-#' @param artattend_log_gamma_offset logit offset for neigboring district ART attendance
+#' @param artattend_log_gamma_offset logit offset for neighboring district ART attendance
+#' @param anchor_home_district logical; whether to include home district random in ART attendance specification
 #' @param rho_paed_15to49f_ratio logical; to model paediatric prevalence as ratio of 15-49 female prevalence
 #' @param rho_paed_x_term logical; to include area interaction for paediatric prevalence
 #' @param alpha_xst_term logical; to include district-sex-time interaction for ART coverage. Default `FALSE`.
@@ -131,6 +132,7 @@ naomi_model_frame <- function(area_merged,
                               artattend = TRUE,
                               artattend_t2 = FALSE,
                               artattend_log_gamma_offset = -4,
+                              anchor_home_district = TRUE,
                               rho_paed_15to49f_ratio = TRUE,
                               rho_paed_x_term = FALSE,
                               alpha_xst_term = FALSE,
@@ -147,7 +149,8 @@ naomi_model_frame <- function(area_merged,
                         calendar_quarter_t2 = calendar_quarter2,
                         calendar_quarter_t3 = calendar_quarter3,
                         artattend = artattend,
-                        artattend_t2 = artattend_t2)
+                        artattend_t2 = artattend_t2,
+                        anchor_home_district = anchor_home_district)
 
   ## Create area tree
   ## TODO: Get rid of reliance on data.tree

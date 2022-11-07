@@ -9,8 +9,7 @@
 #' @seealso [select_naomi_data]
 #' @export
 prepare_tmb_inputs <- function(naomi_data,
-                               report_likelihood = 1L,
-                               anchor_home_district = TRUE) {
+                               report_likelihood = 1L) {
 
   stopifnot(is(naomi_data, "naomi_data"))
   stopifnot(is(naomi_data, "naomi_mf"))
@@ -82,11 +81,13 @@ prepare_tmb_inputs <- function(naomi_data,
   ## ART attendance aggregation
   # Default model for ART attending: Anchor home district = add random effect for home district
 
-  if(anchor_home_district) {
+  if(naomi_data$model_options$anchor_home_district) {
     Xgamma <- naomi:::sparse_model_matrix(~0 + attend_area_idf, naomi_data$mf_artattend)
+    print("model B")
   } else {
     Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
                                   naomi_data$mf_artattend)
+    print("model A")
   }
 
   if(naomi_data$artattend_t2) {
