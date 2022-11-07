@@ -1,3 +1,7 @@
+# naomi 2.7.17
+
+* Fix `aggregate_art()` to aggregate ART separately when provide at different admin levels. Previous behaviour was to aggregate from lowest level provided.
+
 # naomi 2.7.15
 
 * Add and known negative and births facility inicators to input time series
