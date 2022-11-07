@@ -6,6 +6,8 @@
     "ANC_DATA_MISSING_FOR_YEAR_PLURAL": "Dados de teste da CPN não encontrados para os anos {{ano_falta}}.",
     "ANC_HIV_PREVALENCE": "Prevalência de VIH na CPN",
     "ANC_KNOWN_POS": "Casos positivos conhecidos na CPN",
+    "ANC_KNOWN_NEG": "ANC known negative",
+    "BIRTHS_FACILITY": "Health facility births",
     "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "Testes da CPN em TARV superiores aos testes da CPN positivos totais.",
     "ANC_PLHIV": "Frequentadores da CPN seropositivos",
     "ANC_POSITIVE_GREATER_TOTAL_KNOWN": "O número de frequentadores da CPN seropositivos (numerador) é maior do que o número de frequentadores da CPN com um resultado de condição de VIH (denominador).",
@@ -263,5 +265,7 @@
     "UNTREATED_PLHIV_ATTEND": "Untreated PLHIV (ART catchment)",
     "INDICATOR_LABEL_UNTREATED_PLHIV_ATTEND": "Number of untreated PLHIV in area ART catchment",
     "BIRTHS_CLIENTS_RATIO": "Relação nascimentos-clientes",
-    "BIRTHS_CLIENTS_RATIO_DESC": "Rácio de nascimentos nas instalações para clientes CPN"
+    "BIRTHS_CLIENTS_RATIO_DESC": "Rácio de nascimentos nas instalações para clientes CPN",
+    "ANC_KNOWN_NEG_DESC": "Number of HIV negative ANC attendees recently tested and aware of status prior to first ANC visit",
+    "BIRTHS_FACILITY_DESC": "Number of health facility births"
 }
