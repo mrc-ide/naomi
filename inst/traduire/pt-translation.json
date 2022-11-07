@@ -37,8 +37,6 @@
     "INDICATOR_LABEL_ANC_ART_NEW": "Número de mulheres grávidas iniciadas em TARV na CPN",
     "INDICATOR_LABEL_ANC_CLIENTS": "Número total de primeiras visitas à CPN",
     "INDICATOR_LABEL_ANC_KNOWN_POS": "Número de frequentadores da CPN seropositivos com conhecimento da condição antes da primeira visita à CPN",
-    "INDICATOR_LABEL_ANC_KNOWN_NEG": "Number of HIV negative ANC attendees recently tested and aware of status prior to first ANC visit",
-    "INDICATOR_LABEL_BIRTHS_FACILITY": "Number of health facility births",
     "INDICATOR_LABEL_ANC_PLHIV": "Número de mulheres seropositivas que frequentam a CPN",
     "INDICATOR_LABEL_ANC_PREVALENCE": "Prevalência de VIH entre frequentadores da CPN",
     "INDICATOR_LABEL_ANC_TESTED_NEG": "Número de frequentadores da CPN VIH negativos testados na CPN",
