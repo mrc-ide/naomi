@@ -54,6 +54,37 @@ test_that("ART data can be aggregated", {
 
 })
 
+test_that("ART data can be aggregated when avalible at different admin levels", {
+
+  # Create dummy data simillar to MOZ edge case:
+  # ART data at admin1 2014-2016, admin2 2015-2016
+  data <- aggregate_art(a_hintr_data$art_number,
+                        a_hintr_data$shape)
+
+  admin1_data <- dplyr::filter(data, area_level == 1,
+                               calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  admin2_data <- dplyr::filter(data, area_level == 2,
+                               calendar_quarter %in% c("CY2016Q4","CY2017Q4","CY2018Q4"))
+
+  test_data <- rbind(admin1_data, admin2_data)
+
+  # Aggregate data
+  art_agg <- aggregate_art(test_data,a_hintr_data$shape)
+
+  # Aggregated data has data for all years provided
+  expect_equal(unique(art_agg$calendar_quarter),
+               unique(test_data$calendar_quarter))
+
+  # Data has been aggregated correctly
+  df1 <- dplyr::filter(art_agg, year %in% c("2014","2015"))
+  expect_equal(unique(df1$area_level), c(0, 1))
+
+  df2 <- dplyr::filter(art_agg, year %in% c("2016", "2017", "2018"))
+  expect_equal(unique(df2$area_level), c(0, 1, 2))
+
+})
+
 
 test_that("data can be formatted for ART input time series", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
