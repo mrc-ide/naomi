@@ -197,15 +197,18 @@ test_that("metadata synced with meta_indicator", {
 
   metadata <- get_metadata()
 
+  ## meta_indicator is used for the output zip and naomi needs
+  ## metadata is used for hintr plotting. We want to include
+  ## info about all output values in meta_indicator, but not
+  ## input metadata so strip out any input data types
   check <- metadata %>%
-    dplyr::filter(data_type == "output") %>%
+    dplyr::filter(!(data_type %in% c("survey", "programme", "anc"))) %>%
     dplyr::distinct(name, indicator_value) %>%
     dplyr::full_join(
              get_meta_indicator() %>%
              dplyr::select(indicator, indicator_label),
              by = c("indicator_value" = "indicator")
-           ) %>%
-    dplyr::filter(!grepl(".*_ratio", indicator_value))
+           )
 
   expect_equal(tolower(check$name), tolower(check$indicator_label))
 })
@@ -305,4 +308,12 @@ test_that("time series metadata format column hasn't been messed by Excel", {
   expect_equal(meta[[1]]$format, "0%")
   meta <- get_plot_type_column_metadata("births_clients_ratio")
   expect_equal(meta[[1]]$format, "0%")
+})
+
+test_that("there is metadata for each indicator once per plot type", {
+  metadata <- get_metadata()
+  ## Each indicator is displayed only once
+  all <- metadata[, c("data_type", "plot_type", "value_column",
+                      "indicator_column", "indicator_value")]
+  expect_equal(nrow(all), nrow(unique(all)))
 })
