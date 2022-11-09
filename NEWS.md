@@ -1,6 +1,15 @@
-# naomi 2.7.17
 
+# naomi 2.7.18
 * Fix `aggregate_art()` to aggregate ART separately when provide at different admin levels. Previous behaviour was to aggregate from lowest level provided.
+
+# naomi 2.7.17
+* Error if trying to generate comparison report with old model output
+
+# naomi 2.7.16
+
+* Add function to generate html report comparing naomi model estimates with input data:
+  - The comparison report is generated with the function `generate_comparison_report()` that requires     a naomi output file saved as an .Rds or output zip file created by `hintr_run_model()`
+  - The report calls exported plotting functions that will generate interactive plotly figures from       the `inputs_outputs` dataset in the naomi outputs including `bar_plotly()`, `age_bar_plotly()` and     `scatter_plotly`.
 
 # naomi 2.7.15
 
