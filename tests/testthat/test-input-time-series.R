@@ -67,21 +67,30 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
   admin2_data <- dplyr::filter(data, area_level == 2,
                                calendar_quarter %in% c("CY2016Q4","CY2017Q4","CY2018Q4"))
 
-  test_data <- rbind(admin1_data, admin2_data)
-  test_data <- test_data[names(data)]
+  test_data1 <- rbind(admin1_data, admin2_data)
+  test_data1 <- test_data1[names(data)]
 
   # Aggregate data
-  art_agg <- aggregate_art(test_data, a_hintr_data$shape)
+  art_agg1 <- aggregate_art(test_data1, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check1 <- art_agg1 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(10, 10, 6))
 
   # Aggregated data has data for all years provided
-  expect_equal(unique(art_agg$calendar_quarter),
-               unique(test_data$calendar_quarter))
+  expect_equal(unique(art_agg1$calendar_quarter),
+               unique(test_data1$calendar_quarter))
 
   # Data has been aggregated correctly
-  df1 <- dplyr::filter(art_agg, year %in% c("2014","2015"))
+  df1 <- dplyr::filter(art_agg1, year %in% c("2014","2015"))
   expect_equal(unique(df1$area_level), c(0, 1))
 
-  df2 <- dplyr::filter(art_agg, year %in% c("2016", "2017", "2018"))
+  df2 <- dplyr::filter(art_agg1, year %in% c("2016", "2017", "2018"))
   expect_equal(unique(df2$area_level), c(0, 1, 2))
 
   ## Check that aggregated values are equal
@@ -89,7 +98,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
     tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
 
-  art_agg_long <- art_agg  %>%
+  art_agg_long <- art_agg1  %>%
     tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
 
@@ -99,6 +108,46 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
   expect_equal(nrow(data_check), nrow(art_agg_long))
   expect_equal(data_check$value_check, data_check$value_raw)
 
+  # Check for edge cases
+
+  # (1) Data provided at multiple levels for the same years
+  test_data2 <- aggregate_art(a_hintr_data$art_number, a_hintr_data$shape) %>%
+    dplyr::filter(area_level %in% c(0,2))
+
+  test_data2 <- test_data2[names(data)]
+  art_agg2 <- aggregate_art(test_data2, a_hintr_data$shape)
+
+  # Check for same number of records at each area aggregation
+  check2 <- art_agg2 %>%
+           dplyr::group_by(area_level_label, year, age_group, sex) %>%
+           dplyr::summarise(.groups = "drop") %>%
+           dplyr::group_by(area_level_label) %>%
+           dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+
+  expect_equal(unique(check2$n), 16)
+
+  # (2) Data provided at more than one level for different years - filter data to
+  #  lowest level available
+
+  admin01_data <- dplyr::filter(data, area_level %in% c(0,1),
+                               calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  test_data3 <- rbind(admin01_data, admin2_data)
+  test_data3 <- test_data3[names(data)]
+
+  aggregate_art(test_data3, a_hintr_data$shape)
+
+  art_agg3 <- aggregate_art(test_data3, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check3 <- art_agg3 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(10, 10, 6))
 })
 
 
@@ -184,6 +233,102 @@ test_that("ANC data can be aggregated", {
     dplyr::filter(dplyr::n() > 1)
 
   expect_true(nrow(dup_strata) == 0)
+})
+
+test_that("ANC data can be aggregated when avalible at different admin levels", {
+
+  # Create dummy data:
+  data <- aggregate_anc(a_hintr_data$anc_testing,
+                        a_hintr_data$shape)
+
+  admin1_data <- dplyr::filter(data, area_level == 1,
+                               calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  admin2_data <- dplyr::filter(data, area_level == 2,
+                               calendar_quarter %in% c("CY2016Q4","CY2017Q4","CY2018Q4"))
+
+  test_data1 <- rbind(admin1_data, admin2_data)
+  test_data1 <- test_data1[names(data)]
+
+  # Aggregate data
+  anc_agg1 <- aggregate_anc(test_data1, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check1 <- anc_agg1 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(5, 5, 3))
+
+  # Aggregated data has data for all years provided
+  expect_equal(unique(anc_agg1$calendar_quarter),
+               unique(test_data1$calendar_quarter))
+
+  # Data has been aggregated correctly
+  df1 <- dplyr::filter(anc_agg1, year %in% c("2014","2015"))
+  expect_equal(unique(df1$area_level), c(0, 1))
+
+  df2 <- dplyr::filter(anc_agg1, year %in% c("2016", "2017", "2018"))
+  expect_equal(unique(df2$area_level), c(0, 1, 2))
+
+  ## Check that aggregated values are equal
+  data_long <- data  %>%
+    tidyr::pivot_longer(c(anc_clients, anc_known_pos, anc_already_art, anc_tested,
+                          anc_tested_pos, anc_known_neg, births_facility)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
+
+  anc_agg_long <- anc_agg1  %>%
+    tidyr::pivot_longer(c(anc_clients, anc_known_pos, anc_already_art, anc_tested,
+                          anc_tested_pos, anc_known_neg, births_facility)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
+
+  data_check <- anc_agg_long %>%
+    dplyr::inner_join(data_long, by = c("area_id", "sex", "age_group", "calendar_quarter", "name"))
+
+  expect_equal(nrow(data_check), nrow(anc_agg_long))
+  expect_equal(data_check$value_check, data_check$value_raw)
+
+  # Check for edge cases
+
+
+  # (1) Data provided at multiple levels for the same years
+  test_data2 <- aggregate_anc(a_hintr_data$anc_testing, a_hintr_data$shape) %>%
+    dplyr::filter(area_level %in% c(0, 1))
+
+  test_data2 <- test_data2[names(data)]
+  anc_agg2 <- aggregate_anc(test_data2, a_hintr_data$shape)
+
+  # Check for same number of records at each area aggregation
+  check2 <- anc_agg2 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+
+  expect_equal(unique(check2$n), 8)
+
+  # (2) Data provided at more than one level for different years - filter data to
+  #  lowest level available
+
+  admin01_data <- dplyr::filter(data, area_level %in% c(0,1),
+                                calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  test_data3 <- rbind(admin01_data, admin2_data)
+  test_data3 <- test_data3[names(data)]
+
+  anc_agg3 <- aggregate_anc(test_data3, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check3 <- anc_agg3 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(5, 5, 3))
 })
 
 

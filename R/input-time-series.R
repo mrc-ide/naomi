@@ -40,22 +40,14 @@ aggregate_art <- function(art, shape) {
                   quarter = stringr::str_sub(calendar_quarter,-2,-1),
                   time_period = paste0(year, " ", quarter))
 
-  # If program data is provided at more than one area level:
-  # - split by area level and aggregate separately:
+  # Split data by year and aggregate from lowest level available
+  art_dat <- split(art_number , f = art_number$year)
 
-  if(length(unique(art_number$area_level) > 1)) {
-    art_dat <- split(art_number , f = art_number$area_level)
-  } else {
-    art_dat <- list(art_number)
-  }
-
-  aggregate_by_level <- function(art_number){
+  aggregate_art_by_level <- function(art_number){
 
     ## Recursively aggregate ART data up from lowest level of programme data provided
     # Levels to aggregate up from
     art_level <- max(art_number$area_level)
-    sex_level <- unique(art_number$sex)
-    age_level <- unique(art_number$age_group)
 
     art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
       dplyr::left_join(art_number, by = "area_id")
@@ -88,9 +80,9 @@ aggregate_art <- function(art, shape) {
 
   }
 
-
-  art_long <- lapply(art_dat, aggregate_by_level) %>%
-    dplyr::bind_rows()
+  art_long <- lapply(art_dat, aggregate_art_by_level) %>%
+    dplyr::bind_rows() %>%
+    dplyr::arrange(area_id)
 
   art_long$area_hierarchy <- build_hierarchy_label(art_long)
   art_long
@@ -292,44 +284,55 @@ aggregate_anc <- function(anc, shape) {
                   calendar_quarter = paste0("CY", time_period, quarter),
                   sex = "female")
 
-  ## Recursively aggregate ANC data up from lowest level of programme data provided
-  # Level to aggregate from
-  anc_level <- levels(as.factor(anc_testing$area_level))
-  # Join ANC data to hierarchy
-  anc_testing_wide <- dplyr::left_join(
-    anc_testing,
-    spread_areas(areas %>% dplyr::filter(area_level <= anc_level)),
-    by = "area_id")
 
+  # Split data by year and aggregate from lowest level available
+  anc_dat <- split(anc_testing , f = anc_testing$year)
 
-  # Function to aggregate based on area_id[0-9]$ columns in hierarchy
-  aggregate_data_anc <- function(col_name) {
-    df <- anc_testing_wide %>%
-      dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
-                      year, quarter, calendar_quarter) %>%
-      dplyr::summarise(anc_clients = sum(anc_clients, na.rm = TRUE),
-                       anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
-                       anc_already_art = sum(anc_already_art, na.rm = TRUE),
-                       anc_tested = sum(anc_tested, na.rm = TRUE),
-                       anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
-                       anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
-                       births_facility = sum(births_facility, na.rm = TRUE),
-                       .groups = 'drop') %>%
-      dplyr::rename(area_id = `eval(as.name(col_name))`)
+  aggregate_anc_by_level <- function(anc_testing){
+
+    ## Recursively aggregate ANC data up from lowest level of programme data provided
+    # Level to aggregate from
+    anc_level <- max(anc_testing$area_level)
+
+    # Join ANC data to hierarchy
+    anc_testing_wide <- anc_testing %>%
+      dplyr::filter(area_level == anc_level) %>%
+      dplyr::left_join( spread_areas(areas %>% dplyr::filter(area_level <= anc_level)),
+      by = "area_id")
+
+    # Function to aggregate based on area_id[0-9]$ columns in hierarchy
+    aggregate_data_anc <- function(col_name) {
+      df <- anc_testing_wide %>%
+        dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
+                        year, quarter, calendar_quarter) %>%
+        dplyr::summarise(anc_clients = sum(anc_clients, na.rm = TRUE),
+                         anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
+                         anc_already_art = sum(anc_already_art, na.rm = TRUE),
+                         anc_tested = sum(anc_tested, na.rm = TRUE),
+                         anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
+                         anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
+                         births_facility = sum(births_facility, na.rm = TRUE),
+                         .groups = 'drop') %>%
+        dplyr::rename(area_id = `eval(as.name(col_name))`)
+    }
+
+    # Aggregated data frame
+    anc_long <- grep("^area_id*\\s*[0-9]$", colnames(anc_testing_wide), value = TRUE) %>%
+      lapply(function(x) aggregate_data_anc(x))  %>%
+      dplyr::bind_rows() %>%
+      dplyr::left_join(areas %>% dplyr::select(area_id,area_name, area_level,
+                                               area_level_label, parent_area_id,
+                                               area_sort_order), by = "area_id") %>%
+      dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
+                    area_sort_order, sex, age_group, time_period, year, quarter,
+                    calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
+                    anc_tested, anc_tested_pos, anc_known_neg, births_facility) %>%
+      dplyr::ungroup()
   }
 
-  # Aggregated data frame
-  anc_long <- grep("^area_id*\\s*[0-9]$", colnames(anc_testing_wide), value = TRUE) %>%
-    lapply(function(x) aggregate_data_anc(x))  %>%
+  anc_long <- lapply(anc_dat, aggregate_anc_by_level) %>%
     dplyr::bind_rows() %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id,area_name, area_level,
-                                             area_level_label, parent_area_id,
-                                             area_sort_order), by = "area_id") %>%
-    dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
-                  area_sort_order, sex, age_group, time_period, year, quarter,
-                  calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
-                  anc_tested, anc_tested_pos, anc_known_neg, births_facility) %>%
-    dplyr::ungroup()
+    dplyr::arrange(area_id)
 
   anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
   anc_long
