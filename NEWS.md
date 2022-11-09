@@ -1,4 +1,4 @@
-# naomi 2.7.14
+# naomi 2.7.18
 
 Update for Spectrum v6.2 with calendar year projection period instead of mid-year 
 projection.
@@ -6,8 +6,8 @@ projection.
 * Requires `eppasm >= 0.7.0` and `first90 >= 1.6.1` which incorporate code updates 
   for calendar year projection.
 * Add demo PJNZ files saved in Spectrum 6.2 beta 29.
-* For Spectrum inputs parsed by function `extract_pjnz_naomi()`, add an additional 
-  column specifying to which calendar quarter the outputs correspond. This enables
+* For Spectrum inputs parsed by function `extract_pjnz_naomi()`, add a column
+  specifying to which calendar quarter the outputs correspond. This enables
   Naomi model compatibility with either mid-year projection (Spectrum version <=6.19)
   or calendar year projections (Spectrum version >=6.2).
   
