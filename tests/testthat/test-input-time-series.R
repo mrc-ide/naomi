@@ -68,9 +68,10 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
                                calendar_quarter %in% c("CY2016Q4","CY2017Q4","CY2018Q4"))
 
   test_data <- rbind(admin1_data, admin2_data)
+  test_data <- test_data[names(data)]
 
   # Aggregate data
-  art_agg <- aggregate_art(test_data,a_hintr_data$shape)
+  art_agg <- aggregate_art(test_data, a_hintr_data$shape)
 
   # Aggregated data has data for all years provided
   expect_equal(unique(art_agg$calendar_quarter),
@@ -82,6 +83,21 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   df2 <- dplyr::filter(art_agg, year %in% c("2016", "2017", "2018"))
   expect_equal(unique(df2$area_level), c(0, 1, 2))
+
+  ## Check that aggregated values are equal
+  data_long <- data  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
+
+  art_agg_long <- art_agg  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
+
+  data_check <- art_agg_long %>%
+    dplyr::inner_join(data_long, by = c("area_id", "sex", "age_group", "calendar_quarter", "name"))
+
+  expect_equal(nrow(data_check), nrow(art_agg_long))
+  expect_equal(data_check$value_check, data_check$value_raw)
 
 })
 
