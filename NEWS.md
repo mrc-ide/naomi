@@ -1,3 +1,7 @@
+# naomi 2.7.17
+
+* Error if trying to generate comparison report with old model output
+
 # naomi 2.7.16
 
 * Add function to generate html report comparing naomi model estimates with input data:
