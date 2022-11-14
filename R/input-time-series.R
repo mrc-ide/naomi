@@ -292,7 +292,10 @@ aggregate_anc <- function(anc, shape) {
                   births_facility)
 
   anc_testing <- anc %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id")
+    dplyr::left_join(
+      dplyr::select(areas, area_id, area_level),
+      by = "area_id"
+    )
 
   # Split data by year and aggregate from lowest level available
   anc_dat <- split(anc_testing , f = anc_testing$year)
@@ -314,7 +317,9 @@ aggregate_anc <- function(anc, shape) {
       dplyr::left_join(max_dat, by = c("area_id", "age_group", "year"))
 
     # Join ANC data to hierarchy
-    anc_testing_wide <- spread_areas(areas %>% dplyr::filter(area_level <= anc_level)) %>%
+    anc_testing_wide <- areas %>%
+      dplyr::filter(area_level <= anc_level) %>%
+      spread_areas() %>%
       dplyr::right_join(anc_full, by = "area_id")
 
 
@@ -322,14 +327,16 @@ aggregate_anc <- function(anc, shape) {
     aggregate_data_anc <- function(col_name) {
       df <- anc_testing_wide %>%
         dplyr::group_by(eval(as.name(col_name)), age_group, year) %>%
-        dplyr::summarise(anc_clients = sum(anc_clients, na.rm = TRUE),
-                         anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
-                         anc_already_art = sum(anc_already_art, na.rm = TRUE),
-                         anc_tested = sum(anc_tested, na.rm = TRUE),
-                         anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
-                         anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
-                         births_facility = sum(births_facility, na.rm = TRUE),
-                         .groups = 'drop') %>%
+        dplyr::summarise(
+          anc_clients = sum(anc_clients, na.rm = TRUE),
+          anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
+          anc_already_art = sum(anc_already_art, na.rm = TRUE),
+          anc_tested = sum(anc_tested, na.rm = TRUE),
+          anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
+          anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
+          births_facility = sum(births_facility, na.rm = TRUE),
+          .groups = "drop"
+        ) %>%
         dplyr::rename(area_id = `eval(as.name(col_name))`)
     }
 
@@ -338,7 +345,7 @@ aggregate_anc <- function(anc, shape) {
     aggregate_cols <- aggregate_cols[aggregate_cols != paste0("area_id", anc_level)]
 
     aggregated_anc <- aggregate_cols %>%
-      lapply(function(x) aggregate_data_anc(x)) %>%
+      lapply(aggregate_data_anc) %>%
       dplyr::bind_rows() %>%
       dplyr::ungroup()
 
