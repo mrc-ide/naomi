@@ -148,6 +148,19 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
     dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
   expect_equal(check1$n, c(10, 10, 6))
+
+  # Test that ART data can be aggregated with missing records
+  art_agg4 <- aggregate_art(hintr_data$art_number, hintr_data$shape)
+  missing <- dplyr::filter(art_agg4, is.na(art_current))
+
+  # Likoma ART data missing for 2012 in full testing dataset
+  expect_equal(unique(missing$area_name), "Likoma")
+  expect_equal(unique(missing$year), 2012)
+  # Missing records filled in for correct age/sex stratifications
+  expect_equal(nrow(missing), 2)
+  expect_equal(unique(missing$sex), "both")
+  expect_equal(unique(missing$age_group), c("Y000_014","Y015_999"))
+
 })
 
 
@@ -291,8 +304,6 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
   expect_equal(data_check$value_check, data_check$value_raw)
 
   # Check for edge cases
-
-
   # (1) Data provided at multiple levels for the same years
   test_data2 <- aggregate_anc(a_hintr_data$anc_testing, a_hintr_data$shape) %>%
     dplyr::filter(area_level %in% c(0, 1))
@@ -329,6 +340,22 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
     dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
   expect_equal(check1$n, c(5, 5, 3))
+
+
+  # Test that ANC data can be aggregated with missing records
+  # Remove ANC likoma data for 2012
+  test_data4 <- read_anc_testing(hintr_data$anc_testing) %>%
+    dplyr::filter(!(area_id == "MWI_4_7_demo" & year == "2012"))
+
+  anc_agg4 <- aggregate_anc(test_data4, hintr_data$shape)
+  missing <- dplyr::filter(anc_agg4, is.na(anc_clients))
+
+  # Likoma ART data missing for 2012 in full testing dataset
+  expect_equal(unique(missing$area_name), "Likoma")
+  expect_equal(unique(missing$year), 2012)
+  # Missing records filled in for correct age/sex stratifications
+  expect_equal(nrow(missing), 1)
+  expect_equal(unique(missing$age_group), c("Y015_049"))
 })
 
 
@@ -573,3 +600,4 @@ test_that("there is metadata for every indicator", {
     col_types = readr::cols(.default = "c"))
   expect_setequal(plot_types, metadata$id)
 })
+
