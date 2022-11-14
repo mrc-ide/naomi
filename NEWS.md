@@ -11,6 +11,8 @@ projection.
   Naomi model compatibility with either mid-year projection (Spectrum version <=6.19)
   or calendar year projections (Spectrum version >=6.2).
   
+* Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
+  
 # naomi 2.7.16
 
 * Add function to generate html report comparing naomi model estimates with input data:

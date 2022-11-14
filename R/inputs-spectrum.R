@@ -316,14 +316,22 @@ read_dp_anc_testing <- function(dp) {
   proj.years <- yr_start:yr_end
   timedat.idx <- 4 + 1:length(proj.years) - 1
 
+  anc_indicators <- c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_known_neg")
   if (exists_dptag("<ANCTestingValues MV>")) {
     anc_testing <- dpsub("<ANCTestingValues MV>", 2:5, timedat.idx)
+    anc_testing <- sapply(anc_testing, as.integer)
+    dimnames(anc_testing) <- list(indicator = anc_indicators[1:4], year = proj.years)
   } else if (exists_dptag("<ANCTestingValues MV2>")) {
     anc_testing <- dpsub("<ANCTestingValues MV2>", 2:5, timedat.idx)
+    anc_testing <- sapply(anc_testing, as.integer)
+    dimnames(anc_testing) <- list(indicator = anc_indicators[1:4], year = proj.years)
+  } else if (exists_dptag("<ANCTestingValues MV4>")) {
+    anc_testing <- dpsub("<ANCTestingValues MV4>", c(2:5, 10), timedat.idx)
+    anc_testing <- sapply(anc_testing, as.integer)
+    dimnames(anc_testing) <- list(indicator = anc_indicators, year = proj.years)
   } else {
     stop("ANC testing inputs not found in .DP file")
   }
-  anc_testing <- sapply(anc_testing, as.integer)
   anc_testing[anc_testing == -9999] <- NA_real_
 
   ## Note: these values start 1 column later than other arrays in the .DP file
@@ -336,13 +344,12 @@ read_dp_anc_testing <- function(dp) {
   anc_already_art <- sapply(anc_already_art, as.integer)
   anc_already_art[anc_already_art == 0] <- NA
 
-  anc_testing <- rbind(anc_testing, anc_already_art)
-  dimnames(anc_testing) <- list(indicator = c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"),
-                                year = proj.years)
+  anc_testing <- rbind(anc_testing, "anc_already_art" = anc_already_art)
+  names(dimnames(anc_testing)) <- c("indicator", "year")
 
   anc_testing <- as.data.frame.table(anc_testing,
-                                   responseName = "value",
-                                   stringsAsFactors = FALSE)
+                                     responseName = "value",
+                                     stringsAsFactors = FALSE)
   anc_testing$year <- type.convert(anc_testing$year, as.is = TRUE)
   anc_testing <- dplyr::filter(anc_testing, !is.na(value))
 
