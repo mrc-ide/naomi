@@ -883,10 +883,10 @@ select_naomi_data <- function(
 
   } else {
 
-    anc_aggreagted <- aggregate_anc(anc_testing, naomi_mf$areas)
+    anc_aggregated <- aggregate_anc(anc_testing, naomi_mf$areas)
 
     ## Calculate model inputs for all data provided
-    anc_full_mf <- anc_aggreagted %>%
+    anc_full_mf <- anc_aggregated %>%
       dplyr::group_by(area_id, age_group, year) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested,
                                       anc_already_art, anc_clients, anc_known_neg,
