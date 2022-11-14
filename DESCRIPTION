@@ -68,4 +68,5 @@ Remotes:
     bergant/datamodelr,
     mrc-ide/eppasm,
     first90=mrc-ide/first90release,
-    reside-ic/traduire
+    reside-ic/traduire,
+    mrc-ide/naomi.options
