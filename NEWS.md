@@ -13,6 +13,10 @@ projection.
   
 * Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
   
+# naomi 2.7.17
+
+* Error if trying to generate comparison report with old model output
+
 # naomi 2.7.16
 
 * Add function to generate html report comparing naomi model estimates with input data:

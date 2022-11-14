@@ -81,7 +81,7 @@ hintr_prepare_summary_report_download <- function(output,
 #' @export
 hintr_prepare_comparison_report_download <- function(output,
                                                      path = tempfile(fileext = ".html")) {
-  assert_model_output_version(output)
+  assert_model_output_version(output, "2.7.16")
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_COMPARISON")
   model_output <- readRDS(output$model_output_path)
