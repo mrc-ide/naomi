@@ -50,6 +50,27 @@ test_that("model fits with differing number of ANC observations T1 and T2", {
                                   anc_artcov_year_t1 = 2016,
                                   anc_artcov_year_t2 = 2018)
 
+  ## Test that expected number of rows of data are selected
+  expect_equal(nrow(naomi_data$anc_prev_t1_dat), 7)
+  expect_equal(nrow(naomi_data$anc_artcov_t1_dat), 7)
+
+  expect_equal(nrow(naomi_data$anc_clients_t2_dat), 1)
+  expect_equal(nrow(naomi_data$anc_prev_t2_dat), 1)
+  expect_equal(nrow(naomi_data$anc_artcov_t2_dat), 1)
+
+  expect_true(all(!is.na(naomi_data$anc_prev_t2_dat$anc_prev_x)))
+  expect_true(all(!is.na(naomi_data$anc_prev_t2_dat$anc_prev_n)))
+  expect_true(all(!is.na(naomi_data$anc_artcov_t2_dat$anc_artcov_x)))
+  expect_true(all(!is.na(naomi_data$anc_artcov_t2_dat$anc_artcov_n)))
+
+  expect_true(all(!is.na(naomi_data$anc_clients_t2_dat$anc_clients_x)))
+  expect_true(all(!is.na(naomi_data$anc_clients_t2_dat$anc_clients_x)))
+  expect_true(all(!is.na(naomi_data$anc_prev_t2_dat$anc_prev_x)))
+  expect_true(all(!is.na(naomi_data$anc_prev_t2_dat$anc_prev_n)))
+  expect_true(all(!is.na(naomi_data$anc_artcov_t2_dat$anc_artcov_x)))
+  expect_true(all(!is.na(naomi_data$anc_artcov_t2_dat$anc_artcov_n)))
+
+  ## Fit model and confirm convergence
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
   fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 

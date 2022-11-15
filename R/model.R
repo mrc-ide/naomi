@@ -1371,7 +1371,13 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
         year %in% !!year,
         indicator %in% c("anc_clients_x", "anc_clients_pys_offset")
       ) %>%
-      tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
+      tidyr::pivot_wider(names_from = "indicator", values_from = "value")
+
+    ## Filter to only records with anc_clients_x recorded
+    anc_sub <- dplyr::filter(anc_sub, !is.na(anc_clients_x))
+
+    ## Assign observation index
+    anc_sub <- anc_sub %>%
       dplyr::mutate(obs_idx = dplyr::row_number()) %>%
       dplyr::select("area_id", "sex", "age_group","obs_idx","anc_clients_x", "anc_clients_pys_offset")
 
