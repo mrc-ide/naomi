@@ -81,3 +81,43 @@ test_that("extract_pjnz_naomi() returns country and region name", {
   expect_setequal(spec$spectrum_region_code, 0)
   expect_setequal(spec$spectrum_region_name, "Malawi")
 })
+
+
+test_that("extract_pjnz_program_data() returns complete data", {
+
+  ## Test files created with Spectrum v5.87 -- mid-year population projection
+  pjnz_old <- system_file("extdata/demo_mwi2019.PJNZ")
+  dat_old <- extract_pjnz_program_data(pjnz_old)
+
+  expect_true(all(!is.na(dat_old$art_dec31$art_dec31)))
+  expect_setequal(dat_old$art_dec31$sex, c("both", "female", "male"))
+  expect_setequal(dat_old$art_dec31$year, 1970:2025)
+  expect_setequal(dat_old$art_dec31$age_group, c("Y000_014", "Y015_999"))
+  expect_setequal(dat_old$art_dec31$spectrum_region_code, 0)
+
+  expect_setequal(dat_old$anc_testing$spectrum_region_code, 0)
+  expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2018],
+                  c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"))
+  expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2010],
+                  c("anc_already_art"))
+  expect_true(all(!is.na(dat_old$anc_testing$value)))
+
+
+  ## Test files created with Spectrum v6.2 Beta 25 -- calendar year population projection
+  pjnz_new <- system_file("extdata/demo_mwi2019_v6.2.PJNZ")
+  dat_new <- extract_pjnz_program_data(pjnz_new)
+
+  expect_true(all(!is.na(dat_new$art_dec31$art_dec31)))
+  expect_setequal(dat_new$art_dec31$sex, c("both", "female", "male"))
+  expect_setequal(dat_new$art_dec31$year, 1970:2025)
+  expect_setequal(dat_new$art_dec31$age_group, c("Y000_014", "Y015_999"))
+  expect_setequal(dat_new$art_dec31$spectrum_region_code, 0)
+
+  expect_setequal(dat_new$anc_testing$spectrum_region_code, 0)
+  expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2018],
+                  c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_known_neg", "anc_already_art"))
+  expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2010],
+                  c("anc_already_art"))
+  expect_true(all(!is.na(dat_new$anc_testing$value)))
+
+})

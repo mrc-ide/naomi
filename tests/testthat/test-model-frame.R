@@ -240,3 +240,86 @@ test_that("survey_mf(..., use_aggregate) option returns expected results", {
                        min_age = 15, max_age = 50, use_aggregate = TRUE)
   expect_equal(nrow(mf$model_input), 1)
 })
+
+test_that("naomi_model_frame() interpolated population depends on quarter specification", {
+
+  areas_zone <- read_area_merged(system_file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson"))
+  pop_zone <- read_population(system_file("extdata/demo-subnational-pjnz/demo_population_zone.csv"))
+  
+  ## Test files created with Spectrum v5.87 -- mid-year population projection
+  pjnz_old <- system_file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip")
+  spec_old  <- extract_pjnz_naomi(pjnz_old)
+
+  expect_true(all(spec_old$quarter == 2))
+
+  mf_old <- naomi_model_frame(areas_zone,
+                              pop_zone,
+                              spec_old,
+                              scope = "MWI",
+                              level = 2,
+                              calendar_quarter1 = "CY2016Q1",
+                              calendar_quarter2 = "CY2018Q4",
+                              calendar_quarter3 = "CY2019Q2",
+                              spectrum_population_calibration = "subnational")
+
+
+  ## Outputs should match for T3 (CY2019Q2 -- mid-year)
+  expect_equal(sum(dplyr::filter(spec_old, year == 2019)$totpop), sum(mf_old$mf_model$population_t3))
+  expect_equal(sum(dplyr::filter(spec_old, year == 2019)$hivpop),
+               sum(dplyr::filter(mf_old$spectrum_calibration, calendar_quarter == "CY2019Q2")$plhiv_spectrum))
+  expect_equal(sum(dplyr::filter(spec_old, year == 2019)$artpop),
+               sum(dplyr::filter(mf_old$spectrum_calibration, calendar_quarter == "CY2019Q2")$art_current_spectrum))
+  
+  ## Test files created with Spectrum v6.2 Beta 25 -- calendar year population projection
+  pjnz_new <- system_file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz_v6.2.zip")
+  spec_new  <- extract_pjnz_naomi(pjnz_new)
+
+  expect_true(all(spec_new$quarter == 4))
+
+  mf_new <- naomi_model_frame(areas_zone,
+                              pop_zone,
+                              spec_new,
+                              scope = "MWI",
+                              level = 2,
+                              calendar_quarter1 = "CY2016Q1",
+                              calendar_quarter2 = "CY2018Q4",
+                              calendar_quarter3 = "CY2019Q2",
+                              spectrum_population_calibration = "subnational")
+
+
+  ## Outputs should match for T2 (CY2018Q4 -- mid-year)
+  expect_equal(sum(dplyr::filter(spec_new, year == 2018)$totpop), sum(mf_new$mf_model$population_t2))
+  expect_equal(sum(dplyr::filter(spec_new, year == 2018)$hivpop),
+               sum(dplyr::filter(mf_new$spectrum_calibration, calendar_quarter == "CY2018Q4")$plhiv_spectrum))
+
+  ## Note: For Q4 ART pop -- should match to Dec 31 ART input
+  expect_equal(sum(dplyr::filter(spec_new, year == 2018)$artpop_dec31),
+               sum(dplyr::filter(mf_new$spectrum_calibration, calendar_quarter == "CY2018Q4")$art_current_spectrum))
+  
+  ## Test that calibrates to internal ART population if artpop_dec31 not specified
+
+  spec_alt  <- spec_new
+  spec_alt$artpop_dec31 <- NA_real_
+
+  expect_true(all(spec_alt$quarter == 4))
+
+  mf_alt <- naomi_model_frame(areas_zone,
+                              pop_zone,
+                              spec_alt,
+                              scope = "MWI",
+                              level = 2,
+                              calendar_quarter1 = "CY2016Q1",
+                              calendar_quarter2 = "CY2018Q4",
+                              calendar_quarter3 = "CY2019Q2",
+                              spectrum_population_calibration = "subnational")
+
+  ## Outputs should match for T2 (CY2018Q4 -- mid-year)
+  expect_equal(sum(dplyr::filter(spec_alt, year == 2018)$totpop), sum(mf_alt$mf_model$population_t2))
+  expect_equal(sum(dplyr::filter(spec_alt, year == 2018)$hivpop),
+               sum(dplyr::filter(mf_alt$spectrum_calibration, calendar_quarter == "CY2018Q4")$plhiv_spectrum))
+
+  ## Note: For Q4 ART pop -- should match to internal ART total
+  expect_equal(sum(dplyr::filter(spec_alt, year == 2018)$artpop),
+               sum(dplyr::filter(mf_alt$spectrum_calibration, calendar_quarter == "CY2018Q4")$art_current_spectrum))
+
+})

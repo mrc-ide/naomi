@@ -15,7 +15,8 @@ extract_pjnz_naomi <- function(pjnz_list) {
 
   spec <- lapply(pjnz_list, extract_pjnz_one) %>%
     dplyr::bind_rows() %>%
-    dplyr::select(iso3, spectrum_country, spectrum_region_code, spectrum_region_name, dplyr::everything())
+    dplyr::select(iso3, spectrum_country, spectrum_region_code, spectrum_region_name, year, quarter,
+                  dplyr::everything())
 
   spec
 }
@@ -55,9 +56,9 @@ extract_pjnz_one <- function(pjnz) {
   projp <- eppasm::read_hivproj_param(pjnz)
   specres <- eppasm::read_hivproj_output(pjnz)
 
-  specfp <- eppasm:::create_spectrum_fixpar(projp, demp)
+  specfp <- eppasm::create_spectrum_fixpar(projp, demp)
   specfp$eppmod <- "directincid_hts"
-  specfp$incidinput <- eppasm::incid(specres)
+  specfp$incidinput <- eppasm::incid15to49_eppinput_specres(specres)
   specfp$incidpopage <- 0L  ## age 15-49
 
   mod <- eppasm::simmod(specfp)
@@ -101,6 +102,8 @@ extract_pjnz_one <- function(pjnz) {
   spec$spectrum_region_name <- spectrum_region_name
   spec$spectrum_country <- eppasm::read_country(pjnz)
   spec$iso3 <- eppasm::read_iso3(pjnz)
+
+  spec$quarter <- c(2, 4)[match(specfp$projection_period, c("midyear", "calendar"))]
 
   spec
 }
@@ -313,14 +316,22 @@ read_dp_anc_testing <- function(dp) {
   proj.years <- yr_start:yr_end
   timedat.idx <- 4 + 1:length(proj.years) - 1
 
+  anc_indicators <- c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_known_neg")
   if (exists_dptag("<ANCTestingValues MV>")) {
     anc_testing <- dpsub("<ANCTestingValues MV>", 2:5, timedat.idx)
+    anc_testing <- sapply(anc_testing, as.integer)
+    dimnames(anc_testing) <- list(indicator = anc_indicators[1:4], year = proj.years)
   } else if (exists_dptag("<ANCTestingValues MV2>")) {
     anc_testing <- dpsub("<ANCTestingValues MV2>", 2:5, timedat.idx)
+    anc_testing <- sapply(anc_testing, as.integer)
+    dimnames(anc_testing) <- list(indicator = anc_indicators[1:4], year = proj.years)
+  } else if (exists_dptag("<ANCTestingValues MV4>")) {
+    anc_testing <- dpsub("<ANCTestingValues MV4>", c(2:5, 10), timedat.idx)
+    anc_testing <- sapply(anc_testing, as.integer)
+    dimnames(anc_testing) <- list(indicator = anc_indicators, year = proj.years)
   } else {
     stop("ANC testing inputs not found in .DP file")
   }
-  anc_testing <- sapply(anc_testing, as.integer)
   anc_testing[anc_testing == -9999] <- NA_real_
 
   ## Note: these values start 1 column later than other arrays in the .DP file
@@ -333,13 +344,12 @@ read_dp_anc_testing <- function(dp) {
   anc_already_art <- sapply(anc_already_art, as.integer)
   anc_already_art[anc_already_art == 0] <- NA
 
-  anc_testing <- rbind(anc_testing, anc_already_art)
-  dimnames(anc_testing) <- list(indicator = c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"),
-                                year = proj.years)
+  anc_testing <- rbind(anc_testing, "anc_already_art" = anc_already_art)
+  names(dimnames(anc_testing)) <- c("indicator", "year")
 
   anc_testing <- as.data.frame.table(anc_testing,
-                                   responseName = "value",
-                                   stringsAsFactors = FALSE)
+                                     responseName = "value",
+                                     stringsAsFactors = FALSE)
   anc_testing$year <- type.convert(anc_testing$year, as.is = TRUE)
   anc_testing <- dplyr::filter(anc_testing, !is.na(value))
 
@@ -500,8 +510,21 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
 
   quarter_id_out <- calendar_quarter_to_quarter_id(calendar_quarter_out)
 
+  spec_aggr <- spec_aggr %>%
+    dplyr::mutate(
+      quarter_id = convert_quarter_id(year, quarter),
+      quarter_id_dec31 = convert_quarter_id(year, 4L)
+    )
+
+  ## If projected values `artpop` are Q4 (Dec 31), use the Dec 31 specified
+  ## values for interpolation rather than the the internal model values.
+  ## Achieve this by setting the `artpop` values to missing.
+  spec_aggr <- spec_aggr %>%
+    dplyr::mutate(
+      artpop_external = dplyr::if_else(quarter_id == quarter_id_dec31 & !is.na(artpop_dec31), NA_real_, artpop)
+    ) 
+  
   val <- spec_aggr %>%
-    dplyr::mutate(quarter_id = convert_quarter_id(year, 2L)) %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group) %>%
     dplyr::summarise(
       calendar_quarter = calendar_quarter_out,
@@ -509,8 +532,8 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
       plhiv_spectrum = log_lin_approx(quarter_id, hivpop, quarter_id_out),
       ##
       ## Note: art_current interpolates mid-year and end-year ART values
-      art_current_spectrum = log_lin_approx(c(quarter_id, quarter_id+2),
-                                            c(artpop, artpop_dec31), quarter_id_out),
+      art_current_spectrum = log_lin_approx(c(quarter_id, quarter_id_dec31),
+                                            c(artpop_external, artpop_dec31), quarter_id_out),
       ##
       art_current_internal_spectrum = log_lin_approx(quarter_id, artpop, quarter_id_out),
       infections_spectrum = log_lin_approx(quarter_id, infections, quarter_id_out),
