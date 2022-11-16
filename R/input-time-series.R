@@ -63,22 +63,19 @@ aggregate_art <- function(art, shape) {
     aggregate_data_art <- function(col_name) {
       df <- art_number_wide %>%
         dplyr::group_by(eval(as.name(col_name)), sex, age_group, calendar_quarter) %>%
-        dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
+        dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(.),
                             .groups = "drop") %>%
         dplyr::rename(area_id = `eval(as.name(col_name))`)
     }
 
     # Aggregated data frame for area levels > data provided
     aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE)
-    aggregate_cols <- aggregate_cols[aggregate_cols != paste0("area_id", art_level)]
 
     aggregated_art <- aggregate_cols %>%
       lapply(function(x) aggregate_data_art(x)) %>%
       dplyr::bind_rows() %>%
-      dplyr::ungroup()
-
-    data_long <- dplyr::bind_rows(aggregated_art,
-                                  dplyr::select(art_full, -area_level))
+      dplyr::ungroup() %>%
+      dplyr::bind_rows()
 
   }
 
@@ -308,7 +305,6 @@ aggregate_anc <- function(anc, shape) {
     max_dat <- dplyr::filter(anc_testing, area_level == anc_level)
     max_shape <- dplyr::filter(areas, area_level == anc_level)
 
-
     # Ensure entries exist for all programme data age/sex/quarter combinations X
     # shape file area_ids at finest stratification
     anc_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
@@ -322,37 +318,31 @@ aggregate_anc <- function(anc, shape) {
       spread_areas() %>%
       dplyr::right_join(anc_full, by = "area_id")
 
-
     # Function to aggregate based on area_id[0-9]$ columns in hierarchy
     aggregate_data_anc <- function(col_name) {
       df <- anc_testing_wide %>%
         dplyr::group_by(eval(as.name(col_name)), age_group, year) %>%
         dplyr::summarise(
-          anc_clients = sum(anc_clients, na.rm = TRUE),
-          anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
-          anc_already_art = sum(anc_already_art, na.rm = TRUE),
-          anc_tested = sum(anc_tested, na.rm = TRUE),
-          anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
-          anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
-          births_facility = sum(births_facility, na.rm = TRUE),
+          anc_clients = sum(anc_clients),
+          anc_known_pos = sum(anc_known_pos),
+          anc_already_art = sum(anc_already_art),
+          anc_tested = sum(anc_tested),
+          anc_tested_pos = sum(anc_tested_pos),
+          anc_known_neg = sum(anc_known_neg),
+          births_facility = sum(births_facility),
           .groups = "drop"
         ) %>%
         dplyr::rename(area_id = `eval(as.name(col_name))`)
     }
 
-    # Aggregated data frame for area levels > data provided
+    # Aggregated data frame for area levels
     aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(anc_testing_wide), value = TRUE)
-    aggregate_cols <- aggregate_cols[aggregate_cols != paste0("area_id", anc_level)]
 
     aggregated_anc <- aggregate_cols %>%
       lapply(aggregate_data_anc) %>%
       dplyr::bind_rows() %>%
-      dplyr::ungroup()
-
-
-    data_long <- dplyr::bind_rows(aggregated_anc,
-                                  dplyr::select(anc_full, -area_level))
-
+      dplyr::ungroup() %>%
+      dplyr::bind_rows()
   }
 
   anc_long <- lapply(anc_dat, aggregate_anc_by_level) %>%

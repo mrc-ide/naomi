@@ -56,6 +56,8 @@ test_that("ART data can be aggregated", {
 
 test_that("ART data can be aggregated when avalible at different admin levels", {
 
+
+  # (1) Data provided at different levels for different years
   # Create dummy data simillar to MOZ edge case:
   # ART data at admin1 2014-2016, admin2 2015-2016
   data <- aggregate_art(a_hintr_data$art_number,
@@ -110,7 +112,10 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   # Check for edge cases
 
-  # (1) Data provided at multiple levels for the same years
+  # (2) Data provided at multiple levels for the same years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
   test_data2 <- aggregate_art(a_hintr_data$art_number, a_hintr_data$shape) %>%
     dplyr::filter(area_level %in% c(0,2))
 
@@ -127,16 +132,16 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   expect_equal(unique(check2$n), 16)
 
-  # (2) Data provided at more than one level for different years - filter data to
-  #  lowest level available
+  # (3) Data provided at more than one level for different years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
 
   admin01_data <- dplyr::filter(data, area_level %in% c(0,1),
                                calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
 
   test_data3 <- rbind(admin01_data, admin2_data)
   test_data3 <- test_data3[names(data)]
-
-  aggregate_art(test_data3, a_hintr_data$shape)
 
   art_agg3 <- aggregate_art(test_data3, a_hintr_data$shape)
 
@@ -149,15 +154,17 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   expect_equal(check1$n, c(10, 10, 6))
 
-  # Test that ART data can be aggregated with missing records
+
+  # (4) Test that ART data can be aggregated with missing records
+  # Expected behavior - create NAs when missing data is summed up area hierarchy
   art_agg4 <- aggregate_art(hintr_data$art_number, hintr_data$shape)
   missing <- dplyr::filter(art_agg4, is.na(art_current))
 
-  # Likoma ART data missing for 2012 in full testing dataset
-  expect_equal(unique(missing$area_name), "Likoma")
+  # Likoma + parent areas ART data missing for 2012 in aggregated data
+  expect_equal(unique(missing$area_name), c("Malawi - Demo","Northern","Likoma"))
   expect_equal(unique(missing$year), 2012)
   # Missing records filled in for correct age/sex stratifications
-  expect_equal(nrow(missing), 2)
+  expect_equal(nrow(missing), 10)
   expect_equal(unique(missing$sex), "both")
   expect_equal(unique(missing$age_group), c("Y000_014","Y015_999"))
 
@@ -250,7 +257,9 @@ test_that("ANC data can be aggregated", {
 
 test_that("ANC data can be aggregated when avalible at different admin levels", {
 
-  # Create dummy data:
+  # (1) Data provided at different levels for different years
+  # Create dummy data simillar to MOZ edge case:
+  # ART data at admin1 2014-2016, admin2 2015-2016
   data <- aggregate_anc(a_hintr_data$anc_testing,
                         a_hintr_data$shape)
 
@@ -303,8 +312,11 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
   expect_equal(nrow(data_check), nrow(anc_agg_long))
   expect_equal(data_check$value_check, data_check$value_raw)
 
-  # Check for edge cases
-  # (1) Data provided at multiple levels for the same years
+
+  # (2) Data provided at multiple levels for the same years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
   test_data2 <- aggregate_anc(a_hintr_data$anc_testing, a_hintr_data$shape) %>%
     dplyr::filter(area_level %in% c(0, 1))
 
@@ -321,8 +333,10 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
 
   expect_equal(unique(check2$n), 8)
 
-  # (2) Data provided at more than one level for different years - filter data to
-  #  lowest level available
+  # (3) Data provided at more than one level for different years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
 
   admin01_data <- dplyr::filter(data, area_level %in% c(0,1),
                                 calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
@@ -341,20 +355,21 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
 
   expect_equal(check1$n, c(5, 5, 3))
 
-
-  # Test that ANC data can be aggregated with missing records
-  # Remove ANC likoma data for 2012
+  # (4) Test that ART data can be aggregated with missing records
+  # Expected behavior - create NAs when missing data is summed up area hierarchy
+  # Remove ANC Likoma data for 2012
   test_data4 <- read_anc_testing(hintr_data$anc_testing) %>%
     dplyr::filter(!(area_id == "MWI_4_7_demo" & year == "2012"))
 
   anc_agg4 <- aggregate_anc(test_data4, hintr_data$shape)
   missing <- dplyr::filter(anc_agg4, is.na(anc_clients))
 
-  # Likoma ART data missing for 2012 in full testing dataset
-  expect_equal(unique(missing$area_name), "Likoma")
+
+  # Likoma + parents areas ANC data missing for 2012 in aggregated data
+  expect_equal(unique(missing$area_name), c("Malawi - Demo","Northern","Likoma"))
   expect_equal(unique(missing$year), 2012)
   # Missing records filled in for correct age/sex stratifications
-  expect_equal(nrow(missing), 1)
+  expect_equal(nrow(missing), 5)
   expect_equal(unique(missing$age_group), c("Y015_049"))
 })
 
