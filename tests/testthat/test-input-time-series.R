@@ -157,7 +157,10 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   # (4) Test that ART data can be aggregated with missing records
   # Expected behavior - create NAs when missing data is summed up area hierarchy
-  art_agg4 <- aggregate_art(hintr_data$art_number, hintr_data$shape)
+  art <- system.file("extdata/demo_art_number.csv", package = "naomi")
+  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
+
+  art_agg4 <- aggregate_art(art, shape)
   missing <- dplyr::filter(art_agg4, is.na(art_current))
 
   # Likoma + parent areas ART data missing for 2012 in aggregated data
@@ -358,10 +361,13 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
   # (4) Test that ART data can be aggregated with missing records
   # Expected behavior - create NAs when missing data is summed up area hierarchy
   # Remove ANC Likoma data for 2012
-  test_data4 <- read_anc_testing(hintr_data$anc_testing) %>%
+  anc <- system.file("extdata/demo_anc_testing.csv", package = "naomi")
+  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
+
+  test_data4 <- read_anc_testing(anc) %>%
     dplyr::filter(!(area_id == "MWI_4_7_demo" & year == "2012"))
 
-  anc_agg4 <- aggregate_anc(test_data4, hintr_data$shape)
+  anc_agg4 <- aggregate_anc(test_data4, a_hintr_data$shape)
   missing <- dplyr::filter(anc_agg4, is.na(anc_clients))
 
 

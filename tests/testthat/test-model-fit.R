@@ -78,6 +78,80 @@ test_that("model fits with differing number of ANC observations T1 and T2", {
 
 })
 
+test_that("model fits with different combination of ANC prevalence and ANC ART data avalible", {
+
+  # (1) ANC testing data missing for T2
+  ancdat1 <- demo_anc_testing %>%
+    dplyr::filter(area_id %in% a_naomi_mf$mf_areas$area_id) %>%
+    dplyr::group_by(year) %>%
+    dplyr::filter(year == 2016 | year == 2018 ) %>%
+    dplyr::mutate(anc_tested = dplyr::if_else(year == "2018", NA_real_, anc_tested))
+
+
+  naomi_data <- select_naomi_data(a_naomi_mf,
+                                  demo_survey_hiv_indicators,
+                                  anc_testing = ancdat1,
+                                  demo_art_number,
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                  artcov_survey_ids = "DEMO2016PHIA",
+                                  recent_survey_ids = "DEMO2016PHIA",
+                                  anc_prev_year_t1 = 2016,
+                                  anc_prev_year_t2 = NULL,
+                                  anc_artcov_year_t1 = 2016,
+                                  anc_artcov_year_t2 = 2018)
+
+  ## Test that expected number of rows of data are selected
+  expect_equal(nrow(naomi_data$anc_prev_t1_dat), 7)
+  expect_equal(nrow(naomi_data$anc_artcov_t1_dat), 7)
+
+  expect_equal(nrow(naomi_data$anc_clients_t2_dat), 7)
+  expect_equal(nrow(naomi_data$anc_prev_t2_dat), 0)
+  expect_equal(nrow(naomi_data$anc_artcov_t2_dat), 7)
+
+  ## Fit model and confirm convergence
+  tmb_inputs <- prepare_tmb_inputs(naomi_data)
+  fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+  expect_equal(fit$convergence, 0)
+
+  # (2) ANC already ART missing for a single district
+  ancdat2 <- demo_anc_testing %>%
+    dplyr::filter(area_id %in% a_naomi_mf$mf_areas$area_id) %>%
+    dplyr::group_by(year) %>%
+    dplyr::filter(year == 2016 | year == 2018 ) %>%
+    dplyr::mutate(anc_tested = dplyr::if_else(year == "2018" & area_name == "Likoma",
+                                              NA_real_, anc_tested))
+
+  naomi_data <- select_naomi_data(a_naomi_mf,
+                                  demo_survey_hiv_indicators,
+                                  anc_testing = ancdat2,
+                                  demo_art_number,
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                  artcov_survey_ids = "DEMO2016PHIA",
+                                  recent_survey_ids = "DEMO2016PHIA",
+                                  anc_prev_year_t1 = 2016,
+                                  anc_prev_year_t2 = 2018,
+                                  anc_artcov_year_t1 = 2016,
+                                  anc_artcov_year_t2 = 2018)
+
+  ## Test that expected number of rows of data are selected
+  expect_equal(nrow(naomi_data$anc_prev_t1_dat), 7)
+  expect_equal(nrow(naomi_data$anc_artcov_t1_dat), 7)
+
+  expect_equal(nrow(naomi_data$anc_clients_t2_dat), 7)
+  expect_equal(nrow(naomi_data$anc_prev_t2_dat), 6)
+  expect_equal(nrow(naomi_data$anc_artcov_t2_dat), 7)
+
+  ## Fit model and confirm convergence
+  tmb_inputs <- prepare_tmb_inputs(naomi_data)
+  fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+  expect_equal(fit$convergence, 0)
+
+})
+
+
+
 test_that("model fit with no ART data at T2", {
 
     naomi_data <- select_naomi_data(a_naomi_mf,
