@@ -1,3 +1,18 @@
+# naomi 2.7.18
+
+Update for Spectrum v6.2 with calendar year projection period instead of mid-year 
+projection.
+
+* Requires `eppasm >= 0.7.0` and `first90 >= 1.6.1` which incorporate code updates 
+  for calendar year projection.
+* Add demo PJNZ files saved in Spectrum 6.2 beta 29.
+* For Spectrum inputs parsed by function `extract_pjnz_naomi()`, add a column
+  specifying to which calendar quarter the outputs correspond. This enables
+  Naomi model compatibility with either mid-year projection (Spectrum version <=6.19)
+  or calendar year projections (Spectrum version >=6.2).
+  
+* Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
+  
 # naomi 2.7.17
 
 * Error if trying to generate comparison report with old model output
@@ -5,8 +20,8 @@
 # naomi 2.7.16
 
 * Add function to generate html report comparing naomi model estimates with input data:
-  - The comparison report is generated with the function `generate_comparison_report()` that requires     a naomi output file saved as an .Rds or output zip file created by `hintr_run_model()`
-  - The report calls exported plotting functions that will generate interactive plotly figures from       the `inputs_outputs` dataset in the naomi outputs including `bar_plotly()`, `age_bar_plotly()` and     `scatter_plotly`.
+  - The comparison report is generated with the function `generate_comparison_report()` that requires a naomi output file saved as an .Rds or output zip file created by `hintr_run_model()`
+  - The report calls exported plotting functions that will generate interactive plotly figures from the `inputs_outputs` dataset in the naomi outputs including `bar_plotly()`, `age_bar_plotly()` and `scatter_plotly`.
 
 # naomi 2.7.15
 
@@ -44,7 +59,7 @@
 
 # naomi 2.7.7
 
-* Report log likelihood in model fit object
+* Report log likelihood in model fit object.
 
 # naomi 2.7.6
 
