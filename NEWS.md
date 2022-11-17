@@ -1,3 +1,7 @@
+# naomi 2.7.19
+
+* Vectorise `quarter_id_to_calendar_quarter` conversion functions
+
 # naomi 2.7.18
 
 Update for Spectrum v6.2 with calendar year projection period instead of mid-year 

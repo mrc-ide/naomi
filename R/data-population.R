@@ -104,12 +104,15 @@ calendar_quarter_to_quarter_id <- function(calendar_quarter) {
 #' @rdname quarter_year_labels
 #' @export
 quarter_id_to_calendar_quarter <- function(quarter_id) {
-  quarter <- quarter_id %% 4
-  if (quarter == 0) {
-    quarter <- 4
+  convert <- function(id) {
+    quarter <- id %% 4
+    if (quarter == 0) {
+      quarter <- 4
+    }
+    year <- (id - quarter) / 4 + 1900
+    convert_calendar_quarter(year, quarter)
   }
-  year <- (quarter_id - quarter) / 4 + 1900
-  convert_calendar_quarter(year, quarter)
+  vapply(quarter_id, convert, character(1))
 }
 
 #' @rdname quarter_year_labels
