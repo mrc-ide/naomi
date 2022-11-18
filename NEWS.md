@@ -1,6 +1,7 @@
 # naomi 2.7.19
 
-* Vectorise `quarter_id_to_calendar_quarter` conversion functions
+* Vectorise `quarter_id_to_calendar_quarter` conversion functions.
+* Load `get_metadata` into memory on first retrieval for quicker repeated access from other packages.
 
 # naomi 2.7.18
 
