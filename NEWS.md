@@ -2,6 +2,13 @@
 
 * Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
 
+
+# naomi 2.7.19
+
+* Vectorise `quarter_id_to_calendar_quarter` conversion functions.
+* Load `get_metadata` into memory on first retrieval for quicker repeated access from other packages.
+
+
 # naomi 2.7.18
 
 Update for Spectrum v6.2 with calendar year projection period instead of mid-year 

@@ -105,10 +105,8 @@ calendar_quarter_to_quarter_id <- function(calendar_quarter) {
 #' @export
 quarter_id_to_calendar_quarter <- function(quarter_id) {
   quarter <- quarter_id %% 4
-  if (quarter == 0) {
-    quarter <- 4
-  }
-  year <- (quarter_id - quarter) / 4 + 1900
+  quarter[quarter == 0] <- 4
+  year <- (quarter_id - quarter)/4 + 1900
   convert_calendar_quarter(year, quarter)
 }
 
