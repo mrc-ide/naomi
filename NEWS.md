@@ -1,10 +1,15 @@
-# naomi 2.7.19
+# naomi 2.7.20
 * Fix `aggregate_art()` to aggregate ART separately when provide at different admin levels. Previous behaviour was to aggregate from lowest level provided.
 * Add tests and adjusts aggregation scripts to account for missing ART and ANC data inputs:
   - Data provided at multiple levels for the same years
   - Data provided at more than one level for different years
   - Data missing for some sub-national units at one time point
   
+
+# naomi 2.7.19
+* Vectorise `quarter_id_to_calendar_quarter` conversion functions.
+* Load `get_metadata` into memory on first retrieval for quicker repeated access from other packages.
+
 # naomi 2.7.18
 
 Update for Spectrum v6.2 with calendar year projection period instead of mid-year 
