@@ -60,14 +60,11 @@ get_colour_scale <- function(iso3 = "default") {
 
 #' Get indicator metadata as a data frame
 #'
-#'
 #' @return Metadata about indicators as a list
 #'
-#' @export
-#'
 #' @examples
-#' get_metadata()
-get_metadata <- function() {
+#' read_metadata()
+read_metadata <- function() {
   data <- naomi_read_csv(system_file("metadata", "metadata.csv"),
                          na = c("NA"), ## We want empty cells to be ""
                          col_types = readr::cols(.default = "c"))
@@ -91,6 +88,12 @@ get_metadata <- function() {
 
   data
 }
+
+#' Get indicator metadata as a data frame
+#'
+#' @return Metadata about indicators as a list
+#' @export
+get_metadata <- cache_invariant("metadata", read_metadata)
 
 #' Get 5 year age groups
 #'
