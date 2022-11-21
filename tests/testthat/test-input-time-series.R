@@ -171,6 +171,46 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
   expect_equal(unique(missing$sex), "both")
   expect_equal(unique(missing$age_group), c("Y000_014","Y015_999"))
 
+
+  # Test that ART data is aggregated correctly when provided with different age/sex
+  #  stratification
+
+  # (4) Test that ART data can be aggregated with missing records
+  # Expected behavior - create NAs when missing data is summed up area hierarchy
+  art <- readr::read_csv(a_hintr_data$art_number)
+  art_over_15 <- art %>% dplyr::filter(age_group == "Y015_999")
+  art_under_15 <- art %>% dplyr::filter(age_group == "Y000_014")
+
+  males <- art_over_15 %>% dplyr::mutate(sex = "male", art_current = art_current * 0.33)
+  females <- art_over_15 %>% dplyr::mutate(sex = "female", art_current = art_current * 0.67)
+
+  test_data5 <- dplyr::bind_rows(males, females, art_under_15)
+
+  art_agg5 <- aggregate_art(test_data5, a_hintr_data$shape)
+
+  ## Check that aggregated values are equal
+  data_long <- test_data5  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
+
+  art_agg_long <- art_agg5  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
+
+  data_check <- art_agg_long %>%
+    dplyr::inner_join(data_long, by = c("area_id", "sex", "age_group", "calendar_quarter", "name"))
+
+  expect_equal(data_check$value_check, data_check$value_raw)
+
+  # Check that correct age/sex combinations have been aggregated
+  expect_true(identical(art_agg5 %>%
+                          dplyr::group_by(age_group, sex) %>%
+                          dplyr::summarise(.groups = "drop"),
+                        tibble::tribble(~age_group, ~sex,
+                                        "Y000_014", "both",
+                                        "Y015_999", "female",
+                                        "Y015_999",  "male")))
+
 })
 
 

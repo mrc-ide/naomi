@@ -49,11 +49,14 @@ aggregate_art <- function(art, shape) {
 
     # Ensure entries exist for all programme data age/sex/quarter combinations X
     # shape file area_ids at finest stratification
+
+    age_sex_df <- max_dat %>%
+      dplyr::group_by(sex, age_group, calendar_quarter) %>%
+      dplyr::summarise(.groups = "drop")
+
     art_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
-                                age_group = unique(max_dat$age_group),
-                                sex = unique(max_dat$sex),
-                                calendar_quarter = unique(max_dat$calendar_quarter)) %>%
-      dplyr::left_join(max_dat, by = c("area_id", "age_group", "sex", "calendar_quarter"))
+                                age_sex_df) %>%
+      dplyr::left_join(max_dat, by = c("area_id", "sex", "age_group", "calendar_quarter"))
 
 
     art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
