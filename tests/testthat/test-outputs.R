@@ -182,7 +182,7 @@ test_that("subset_output_package() saves expected output package", {
 
 })
 
-test_that("can generate summary report from rds file", {
+test_that("can generate summary report from a qs file", {
   t <- tempfile(fileext = ".html")
   generate_output_summary_report(t, a_hintr_output_calibrated$model_output_path,
                                  quiet = TRUE)
@@ -270,7 +270,7 @@ test_that("summary report can be translated", {
 
 test_that("navigator checklist returns expected results", {
 
-  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+  model_output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
 
   expected_checklist <- c("ART_is_Spectrum"            = FALSE,
                           "ANC_is_Spectrum"            = FALSE,
@@ -332,7 +332,7 @@ test_that("navigator checklist returns expected results", {
 
 test_that("navigator checklist returns results if options lists missing", {
 
-  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+  model_output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
   no_data_opts_output <- model_output$output_package
 
   no_data_opts_output$fit$data_options <- NULL
@@ -437,7 +437,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
 test_that("navigator checklist results change with different calibration options", {
 
-  model_output <- readRDS(a_hintr_output_calibrated$model_output_path)
+  model_output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
 
   ## Changing from "sex_age_group" to "sex_age_coarse" -> TRUE
   adj_output <- model_output$output_package
@@ -465,7 +465,7 @@ test_that("navigator checklist results change with different calibration options
 
 test_that("navigator checklist returns results for uncalibrated model output", {
 
-  out_uncalibrated <- readRDS(a_hintr_output$model_output_path)
+  out_uncalibrated <- read_hintr_output(a_hintr_output$model_output_path)
   tmp_checklist <- tempfile(fileext = ".csv")
   write_navigator_checklist(out_uncalibrated$output_package, tmp_checklist)
   checklist <- read.csv(tmp_checklist)
@@ -562,7 +562,7 @@ test_that("output file README generated in output zip", {
 
 })
 
-test_that("can generate comparison report from rds file", {
+test_that("can generate comparison report from a qs file", {
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, a_hintr_output_calibrated$model_output_path,
                              quiet = TRUE)

@@ -12,7 +12,7 @@ hintr_calibrate_plot <- function(output) {
 
   assert_model_output_version(output, "2.5.7")
   calibration_path <- output$model_output_path
-  calibration_data <- readRDS(calibration_path)
+  calibration_data <- read_hintr_output(calibration_path)
 
   df <- calibration_data$output_package$fit$spectrum_calibration
   ## Could be NULL if called with uncalibrated model output
@@ -139,7 +139,7 @@ hintr_calibrate_plot <- function(output) {
 hintr_comparison_plot <- function(output) {
   assert_model_output_version(output, "2.7.1")
   output_path <- output$model_output_path
-  output_data <- readRDS(output_path)
+  output_data <- read_hintr_output(output_path)
   if (is.null(output_data$output_package$inputs_outputs)) {
     ## This can happen if a user has an old model output, then recalibrates
     ## it will update the version to latest but this output will not exist
