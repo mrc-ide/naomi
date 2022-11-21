@@ -36,7 +36,7 @@ test_that("comparison plot returns useful error if no input output data", {
   t <- tempfile()
   output_data <- read_hintr_output(a_hintr_output$model_output_path)
   output_data$output_package$inputs_outputs <- NULL
-  qs::qsave(output_data, t)
+  hintr_save(output_data, t)
   hintr_output <- a_hintr_output
   hintr_output$model_output_path <- t
   expect_error(hintr_comparison_plot(hintr_output),

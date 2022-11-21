@@ -56,7 +56,7 @@ hintr_run_model <- function(data, options,
     run_model(data, options, validate))
   warnings <- model_run_output$warnings
   model_run_output$warnings <- list(model_fit = warnings)
-  qs::qsave(model_run_output, model_output_path)
+  hintr_save(model_run_output, model_output_path)
   build_hintr_output(
     NULL,
     model_output_path,
@@ -138,6 +138,10 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
+hintr_save <- function(obj, file) {
+  qs::qsave(obj, file, preset = "fast")
+}
+
 assert_model_output_version <- function(obj, version = NULL) {
   if (!is_hintr_output(obj) || is.null(obj$version)) {
     stop(t_("OLD_MODEL_OUTPUT"))
@@ -166,8 +170,8 @@ hintr_calibrate <- function(
   out <- handle_naomi_warnings(run_calibrate(output, calibration_options))
   warnings <- out$warnings
   out$calibrate_data$warnings$calibrate <- warnings
-  qs::qsave(out$plot_data, plot_data_path)
-  qs::qsave(out$calibrate_data, calibrate_output_path)
+  hintr_save(out$plot_data, plot_data_path)
+  hintr_save(out$calibrate_data, calibrate_output_path)
   build_hintr_output(plot_data_path,
                      calibrate_output_path,
                      warnings = warnings)
