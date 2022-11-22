@@ -47,7 +47,7 @@ test_that("model can be run without programme data", {
   options$artattend_t2 <- NULL
   options$artattend_log_gamma_offset <- NULL
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(data, options, output_path)
   expect_equal(names(model_run),
                c("plot_data_path", "model_output_path", "version", "warnings"))
@@ -88,7 +88,7 @@ test_that("progress messages are printed", {
   skip_on_covr()
   mock_new_progress <- mockery::mock(MockProgress$new())
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   with_mock("naomi:::new_progress" = mock_new_progress,
             "naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
     model_run <- naomi_evaluate_promise(
@@ -138,7 +138,7 @@ test_that("progress messages are printed", {
 })
 
 test_that("model run throws error for invalid inputs", {
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   expect_error(
     hintr_run_model(data, a_hintr_options_bad, output_path)
   )
@@ -161,19 +161,19 @@ test_that("setting rng_seed returns same output", {
   options$spectrum_infections_calibration_level <- "none"
   options$calibrate_method <- "logistic"
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(data, options, output_path)
 
   options2 <- options
   options2$rng_seed <- 17
 
-  output_path2 <- tempfile()
+  output_path2 <- tempfile(fileext = ".qs")
   model_run2 <- hintr_run_model(data, options2, output_path2)
 
   options3 <- options
   options3$rng_seed <- NULL
 
-  output_path3 <- tempfile()
+  output_path3 <- tempfile(fileext = ".qs")
   model_run3 <- hintr_run_model(data, options3, output_path3)
 
   output <- read_hintr_output(model_run$model_output_path)
@@ -203,7 +203,7 @@ test_that("exceeding max_iterations raises convergence warning", {
   options$artattend <- "false"
   options$max_iterations <- 5
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   out <- hintr_run_model(data, options, output_path)
 
   expect_length(out$warnings, 5)
@@ -471,7 +471,7 @@ test_that("Model can be run without .shiny90 file", {
   expect_true(validate_model_options(data, opts)$valid)
 
   ## Fit model without .shiny90 in PJNZ
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
 
   model_run <- hintr_run_model(data,
                                opts,
