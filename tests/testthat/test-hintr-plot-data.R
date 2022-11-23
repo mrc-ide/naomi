@@ -33,7 +33,7 @@ test_that("comparison plot returns useful error if run with old naomi output", {
 })
 
 test_that("comparison plot returns useful error if no input output data", {
-  t <- tempfile()
+  t <- tempfile(fileext = ".qs")
   output_data <- read_hintr_output(a_hintr_output$model_output_path)
   output_data$output_package$inputs_outputs <- NULL
   hintr_save(output_data, t)
