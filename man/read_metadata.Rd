@@ -12,6 +12,4 @@ Metadata about indicators as a list
 \description{
 Get indicator metadata as a data frame
 }
-\examples{
-read_metadata()
-}
+\keyword{internal}
