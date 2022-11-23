@@ -1294,6 +1294,7 @@ read_hintr_output <- function(path) {
   if (is_qs) {
     qs::qread(path)
   } else {
+    ## Model & plot data output before v2.8.0 were saved as RDS
     readRDS(path)
   }
 }
