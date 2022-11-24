@@ -2,7 +2,7 @@
 % Please edit documentation in R/outputs.R
 \name{generate_comparison_report}
 \alias{generate_comparison_report}
-\title{Generate and save summary report at specified path}
+\title{Generate and save comparison report at specified path}
 \usage{
 generate_comparison_report(report_path, outputs, quiet = FALSE)
 }
@@ -17,6 +17,6 @@ generate_comparison_report(report_path, outputs, quiet = FALSE)
 Path to summary report
 }
 \description{
-Generate and save summary report at specified path
+Generate and save comparison report at specified path
 }
 \keyword{internal}

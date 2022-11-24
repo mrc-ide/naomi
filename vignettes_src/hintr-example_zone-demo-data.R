@@ -30,7 +30,7 @@ library(naomi)
 
 ##+ fit model
 hintr_data <- list(
-  pjnz = system.file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip", package = "naomi"),
+  pjnz = system.file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz_v6.2.zip", package = "naomi"),
   population = system.file("extdata/demo-subnational-pjnz/demo_population_zone.csv", package = "naomi"),
   shape = system.file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson", package = "naomi"),
   survey = system.file("extdata/demo_survey_hiv_indicators.csv", package = "naomi"),
@@ -137,7 +137,7 @@ tmb_inputs <- prepare_tmb_inputs(naomi_data)
 fit <- fit_tmb(tmb_inputs)
 fit <- sample_tmb(fit, 100)
 
-outputs <- output_package(fit, naomi_mf)
+outputs <- output_package(fit, naomi_data)
 
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",

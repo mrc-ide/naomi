@@ -353,3 +353,31 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
                     "area_hierarchy", "art_current", "art_new",
                     "vl_tested_12mos", "vl_suppressed_12mos"))
 })
+
+test_that("there is metadata for every indicator", {
+  anc <- prepare_input_time_series_anc(a_hintr_data$anc_testing,
+                                       a_hintr_data$shape)
+
+  art_number <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
+  adult_f <- art_number %>%
+    dplyr::filter(age_group == "Y015_999") %>%
+    dplyr::mutate(sex = "female")
+  adult_m <- art_number %>%
+    dplyr::filter(age_group == "Y015_999") %>%
+    dplyr::mutate(sex = "male")
+  peads <- art_number %>% dplyr::filter(age_group == "Y000_014")
+
+
+  # Check data with sex disaggregated, age aggregated
+  art <- rbind(adult_f, adult_m, peads)
+  art_data <- tempfile(fileext = ".csv")
+  readr::write_csv(art, art_data)
+
+  art <- prepare_input_time_series_art(art, a_hintr_data$shape)
+
+  plot_types <- unique(c(anc$plot, art$plot))
+  metadata <- naomi_read_csv(
+    system_file("metadata", "time_series_plot_metadata.csv"),
+    col_types = readr::cols(.default = "c"))
+  expect_setequal(plot_types, metadata$id)
+})

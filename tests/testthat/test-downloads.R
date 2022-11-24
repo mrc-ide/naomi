@@ -151,16 +151,15 @@ test_that("comparison report download can be created", {
   expect_length(out$metadata$description, 1)
   expect_equal(out$metadata$areas, "MWI")
 
-  expect_true(file.size(out$path) > 2000)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS",
-                        brio::readLines(out$path))))
-  expect_true(any(grepl(basename(a_hintr_data$pjnz),
-                        brio::readLines(out$path))))
-  expect_true(any(grepl("Central", brio::readLines(out$path))))
+  expect_true(file.size(out$path) > 2000)#
+  content <- brio::readLines(out$path)
+  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
+  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
+  expect_true(any(grepl("Central", content)))
 
   ## Progress messages printed
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message,
                "Generating comparison report")
 })
-

@@ -133,10 +133,10 @@ pop_pyramid_outputs <- function(naomi_output,
 
   # generate plot
   ggplot2::ggplot(fig_data, ggplot2::aes(x = ifelse(sex == masc_label, -mean, mean),
-                                                 y = age_group,
-                                                 ymin = lower,
-                                                 ymax = upper,
-                                                 fill = sex)) +
+                                         y = age_group,
+                                         ymin = lower,
+                                         ymax = upper,
+                                         fill = sex)) +
     ggplot2::geom_col(width = 0.85) +
     ggplot2::scale_x_continuous(labels = legend_label,
                                 limits = max(fig_data$mean) * c(-1,1)) +
@@ -239,11 +239,11 @@ district_barplot <- function(naomi_output,
                     threshold = as.factor(threshold))
 
     #Plot figure
-   plot <- ggplot2::ggplot(fig_data, ggplot2::aes(reorder(area_name, mean),
-                                           mean,
-                                           ymin = lower,
-                                           ymax = upper,
-                                           fill = threshold)) +
+    plot <- ggplot2::ggplot(fig_data, ggplot2::aes(reorder(area_name, mean),
+                                                   mean,
+                                                   ymin = lower,
+                                                   ymax = upper,
+                                                   fill = threshold)) +
       ggplot2::theme_classic() +
       ggplot2::geom_col(position = "dodge") +
       ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
@@ -263,7 +263,7 @@ district_barplot <- function(naomi_output,
       ggplot2::coord_flip() +
       ggplot2::scale_fill_manual(name = paste0(legend_title, " \n ", national_est),
                                  values = cols)
-   plot
+    plot
 
   } else {
     # generate district level plot if no national indicator is available
@@ -279,9 +279,9 @@ district_barplot <- function(naomi_output,
 
     #Plot figure
     plot <- ggplot2::ggplot(district_data, ggplot2::aes(reorder(area_name, mean),
-                                                mean,
-                                                ymin = lower,
-                                                ymax = upper)) +
+                                                        mean,
+                                                        ymin = lower,
+                                                        ymax = upper)) +
       ggplot2::theme_classic() +
       ggplot2::geom_col(position = "dodge", fill = colour) +
       ggplot2::geom_linerange(position = ggplot2::position_dodge(0.8)) +
@@ -300,3 +300,400 @@ district_barplot <- function(naomi_output,
   }
 }
 
+
+
+#' Automatically make drop drop buttons for plotly filter
+#'
+#' @param df
+#' @param var
+
+
+dropdown_buttons <- function(df, var) {
+
+  levels <- unique(df[[var]])
+  n <- length(levels)
+  buttons <- vector("list", n)
+
+  for (i in 1:n) {
+    buttons[[i]] <- list(method = "restyle",
+                         args = list("transforms[0].value",
+                                   levels[i]),
+                         label = levels[i])
+  }
+  buttons
+}
+
+#' Plotly barplot comparing geographical distribution of data inputs and naomi outputs
+#'
+#' @param df Inputs_outputs dataframe containing matched model estimates and data inputs.
+#' @param ind Indicator filter.
+#' @param quarter Calendar quarter filter.
+#' @param age_disag Age group filter.
+#' @param sex_disag Sex filter.
+#'
+#' @export
+
+bar_plotly <- function(df,
+                       ind,
+                       quarter,
+                       age_disag = "Y015_049",
+                       sex_disag  = "both") {
+
+  remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
+                      "autoScale2d", "resetScale2d", "hoverClosestCartesian",
+                      "hoverCompareCartesian", "zoom")
+
+
+  output_source <- paste0("Naomi estimate ", quarter)
+
+  plot_data <- df %>%
+    dplyr::filter(indicator == ind,
+                  calendar_quarter == quarter,
+                  age_group == age_disag,
+                  sex == sex_disag,
+                  !is.na(mean))
+
+  buttons <- dropdown_buttons(plot_data, "area_level_label")
+
+  if (ind == "prevalence") {
+    title <- "HIV prevalence"
+  } else if (ind == "art_coverage") {
+    title <- "ART coverage"
+  }
+  plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
+    output_source, "<b>")
+
+
+  mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
+
+  plot_data <- plot_data[order(plot_data$source), ]
+
+
+  final_plot <- plotly::plot_ly(
+    data = plot_data,
+    type = "bar",
+    color = ~ as.factor(source),
+    colors = c("#07bbc1", "#f68e1f", "#87c440"),
+    x = ~area_name,
+    y = ~mean,
+    hoverinfo = "text",
+    text = ~paste("</br>", area_name,
+                  "</br>", source,
+                  "</br>", round(mean * 100, 2),
+                  " (", round(upper * 100, 2), "-",
+                  round(lower * 100, 2),  "%)"),
+    error_y = ~list(symmetric = FALSE,
+                    arrayminus = mean - lower,
+                    array = upper - mean,
+                    color = "#000000"),
+    transforms = list(
+                   list(
+                   type = "filter",
+                   target = ~area_level_label,
+                   operation = "=",
+                   value = sort(plot_data$area_level_label)[1]))) %>%
+    plotly::layout(
+      margin = mrg,
+      xaxis = list(type = "category",
+                   categoryarray =  ~source,
+                   categoryorder = "array",
+                   title = list(text = "")),
+      yaxis = list(tickformat = ".0%",
+                   tickmode = "array",
+                   title = list(text = title, font = list(size = 10))),
+      title = list(text = plot_title,
+                   font = list(size = 13, colour = "black", face = "bold")),
+      legend = list(title = list(text = "Data source",
+                                 font = list(size = 10))),
+      updatemenus = list(
+        list(
+          type = "dropdown",
+          y = 1.2,
+          x  = 0.2,
+          active = 0,
+          buttons = buttons
+        )
+      )
+    ) %>%
+    plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
+
+  suppressWarnings(final_plot)
+}
+
+#' Plotly barplot comparing age distribution of survey inputs and naomi outputs
+#'
+#' @param df Inputs_outputs dataframe containing matched model estimates and data inputs.
+#' @param ind Indicator filter.
+#' @param quarter Calendar quarter filter.
+#'
+#' @export
+
+age_bar_plotly <- function(df,
+                           ind,
+                           quarter) {
+
+  remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
+                      "autoScale2d", "resetScale2d", "hoverClosestCartesian",
+                      "hoverCompareCartesian", "zoom")
+
+
+  output_source <- paste0("Naomi estimate ", quarter)
+
+  meta_age <- get_age_groups() %>%
+    dplyr::filter(age_group_span == 5)
+
+  plot_data <- df %>%
+    dplyr::filter(indicator == ind,
+                  calendar_quarter == quarter,
+                  area_level == 0,
+                  age_group %in% unique(meta_age$age_group),
+                  !is.na(mean)) %>%
+    dplyr::left_join(meta_age, by = "age_group")
+
+
+
+  buttons <- dropdown_buttons(plot_data, "sex")
+
+  if (ind == "prevalence") {
+    title <- "HIV prevalence"
+  } else if (ind == "art_coverage") {
+    title <- "ART coverage"
+  }
+  plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
+    output_source, "<b>")
+
+
+  mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
+
+  plot_data <- plot_data[order(plot_data$age_group_sort_order), ]
+
+
+  final_plot <- plotly::plot_ly(data = plot_data,
+                        type = "bar",
+                        color = ~ as.factor(source),
+                        colors = c("#07bbc1", "#f68e1f", "#87c440"),
+                        x = ~age_group_label,
+                        y = ~mean,
+                        hoverinfo = "text",
+                        text = ~paste("</br>", age_group_label,
+                                      "</br>", source,
+                                      "</br>", round(mean * 100, 2),
+                                      " (", round(upper * 100, 2), "-",
+                                      round(lower * 100, 2),  "%)"),
+                        error_y = ~list(symmetric = FALSE,
+                                        arrayminus = mean - lower,
+                                        array = upper - mean,
+                                        color = "#000000"),
+                        transforms = list(
+                          list(
+                            type = "filter",
+                            target = ~sex,
+                            operation = "=",
+                            value = sort(plot_data$sex)[1]))) %>%
+    plotly::layout(
+      margin = mrg,
+      xaxis = list(type = "category",
+                   categoryarray =  ~age_group_label,
+                   categoryorder = "array",
+                   title = list(text = "")),
+      yaxis = list(tickformat = ".0%",
+                   tickmode = "array",
+                   title = list(text = title, font = list(size = 10))),
+      title = list(text = plot_title,
+                   font = list(size = 13, colour = "black", face = "bold")),
+      legend = list(title = list(text = "Data source",
+                                 font = list(size = 10))),
+      updatemenus = list(
+        list(
+          type = "dropdown",
+          y = 1.2,
+          x  = 0.2,
+          active = 0,
+          buttons = buttons
+        )
+      )
+    ) %>%
+    plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
+
+  suppressWarnings(final_plot)
+}
+
+#' Plotly scatterplot data inputs and naomi outputs
+#'
+#' @param df Inputs_outputs dataframe containing matched model estimates and data inputs.
+#' @param ind Indicator filter.
+#' @param quarter Calendar quarter filter.
+#' @param age_disag Age group filter.
+#' @param sex_disag Sex filter.
+#' @param input_data Input data name.
+#' @param input_data_type Input data type.
+#'
+#' @export
+
+scatter_plotly <- function(df,
+                           ind,
+                           quarter,
+                           input_data,
+                           input_data_type,
+                           age_disag = "Y015_049",
+                           sex_disag  = "both") {
+
+  remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
+                      "autoScale2d", "resetScale2d", "hoverClosestCartesian",
+                      "hoverCompareCartesian", "zoom")
+
+
+  input_source <- paste0(input_data, " ", quarter)
+  output_source <- paste0("Naomi estimate ", quarter)
+
+
+  plot_data <- df %>%
+    dplyr::filter(indicator == ind,
+                  calendar_quarter == quarter,
+                  age_group == age_disag,
+                  sex == sex_disag,
+                  !is.na(mean))
+
+
+  # Get ranges for axis
+  if (grepl("prevalence", ind)) {
+    max <- max(plot_data$mean) + 0.02
+    range <- "5"
+    title <- "HIV prevalence"
+  }
+
+  if (grepl("art_coverage", ind)) {
+    max <- max(plot_data$mean) + 0.05
+    min <- min(plot_data$mean) - 0.05
+    range <- "10"
+    title <- "ART coverage"
+  }
+
+  # Filter for correct survey in case of multiple surveys
+  if (input_data_type == "survey") {
+    plot_data <- plot_data %>%
+      dplyr::filter(source %in% c(input_source, output_source))
+  }
+
+
+  age_groups <- get_age_groups()
+  age_label <- age_groups[age_groups$age_group == unique(plot_data$age_group), ]$age_group_label
+  if (sex_disag == "both") {
+    sex_label <- "all"
+  } else {
+    sex_label <- sex_disag
+  }
+
+  plot_title <- paste("<b>", title, ": ", input_data, " vs. ", output_source,
+                      "</br><sub> (", sex_label, ",", age_label, ")</sub><br>")
+
+  if (grepl("anc", ind)) {
+    output_source <- paste0(output_source, " females 15-49")
+  }
+
+
+  plot_data_wide <- plot_data %>%
+    dplyr::mutate(data_type = ifelse(grepl("Naomi estimate",source), "output", "input")) %>%
+    dplyr::select(area_id, area_name, area_level_label, sex, age_group,
+                  calendar_quarter, indicator, mean, data_type) %>%
+    tidyr::pivot_wider(names_from = data_type, values_from = mean) %>%
+    dplyr::filter(!is.na(input))
+
+  mrg <- list(l = 100, r = 150, b = 70, t = 100)
+
+  plot <- plotly::plot_ly(data = plot_data_wide,
+                          x = ~ output,
+                          y = ~ input,
+                          color = ~area_level_label,
+                          colors = c("#f68e1f", "#07bbc1", "#FFE800"),
+                          type = "scatter",
+                          mode = "markers",
+                          hoverinfo = "text",
+                          text = ~paste("</br>", area_name,
+                                        "</br> Survey estimate: ", round(input*100, 2), "%",
+                                        "</br> Model estimate: ", round(output*100, 2), "%")) %>%
+    plotly::layout(legend = list(title = list(text = "Area Level",
+                                              font = list(size = 10))),
+           title = list(text = plot_title,
+                        font = list(size = 13, colour = "black", face = "bold")),
+           margin = mrg,
+           annotations = list(x = -0.1, y = -0.3,
+                              text = paste0("*Dotted lines contain model estimates that are within ",
+                                            range, "% of ", input_data_type," estimates."),
+                              showarrow = F, xref = "paper", yref = "paper",
+                              font = list(size=10, color="grey"))) %>%
+    plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
+
+  if (grepl("prevalence", ind)) {
+    final_plot <- plot %>%
+      plotly::add_segments(
+        x = 0, y = 0,
+        xend = max, yend = max,
+        line = list(color = "grey", width = 0.05),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = 0.05, y  = 0, xend = max + 0.05, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = 0, y = 0.05, xend = max - 0.05, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::layout(
+        yaxis = list(tickformat = ".0%", tickmode = "array",
+                     title = list(text = input_data, font = list(size = 10)),
+                     range = c(0, max),
+                     zerolinecolor = "ffff",
+                     zerolinewidth = 1,
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"),
+        xaxis = list(tickformat = ".0%",
+                     title = list(text = output_source, font = list(size = 10)),
+                     range = c(0, max + 0.05),
+                     zerolinecolor = "ffff",
+                     zerolinewidth = 1,
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"))
+  }
+
+  if (grepl("art_coverage", ind)) {
+    final_plot <- plot %>%
+      plotly::add_segments(
+        x = min, y = min, xend = max, yend = max,
+        line = list(color = "grey", width = 0.05),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = min + 0.1, y = min, xend = max + 0.1, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::add_segments(
+        x = min - 0.1, y = min, xend = max - 0.1, yend = max,
+        line = list(color = "grey", width = 0.05, dash = "dash"),
+        showlegend = FALSE) %>%
+      plotly::layout(
+        yaxis = list(tickformat = ".0%", tickmode = "array",
+                     title = list(text = input_data, font = list(size = 10)),
+                     range = c(min, max),
+                     zerolinecolor = "ffff",
+                     zerolinewidth = 1,
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"),
+        xaxis = list(tickformat = ".0%",
+                     title = list(text = output_source, font = list(size = 10)),
+                     range = c(min, max + 0.05),
+                     zerolinecolor = "ffff",
+                     zerolinewidth = 1,
+                     gridcolor = "ffff",
+                     showline = T,
+                     linewidth = 1,
+                     linecolor = "black"))
+  }
+
+  final_plot
+}
