@@ -435,7 +435,7 @@ read_spectrum_region_code <- function(pjnz) {
 read_spectrum_region_name <- function(pjnz) {
   pjn <- eppasm::read_pjn(pjnz)
   region_name <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 2, 4]
-  if (region_name == "") {
+  if (is.na(region_name) || region_name == "") {
     region_name <- NA_character_
   }
   region_name
