@@ -1290,8 +1290,7 @@ get_period_metadata <- function(calendar_quarters) {
 #' @return The read data
 #' @export
 read_hintr_output <- function(path) {
-  is_qs <- grepl("\\.qs$", path, ignore.case = TRUE)
-  if (is_qs) {
+  if (tolower(tools::file_ext(path)) == "qs") {
     qs::qread(path)
   } else {
     ## Model & plot data output before v2.8.0 were saved as RDS
