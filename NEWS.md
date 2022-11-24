@@ -1,3 +1,9 @@
+# naomi 2.7.21
+* Add model option to specify a new structure for ART attending random effects. This change include a random effect for each home district in the ART attending model increasing the "attractiveness" of a home district and preventing too many residents from being reallocated to neighbouring districts. 
+* This is now the default model specification with `options$anchor_home_district = TRUE`
+* The model can be reverted to the previous specification with ``options$anchor_home_district = FALSE`
+
+
 # naomi 2.7.19
 
 * Vectorise `quarter_id_to_calendar_quarter` conversion functions.
