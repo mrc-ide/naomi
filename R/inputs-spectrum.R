@@ -435,7 +435,7 @@ read_spectrum_region_code <- function(pjnz) {
 read_spectrum_region_name <- function(pjnz) {
   pjn <- eppasm::read_pjn(pjnz)
   region_name <- pjn[which(pjn[, 1] == "<Projection Parameters - Subnational Region Name2>") + 2, 4]
-  if (is.na(region_name) || region_name == "") {
+  if (is.null(region_name) || !nzchar(region_name)) {
     region_name <- NA_character_
   }
   region_name
@@ -522,8 +522,8 @@ get_spec_aggr_interpolation <- function(spec_aggr, calendar_quarter_out) {
   spec_aggr <- spec_aggr %>%
     dplyr::mutate(
       artpop_external = dplyr::if_else(quarter_id == quarter_id_dec31 & !is.na(artpop_dec31), NA_real_, artpop)
-    ) 
-  
+    )
+
   val <- spec_aggr %>%
     dplyr::group_by(spectrum_region_code, spectrum_region_name, sex, age_group) %>%
     dplyr::summarise(

@@ -7,7 +7,7 @@
 hintr_run_model(
   data,
   options,
-  model_output_path = tempfile(fileext = ".rds"),
+  model_output_path = tempfile(fileext = ".qs"),
   validate = TRUE
 )
 }
@@ -16,7 +16,7 @@ hintr_run_model(
 
 \item{options}{List of model run options (see details).}
 
-\item{model_output_path}{Path to store model output as rds. Used in
+\item{model_output_path}{Path to store model output as qs. Used in
 calibrating model and producing output downloads.}
 
 \item{validate}{If FALSE validation of inputs & data will be skipped.}
@@ -26,7 +26,7 @@ Paths to output files
 }
 \description{
 This prepares the model inputs from data and options and saves output as
-an rds.
+a qs file.
 }
 \details{
 The \code{data} argument must be a list specifying paths to the following:

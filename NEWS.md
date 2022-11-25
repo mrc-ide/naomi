@@ -1,13 +1,28 @@
-# naomi 2.7.21
-* Add model option to specify a new structure for ART attending random effects. This change include a random effect for each home district in the ART attending model increasing the "attractiveness" of a home district and preventing too many residents from being reallocated to neighbouring districts. 
+# naomi 2.8.2
+
+* Add model option to specify a new structure for ART attending random effects. In this change, the random effect for the home district applies to residents in that district (and in the neighbouring districts). This means that, for example, if a district is "attractive" to residents of neighbouring districts, it will also be more attractive to residents in that district to stay there, rather than go to a neighbouring district. In the previous specification of the model, the ART attending district parameter only applied to residents of neighbouring districts.
 * This is now the default model specification with `options$anchor_home_district = TRUE`
 * The model can be reverted to the previous specification with ``options$anchor_home_district = FALSE`
+
+# naomi 2.8.1
+
+* Fix `aggregate_art()` to aggregate ART separately when provide at different admin levels. Previous behaviour was to aggregate from lowest level provided.
+* Add tests and adjusts aggregation scripts to account for missing ART and ANC data inputs:
+  - Data provided at multiple levels for the same years
+  - Data provided at more than one level for different years
+  - Data missing for some sub-national units at one time point
+  
+# naomi 2.8.0
+
+* Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
+>>>>>>> origin/aggregate-art-with-different-admin-levels
 
 
 # naomi 2.7.19
 
 * Vectorise `quarter_id_to_calendar_quarter` conversion functions.
 * Load `get_metadata` into memory on first retrieval for quicker repeated access from other packages.
+
 
 # naomi 2.7.18
 
@@ -23,9 +38,8 @@ projection.
   or calendar year projections (Spectrum version >=6.2).
   
 * Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
-  
-# naomi 2.7.17
 
+# naomi 2.7.17
 * Error if trying to generate comparison report with old model output
 
 # naomi 2.7.16

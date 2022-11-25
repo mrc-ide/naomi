@@ -7,8 +7,8 @@
 hintr_calibrate(
   output,
   calibration_options,
-  plot_data_path = tempfile(fileext = ".rds"),
-  calibrate_output_path = tempfile(fileext = ".rds")
+  plot_data_path = tempfile(fileext = ".qs"),
+  calibrate_output_path = tempfile(fileext = ".qs")
 )
 }
 \arguments{
@@ -16,7 +16,7 @@ hintr_calibrate(
 
 \item{calibration_options}{A set of calibration options}
 
-\item{plot_data_path}{Path to store calibrated output indicators as an RDS.}
+\item{plot_data_path}{Path to store calibrated output indicators as a qs.}
 
 \item{calibrate_output_path}{Path to store data required for re-calibrating model.}
 }
