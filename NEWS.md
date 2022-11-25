@@ -1,6 +1,6 @@
 # naomi 2.8.3
 
-* Update model fit to fallback to `anchor_home_district = TRUE` if option is not set
+* Update model fit to fallback to `anchor_home_district = TRUE` if option is not set.
 
 # naomi 2.8.2
 
