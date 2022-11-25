@@ -1,3 +1,11 @@
+# naomi 2.8.1
+
+* Fix `aggregate_art()` to aggregate ART separately when provide at different admin levels. Previous behaviour was to aggregate from lowest level provided.
+* Add tests and adjusts aggregation scripts to account for missing ART and ANC data inputs:
+  - Data provided at multiple levels for the same years
+  - Data provided at more than one level for different years
+  - Data missing for some sub-national units at one time point
+  
 # naomi 2.8.0
 
 * Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
@@ -23,9 +31,8 @@ projection.
   or calendar year projections (Spectrum version >=6.2).
   
 * Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
-  
-# naomi 2.7.17
 
+# naomi 2.7.17
 * Error if trying to generate comparison report with old model output
 
 # naomi 2.7.16

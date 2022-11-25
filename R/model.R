@@ -883,10 +883,11 @@ select_naomi_data <- function(
 
   } else {
 
-    anc_aggreagted <- aggregate_anc(anc_testing, naomi_mf$areas)
+    anc_aggregated <- aggregate_anc(anc_testing, naomi_mf$areas) %>%
+      dplyr::filter(area_id %in% naomi_mf$area_aggregation$area_id)
 
     ## Calculate model inputs for all data provided
-    anc_full_mf <- anc_aggreagted %>%
+    anc_full_mf <- anc_aggregated %>%
       dplyr::group_by(area_id, age_group, year) %>%
       dplyr::summarise_at(dplyr::vars(anc_known_pos, anc_tested_pos, anc_tested,
                                       anc_already_art, anc_clients, anc_known_neg,
@@ -925,7 +926,7 @@ select_naomi_data <- function(
     anc_tagged <- tag_data_inputs(anc_full_mf, anc_model_mf, colnames(anc_model_mf))
 
     anc_full_mf = anc_tagged$raw_input %>%
-      dplyr::left_join(meta_areas, by = "area_id") %>%
+      dplyr::left_join(meta_areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
       dplyr::arrange(area_level, area_id, year) %>%
       dplyr::select(-c(area_level))
 
@@ -1284,7 +1285,8 @@ anc_testing_prev_mf <- function(year, anc_model_mf) {
       ) %>%
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
       dplyr::mutate(obs_idx = dplyr::row_number()) %>%
-      dplyr::select("area_id", "sex", "age_group","obs_idx","anc_prev_x", "anc_prev_n")
+      dplyr::select("area_id", "sex", "age_group","obs_idx","anc_prev_x", "anc_prev_n") %>%
+      dplyr::filter(!is.na(anc_prev_x), !is.na(anc_prev_n))
 
     if(any(anc_sub$anc_prev_x > anc_sub$anc_prev_n))
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
@@ -1371,7 +1373,13 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
         year %in% !!year,
         indicator %in% c("anc_clients_x", "anc_clients_pys_offset")
       ) %>%
-      tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
+      tidyr::pivot_wider(names_from = "indicator", values_from = "value")
+
+    ## Filter to only records with anc_clients_x recorded
+    anc_sub <- dplyr::filter(anc_sub, !is.na(anc_clients_x))
+
+    ## Assign observation index
+    anc_sub <- anc_sub %>%
       dplyr::mutate(obs_idx = dplyr::row_number()) %>%
       dplyr::select("area_id", "sex", "age_group","obs_idx","anc_clients_x", "anc_clients_pys_offset")
 

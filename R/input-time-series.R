@@ -31,53 +31,76 @@ aggregate_art <- function(art, shape) {
   cols_keep <- intersect(cols_list, colnames(art))
 
   art <- art %>%
-    dplyr::select(area_id, sex, age_group, calendar_quarter,
-                  dplyr::any_of(cols_list))
+    dplyr::select(area_id, sex, age_group, calendar_quarter, dplyr::any_of(cols_list))
 
   art_number <- art %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
-    dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
-                  quarter = stringr::str_sub(calendar_quarter,-2,-1),
-                  time_period = paste0(year, " ", quarter))
+    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id")
 
-  ## Recursively aggregate ART data up from lowest level of programme data provided
-  # Levels to aggregate up from
-  art_level <- max(art_number$area_level)
-  sex_level <- unique(art_number$sex)
-  age_level <- unique(art_number$age_group)
-  # Join ART data to hierarchy
-  art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
-    dplyr::left_join(art_number, by = "area_id")
+  # Split data by year and aggregate from lowest level available
+  art_dat <- split(art_number , f = art_number$calendar_quarter)
+
+  aggregate_art_by_level <- function(art_number){
+
+    ## Recursively aggregate ART data up from lowest level of programme data provided
+    # Levels to aggregate up from
+    art_level <- max(art_number$area_level)
+    max_dat <- dplyr::filter(art_number, area_level == art_level)
+    max_shape <- dplyr::filter(areas, area_level == art_level)
+
+    # Ensure entries exist for all programme data age/sex/quarter combinations X
+    # shape file area_ids at finest stratification
+
+    age_sex_df <- max_dat %>%
+      dplyr::group_by(sex, age_group, calendar_quarter) %>%
+      dplyr::summarise(.groups = "drop")
+
+    art_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
+                                age_sex_df) %>%
+      dplyr::left_join(max_dat, by = c("area_id", "sex", "age_group", "calendar_quarter"))
 
 
-  # Function to aggregate based on area_id[0-9]$ columns in hierarchy
-  aggregate_data_art <- function(col_name) {
-    df <- art_number_wide %>%
-      dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
-                      year, quarter, calendar_quarter) %>%
-      dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(.),
-                          .groups = "drop") %>%
-      dplyr::rename(area_id = `eval(as.name(col_name))`)
+    art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
+      dplyr::right_join(art_full, by = "area_id")
+
+    # Function to aggregate based on area_id[0-9]$ columns in hierarchy
+    aggregate_data_art <- function(col_name) {
+      df <- art_number_wide %>%
+        dplyr::group_by(eval(as.name(col_name)), sex, age_group, calendar_quarter) %>%
+        dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(.),
+                            .groups = "drop") %>%
+        dplyr::rename(area_id = `eval(as.name(col_name))`)
+    }
+
+    # Aggregated data frame for area levels > data provided
+    aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE)
+
+    aggregated_art <- aggregate_cols %>%
+      lapply(function(x) aggregate_data_art(x)) %>%
+      dplyr::bind_rows() %>%
+      dplyr::ungroup() %>%
+      dplyr::bind_rows()
+
   }
 
-  # Aggregated data frame
-  art_long <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE) %>%
-    lapply(function(x) aggregate_data_art(x))  %>%
+  art_long <- lapply(art_dat, aggregate_art_by_level) %>%
     dplyr::bind_rows() %>%
+    dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
+                  quarter = stringr::str_sub(calendar_quarter,-2,-1),
+                  time_period = paste0(year, " ", quarter)) %>%
     dplyr::left_join(
       areas %>%
         dplyr::select(area_id, area_name, area_level,
-                      area_level_label, parent_area_id,
-                      area_sort_order),
-      by = "area_id"
+                      area_level_label, parent_area_id,area_sort_order),
+      by = c("area_id")
     ) %>%
-    dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
+    dplyr::select(area_id, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group,time_period, year, quarter,
                   calendar_quarter, dplyr::everything()) %>%
-    dplyr::ungroup()
+    dplyr::arrange(year, area_sort_order)
 
   art_long$area_hierarchy <- build_hierarchy_label(art_long)
   art_long
+
 }
 
 
@@ -269,50 +292,77 @@ aggregate_anc <- function(anc, shape) {
                   births_facility)
 
   anc_testing <- anc %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id, area_level), by = "area_id") %>%
-    dplyr::mutate(time_period = as.character(year),
-                  quarter = "Q4",
-                  calendar_quarter = paste0("CY", time_period, quarter),
-                  sex = "female")
+    dplyr::left_join(
+      dplyr::select(areas, area_id, area_level),
+      by = "area_id"
+    )
 
-  ## Recursively aggregate ANC data up from lowest level of programme data provided
-  # Level to aggregate from
-  anc_level <- levels(as.factor(anc_testing$area_level))
-  # Join ANC data to hierarchy
-  anc_testing_wide <- dplyr::left_join(
-    anc_testing,
-    spread_areas(areas %>% dplyr::filter(area_level <= anc_level)),
-    by = "area_id")
+  # Split data by year and aggregate from lowest level available
+  anc_dat <- split(anc_testing , f = anc_testing$year)
 
+  aggregate_anc_by_level <- function(anc_testing){
 
-  # Function to aggregate based on area_id[0-9]$ columns in hierarchy
-  aggregate_data_anc <- function(col_name) {
-    df <- anc_testing_wide %>%
-      dplyr::group_by(eval(as.name(col_name)), sex, age_group, time_period,
-                      year, quarter, calendar_quarter) %>%
-      dplyr::summarise(anc_clients = sum(anc_clients, na.rm = TRUE),
-                       anc_known_pos = sum(anc_known_pos, na.rm = TRUE),
-                       anc_already_art = sum(anc_already_art, na.rm = TRUE),
-                       anc_tested = sum(anc_tested, na.rm = TRUE),
-                       anc_tested_pos = sum(anc_tested_pos, na.rm = TRUE),
-                       anc_known_neg = sum(anc_known_neg, na.rm = TRUE),
-                       births_facility = sum(births_facility, na.rm = TRUE),
-                       .groups = 'drop') %>%
-      dplyr::rename(area_id = `eval(as.name(col_name))`)
+    ## Recursively aggregate ANC data up from lowest level of programme data provided
+    # Level to aggregate from
+    anc_level <- max(anc_testing$area_level)
+    max_dat <- dplyr::filter(anc_testing, area_level == anc_level)
+    max_shape <- dplyr::filter(areas, area_level == anc_level)
+
+    # Ensure entries exist for all programme data age/sex/quarter combinations X
+    # shape file area_ids at finest stratification
+    anc_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
+                                age_group = unique(max_dat$age_group),
+                                year = unique(max_dat$year)) %>%
+      dplyr::left_join(max_dat, by = c("area_id", "age_group", "year"))
+
+    # Join ANC data to hierarchy
+    anc_testing_wide <- areas %>%
+      dplyr::filter(area_level <= anc_level) %>%
+      spread_areas() %>%
+      dplyr::right_join(anc_full, by = "area_id")
+
+    # Function to aggregate based on area_id[0-9]$ columns in hierarchy
+    aggregate_data_anc <- function(col_name) {
+      df <- anc_testing_wide %>%
+        dplyr::group_by(eval(as.name(col_name)), age_group, year) %>%
+        dplyr::summarise(
+          anc_clients = sum(anc_clients),
+          anc_known_pos = sum(anc_known_pos),
+          anc_already_art = sum(anc_already_art),
+          anc_tested = sum(anc_tested),
+          anc_tested_pos = sum(anc_tested_pos),
+          anc_known_neg = sum(anc_known_neg),
+          births_facility = sum(births_facility),
+          .groups = "drop"
+        ) %>%
+        dplyr::rename(area_id = `eval(as.name(col_name))`)
+    }
+
+    # Aggregated data frame for area levels
+    aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(anc_testing_wide), value = TRUE)
+
+    aggregated_anc <- aggregate_cols %>%
+      lapply(aggregate_data_anc) %>%
+      dplyr::bind_rows() %>%
+      dplyr::ungroup() %>%
+      dplyr::bind_rows()
   }
 
-  # Aggregated data frame
-  anc_long <- grep("^area_id*\\s*[0-9]$", colnames(anc_testing_wide), value = TRUE) %>%
-    lapply(function(x) aggregate_data_anc(x))  %>%
+  anc_long <- lapply(anc_dat, aggregate_anc_by_level) %>%
     dplyr::bind_rows() %>%
-    dplyr::left_join(areas %>% dplyr::select(area_id,area_name, area_level,
-                                             area_level_label, parent_area_id,
-                                             area_sort_order), by = "area_id") %>%
+    dplyr::mutate(time_period = as.character(year), quarter = "Q4", sex = "female",
+                  calendar_quarter = paste0("CY", time_period, quarter),
+                  births_facility = dplyr::if_else(is.na(births_facility), 0, births_facility)) %>%
+    dplyr::left_join(areas %>%
+                       dplyr::select(area_id, area_name, area_level,area_level_label,
+                                     parent_area_id, area_sort_order),
+                     by = "area_id") %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group, time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
                   anc_tested, anc_tested_pos, anc_known_neg, births_facility) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::arrange(year, area_sort_order)
 
   anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
   anc_long

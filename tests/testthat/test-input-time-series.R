@@ -54,6 +54,165 @@ test_that("ART data can be aggregated", {
 
 })
 
+test_that("ART data can be aggregated when avalible at different admin levels", {
+
+
+  # (1) Data provided at different levels for different years
+  # Create dummy data simillar to MOZ edge case:
+  # ART data at admin1 2014-2016, admin2 2015-2016
+  data <- aggregate_art(a_hintr_data$art_number,
+                        a_hintr_data$shape)
+
+  admin1_data <- dplyr::filter(data, area_level == 1,
+                               calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  admin2_data <- dplyr::filter(data, area_level == 2,
+                               calendar_quarter %in% c("CY2016Q4","CY2017Q4","CY2018Q4"))
+
+  test_data1 <- rbind(admin1_data, admin2_data)
+  test_data1 <- test_data1[names(data)]
+
+  # Aggregate data
+  art_agg1 <- aggregate_art(test_data1, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check1 <- art_agg1 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(10, 10, 6))
+
+  # Aggregated data has data for all years provided
+  expect_equal(unique(art_agg1$calendar_quarter),
+               unique(test_data1$calendar_quarter))
+
+  # Data has been aggregated correctly
+  df1 <- dplyr::filter(art_agg1, year %in% c("2014","2015"))
+  expect_equal(unique(df1$area_level), c(0, 1))
+
+  df2 <- dplyr::filter(art_agg1, year %in% c("2016", "2017", "2018"))
+  expect_equal(unique(df2$area_level), c(0, 1, 2))
+
+  ## Check that aggregated values are equal
+  data_long <- data  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
+
+  art_agg_long <- art_agg1  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
+
+  data_check <- art_agg_long %>%
+    dplyr::inner_join(data_long, by = c("area_id", "sex", "age_group", "calendar_quarter", "name"))
+
+  expect_equal(nrow(data_check), nrow(art_agg_long))
+  expect_equal(data_check$value_check, data_check$value_raw)
+
+  # Check for edge cases
+
+  # (2) Data provided at multiple levels for the same years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
+  test_data2 <- aggregate_art(a_hintr_data$art_number, a_hintr_data$shape) %>%
+    dplyr::filter(area_level %in% c(0,2))
+
+  test_data2 <- test_data2[names(data)]
+  art_agg2 <- aggregate_art(test_data2, a_hintr_data$shape)
+
+  # Check for same number of records at each area aggregation
+  check2 <- art_agg2 %>%
+           dplyr::group_by(area_level_label, year, age_group, sex) %>%
+           dplyr::summarise(.groups = "drop") %>%
+           dplyr::group_by(area_level_label) %>%
+           dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+
+  expect_equal(unique(check2$n), 16)
+
+  # (3) Data provided at more than one level for different years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
+
+  admin01_data <- dplyr::filter(data, area_level %in% c(0,1),
+                               calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  test_data3 <- rbind(admin01_data, admin2_data)
+  test_data3 <- test_data3[names(data)]
+
+  art_agg3 <- aggregate_art(test_data3, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check3 <- art_agg3 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(10, 10, 6))
+
+
+  # (4) Test that ART data can be aggregated with missing records
+  # Expected behavior - create NAs when missing data is summed up area hierarchy
+  art <- system.file("extdata/demo_art_number.csv", package = "naomi")
+  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
+
+  art_agg4 <- aggregate_art(art, shape)
+  missing <- dplyr::filter(art_agg4, is.na(art_current))
+
+  # Likoma + parent areas ART data missing for 2012 in aggregated data
+  expect_equal(unique(missing$area_name), c("Malawi - Demo","Northern","Likoma"))
+  expect_equal(unique(missing$year), 2012)
+  # Missing records filled in for correct age/sex stratifications
+  expect_equal(nrow(missing), 10)
+  expect_equal(unique(missing$sex), "both")
+  expect_equal(unique(missing$age_group), c("Y000_014","Y015_999"))
+
+
+  # Test that ART data is aggregated correctly when provided with different age/sex
+  #  stratification
+
+  # (4) Test that ART data can be aggregated with missing records
+  # Expected behavior - create NAs when missing data is summed up area hierarchy
+  art <- readr::read_csv(a_hintr_data$art_number)
+  art_over_15 <- art %>% dplyr::filter(age_group == "Y015_999")
+  art_under_15 <- art %>% dplyr::filter(age_group == "Y000_014")
+
+  males <- art_over_15 %>% dplyr::mutate(sex = "male", art_current = art_current * 0.33)
+  females <- art_over_15 %>% dplyr::mutate(sex = "female", art_current = art_current * 0.67)
+
+  test_data5 <- dplyr::bind_rows(males, females, art_under_15)
+
+  art_agg5 <- aggregate_art(test_data5, a_hintr_data$shape)
+
+  ## Check that aggregated values are equal
+  data_long <- test_data5  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
+
+  art_agg_long <- art_agg5  %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
+
+  data_check <- art_agg_long %>%
+    dplyr::inner_join(data_long, by = c("area_id", "sex", "age_group", "calendar_quarter", "name"))
+
+  expect_equal(data_check$value_check, data_check$value_raw)
+
+  # Check that correct age/sex combinations have been aggregated
+  expect_true(identical(art_agg5 %>%
+                          dplyr::group_by(age_group, sex) %>%
+                          dplyr::summarise(.groups = "drop"),
+                        tibble::tribble(~age_group, ~sex,
+                                        "Y000_014", "both",
+                                        "Y015_999", "female",
+                                        "Y015_999",  "male")))
+
+})
+
 
 test_that("data can be formatted for ART input time series", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
@@ -137,6 +296,127 @@ test_that("ANC data can be aggregated", {
     dplyr::filter(dplyr::n() > 1)
 
   expect_true(nrow(dup_strata) == 0)
+})
+
+test_that("ANC data can be aggregated when avalible at different admin levels", {
+
+  # (1) Data provided at different levels for different years
+  # Create dummy data simillar to MOZ edge case:
+  # ART data at admin1 2014-2016, admin2 2015-2016
+  data <- aggregate_anc(a_hintr_data$anc_testing,
+                        a_hintr_data$shape)
+
+  admin1_data <- dplyr::filter(data, area_level == 1,
+                               calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  admin2_data <- dplyr::filter(data, area_level == 2,
+                               calendar_quarter %in% c("CY2016Q4","CY2017Q4","CY2018Q4"))
+
+  test_data1 <- rbind(admin1_data, admin2_data)
+  test_data1 <- test_data1[names(data)]
+
+  # Aggregate data
+  anc_agg1 <- aggregate_anc(test_data1, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check1 <- anc_agg1 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(5, 5, 3))
+
+  # Aggregated data has data for all years provided
+  expect_equal(unique(anc_agg1$calendar_quarter),
+               unique(test_data1$calendar_quarter))
+
+  # Data has been aggregated correctly
+  df1 <- dplyr::filter(anc_agg1, year %in% c("2014","2015"))
+  expect_equal(unique(df1$area_level), c(0, 1))
+
+  df2 <- dplyr::filter(anc_agg1, year %in% c("2016", "2017", "2018"))
+  expect_equal(unique(df2$area_level), c(0, 1, 2))
+
+  ## Check that aggregated values are equal
+  data_long <- data  %>%
+    tidyr::pivot_longer(c(anc_clients, anc_known_pos, anc_already_art, anc_tested,
+                          anc_tested_pos, anc_known_neg, births_facility)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
+
+  anc_agg_long <- anc_agg1  %>%
+    tidyr::pivot_longer(c(anc_clients, anc_known_pos, anc_already_art, anc_tested,
+                          anc_tested_pos, anc_known_neg, births_facility)) %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
+
+  data_check <- anc_agg_long %>%
+    dplyr::inner_join(data_long, by = c("area_id", "sex", "age_group", "calendar_quarter", "name"))
+
+  expect_equal(nrow(data_check), nrow(anc_agg_long))
+  expect_equal(data_check$value_check, data_check$value_raw)
+
+
+  # (2) Data provided at multiple levels for the same years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
+  test_data2 <- aggregate_anc(a_hintr_data$anc_testing, a_hintr_data$shape) %>%
+    dplyr::filter(area_level %in% c(0, 1))
+
+  test_data2 <- test_data2[names(data)]
+  anc_agg2 <- aggregate_anc(test_data2, a_hintr_data$shape)
+
+  # Check for same number of records at each area aggregation
+  check2 <- anc_agg2 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+
+  expect_equal(unique(check2$n), 8)
+
+  # (3) Data provided at more than one level for different years
+  # Expected behavior - aggregate up from lowest  level available at each year
+  # discard additional aggregated data
+  # TO DO: improve this to retain all data present and add in missing aggregates
+
+  admin01_data <- dplyr::filter(data, area_level %in% c(0,1),
+                                calendar_quarter %in% c("CY2014Q4","CY2015Q4"))
+
+  test_data3 <- rbind(admin01_data, admin2_data)
+  test_data3 <- test_data3[names(data)]
+
+  anc_agg3 <- aggregate_anc(test_data3, a_hintr_data$shape)
+
+  # Check for different of records at each area aggregation
+  check3 <- anc_agg3 %>%
+    dplyr::group_by(area_level_label, year, age_group, sex) %>%
+    dplyr::summarise(.groups = "drop") %>%
+    dplyr::group_by(area_level_label) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
+
+  expect_equal(check1$n, c(5, 5, 3))
+
+  # (4) Test that ART data can be aggregated with missing records
+  # Expected behavior - create NAs when missing data is summed up area hierarchy
+  # Remove ANC Likoma data for 2012
+  anc <- system.file("extdata/demo_anc_testing.csv", package = "naomi")
+  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
+
+  test_data4 <- read_anc_testing(anc) %>%
+    dplyr::filter(!(area_id == "MWI_4_7_demo" & year == "2012"))
+
+  anc_agg4 <- aggregate_anc(test_data4, a_hintr_data$shape)
+  missing <- dplyr::filter(anc_agg4, is.na(anc_clients))
+
+
+  # Likoma + parents areas ANC data missing for 2012 in aggregated data
+  expect_equal(unique(missing$area_name), c("Malawi - Demo","Northern","Likoma"))
+  expect_equal(unique(missing$year), 2012)
+  # Missing records filled in for correct age/sex stratifications
+  expect_equal(nrow(missing), 5)
+  expect_equal(unique(missing$age_group), c("Y015_049"))
 })
 
 
@@ -381,3 +661,4 @@ test_that("there is metadata for every indicator", {
     col_types = readr::cols(.default = "c"))
   expect_setequal(plot_types, metadata$id)
 })
+
