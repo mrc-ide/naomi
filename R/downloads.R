@@ -12,7 +12,7 @@ hintr_prepare_spectrum_download <- function(output,
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")
-  model_output <- readRDS(output$model_output_path)
+  model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     path = save_output_spectrum(path, model_output$output_package, notes),
@@ -36,7 +36,7 @@ hintr_prepare_coarse_age_group_download <- function(output,
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_COARSE")
-  model_output <- readRDS(output$model_output_path)
+  model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     path = save_output_coarse_age_groups(path, model_output$output_package),
@@ -59,7 +59,7 @@ hintr_prepare_summary_report_download <- function(output,
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_SUMMARY")
-  model_output <- readRDS(output$model_output_path)
+  model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     path = generate_output_summary_report(path, output$model_output_path,
@@ -84,7 +84,7 @@ hintr_prepare_comparison_report_download <- function(output,
   assert_model_output_version(output, "2.7.16")
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_COMPARISON")
-  model_output <- readRDS(output$model_output_path)
+  model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     ## Just using the summary report as a placeholder - eventually

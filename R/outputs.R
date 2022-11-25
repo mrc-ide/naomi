@@ -1276,3 +1276,24 @@ get_period_metadata <- function(calendar_quarters) {
       quarter_label = quarter_year_labels(quarter_id)
     )
 }
+
+
+#' Read hintr output
+#'
+#' Read the hintr model output or plot data saved as a qs or an rds file.
+#' This is the data saved from hintr_run_model or hintr_calibrate
+#' before the output zip is generated. This uses the file extension
+#' to identify the reading function to use.
+#'
+#' @param path Path to the file
+#'
+#' @return The read data
+#' @export
+read_hintr_output <- function(path) {
+  if (tolower(tools::file_ext(path)) == "qs") {
+    qs::qread(path)
+  } else {
+    ## Model & plot data output before v2.8.0 were saved as RDS
+    readRDS(path)
+  }
+}
