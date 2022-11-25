@@ -347,6 +347,10 @@ naomi_prepare_data <- function(data, options) {
     options$adjust_area_growth <- FALSE
   }
 
+  if(is.null(options$anchor_home_district)) {
+    options$anchor_home_district <- TRUE
+  }
+
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
     population_agesex = population,
