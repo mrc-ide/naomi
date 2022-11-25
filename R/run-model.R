@@ -360,6 +360,7 @@ naomi_prepare_data <- function(data, options) {
     output_aware_plhiv = as.logical(options$output_aware_plhiv),
     artattend = as.logical(options$artattend),
     artattend_t2 = as.logical(options$artattend_t2),
+    anchor_home_district = as.logical(options$anchor_home_district),
     artattend_log_gamma_offset = as.numeric(options$artattend_log_gamma_offset),
     rho_paed_x_term = as.logical(options$rho_paed_x_term),
     rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
