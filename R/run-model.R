@@ -1,11 +1,11 @@
 #' Run the model and save output
 #'
 #' This prepares the model inputs from data and options and saves output as
-#' an rds.
+#' a qs file.
 #'
 #' @param data List of paths to input data files.
 #' @param options List of model run options (see details).
-#' @param model_output_path Path to store model output as rds. Used in
+#' @param model_output_path Path to store model output as qs. Used in
 #'   calibrating model and producing output downloads.
 #' @param validate If FALSE validation of inputs & data will be skipped.
 #'
@@ -50,13 +50,13 @@
 #' @export
 #'
 hintr_run_model <- function(data, options,
-                            model_output_path = tempfile(fileext = ".rds"),
+                            model_output_path = tempfile(fileext = ".qs"),
                             validate = TRUE) {
   model_run_output <- handle_naomi_warnings(
     run_model(data, options, validate))
   warnings <- model_run_output$warnings
   model_run_output$warnings <- list(model_fit = warnings)
-  saveRDS(model_run_output, model_output_path)
+  hintr_save(model_run_output, model_output_path)
   build_hintr_output(
     NULL,
     model_output_path,
@@ -138,6 +138,10 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
+hintr_save <- function(obj, file) {
+  qs::qsave(obj, file, preset = "fast")
+}
+
 assert_model_output_version <- function(obj, version = NULL) {
   if (!is_hintr_output(obj) || is.null(obj$version)) {
     stop(t_("OLD_MODEL_OUTPUT"))
@@ -155,19 +159,19 @@ assert_model_output_version <- function(obj, version = NULL) {
 #'
 #' @param output A hintr_output object.
 #' @param calibration_options A set of calibration options
-#' @param plot_data_path Path to store calibrated output indicators as an RDS.
+#' @param plot_data_path Path to store calibrated output indicators as a qs.
 #' @param calibrate_output_path Path to store data required for re-calibrating model.
 #'
 #' @return Calibrated hintr_output object
 #' @export
 hintr_calibrate <- function(
-  output, calibration_options, plot_data_path = tempfile(fileext = ".rds"),
-  calibrate_output_path = tempfile(fileext = ".rds")) {
+  output, calibration_options, plot_data_path = tempfile(fileext = ".qs"),
+  calibrate_output_path = tempfile(fileext = ".qs")) {
   out <- handle_naomi_warnings(run_calibrate(output, calibration_options))
   warnings <- out$warnings
   out$calibrate_data$warnings$calibrate <- warnings
-  saveRDS(out$plot_data, plot_data_path)
-  saveRDS(out$calibrate_data, calibrate_output_path)
+  hintr_save(out$plot_data, plot_data_path)
+  hintr_save(out$calibrate_data, calibrate_output_path)
   build_hintr_output(plot_data_path,
                      calibrate_output_path,
                      warnings = warnings)
@@ -179,7 +183,7 @@ run_calibrate <- function(output, calibration_options) {
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_CALIBRATE")
 
-  model_output <- readRDS(output$model_output_path)
+  model_output <- read_hintr_output(output$model_output_path)
 
   ## TODO: Add ability to re-run the calibration
   if (!is.null(model_output$info$calibration_options.yml)) {

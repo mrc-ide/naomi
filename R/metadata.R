@@ -62,8 +62,7 @@ get_colour_scale <- function(iso3 = "default") {
 #'
 #' @return Metadata about indicators as a list
 #'
-#' @examples
-#' read_metadata()
+#' @keywords internal
 read_metadata <- function() {
   data <- naomi_read_csv(system_file("metadata", "metadata.csv"),
                          na = c("NA"), ## We want empty cells to be ""

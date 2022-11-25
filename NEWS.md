@@ -1,14 +1,21 @@
-# naomi 2.7.20
+# naomi 2.8.1
+
 * Fix `aggregate_art()` to aggregate ART separately when provide at different admin levels. Previous behaviour was to aggregate from lowest level provided.
 * Add tests and adjusts aggregation scripts to account for missing ART and ANC data inputs:
   - Data provided at multiple levels for the same years
   - Data provided at more than one level for different years
   - Data missing for some sub-national units at one time point
   
+# naomi 2.8.0
+
+* Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
+
 
 # naomi 2.7.19
+
 * Vectorise `quarter_id_to_calendar_quarter` conversion functions.
 * Load `get_metadata` into memory on first retrieval for quicker repeated access from other packages.
+
 
 # naomi 2.7.18
 

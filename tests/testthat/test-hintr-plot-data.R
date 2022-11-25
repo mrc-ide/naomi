@@ -13,7 +13,7 @@ test_that("calibrate plot data can be generated", {
                     "prevalence", "art_coverage",
                     "aware_plhiv_prop", "incidence"))
 
-  indicators <- readRDS(a_hintr_output$model_output_path)$output_package$indicators
+  indicators <- read_hintr_output(a_hintr_output$model_output_path)$output_package$indicators
   expect_true(all(plot_data$indicator %in% indicators$indicator))
 })
 
@@ -33,10 +33,10 @@ test_that("comparison plot returns useful error if run with old naomi output", {
 })
 
 test_that("comparison plot returns useful error if no input output data", {
-  t <- tempfile()
-  output_data <- readRDS(a_hintr_output$model_output_path)
+  t <- tempfile(fileext = ".qs")
+  output_data <- read_hintr_output(a_hintr_output$model_output_path)
   output_data$output_package$inputs_outputs <- NULL
-  saveRDS(output_data, t)
+  hintr_save(output_data, t)
   hintr_output <- a_hintr_output
   hintr_output$model_output_path <- t
   expect_error(hintr_comparison_plot(hintr_output),

@@ -2,7 +2,7 @@ context("calibrate-model")
 
 test_that("calibrated model matches end-year Spectrum ART", {
 
-  out <- readRDS(a_hintr_output_calibrated$model_output_path)
+  out <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
   ind <- out$output_package$indicators
 
   tmpf <- tempfile()

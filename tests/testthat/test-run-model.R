@@ -1,7 +1,7 @@
 context("run-model")
 
 test_that("model can be run", {
-  output_path <- tempfile(fileext = ".rds")
+  output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(a_hintr_data,
                                a_hintr_options,
                                output_path)
@@ -11,7 +11,7 @@ test_that("model can be run", {
   expect_equal(model_run$version, packageVersion("naomi"))
   expect_null(model_run$plot_data_path)
 
-  output <- readRDS(model_run$model_output_path)
+  output <- read_hintr_output(model_run$model_output_path)
   expect_equal(names(output),
                c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
@@ -47,13 +47,13 @@ test_that("model can be run without programme data", {
   options$artattend_t2 <- NULL
   options$artattend_log_gamma_offset <- NULL
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(data, options, output_path)
   expect_equal(names(model_run),
                c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_null(model_run$plot_data_path)
 
-  output <- readRDS(model_run$model_output_path)
+  output <- read_hintr_output(model_run$model_output_path)
   expect_equal(names(output),
                c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
@@ -88,7 +88,7 @@ test_that("progress messages are printed", {
   skip_on_covr()
   mock_new_progress <- mockery::mock(MockProgress$new())
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   with_mock("naomi:::new_progress" = mock_new_progress,
             "naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
     model_run <- naomi_evaluate_promise(
@@ -138,7 +138,7 @@ test_that("progress messages are printed", {
 })
 
 test_that("model run throws error for invalid inputs", {
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   expect_error(
     hintr_run_model(data, a_hintr_options_bad, output_path)
   )
@@ -161,24 +161,24 @@ test_that("setting rng_seed returns same output", {
   options$spectrum_infections_calibration_level <- "none"
   options$calibrate_method <- "logistic"
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(data, options, output_path)
 
   options2 <- options
   options2$rng_seed <- 17
 
-  output_path2 <- tempfile()
+  output_path2 <- tempfile(fileext = ".qs")
   model_run2 <- hintr_run_model(data, options2, output_path2)
 
   options3 <- options
   options3$rng_seed <- NULL
 
-  output_path3 <- tempfile()
+  output_path3 <- tempfile(fileext = ".qs")
   model_run3 <- hintr_run_model(data, options3, output_path3)
 
-  output <- readRDS(model_run$model_output_path)
-  output2 <- readRDS(model_run2$model_output_path)
-  output3 <- readRDS(model_run3$model_output_path)
+  output <- read_hintr_output(model_run$model_output_path)
+  output2 <- read_hintr_output(model_run2$model_output_path)
+  output3 <- read_hintr_output(model_run3$model_output_path)
 
   expect_equal(output, output2)
 
@@ -203,7 +203,7 @@ test_that("exceeding max_iterations raises convergence warning", {
   options$artattend <- "false"
   options$max_iterations <- 5
 
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
   out <- hintr_run_model(data, options, output_path)
 
   expect_length(out$warnings, 5)
@@ -290,8 +290,8 @@ test_that("model run can be calibrated", {
   output_hash <- tools::md5sum(a_hintr_output$model_output_path)
   expect_null(a_hintr_output$plot_data_path)
 
-  plot_data_path <- tempfile(fileext = ".rds")
-  calibration_output_path <- tempfile(fileext = ".rds")
+  plot_data_path <- tempfile(fileext = ".qs")
+  calibration_output_path <- tempfile(fileext = ".qs")
   calibrated_output <- hintr_calibrate(a_hintr_output,
                                        a_hintr_calibration_options,
                                        plot_data_path,
@@ -308,7 +308,7 @@ test_that("model run can be calibrated", {
 
   ## Output has been calibrated
   expect_true(!is.null(calibrated_output$plot_data_path))
-  indicators_output <- readRDS(calibrated_output$plot_data_path)
+  indicators_output <- read_hintr_output(calibrated_output$plot_data_path)
   ## Total population outputs:
   ## * 33 age groups
   ## * 3 sexes
@@ -327,7 +327,7 @@ test_that("model run can be calibrated", {
                         a_hintr_output$model_output_path)
   expect_length(calibrated_output$warnings, 0)
 
-  output <- readRDS(calibrated_output$model_output_path)
+  output <- read_hintr_output(calibrated_output$model_output_path)
   expect_equal(names(output),
                c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
@@ -370,17 +370,17 @@ test_that("calibrating model with 'none' returns same results", {
     calibrate_method = "logistic"
   )
 
-  plot_data_path <- tempfile(fileext = ".rds")
-  calibration_output_path <- tempfile(fileext = ".rds")
+  plot_data_path <- tempfile(fileext = ".qs")
+  calibration_output_path <- tempfile(fileext = ".qs")
   calibrated_output <- hintr_calibrate(a_hintr_output,
                                        none_calibration_options,
                                        plot_data_path,
                                        calibration_output_path)
 
-  out_raw <- readRDS(a_hintr_output$model_output_path)
+  out_raw <- read_hintr_output(a_hintr_output$model_output_path)
   out_raw_disag <- disaggregate_0to4_outputs(out_raw$output_package, out_raw$naomi_data)
 
-  out_calib <- readRDS(calibrated_output$model_output_path)
+  out_calib <- read_hintr_output(calibrated_output$model_output_path)
 
   expect_equal(out_raw_disag$indicators, out_calib$output_package$indicators, tolerance = 1e-6)
   expect_equal(out_raw$output_package$art_attendance, out_calib$output_package$art_attendance)
@@ -388,16 +388,16 @@ test_that("calibrating model with 'none' returns same results", {
 
 test_that("re-calibrating an already calibrated output throws error", {
 
-  plot_data_path1 <- tempfile(fileext = ".rds")
-  calibration_output_path1 <- tempfile(fileext = ".rds")
+  plot_data_path1 <- tempfile(fileext = ".qs")
+  calibration_output_path1 <- tempfile(fileext = ".qs")
   calibrated_output1 <- hintr_calibrate(a_hintr_output,
                                         a_hintr_calibration_options,
                                         plot_data_path1,
                                         calibration_output_path1)
 
   ## Calibrate again with same options using the outputs of calibration 1
-  plot_data_path2 <- tempfile(fileext = ".rds")
-  calibration_output_path2 <- tempfile(fileext = ".rds")
+  plot_data_path2 <- tempfile(fileext = ".qs")
+  calibration_output_path2 <- tempfile(fileext = ".qs")
   expect_error(hintr_calibrate(calibrated_output1,
                                a_hintr_calibration_options,
                                plot_data_path2,
@@ -471,7 +471,7 @@ test_that("Model can be run without .shiny90 file", {
   expect_true(validate_model_options(data, opts)$valid)
 
   ## Fit model without .shiny90 in PJNZ
-  output_path <- tempfile()
+  output_path <- tempfile(fileext = ".qs")
 
   model_run <- hintr_run_model(data,
                                opts,
@@ -481,7 +481,7 @@ test_that("Model can be run without .shiny90 file", {
   expect_equal(names(model_run),
                c("plot_data_path", "model_output_path", "version", "warnings"))
 
-  output <- readRDS(model_run$model_output_path)
+  output <- read_hintr_output(model_run$model_output_path)
   expect_equal(names(output),
                c("output_package", "naomi_data", "info", "warnings"))
   expect_s3_class(output$output_package, "naomi_output")
@@ -503,7 +503,7 @@ test_that("Model can be run without .shiny90 file", {
 
   expect_s3_class(calibrated_output, "hintr_output")
 
-  indicators_output <- readRDS(calibrated_output$model_output_path)
+  indicators_output <- read_hintr_output(calibrated_output$model_output_path)
   ## Check there is some data
   ## 11 indicators (3 fewer because missing awareness of status indicators
   expect_equal(nrow(indicators_output$output_package$indicators),
@@ -677,11 +677,11 @@ test_that("can get data_type labels", {
 test_that("trying to calibrate incompatible model output returns error", {
 
   ## Calibration makes no modification of existing files.
-  plot_data_path <- tempfile(fileext = ".rds")
-  calibration_output_path <- tempfile(fileext = ".rds")
+  plot_data_path <- tempfile(fileext = ".qs")
+  calibration_output_path <- tempfile(fileext = ".qs")
   hintr_output <- list(
     plot_data_path = NULL,
-    model_output_path = "refdata/naomi-2.5.5/output_data_2.5.5.rds",
+    model_output_path = "refdata/naomi-2.5.5/output_data_2.5.5.qs",
     version = "2.5.5"
   )
   class(hintr_output) <- "hintr_output"
