@@ -1,3 +1,7 @@
+# naomi 2.8.3
+
+* Update model fit to fallback to `anchor_home_district = FALSE` if option is not set
+
 # naomi 2.8.2
 
 * Add model option to specify a new structure for ART attending random effects. In this change, the random effect for the home district applies to residents in that district (and in the neighbouring districts). This means that, for example, if a district is "attractive" to residents of neighbouring districts, it will also be more attractive to residents in that district to stay there, rather than go to a neighbouring district. In the previous specification of the model, the ART attending district parameter only applied to residents of neighbouring districts.
@@ -15,7 +19,6 @@
 # naomi 2.8.0
 
 * Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
->>>>>>> origin/aggregate-art-with-different-admin-levels
 
 
 # naomi 2.7.19

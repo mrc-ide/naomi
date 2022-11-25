@@ -81,7 +81,7 @@ prepare_tmb_inputs <- function(naomi_data,
   ## ART attendance aggregation
   # Default model for ART attending: Anchor home district = add random effect for home district
 
-  if(naomi_data$model_options$anchor_home_district) {
+  if(isTRUE(naomi_data$model_options$anchor_home_district)) {
     Xgamma <- naomi:::sparse_model_matrix(~0 + attend_area_idf, naomi_data$mf_artattend)
   } else {
     Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
