@@ -1,6 +1,6 @@
 # naomi 2.8.3
 
-* Update model fit to fallback to `anchor_home_district = FALSE` if option is not set
+* Update model fit to fallback to `anchor_home_district = TRUE` if option is not set
 
 # naomi 2.8.2
 
@@ -43,6 +43,7 @@ projection.
 * Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
 
 # naomi 2.7.17
+
 * Error if trying to generate comparison report with old model output
 
 # naomi 2.7.16
