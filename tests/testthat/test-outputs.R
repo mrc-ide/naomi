@@ -583,3 +583,23 @@ test_that("can generate summary report from zip file", {
   expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
+
+test_that("can generate comparison report with only 1 survey chosen", {
+  ## Create a model output with only 1 option chosen for survey_prevalence
+  model_output <- a_hintr_output_calibrated$model_output_path
+  output <- qs::qread(model_output)
+  options <- yaml::read_yaml(text = output$info$options.yml)
+  options$survey_prevalence <- options$survey_prevalence[1]
+  output$info$options.yml <- yaml::as.yaml(options)
+  out <- tempfile(fileext = ".qs")
+  model_output <- qs::qsave(output, preset = "fast", out)
+
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, out, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  content <- brio::readLines(t)
+  expect_false(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
+  expect_true(any(grepl("DEMO2016PHIA", content)))
+  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("class=\"logo-naomi\"", content)))
+})

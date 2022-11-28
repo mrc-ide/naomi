@@ -1,3 +1,7 @@
+# naomi 2.8.4
+
+* Make comparison report handle cases where the user selects only 1 survey for prevalence.
+
 # naomi 2.8.3
 
 * Update model fit to fallback to `anchor_home_district = TRUE` if option is not set.
