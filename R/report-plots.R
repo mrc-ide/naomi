@@ -697,3 +697,111 @@ scatter_plotly <- function(df,
 
   final_plot
 }
+
+
+#' Create population pyramid plot
+#'
+#' @param naomi_output  Naomi output object or path to naomi output zip folder
+#' @param calendar_quarter Naomi projection quarter to filter data to, default is calendar_quarter_t2
+#' @param colour_palette Names or hexcode value for right and left side of population pyramid. Can be specified as a preset colour palette using "red", "green" and "blue" or manually as a named list: cols <- c( left_clour = "red", right_colour = "blue").
+#' @param x_title Title for the figure x axis, blank by default
+#' @param y_title Title for the figure y axis, default is "Age Group"
+#' @param fig_title Title for the figure, blank by default,
+#' @param masc_label Label for male sex group, default is "Male"
+#' @param fem_label Label for female sex group, default is "Female"
+#'
+##' @return
+##' @export
+
+population_pyramid <- function(population_agesex,
+                               shape,
+                               admin_level,
+                               quarter,
+                               masc_label = t_("SEX_MALE"),
+                               fem_label = t_("SEX_FEMALE"),
+                               select_area = NULL) {
+
+
+  ## Check if anc is object or file path
+  if(!inherits(population_agesex, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    population_agesex <- read_population(population_agesex)
+  }
+
+  # Error if invalid calendar quarter selected
+  if(!(quarter %in% unique(population_agesex$calendar_quarter))){
+    stop(paste(quarter, " is not a valid time point in the data set. Please
+                select one of the following time points: "),
+               paste("\n",unique(population_agesex$calendar_quarter))) }
+
+
+  # Aggregate population data for all area levels
+  pop_aggregated <- aggregate_pop(population_agesex, shape)
+
+
+  # get age group meta data
+  meta_age <- get_age_groups()
+
+  # shape data for plot
+  fig_data <- pop_aggregated %>%
+    # get age labels for 5-year age bands
+    dplyr::left_join(meta_age, by = c("age_group")) %>%
+    # filter for desired indicator and disaggregates
+    dplyr::filter(area_level == admin_level,
+                  calendar_quarter == quarter,
+                  sex != "both",
+                  age_group_span == 5) %>%
+    dplyr::mutate(age_group = forcats::fct_reorder(age_group_label, age_group_sort_order)) %>%
+    # recode sex varible to corresponding colour palette label
+    dplyr::mutate(sex = dplyr::recode_factor(sex,
+                                             "male" = masc_label,
+                                             "female" = fem_label))
+
+  if(!is.null(select_area)){
+    fig_data <- fig_data %>%
+      dplyr::filter(area_name %in% select_area)
+  }
+
+  # Set colour palette
+  cols <- c(left_colour="honeydew3",right_colour="olivedrab4")
+  x_title <- "Population"
+  y_title <- "Age Group"
+
+  # assign translated labels to colours
+  names(cols) <- c(masc_label, fem_label)
+
+  level_label <- unique(fig_data$area_level_label)
+  source <- unique(fig_data$source)
+
+  plot_title <- paste0(quarter, " ", level_label, " population (source: ", source, ")")
+
+
+  # generate plot
+  ggplot2::ggplot(fig_data, ggplot2::aes(x = ifelse(sex == masc_label, -population, population),
+                                         y = age_group,
+                                         fill = sex)) +
+    ggplot2::geom_col(width = 0.85) +
+    ggplot2::scale_x_continuous(labels = abs,
+                                limits = max(fig_data$population) * c(-1,1)) +
+    ggplot2::labs(x = x_title,
+                  y = y_title) +
+    ggplot2::scale_fill_manual(values = cols) +
+    ggplot2::theme_classic(base_size = 10) +
+    ggplot2::theme(legend.position = "top",
+                   plot.title = ggplot2::element_text(size = 8, face = "bold",
+                                                      hjust = 0.5),
+                   axis.title = ggplot2::element_text(size = 6),
+                   axis.text.x = ggplot2::element_text(size = 5),
+                   axis.text.y = ggplot2::element_text(size = 5),
+                   legend.title = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size = 6),
+                   legend.key.size = ggplot2::unit(0.5, "lines"),
+                   plot.margin = ggplot2::margin(0.5, 0.3, 0.5, 0.3, "cm")) +
+    ggplot2::ylab(y_title) +
+    ggplot2::facet_wrap(~area_name, ncol = 4) +
+    ggplot2::ggtitle(plot_title)
+
+}
+
+
+
+

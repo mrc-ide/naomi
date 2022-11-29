@@ -504,3 +504,100 @@ build_hierarchy_label <- function(meta_areas) {
   labels[is.na(labels)] <- root_name
   labels
 }
+
+##' Aggregate population data according to area hierarchy
+##'
+##' Take population and shape file paths or data files and aggregate
+##' population according to area hierarchy provided
+##'
+##' @param pop Path to file containing population data or population data object
+##' @param shape Path to file containing geojson areas data or areas data object
+##'
+##' @return Aggregated ANC data containing columns area_id, area_name, area_level,
+##' area_level_label, sex,age_group, time_period, year, quarter, calendar_quarter,
+##' population
+
+##' @export
+
+aggregate_pop <- function(pop, shape) {
+
+  ## Recursively aggregate ANC data up from lowest level of programm data provided
+  # Level to aggregate from
+
+  ## Check if shape is object or file path
+  if(!inherits(shape, "sf")) {
+    areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
+  } else {
+    areas <- shape %>% sf::st_drop_geometry()
+  }
+
+  ## Check if anc is object or file path
+  if(!inherits(pop, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    pop <- read_population(pop)
+  }
+
+  ## Select only required columns; to avoid column name clash with
+  ## any additional columns in ANC data set
+  pop <-  pop %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, population, source) %>%
+    dplyr::left_join(
+      dplyr::select(areas, area_id, area_level),
+      by = "area_id")
+
+  # Split data by year and aggregate from lowest level available
+  pop_dat <- split(pop , f = pop$calendar_quarter)
+
+  aggregate_pop_by_level <- function(pop_df){
+
+    ## Recursively aggregate ANC data up from lowest level of programme data provided
+    # Level to aggregate from
+    pop_level <- max(pop_df$area_level)
+    max_dat <- dplyr::filter(pop_df, area_level == pop_level)
+    max_shape <- dplyr::filter(areas, area_level == pop_level)
+
+
+    # Join ANC data to hierarchy
+    pop_wide <- areas %>%
+      dplyr::filter(area_level <= pop_level) %>%
+      spread_areas() %>%
+      dplyr::right_join(pop_df, by = "area_id")
+
+    # Function to aggregate based on area_id[0-9]$ columns in hierarchy
+    aggregate_data_pop <- function(col_name) {
+      df <- pop_wide  %>%
+        dplyr::group_by(eval(as.name(col_name)), sex, age_group, calendar_quarter, source) %>%
+        dplyr::summarise(
+          population = sum(population),
+          .groups = "drop"
+        ) %>%
+        dplyr::rename(area_id = `eval(as.name(col_name))`)
+    }
+
+    # Aggregated data frame for area levels
+    aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(pop_wide), value = TRUE)
+
+    aggregated_pop <- aggregate_cols %>%
+      lapply(aggregate_data_pop) %>%
+      dplyr::bind_rows() %>%
+      dplyr::ungroup() %>%
+      dplyr::bind_rows()
+  }
+
+  pop_long <- lapply(pop_dat, aggregate_pop_by_level) %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter),
+                  time_period = as.character(year)) %>%
+    dplyr::left_join(areas %>% dplyr::select(area_id, area_name, area_level,area_level_label,
+                                     parent_area_id, area_sort_order),
+                     by = "area_id") %>%
+    dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
+                  area_sort_order, sex, age_group, time_period, year,
+                  calendar_quarter, population, source) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(year, area_sort_order)
+
+  pop_long$area_hierarchy <- build_hierarchy_label(pop_long)
+  pop_long
+}
+
+
