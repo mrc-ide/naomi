@@ -1,3 +1,9 @@
+# naomi 2.8.5
+
+* Add script to aggregate population according to area hierachy. 
+* Add exported to create popoulation pyramids with Naomi population and   
+   boundaries files. 
+
 # naomi 2.8.4
 
 * Make comparison report handle cases where the user selects only 1 survey for prevalence.
