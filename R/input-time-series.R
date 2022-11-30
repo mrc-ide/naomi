@@ -596,7 +596,7 @@ aggregate_pop <- function(pop, shape) {
     dplyr::ungroup() %>%
     dplyr::arrange(year, area_sort_order)
 
-  pop_long$area_hierarchy <- build_hierarchy_label(pop_long)
+  # pop_long$area_hierarchy <- build_hierarchy_label(pop_long)
   pop_long
 }
 
