@@ -1,3 +1,7 @@
+# naomi 2.8.6
+
+* Show ANC prevalence on ANC time series to 1 decimal place instead of 2. It will now be consistent with prevalence in other plots.
+
 # naomi 2.8.5
 
 No user-visible changes, only internal.
