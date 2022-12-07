@@ -31,7 +31,7 @@ test_that("extract_shiny90_age_sex() returns for Spectrum internal .shiny90", {
   pjnz_shiny90_internal <- system_file("extdata/demo_mwi2019_v6.21-shiny90.PJNZ")
   shiny90dir <- tempfile()
   utils::unzip(pjnz_shiny90_internal, exdir = shiny90dir)
-  shiny90_internal_path <- file.path(shiny90dir, "malawi.zip.shiny90")
+  shiny90_internal_path <- file.path(shiny90dir, "Malawi.zip.shiny90")
 
   ## pjnz_path argument = NULL (default)
   expect_error(extract_shiny90_age_sex(shiny90_internal_path, year = 2010:2019),
