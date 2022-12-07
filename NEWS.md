@@ -1,9 +1,17 @@
-# naomi 2.8.3
+# naomi 2.8.5
 
 No user-visible changes, only internal.
 
 * Update `extract_shiny90_age_sex()` to extract awareness of status estimates saved with Spectrum internal Shiny90 implementation (Spectrum v6.21).
 * Added test file with internally created .shiny90 file: `extdata/demo_mwi2019_v6.21-shiny90.PJNZ`
+
+# naomi 2.8.4
+
+* Make comparison report handle cases where the user selects only 1 survey for prevalence.
+
+# naomi 2.8.3
+
+* Update model fit to fallback to `anchor_home_district = TRUE` if option is not set.
 
 # naomi 2.8.2
 
@@ -22,7 +30,6 @@ No user-visible changes, only internal.
 # naomi 2.8.0
 
 * Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
->>>>>>> origin/aggregate-art-with-different-admin-levels
 
 
 # naomi 2.7.19
@@ -47,6 +54,7 @@ projection.
 * Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
 
 # naomi 2.7.17
+
 * Error if trying to generate comparison report with old model output
 
 # naomi 2.7.16

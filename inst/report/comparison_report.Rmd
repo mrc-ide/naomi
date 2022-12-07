@@ -1,7 +1,7 @@
 ---
 params:
-  outputs: "/var/folders/vk/s5m946h57g3dk4rm43k1zk2m0000gn/T//RtmpQx5p42/file551d122c769a.rds"
-  lang: "en"
+  outputs: NA
+  lang: NA
 output:
   html_document:
     css: styles.css
@@ -138,16 +138,16 @@ if("true" %in% include$art_attend ) {
 } else { art_attend <- NA }
 
 # ANC ART programme data included
-anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2)
-anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+anc_art_options = c(options$anc_art_coverage_year1, options$anc_art_coverage_year2)
+anc_art_options <- anc_art_options[!vlapply(anc_art_options, is_empty)]
 
 if(length(anc_art_options)) {
   anc_art <- paste0(anc_art_options, sep = "", collapse = collapse_and)
 } else { anc_art <- NA }
 
 # ANC prev programme data
-anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
-anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
+anc_prev_options = c(options$anc_prevalence_year1, options$anc_prevalence_year2)
+anc_prev_options <- anc_art_options[!vlapply(anc_art_options, is_empty)]
 
 if(length(anc_prev_options)) {
   anc_prev <- paste0(anc_prev_options, sep = "", collapse = collapse_and)
@@ -313,7 +313,7 @@ fig2 <-  scatter_plotly(data,
 
 
 
-if(is.null(survey_prev2)) {
+if(is_empty(survey_prev2)) {
 
   # A single prevalence survey
 
@@ -469,25 +469,23 @@ if (sum(is.na(programme_data)) <3 ) {
 #-------------------------------------------------------------------------------
 # ANC data: interactive scatter plot
 #-------------------------------------------------------------------------------
-anc_t1 <- !is.null(outputs$fit$data_options$anc_prev_year_t1)
-anc_t2 <- !is.null(outputs$fit$data_options$anc_prev_year_t2)
+anc_t1 <- outputs$fit$data_options$anc_prev_year_t1
+anc_t2 <- outputs$fit$data_options$anc_prev_year_t2
+has_anc <- !is_empty(anc_t1) && !is_empty(anc_t2)
 
-if(anc_t1 && anc_t2) {
-  t1 <- outputs$fit$data_options$anc_prev_year_t1
-  t2 <- outputs$fit$data_options$anc_prev_year_t2
-
+if(has_anc) {
   #  Scatter plot ANC prevalence
   fig1 <-  scatter_plotly(data,
                           ind = "anc_prevalence_age_matched",
                           quarter = calendar_quarter1,
-                          input_data = paste0("ANC ", t1) ,
+                          input_data = paste0("ANC ", anc_t1) ,
                           input_data_type = "ANC programme",
                           sex_disag = "female")
 
   fig2 <-  scatter_plotly(data,
                           ind = "anc_prevalence_age_matched",
                           quarter = calendar_quarter2,
-                          input_data = paste0("ANC ", t2) ,
+                          input_data = paste0("ANC ", anc_t2) ,
                           input_data_type = "ANC programme",
                           sex_disag = "female")
 
@@ -497,14 +495,14 @@ if(anc_t1 && anc_t2) {
   fig3 <-  scatter_plotly(data,
                           ind = "anc_art_coverage_age_matched",
                           quarter = calendar_quarter1,
-                          input_data = paste0("ANC ",t1),
+                          input_data = paste0("ANC ", anc_t2),
                           input_data_type = "ANC programme",
                           sex_disag = "female")
 
   fig4 <-  scatter_plotly(data,
                           ind = "anc_art_coverage_age_matched",
                           quarter = calendar_quarter2,
-                          input_data = paste0("ANC ",t2),
+                          input_data = paste0("ANC ", anc_t2),
                           input_data_type = "ANC programme",
                           sex_disag = "female")
 
@@ -526,13 +524,7 @@ if(anc_t1 && anc_t2) {
     prev_plots,
     art_plots
   )
-
-
-
-  }
-
-
-
+}
 ```
 
 

@@ -17,3 +17,11 @@ test_that("read csv can read semicolon delimited files", {
   expect_equal(naomi_read_csv(path1), naomi_read_csv(path2))
   expect_equal(readr_read_csv(path1), readr_read_csv(path2))
 })
+
+test_that("is_empty", {
+  expect_true(is_empty(NA))
+  expect_true(is_empty(NULL))
+  expect_true(is_empty(""))
+  expect_false(is_empty("text"))
+  expect_false(is_empty(2))
+})

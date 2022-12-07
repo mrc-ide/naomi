@@ -96,3 +96,7 @@ match_values <- function(args, choices, name = deparse(substitute(args))) {
 vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, ..., FUN.VALUE = logical(1))
 }
+
+is_empty <- function(x) {
+  is.null(x) || is.na(x) || !nzchar(x)
+}
