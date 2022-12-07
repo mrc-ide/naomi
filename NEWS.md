@@ -1,3 +1,10 @@
+# naomi 2.8.3
+
+No user-visible changes, only internal.
+
+* Update `extract_shiny90_age_sex()` to extract awareness of status estimates saved with Spectrum internal Shiny90 implementation (Spectrum v6.21).
+* Added test file with internally created .shiny90 file: `extdata/demo_mwi2019_v6.21-shiny90.PJNZ`
+
 # naomi 2.8.2
 
 * Add model option to specify a new structure for ART attending random effects. In this change, the random effect for the home district applies to residents in that district (and in the neighbouring districts). This means that, for example, if a district is "attractive" to residents of neighbouring districts, it will also be more attractive to residents in that district to stay there, rather than go to a neighbouring district. In the previous specification of the model, the ART attending district parameter only applied to residents of neighbouring districts.

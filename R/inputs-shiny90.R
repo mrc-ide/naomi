@@ -4,6 +4,7 @@
 #' output file to five-year age groups 15-19 to 50+.
 #'
 #' @param shiny90_path file path to .shiny90 digest file.
+#' @param pjnz_path file path to PJNZ file
 #' @param years year(s) to generate estimates; an integer or a vector of integers.
 #'   If NULL, all years available in estimates are returned (default).
 #'
@@ -27,21 +28,41 @@
 #' utils::unzip(pjnz, "malawi.zip.shiny90", exdir = shiny90dir)
 #' shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
 #'
-#' extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
+#' extract_shiny90_age_sex(shiny90_path, pjnz, year = 2010:2019)
 #'
 #' @export
 #'
-extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
+extract_shiny90_age_sex <- function(shiny90_path, pjnz_path = NULL, years = NULL) {
 
   tmpd <- tempfile()
   on.exit(unlink(tmpd))
 
   utils::unzip(shiny90_path, exdir = tmpd)
 
-  name <- brio::readLines(file.path(tmpd, "country.txt"))[1]
+  has_pjnz <- !is.null(pjnz_path) && file.exists(pjnz_path)
+
+  if (file.exists(file.path(tmpd, "country.txt"))) {
+      name <- brio::readLines(file.path(tmpd, "country.txt"))[1]
+  } else if (has_pjnz) {
+    name <- eppasm::read_country(pjnz_path)
+    pjnz_region <- eppasm::read_region(pjnz_path)
+    if (!is.null(pjnz_region)) {
+      name <- paste0(name, " - ", pjnz_region)
+    }
+  } else {
+    stop("PJNZ file required for .shiny90 created by Spectrum")
+  }
+
   spectrum_data <- list.files(file.path(tmpd, "spectrum_data"), "rds$", full.names = TRUE)
-  spec <- lapply(spectrum_data, readRDS)
-  spec <- lapply(spec, "[[", "data")
+  if (length(spectrum_data) > 0) {
+    spec <- lapply(spectrum_data, readRDS)
+    spec <- lapply(spec, "[[", "data")
+  } else if (has_pjnz) {
+    spec <- list(first90::extract_pjnz(pjnz_path))
+  } else {
+    stop("PJNZ file required for .shiny90 created by Spectrum")
+  }
+  
   fp <- first90::prepare_inputs_from_extracts(spec)
 
   if (!exists("popadjust", fp)) {
@@ -62,7 +83,13 @@ extract_shiny90_age_sex <- function(shiny90_path, years = NULL) {
          paste0(setdiff(years, proj_years), collapse = ", "))
   }
 
-  par <- readRDS(file.path(tmpd, "model_outputs/par.rds"))
+  if (file.exists(file.path(tmpd, "model_outputs/par.rds"))) {
+    par <- readRDS(file.path(tmpd, "model_outputs/par.rds"))
+  } else if (has_pjnz) {
+    par <- as.numeric(readr_read_csv(file.path(tmpd, "model_outputs/par.csv"), col_names = FALSE))
+  } else {
+    stop("PJNZ file required for .shiny90 created by Spectrum")
+  }
 
   fpsim <- first90::create_hts_param(par, fp)
   mod <- first90::simmod(fpsim)

@@ -26,6 +26,36 @@ test_that("extract_shiny90_age_sex() returns expected results", {
                "Ouput years not contained in shiny90 projection: 2035, 2038")
 })
 
+test_that("extract_shiny90_age_sex() returns for Spectrum internal .shiny90", {
+
+  pjnz_shiny90_internal <- system_file("extdata/demo_mwi2019_v6.21-shiny90.PJNZ")
+  shiny90dir <- tempfile()
+  utils::unzip(pjnz_shiny90_internal, exdir = shiny90dir)
+  shiny90_internal_path <- file.path(shiny90dir, "malawi.zip.shiny90")
+
+  ## pjnz_path argument = NULL (default)
+  expect_error(extract_shiny90_age_sex(shiny90_internal_path, year = 2010:2019),
+               "PJNZ file required for .shiny90 created by Spectrum")
+
+  ## pjnz_path does not exist
+  expect_error(extract_shiny90_age_sex(shiny90_internal_path, pjnz_path = "./does_not_exist.pjnz", year = 2010:2019),
+               "PJNZ file required for .shiny90 created by Spectrum")
+
+  res1 <- extract_shiny90_age_sex(shiny90_internal_path, pjnz_shiny90_internal, year = 2010:2019)
+
+  expect_named(res1, c("area", "year", "sex", "agegr", "hivstatus",
+                       "plhiv", "aware", "artnum"))
+  expect_setequal(res1$area, "Malawi")
+  expect_setequal(res1$year, 2010:2019)
+  expect_setequal(res1$sex, c("male", "female"))
+  expect_setequal(res1$agegr, c("15-19", "20-24", "25-29", "30-34",
+                                "35-39", "40-44", "45-49", "50-99"))
+  expect_setequal(res1$hivstatus, "positive")
+  expect_true(all(res1$plhiv > res1$aware))
+  expect_true(all(res1$aware >= res1$artnum))
+  expect_true(all(res1$artnum > 0))
+
+})
 
 test_that("assert_pjnz_shiny90 validates shiny90 case-insensitively", {
 
