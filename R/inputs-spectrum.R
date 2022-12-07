@@ -365,7 +365,8 @@ add_shiny90_unaware <- function(spec, pjnz) {
     shiny90_name <- get_pjnz_shiny90_filename(pjnz)
     utils::unzip(pjnz, shiny90_name, exdir = shiny90_dir)
 
-    df <- extract_shiny90_age_sex(file.path(shiny90_dir, shiny90_name),
+    df <- extract_shiny90_age_sex(shiny90_path = file.path(shiny90_dir, shiny90_name),
+                                  pjnz_path = pjnz,
                                   years = unique(spec$year))
     df$unaware_untreated_prop <- (df$plhiv - df$aware) / (df$plhiv - df$artnum)
     df <- df[c("year", "sex", "agegr", "unaware_untreated_prop")]

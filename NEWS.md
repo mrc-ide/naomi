@@ -1,3 +1,10 @@
+# naomi 2.8.5
+
+No user-visible changes, only internal.
+
+* Update `extract_shiny90_age_sex()` to extract awareness of status estimates saved with Spectrum internal Shiny90 implementation (Spectrum v6.21).
+* Added test file with internally created .shiny90 file: `extdata/demo_mwi2019_v6.21-shiny90.PJNZ`
+
 # naomi 2.8.4
 
 * Make comparison report handle cases where the user selects only 1 survey for prevalence.
