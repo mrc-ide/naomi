@@ -1,3 +1,7 @@
+# naomi 2.8.6
+
+* `hintr_run_model` data can include a `resource_url` to include a static link to the original resource.
+
 # naomi 2.8.5
 
 No user-visible changes, only internal.

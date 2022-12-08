@@ -529,10 +529,12 @@ naomi_info_input <- function(data) {
   }
   filenames <- vapply(data, get_col_from_list, character(1), "filename")
   hash <- vapply(data, get_col_from_list, character(1), "hash")
+  resource_url <- vapply(data, get_col_from_list, character(1), "resource_url")
   data.frame(
     role = names(data),
     filename = filenames,
     md5sum = hash,
+    resource_url = resource_url,
     stringsAsFactors = FALSE,
     row.names = NULL
   )

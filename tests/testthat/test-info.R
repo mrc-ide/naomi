@@ -34,6 +34,38 @@ test_that("naomi_info_input contains filename and hash info", {
     role = c("pjnz", "population", "art"),
     filename = c("demo_mwi2019.PJNZ", "demo_population_agesex.csv", NA),
     md5sum = c("pjnz_hash", "population_hash", NA),
+    resource_url = c(NA_character_, NA_character_, NA_character_),
+    stringsAsFactors = FALSE
+  ))
+})
+
+test_that("naomi_info_input contains resource URL", {
+  data <- list(
+    pjnz = list(
+      path = system_file("extdata/demo_mwi2019.PJNZ"),
+      hash = "pjnz_hash",
+      filename = "demo_mwi2019.PJNZ",
+      resource_url = "https://adr.unaids.org/file/123.pjnz"
+    ),
+    population = list(
+      path = system_file("extdata/demo_population_agesex.csv"),
+      hash = "population_hash",
+      filename = "demo_population_agesex.csv",
+      resource_url = "https://adr.unaids.org/file/pop.csv"
+    ),
+    art = NULL
+  )
+
+  info <- naomi_info_input(data)
+
+  expect_equal(nrow(info), 3)
+  expect_equal(info, data.frame(
+    role = c("pjnz", "population", "art"),
+    filename = c("demo_mwi2019.PJNZ", "demo_population_agesex.csv", NA),
+    md5sum = c("pjnz_hash", "population_hash", NA),
+    resource_url = c("https://adr.unaids.org/file/123.pjnz",
+                     "https://adr.unaids.org/file/pop.csv",
+                     NA),
     stringsAsFactors = FALSE
   ))
 })
