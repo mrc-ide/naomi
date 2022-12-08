@@ -117,16 +117,17 @@ art_spectrum_warning <- function(art, shape, pjnz) {
         dplyr::select(areas, area_id, spectrum_region_code),
         by = "area_id"
       ) %>%
-      dplyr::count(spectrum_region_code, sex, age_group, calendar_quarter,
+      dplyr::count(spectrum_region_code, calendar_quarter,
                    wt = art_current, name = "value_naomi") %>%
       dplyr::left_join(
         pjnz$art_dec31 %>%
-          dplyr::mutate(
-            calendar_quarter = paste0("CY", year, "Q4")
-          ),
-        by = c("spectrum_region_code", "sex", "age_group", "calendar_quarter")
+          dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
+          dplyr::count(spectrum_region_code, calendar_quarter,
+                       wt = art_dec31, name = "value_spectrum"),
+        by = c("spectrum_region_code", "calendar_quarter")
       ) %>%
-    dplyr::rename(value_spectrum = art_dec31)
+    dplyr::mutate(sex = "both", age_group = "Y000_999",
+                  year = calendar_quarter_to_year(calendar_quarter))
 
   spectrum_region_code <- unique(areas$spectrum_region_code)
 
@@ -192,7 +193,7 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
     pjnz <- extract_pjnz_program_data(pjnz)
   }
 
-  ## Check if art totals match spectrum totals
+  ## Check if anc totals match spectrum totals
   anc_merged <- anc %>%
     dplyr::left_join(
       dplyr::select(areas, area_id,area_name, spectrum_region_code),

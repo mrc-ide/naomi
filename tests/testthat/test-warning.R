@@ -135,7 +135,7 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
                c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ART current not equal to Spectrum",
                     art0$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Malawi - Demo naomi",
+  expect_true(grepl("2018 Y000_999 Malawi - Demo naomi",
                     art0$warnings[[1]]$text))
   expect_true(grepl("and \\d+ more",
                     art0$warnings[[1]]$text))
