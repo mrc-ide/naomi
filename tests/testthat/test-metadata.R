@@ -283,7 +283,7 @@ test_that("time series metadata format column hasn't been messed by Excel", {
   meta <- get_plot_type_column_metadata("art_prop_u15")
   expect_equal(meta[[1]]$format, "0%")
   meta <- get_plot_type_column_metadata("anc_prevalence")
-  expect_equal(meta[[1]]$format, "0.00%")
+  expect_equal(meta[[1]]$format, "0.0%")
   meta <- get_plot_type_column_metadata("anc_art_coverage")
   expect_equal(meta[[1]]$format, "0%")
   meta <- get_plot_type_column_metadata("vl_prop_suppressed_total")
