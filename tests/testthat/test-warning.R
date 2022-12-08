@@ -226,6 +226,3 @@ test_that("ANC warning raised if spectrum totals do not match naomi data", {
                     anc1$warnings[[2]]$text))
 })
 
-
-test_that("Spectrum total warning is correct")
-
