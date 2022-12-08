@@ -149,11 +149,11 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
                c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ART current not equal to Spectrum",
                     art1$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Northern",
+  expect_true(grepl("2018 Y000_999 Northern",
                     art1$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Central",
+  expect_true(grepl("2018 Y000_999 Central",
                     art1$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Southern",
+  expect_true(grepl("2018 Y000_999 Southern",
                     art1$warnings[[1]]$text))
   expect_true(grepl("and \\d+ more",
                     art1$warnings[[1]]$text))

@@ -1,3 +1,8 @@
+# naomi 2.8.7
+
+* Update bug in `art_spectrum_warning()` and `anc_spectrum_warning()` where district totals in naomi were compared to national totals in spectrum.
+* Changes warning to compare district totals as opposed to district age sex totals to avoid excluding comparisons when age/sex dissagreagtes are different in spectrum and naomi data.
+
 # naomi 2.8.6
 
 * `hintr_run_model` data can include a `resource_url` to include a static link to the original resource.
