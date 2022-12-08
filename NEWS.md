@@ -1,6 +1,10 @@
-# naomi 2.8.6
+# naomi 2.8.7
 
 * Show ANC prevalence on ANC time series to 1 decimal place instead of 2. It will now be consistent with prevalence in other plots.
+
+# naomi 2.8.6
+
+* `hintr_run_model` data can include a `resource_url` to include a static link to the original resource.
 
 # naomi 2.8.5
 
