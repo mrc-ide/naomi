@@ -118,57 +118,114 @@ test_that("warning raised if outputs exceed threshold", {
 })
 
 test_that("ART warning raised if spectrum totals do not match naomi data", {
-  art_w <- hintr_validate_art(a_hintr_data$art_number,
-                              a_hintr_data$shape,
-                              a_hintr_data$pjnz)
 
-  expect_length(art_w$warnings, 1)
-  expect_equal(art_w$warnings[[1]]$locations,
+  data <- list(
+    pjnz = system.file("extdata/demo_mwi2019.PJNZ", package = "naomi"),
+    shape = system.file("extdata/demo_areas.geojson", package = "naomi"),
+    art_number = system.file("extdata/demo_art_number.csv", package = "naomi")
+  )
+
+  # National warnings for national pjnz file
+  art0 <- hintr_validate_art(data$art_number,
+                             data$shape,
+                             data$pjnz)
+
+  expect_length(art0$warnings, 1)
+  expect_equal(art0$warnings[[1]]$locations,
                c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ART current not equal to Spectrum",
-                    art_w$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Northern",
-                    art_w$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Central-East",
-                    art_w$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_014 Central-West",
-                    art_w$warnings[[1]]$text))
+                    art0$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Malawi - Demo naomi",
+                    art0$warnings[[1]]$text))
   expect_true(grepl("and \\d+ more",
-                    art_w$warnings[[1]]$text))
+                    art0$warnings[[1]]$text))
 
-})
+  art1 <- hintr_validate_art(a_hintr_data$art_number,
+                            a_hintr_data$shape,
+                            a_hintr_data$pjnz)
+
+  expect_length(art1$warnings, 1)
+  expect_equal(art1$warnings[[1]]$locations,
+               c("model_calibrate", "review_output"))
+  expect_true(grepl("Naomi ART current not equal to Spectrum",
+                    art1$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Northern",
+                    art1$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Central",
+                    art1$warnings[[1]]$text))
+  expect_true(grepl("2018 Y000_014 Southern",
+                    art1$warnings[[1]]$text))
+  expect_true(grepl("and \\d+ more",
+                    art1$warnings[[1]]$text))
+
+  })
 
 test_that("ANC warning raised if spectrum totals do not match naomi data", {
-  anc_w <- hintr_validate_anc(a_hintr_data$anc_testing,
-                              a_hintr_data$shape,
-                              a_hintr_data$pjnz)
 
-  expect_length(anc_w$warnings, 2)
+  data <- list(
+    pjnz = system.file("extdata/demo_mwi2019.PJNZ", package = "naomi"),
+    shape = system.file("extdata/demo_areas.geojson", package = "naomi"),
+    anc_testing = system.file("extdata/demo_anc_testing.csv", package = "naomi")
+  )
 
-  expect_equal(anc_w$warnings[[1]]$locations,
+  # National warnings for national pjnz file
+  anc0 <- hintr_validate_anc(data$anc_testing,
+                             data$shape,
+                             data$pjnz)
+
+  expect_length(anc0$warnings, 2)
+
+  expect_equal(anc0$warnings[[1]]$locations,
                c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ANC testing not equal to Spectrum",
-                    anc_w$warnings[[1]]$text))
-  expect_true(grepl("2018 Northern",
-                    anc_w$warnings[[1]]$text))
-  expect_true(grepl("2018 Central-East",
-                    anc_w$warnings[[1]]$text))
-  expect_true(grepl("2018 Central-West",
-                    anc_w$warnings[[1]]$text))
+                    anc0$warnings[[1]]$text))
+  expect_true(grepl("2018 Malawi - Demo",
+                    anc0$warnings[[1]]$text))
   expect_true(grepl("and \\d+ more",
-                    anc_w$warnings[[1]]$text))
+                    anc0$warnings[[1]]$text))
 
-  expect_equal(anc_w$warnings[[2]]$locations,
+  expect_equal(anc0$warnings[[2]]$locations,
                c("model_calibrate", "review_output"))
   expect_true(grepl("Naomi ANC tested positive not equal to Spectrum",
-                    anc_w$warnings[[2]]$text))
-  expect_true(grepl("2018 Northern",
-                    anc_w$warnings[[2]]$text))
-  expect_true(grepl("2018 Central-East",
-                    anc_w$warnings[[2]]$text))
-  expect_true(grepl("2018 Central-West",
-                    anc_w$warnings[[2]]$text))
+                    anc0$warnings[[2]]$text))
+  expect_true(grepl("2018 Malawi - Demo",
+                    anc0$warnings[[2]]$text))
   expect_true(grepl("and \\d+ more",
-                    anc_w$warnings[[2]]$text))
+                    anc0$warnings[[2]]$text))
+
+  # Sub national level warnings for national pjnz file
+  anc1 <- hintr_validate_anc(a_hintr_data$anc_testing,
+                             a_hintr_data$shape,
+                             a_hintr_data$pjnz)
+
+  expect_length(anc1$warnings, 2)
+  expect_equal(anc1$warnings[[1]]$locations,
+               c("model_calibrate", "review_output"))
+  expect_true(grepl("Naomi ANC testing not equal to Spectrum",
+                    anc1$warnings[[1]]$text))
+  expect_true(grepl("2018 Northern",
+                    anc1$warnings[[1]]$text))
+  expect_true(grepl("2018 Central",
+                    anc1$warnings[[1]]$text))
+  expect_true(grepl("2018 Southern",
+                    anc1$warnings[[1]]$text))
+  expect_true(grepl("and \\d+ more",
+                    anc1$warnings[[1]]$text))
+
+  expect_equal(anc1$warnings[[2]]$locations,
+               c("model_calibrate", "review_output"))
+  expect_true(grepl("Naomi ANC tested positive not equal to Spectrum",
+                    anc1$warnings[[2]]$text))
+  expect_true(grepl("2018 Northern",
+                    anc1$warnings[[2]]$text))
+  expect_true(grepl("2018 Central",
+                    anc1$warnings[[2]]$text))
+  expect_true(grepl("2018 Southern",
+                    anc1$warnings[[2]]$text))
+  expect_true(grepl("and \\d+ more",
+                    anc1$warnings[[2]]$text))
 })
+
+
+test_that("Spectrum total warning is correct")
 

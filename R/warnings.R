@@ -110,15 +110,16 @@ art_spectrum_warning <- function(art, shape, pjnz) {
     pjnz <- extract_pjnz_program_data(pjnz)
   }
 
+
   ## Check if art totals match spectrum totals
   art_merged <- art %>%
       dplyr::left_join(
-        dplyr::select(areas, area_id, area_name, spectrum_region_code),
+        dplyr::select(areas, area_id, spectrum_region_code),
         by = "area_id"
       ) %>%
-      dplyr::count(spectrum_region_code, sex, age_group, area_name, calendar_quarter,
+      dplyr::count(spectrum_region_code, sex, age_group, calendar_quarter,
                    wt = art_current, name = "value_naomi") %>%
-      dplyr::inner_join(
+      dplyr::left_join(
         pjnz$art_dec31 %>%
           dplyr::mutate(
             calendar_quarter = paste0("CY", year, "Q4")
@@ -126,6 +127,23 @@ art_spectrum_warning <- function(art, shape, pjnz) {
         by = c("spectrum_region_code", "sex", "age_group", "calendar_quarter")
       ) %>%
     dplyr::rename(value_spectrum = art_dec31)
+
+  spectrum_region_code <- unique(areas$spectrum_region_code)
+
+  if(length(unique(spectrum_region_code)) == 1) {
+    # If spectrum file is national - add admin0 level name
+    name <- areas[areas$area_level == spectrum_region_code, ]$area_name
+    art_merged$area_name <- name
+
+  } else {
+    # If multiple spectrum files, add admin1 level names
+    art_merged <- art_merged %>%
+      dplyr::left_join(
+        spectrum_name_map <- areas %>%
+          dplyr::filter(area_level == 1) %>%
+          dplyr::select(area_name, spectrum_region_code),
+        by = "spectrum_region_code")
+  }
 
   format_spectrum_total_warning(
     data_merged = art_merged,
@@ -183,7 +201,7 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
     tidyr::pivot_longer(dplyr::starts_with("anc"),
                         names_to = "indicator",
                         values_to = "value_naomi") %>%
-    dplyr::count(spectrum_region_code, age_group, area_name, year, indicator,
+    dplyr::count(spectrum_region_code, age_group, year, indicator,
                  wt = value_naomi, name = "value_naomi") %>%
     dplyr::inner_join(
       pjnz$anc_testing %>%
@@ -191,6 +209,24 @@ anc_spectrum_warning <- function(anc, shape, pjnz) {
       by = c("spectrum_region_code", "indicator", "year")
     ) %>%
     dplyr::mutate( sex = "female")
+
+  spectrum_region_code <- unique(areas$spectrum_region_code)
+
+  if(length(unique(spectrum_region_code)) == 1) {
+    # If spectrum file is national - add admin0 level name
+    name <- areas[areas$area_level == spectrum_region_code, ]$area_name
+    anc_merged$area_name <- name
+
+    } else {
+      # If multiple spectrum files, add admin1 level names
+      anc_merged <- anc_merged %>%
+        dplyr::left_join(
+          spectrum_name_map <- areas %>%
+            dplyr::filter(area_level == 1) %>%
+            dplyr::select(area_name, spectrum_region_code),
+          by = "spectrum_region_code")
+    }
+
 
   anc_tested <- anc_merged[anc_merged$indicator == "anc_tested",]
 
