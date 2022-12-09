@@ -93,16 +93,19 @@ do_validate_model_options <- function(data, options) {
     }
   }
 
+  # Add warning is ART attendance is not selected
+  if(!(options$artattend == "true")) {
+    if(options$include_art_t1 == "true" || options$include_art_t2 == "true"){
+      naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
+                    c("model_options"))
+    }
+  }
+
   area_merged <- read_area_merged(data$shape$path)
   if (all(is.na(area_merged$spectrum_region_code))) {
     stop(t_("SHAPE_SPECTRUM_REGION_ALL_NA"))
   }
 
-  # Add warning is ART attendance is not selected
-  if(!(options$artattend == "true")) {
-    naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
-                  c("model_options"))
-  }
 
   ## ## Validate PJNZ
 

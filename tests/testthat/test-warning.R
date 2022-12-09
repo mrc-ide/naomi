@@ -83,6 +83,15 @@ test_that("warning raised if art attend is not selected", {
                paste0("You have chosen to fit model without estimating ",
                       "neighbouring ART attendance. You may wish to review",
                       " your selection to include this option."))
+
+  # No warning raised when no ART included
+  options_no_art <- options
+  options_no_art$include_art_t1 <- "false"
+  options_no_art$include_art_t2 <- "false"
+
+  out <- validate_model_options(a_hintr_data, options_no_art)
+  expect_length(out$warnings, 0)
+
 })
 
 test_that("warning raised if outputs exceed threshold", {
