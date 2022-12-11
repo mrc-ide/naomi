@@ -462,34 +462,57 @@ age_bar_plotly <- function(df,
   plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
     output_source, "<b>")
 
-
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
 
-  plot_data <- plot_data[order(plot_data$age_group_sort_order), ]
+  sources <- unique(plot_data$source)
+  plotting_data <- plot_data %>%
+    dplyr::mutate(text = paste("</br>", age_group_label,
+                               "</br>", source,
+                               "</br>", round(mean * 100, 2),
+                               " (", round(upper * 100, 2), "-",
+                               round(lower * 100, 2),  "%)")) %>%
+    tidyr::pivot_wider(id_cols = c(area_id, age_group, calendar_quarter,
+                                   indicator, area_name, sex, area_level,
+                                   area_level_label, age_group_label),
+                       names_from = source,
+                       values_from = c(mean, upper, lower, text),
+                       ## plotly does not play nicely with NA
+                       ## if left with NA values then the bars will
+                       ## show the first available entry ignoring the
+                       ## transform filter
+                       values_fill = list(mean = 0, upper = NA_real_,
+                                          lower = NA_real_,
+                                          text = ""))
 
-
-  final_plot <- plotly::plot_ly(data = plot_data,
-                        type = "bar",
-                        color = ~ as.factor(source),
-                        colors = c("#07bbc1", "#f68e1f", "#87c440"),
-                        x = ~age_group_label,
-                        y = ~mean,
-                        hoverinfo = "text",
-                        text = ~paste("</br>", age_group_label,
-                                      "</br>", source,
-                                      "</br>", round(mean * 100, 2),
-                                      " (", round(upper * 100, 2), "-",
-                                      round(lower * 100, 2),  "%)"),
-                        error_y = ~list(symmetric = FALSE,
-                                        arrayminus = mean - lower,
-                                        array = upper - mean,
-                                        color = "#000000"),
-                        transforms = list(
-                          list(
-                            type = "filter",
-                            target = ~sex,
-                            operation = "=",
-                            value = sort(plot_data$sex)[1]))) %>%
+  final_plot <- plotly::plot_ly()
+  ## TODO: will there always be 3 colours??
+  colours <- c("#07bbc1", "#f68e1f", "#87c440")
+  for (i in seq_along(sources)) {
+    source <- sources[[i]]
+    final_plot <- final_plot %>%
+      plotly::add_trace(
+        data = plotting_data,
+        type = "bar",
+        x = ~age_group_label,
+        y = as.formula(paste0("~`mean_", source, "`")),
+        name = source,
+        marker = list(color = colours[i]),
+        hoverinfo = "text",
+        hovertext = as.formula(paste0("~`text_", source, "`")),
+        error_y = list(type = "data",
+                        symmetric = FALSE,
+                        arrayminus = as.formula(paste0("~`mean_", source, "` - `lower_", source, "`")),
+                        array = as.formula(paste0("~`upper_", source, "` - `mean_", source, "`")),
+                        color = "#000000"),
+        transforms = list(
+          list(
+            type = "filter",
+            target = ~sex,
+            operation = "=",
+            value = sort(plot_data$sex)[1]))
+    )
+  }
+  final_plot <- final_plot %>%
     plotly::layout(
       margin = mrg,
       xaxis = list(type = "category",
@@ -515,7 +538,7 @@ age_bar_plotly <- function(df,
     ) %>%
     plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
-  suppressWarnings(final_plot)
+  final_plot
 }
 
 #' Plotly scatterplot data inputs and naomi outputs
@@ -697,3 +720,4 @@ scatter_plotly <- function(df,
 
   final_plot
 }
+

@@ -151,7 +151,7 @@ test_that("comparison report download can be created", {
   expect_length(out$metadata$description, 1)
   expect_equal(out$metadata$areas, "MWI")
 
-  expect_true(file.size(out$path) > 2000)#
+  expect_true(file.size(out$path) > 2000)
   content <- brio::readLines(out$path)
   expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
   expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
