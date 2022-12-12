@@ -1,6 +1,7 @@
 # naomi 2.8.9
 
-* Add `save_rehydrate_zip` to output a zip file which can be uploaded into web app to rehydrate a project
+* Add `save_rehydrate_zip` to output a zip file which can be uploaded into web app to rehydrate a project.
+* Add `read_rehydrate_zip` helper function to reconstruct `hintr_output` from zip from `save_rehydrate_zip`
 
 # naomi 2.8.8
 
