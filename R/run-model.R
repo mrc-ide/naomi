@@ -188,6 +188,11 @@ read_rehydrate_zip <- function(rehydrate_zip, destination_dir) {
   }
 
   zip::unzip(rehydrate_zip, exdir = destination_dir)
+  if (!("hintr_output.rds" %in% list.files(destination_dir))) {
+    stop(sprintf("Cannot rehydrate from %s as it does not contain output RDS",
+                 rehydrate_zip))
+  }
+
   output <- readRDS(file.path(destination_dir, "hintr_output.rds"))
   file.rename(file.path(destination_dir, basename(output$plot_data_path)),
               file.path(destination_dir, "plot_data_path.qs"))
