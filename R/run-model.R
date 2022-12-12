@@ -142,6 +142,62 @@ hintr_save <- function(obj, file) {
   qs::qsave(obj, file, preset = "fast")
 }
 
+#' Save out a zip file which can be loaded into project rehydrate
+#'
+#' @param hintr_output The hintr_output object to save
+#' @param path Path to save the file at
+#'
+#' @return Path to the newly saved file
+#' @export
+save_rehydrate_zip <- function(hintr_output, path = tempfile(fileext = ".zip")) {
+  if (!is_hintr_output(hintr_output)) {
+    stop("Can only save hintr output as rehydrate zip")
+  }
+  if (is.null(hintr_output$plot_data_path) ||
+      is.null(hintr_output$model_output_path) ||
+      !file.exists(hintr_output$plot_data_path) ||
+      !file.exists(hintr_output$model_output_path)) {
+    stop("Cannot save rehydrate, plot data or model output file does not exist")
+  }
+  t <- tempfile()
+  dir.create(t)
+  old <- setwd(t)
+  on.exit(setwd(old))
+  file.copy(hintr_output$plot_data_path, "./plot_data_path.qs")
+  file.copy(hintr_output$model_output_path, "./model_output_path.qs")
+  hintr_output$plot_data_path <- "plot_data_path.qs"
+  hintr_output$model_output_path <- "model_output_path.qs"
+  meta <- saveRDS(hintr_output, "hintr_output.rds")
+  zip::zipr(path, list.files())
+  path
+}
+
+#' Read a rehydrate zip created by `save_rehydrate_zip`
+#'
+#' This unzips to rehydrate files into destination_dir, and then
+#' builds the hintr_output relative to this dir
+#'
+#' @param rehydrate_zip The rehydrate zip to read
+#' @param destination_dir The directory to unzip the
+#'
+#' @return The rehydrated zip as hintr_output object
+#' @export
+read_rehydrate_zip <- function(rehydrate_zip, destination_dir) {
+  if (!dir.exists(destination_dir)) {
+    stop(sprintf("Cannot unzip into %s file does not exist", destination_dir))
+  }
+
+  zip::unzip(rehydrate_zip, exdir = destination_dir)
+  output <- readRDS(file.path(destination_dir, "hintr_output.rds"))
+  file.rename(file.path(destination_dir, basename(output$plot_data_path)),
+              file.path(destination_dir, "plot_data_path.qs"))
+  output$plot_data_path <- file.path(destination_dir, "plot_data_path.qs")
+  file.rename(file.path(destination_dir, basename(output$model_output_path)),
+              file.path(destination_dir, "model_output_path.qs"))
+  output$model_output_path <- file.path(destination_dir, "model_output_path.qs")
+  output
+}
+
 assert_model_output_version <- function(obj, version = NULL) {
   if (!is_hintr_output(obj) || is.null(obj$version)) {
     stop(t_("OLD_MODEL_OUTPUT"))

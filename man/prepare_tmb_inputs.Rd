@@ -8,6 +8,10 @@ prepare_tmb_inputs(naomi_data, report_likelihood = 1L)
 }
 \arguments{
 \item{naomi_data}{Naomi data object}
+
+\item{report_likelihood}{Option to report likelihood in fit object (default true).}
+
+\item{anchor_home_district}{Option to include random effect home district attractiveness to retain residents on ART within home districts (default true).}
 }
 \value{
 Inputs ready for TMB model

@@ -692,3 +692,24 @@ test_that("trying to calibrate incompatible model output returns error", {
                "Model output out of date please re-run model and try again.")
 })
 
+test_that("can save and read rehydrate zip", {
+  rehydrate_zip <- save_rehydrate_zip(a_hintr_output_calibrated)
+
+  destination <- tempfile()
+  dir.create(destination)
+  out <- read_rehydrate_zip(rehydrate_zip, destination)
+  expect_true(is_hintr_output(out))
+
+  expect_true(file.size(out$plot_data_path) > 100)
+  expect_true(file.size(out$model_output_path) > 100)
+  expect_equal(basename(out$plot_data_path), "plot_data_path.qs")
+  expect_equal(basename(out$model_output_path), "model_output_path.qs")
+})
+
+test_that("save rehydrate zip fails if using invalid or incomplete file", {
+  expect_error(save_rehydrate_zip(list()),
+               "Can only save hintr output as rehydrate zip")
+  expect_error(
+    save_rehydrate_zip(a_hintr_output),
+    "Cannot save rehydrate, plot data or model output file does not exist")
+})

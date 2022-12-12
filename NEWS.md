@@ -1,3 +1,7 @@
+# naomi 2.8.9
+
+* Add `save_rehydrate_zip` to output a zip file which can be uploaded into web app to rehydrate a project
+
 # naomi 2.8.8
 
 * Update bug in `art_spectrum_warning()` and `anc_spectrum_warning()` where district totals in naomi were compared to national totals in spectrum.
