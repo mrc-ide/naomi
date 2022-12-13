@@ -693,7 +693,8 @@ test_that("trying to calibrate incompatible model output returns error", {
 })
 
 test_that("can save and read rehydrate zip", {
-  rehydrate_zip <- save_rehydrate_zip(a_hintr_output_calibrated)
+  rehydrate_zip <- save_rehydrate_zip(a_hintr_output_calibrated,
+                                      hash_filenames = FALSE)
 
   destination <- tempfile()
   dir.create(destination)
@@ -704,6 +705,31 @@ test_that("can save and read rehydrate zip", {
   expect_true(file.size(out$model_output_path) > 100)
   expect_equal(basename(out$plot_data_path), "plot_data_path.qs")
   expect_equal(basename(out$model_output_path), "model_output_path.qs")
+
+  ## Inputs have real filenames
+  output <- read_hintr_output(out$model_output_path)
+  inputs <- read.csv(text = output$info$inputs.csv)
+  expect_setequal(inputs$filename, basename(as.character(a_hintr_data)))
+})
+
+test_that("can save and read rehydrate zip with hashed filenames", {
+  rehydrate_zip <- save_rehydrate_zip(a_hintr_output_calibrated,
+                                      hash_filenames = TRUE)
+
+  destination <- tempfile()
+  dir.create(destination)
+  out <- read_rehydrate_zip(rehydrate_zip, destination)
+  expect_true(is_hintr_output(out))
+
+  expect_true(file.size(out$plot_data_path) > 100)
+  expect_true(file.size(out$model_output_path) > 100)
+  expect_equal(basename(out$plot_data_path), "plot_data_path.qs")
+  expect_equal(basename(out$model_output_path), "model_output_path.qs")
+
+  ## Filenames have been converted to md5sum.extension format
+  output <- read_hintr_output(out$model_output_path)
+  inputs <- read.csv(text = output$info$inputs.csv)
+  expect_match(inputs$filename, "[A-Z0-9]{32}.[A-Za-z]+")
 })
 
 test_that("save rehydrate zip fails if using invalid or incomplete file", {

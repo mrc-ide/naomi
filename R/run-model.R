@@ -145,11 +145,14 @@ hintr_save <- function(obj, file) {
 #' Save out a zip file which can be loaded into project rehydrate
 #'
 #' @param hintr_output The hintr_output object to save
+#' @param hash_filenames If TRUE then input filenames are updated to the format
+#'   <hash>.<extension> to match the format used on the server
 #' @param path Path to save the file at
 #'
 #' @return Path to the newly saved file
 #' @export
-save_rehydrate_zip <- function(hintr_output, path = tempfile(fileext = ".zip")) {
+save_rehydrate_zip <- function(hintr_output, hash_filenames = TRUE,
+                               path = tempfile(fileext = ".zip")) {
   if (!is_hintr_output(hintr_output)) {
     stop("Can only save hintr output as rehydrate zip")
   }
@@ -167,7 +170,17 @@ save_rehydrate_zip <- function(hintr_output, path = tempfile(fileext = ".zip")) 
   file.copy(hintr_output$model_output_path, "./model_output_path.qs")
   hintr_output$plot_data_path <- "plot_data_path.qs"
   hintr_output$model_output_path <- "model_output_path.qs"
-  meta <- saveRDS(hintr_output, "hintr_output.rds")
+  saveRDS(hintr_output, "hintr_output.rds")
+
+  if (hash_filenames) {
+    output <- read_hintr_output(hintr_output$model_output_path)
+    inputs <- read.csv(text = output$info$inputs.csv)
+    inputs$filename <- paste0(toupper(inputs$md5sum),
+                              ".", tools::file_ext(inputs$filename))
+    output$info$inputs.csv <- write_csv_string(inputs)
+    qs::qsave(output, hintr_output$model_output_path, preset = "fast")
+  }
+
   zip::zipr(path, list.files())
   path
 }
