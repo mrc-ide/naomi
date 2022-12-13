@@ -181,7 +181,8 @@ save_rehydrate_zip <- function(hintr_output, hash_filenames = TRUE,
     qs::qsave(output, hintr_output$model_output_path, preset = "fast")
   }
 
-  zip::zipr(path, list.files())
+  path <- file.path(normalizePath(dirname(path)), basename(path))
+  zip::zip(path, list.files())
   path
 }
 
