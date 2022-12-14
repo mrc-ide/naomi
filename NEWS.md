@@ -1,3 +1,7 @@
+# naomi 2.8.9
+
+* Fix comparison bar plot error bars and filters.
+
 # naomi 2.8.8
 
 * Update bug in `art_spectrum_warning()` and `anc_spectrum_warning()` where district totals in naomi were compared to national totals in spectrum.

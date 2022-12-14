@@ -283,8 +283,8 @@ fig2 <- bar_plotly (data,
 
 htmltools::div(
   style = "display: flex; flex-direction: column",
-  htmltools::div(fig1, style = "width: 80%;"),
-  htmltools::div(fig2, style = "width: 80%"),
+  htmltools::div(fig1),
+  htmltools::div(fig2),
 )
 
 ```
@@ -319,8 +319,8 @@ if(is_empty(survey_prev2)) {
 
   htmltools::div(
     style = "display: flex;",
-    htmltools::div(fig1, style = "width: 45%;"),
-    htmltools::div(fig2, style = "width: 45%"),
+    htmltools::div(fig1, style = "width: 50%;"),
+    htmltools::div(fig2, style = "width: 50%"),
   )
 
 } else {
@@ -336,14 +336,14 @@ if(is_empty(survey_prev2)) {
 
   prev_plots <-   htmltools::div(
     style = "display: flex;",
-    htmltools::div(fig1B, style = "width: 45%;"),
-    htmltools::div(fig1, style = "width: 45%"),
+    htmltools::div(fig1B, style = "width: 50%;"),
+    htmltools::div(fig1, style = "width: 50%"),
   )
 
   htmltools::div(
     style = "display: flex; flex-direction: column",
     prev_plots,
-    htmltools::div(fig2, style = "width: 45%")
+    htmltools::div(fig2, style = "width: 50%")
   )
 }
 
@@ -372,8 +372,8 @@ fig2 <- age_bar_plotly (data,
 
   htmltools::div(
     style = "display: flex; flex-direction: column",
-    htmltools::div(fig1, style = "width: 70%"),
-    htmltools::div(fig2, style = "width: 70%")
+    htmltools::div(fig1),
+    htmltools::div(fig2)
     )
 
 ```
@@ -509,14 +509,14 @@ if(has_anc) {
 
   prev_plots <-   htmltools::div(
     style = "display: flex;",
-    htmltools::div(fig1, style = "width: 40%;"),
-    htmltools::div(fig2, style = "width: 40%;")
+    htmltools::div(fig1, style = "width: 50%;"),
+    htmltools::div(fig2, style = "width: 50%;")
   )
 
   art_plots <-   htmltools::div(
     style = "display: flex;",
-    htmltools::div(fig3, style = "width: 40%;"),
-    htmltools::div(fig4, style = "width: 40%;")
+    htmltools::div(fig3, style = "width: 50%;"),
+    htmltools::div(fig4, style = "width: 50%;")
   )
 
   htmltools::div(

@@ -366,8 +366,13 @@ bar_plotly <- function(df,
 
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
 
-  plot_data <- plot_data[order(plot_data$source), ]
-
+  ## Sorting here is very important, the transform in the plot
+  ## below does not respect the bars split on source factor
+  ## so without ordering it the sex filter ends up
+  ## filtering bars incorrectly. Arrange the data beforehand so that
+  ## the transform correctly identifies the sex of the columns.
+  plot_data <- plot_data %>%
+    dplyr::arrange(source)
 
   final_plot <- plotly::plot_ly(
     data = plot_data,
@@ -382,16 +387,16 @@ bar_plotly <- function(df,
                   "</br>", round(mean * 100, 2),
                   " (", round(upper * 100, 2), "-",
                   round(lower * 100, 2),  "%)"),
-    error_y = ~list(symmetric = FALSE,
-                    arrayminus = mean - lower,
-                    array = upper - mean,
-                    color = "#000000"),
+    error_y = list(symmetric = FALSE,
+                   arrayminus = ~ mean - lower,
+                   array = ~ upper - mean,
+                   color = "#000000"),
     transforms = list(
                    list(
                    type = "filter",
                    target = ~area_level_label,
                    operation = "=",
-                   value = sort(plot_data$area_level_label)[1]))) %>%
+                   value = sort(unique(plot_data$area_level_label))[1]))) %>%
     plotly::layout(
       margin = mrg,
       xaxis = list(type = "category",
@@ -417,7 +422,7 @@ bar_plotly <- function(df,
     ) %>%
     plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
-  suppressWarnings(final_plot)
+  final_plot
 }
 
 #' Plotly barplot comparing age distribution of survey inputs and naomi outputs
@@ -431,11 +436,9 @@ bar_plotly <- function(df,
 age_bar_plotly <- function(df,
                            ind,
                            quarter) {
-
   remove_buttons <- c("zoomIn2d", "zoomOut2d", "pan2d", "select2d", "lasso2d",
                       "autoScale2d", "resetScale2d", "hoverClosestCartesian",
                       "hoverCompareCartesian", "zoom")
-
 
   output_source <- paste0("Naomi estimate ", quarter)
 
@@ -450,8 +453,6 @@ age_bar_plotly <- function(df,
                   !is.na(mean)) %>%
     dplyr::left_join(meta_age, by = "age_group")
 
-
-
   buttons <- dropdown_buttons(plot_data, "sex")
 
   if (ind == "prevalence") {
@@ -462,38 +463,47 @@ age_bar_plotly <- function(df,
   plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
     output_source, "<b>")
 
-
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
 
-  plot_data <- plot_data[order(plot_data$age_group_sort_order), ]
-
+  x_axis_order <- plot_data %>%
+    dplyr::distinct(age_group_label, age_group_sort_order) %>%
+    dplyr::arrange(age_group_sort_order) %>%
+    dplyr::select(age_group_label)
+  x_axis_order <- as.character(x_axis_order$age_group_label)
+  ## Sorting here is very important, the transform in the plot
+  ## below does not respect the bars split on source factor
+  ## so without ordering it the sex filter ends up
+  ## filtering bars incorrectly. Arrange the data beforehand so that
+  ## the transform correctly identifies the sex of the columns.
+  plot_data <- plot_data %>%
+    dplyr::arrange(source)
 
   final_plot <- plotly::plot_ly(data = plot_data,
-                        type = "bar",
-                        color = ~ as.factor(source),
-                        colors = c("#07bbc1", "#f68e1f", "#87c440"),
-                        x = ~age_group_label,
-                        y = ~mean,
-                        hoverinfo = "text",
-                        text = ~paste("</br>", age_group_label,
-                                      "</br>", source,
-                                      "</br>", round(mean * 100, 2),
-                                      " (", round(upper * 100, 2), "-",
-                                      round(lower * 100, 2),  "%)"),
-                        error_y = ~list(symmetric = FALSE,
-                                        arrayminus = mean - lower,
-                                        array = upper - mean,
-                                        color = "#000000"),
-                        transforms = list(
-                          list(
-                            type = "filter",
-                            target = ~sex,
-                            operation = "=",
-                            value = sort(plot_data$sex)[1]))) %>%
+                                type = "bar",
+                                color = ~ factor(source),
+                                colors = c("#07bbc1", "#f68e1f", "#87c440"),
+                                x = ~age_group_label,
+                                y = ~mean,
+                                hoverinfo = "text",
+                                text = ~paste("</br>", age_group_label,
+                                              "</br>", source,
+                                              "</br>", round(mean * 100, 2),
+                                              " (", round(upper * 100, 2), "-",
+                                              round(lower * 100, 2),  "%)"),
+                                error_y = list(symmetric = FALSE,
+                                                arrayminus = ~ mean - lower,
+                                                array = ~ upper - mean,
+                                                color = "#000000"),
+                                transforms = list(
+                                  list(
+                                    type = "filter",
+                                    target = ~sex,
+                                    operation = "=",
+                                    value = sort(unique(plot_data$sex)[1])))) %>%
     plotly::layout(
       margin = mrg,
       xaxis = list(type = "category",
-                   categoryarray =  ~age_group_label,
+                   categoryarray =  x_axis_order,
                    categoryorder = "array",
                    title = list(text = "")),
       yaxis = list(tickformat = ".0%",
@@ -515,7 +525,7 @@ age_bar_plotly <- function(df,
     ) %>%
     plotly::config(modeBarButtonsToRemove = remove_buttons, displaylogo = FALSE)
 
-  suppressWarnings(final_plot)
+  final_plot
 }
 
 #' Plotly scatterplot data inputs and naomi outputs
@@ -697,3 +707,4 @@ scatter_plotly <- function(df,
 
   final_plot
 }
+
