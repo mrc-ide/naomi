@@ -206,14 +206,12 @@ test_that("exceeding max_iterations raises convergence warning", {
   output_path <- tempfile(fileext = ".qs")
   out <- hintr_run_model(data, options, output_path)
 
-  expect_length(out$warnings, 5)
+  expect_length(out$warnings, 4)
 
   expect_equal(out$warnings[[1]]$text,
-               paste0("You have chosen to fit model without estimating ",
-               "neighbouring ART attendance. You may wish to review your ",
-               "selection to include this option."))
+               paste0("Naomi ART current not equal to Spectrum: 2018 Y000_999 Northern naomi: 78974 spectrum: 57913; 2018 Y000_999 Central naomi: 226728 spectrum: 236140; 2018 Y000_999 Southern naomi: 493159 spectrum: 496708 and 21 more"))
 
-  expect_equal(out$warnings[[5]]$text,
+  expect_equal(out$warnings[[4]]$text,
                paste0("Convergence error: iteration limit reached without convergence (10)"))
 
   msgs <- lapply(out$warnings, function(x) x$text)
