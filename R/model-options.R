@@ -91,13 +91,13 @@ do_validate_model_options <- function(data, options) {
          (is.null(options$include_art_t2) || options$include_art_t2 == "false"))) {
       stop(t_("TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE"))
     }
-  }
 
-  # Add warning is ART attendance is not selected
-  if(!(options$artattend == "true")) {
-    if(options$include_art_t1 == "true" || options$include_art_t2 == "true"){
-      naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
-                    c("model_options"))
+    # Add warning is ART attendance is not selected
+    if(!(as.logical(options$artattend))) {
+      if(options$include_art_t1 == "true" || options$include_art_t2 == "true"){
+        naomi_warning(t_("WARNING_OPTIONS_MISSING_ARTATTEND"),
+                      c("model_options"))
+      }
     }
   }
 
