@@ -1,6 +1,10 @@
-# naomi 2.8.9
+# naomi 2.8.10
 
 * Don't raise warning for not selecting ART attending when ART data is excluded at T1 and T2
+
+# naomi 2.8.9
+
+* Fix comparison bar plot error bars and filters.
 
 # naomi 2.8.8
 
