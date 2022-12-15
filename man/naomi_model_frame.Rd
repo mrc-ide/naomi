@@ -22,6 +22,7 @@ naomi_model_frame(
   artattend = TRUE,
   artattend_t2 = FALSE,
   artattend_log_gamma_offset = -4,
+  anchor_home_district = TRUE,
   rho_paed_15to49f_ratio = TRUE,
   rho_paed_x_term = FALSE,
   alpha_xst_term = FALSE,
@@ -64,7 +65,9 @@ ids.}
 
 \item{artattend_t2}{logical; whether to allow time-varying neighboring district ART attendance}
 
-\item{artattend_log_gamma_offset}{logit offset for neigboring district ART attendance}
+\item{artattend_log_gamma_offset}{logit offset for neighboring district ART attendance}
+
+\item{anchor_home_district}{logical; whether to include home district random in ART attendance specification}
 
 \item{rho_paed_15to49f_ratio}{logical; to model paediatric prevalence as ratio of 15-49 female prevalence}
 
