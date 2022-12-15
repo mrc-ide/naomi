@@ -287,7 +287,8 @@ naomi_prepare_data <- function(data, options) {
   population <- read_population(data$population$path)
   survey <- read_survey_indicators(data$survey$path)
 
-  spec <- extract_pjnz_naomi(data$pjnz$path)
+  spec <- extract_pjnz_naomi(data$pjnz$path,
+                             extract_shiny90 = as.logical(options$output_aware_plhiv))
 
   spec_program_data <- extract_pjnz_program_data(data$pjnz$path)
 

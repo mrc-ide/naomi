@@ -4,10 +4,12 @@
 \alias{extract_shiny90_age_sex}
 \title{Export proportion aware by five year age group from Shiny90}
 \usage{
-extract_shiny90_age_sex(shiny90_path, years = NULL)
+extract_shiny90_age_sex(shiny90_path, pjnz_path = NULL, years = NULL)
 }
 \arguments{
 \item{shiny90_path}{file path to .shiny90 digest file.}
+
+\item{pjnz_path}{file path to PJNZ file}
 
 \item{years}{year(s) to generate estimates; an integer or a vector of integers.
 If NULL, all years available in estimates are returned (default).}
@@ -35,6 +37,6 @@ shiny90dir <- tempfile()
 utils::unzip(pjnz, "malawi.zip.shiny90", exdir = shiny90dir)
 shiny90_path <- file.path(shiny90dir, "malawi.zip.shiny90")
 
-extract_shiny90_age_sex(shiny90_path, year = 2010:2019)
+extract_shiny90_age_sex(shiny90_path, pjnz, year = 2010:2019)
 
 }
