@@ -1,3 +1,7 @@
+# naomi 2.8.11
+
+* Do not attempt to extract .shiny90 data if option `output_aware_plhiv` = "No".
+
 # naomi 2.8.10
 
 * Don't raise warning for not selecting ART attending when ART data is excluded at T1 and T2

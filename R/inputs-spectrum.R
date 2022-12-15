@@ -1,19 +1,24 @@
 #' Extract Model Inputs from Spectrum PJNZ
 #'
 #' @param pjnz_list Vector of filepaths to Spectrum PJNZ file.
+#' @param extract_shiny90 Logical; whether to attempt to extract .shiny90 zip
 #'
 #' @return A `data.frame` with Spectrum indicators.
+#'
+#' @description
+#' If the .shiny90 file does not exist within the .PJNZ, the function will
+#' silently not return values, even if `extract_shiny90 = TRUE`.
 #'
 #' @examples
 #' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
 #' spec <- extract_pjnz_naomi(pjnz)
 #'
 #' @export
-extract_pjnz_naomi <- function(pjnz_list) {
+extract_pjnz_naomi <- function(pjnz_list, extract_shiny90 = TRUE) {
 
   pjnz_list <- unroll_pjnz(pjnz_list)
 
-  spec <- lapply(pjnz_list, extract_pjnz_one) %>%
+  spec <- lapply(pjnz_list, extract_pjnz_one, extract_shiny90 = extract_shiny90) %>%
     dplyr::bind_rows() %>%
     dplyr::select(iso3, spectrum_country, spectrum_region_code, spectrum_region_name, year, quarter,
                   dplyr::everything())
@@ -49,7 +54,7 @@ is_pjnz <- function(path) {
 }
 
 
-extract_pjnz_one <- function(pjnz) {
+extract_pjnz_one <- function(pjnz, extract_shiny90) {
 
   ## Code extracted from eppasm:::create_specfp()
   demp <- eppasm::read_specdp_demog_param(pjnz)
@@ -88,7 +93,7 @@ extract_pjnz_one <- function(pjnz) {
 
   spec <- add_dec31_art(spec, pjnz)
 
-  spec <- add_shiny90_unaware(spec, pjnz)
+  spec <- add_shiny90_unaware(spec, pjnz, extract_shiny90)
 
 
 
@@ -356,9 +361,9 @@ read_dp_anc_testing <- function(dp) {
   anc_testing
 }
 
-add_shiny90_unaware <- function(spec, pjnz) {
+add_shiny90_unaware <- function(spec, pjnz, extract_shiny90) {
 
-  if (assert_pjnz_shiny90(pjnz)) {
+  if (extract_shiny90 && assert_pjnz_shiny90(pjnz)) {
     shiny90_dir <- tempfile()
     on.exit(unlink(shiny90_dir, recursive = TRUE))
 

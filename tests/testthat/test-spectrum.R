@@ -151,3 +151,13 @@ test_that("extract_pjnz_program_data() returns complete data", {
   expect_true(all(!is.na(dat_new$anc_testing$value)))
 
 })
+
+
+test_that("extract_pjnz_naomi(..., extract_shiny90 = FALSE) returns PLHIV - ART", {
+
+  ## Test when using national Spectrum file
+  pjnz_nat <- system_file("extdata/demo_mwi2019.PJNZ")
+  spec <- extract_pjnz_naomi(pjnz_nat, extract_shiny90 = FALSE)
+
+  expect_equal(spec$unaware, spec$hivpop - spec$artpop)
+})
