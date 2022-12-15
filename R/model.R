@@ -849,7 +849,7 @@ select_naomi_data <- function(
 
   survey_artcov_tagged <- survey_mf(survey_ids = artcov_survey_ids,
                                    indicator = "art_coverage",
-                                   survey_hiv_indicators = survey_hiv_indicators,,
+                                   survey_hiv_indicators = survey_hiv_indicators,
                                    naomi_mf = naomi_mf,
                                    use_kish = use_kish_artcov,
                                    deff = deff_artcov,
@@ -1291,8 +1291,9 @@ anc_testing_prev_mf <- function(year, anc_model_mf) {
       dplyr::select("area_id", "sex", "age_group","obs_idx","anc_prev_x", "anc_prev_n") %>%
       dplyr::filter(!is.na(anc_prev_x), !is.na(anc_prev_n))
 
-    if(any(anc_sub$anc_prev_x > anc_sub$anc_prev_n))
+    if(any(anc_sub$anc_prev_x > anc_sub$anc_prev_n)) {
       stop(t_("ANC_POSITIVE_GREATER_TOTAL_KNOWN"))
+    }
 
     anc_sub
 
@@ -1333,7 +1334,8 @@ anc_testing_artcov_mf <- function(year, anc_model_mf) {
       ) %>%
       tidyr::pivot_wider(names_from = "indicator", values_from = "value") %>%
       dplyr::mutate(obs_idx = dplyr::row_number()) %>%
-      dplyr::select("area_id", "sex", "age_group", "obs_idx", "anc_artcov_x", "anc_artcov_n")
+      dplyr::select("area_id", "sex", "age_group", "obs_idx", "anc_artcov_x", "anc_artcov_n") %>%
+      dplyr::filter(!is.na(anc_artcov_x), !is.na(anc_artcov_n))
 
     if(any(anc_sub$anc_artcov_x > anc_sub$anc_artcov_n)) {
       stop(t_("ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE"))
@@ -1527,7 +1529,8 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
     artnum_full_mf <- rbind(filtered_artnum, excluded)
     artnum_sub <- dplyr::select(filtered_artnum,
-                                     area_id, sex, age_group, art_current)
+                                     area_id, sex, age_group, art_current) %>%
+      dplyr::filter(!is.na(art_current))
 
     artnum_out <- list(raw_input = artnum_full_mf,
                       model_input = artnum_sub)
