@@ -150,6 +150,44 @@ test_that("model fits with different combination of ANC prevalence and ANC ART d
 
 })
 
+test_that("model fits with missing ART and ANC data", {
+
+  ancdat_missing <- demo_anc_testing
+  ancdat_missing[ancdat_missing$area_id == "MWI_4_1_demo",]$anc_tested_pos <- NA_real_
+  ancdat_missing[ancdat_missing$area_id == "MWI_4_1_demo",]$anc_clients<- NA_real_
+
+  artdat_missing <- demo_art_number
+  artdat_missing[artdat_missing$area_id == "MWI_4_1_demo" & artdat_missing$age_group == "Y000_014",]$art_current <- NA_real_
+
+  naomi_data <- select_naomi_data(a_naomi_mf,
+                                  demo_survey_hiv_indicators,
+                                  anc_testing = ancdat_missing,
+                                  art_number = artdat_missing,
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                  artcov_survey_ids = "DEMO2016PHIA",
+                                  recent_survey_ids = "DEMO2016PHIA",
+                                  anc_prev_year_t1 = 2016,
+                                  anc_prev_year_t2 = 2018,
+                                  anc_artcov_year_t1 = 2016,
+                                  anc_artcov_year_t2 = 2018)
+
+  ## Test that expected number of rows of data are selected (NAs removed)
+  expect_equal(nrow(naomi_data$anc_prev_t1_dat), 6)
+  expect_equal(nrow(naomi_data$anc_artcov_t1_dat), 6)
+  expect_equal(nrow(naomi_data$artnum_t1_dat), 13)
+
+  expect_equal(nrow(naomi_data$anc_clients_t2_dat), 6)
+  expect_equal(nrow(naomi_data$anc_prev_t2_dat), 6)
+  expect_equal(nrow(naomi_data$anc_artcov_t2_dat), 6)
+  expect_equal(nrow(naomi_data$artnum_t2_dat), 13)
+
+
+  ## Fit model and confirm convergence
+  tmb_inputs <- prepare_tmb_inputs(naomi_data)
+  fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
+
+  expect_equal(fit$convergence, 0)
+})
 
 
 test_that("model fit with no ART data at T2", {
