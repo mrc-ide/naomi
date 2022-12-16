@@ -154,7 +154,6 @@ test_that("model fits with missing ART and ANC data", {
 
   ancdat_missing <- demo_anc_testing
   ancdat_missing[ancdat_missing$area_id == "MWI_4_1_demo",]$anc_tested_pos <- NA_real_
-  ancdat_missing[ancdat_missing$area_id == "MWI_4_1_demo",]$anc_already_art <- NA_real_
   ancdat_missing[ancdat_missing$area_id == "MWI_4_1_demo",]$anc_clients<- NA_real_
 
   artdat_missing <- demo_art_number
@@ -188,7 +187,6 @@ test_that("model fits with missing ART and ANC data", {
   fit <- fit_tmb(tmb_inputs, outer_verbose = FALSE)
 
   expect_equal(fit$convergence, 0)
-
 })
 
 
