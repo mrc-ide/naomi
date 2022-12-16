@@ -1479,7 +1479,8 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     aggregated_artnum <- aggregate_art(art_number, naomi_mf$areas) %>%
       dplyr::mutate(
         quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
-      )
+      ) %>%
+      dplyr::filter(!is.na(art_current))
 
     cols <- c("area_id","sex","age_group","art_current")
 
@@ -1529,8 +1530,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
     artnum_full_mf <- rbind(filtered_artnum, excluded)
     artnum_sub <- dplyr::select(filtered_artnum,
-                                     area_id, sex, age_group, art_current) %>%
-      dplyr::filter(!is.na(art_current))
+                                     area_id, sex, age_group, art_current)
 
     artnum_out <- list(raw_input = artnum_full_mf,
                       model_input = artnum_sub)
