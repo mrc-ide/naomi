@@ -467,7 +467,22 @@ read_spectrum_projection_name <- function(pjnz) {
 
 get_pjnz_shiny90_filename <- function(pjnz) {
   files <- utils::unzip(pjnz, list = TRUE)$Name
-  grep("\\.shiny90$", files, ignore.case = TRUE, value = TRUE)
+  shiny90file <- grep("\\.shiny90$", files, ignore.case = TRUE, value = TRUE)
+
+  if (length(shiny90file) > 1) {
+    msg <- paste0("Multiple .shiny90 files found: ",
+                  paste0(shiny90file, collapse = ", "))
+
+    ## If multiple files found, choose file with shortest name
+    shiny90file <- shiny90file[which.min(nchar(shiny90file))]
+
+    msg <- paste0(msg, "\nUsing file: ", shiny90file)
+
+    ## No need to translate this. It shouldn't happen
+    naomi_warning(msg, c("model_options", "model_fit"))
+  }
+
+  shiny90file
 }
 
 #' Check whether PJNZ contains .shiny90 file

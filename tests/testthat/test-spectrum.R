@@ -161,3 +161,30 @@ test_that("extract_pjnz_naomi(..., extract_shiny90 = FALSE) returns PLHIV - ART"
 
   expect_equal(spec$unaware, spec$hivpop - spec$artpop)
 })
+
+
+test_that("get_pjnz_shiny90_filename() handles multiple .shiny90 files", {
+
+  pjnz_test <- system_file("extdata/demo_mwi2019_v6.21-shiny90.PJNZ")
+
+  tmpd <- tempfile()
+  shiny90file <- get_pjnz_shiny90_filename(pjnz_test)
+  unzip(pjnz_test, shiny90file, exdir = tmpd)
+
+  shiny90dup <- "Malawi.zip duplicated.shiny90"
+  file.copy(file.path(tmpd, shiny90file), file.path(tmpd, shiny90dup))
+  zip(pjnz_test, file.path(tmpd, shiny90dup), flags = "-j")
+
+  func <- function() {
+    list(shiny90new = get_pjnz_shiny90_filename(pjnz_test))
+  }
+  w <- handle_naomi_warnings(func())
+
+  expect_equal(w$warnings[[1]]$text, "Multiple .shiny90 files found: Malawi.zip.shiny90, Malawi.zip duplicated.shiny90
+Using file: Malawi.zip.shiny90")
+  expect_equal(w$warnings[[1]]$locations, c("model_options", "model_fit"))
+  expect_s3_class(w$warnings[[1]], "naomi_warning")
+  expect_s3_class(w$warnings[[1]], "condition")
+
+  expect_equal(w$shiny90new, "Malawi.zip.shiny90")
+})
