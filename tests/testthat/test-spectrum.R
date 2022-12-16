@@ -175,14 +175,16 @@ test_that("get_pjnz_shiny90_filename() handles multiple .shiny90 files", {
   file.copy(file.path(tmpd, shiny90file), file.path(tmpd, shiny90dup))
   zip(pjnz_test, file.path(tmpd, shiny90dup), flags = "-j")
 
-  w <- capture_condition(shiny90new <- get_pjnz_shiny90_filename(pjnz_test))
-  
+  func <- function() {
+    list(shiny90new = get_pjnz_shiny90_filename(pjnz_test))
+  }
+  w <- handle_naomi_warnings(func())
 
-  expect_equal(w$text, "Multiple .shiny90 files found: Malawi.zip.shiny90, Malawi.zip duplicated.shiny90
+  expect_equal(w$warnings[[1]]$text, "Multiple .shiny90 files found: Malawi.zip.shiny90, Malawi.zip duplicated.shiny90
 Using file: Malawi.zip.shiny90")
-  expect_equal(w$locations, c("model_options", "model_fit"))
-  expect_s3_class(w, "naomi_warning")
-  expect_s3_class(w, "condition")
+  expect_equal(w$warnings[[1]]$locations, c("model_options", "model_fit"))
+  expect_s3_class(w$warnings[[1]], "naomi_warning")
+  expect_s3_class(w$warnings[[1]], "condition")
 
-  expect_equal(shiny90new, "Malawi.zip.shiny90")
+  expect_equal(w$shiny90new, "Malawi.zip.shiny90")
 })
