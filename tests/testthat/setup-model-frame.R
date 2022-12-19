@@ -33,7 +33,8 @@ a_output_calib <- calibrate_outputs(a_output, a_naomi_data,
                                     "national", "sex_age_coarse",
                                     "national", "sex_age_coarse",
                                     "national", "sex_age_coarse",
-                                    calibrate_method = "logistic")
+                                    calibrate_method = "logistic",
+                                    psnu_level = 2)
 
 a_output_full  <- disaggregate_0to4_outputs(a_output_calib, a_naomi_data)
 

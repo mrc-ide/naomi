@@ -201,12 +201,15 @@ run_calibrate <- function(output, calibration_options) {
     spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
     spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
     spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat,
-    calibrate_method = calibration_options$calibrate_method
+    calibrate_method = calibration_options$calibrate_method,
+    psnu_level = calibration_options$psnu_level
   )
 
   calibrated_output <- disaggregate_0to4_outputs(
     output = calibrated_output,
     naomi_mf = model_output$naomi_data)
+
+
 
   calibration_data <- list(
     output_package = calibrated_output,

@@ -75,7 +75,8 @@ calibrate_outputs <- function(output,
                               spectrum_aware_calibration_strat,
                               spectrum_infections_calibration_level,
                               spectrum_infections_calibration_strat,
-                              calibrate_method = "logistic") {
+                              calibrate_method = "logistic",
+                              psnu_level) {
 
   stopifnot(inherits(output, "naomi_output"))
   stopifnot(inherits(naomi_mf, "naomi_mf"))
@@ -241,21 +242,21 @@ calibrate_outputs <- function(output,
                                      plhiv_target,
                                      calibrate_method)
              )
-    
+
     ## Calibrate PLHIV attending
     ## Note: aggregate based on calibrated values for valmean_wide$plhiv
-    
+
     plhivattend_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                                   "sex_age_group")
-    
+
     plhivattend_target <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::summarise(plhivattend_target = sum(plhiv),
                        .groups = "drop")
-    
+
     valmean_wide <- valmean_wide %>%
       dplyr::left_join(plhivattend_target, by = plhivattend_aggr_var)
-    
+
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::mutate(
@@ -263,14 +264,14 @@ calibrate_outputs <- function(output,
                                                  plhivattend_target)
       )
   }
-  
-  
+
+
   ## Calibrate ART number
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
-  
+
   if(length(artnum_aggr_var) > 0L) {
-    
+
     artnum_target <- spectrum_calibration %>%
       dplyr::group_by_at(artnum_aggr_var) %>%
       dplyr::summarise(artnum_target = sum(art_current_spectrum),
@@ -451,10 +452,10 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter2, "plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter1, "untreated_plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter2, "untreated_plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),
@@ -542,8 +543,9 @@ calibrate_outputs <- function(output,
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 
-  ## Save calibration options
 
+
+  ## Save calibration options
   calib_opts <- list(spectrum_plhiv_calibration_level = spectrum_plhiv_calibration_level,
                      spectrum_plhiv_calibration_strat  = spectrum_plhiv_calibration_strat,
                      spectrum_artnum_calibration_level = spectrum_artnum_calibration_level,
@@ -552,7 +554,8 @@ calibrate_outputs <- function(output,
                      spectrum_aware_calibration_strat = spectrum_aware_calibration_strat,
                      spectrum_infections_calibration_level = spectrum_infections_calibration_level,
                      spectrum_infections_calibration_strat = spectrum_infections_calibration_strat,
-                     calibrate_method = calibrate_method)
+                     calibrate_method = calibrate_method,
+                     psnu_level = psnu_level)
 
   output$indicators <- out
   output$fit$spectrum_calibration <- spectrum_calibration
