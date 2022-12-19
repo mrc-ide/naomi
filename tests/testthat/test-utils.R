@@ -24,4 +24,7 @@ test_that("is_empty", {
   expect_true(is_empty(""))
   expect_false(is_empty("text"))
   expect_false(is_empty(2))
+  expect_true(is_empty(list()))
+  expect_true(is_empty(c()))
+  expect_false(is_empty(c("things")))
 })
