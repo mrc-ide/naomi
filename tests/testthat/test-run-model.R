@@ -348,7 +348,7 @@ test_that("model run can be calibrated", {
     spectrum_infections_calibration_level = "none",
     spectrum_infections_calibration_strat = "age_coarse",
     calibrate_method = "logistic",
-    psnu_level = 2
+    psnu_level = 3
   )
   expect_error(
     hintr_calibrate(calibrated_output, calibration_options),

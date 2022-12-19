@@ -61,7 +61,7 @@ a_hintr_calibration_options <- list(
   spectrum_infections_calibration_level = "none",
   spectrum_infections_calibration_strat = "age_coarse",
   calibrate_method = "logistic",
-  psnu_level = 2
+  psnu_level = 3
 )
 
 a_hintr_output_calibrated <- hintr_calibrate(a_hintr_output,
