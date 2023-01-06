@@ -284,7 +284,7 @@ if(is_empty(options$survey_art_coverage)) {
     style = "display: flex; flex-direction: column",
     htmltools::div(fig1))
   
-}else{
+} else {
   
   # Print HIV prevalence + ART coverage
   fig2 <- bar_plotly (data,
