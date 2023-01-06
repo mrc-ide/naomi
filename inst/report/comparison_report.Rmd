@@ -277,7 +277,7 @@ fig1 <- bar_plotly (data,
                     quarter = calendar_quarter1)
 
 
-if(is_empty(options$survey_art_coverage)) {
+if (is_empty(options$survey_art_coverage)) {
   
   # If no survey ART - print only HIV prevalence 
   htmltools::div(
