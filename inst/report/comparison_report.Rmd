@@ -336,7 +336,7 @@ if(is_empty(survey_prev2)) {
   )}
 
 
-if(is_empty(options$survey_art_coverage)) {
+if (is_empty(options$survey_art_coverage)) {
   
   # If no survey ART - print only HIV prevalence 
   htmltools::div(
