@@ -169,7 +169,7 @@ test_that("get_pjnz_shiny90_filename() handles multiple .shiny90 files", {
 
   tmpd <- tempfile()
   shiny90file <- get_pjnz_shiny90_filename(pjnz_test)
-  unzip(pjnz_test, shiny90file, exdir = tmpd)
+  utils::unzip(pjnz_test, shiny90file, exdir = tmpd)
 
   shiny90dup <- "Malawi.zip duplicated.shiny90"
   file.copy(file.path(tmpd, shiny90file), file.path(tmpd, shiny90dup))

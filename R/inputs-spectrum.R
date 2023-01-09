@@ -640,6 +640,6 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
 }
 
 read_dp <- function(pjnz) {
-  dpfile <- grep(".DP$", unzip(pjnz, list = TRUE)$Name, value = TRUE)
+  dpfile <- grep(".DP$", utils::unzip(pjnz, list = TRUE)$Name, value = TRUE)
   read.csv(unz(pjnz, dpfile), as.is = TRUE)
 }
