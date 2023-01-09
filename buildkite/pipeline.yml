@@ -6,6 +6,8 @@ steps:
 
   - label: ":hammer: Test"
     command: docker/test
+    agents:
+      queue: parallel
 
   - wait
 
