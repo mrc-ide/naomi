@@ -21,7 +21,7 @@ test_that("spectrum download can be created", {
 
 
   ## # UNAIDS Navigator Checklist checks
-  navigator_checklist <- read.csv(unz(out$path, "info/unaids_navigator_checklist.csv"))
+  navigator_checklist <- utils::read.csv(unz(out$path, "info/unaids_navigator_checklist.csv"))
 
 
   expect_equal(names(navigator_checklist),

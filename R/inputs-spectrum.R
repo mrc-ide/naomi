@@ -197,7 +197,7 @@ read_dp_art_dec31 <- function(dp) {
                                    responseName = "art_dec31",
                                    stringsAsFactors = FALSE)
   art15plus$age_group <- "Y015_999"
-  art15plus$year <- type.convert(art15plus$year, as.is = TRUE)
+  art15plus$year <- utils::type.convert(art15plus$year, as.is = TRUE)
 
 
   ## # Child number on ART
@@ -243,7 +243,7 @@ read_dp_art_dec31 <- function(dp) {
 
   child_art_need<- dpsub("<ChildARTCalc MV2>", 9, timedat.idx)
   child_art_need <- as.numeric(child_art_need)
-  child_art_need <- approx(proj.years, child_art_need, proj.years + 0.5, rule = 2)$y
+  child_art_need <- stats::approx(proj.years, child_art_need, proj.years + 0.5, rule = 2)$y
   names(child_art_need) <- proj.years
 
   child_art <- dplyr::case_when(child_art_isperc == 0  & !is.na(child_art_aggr) ~ child_art_aggr,
@@ -355,7 +355,7 @@ read_dp_anc_testing <- function(dp) {
   anc_testing <- as.data.frame.table(anc_testing,
                                      responseName = "value",
                                      stringsAsFactors = FALSE)
-  anc_testing$year <- type.convert(anc_testing$year, as.is = TRUE)
+  anc_testing$year <- utils::type.convert(anc_testing$year, as.is = TRUE)
   anc_testing <- dplyr::filter(anc_testing, !is.na(value))
 
   anc_testing
@@ -641,5 +641,5 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
 
 read_dp <- function(pjnz) {
   dpfile <- grep(".DP$", utils::unzip(pjnz, list = TRUE)$Name, value = TRUE)
-  read.csv(unz(pjnz, dpfile), as.is = TRUE)
+  utils::read.csv(unz(pjnz, dpfile), as.is = TRUE)
 }

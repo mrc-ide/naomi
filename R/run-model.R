@@ -128,7 +128,7 @@ run_model <- function(data, options, validate) {
 build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
   out <- list(plot_data_path = plot_data_path,
               model_output_path = model_output_path,
-              version = packageVersion("naomi"),
+              version = utils::packageVersion("naomi"),
               warnings = warnings)
   class(out) <- "hintr_output"
   out
@@ -542,7 +542,7 @@ naomi_info_input <- function(data) {
 }
 
 naomi_info_packages <- function() {
-  info <- sessionInfo()
+  info <- utils::sessionInfo()
 
   versions <- function(x, type) {
     ret <- t(vapply(x, function(x) c(x$Package, x$Version, type), character(3),

@@ -293,7 +293,7 @@ test_that("navigator checklist returns expected results", {
 
   tmp_checklist <- tempfile(fileext = ".csv")
   write_navigator_checklist(model_output$output_package, tmp_checklist)
-  checklist <- read.csv(tmp_checklist)
+  checklist <- utils::read.csv(tmp_checklist)
 
   expect_equal(unname(expected_checklist[checklist$NaomiCheckPermPrimKey]),
                checklist$TrueFalse)
@@ -322,7 +322,7 @@ test_that("navigator checklist returns expected results", {
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_true(all(checklist_adj$TrueFalse))
 })
@@ -358,7 +358,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   tmp_checklist_no_data_opts<- tempfile(fileext = ".csv")
   write_navigator_checklist(no_data_opts_output, tmp_checklist_no_data_opts)
-  checklist_no_data_opts <- read.csv(tmp_checklist_no_data_opts)
+  checklist_no_data_opts <- utils::read.csv(tmp_checklist_no_data_opts)
 
   expect_equal(unname(expect_chklst_no_data_opts[checklist_no_data_opts$NaomiCheckPermPrimKey]),
                checklist_no_data_opts$TrueFalse)
@@ -392,7 +392,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   tmp_checklist_no_model_opts<- tempfile(fileext = ".csv")
   write_navigator_checklist(no_model_opts_output, tmp_checklist_no_model_opts)
-  checklist_no_model_opts <- read.csv(tmp_checklist_no_model_opts)
+  checklist_no_model_opts <- utils::read.csv(tmp_checklist_no_model_opts)
 
   expect_equal(unname(expect_chklst_no_model_opts[checklist_no_model_opts$NaomiCheckPermPrimKey]),
                checklist_no_model_opts$TrueFalse)
@@ -427,7 +427,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   tmp_checklist_no_calib_opts<- tempfile(fileext = ".csv")
   write_navigator_checklist(no_calib_opts_output, tmp_checklist_no_calib_opts)
-  checklist_no_calib_opts <- read.csv(tmp_checklist_no_calib_opts)
+  checklist_no_calib_opts <- utils::read.csv(tmp_checklist_no_calib_opts)
 
   expect_equal(unname(expect_chklst_no_calib_opts[checklist_no_calib_opts$NaomiCheckPermPrimKey]),
                checklist_no_calib_opts$TrueFalse)
@@ -443,7 +443,7 @@ test_that("navigator checklist results change with different calibration options
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"])
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])  ## Remains TRUE
@@ -454,7 +454,7 @@ test_that("navigator checklist results change with different calibration options
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"]) ## Remains FALSE
   expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])
@@ -466,7 +466,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
   out_uncalibrated <- read_hintr_output(a_hintr_output$model_output_path)
   tmp_checklist <- tempfile(fileext = ".csv")
   write_navigator_checklist(out_uncalibrated$output_package, tmp_checklist)
-  checklist <- read.csv(tmp_checklist)
+  checklist <- utils::read.csv(tmp_checklist)
 
   expected_checklist <- c("ART_is_Spectrum"            = FALSE,
                           "ANC_is_Spectrum"            = FALSE,
@@ -499,7 +499,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])
 })

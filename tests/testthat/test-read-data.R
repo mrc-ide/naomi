@@ -70,7 +70,7 @@ test_that("read_*()functions drop NA rows", {
 })
 
 test_that("reading utils can handle files with , in numeric columns", {
-  art <- read.csv(a_hintr_data$art_number)
+  art <- utils::read.csv(a_hintr_data$art_number)
   art$art_current <- as.character(art$art_current)
   art$art_current[1] <- "2,031"
   art$art_current[2] <- "2.031"

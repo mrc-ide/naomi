@@ -11,7 +11,7 @@ data(demo_area_hierarchy)
 #' Malawi 2018 Census population tables
 #' Accessed 30 August 2019
 #'
-#' 
+#'
 ## dir.create(here("data-raw/population"))
 ## download.file("http://www.nsomalawi.mw/images/stories/data_on_line/demography/census_2018/2018%20MPHC%20Published%20Tables/Series%20A.%20Population%20Tables.xlsx",
 ##               here("data-raw/population", "Series A. Population Tables.xlsx"))
@@ -57,7 +57,7 @@ a5 <- Map(readxl::read_excel,
 
 a5aggr <- a5 %>%
   filter(age != "Total") %>%
-  mutate(age = sub("\\+", "", age) %>% type.convert,
+  mutate(age = sub("\\+", "", age) %>% utils::type.convert,
          age_group = cut(age, c(0, 1, 1:18*5, Inf),
                          c("Less than 1 Year", "1-4", paste0(1:17*5, "-", 2:18*5 - 1), "90+"),
                          TRUE, FALSE)) %>%
@@ -76,7 +76,7 @@ a6 <- Map(readxl::read_excel,
   bind_rows() %>%
   mutate(area_name = sub(" Total", "", name) %>%
            recode("Nklhotakota" = "Nkhotakota")) %>%
-  left_join(demo_area_hierarchy %>% filter(area_level %in% c(1, 4))) 
+  left_join(demo_area_hierarchy %>% filter(area_level %in% c(1, 4)))
 
 
 #' Initial population: district by age disaggregated by region sex ratio by age
@@ -103,7 +103,7 @@ cens18 <- spread_areas(demo_area_hierarchy) %>%
     by = c("area_id1" = "area_id", "sex", "age_group")
   ) %>%
   mutate(population = pop_a6)
-  
+
 
 #' Use inverse proportional fitting to adjust district population to match:
 #' - Region population by age/sex (A5)
@@ -131,7 +131,7 @@ cens18 %>%
 
 cens18 <- cens18 %>%
   select(area_id, sex, age_group, population)
-            
+
 
 #' Malawi NSO Population Projections 2008-2030
 #' Source: http://www.nsomalawi.mw/images/stories/data_on_line/demography/census_2008/Main%20Report/ThematicReports/Population%20Projections%20Malawi.pdf
@@ -170,7 +170,7 @@ cens18adj <- nso %>%
   filter(year == 2018) %>%
   left_join(
       cens18 %>%
-      mutate(age_group_label = age_group %>%           
+      mutate(age_group_label = age_group %>%
                recode("Less than 1 Year" = "0-4",
                       "1-4" = "0-4",
                       "80-84" = "80+",
@@ -189,7 +189,7 @@ cens18adj <- nso %>%
 #'   for men.
 #' - Age 0-4 population much smaller: probably a combination of lower than
 #'   projected fertility and undercount of U5 population.
-cens18adj %>%  
+cens18adj %>%
   left_join(demo_area_hierarchy %>% select(area_id, area_name, area_sort_order)) %>%
   left_join(get_age_groups() %>% select(age_group, age_group_label, age_group_sort_order)) %>%
   mutate(area = fct_reorder(area_name, area_sort_order),
@@ -198,7 +198,7 @@ cens18adj %>%
   geom_hline(yintercept = 1.0, linetype = "dashed") +
   geom_step() +
   scale_y_log10() +
-  coord_cartesian(ylim = c(0.6, 2.0)) + 
+  coord_cartesian(ylim = c(0.6, 2.0)) +
   facet_wrap(~area, ncol = 8) +
   theme_light() +
   theme(legend.position = "bottom",
@@ -240,7 +240,7 @@ population_agesex  <- population_agesex %>%
            upper = NULL)
   ) %>%
   mutate(area_level = NULL)
-         
+
 
 
 #' ## Save datasets
