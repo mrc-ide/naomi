@@ -6,4 +6,6 @@ HERE=$(dirname $0)
 # In case we switch agents between steps
 [ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
 
-docker run --rm $TAG_SHA test_self
+docker run --rm \
+  -e TESTTHAT_CPUS=4 \
+  $TAG_SHA test_self
