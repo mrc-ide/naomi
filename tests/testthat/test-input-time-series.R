@@ -513,7 +513,7 @@ test_that("plots are filtered according to avalible disaggregates", {
 
 test_that("can get plot type descriptions from key", {
   ret <- get_plot_type_column_metadata(c("art_total", "art_child"))
-  expect_equivalent(ret, list(
+  expect_equal(ret, list(
     list(
       id = "art_total",
       label = "ART count",
@@ -528,7 +528,7 @@ test_that("can get plot type descriptions from key", {
       format = "0,0",
       accuracy = NA_integer_
     )
-  ))
+  ), ignore_attr = TRUE)
 })
 
 test_that("data can be aggregated without all indicators", {

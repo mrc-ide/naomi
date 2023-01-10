@@ -11,7 +11,7 @@ test_that("scale_gmrf_precision() returns expected values", {
 
   res <- scale_gmrf_precision(Q)
 
-  expect_is(res, "dsCMatrix")
+  expect_s3_class(res, "dsCMatrix")
   expect_equal(res@i, Qscaled@i)
   expect_equal(res@x, Qscaled@x)
 })

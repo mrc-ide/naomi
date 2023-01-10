@@ -39,7 +39,7 @@ test_that("write and read hintr outputs returns same thing", {
 
   ## The sfc column creates an error for expect_equal(). Check the type
   ## then drop the geometry column.
-  expect_is(read2$meta_area, "sf")
+  expect_s3_class(read2$meta_area, "sf")
   read1$meta_area <- sf::st_drop_geometry(read1$meta_area)
   read2$meta_area <- sf::st_drop_geometry(read2$meta_area)
 
@@ -151,7 +151,7 @@ test_that("subset_output_package() saves expected output package", {
 
   expect_equal(normalizePath(sub_keep_return),
                normalizePath(sub_keep_file))
-  expect_is(sub_keep_out, "naomi_output")
+  expect_s3_class(sub_keep_out, "naomi_output")
   expect_setequal(area_id_sub, sub_keep_out$indicators$area_id)
   expect_setequal(sex_sub, sub_keep_out$indicators$sex)
   expect_setequal(age_group_sub, sub_keep_out$indicators$age_group)

@@ -1,5 +1,5 @@
 test_that("example areas datasets are valid", {
-  expect_is(
+  expect_s3_class(
     create_areas(demo_area_levels,
                  demo_area_hierarchy,
                  demo_area_boundaries),
