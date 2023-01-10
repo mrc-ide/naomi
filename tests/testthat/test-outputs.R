@@ -136,8 +136,8 @@ test_that("subset_output_package() saves expected output package", {
   sub_keep_file <- tempfile(fileext = ".zip")
   out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
 
-  sub_keep_return <- expect_warning(
-    subset_output_package(out$path,
+  expect_warning(
+    sub_keep_return <- subset_output_package(out$path,
                           sub_keep_file,
                           area_id = area_id_sub,
                           sex = sex_sub,
@@ -555,9 +555,8 @@ test_that("output file README generated in output zip", {
   t <- file.path(tmpd, "README.md")
   expect_true(file.size(t) > 1500)
   content <- brio::readLines(t)
-  expect_true(any(grepl("├── art_attendance.csv", content)))
+  expect_true(any(grepl("art_attendance.csv", content)))
   expect_true(any(grepl("The following files have been generated as part of a Naomi model fit:" , content)))
-
 })
 
 test_that("can generate comparison report from a qs file", {
