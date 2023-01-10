@@ -5,8 +5,8 @@ R CMD build /src
 VERSION=$(grep "^Version" /src/DESCRIPTION | sed 's/Version: //')
 
 echo "--- Checking package :checkered_flag:"
-_R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran --no-tests hintr_$VERSION.tar.gz
+_R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran --no-tests naomi_$VERSION.tar.gz
 
 echo "--- Testing package :test_tube:"
-R CMD INSTALL hintr_$VERSION.tar.gz
+R CMD INSTALL naomi_$VERSION.tar.gz
 Rscript -e 'testthat::test_local("/src", reporter = testthat::ParallelProgressReporter$new())'
