@@ -9,4 +9,7 @@ ENV NAOMI_GIT_HASH $GIT_SHA
 ENV NAOMI_GIT_BRANCH $GIT_BRANCH
 ENV NAOMI_VERSION $NAOMI_VERSION
 
+RUN install_remote \
+    mrc-ide/mockr
+
 COPY . /src
