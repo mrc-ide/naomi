@@ -1,5 +1,3 @@
-context("test-read-data")
-
 test_that("read data functions parse expected columns", {
 
   expect_s3_class(read_population(a_hintr_data$population), "data.frame")

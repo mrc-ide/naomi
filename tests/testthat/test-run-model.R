@@ -1,5 +1,3 @@
-context("run-model")
-
 test_that("model can be run", {
   output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(a_hintr_data,

@@ -1,5 +1,3 @@
-context("calibrate-model")
-
 test_that("calibrated model matches end-year Spectrum ART", {
 
   out <- read_hintr_output(a_hintr_output_calibrated$model_output_path)

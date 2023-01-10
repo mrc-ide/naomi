@@ -1,5 +1,3 @@
-context("utils")
-
 test_that("scale_gmrf_precision() returns expected values", {
 
   adj <- Matrix::sparseMatrix(i = c(1, 1, 2, 3), j = c(2, 4, 4, 5),
@@ -34,4 +32,4 @@ test_that("create adjacency matrix from shapefile", {
   expect_equal(adj2[edges], rep(1, 10))
   expect_equal(adj2[no_edges], rep(0, 15))
 })
-  
+

@@ -1,5 +1,3 @@
-context("data-anc")
-
 test_that("can calculate prevalence and ART coverage from ANC data", {
   path <- system.file("extdata", "demo_anc_testing.csv",
                       package = "naomi")

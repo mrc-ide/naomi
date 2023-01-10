@@ -1,5 +1,3 @@
-context("metadata")
-
 test_that("can retrieve indicator colour scales for a country", {
   scale <- get_colour_scale("MWI")
   expect_true(all(c("iso3", "indicator", "colour", "min", "max",

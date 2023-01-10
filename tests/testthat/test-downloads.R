@@ -1,5 +1,3 @@
-context("downloads")
-
 test_that("spectrum download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   notes <- "these are my\nmultiline notes"
