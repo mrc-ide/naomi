@@ -89,9 +89,9 @@ test_that("progress messages are printed", {
   output_path <- tempfile(fileext = ".qs")
   with_mock(new_progress = mock_new_progress,
             fit_tmb = fit, sample_tmb = sample, {
-    model_run <- naomi_evaluate_promise(
-      hintr_run_model(a_hintr_data, a_hintr_options, output_path))
-  })
+              model_run <- naomi_evaluate_promise(
+                hintr_run_model(a_hintr_data, a_hintr_options, output_path))
+            })
   ## If using mock fit here there will only be 5, if using real
   ## fit_tmb there will be many more
   expect_true(length(model_run$progress) >= 5)
@@ -120,7 +120,7 @@ test_that("progress messages are printed", {
   model_help <- lapply(model_run$progress, function(msg) {
     msg$fit_model$helpText
   })
-  have_iteration <- grepl("Iteration \\d+ - [\\d.m\\s]+s elapsed", model_help,
+  have_iteration <- grepl("Iteration \\d+ - [\\d.m\\s]+[sm] elapsed", model_help,
                           perl = TRUE)
   expect_true(any(have_iteration))
   expect_false(all(have_iteration))
@@ -131,7 +131,7 @@ test_that("progress messages are printed", {
   ## Final messages has completed message
   final_message <- model_run$progress[[length(model_run$progress)]]
   expect_match(final_message$fit_model$helpText,
-               "\\d+ iterations in [\\d.m\\s]+s",
+               "\\d+ iterations in [\\d.m\\s]+[sm]",
                perl = TRUE)
 })
 
@@ -554,10 +554,10 @@ test_that("calibration reports simple progress", {
   })
   expect_length(messages$progress, 2)
   progress <- messages$progress
-  expect_match(progress[[1]]$message,
-               "Calibrating outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
-  expect_match(progress[[2]]$message,
-               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+  expect_equal(progress[[1]]$message,
+               "Calibrating outputs - 30s elapsed")
+  expect_equal(progress[[2]]$message,
+               "Saving outputs - 2m elapsed")
 })
 
 test_that("validate_calibrate_options errors if required options are missing", {
