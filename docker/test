@@ -8,4 +8,5 @@ HERE=$(dirname $0)
 
 docker run --rm \
   -e TESTTHAT_CPUS=4 \
+  -e _R_CHECK_CRAN_INCOMING_=FALSE \
   $TAG_SHA test_self
