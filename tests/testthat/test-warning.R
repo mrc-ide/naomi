@@ -55,9 +55,9 @@ test_that("warning raised after false convergence", {
   mock_output_package <- mockery::mock(a_output)
 
   with_mock(
-    "naomi:::fit_tmb" = mock_fit_tmb,
-    "naomi:::sample_tmb" = mock_sample_tmb,
-    "naomi:::output_package" = mock_output_package, {
+    fit_tmb = mock_fit_tmb,
+    sample_tmb = mock_sample_tmb,
+    output_package = mock_output_package, {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
@@ -106,9 +106,9 @@ test_that("warning raised if outputs exceed threshold", {
   mock_output_package <- mockery::mock(output)
 
   with_mock(
-    "naomi:::fit_tmb" = mock_fit_tmb,
-    "naomi:::sample_tmb" = mock_sample_tmb,
-    "naomi:::output_package" = mock_output_package, {
+    fit_tmb = mock_fit_tmb,
+    sample_tmb = mock_sample_tmb,
+    output_package = mock_output_package, {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 

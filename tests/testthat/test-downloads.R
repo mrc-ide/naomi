@@ -1,7 +1,7 @@
 test_that("spectrum download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   notes <- "these are my\nmultiline notes"
-  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+  with_mock(new_simple_progress = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
                                              notes = notes))
@@ -72,7 +72,7 @@ test_that("spectrum download can be created", {
 
 test_that("coarse age group download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
-  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+  with_mock(new_simple_progress = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_coarse_age_group_download(a_hintr_output_calibrated))
   })
@@ -112,7 +112,7 @@ test_that("coarse age group download can be created", {
 
 test_that("summary report download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
-  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+  with_mock(new_simple_progress = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_summary_report_download(a_hintr_output_calibrated))
   })
@@ -138,7 +138,7 @@ test_that("summary report download can be created", {
 
 test_that("comparison report download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
-  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+  with_mock(new_simple_progress = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_comparison_report_download(
         a_hintr_output_calibrated))
