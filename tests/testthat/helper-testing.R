@@ -6,40 +6,6 @@ with_mock <- function(..., .parent = parent.frame()) {
   mockr::with_mock(..., .parent = .parent, .env = "naomi")
 }
 
-naomi_evaluate_promise <- function (code, print = FALSE) {
-  warnings <- testthat:::Stack$new()
-  handle_warning <- function(condition) {
-    warnings$push(condition)
-    invokeRestart("muffleWarning")
-  }
-  messages <- testthat:::Stack$new()
-  handle_message <- function(condition) {
-    messages$push(condition)
-    invokeRestart("muffleMessage")
-  }
-  progress <- testthat:::Stack$new()
-  handle_progress <- function(condition) {
-    progress$push(condition)
-    invokeRestart("muffleProgress")
-  }
-  temp <- tempfile()
-  result <- withr::with_output_sink(
-    temp,
-    withCallingHandlers(withVisible(code),
-                        warning = handle_warning,
-                        message = handle_message,
-                        progress = handle_progress))
-  if (result$visible && print) {
-    withr::with_output_sink(temp, print(result$value))
-  }
-  output <- brio::read_file(temp)
-  list(result = result$value,
-       output = output,
-       warnings = testthat:::get_messages(warnings$as_list()),
-       messages = testthat:::get_messages(messages$as_list()),
-       progress = progress$as_list())
-}
-
 MockProgress <- R6::R6Class(
   "MockProgress",
   inherit = Progress,
@@ -107,6 +73,47 @@ MockSimpleProgress <- R6::R6Class(
     }
   )
 )
+
+naomi_evaluate_promise <- function (code, print = FALSE) {
+  warnings <- testthat:::Stack$new()
+  handle_warning <- function(condition) {
+    warnings$push(condition)
+    invokeRestart("muffleWarning")
+    if (!is.null(findRestart("muffleWarning"))) {
+      invokeRestart("muffleWarning")
+    }
+  }
+  messages <- testthat:::Stack$new()
+  handle_message <- function(condition) {
+    messages$push(condition)
+    if (!is.null(findRestart("muffleMessage"))) {
+      invokeRestart("muffleMessage")
+    }
+  }
+  progress <- testthat:::Stack$new()
+  handle_progress <- function(condition) {
+    progress$push(condition)
+    if (!is.null(findRestart("muffleProgress"))) {
+      invokeRestart("muffleProgress")
+    }
+  }
+  temp <- tempfile()
+  result <- withr::with_output_sink(
+    temp,
+    withCallingHandlers(withVisible(code),
+                        warning = handle_warning,
+                        message = handle_message,
+                        progress = handle_progress))
+  if (result$visible && print) {
+    withr::with_output_sink(temp, print(result$value))
+  }
+  output <- brio::read_file(temp)
+  list(result = result$value,
+       output = output,
+       warnings = testthat:::get_messages(warnings$as_list()),
+       messages = testthat:::get_messages(messages$as_list()),
+       progress = progress$as_list())
+}
 
 expect_file_equivalent <- function(path_object, path_expected) {
   object_md5 <- tools::md5sum(path_object)

@@ -84,14 +84,13 @@ test_that("model fit without survey ART and survey recency data", {
 
 test_that("progress messages are printed", {
   skip_on_covr()
-  mock_new_progress <- mockery::mock(MockProgress$new())
-
   output_path <- tempfile(fileext = ".qs")
-  with_mock(new_progress = mock_new_progress,
-            fit_tmb = fit, sample_tmb = sample, {
-              model_run <- naomi_evaluate_promise(
-                hintr_run_model(a_hintr_data, a_hintr_options, output_path))
-            })
+  mockery::stub(hintr_run_model, "fit_tmb", fit, depth = 2)
+  mockery::stub(hintr_run_model, "sample_tmb", sample, depth = 2)
+  mockery::stub(hintr_run_model, "new_progress", MockProgress$new(), depth = 2)
+  model_run <- naomi_evaluate_promise(
+    hintr_run_model(a_hintr_data, a_hintr_options, output_path))
+
   ## If using mock fit here there will only be 5, if using real
   ## fit_tmb there will be many more
   expect_true(length(model_run$progress) >= 5)
@@ -114,7 +113,7 @@ test_that("progress messages are printed", {
   expect_true(second_message[[2]]$started)
   expect_false(second_message[[2]]$complete)
 
-  skip_if(!all.equal(fit, fit_tmb),
+  skip_if(!all.equal(fit, fit_tmb, check.environment = FALSE),
           "Using mock fit result, skipping progress tests")
   ## Help text gets printed at some point
   model_help <- lapply(model_run$progress, function(msg) {
