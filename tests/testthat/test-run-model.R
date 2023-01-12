@@ -202,7 +202,10 @@ test_that("exceeding max_iterations raises convergence warning", {
   options$max_iterations <- 5
 
   output_path <- tempfile(fileext = ".qs")
-  out <- hintr_run_model(data, options, output_path)
+  expect_warning(
+    out <- hintr_run_model(data, options, output_path),
+    "convergence error: iteration limit reached without convergence (10)",
+    fixed = TRUE)
 
   expect_length(out$warnings, 4)
 

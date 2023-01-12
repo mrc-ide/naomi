@@ -50,11 +50,11 @@ MockProgress <- R6::R6Class(
     mock_times = list(),
 
     initialize = function() {
-      super$initialize()
       self$now <- round.POSIXt(Sys.time(), units = "mins")
       self$mock_times = list(
         self$now, self$now + 30, self$now + (2 * 60), self$now + (62 * 60),
         self$now + (65 * 60) + 8)
+      super$initialize()
     },
     ## Wrap print message in a with restarts so we can capture messages for
     ## testing
