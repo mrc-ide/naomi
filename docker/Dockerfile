@@ -13,7 +13,8 @@ RUN install_packages \
     pkgbuild
 
 RUN install_remote \
-    mrc-ide/mockr
+    mrc-ide/mockr \
+    mrc-ide/testthat.buildkite
 
 ## Model run will try to parallelise over as many threads as are available
 ## potentially slowing the application, manually limit threads to 1

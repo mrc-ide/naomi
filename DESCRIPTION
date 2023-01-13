@@ -60,6 +60,7 @@ Suggests:
     mockr,
     scales,
     testthat (>= 2.1.0),
+    testthat.buildkite,
     tidyverse,
     viridis
 VignetteBuilder: knitr
@@ -72,6 +73,7 @@ Remotes:
     first90=mrc-ide/first90release,
     reside-ic/traduire,
     mrc-ide/naomi.options,
-    mrc-ide/mockr
+    mrc-ide/mockr,
+    mrc-ide/testthat.buildkite
 Config/testthat/edition: 3
 Config/testthat/parallel: true

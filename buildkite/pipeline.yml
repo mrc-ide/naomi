@@ -4,6 +4,9 @@ steps:
 
   - wait
 
+  - label: ":rstats: Check"
+    command: docker/check
+
   - label: ":hammer: Test"
     command: docker/test
     agents:
