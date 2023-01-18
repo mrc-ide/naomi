@@ -60,7 +60,6 @@ Suggests:
     mockr,
     scales,
     testthat (>= 2.1.0),
-    testthat.buildkite,
     tidyverse,
     viridis
 VignetteBuilder: knitr
