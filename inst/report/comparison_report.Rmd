@@ -160,7 +160,7 @@ if(length(anc_prev_options)) {
 ```{r, echo = FALSE, results = 'asis'}
 
 if (print_en) {
-  cat(paste0("## ", country, " Estimations infranationales du VIH \n"))
+  cat(paste0("## ", country, " Subnational HIV Estimates \n"))
   cat(paste0("Naomi estimates for **", quarter_t2, "** (report generated ", report_date, ")"))
 }
 
