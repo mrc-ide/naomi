@@ -9,11 +9,9 @@ ENV NAOMI_GIT_HASH $GIT_SHA
 ENV NAOMI_GIT_BRANCH $GIT_BRANCH
 ENV NAOMI_VERSION $NAOMI_VERSION
 
-RUN install_packages \
-    pkgbuild
-
-RUN install_remote \
-    mrc-ide/mockr \
-    mrc-ide/testthat.buildkite
+RUN install_packages --repo=https://mrc-ide.r-universe.dev \
+    mockr \
+    pkgbuild \
+    testthat.buildkite
 
 COPY . /src
