@@ -1,5 +1,3 @@
-context("run-model-options")
-
 test_that("model test options return expected frames", {
 
   expect_true(all(vapply(a_hintr_data, file.exists, logical(1))))

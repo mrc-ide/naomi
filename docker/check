@@ -7,6 +7,5 @@ HERE=$(dirname $0)
 [ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
 
 docker run --rm -it \
-  -e TESTTHAT_CPUS=$NUM_CPUS \
   -e _R_CHECK_CRAN_INCOMING_=FALSE \
-  $TAG_SHA test_self
+  $TAG_SHA check_self

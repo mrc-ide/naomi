@@ -1,4 +1,3 @@
-
 test_that("spread_areas() works", {
   ## TODO: Where is demo_areas?
   ## expect_error(spread_areas(demo_areas, -4))

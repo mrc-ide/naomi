@@ -1,5 +1,3 @@
-context("metadata")
-
 test_that("can retrieve indicator colour scales for a country", {
   scale <- get_colour_scale("MWI")
   expect_true(all(c("iso3", "indicator", "colour", "min", "max",
@@ -49,7 +47,7 @@ test_that("default configuration missing throws an error", {
   mock_naomi_read_csv <- mockery::mock(
     data.frame(iso3 = c("MWI"), indicator = c("Test"),
                stringsAsFactors = FALSE))
-  with_mock("naomi:::naomi_read_csv" = mock_naomi_read_csv, {
+  with_mock(naomi_read_csv = mock_naomi_read_csv, {
     expect_error(get_colour_scale(),
                  "Can't retrieve default colour scale. Check configuration.")
   })

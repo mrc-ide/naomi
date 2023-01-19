@@ -71,7 +71,7 @@ if(grepl("\\.zip$", params$outputs)) {
   output_zip <- params$outputs
   outputs <- naomi::read_output_package(output_zip)
   inputs <- unz(output_zip, "info/inputs.csv")
-  inputs <- read.csv(inputs)
+  inputs <- utils::read.csv(inputs)
   options <- unz(output_zip, "info/options.yml")
   options <- yaml::read_yaml(options)
 

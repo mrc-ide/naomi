@@ -12,12 +12,12 @@
 create_adj_matrix <- function(sh){
 
   s2_current <- sf::sf_use_s2()
-  on.exit(
-    invisible(suppress_one_message(capture.output(sf::sf_use_s2(s2_current)),
-              "Spherical geometry \\(s2\\) switched"))
+  on.exit(invisible(
+    suppress_one_message(utils::capture.output(sf::sf_use_s2(s2_current)),
+                         "Spherical geometry \\(s2\\) switched"))
   )
-  invisible(suppress_one_message(capture.output(sf::sf_use_s2(FALSE)),
-            "Spherical geometry \\(s2\\) switched"))
+  invisible(suppress_one_message(utils::capture.output(sf::sf_use_s2(FALSE)),
+                                 "Spherical geometry \\(s2\\) switched"))
 
   if (nrow(sh) == 1) {
     adj <- matrix(0, dimnames = list(sh$area_id, sh$area_id))

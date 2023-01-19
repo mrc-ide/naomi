@@ -57,6 +57,7 @@ Suggests:
     datamodelr,
     lubridate,
     mockery,
+    mockr,
     scales,
     testthat (>= 2.1.0),
     tidyverse,
@@ -70,4 +71,8 @@ Remotes:
     mrc-ide/eppasm,
     first90=mrc-ide/first90release,
     reside-ic/traduire,
-    mrc-ide/naomi.options
+    mrc-ide/naomi.options,
+    mrc-ide/mockr,
+    mrc-ide/testthat.buildkite
+Config/testthat/edition: 3
+Config/testthat/parallel: true
