@@ -606,8 +606,7 @@ test_that("can generate comparison report with only 1 survey chosen", {
 
 test_that("can generate comparison report without survey ART coverage", {
   ## Create a model output with only 1 option chosen for survey_prevalence
-  model_output <- a_hintr_output_calibrated$model_output_path
-  output <- qs::qread(model_output)
+  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
   options <- yaml::read_yaml(text = output$info$options.yml)
   options$survey_art_coverage <- NULL
   output$info$options.yml <- yaml::as.yaml(options)
