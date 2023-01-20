@@ -386,7 +386,7 @@ if (is_empty(options$survey_art_coverage)) {
 } else {
   
   # Print HIV prevalence + ART coverage
-  fig2 <- age_bar_plotly (data,
+  fig2 <- age_bar_plotly(data,
                       ind = "art_coverage",
                       quarter = calendar_quarter1)
   
