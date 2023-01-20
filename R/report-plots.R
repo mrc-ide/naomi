@@ -594,7 +594,7 @@ scatter_plotly <- function(df,
   age_label <- age_groups[age_groups$age_group == unique(plot_data$age_group), ]$age_group_label
 
   plot_title <- paste("<b>", title, ": ", input_data, " vs. ", output_source,
-                      "</br><sub> (", sex_disag, ",", age_label, ")</sub><br>")
+                      "</br><sub> (", sex_disag, ",", age_label, ")</sub></b>")
 
   if (grepl("anc", ind)) {
     output_source <- paste0(output_source, " females 15-49")
