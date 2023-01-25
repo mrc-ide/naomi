@@ -1,3 +1,8 @@
+# naomi 2.8.13
+
+* Generate comparison report where no survey ART coverage is available
+* Consistent age/sex descriptions in comparison plot titles.
+
 # naomi 2.8.12
 
 * Handle case when multiple .shiny90 files found in .PJNZ file. Choose the file with the shortest file name. This will most likely be the file that Spectrum fitter has saved.

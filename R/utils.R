@@ -98,5 +98,5 @@ vlapply <- function(X, FUN, ...) {
 }
 
 is_empty <- function(x) {
-  is.null(x) || is.na(x) || !nzchar(x)
+  length(x) == 0 || is.null(x) || is.na(x) || !nzchar(x)
 }
