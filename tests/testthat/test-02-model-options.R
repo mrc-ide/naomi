@@ -1,5 +1,3 @@
-context("model-options")
-
 test_that("validate model options returns true", {
   out <- validate_model_options(format_data_input(a_hintr_data),
                                 a_hintr_options)

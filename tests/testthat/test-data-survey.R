@@ -1,5 +1,3 @@
-context("test-data-survey")
-
 test_that("cmc_date() returns correct value", {
   expect_equal(cmc_date(as.Date("1987-02-11", format = "%Y-%m-%d")), 1046)
 })

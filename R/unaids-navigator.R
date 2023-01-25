@@ -189,5 +189,5 @@ write_navigator_checklist <- function(naomi_output,
   }
 
   ## Using write.csv() instead of naomi_write_csv() because writing na = "NA"
-  write.csv(v, path, row.names = FALSE, na = "NA")
+  utils::write.csv(v, path, row.names = FALSE, na = "NA")
 }

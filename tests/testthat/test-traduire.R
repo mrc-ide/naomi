@@ -1,5 +1,3 @@
-context("traduire")
-
 # Hopefully we'll provide a simpler way of doing this...
 test_that("translation initialisation calls traduire_register", {
   expect_true("package:naomi" %in% traduire::translator_list())

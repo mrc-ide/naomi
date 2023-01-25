@@ -21,7 +21,7 @@ test_that("datapack_psnu_area_level is well formed", {
   expect_equal(names(psnu_level), c("iso3", "psnu_area_level"))
   expect_equal(anyDuplicated(psnu_level$iso3), 0)
   expect_true(all(!is.na(psnu_level$psnu_area_level)))
-  expect_is(psnu_level$psnu_area_level, "integer")
+  expect_type(psnu_level$psnu_area_level, "integer")
 })
 
 test_that("datapack_indicator_map is well formed", {

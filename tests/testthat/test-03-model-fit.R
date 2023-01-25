@@ -1,5 +1,3 @@
-context("test-model-fit")
-
 test_that("setting rng_seed returns same outputs", {
 
   a_fit_sample2 <- sample_tmb(a_fit, nsample = 30, rng_seed = 28)

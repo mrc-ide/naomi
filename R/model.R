@@ -124,7 +124,7 @@ naomi_model_frame <- function(area_merged,
                               sexes = c("male", "female"),
                               omega = 0.7,
                               rita_param = list(OmegaT0      = 130 / 365,
-                                                sigma_OmegaT = ((142-118) / 365) / (2*qnorm(0.975)),
+                                                sigma_OmegaT = ((142-118) / 365) / (2 * stats::qnorm(0.975)),
                                                 betaT0       = 0.0,
                                                 sigma_betaT  = 0.00001,
                                                 ritaT        = 1.0),
@@ -1496,7 +1496,7 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::group_by(area_id, sex, age_group) %>%
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
-                       art_current = approx(quarter_id, art_current, out_quarter_id, rule =2)$y,
+                       art_current = stats::approx(quarter_id, art_current, out_quarter_id, rule =2)$y,
                        .groups = "drop") %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter) %>%

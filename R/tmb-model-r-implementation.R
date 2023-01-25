@@ -629,7 +629,7 @@ naomi_objective_function_r <- function(d, p) {
     d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2) +
     d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt)
   mu_anc_rho_t3 <- as.vector(mu_anc_rho_t3)
-  anc_rho_t3 <- plogis(mu_anc_rho_t3)
+  anc_rho_t3 <- stats::plogis(mu_anc_rho_t3)
 
   mu_anc_alpha_t3 <- mu_alpha_t3 +
     d$logit_anc_alpha_t3_offset +

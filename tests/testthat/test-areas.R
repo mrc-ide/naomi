@@ -1,5 +1,3 @@
-context("test-areas")
-
 ## test_that("get_area_collection() defaults to all areas at lowest level", {
 ##   val <- get_area_collection(demo_areas)
 ##   expect_equal(nrow(val), 32)

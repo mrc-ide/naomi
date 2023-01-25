@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+echo "--- Building package :package:"
+R CMD build /src
+VERSION=$(grep "^Version" /src/DESCRIPTION | sed 's/Version: //')
+PACKAGE_NAME=$(grep "^Package" /src/DESCRIPTION | sed 's/Package: //')
+
+echo "--- Checking package :checkered_flag:"
+_R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran --no-tests ${PACKAGE_NAME}_$VERSION.tar.gz

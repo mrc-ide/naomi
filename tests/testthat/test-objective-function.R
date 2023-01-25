@@ -1,9 +1,7 @@
-context("objective function")
-
 test_that("R implementation matches C++", {
 
   ## TODO: Replace the test in setup-model-frame.R with this
-  
+
   b_area_merged <- read_area_merged(a_hintr_data$shape)
   b_spec <- extract_pjnz_naomi(a_hintr_data$pjnz)
   b_pop_agesex <- read_population(a_hintr_data$population)
@@ -39,7 +37,7 @@ test_that("R implementation matches C++", {
   par_val <- b_fit$par.full %>% split(names(.))
   p <- b_tmb_inputs$par_init
   p[names(par_val)] <- par_val
-  
+
   v <- naomi_objective_function_r(d, p)
 
   ## Check that REPORT() values are equal
