@@ -465,7 +465,7 @@ age_bar_plotly <- function(df,
     title <- "ART coverage"
   }
   plot_title <- paste0("<b>", title, ": ", "Household survey vs. ",
-    output_source, "<\b>")
+    output_source, "</b>")
 
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
 
