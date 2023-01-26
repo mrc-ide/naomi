@@ -1,3 +1,7 @@
+# naomi 2.8.14
+
+* Show comparison barchart ratios to 1 decimal point accuracy.
+
 # naomi 2.8.13
 
 * Generate comparison report where no survey ART coverage is available
