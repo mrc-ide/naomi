@@ -58,6 +58,7 @@ Suggests:
     lubridate,
     mockery,
     mockr,
+    rvest,
     scales,
     testthat (>= 2.1.0),
     tidyverse,

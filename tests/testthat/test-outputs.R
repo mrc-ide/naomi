@@ -602,7 +602,7 @@ test_that("can generate comparison report with only 1 survey chosen", {
 })
 
 test_that("can generate comparison report without survey ART coverage", {
-  ## Create a model output with only 1 option chosen for survey_prevalence
+  ## Create a model output with no option chosen for survey_art_coverage
   output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
   options <- yaml::read_yaml(text = output$info$options.yml)
   options$survey_art_coverage <- NULL
@@ -613,7 +613,35 @@ test_that("can generate comparison report without survey ART coverage", {
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, out, quiet = TRUE)
   expect_true(file.size(t) > 2000)
-  content <- brio::readLines(t)
-  expect_false(any(grepl("survey data on ART coverage", content)))
+  html <- rvest::read_html(t, encoding = "UTF-8")
+  expect_length(rvest::html_element(html, ".prevalence-barchart"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-plotly"), 2)
+  expect_length(rvest::html_element(html, ".art-barchart"), 0)
+  expect_length(rvest::html_element(html, ".art-scatter"), 0)
+  expect_length(rvest::html_element(html, ".art-plotly"), 0)
+})
 
+test_that("prevalence survey plots not drawn when using aggregate survey", {
+  ## This is to address Guinea-Bissau 2022/2023 issue #36
+  ## Create a model output with only 1 option chosen for survey_prevalence
+  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
+  options <- yaml::read_yaml(text = output$info$options.yml)
+  options$use_survey_aggregate <- "true"
+  output$info$options.yml <- yaml::as.yaml(options)
+  out <- tempfile(fileext = ".qs")
+  model_output <- qs::qsave(output, preset = "fast", out)
+
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, out, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  html <- rvest::read_html(t, encoding = "UTF-8")
+  expect_length(rvest::html_element(html, ".prevalence-barchart"), 0)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1"), 0)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 0)
+  expect_length(rvest::html_element(html, ".prevalence-plotly"), 0)
+  expect_length(rvest::html_element(html, ".art-barchart"), 2)
+  expect_length(rvest::html_element(html, ".art-scatter"), 2)
+  expect_length(rvest::html_element(html, ".art-plotly"), 2)
 })

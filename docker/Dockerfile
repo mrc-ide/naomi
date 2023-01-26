@@ -11,6 +11,7 @@ ENV NAOMI_VERSION $NAOMI_VERSION
 
 RUN install_packages --repo=https://mrc-ide.r-universe.dev \
     mockr \
+    rvest \
     pkgbuild \
     testthat.buildkite
 

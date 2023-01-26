@@ -285,33 +285,32 @@ data <- outputs$inputs_outputs
 calendar_quarter1 <- options$calendar_quarter_t1
 calendar_quarter2 <- options$calendar_quarter_t2
 
+plots <- list()
+class <- c()
 #  Barplot prevalence
-fig1 <- bar_plotly (data,
-                    ind = "prevalence",
-                    quarter = calendar_quarter1)
+if (identical(options$use_survey_aggregate, "false")) {
+  ## We do not create prevalence aggregate plot if use_survey_aggregate is true
+  ## See Guinea-Bissau issue 2022/2023 #36
+  fig1 <- bar_plotly(data,
+                     ind = "prevalence",
+                     quarter = calendar_quarter1)
+  plots <- c(plots, htmltools::div(fig1))
+  class <- c(class, "prevalence-barchart")
+}
 
 
-if (is_empty(options$survey_art_coverage)) {
-  
-  # If no survey ART - print only HIV prevalence 
-  htmltools::div(
-    style = "display: flex; flex-direction: column",
-    htmltools::div(fig1))
-  
-} else {
-  
-  # Print HIV prevalence + ART coverage
+if (!is_empty(options$survey_art_coverage)) {
+  ## If no survey ART don't include the plot
   fig2 <- bar_plotly(data,
                       ind = "art_coverage",
                       quarter = calendar_quarter1)
+  plots <- c(plots, htmltools::div(fig2))
+  class <- c(class, "art-barchart")
+} 
   
-  htmltools::div(
-    style = "display: flex; flex-direction: column",
-    htmltools::div(fig1),
-    htmltools::div(fig2))
-
-}
-
+do.call(htmltools::div, c(plots,
+                          style = "display: flex; flex-direction: column",
+                          class = paste(class, collapse = " ")))
 ```
 
 
@@ -320,57 +319,59 @@ if (is_empty(options$survey_art_coverage)) {
 survey_prev1 <- options$survey_prevalence[1]
 survey_prev2 <- options$survey_prevalence[2]
 
-#  Scatter plot survey prevalence
-fig1 <-  scatter_plotly(data,
-                        ind = "prevalence",
-                        quarter = calendar_quarter1,
-                        input_data = survey_prev1,
-                        input_data_type = "survey")
+plots <- list()
+class <- c()
+prev_plots <- NULL
+if (identical(options$use_survey_aggregate, "false")) {
+  ## We do not create prevalence aggregate plot if use_survey_aggregate is true
+  ## See Guinea-Bissau issue 2022/2023 #36
+  
+  #  Scatter plot survey prevalence
+  fig1 <- scatter_plotly(data,
+                         ind = "prevalence",
+                         quarter = calendar_quarter1,
+                         input_data = survey_prev1,
+                         input_data_type = "survey")
+  plots <- c(plots, htmltools::div(fig1, style = "width: 50%"))
+  class <- c(class, "prevalence-scatter1")
+  
+  if (!is_empty(survey_prev2)) { 
+    
+    # Multiple prevalence surveys
+    fig1B <-  scatter_plotly(data,
+                             ind = "prevalence",
+                             quarter = calendar_quarter1,
+                             input_data = survey_prev2,
+                             input_data_type = "survey")
+    plots <- c(htmltools::div(fig1B, style = "width: 50%;"), plots)
+    class <- c(class, "prevalence-scatter1B")
+  }
+  
+  prev_plots <- do.call(htmltools::div, c(
+    plots,
+    style = "display: flex",
+    class = paste(class, collapse = " ")))
+}
 
 
-if(is_empty(survey_prev2)) { 
+art_plot <- NULL 
+if (!is_empty(options$survey_art_coverage)) {
   
-  # Single prevalence survey
-  prev_plots <- fig1
-  
-} else {
-  
-  # Multiple prevalence surveys
-  fig1B <-  scatter_plotly(data,
-                           ind = "prevalence",
-                           quarter = calendar_quarter1,
-                           input_data = survey_prev2,
-                           input_data_type = "survey")
-  
-  
-  prev_plots <-   htmltools::div(
-    style = "display: flex;",
-    htmltools::div(fig1B, style = "width: 50%;"),
-    htmltools::div(fig1, style = "width: 50%"),
-  )}
-
-
-if (is_empty(options$survey_art_coverage)) {
-  
-  # If no survey ART - print only HIV prevalence 
-  htmltools::div(
-    style = "display: flex; flex-direction: column",
-    prev_plots)
-  
-} else {
-  
-  # Print HIV prevalence + ART coverage
+  # ART coverage plot
   fig2 <-  scatter_plotly(data,
                           ind = "art_coverage",
                           quarter = calendar_quarter1,
                           input_data = survey_art,
                           input_data_type = "survey")
-  
-  htmltools::div(
-    style = "display: flex; flex-direction: column",
-    prev_plots,
-    htmltools::div(fig2, style = "width: 50%")
-  )}
+  art_plot <- htmltools::div(fig2, 
+                             style = "width: 50%", 
+                             class = "art-scatter")
+}
+htmltools::div(
+  style = "display: flex; flex-direction: column",
+  prev_plots,
+  art_plot
+)
 
 ```
 
@@ -384,33 +385,36 @@ if (print_pt) {cat("\n### Distribuição etária \n")}
 
 ```{r, echo=FALSE, warning = FALSE, message = FALSE, out.width  =  "90%", results = 'asis'}
 
-
-#  Age bar plots
-fig1 <- age_bar_plotly (data,
-                    ind = "prevalence",
-                    quarter = calendar_quarter1)
-
-if (is_empty(options$survey_art_coverage)) {
+plots <- list()
+class <- c()
+if (identical(options$use_survey_aggregate, "false")) {
+  ## We do not create prevalence aggregate plot if use_survey_aggregate is true
+  ## See Guinea-Bissau issue 2022/2023 #36
   
-  # If no survey ART - print only HIV prevalence 
-  htmltools::div(
-    style = "display: flex; flex-direction: column",
-    htmltools::div(fig1, style = "width: 80%;"))
+  # Age bar plots
+  fig1 <- age_bar_plotly(data,
+                         ind = "prevalence",
+                         quarter = calendar_quarter1)
   
-} else {
-  
-  # Print HIV prevalence + ART coverage
-  fig2 <- age_bar_plotly(data,
-                      ind = "art_coverage",
-                      quarter = calendar_quarter1)
-  
-  htmltools::div(
-    style = "display: flex; flex-direction: column",
-    htmltools::div(fig1),
-    htmltools::div(fig2))
+  plots <- c(plots, htmltools::div(fig1))
+  class <- c(class, "prevalence-plotly")
 }
 
+
+if (!is_empty(options$survey_art_coverage)) {
+  ## If no survey ART don't include the plot
+  fig2 <- age_bar_plotly(data,
+                         ind = "art_coverage",
+                         quarter = calendar_quarter1)
+  plots <- c(plots, htmltools::div(fig2))
+  class <- c(class, "art-plotly")
+}
+  
+do.call(htmltools::div, c(plots,
+                          style = "display: flex; flex-direction: column",
+                          class = paste(class, collapse = " ")))
 ```
+
 ::: {#translate lang="en"}
 *Static images of individual plots can be downloaded by hovering on the right hand corner*
 :::
@@ -517,7 +521,7 @@ anc_t1 <- outputs$fit$data_options$anc_prev_year_t1
 anc_t2 <- outputs$fit$data_options$anc_prev_year_t2
 has_anc <- !is_empty(anc_t1) && !is_empty(anc_t2)
 
-if(has_anc) {
+if (has_anc) {
   #  Scatter plot ANC prevalence
   fig1 <-  scatter_plotly(data,
                           ind = "anc_prevalence_age_matched",
