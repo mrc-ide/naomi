@@ -1,3 +1,7 @@
+# naomi 2.8.15
+
+* Don't include prevalence plots in comparison report download when model fit with survey aggregate data (issue 36).
+
 # naomi 2.8.14
 
 * Show comparison barchart ratios to 1 decimal point accuracy.
