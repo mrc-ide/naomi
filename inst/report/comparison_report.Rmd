@@ -294,7 +294,7 @@ if (identical(options$use_survey_aggregate, "false")) {
   fig1 <- bar_plotly(data,
                      ind = "prevalence",
                      quarter = calendar_quarter1)
-  plots <- c(plots, htmltools::div(fig1))
+  plots <- c(plots, list(htmltools::div(fig1)))
   class <- c(class, "prevalence-barchart")
 }
 
@@ -304,13 +304,12 @@ if (!is_empty(options$survey_art_coverage)) {
   fig2 <- bar_plotly(data,
                       ind = "art_coverage",
                       quarter = calendar_quarter1)
-  plots <- c(plots, htmltools::div(fig2))
+  plots <- c(plots, list(htmltools::div(fig2)))
   class <- c(class, "art-barchart")
 } 
-  
-do.call(htmltools::div, c(plots,
-                          style = "display: flex; flex-direction: column",
-                          class = paste(class, collapse = " ")))
+htmltools::div(plots,
+               style = "display: flex; flex-direction: column",
+               class = paste(class, collapse = " "))
 ```
 
 
@@ -332,7 +331,7 @@ if (identical(options$use_survey_aggregate, "false")) {
                          quarter = calendar_quarter1,
                          input_data = survey_prev1,
                          input_data_type = "survey")
-  plots <- c(plots, htmltools::div(fig1, style = "width: 50%"))
+  plots <- c(plots, list(htmltools::div(fig1, style = "width: 50%")))
   class <- c(class, "prevalence-scatter1")
   
   if (!is_empty(survey_prev2)) { 
@@ -343,14 +342,14 @@ if (identical(options$use_survey_aggregate, "false")) {
                              quarter = calendar_quarter1,
                              input_data = survey_prev2,
                              input_data_type = "survey")
-    plots <- c(htmltools::div(fig1B, style = "width: 50%;"), plots)
+    plots <- c(list(htmltools::div(fig1B, style = "width: 50%;")), plots)
     class <- c(class, "prevalence-scatter1B")
   }
   
-  prev_plots <- do.call(htmltools::div, c(
+  prev_plots <- htmltools::div(
     plots,
     style = "display: flex",
-    class = paste(class, collapse = " ")))
+    class = paste(class, collapse = " "))
 }
 
 
@@ -396,7 +395,7 @@ if (identical(options$use_survey_aggregate, "false")) {
                          ind = "prevalence",
                          quarter = calendar_quarter1)
   
-  plots <- c(plots, htmltools::div(fig1))
+  plots <- c(plots, list(htmltools::div(fig1)))
   class <- c(class, "prevalence-plotly")
 }
 
@@ -406,13 +405,13 @@ if (!is_empty(options$survey_art_coverage)) {
   fig2 <- age_bar_plotly(data,
                          ind = "art_coverage",
                          quarter = calendar_quarter1)
-  plots <- c(plots, htmltools::div(fig2))
+  plots <- c(plots, list(htmltools::div(fig2)))
   class <- c(class, "art-plotly")
 }
-  
-do.call(htmltools::div, c(plots,
-                          style = "display: flex; flex-direction: column",
-                          class = paste(class, collapse = " ")))
+
+htmltools::div(plots,
+               style = "display: flex; flex-direction: column",
+               class = paste(class, collapse = " "))
 ```
 
 ::: {#translate lang="en"}
