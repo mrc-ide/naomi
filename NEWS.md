@@ -1,6 +1,6 @@
 # naomi 2.8.14
 
-* Show comparison barchart ratios to 1 DP accuracy.
+* Show comparison barchart ratios to 1 decimal point accuracy.
 
 # naomi 2.8.13
 
