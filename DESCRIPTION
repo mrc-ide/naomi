@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.8.14
+Version: 2.8.15
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -58,6 +58,7 @@ Suggests:
     lubridate,
     mockery,
     mockr,
+    rvest,
     scales,
     testthat (>= 2.1.0),
     tidyverse,
