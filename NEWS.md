@@ -1,3 +1,7 @@
+# naomi 2.9.0
+
+* Add higher area levels to PEPFAR Datim ID mapping table to enable alternate PSNU level selection.
+
 # naomi 2.8.12
 
 * Handle case when multiple .shiny90 files found in .PJNZ file. Choose the file with the shortest file name. This will most likely be the file that Spectrum fitter has saved.
