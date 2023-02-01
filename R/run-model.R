@@ -311,6 +311,8 @@ naomi_prepare_data <- function(data, options) {
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   calendar_quarter_t3 <- options$calendar_quarter_t3
+  calendar_quarter_t4 <- options$calendar_quarter_t4
+  calendar_quarter_t5 <- options$calendar_quarter_t5
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
@@ -361,6 +363,8 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter1 = calendar_quarter_t1,
     calendar_quarter2 = calendar_quarter_t2,
     calendar_quarter3 = calendar_quarter_t3,
+    calendar_quarter4 = calendar_quarter_t4,
+    calendar_quarter5 = calendar_quarter_t5,
     spectrum_population_calibration = options$spectrum_population_calibration,
     output_aware_plhiv = as.logical(options$output_aware_plhiv),
     artattend = as.logical(options$artattend),

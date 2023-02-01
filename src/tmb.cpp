@@ -202,7 +202,6 @@ Type objective_function<Type>::operator() ()
 
   DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t1);
   DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t2);
-  DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t3);
 
   // ** Initialize nll **
   Type val(0);
@@ -849,6 +848,7 @@ Type objective_function<Type>::operator() ()
     DATA_SPARSE_MATRIX(Lproj_paed_t2t3);
     DATA_VECTOR(logit_alpha_t2t3_offset);
     DATA_VECTOR(log_lambda_t3_offset);
+    DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t3);
 
     vector<Type> mu_alpha_t3(mu_alpha_t2 + logit_alpha_t2t3_offset);
     vector<Type> alpha_t3(invlogit(mu_alpha_t3));
@@ -959,6 +959,152 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_tested_neg_t3_out);
     REPORT(anc_rho_t3_out);
     REPORT(anc_alpha_t3_out);
+
+
+    // Projection to time 4
+    // Only PLHIV, ART and infections calculated. No ANC or awareness indicators
+
+    DATA_VECTOR(population_t4);
+    DATA_SPARSE_MATRIX(Lproj_hivpop_t3t4);
+    DATA_SPARSE_MATRIX(Lproj_incid_t3t4);
+    DATA_SPARSE_MATRIX(Lproj_paed_t3t4);
+    DATA_VECTOR(logit_alpha_t3t4_offset);
+    DATA_VECTOR(log_lambda_t4_offset);
+    DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t4);    
+
+    vector<Type> mu_alpha_t4(mu_alpha_t3 + logit_alpha_t3t4_offset);
+    vector<Type> alpha_t4(invlogit(mu_alpha_t4));
+
+    vector<Type> infections_adult_t3t4(lambda_adult_t3 * (population_t3 - plhiv_t3));
+    vector<Type> plhiv_t4(Lproj_hivpop_t3t4 * plhiv_t3 + Lproj_incid_t3t4 * infections_adult_t3t4 + Lproj_paed_t3t4 * plhiv_t3);
+
+    vector<Type> rho_t4(plhiv_t4 / population_t4);
+    vector<Type> prop_art_t4(rho_t4 * alpha_t4);
+    vector<Type> artnum_t4(population_t4 * prop_art_t4);
+
+    vector<Type> plhiv_15to49_t4(X_15to49 * plhiv_t4);
+    vector<Type> rho_15to49_t4(plhiv_15to49_t4 / (X_15to49 * population_t4));
+    vector<Type> alpha_15to49_t4((X_15to49 * artnum_t4) / plhiv_15to49_t4);
+
+    vector<Type> mu_lambda_t4(X_lambda * beta_lambda + log_lambda_t4_offset +
+			      Z_x * vector<Type>(log(rho_15to49_t4) + log(1.0 - omega * alpha_15to49_t4)) +
+			      Z_lambda_x * ui_lambda_x);
+
+    vector<Type> lambda_adult_t4(exp(mu_lambda_t4));
+
+    // Add paediatric incidence
+    vector<Type> rho_15to49f_t4((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t4)) / (X_15to49f * population_t4));
+    vector<Type> lambda_paed_t4(X_paed_lambda_ratio_t4 * rho_15to49f_t4);
+    vector<Type> lambda_t4(lambda_adult_t4 + lambda_paed_t4);
+
+    vector<Type> infections_t4(lambda_t4 * (population_t4 - plhiv_t4));
+
+    vector<Type> prop_art_ij_t4((Xart_idx * prop_art_t4) * (Xart_gamma * gamma_art_t2));  // Note: using same ART attendance as T2
+    vector<Type> population_ij_t4(Xart_idx * population_t4);
+    vector<Type> artnum_ij_t4(population_ij_t4 * prop_art_ij_t4);
+
+    vector<Type> population_t4_out(A_out * population_t4);
+    vector<Type> plhiv_t4_out(A_out * plhiv_t4);
+    // vector<Type> rho_t4_out(plhiv_t4_out / population_t4_out);
+    // vector<Type> artnum_t4_out(A_out * artnum_t4);
+    // vector<Type> alpha_t4_out(artnum_t4_out / plhiv_t4_out);
+    // vector<Type> artattend_t4_out(A_out * (A_artattend_mf * artnum_ij_t4));
+    // vector<Type> artattend_ij_t4_out(A_art_reside_attend * artnum_ij_t4);
+    // vector<Type> untreated_plhiv_num_t4_out(plhiv_t4_out - artnum_t4_out);
+
+    // Calculate number of PLHIV who attend facility in district i; denominator for artattend
+    vector<Type> plhiv_attend_ij_t4((Xart_idx * plhiv_t4) * (Xart_gamma * gamma_art_t2));    // Note: using same ART attendance as T2
+    vector<Type> plhiv_attend_t4_out(A_out * (A_artattend_mf * plhiv_attend_ij_t4));
+    // vector<Type> untreated_plhiv_attend_t4_out(plhiv_attend_t4_out - artattend_t4_out);
+
+    vector<Type> infections_t4_out(A_out * infections_t4);
+    vector<Type> lambda_t4_out(infections_t4_out / (population_t4_out - plhiv_t4_out));
+
+    REPORT(population_t4_out);
+    // REPORT(rho_t4_out);
+    REPORT(plhiv_t4_out);
+    // REPORT(alpha_t4_out);
+    // REPORT(artnum_t4_out);
+    // REPORT(artattend_t4_out);
+    // REPORT(artattend_ij_t4_out);
+    // REPORT(untreated_plhiv_num_t4_out);
+    REPORT(plhiv_attend_t4_out);
+    // REPORT(untreated_plhiv_attend_t4_out);
+    REPORT(lambda_t4_out);
+    REPORT(infections_t4_out);
+
+    // Projection to time 5
+    // Only PLHIV, ART and infections calculated. No ANC or awareness indicators
+
+    DATA_VECTOR(population_t5);
+    DATA_SPARSE_MATRIX(Lproj_hivpop_t4t5);
+    DATA_SPARSE_MATRIX(Lproj_incid_t4t5);
+    DATA_SPARSE_MATRIX(Lproj_paed_t4t5);
+    DATA_VECTOR(logit_alpha_t4t5_offset);
+    DATA_VECTOR(log_lambda_t5_offset);
+    DATA_SPARSE_MATRIX(X_paed_lambda_ratio_t5);
+
+    vector<Type> mu_alpha_t5(mu_alpha_t4 + logit_alpha_t4t5_offset);
+    vector<Type> alpha_t5(invlogit(mu_alpha_t5));
+
+    vector<Type> infections_adult_t4t5(lambda_adult_t4 * (population_t4 - plhiv_t4));
+    vector<Type> plhiv_t5(Lproj_hivpop_t4t5 * plhiv_t4 + Lproj_incid_t4t5 * infections_adult_t4t5 + Lproj_paed_t4t5 * plhiv_t4);
+
+    vector<Type> rho_t5(plhiv_t5 / population_t5);
+    vector<Type> prop_art_t5(rho_t5 * alpha_t5);
+    vector<Type> artnum_t5(population_t5 * prop_art_t5);
+
+    vector<Type> plhiv_15to49_t5(X_15to49 * plhiv_t5);
+    vector<Type> rho_15to49_t5(plhiv_15to49_t5 / (X_15to49 * population_t5));
+    vector<Type> alpha_15to49_t5((X_15to49 * artnum_t5) / plhiv_15to49_t5);
+
+    vector<Type> mu_lambda_t5(X_lambda * beta_lambda + log_lambda_t5_offset +
+			      Z_x * vector<Type>(log(rho_15to49_t5) + log(1.0 - omega * alpha_15to49_t5)) +
+			      Z_lambda_x * ui_lambda_x);
+
+    vector<Type> lambda_adult_t5(exp(mu_lambda_t5));
+
+    // Add paediatric incidence
+    vector<Type> rho_15to49f_t5((X_15to49f * vector<Type>(invlogit(mu_rho) * population_t5)) / (X_15to49f * population_t5));
+    vector<Type> lambda_paed_t5(X_paed_lambda_ratio_t5 * rho_15to49f_t5);
+    vector<Type> lambda_t5(lambda_adult_t5 + lambda_paed_t5);
+
+    vector<Type> infections_t5(lambda_t5 * (population_t5 - plhiv_t5));
+
+    vector<Type> prop_art_ij_t5((Xart_idx * prop_art_t5) * (Xart_gamma * gamma_art_t2));  // Note: using same ART attendance as T2
+    vector<Type> population_ij_t5(Xart_idx * population_t5);
+    vector<Type> artnum_ij_t5(population_ij_t5 * prop_art_ij_t5);
+
+    vector<Type> population_t5_out(A_out * population_t5);
+    vector<Type> plhiv_t5_out(A_out * plhiv_t5);
+    // vector<Type> rho_t5_out(plhiv_t5_out / population_t5_out);
+    // vector<Type> artnum_t5_out(A_out * artnum_t5);
+    // vector<Type> alpha_t5_out(artnum_t5_out / plhiv_t5_out);
+    // vector<Type> artattend_t5_out(A_out * (A_artattend_mf * artnum_ij_t5));
+    // vector<Type> artattend_ij_t5_out(A_art_reside_attend * artnum_ij_t5);
+    // vector<Type> untreated_plhiv_num_t5_out(plhiv_t5_out - artnum_t5_out);
+
+    // Calculate number of PLHIV who attend facility in district i; denominator for artattend
+    vector<Type> plhiv_attend_ij_t5((Xart_idx * plhiv_t5) * (Xart_gamma * gamma_art_t2));    // Note: using same ART attendance as T2
+    vector<Type> plhiv_attend_t5_out(A_out * (A_artattend_mf * plhiv_attend_ij_t5));
+    // vector<Type> untreated_plhiv_attend_t5_out(plhiv_attend_t5_out - artattend_t5_out);
+
+
+    vector<Type> infections_t5_out(A_out * infections_t5);
+    // vector<Type> lambda_t5_out(infections_t5_out / (population_t5_out - plhiv_t5_out));
+
+    REPORT(population_t5_out);
+    // REPORT(rho_t5_out);
+    REPORT(plhiv_t5_out);
+    // REPORT(alpha_t5_out);
+    // REPORT(artnum_t5_out);
+    // REPORT(artattend_t5_out);
+    // REPORT(artattend_ij_t5_out);
+    // REPORT(untreated_plhiv_num_t5_out);
+    REPORT(plhiv_attend_t5_out);
+    // REPORT(untreated_plhiv_attend_t5_out);
+    // REPORT(lambda_t5_out);
+    REPORT(infections_t5_out);
   }
 
   if(report_likelihood){

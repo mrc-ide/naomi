@@ -1,5 +1,7 @@
 # naomi 2.9.0
 
+* Add projection to T4 and T5 for PEPFAR COP projections. Only outputs plhiv, plhiv_attend, and infections, and, for T4, incidence.
+
 * Add higher area levels to PEPFAR Datim ID mapping table to enable alternate PSNU level selection.
 
 # naomi 2.8.12

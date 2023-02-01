@@ -206,6 +206,11 @@ calibrate_outputs <- function(output,
   calibrate_one <- function(value_raw, proportion_raw, denominator_new,
                             target_val, calibrate_method) {
 
+    ## Don't calibrate for T4 and T5 where some outputs not produced
+    if(all(is.na(value_raw))) {
+      return(value_raw)
+    }
+
     if (calibrate_method == "logistic") {
       val <- calibrate_logistic_one(proportion_raw, denominator_new, target_val)
     } else if (calibrate_method == "proportional") {
@@ -259,8 +264,11 @@ calibrate_outputs <- function(output,
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::mutate(
-        plhiv_attend = calibrate_proportional_one(plhiv_attend,
-                                                 plhivattend_target)
+        plhiv_attend = calibrate_one(value_raw = plhiv_attend,
+                                     proportion_raw = NA,
+                                     denominator_new = NA,
+                                     target_val = plhivattend_target,
+                                     calibrate_method = "proportional")
       )
   }
   
@@ -306,9 +314,12 @@ calibrate_outputs <- function(output,
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(artattend_aggr_var) %>%
       dplyr::mutate(
-               art_current = calibrate_proportional_one(art_current,
-                                                        artattend_target)
-             )
+        art_current = calibrate_one(value_raw = art_current,
+                                    proportion_raw = NA,
+                                    denominator_new = NA,
+                                    target_val = artattend_target,
+                                    calibrate_method = "proportional")
+      )
   }
   valmean_wide$untreated_plhiv_num = valmean_wide$plhiv - valmean_wide$art_current_residents
   valmean_wide$untreated_plhiv_attend = valmean_wide$plhiv_attend - valmean_wide$art_current
@@ -451,10 +462,10 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter2, "plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter3, "plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter1, "untreated_plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter2, "untreated_plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),                  
+                  .expand(naomi_mf$calendar_quarter3, "untreated_plhiv_attend"),
                   .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_num"),
@@ -463,7 +474,15 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "aware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "infections"),
                   .expand(naomi_mf$calendar_quarter2, "infections"),
-                  .expand(naomi_mf$calendar_quarter3, "infections")
+                  .expand(naomi_mf$calendar_quarter3, "infections"),
+
+                  .expand(naomi_mf$calendar_quarter4, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter4, "plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter4, "infections"),
+
+                  .expand(naomi_mf$calendar_quarter5, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter5, "plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter5, "infections")
                 )
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")

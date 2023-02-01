@@ -108,6 +108,17 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
+  indicators_t4 <- c("population_t4_out" = "population",
+                     "plhiv_t4_out" = "plhiv",
+                     "plhiv_attend_t4_out" = "plhiv_attend",
+                     "infections_t4_out" = "infections",
+                     "lambda_t4_out" = "incidence")
+
+  indicators_t5 <- c("population_t5_out" = "population",
+                     "plhiv_t5_out" = "plhiv",
+                     "plhiv_attend_t5_out" = "plhiv_attend",
+                     "infections_t5_out" = "infections")
+  
   if (naomi_mf$output_aware_plhiv) {
 
     indicators_t1 <- c(indicators_t1,
@@ -127,10 +138,15 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
+  indicator_est_t4 <- Map(get_est, names(indicators_t4), indicators_t4, naomi_mf$calendar_quarter4)
+  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)  
+  
 
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
+  indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
+  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)  
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -186,7 +202,9 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t2,
                   indicator_anc_est_t2,
                   indicator_est_t3,
-                  indicator_anc_est_t3
+                  indicator_anc_est_t3,
+                  indicator_est_t4,
+                  indicator_est_t5                  
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -457,7 +475,9 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
   meta_period <- get_period_metadata(c(naomi_data$calendar_quarter1,
                                        naomi_data$calendar_quarter2,
-                                       naomi_data$calendar_quarter3))
+                                       naomi_data$calendar_quarter3,
+                                       naomi_data$calendar_quarter4,
+                                       naomi_data$calendar_quarter5))
   meta_age_group <- get_age_groups()
 
   ## # Fitting outputs
@@ -901,7 +921,9 @@ save_output <- function(filename, dir,
   meta_period <- get_period_metadata(
     c(naomi_output$fit$model_options$calendar_quarter_t1,
       naomi_output$fit$model_options$calendar_quarter_t2,
-      naomi_output$fit$model_options$calendar_quarter_t3))
+      naomi_output$fit$model_options$calendar_quarter_t3,
+      naomi_output$fit$model_options$calendar_quarter_t4,
+      naomi_output$fit$model_options$calendar_quarter_t5))
   naomi_output$meta_period <- meta_period
 
   if (with_labels) {
