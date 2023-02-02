@@ -180,8 +180,9 @@ read_datapack_psnu <- function() {
 
 datapack_aggregate_1to9 <- function(indicators) {
 
+  
   indicators_keep <- c("plhiv", "plhiv_attend", "untreated_plhiv_attend", "infections",
-                       "population", "art_current", "art_current_residents", "aware_plhiv_num")
+                       "population", "art_current", "art_current_residents", "aware_plhiv_num")  
 
   indicators1to9 <- indicators %>%
     dplyr::filter(
@@ -191,7 +192,18 @@ datapack_aggregate_1to9 <- function(indicators) {
     dplyr::count(area_id, sex, age_group = "Y001_009", calendar_quarter, indicator,
                  wt = mean, name = "mean") %>%
     tidyr::pivot_wider(id_cols = c(area_id, sex, age_group, calendar_quarter),
-                       names_from = indicator, values_from = mean) %>%
+                       names_from = indicator, values_from = mean)
+
+  required_cols <- c("plhiv", "population", "art_current_residents", "infections")
+  if ( any( !required_cols %in% names(indicators1to9) )) {
+    missing_cols <- setdiff(required_cols, names(indicators1to9))
+    warning("Required indicators not in output: ", paste(missing_cols, collapse = ", "))
+
+    indicators1to9[missing_cols] <- NA_real_
+  }
+  
+
+  indicators1to9 <- indicators1to9 %>%
     dplyr::mutate(
       prevalence = plhiv / population,
       art_coverage = art_current_residents / plhiv,
