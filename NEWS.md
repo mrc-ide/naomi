@@ -1,3 +1,4 @@
+
 # naomi 2.9.0
 
 * Add projection to T4 and T5 for PEPFAR COP projections. Only outputs plhiv, plhiv_attend, and infections, and, for T4, incidence.
@@ -7,6 +8,19 @@
 * Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2023.csv`.
 
 * Add higher area levels to PEPFAR Datim ID mapping table to enable alternate PSNU level selection.
+
+# naomi 2.8.15
+
+* Don't include prevalence plots in comparison report download when model fit with survey aggregate data (issue 36).
+
+# naomi 2.8.14
+
+* Show comparison barchart ratios to 1 decimal point accuracy.
+
+# naomi 2.8.13
+
+* Generate comparison report where no survey ART coverage is available
+* Consistent age/sex descriptions in comparison plot titles.
 
 # naomi 2.8.12
 

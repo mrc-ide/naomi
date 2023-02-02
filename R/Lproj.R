@@ -2,10 +2,10 @@
 #' spline interpolation. 80+ open-ended age group is extended to age 100.
 #'
 #' @noRd
-#' 
+#'
 graduate_mono <- function(y, x, xout) {
   xout <- c(xout, 2*xout[length(xout)] - xout[length(xout)-1])
-  diff(splinefun(x, c(0, cumsum(y)), method = "hyman")(xout))
+  diff(stats::splinefun(x, c(0, cumsum(y)), method = "hyman")(xout))
 }
 
 create_Lproj <- function(spec, mf_model,
@@ -16,8 +16,8 @@ create_Lproj <- function(spec, mf_model,
   ## Remove paediatric infections; these are not handled through the incidence, so should
   ## not be subtracted when calculating PLHIV survivorship.
   spec$infections[spec$age < 10] <- 0.0
-  
-  
+
+
   spec_quarter <- spec %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L),
                   year = NULL) %>%
@@ -51,7 +51,7 @@ create_Lproj <- function(spec, mf_model,
 
   ## Graduate infections over period quarters within each age
   infections_cohort <- spec_quarter %>%
-    dplyr::arrange(spectrum_region_code, sex, age_quarter, quarter_id) %>% 
+    dplyr::arrange(spectrum_region_code, sex, age_quarter, quarter_id) %>%
     dplyr::group_by(spectrum_region_code, sex, age_quarter) %>%
     dplyr::summarise(
       quarter_id_out = seq.int(quarter_id1 - 4, quarter_id2 + 3),
@@ -60,10 +60,10 @@ create_Lproj <- function(spec, mf_model,
     ) %>%
     dplyr::rename(quarter_id = quarter_id_out) %>%
     dplyr::mutate(cohort_quarter = quarter_id - age_quarter)
-    
-  
+
+
   ## Aggregate infections according to age group at T1, age group at T2 aand age at infection
-  infections_cohort <- infections_cohort %>%  
+  infections_cohort <- infections_cohort %>%
     dplyr::filter(quarter_id >= quarter_id1 - 4,
                   quarter_id < quarter_id2 + 4) %>%
     dplyr::mutate(age_group1 = age_quarter_to_age_group(quarter_id1 - cohort_quarter),
@@ -216,7 +216,7 @@ create_Lproj <- function(spec, mf_model,
                                        j = hivpopLproj$idx1,
                                        x = hivpopLproj$L_hivpop,
                                        dims = rep(nrow(mf_model), 2))
-  
+
   Lproj_netgrow <- Matrix::sparseMatrix(i = hivpopLproj$idx2,
                                         j = hivpopLproj$idx1,
                                         x = hivpopLproj$net_growth_ratio,
@@ -257,7 +257,7 @@ create_Lproj <- function(spec, mf_model,
       by = c("spectrum_region_code", "sex", "age_group2", "area_id")
     )
 
-  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1  
+  ## !! REMOVED FROM v2.6.0 release; target for v2.6.1
   ## incidLproj <- incidLproj %>%
   ##   dplyr::left_join(
   ##     net_growth_ratio_t1t2,

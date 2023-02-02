@@ -696,7 +696,7 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
 
 rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(mean))) {
 
-  z = matrix(rnorm(n * length(mean)), ncol = n)
+  z = matrix(stats::rnorm(n * length(mean)), ncol = n)
   L_inv = Matrix::Cholesky(prec)
   v <- mean + Matrix::solve(as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(as(L_inv, "Matrix")), z))
   as.matrix(Matrix::t(v))

@@ -1,5 +1,3 @@
-context("test-select-naomi-data")
-
 test_that("select ANC programme data returns expected rows", {
 
   # Test output created by anc_testing_prev_mf()

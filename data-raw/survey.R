@@ -14,7 +14,7 @@ devtools::load_all()
 #'    * Available from: https://phia-data.icap.columbia.edu/files#malawi
 #'    * Accessed: 1 March 2019
 #'    * Note: cluster coordinates not yet available. IMPUTED for demonstration.
-#' 
+#'
 
 
 #' ## Load datasets
@@ -49,7 +49,7 @@ geom <- geom_raw %>%
   left_join(surveys %>% select(iso3, survey_id, SurveyNum),
             by = c("SVYID" = "SurveyNum"))
 
-#' Surveys with multiple areas: 
+#' Surveys with multiple areas:
 #' * In general, choose the level that larger number of regions.
 #' * Note: this code will fail if two levels have same number of regions as n = max(n)
 #'   will return both.
@@ -149,7 +149,7 @@ dhs_region_level <- areas_survey_region %>%
     n_level2 = n_distinct(area_id2, na.rm = TRUE),
     n_level3 = n_distinct(area_id3, na.rm = TRUE),
     n_level4 = n_distinct(area_id4, na.rm = TRUE)
-   ) %>% 
+   ) %>%
   ungroup
 
 dhs_region_level %>%
@@ -185,7 +185,7 @@ dhs_regions %>%
 
 #' Extract clusters from household recode dataset
 
-hrd <- dhs_datasets(surveyIds = surveys$SurveyId, 
+hrd <- dhs_datasets(surveyIds = surveys$SurveyId,
                     fileType = "HR", fileFormat = "flat") %>%
   mutate(path = get_datasets(.) %>% unlist) %>%
   left_join(surveys %>% select(SurveyId, survey_id)) %>%
@@ -242,7 +242,7 @@ ge <- lapply(ged$path, readRDS) %>%
       SurveyType = ged$SurveyType,
       CountryName = ged$CountryName) %>%
   Map(replace, ., lapply(., `==`, "NULL"), NA) %>%
-  lapply(type.convert) %>%
+  lapply(utils::type.convert) %>%
   bind_rows() %>%
   st_as_sf(coords = c("LONGNUM", "LATNUM"), remove = FALSE)
 
@@ -285,11 +285,11 @@ clusters <- clusters %>%
   arrange(distance) %>%
   group_by(survey_id, cluster_id) %>%
   filter(row_number() == 1) %>%
-  ungroup %>% 
+  ungroup %>%
   transmute(survey_id,
             cluster_id = cluster_id,
             res_type,
-            survey_region_id, 
+            survey_region_id,
             longitude,
             latitude,
             geoloc_area_id = area_id,
@@ -381,9 +381,9 @@ extract_dhs <- function(SurveyId){
   }
 
   if(SurveyId %in% ard$SurveyId) {
-    
+
     ar <- ard %>% filter(SurveyId == !!SurveyId) %>% .$path %>% readRDS
-    
+
     dat <- dat %>%
     left_join(
       ar %>%
@@ -398,7 +398,7 @@ extract_dhs <- function(SurveyId){
       by = c("cluster_id", "household", "line")
     )
   }
-  
+
   dat$SurveyId <- SurveyId
 
   dat
@@ -423,7 +423,7 @@ dhs_meta <- surveys %>%
             male_age_max = as.integer(MaxAgeMen),
             report_ref = NA_character_,
             dataset_ref = NA_character_,
-            notes = NA_character_) 
+            notes = NA_character_)
 
 dhs_regions <- dhs_regions %>%
   ungroup()
@@ -481,7 +481,7 @@ mphia_zone_labels <- c("Northern" = 1L,
 #'
 #' Note: In MoH classifications, Mulanje is part of the South-East Zone.
 #'       In MPHIA, it is allocated to South-West Zone.
-#' 
+#'
 
 demo_area_survey_region <- areas_wide %>%
   mutate(
@@ -521,7 +521,7 @@ phia_regions <- demo_area_survey_region %>%
 #'
 #' Note: cluster geolocations are not available yet. Allocate clusters to
 #'       districts randomly proportional to district population size.
-#' 
+#'
 
 
 #' PHIA survey cluster ids
@@ -554,7 +554,7 @@ area_sample <- demo_population_agesex %>%
   summarise(area_ids = list(area_id),
             area_pops = list(pop15to64),
             .groups = "drop")
-  
+
 #' Sample area_id for each cluster proportional to population size
 sample2 <- function(x, size, replace = FALSE, prob = NULL) {
   x[sample.int(length(x), size, replace, prob)]
@@ -569,7 +569,7 @@ phia_clusters <- ge %>%
     area_pops = NULL
   ) %>%
   ungroup
-  
+
 
 
 #' Check to confirm area_id is in correct zone
@@ -708,7 +708,7 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_biomarker,
   demo_area_hierarchy)
 
-  
+
 #' ## Save datasets
 #'
 #' Survey data agreements stipulate not to reproduce individual survey data.
@@ -734,7 +734,7 @@ usethis::use_data(
 
 
 dir.create(here("inst/extdata/survey/"))
-           
+
 write_csv(demo_survey_meta, here("inst/extdata/survey/demo_survey_meta.csv"))
 write_csv(demo_survey_regions, here("inst/extdata/survey/demo_survey_regions.csv"))
 write_csv(demo_survey_clusters, here("inst/extdata/survey/demo_survey_clusters.csv"))

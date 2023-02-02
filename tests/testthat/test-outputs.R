@@ -1,5 +1,3 @@
-context("model outputs")
-
 test_that("traidure hooks work in model outputs", {
   out_en <- output_package(a_fit_sample, a_naomi_data)
   expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "December 2018", "June 2019"))
@@ -41,7 +39,7 @@ test_that("write and read hintr outputs returns same thing", {
 
   ## The sfc column creates an error for expect_equal(). Check the type
   ## then drop the geometry column.
-  expect_is(read2$meta_area, "sf")
+  expect_s3_class(read2$meta_area, "sf")
   read1$meta_area <- sf::st_drop_geometry(read1$meta_area)
   read2$meta_area <- sf::st_drop_geometry(read2$meta_area)
 
@@ -138,8 +136,8 @@ test_that("subset_output_package() saves expected output package", {
   sub_keep_file <- tempfile(fileext = ".zip")
   out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
 
-  sub_keep_return <- expect_warning(
-    subset_output_package(out$path,
+  expect_warning(
+    sub_keep_return <- subset_output_package(out$path,
                           sub_keep_file,
                           area_id = area_id_sub,
                           sex = sex_sub,
@@ -153,7 +151,7 @@ test_that("subset_output_package() saves expected output package", {
 
   expect_equal(normalizePath(sub_keep_return),
                normalizePath(sub_keep_file))
-  expect_is(sub_keep_out, "naomi_output")
+  expect_s3_class(sub_keep_out, "naomi_output")
   expect_setequal(area_id_sub, sub_keep_out$indicators$area_id)
   expect_setequal(sex_sub, sub_keep_out$indicators$sex)
   expect_setequal(age_group_sub, sub_keep_out$indicators$age_group)
@@ -295,7 +293,7 @@ test_that("navigator checklist returns expected results", {
 
   tmp_checklist <- tempfile(fileext = ".csv")
   write_navigator_checklist(model_output$output_package, tmp_checklist)
-  checklist <- read.csv(tmp_checklist)
+  checklist <- utils::read.csv(tmp_checklist)
 
   expect_equal(unname(expected_checklist[checklist$NaomiCheckPermPrimKey]),
                checklist$TrueFalse)
@@ -324,7 +322,7 @@ test_that("navigator checklist returns expected results", {
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_true(all(checklist_adj$TrueFalse))
 })
@@ -360,7 +358,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   tmp_checklist_no_data_opts<- tempfile(fileext = ".csv")
   write_navigator_checklist(no_data_opts_output, tmp_checklist_no_data_opts)
-  checklist_no_data_opts <- read.csv(tmp_checklist_no_data_opts)
+  checklist_no_data_opts <- utils::read.csv(tmp_checklist_no_data_opts)
 
   expect_equal(unname(expect_chklst_no_data_opts[checklist_no_data_opts$NaomiCheckPermPrimKey]),
                checklist_no_data_opts$TrueFalse)
@@ -394,7 +392,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   tmp_checklist_no_model_opts<- tempfile(fileext = ".csv")
   write_navigator_checklist(no_model_opts_output, tmp_checklist_no_model_opts)
-  checklist_no_model_opts <- read.csv(tmp_checklist_no_model_opts)
+  checklist_no_model_opts <- utils::read.csv(tmp_checklist_no_model_opts)
 
   expect_equal(unname(expect_chklst_no_model_opts[checklist_no_model_opts$NaomiCheckPermPrimKey]),
                checklist_no_model_opts$TrueFalse)
@@ -429,7 +427,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   tmp_checklist_no_calib_opts<- tempfile(fileext = ".csv")
   write_navigator_checklist(no_calib_opts_output, tmp_checklist_no_calib_opts)
-  checklist_no_calib_opts <- read.csv(tmp_checklist_no_calib_opts)
+  checklist_no_calib_opts <- utils::read.csv(tmp_checklist_no_calib_opts)
 
   expect_equal(unname(expect_chklst_no_calib_opts[checklist_no_calib_opts$NaomiCheckPermPrimKey]),
                checklist_no_calib_opts$TrueFalse)
@@ -445,7 +443,7 @@ test_that("navigator checklist results change with different calibration options
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"])
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])  ## Remains TRUE
@@ -456,7 +454,7 @@ test_that("navigator checklist results change with different calibration options
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_PLHIV"]) ## Remains FALSE
   expect_false(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_ART"])
@@ -468,7 +466,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
   out_uncalibrated <- read_hintr_output(a_hintr_output$model_output_path)
   tmp_checklist <- tempfile(fileext = ".csv")
   write_navigator_checklist(out_uncalibrated$output_package, tmp_checklist)
-  checklist <- read.csv(tmp_checklist)
+  checklist <- utils::read.csv(tmp_checklist)
 
   expected_checklist <- c("ART_is_Spectrum"            = FALSE,
                           "ANC_is_Spectrum"            = FALSE,
@@ -501,7 +499,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
 
   tmp_checklist_adj <- tempfile(fileext = ".csv")
   write_navigator_checklist(adj_output, tmp_checklist_adj)
-  checklist_adj <- read.csv(tmp_checklist_adj)
+  checklist_adj <- utils::read.csv(tmp_checklist_adj)
 
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])
 })
@@ -557,9 +555,8 @@ test_that("output file README generated in output zip", {
   t <- file.path(tmpd, "README.md")
   expect_true(file.size(t) > 1500)
   content <- brio::readLines(t)
-  expect_true(any(grepl("├── art_attendance.csv", content)))
+  expect_true(any(grepl("art_attendance.csv", content)))
   expect_true(any(grepl("The following files have been generated as part of a Naomi model fit:" , content)))
-
 })
 
 test_that("can generate comparison report from a qs file", {
@@ -602,4 +599,49 @@ test_that("can generate comparison report with only 1 survey chosen", {
   expect_true(any(grepl("DEMO2016PHIA", content)))
   expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
+})
+
+test_that("can generate comparison report without survey ART coverage", {
+  ## Create a model output with no option chosen for survey_art_coverage
+  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
+  options <- yaml::read_yaml(text = output$info$options.yml)
+  options$survey_art_coverage <- NULL
+  output$info$options.yml <- yaml::as.yaml(options)
+  out <- tempfile(fileext = ".qs")
+  model_output <- qs::qsave(output, preset = "fast", out)
+
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, out, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  html <- rvest::read_html(t, encoding = "UTF-8")
+  expect_length(rvest::html_element(html, ".prevalence-barchart"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-plotly"), 2)
+  expect_length(rvest::html_element(html, ".art-barchart"), 0)
+  expect_length(rvest::html_element(html, ".art-scatter"), 0)
+  expect_length(rvest::html_element(html, ".art-plotly"), 0)
+})
+
+test_that("prevalence survey plots not drawn when using aggregate survey", {
+  ## This is to address Guinea-Bissau 2022/2023 issue #36
+  ## Create a model output with only 1 option chosen for survey_prevalence
+  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
+  options <- yaml::read_yaml(text = output$info$options.yml)
+  options$use_survey_aggregate <- "true"
+  output$info$options.yml <- yaml::as.yaml(options)
+  out <- tempfile(fileext = ".qs")
+  model_output <- qs::qsave(output, preset = "fast", out)
+
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, out, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+  html <- rvest::read_html(t, encoding = "UTF-8")
+  expect_length(rvest::html_element(html, ".prevalence-barchart"), 0)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1"), 0)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 0)
+  expect_length(rvest::html_element(html, ".prevalence-plotly"), 0)
+  expect_length(rvest::html_element(html, ".art-barchart"), 2)
+  expect_length(rvest::html_element(html, ".art-scatter"), 2)
+  expect_length(rvest::html_element(html, ".art-plotly"), 2)
 })

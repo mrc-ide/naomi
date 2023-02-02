@@ -12,7 +12,7 @@ devtools::load_all()
 #'    * Available from: https://phia-data.icap.columbia.edu/files#malawi
 #'    * Accessed: 1 March 2019
 #'    * Note: cluster coordinates not yet available. IMPUTED for demonstration.
-#' 
+#'
 
 
 #' ## Load datasets
@@ -101,7 +101,7 @@ mdhsa <- mdhsd %>%
   ) %>%
   ungroup()
 
-  
+
 
 stopifnot(sum(mdhsa$n_pos) == sum(mdhs$n_pos))
 stopifnot(sum(mdhsa$n_neg) == sum(mdhs$n_neg))
@@ -129,7 +129,7 @@ mdhs_dat <- mdhsa %>%
   ) %>%
   mutate(
     area_name = recode(district, "Nkhatabay" = "Nkhata Bay", "Nkhota kota" = "Nkhotakota")
-  ) %>% 
+  ) %>%
   left_join(
     demo_areas %>%
     filter(area_level == 4) %>%
@@ -161,13 +161,13 @@ mdhs_dat <- mdhs_dat %>%
     upper = if_else(is.nan(upper), NA_real_, upper),
     lest_se = NULL
   )
-    
+
 #' ## MPHIA 2015-16
 #'
 #' ### Load datasets
 #'
 #' Datasets downloaded from https://phia-data.icap.columbia.edu/files#malawi
-#' 
+#'
 
 mphia_path <- "~/Data/household surveys/PHIA/datasets/Malawi/datasets/"
 
@@ -205,7 +205,7 @@ mphia_zone_labels <- c("Northern" = 1L,
 #'
 #' Note: In MoH classifications, Mulanje is part of the South-East Zone.
 #'       In MPHIA, it is allocated to South-West Zone.
-#' 
+#'
 
 demo_area_survey_region <- areas_wide %>%
   mutate(
@@ -245,7 +245,7 @@ phia_regions <- demo_area_survey_region %>%
 #'
 #' Note: cluster geolocations are not available yet. Allocate clusters to
 #'       districts randomly proportional to district population size.
-#' 
+#'
 
 
 #' PHIA survey cluster ids
@@ -278,7 +278,7 @@ area_sample <- demo_population_agesex %>%
   summarise(area_ids = list(area_id),
             area_pops = list(pop15to64),
             .groups = "drop")
-  
+
 #' Sample area_id for each cluster proportional to population size
 sample2 <- function(x, size, replace = FALSE, prob = NULL) {
   x[sample.int(length(x), size, replace, prob)]
@@ -293,7 +293,7 @@ phia_clusters <- ge %>%
     area_pops = NULL
   ) %>%
   ungroup
-  
+
 
 
 #' Check to confirm area_id is in correct zone
@@ -416,7 +416,7 @@ phia_hiv_indicators <- calc_survey_hiv_indicators(
   phia_biomarker,
   demo_area_hierarchy)
 
-  
+
 #' ## Save datasets
 #'
 

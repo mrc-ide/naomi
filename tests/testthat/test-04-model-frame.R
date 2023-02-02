@@ -1,5 +1,3 @@
-context("test-model-frames")
-
 test_that("get_age_group_out() returns expected groups", {
   expect_setequal(get_age_group_out("Y015_049"), "Y015_049")
   expect_setequal(get_age_group_out(c("Y015_049", "Y050_064", "Y065_999")),
@@ -279,7 +277,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
 
   areas_zone <- read_area_merged(system_file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson"))
   pop_zone <- read_population(system_file("extdata/demo-subnational-pjnz/demo_population_zone.csv"))
-  
+
   ## Test files created with Spectrum v5.87 -- mid-year population projection
   pjnz_old <- system_file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip")
   spec_old  <- extract_pjnz_naomi(pjnz_old)
@@ -305,7 +303,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
                sum(dplyr::filter(mf_old$spectrum_calibration, calendar_quarter == "CY2019Q2")$plhiv_spectrum))
   expect_equal(sum(dplyr::filter(spec_old, year == 2019)$artpop),
                sum(dplyr::filter(mf_old$spectrum_calibration, calendar_quarter == "CY2019Q2")$art_current_spectrum))
-  
+
   ## Test files created with Spectrum v6.2 Beta 25 -- calendar year population projection
   pjnz_new <- system_file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz_v6.2.zip")
   spec_new  <- extract_pjnz_naomi(pjnz_new)
@@ -333,7 +331,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
   ## Note: For Q4 ART pop -- should match to Dec 31 ART input
   expect_equal(sum(dplyr::filter(spec_new, year == 2018)$artpop_dec31),
                sum(dplyr::filter(mf_new$spectrum_calibration, calendar_quarter == "CY2018Q4")$art_current_spectrum))
-  
+
   ## Test that calibrates to internal ART population if artpop_dec31 not specified
 
   spec_alt  <- spec_new

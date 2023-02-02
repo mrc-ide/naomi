@@ -1,5 +1,3 @@
-context("info")
-
 test_that("can get naomi info", {
   info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
   expect_equal(names(info), c("inputs.csv", "options.yml", "packages.csv"))

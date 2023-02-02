@@ -360,8 +360,12 @@ bar_plotly <- function(df,
   } else if (ind == "art_coverage") {
     title <- "ART coverage"
   }
-  plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
-    output_source, "<b>")
+
+  age_groups <- get_age_groups()
+  age_label <- age_groups[age_groups$age_group == unique(plot_data$age_group), ]$age_group_label
+
+  plot_title <- paste0("<b>", title, ": ", "Household survey vs. ",
+    output_source," (", sex_disag, ",", age_label,  ") </b>")
 
 
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
@@ -460,8 +464,8 @@ age_bar_plotly <- function(df,
   } else if (ind == "art_coverage") {
     title <- "ART coverage"
   }
-  plot_title <- paste("<b>", title, ": ", "Household survey vs. ",
-    output_source, "<b>")
+  plot_title <- paste0("<b>", title, ": ", "Household survey vs. ",
+    output_source, "</b>")
 
   mrg <- list(l = 50, r = 50, b = 50, t = 120, pad = 20)
 
@@ -588,14 +592,9 @@ scatter_plotly <- function(df,
 
   age_groups <- get_age_groups()
   age_label <- age_groups[age_groups$age_group == unique(plot_data$age_group), ]$age_group_label
-  if (sex_disag == "both") {
-    sex_label <- "all"
-  } else {
-    sex_label <- sex_disag
-  }
 
   plot_title <- paste("<b>", title, ": ", input_data, " vs. ", output_source,
-                      "</br><sub> (", sex_label, ",", age_label, ")</sub><br>")
+                      "</br><sub> (", sex_disag, ",", age_label, ")</sub></b>")
 
   if (grepl("anc", ind)) {
     output_source <- paste0(output_source, " females 15-49")

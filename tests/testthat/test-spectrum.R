@@ -168,15 +168,18 @@ test_that("get_pjnz_shiny90_filename() handles multiple .shiny90 files", {
   pjnz_test <- system_file("extdata/demo_mwi2019_v6.21-shiny90.PJNZ")
 
   tmpd <- tempfile()
+  dir.create(tmpd)
   shiny90file <- get_pjnz_shiny90_filename(pjnz_test)
-  unzip(pjnz_test, shiny90file, exdir = tmpd)
+  utils::unzip(pjnz_test, shiny90file, exdir = tmpd)
 
   shiny90dup <- "Malawi.zip duplicated.shiny90"
   file.copy(file.path(tmpd, shiny90file), file.path(tmpd, shiny90dup))
-  zip(pjnz_test, file.path(tmpd, shiny90dup), flags = "-j")
+  shiny90dup_zip <- tempfile(fileext = ".PJNZ")
+  file.copy(pjnz_test, shiny90dup_zip)
+  zip(shiny90dup_zip, file.path(tmpd, shiny90dup), flags = "-j")
 
   func <- function() {
-    list(shiny90new = get_pjnz_shiny90_filename(pjnz_test))
+    list(shiny90new = get_pjnz_shiny90_filename(shiny90dup_zip))
   }
   w <- handle_naomi_warnings(func())
 

@@ -128,7 +128,7 @@ run_model <- function(data, options, validate) {
 build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
   out <- list(plot_data_path = plot_data_path,
               model_output_path = model_output_path,
-              version = packageVersion("naomi"),
+              version = utils::packageVersion("naomi"),
               warnings = warnings)
   class(out) <- "hintr_output"
   out
@@ -414,115 +414,123 @@ new_progress <- function() {
 }
 
 Progress <- R6::R6Class("Progress", list(
-                                      cloneable = FALSE,
-                                      progress = NULL,
-                                      iteration = 0,
-                                      start_time = NULL,
-                                      elapsed = as.difftime(0, units = "secs"),
+  cloneable = FALSE,
+  progress = NULL,
+  iteration = 0,
+  start_time = NULL,
+  elapsed = as.difftime(0, units = "secs"),
 
-                                      initialize = function() {
-                                        self$progress <-
-                                          list(
-                                            prepare_inputs = list(
-                                              started = FALSE,
-                                              complete = FALSE,
-                                              name = t_("PROGRESS_PREPARE_INPUTS")
-                                            ),
-                                            fit_model = list(
-                                              started = FALSE,
-                                              complete = FALSE,
-                                              name = t_("PROGRESS_FIT_MODEL"),
-                                              helpText = NULL
-                                            ),
-                                            uncertainty = list(
-                                              started = FALSE,
-                                              complete = FALSE,
-                                              name = t_("PROGRESS_UNCERTAINTY")
-                                            ),
-                                            prepare_outputs = list(
-                                              started = FALSE,
-                                              complete = FALSE,
-                                              name = t_("PROGRESS_PREPARE_OUTPUTS")
-                                            )
-                                          )
-                                      },
+  initialize = function() {
+    self$progress <-
+      list(
+        prepare_inputs = list(
+          started = FALSE,
+          complete = FALSE,
+          name = t_("PROGRESS_PREPARE_INPUTS")
+        ),
+        fit_model = list(
+          started = FALSE,
+          complete = FALSE,
+          name = t_("PROGRESS_FIT_MODEL"),
+          helpText = NULL
+        ),
+        uncertainty = list(
+          started = FALSE,
+          complete = FALSE,
+          name = t_("PROGRESS_UNCERTAINTY")
+        ),
+        prepare_outputs = list(
+          started = FALSE,
+          complete = FALSE,
+          name = t_("PROGRESS_PREPARE_OUTPUTS")
+        )
+      )
+  },
 
-                                      start = function(step_name) {
-                                        self$step_exists(step_name)
-                                        self$progress[[step_name]]$started <- TRUE
-                                      },
+  start = function(step_name) {
+    self$step_exists(step_name)
+    self$progress[[step_name]]$started <- TRUE
+  },
 
-                                      complete = function(step_name) {
-                                        self$step_exists(step_name)
-                                        self$progress[[step_name]]$complete <- TRUE
-                                      },
+  complete = function(step_name) {
+    self$step_exists(step_name)
+    self$progress[[step_name]]$complete <- TRUE
+  },
 
-                                      step_exists = function(step_name) {
-                                        self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
-                                      },
+  step_exists = function(step_name) {
+    self$progress[[step_name]] %||% stop(sprintf("Invalid step '%s'", step_name))
+  },
 
-                                      print = function() {
-                                        signalCondition(structure(self$progress,
-                                                                  class = c("progress", "condition")))
-                                      },
+  print = function() {
+    signalCondition(structure(self$progress,
+                              class = c("progress", "condition")))
+  },
 
-                                      set_start_time = function() {
-                                        self$start_time <- Sys.time()
-                                      },
+  set_start_time = function() {
+    self$start_time <- self$time_now()
+  },
 
-                                      iterate_fit = function() {
-                                        if (is.null(self$start_time)) {
-                                          self$set_start_time()
-                                        }
-                                        self$iteration <- self$iteration + 1
-                                        self$elapsed <- Sys.time() - self$start_time
-                                        self$progress$fit_model$helpText <- t_("PROGRESS_FIT_MODEL_HELP_TEXT",
-                                                                               list(iteration = self$iteration,
-                                                                                    elapsed = prettyunits::pretty_dt(self$elapsed)))
-                                        self$print()
-                                      },
+  iterate_fit = function() {
+    if (is.null(self$start_time)) {
+      self$set_start_time()
+    }
+    self$iteration <- self$iteration + 1
+    self$elapsed <- self$time_now() - self$start_time
+    self$progress$fit_model$helpText <- t_("PROGRESS_FIT_MODEL_HELP_TEXT",
+                                           list(iteration = self$iteration,
+                                                elapsed = prettyunits::pretty_dt(self$elapsed)))
+    self$print()
+  },
 
-                                      finalise_fit = function() {
-                                        self$progress$fit_model$helpText <- t_(
-                                          "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE",
-                                          list(iteration = self$iteration,
-                                               elapsed = prettyunits::pretty_dt(self$elapsed)))
-                                      }
-                                    ))
+  finalise_fit = function() {
+    self$progress$fit_model$helpText <- t_(
+      "PROGRESS_FIT_MODEL_HELP_TEXT_COMPLETE",
+      list(iteration = self$iteration,
+           elapsed = prettyunits::pretty_dt(self$elapsed)))
+  },
+
+  time_now = function() {
+    Sys.time()
+  }
+))
 
 new_simple_progress <- function() {
   SimpleProgress$new()
 }
 
 SimpleProgress <- R6::R6Class("SimpleProgress", list(
-                                                  cloneable = FALSE,
-                                                  progress = "",
-                                                  start_time = NULL,
-                                                  elapsed = NULL,
+  cloneable = FALSE,
+  progress = "",
+  start_time = NULL,
+  elapsed = NULL,
 
-                                                  initialize = function() {
-                                                    self$set_start_time()
-                                                  },
+  initialize = function() {
+    self$set_start_time()
+  },
 
-                                                  print = function() {
-                                                    signalCondition(structure(list(message = self$progress),
-                                                                              class = c("progress", "condition")))
-                                                  },
+  print = function() {
+    signalCondition(structure(list(message = self$progress),
+                              class = c("progress", "condition")))
+  },
 
-                                                  set_start_time = function() {
-                                                    self$start_time <- Sys.time()
-                                                  },
+  set_start_time = function() {
+    self$start_time <- self$time_now()
+  },
 
-                                                  update_progress = function(message_key) {
-                                                    if (is.null(self$start_time)) {
-                                                      self$set_start_time()
-                                                    }
-                                                    self$elapsed <- Sys.time() - self$start_time
-                                                    self$progress <- t_(message_key,
-                                                                        list(elapsed = prettyunits::pretty_dt(self$elapsed)))
-                                                    self$print()
-                                                  }
-                                                ))
+  update_progress = function(message_key) {
+    if (is.null(self$start_time)) {
+      self$set_start_time()
+    }
+    self$elapsed <- self$time_now() - self$start_time
+    self$progress <- t_(message_key,
+                        list(elapsed = prettyunits::pretty_dt(self$elapsed)))
+    self$print()
+  },
+
+  time_now = function() {
+    Sys.time()
+  }
+))
 
 naomi_info_input <- function(data) {
   get_col_from_list <- function(data, what) {
@@ -546,7 +554,7 @@ naomi_info_input <- function(data) {
 }
 
 naomi_info_packages <- function() {
-  info <- sessionInfo()
+  info <- utils::sessionInfo()
 
   versions <- function(x, type) {
     ret <- t(vapply(x, function(x) c(x$Package, x$Version, type), character(3),
@@ -724,3 +732,4 @@ build_description <- function(type_text, options) {
                     options[["calendar_quarter_t3"]]))
   paste0(c(type_text, "", opt_text), collapse = "\n")
 }
+

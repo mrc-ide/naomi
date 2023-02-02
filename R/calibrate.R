@@ -190,7 +190,7 @@ calibrate_outputs <- function(output,
     logit_p_fine <- qlogis(proportion_raw)
     adjust_numerator <- function(theta, l, d) plogis(l + theta) * d
     optfn <- function(theta){ (sum(adjust_numerator(theta, logit_p_fine, denominator_new)) - target_val)^2 }
-    opt <- optimise(optfn, c(-10, 10), tol = .Machine$double.eps^0.5)
+    opt <- stats::optimise(optfn, c(-10, 10), tol = .Machine$double.eps^0.5)
 
     adjust_numerator(opt$minimum, logit_p_fine, denominator_new)
   }
@@ -246,21 +246,21 @@ calibrate_outputs <- function(output,
                                      plhiv_target,
                                      calibrate_method)
              )
-    
+
     ## Calibrate PLHIV attending
     ## Note: aggregate based on calibrated values for valmean_wide$plhiv
-    
+
     plhivattend_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                                   "sex_age_group")
-    
+
     plhivattend_target <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::summarise(plhivattend_target = sum(plhiv),
                        .groups = "drop")
-    
+
     valmean_wide <- valmean_wide %>%
       dplyr::left_join(plhivattend_target, by = plhivattend_aggr_var)
-    
+
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::mutate(
@@ -271,14 +271,14 @@ calibrate_outputs <- function(output,
                                      calibrate_method = "proportional")
       )
   }
-  
-  
+
+
   ## Calibrate ART number
   artnum_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                            spectrum_artnum_calibration_strat)
-  
+
   if(length(artnum_aggr_var) > 0L) {
-    
+
     artnum_target <- spectrum_calibration %>%
       dplyr::group_by_at(artnum_aggr_var) %>%
       dplyr::summarise(artnum_target = sum(art_current_spectrum),

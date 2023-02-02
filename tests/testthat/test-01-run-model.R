@@ -1,5 +1,3 @@
-context("run-model")
-
 test_that("model can be run", {
   output_path <- tempfile(fileext = ".qs")
   model_run <- hintr_run_model(a_hintr_data,
@@ -86,14 +84,13 @@ test_that("model fit without survey ART and survey recency data", {
 
 test_that("progress messages are printed", {
   skip_on_covr()
-  mock_new_progress <- mockery::mock(MockProgress$new())
-
   output_path <- tempfile(fileext = ".qs")
-  with_mock("naomi:::new_progress" = mock_new_progress,
-            "naomi::fit_tmb" = fit, "naomi::sample_tmb" = sample, {
-    model_run <- naomi_evaluate_promise(
-      hintr_run_model(a_hintr_data, a_hintr_options, output_path))
-  })
+  mockery::stub(hintr_run_model, "fit_tmb", fit, depth = 2)
+  mockery::stub(hintr_run_model, "sample_tmb", sample, depth = 2)
+  mockery::stub(hintr_run_model, "new_progress", MockProgress$new(), depth = 2)
+  model_run <- naomi_evaluate_promise(
+    hintr_run_model(a_hintr_data, a_hintr_options, output_path))
+
   ## If using mock fit here there will only be 5, if using real
   ## fit_tmb there will be many more
   expect_true(length(model_run$progress) >= 5)
@@ -116,13 +113,13 @@ test_that("progress messages are printed", {
   expect_true(second_message[[2]]$started)
   expect_false(second_message[[2]]$complete)
 
-  skip_if(!all.equal(fit, fit_tmb),
+  skip_if(!all.equal(fit, fit_tmb, check.environment = FALSE),
           "Using mock fit result, skipping progress tests")
   ## Help text gets printed at some point
   model_help <- lapply(model_run$progress, function(msg) {
     msg$fit_model$helpText
   })
-  have_iteration <- grepl("Iteration \\d+ - [\\d.m\\s]+s elapsed", model_help,
+  have_iteration <- grepl("Iteration \\d+ - [\\d.m\\s]+[sm] elapsed", model_help,
                           perl = TRUE)
   expect_true(any(have_iteration))
   expect_false(all(have_iteration))
@@ -133,7 +130,7 @@ test_that("progress messages are printed", {
   ## Final messages has completed message
   final_message <- model_run$progress[[length(model_run$progress)]]
   expect_match(final_message$fit_model$helpText,
-               "\\d+ iterations in [\\d.m\\s]+s",
+               "\\d+ iterations in [\\d.m\\s]+[sm]",
                perl = TRUE)
 })
 
@@ -204,7 +201,10 @@ test_that("exceeding max_iterations raises convergence warning", {
   options$max_iterations <- 5
 
   output_path <- tempfile(fileext = ".qs")
-  out <- hintr_run_model(data, options, output_path)
+  expect_warning(
+    out <- hintr_run_model(data, options, output_path),
+    "convergence error: iteration limit reached without convergence (10)",
+    fixed = TRUE)
 
   expect_length(out$warnings, 4)
 
@@ -409,35 +409,29 @@ test_that("useful error returned when model output can't be calibrated", {
 })
 
 test_that("progress can report on model fit", {
-  ## Mock some times for consistent testing of elapsed time, return
-  ## now, in 30s time, in 2 mins time, in 1h 2 mins time and in 1h 5m 8s time
-  now <- round.POSIXt(Sys.time(), units = "mins")
-  mock_sys_time <- mockery::mock(now, now + 30, now + (2 * 60), now + (62 * 60),
-                                 now + (65 * 60) + 8)
-  with_mock("Sys.time" = mock_sys_time, {
-    progress <- MockProgress$new()
-    expect_null(progress$progress$fit_model$helpText)
-    messages1 <- naomi_evaluate_promise(
-      progress$iterate_fit()
-    )
-    messages2 <- naomi_evaluate_promise(
-      progress$iterate_fit()
-    )
-    messages3 <- naomi_evaluate_promise(
-      progress$iterate_fit()
-    )
-    reset <- naomi_set_language("fr")
-    on.exit(reset())
-    messages4 <- naomi_evaluate_promise(
-      progress$iterate_fit()
-    )
-    messages5 <- naomi_evaluate_promise({
-      progress$finalise_fit()
-      progress$complete("fit_model")
-      progress$print()
-    })
+  progress <- MockProgress$new()
+  expect_null(progress$progress$fit_model$helpText)
+  messages1 <- naomi_evaluate_promise(
+    progress$iterate_fit()
+  )
+  messages2 <- naomi_evaluate_promise(
+    progress$iterate_fit()
+  )
+  messages3 <- naomi_evaluate_promise(
+    progress$iterate_fit()
+  )
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  messages4 <- naomi_evaluate_promise(
+    progress$iterate_fit()
+  )
+  messages5 <- naomi_evaluate_promise({
+    progress$finalise_fit()
+    progress$complete("fit_model")
+    progress$print()
   })
-  expect_equal(progress$start_time, now)
+
+  expect_equal(progress$start_time, progress$now)
   expect_equal(messages1$progress[[1]]$fit_model$helpText,
                "Iteration 1 - 30s elapsed")
   expect_equal(messages2$progress[[1]]$fit_model$helpText,
@@ -515,7 +509,7 @@ test_that("hintr_run_model can skip validation", {
 
   mock_validate_model_options <- mockery::mock(TRUE)
 
-  with_mock("naomi:::do_validate_model_options" = mock_validate_model_options, {
+  with_mock(do_validate_model_options = mock_validate_model_options, {
     ## Don't really care about result here, just using some test that will
     ## complete relatively quickly so we can test model validation is skipped
     expect_error(hintr_run_model(format_data_input(a_hintr_data), options,
@@ -523,7 +517,7 @@ test_that("hintr_run_model can skip validation", {
   })
   mockery::expect_called(mock_validate_model_options, 0)
 
-  with_mock("naomi:::do_validate_model_options" = mock_validate_model_options, {
+  with_mock(do_validate_model_options = mock_validate_model_options, {
     ## Don't really care about result here, just using some test that will
     ## complete relatively quickly so we can test model validation is skipped
     expect_error(hintr_run_model(format_data_input(a_hintr_data), options))
@@ -532,23 +526,20 @@ test_that("hintr_run_model can skip validation", {
 })
 
 test_that("simple progress", {
-  now <- round.POSIXt(Sys.time(), units = "mins")
-  mock_sys_time <- mockery::mock(now, now + 30, now + (2 * 60), now + (62 * 60))
-  with_mock("Sys.time" = mock_sys_time, {
-    progress <- MockSimpleProgress$new()
-    messages1 <- naomi_evaluate_promise(
-      progress$update_progress("PROGRESS_CALIBRATE")
-    )
-    messages2 <- naomi_evaluate_promise(
-      progress$update_progress("PROGRESS_CALIBRATE")
-    )
-    reset <- naomi_set_language("fr")
-    on.exit(reset())
-    messages3 <- naomi_evaluate_promise(
-      progress$update_progress("PROGRESS_CALIBRATE")
-    )
-  })
-  expect_equal(progress$start_time, now)
+  progress <- MockSimpleProgress$new()
+  messages1 <- naomi_evaluate_promise(
+    progress$update_progress("PROGRESS_CALIBRATE")
+  )
+  messages2 <- naomi_evaluate_promise(
+    progress$update_progress("PROGRESS_CALIBRATE")
+  )
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  messages3 <- naomi_evaluate_promise(
+    progress$update_progress("PROGRESS_CALIBRATE")
+  )
+
+  expect_equal(progress$start_time, progress$now)
   expect_equal(messages1$progress[[1]]$message,
                "Calibrating outputs - 30s elapsed")
   expect_equal(messages2$progress[[1]]$message,
@@ -559,16 +550,16 @@ test_that("simple progress", {
 
 test_that("calibration reports simple progress", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
-  with_mock("naomi:::new_simple_progress" = mock_new_simple_progress, {
+  with_mock(new_simple_progress = mock_new_simple_progress, {
     messages <- naomi_evaluate_promise(
       hintr_calibrate(a_hintr_output, a_hintr_calibration_options))
   })
   expect_length(messages$progress, 2)
   progress <- messages$progress
-  expect_match(progress[[1]]$message,
-               "Calibrating outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
-  expect_match(progress[[2]]$message,
-               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+  expect_equal(progress[[1]]$message,
+               "Calibrating outputs - 30s elapsed")
+  expect_equal(progress[[2]]$message,
+               "Saving outputs - 2m elapsed")
 })
 
 test_that("validate_calibrate_options errors if required options are missing", {

@@ -1,5 +1,5 @@
 naomi_write_csv <- function(...) {
-  write.csv(..., row.names = FALSE, na = "")
+  utils::write.csv(..., row.names = FALSE, na = "")
 }
 
 naomi_read_csv <- function(file, ..., col_types = readr::cols()) {
@@ -27,7 +27,7 @@ system_file <- function(...) {
 write_csv_string <- function(x, ..., row.names = FALSE) {
   tmp <- tempfile()
   on.exit(unlink(tmp))
-  write.csv(x, tmp, ..., row.names = row.names)
+  utils::write.csv(x, tmp, ..., row.names = row.names)
   paste0(brio::readLines(tmp), collapse = "\n")
 }
 
@@ -98,5 +98,5 @@ vlapply <- function(X, FUN, ...) {
 }
 
 is_empty <- function(x) {
-  is.null(x) || is.na(x) || !nzchar(x)
+  length(x) == 0 || is.null(x) || is.na(x) || !nzchar(x)
 }

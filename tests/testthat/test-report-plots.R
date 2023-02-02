@@ -1,5 +1,3 @@
-context("report-plots")
-
 test_that("map plot can be generated", {
   expect_no_error(map_outputs(a_output_indicators,
                               indicator = "plhiv",
