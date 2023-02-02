@@ -645,3 +645,30 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
   expect_length(rvest::html_element(html, ".art-scatter"), 2)
   expect_length(rvest::html_element(html, ".art-plotly"), 2)
 })
+
+test_that("prevalence survey plots not drawn when using aggregate survey", {
+  ## This is to address Cameroon 2022/2023 issue #41
+  ## Create a model output with different ART time to prevalence
+  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
+  output$output_package$inputs_outputs <-
+    output$output_package$inputs_outputs %>%
+    dplyr::mutate(calendar_quarter = dplyr::case_when(
+      indicator == "art_coverage" & calendar_quarter == "CY2016Q1" ~ "CY2015Q1",
+      TRUE ~ calendar_quarter))
+
+  out <- tempfile(fileext = ".qs")
+  model_output <- qs::qsave(output, preset = "fast", out)
+
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, out, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+
+  html <- rvest::read_html(t, encoding = "UTF-8")
+  expect_length(rvest::html_element(html, ".prevalence-barchart"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-plotly"), 2)
+  expect_length(rvest::html_element(html, ".art-barchart"), 0)
+  expect_length(rvest::html_element(html, ".art-scatter"), 0)
+  expect_length(rvest::html_element(html, ".art-plotly"), 0)
+})
