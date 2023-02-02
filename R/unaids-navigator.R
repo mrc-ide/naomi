@@ -122,7 +122,7 @@ write_navigator_checklist <- function(naomi_output,
 
     if (!is.null(model_options)) {
       model_options$artattend <- as.logical(model_options$artattend)
-      model_options$artattend <- as.logical(model_options$artattend_t2)
+      model_options$artattend_t2  <- as.logical(model_options$artattend_t2)
 
       ## Check survey
       # Does T1 calendar quarter match one survey
