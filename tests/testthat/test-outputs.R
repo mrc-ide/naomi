@@ -1,6 +1,7 @@
 test_that("traidure hooks work in model outputs", {
   out_en <- output_package(a_fit_sample, a_naomi_data)
-  expect_setequal(out_en$meta_period$quarter_label, c("March 2016", "December 2018", "June 2019"))
+  expect_setequal(out_en$meta_period$quarter_label,
+                  c("March 2016", "December 2018", "June 2019", "September 2022", "September 2023"))
   expect_setequal(out_en$meta_indicator$indicator_label[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("ART coverage", "HIV prevalence"))
   expect_setequal(out_en$meta_indicator$description[out_en$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
@@ -10,7 +11,8 @@ test_that("traidure hooks work in model outputs", {
   on.exit(reset())
 
   out_fr <- output_package(a_fit_sample, a_naomi_data)
-  expect_setequal(out_fr$meta_period$quarter_label, c("Mars 2016", "Décembre 2018", "Juin 2019"))
+  expect_setequal(out_fr$meta_period$quarter_label,
+                  c("Mars 2016", "Décembre 2018", "Juin 2019", "Septembre 2022", "Septembre 2023"))
   expect_setequal(out_fr$meta_indicator$indicator_label[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
                   c("Prévalence du VIH", "Couverture TARV"))
   expect_setequal(out_fr$meta_indicator$description[out_fr$meta_indicator$indicator %in% c("art_coverage", "prevalence")],
@@ -137,14 +139,17 @@ test_that("subset_output_package() saves expected output package", {
   out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
 
   expect_warning(
-    sub_keep_return <- subset_output_package(out$path,
-                          sub_keep_file,
-                          area_id = area_id_sub,
-                          sex = sex_sub,
-                          age_group = age_group_sub,
-                          calendar_quarter = calendar_quarter_sub,
-                          indicator = indicator_sub),
-    "PSNU level 3 not included in model outputs"
+    expect_warning(
+      sub_keep_return <- subset_output_package(out$path,
+                                               sub_keep_file,
+                                               area_id = area_id_sub,
+                                               sex = sex_sub,
+                                               age_group = age_group_sub,
+                                               calendar_quarter = calendar_quarter_sub,
+                                               indicator = indicator_sub),
+      "PSNU level 3 not included in model outputs"
+    ),
+    "Required indicators not in output: plhiv, population, art_current_residents, infections"
   )
 
   sub_keep_out <- read_output_package(sub_keep_file)
@@ -533,7 +538,7 @@ test_that("writing output package translates labels", {
   ## area_level_label comes from input data (not translated)
   expect_true("Prévalence du VIH" %in% read$indicators$indicator_label)
   expect_setequal(read$indicators$quarter_label,
-                  c("Mars 2016", "Décembre 2018", "Juin 2019"))
+                  c("Mars 2016", "Décembre 2018", "Juin 2019", "Septembre 2022", "Septembre 2023"))
   ## age group label currently doesn't have translations
   expect_true("all ages" %in% read$indicators$age_group_label)
 
