@@ -261,7 +261,9 @@ test_that("Option adjust_area_growth handles cases with projection_dur >5 years"
   options_longdur <- a_hintr_options
   options_longdur$adjust_area_growth <- TRUE
   options_longdur$calendar_quarter_t2 = "CY2023Q4"
-  options_longdur$calendar_quarter_t3 = "CY2024Q3"
+  options_longdur$calendar_quarter_t3 = "CY2024Q2"
+  options_longdur$calendar_quarter_t4 = "CY2024Q3"
+  options_longdur$calendar_quarter_t5 = "CY2024Q4"
   options_longdur$include_art_t2 <- "false"
   options_longdur$artattend_t2 <- "false"
 
