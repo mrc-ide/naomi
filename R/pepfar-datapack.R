@@ -190,7 +190,7 @@ datapack_aggregate_1to9 <- function(indicators) {
     ) %>%
     dplyr::count(area_id, sex, age_group = "Y001_009", calendar_quarter, indicator,
                  wt = mean, name = "mean") %>%
-    tidyr::pivot_wider(c(area_id, sex, age_group, calendar_quarter),
+    tidyr::pivot_wider(id_cols = c(area_id, sex, age_group, calendar_quarter),
                        names_from = indicator, values_from = mean) %>%
     dplyr::mutate(
       prevalence = plhiv / population,
@@ -198,7 +198,7 @@ datapack_aggregate_1to9 <- function(indicators) {
       incidence = infections / (population - plhiv)
     ) %>%
     tidyr::pivot_longer(
-      dplyr::any_of(c(indicators_keep, "prevalence", "art_coverage", "incidence")),
+      cols = dplyr::any_of(c(indicators_keep, "prevalence", "art_coverage", "incidence")),
       names_to = "indicator", values_to = "mean"
     )
 
