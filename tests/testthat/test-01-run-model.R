@@ -310,16 +310,18 @@ test_that("model run can be calibrated", {
   ## Total population outputs:
   ## * 33 age groups
   ## * 3 sexes
-  ## * 3 output times
   ## * 9 areas
-  ## * 14 indicators
+  ## * 3 output times - 14 indicators
+  ## * 1 output time - 5 indicators
+  ## * 1 output time - 4 indicators
   ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
   ## 9 = number of areas
   ## 12 = number of ANC age groups
-  expect_equal(nrow(indicators_output), 33 * 3 * 3 * 9 * 14 + 3 * 9 * 9 * 12)
+  expect_equal(nrow(indicators_output),
+               33 * 3 * 9 * (3 * 14 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
@@ -499,7 +501,7 @@ test_that("Model can be run without .shiny90 file", {
   ## Check there is some data
   ## 11 indicators (3 fewer because missing awareness of status indicators
   expect_equal(nrow(indicators_output$output_package$indicators),
-               33 * 3 * 3 * 9 * 11 + 3 * 9 * 9 * 12)
+               33 * 3 * 9 * (3 * 11 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
 })
 
 test_that("hintr_run_model can skip validation", {
