@@ -1,3 +1,7 @@
+# naomi 2.8.17
+
+* Patch NULL checking code in `summary_report.Rmd`.
+
 # naomi 2.8.16
 
 * Don't include ART plots in comparison report download when model fit with an ART calendar quarter different to t1 (issue 41).
