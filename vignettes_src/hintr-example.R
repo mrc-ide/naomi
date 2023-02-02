@@ -7,12 +7,13 @@
 #'   %\VignetteEncoding{UTF-8}
 #' ---
 
-##+ include = FALSE
+##+ preamble, include = FALSE
 knitr::opts_chunk$set(
                     collapse = TRUE,
                     comment = "#>"
                   )
 unlink("outputs", recursive = TRUE)
+
 #'
 #'
 #' This vignette provides example
@@ -21,7 +22,7 @@ unlink("outputs", recursive = TRUE)
 
 library(naomi)
 
-##+ fit model
+##+ fit_model
 hintr_data <- list(
   pjnz = system.file("extdata/demo_mwi2019.PJNZ", package = "naomi"),
   population = system.file("extdata/demo_population_agesex.csv", package = "naomi"),
@@ -84,6 +85,8 @@ coarse_download <- hintr_prepare_coarse_age_group_download(calibrated_paths)
 #' TO DO: add summary report download
 
 #' Read output package and generate datapack export
+
+##+ read_output
 naomi_output <- read_output_package(spectrum_download$path)
 
 datapack_path <- tempfile(fileext = ".csv")
