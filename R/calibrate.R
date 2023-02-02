@@ -149,7 +149,7 @@ calibrate_outputs <- function(output,
   ## Calculate calibration adjustments for means PLHIV, ART number, and new infections
 
   valmean_wide <- val %>%
-    tidyr::pivot_wider(c(area_id, tidyselect::all_of(group_vars)),
+    tidyr::pivot_wider(id_cols = c(area_id, tidyselect::all_of(group_vars)),
                        names_from = indicator, values_from = mean) %>%
     dplyr::mutate(
              age_coarse = dplyr::if_else(
@@ -521,7 +521,7 @@ calibrate_outputs <- function(output,
              aware_plhiv_prop = aware_plhiv_num / plhiv,
              incidence = infections / (population - plhiv)
            ) %>%
-    tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
+    tidyr::pivot_longer(cols = c(prevalence, art_coverage, aware_plhiv_prop, incidence),
                         names_to = "indicator", values_to = "adjusted") %>%
     dplyr::select(tidyselect::all_of(byv), adjusted) %>%
     dplyr::left_join(

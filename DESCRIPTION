@@ -23,7 +23,7 @@ Imports:
     assertthat,
     brio,
     data.tree,
-    dplyr,
+    dplyr (>= 1.1.0),
     eppasm (>= 0.7.1),
     first90 (>= 1.6.1),
     forcats,

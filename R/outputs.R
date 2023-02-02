@@ -1247,7 +1247,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     tidyr::pivot_wider()
 
   out_0to4strat_rates <- out_0to4strat_counts %>%
-    tidyr::pivot_wider(c("area_id", "sex", "calendar_quarter", "age_group"),
+    tidyr::pivot_wider(id_cols = c("area_id", "sex", "calendar_quarter", "age_group"),
                        names_from = indicator, values_from = mean)
 
   out_0to4strat_rates <- out_0to4strat_rates %>%
@@ -1262,7 +1262,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
   }
 
   out_0to4strat_rates <- out_0to4strat_rates %>%
-    tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
+    tidyr::pivot_longer(cols = c(prevalence, art_coverage, aware_plhiv_prop, incidence),
                         names_to = "indicator", values_to = "ratio") %>%
     dplyr::select(area_id, sex, calendar_quarter, age_group, indicator, ratio) %>%
     dplyr::inner_join(out0to4, by = c("area_id", "sex", "calendar_quarter", "indicator")) %>%
