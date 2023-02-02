@@ -112,30 +112,57 @@ area_level_label <- area_level_map$area_level_label[area_level_map$area_level ==
 country <- paste0(outputs$meta_area$area_name[outputs$meta_area$area_id == iso],
                   sep = "", collapse = "")
 
-# Determine if and when programme data has been included
+# Determine if and when programme data has been included 
+if (is.null(options$include_art_t1) || options$include_art_t1 == "") {
+  options$include_art_t1 <- NA
+}
+if (is.null(options$include_art_t2) || options$include_art_t2 == "") {
+  options$include_art_t2 <- NA
+}
+
+if (is.null(quarter_t1) || quarter_t1 == "") {
+  quarter_t1 <- NA
+}
+if (is.null(quarter_t2) || quarter_t2 == "") {
+  quarter_t2 <- NA
+}
+
+if (is.null(options[["artattend"]]) || options[["artattend"]] == "") {
+  options[["artattend"]] <- NA
+}
+if (is.null(options[["artattend_t2"]]) || options[["artattend_t2"]] == "") {
+  options[["artattend_t2"]] <- NA
+}
+
 include <- tibble::tibble(
-  art = list(options$include_art_t1, options$include_art_t2),
-  art_year = list(quarter_t1, quarter_t2),
-  art_attend = list(options$artattend, options$artattend_t2)
-) %>%
-  dplyr::mutate_all(list(~dplyr::na_if(., "NULL"))) %>%
-  dplyr::mutate_all(list(~dplyr::na_if(., "")))
+  art = c(options$include_art_t1, options$include_art_t2),
+  art_year = c(quarter_t1, quarter_t2),
+  art_attend = c(options$artattend, options$artattend_t2)
+)
 
 # Select years where programme data is included
 collapse_and <- " and "
-if (print_fr) { collapse_and <- " et "} else if (print_pt) { collapse_and <- " e "}
+if (print_fr) {
+  collapse_and <- " et "
+} else if (print_pt) {
+  collapse_and <- " e "
+}
 
 # ART data included
 if("true" %in% include$art) {
   df <- include %>% dplyr::filter(art == "true")
   art_year <- paste0(df$art_year, sep = "", collapse = collapse_and)
-} else { art_year <- NA }
+} else {
+  art_year <- NA
+}
 
 # ART attendance reallocation is implemented
 if("true" %in% include$art_attend ) {
   df <- include %>% dplyr::filter(art_attend == "true")
   art_attend <- paste0(df$art_year, sep = "", collapse = collapse_and)
-} else { art_attend <- NA }
+} else {
+  art_attend <- NA
+}
 
 # ANC ART programme data included
 anc_art_options = c(options$anc_art_coverage_year1, options$anc_art_coverage_year2)
@@ -143,7 +170,9 @@ anc_art_options <- anc_art_options[!vlapply(anc_art_options, is_empty)]
 
 if(length(anc_art_options)) {
   anc_art <- paste0(anc_art_options, sep = "", collapse = collapse_and)
-} else { anc_art <- NA }
+} else {
+  anc_art <- NA
+}
 
 # ANC prev programme data
 anc_prev_options = c(options$anc_prevalence_year1, options$anc_prevalence_year2)
@@ -151,7 +180,9 @@ anc_prev_options <- anc_art_options[!vlapply(anc_art_options, is_empty)]
 
 if(length(anc_prev_options)) {
   anc_prev <- paste0(anc_prev_options, sep = "", collapse = collapse_and)
-} else { anc_prev <- NA }
+} else {
+  anc_prev <- NA
+}
 
 
 ```
@@ -301,11 +332,18 @@ if (identical(options$use_survey_aggregate, "false")) {
 
 if (!is_empty(options$survey_art_coverage)) {
   ## If no survey ART don't include the plot
-  fig2 <- bar_plotly(data,
-                      ind = "art_coverage",
-                      quarter = calendar_quarter1)
-  plots <- c(plots, list(htmltools::div(fig2)))
-  class <- c(class, "art-barchart")
+  
+  ## Fix for 2022/20223 CMR issue #41
+  filtered_data <- data %>%
+    dplyr::filter(indicator == "art_coverage",
+                  calendar_quarter == calendar_quarter1)
+  if (nrow(filtered_data) > 0) {
+    fig2 <- bar_plotly(data,
+                       ind = "art_coverage",
+                       quarter = calendar_quarter1)
+    plots <- c(plots, list(htmltools::div(fig2)))
+    class <- c(class, "art-barchart")
+  }
 } 
 htmltools::div(plots,
                style = "display: flex; flex-direction: column",
@@ -357,14 +395,17 @@ art_plot <- NULL
 if (!is_empty(options$survey_art_coverage)) {
   
   # ART coverage plot
-  fig2 <-  scatter_plotly(data,
-                          ind = "art_coverage",
-                          quarter = calendar_quarter1,
-                          input_data = survey_art,
-                          input_data_type = "survey")
-  art_plot <- htmltools::div(fig2, 
-                             style = "width: 50%", 
-                             class = "art-scatter")
+  ## Fix for 2022/20223 CMR issue #41
+  if (nrow(filtered_data) > 0) {
+    fig2 <-  scatter_plotly(data,
+                            ind = "art_coverage",
+                            quarter = calendar_quarter1,
+                            input_data = survey_art,
+                            input_data_type = "survey")
+    art_plot <- htmltools::div(fig2, 
+                               style = "width: 50%", 
+                               class = "art-scatter")
+  }
 }
 htmltools::div(
   style = "display: flex; flex-direction: column",
@@ -402,11 +443,15 @@ if (identical(options$use_survey_aggregate, "false")) {
 
 if (!is_empty(options$survey_art_coverage)) {
   ## If no survey ART don't include the plot
-  fig2 <- age_bar_plotly(data,
-                         ind = "art_coverage",
-                         quarter = calendar_quarter1)
-  plots <- c(plots, list(htmltools::div(fig2)))
-  class <- c(class, "art-plotly")
+  
+  ## Fix for 2022/20223 CMR issue #41
+  if (nrow(filtered_data) > 0) {
+    fig2 <- age_bar_plotly(data,
+                           ind = "art_coverage",
+                           quarter = calendar_quarter1)
+    plots <- c(plots, list(htmltools::div(fig2)))
+    class <- c(class, "art-plotly")
+  }
 }
 
 htmltools::div(plots,

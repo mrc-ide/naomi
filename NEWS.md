@@ -9,6 +9,14 @@
 
 * Add higher area levels to PEPFAR Datim ID mapping table to enable alternate PSNU level selection.
 
+# naomi 2.8.17
+
+* Patch NULL checking code in `summary_report.Rmd` and `comparison_report.Rmd`.
+
+# naomi 2.8.16
+
+* Don't include ART plots in comparison report download when model fit with an ART calendar quarter different to t1 (issue 41).
+
 # naomi 2.8.15
 
 * Don't include prevalence plots in comparison report download when model fit with survey aggregate data (issue 36).
