@@ -1,6 +1,6 @@
 # naomi 2.8.17
 
-* Patch NULL checking code in `summary_report.Rmd`.
+* Patch NULL checking code in `summary_report.Rmd` and `comparison_report.Rmd`.
 
 # naomi 2.8.16
 
