@@ -43,7 +43,9 @@ hintr_options <- list(
   area_level = "2",
   calendar_quarter_t1 = "CY2016Q1",
   calendar_quarter_t2 = "CY2018Q4",
-  calendar_quarter_t3 = "CY2019Q3",
+  calendar_quarter_t3 = "CY2019Q2",
+  calendar_quarter_t4 = "CY2023Q2",
+  calendar_quarter_t5 = "CY2024Q2",
   survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
   survey_art_coverage = "DEMO2016PHIA",
   survey_recently_infected = "DEMO2016PHIA",
@@ -86,7 +88,7 @@ spectrum_download <- hintr_prepare_spectrum_download(calibrated_paths)
 calibrate_plot_data <- hintr_calibrate_plot(calibrated_paths)
 
 #' Read output package and generate datapack export
-naomi_output <- read_output_package(hintr_paths$spectrum_path)
+naomi_output <- read_output_package(spectrum_download$path)
 
 datapack_path <- tempfile(fileext = ".csv")
 write_datapack_csv(naomi_output, datapack_path)
@@ -109,6 +111,8 @@ naomi_mf <- naomi_model_frame(area_merged,
                               calendar_quarter1 = hintr_options$calendar_quarter_t1,
                               calendar_quarter2 = hintr_options$calendar_quarter_t2,
                               calendar_quarter3 = hintr_options$calendar_quarter_t3,
+                              calendar_quarter4 = hintr_options$calendar_quarter_t4,
+                              calendar_quarter5 = hintr_options$calendar_quarter_t5,
                               adjust_area_growth = TRUE)
 
 
