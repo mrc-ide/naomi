@@ -80,6 +80,8 @@ level <- 4
 calendar_quarter_t1 <- "CY2016Q1"
 calendar_quarter_t2 <- "CY2018Q3"
 calendar_quarter_t3 <- "CY2019Q4"
+calendar_quarter_t4 <- "CY2022Q3"
+calendar_quarter_t5 <- "CY2023Q3"
 
 #' The following select data inputs to model fitting from the uploaded datasets.
 #' Providing `NULL` for any will exclude that data source from model fitting.
@@ -128,9 +130,11 @@ naomi_mf <- naomi_model_frame(area_merged,
                               spec,
                               scope = scope,
                               level = level,
-                              calendar_quarter_t1,
-                              calendar_quarter_t2,
-                              calendar_quarter_t3,
+                              calendar_quarter1 = calendar_quarter_t1,
+                              calendar_quarter2 = calendar_quarter_t2,
+                              calendar_quarter3 = calendar_quarter_t3,
+                              calendar_quarter4 = calendar_quarter_t4,
+                              calendar_quarter5 = calendar_quarter_t5,
                               adjust_area_growth = TRUE)
 
 
@@ -161,13 +165,13 @@ tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
 #' Fit the TMB model
 
-##+ fit_model, cache = TRUE
+##+ fit_model, cache = FALSE
 fit <- fit_tmb(tmb_inputs)
 
 #' Calculate model outputs. We can calculate outputs based on posterior mode
 #' estimates before running `report_tmb()` to calculate posterior intervals.
 
-outputs <- output_package(fit, naomi_mf)
+outputs <- output_package(fit, naomi_data)
 
 #' The output package consists of a data frame of indicators and metadata
 #' defining the labels for each indicator.
@@ -196,13 +200,13 @@ add_output_labels(outputs) %>%
 #' Calculate uncertainty ranges and add to the output object
 #' (This is time consuming and memory intensive.
 
-##+ sample_outputs, cache = TRUE
+##+ sample_outputs, cache = FALSE
 system.time(fit <- sample_tmb(fit))
 
 #' Regenerate outputs with uncertainty ranges.
 
-##+ make_output_package, cache = TRUE
-system.time(outputs <- output_package(fit, naomi_mf))
+##+ make_output_package, cache = FALSE
+system.time(outputs <- output_package(fit, naomi_data))
 
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",
