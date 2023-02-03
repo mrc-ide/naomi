@@ -1100,12 +1100,12 @@ read_output_package <- function(path) {
   ## Fit list
   fit <- list()
 
-  if (file.exists(file.path(tmpd,"info/options.yml"))) {
-    # If hintr_output saved: Full model options available in "info"
-    fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
-  } else if (file.exists(file.path(tmpd, "fit/model_options.yml"))) {
+  if (file.exists(file.path(tmpd, "fit/model_options.yml"))) {
     # If naomi_output saved: Subset model options available in fit object
     fit$model_options <- yaml::read_yaml(file.path(tmpd, "fit/model_options.yml"))
+  } else if (file.exists(file.path(tmpd,"info/options.yml"))) {
+    # If hintr_output saved: Full model options available in "info"
+    fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
   } else if (file.exists(file.path(tmpd, "info/options.yml"))) {
     # Backwards compatibility for old version of coarse output zip
     fit$model_options <- yaml::read_yaml(file.path(tmpd, "info/options.yml"))

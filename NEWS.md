@@ -9,6 +9,8 @@
 
 * Add higher area levels to PEPFAR Datim ID mapping table to enable alternate PSNU level selection.
 
+* Add advanced model option to select PEPFAR PSNU level to produce Data Pack output. Defaults set to current choices.
+
 # naomi 2.8.17
 
 * Patch NULL checking code in `summary_report.Rmd` and `comparison_report.Rmd`.
