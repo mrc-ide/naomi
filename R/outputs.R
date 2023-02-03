@@ -973,7 +973,7 @@ save_output <- function(filename, dir,
   if (export_datapack) {
     write_datapack_csv(naomi_output = naomi_output,
                        path = "pepfar_datapack_indicators_2023.csv",
-                       psnu_level = naomi_output$fit$calibration_options$psnu_level)
+                       psnu_level = naomi_output$fit$model_options$psnu_level)
   }
 
 

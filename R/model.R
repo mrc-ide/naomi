@@ -103,6 +103,9 @@ naomi_output_frame <- function(mf_model,
 #' @param logit_nu_sd standard deviation of logit viral load suppression.
 #' @param spectrum_population_calibration character string values "national", "subnational", "none"
 #' @param adjust_area_growth TRUE/FALSE: adjust PLHIV population for net change in cohort size
+#' @param psnu_level Level at which to output PEPFAR Data Pack outputs for planning. This doesn't have anything to do with
+#'   calibration, but this is a convenient place to allow user to edit this in model workflow. Default value `NULL` indicates
+#'   to read PSNU level from internal database.
 #'
 #' @return Naomi model frame
 #'
@@ -144,7 +147,8 @@ naomi_model_frame <- function(area_merged,
                               logit_nu_sd = 0.3,
                               spectrum_population_calibration = "national",
                               output_aware_plhiv = TRUE,
-                              adjust_area_growth = FALSE) {
+                              adjust_area_growth = FALSE,
+                              psnu_level = NULL) {
 
   ## Create a list of options to save out
   model_options <- list(area_scope = scope,
@@ -156,7 +160,8 @@ naomi_model_frame <- function(area_merged,
                         calendar_quarter_t5 = calendar_quarter5,                        
                         artattend = artattend,
                         artattend_t2 = artattend_t2,
-                        anchor_home_district = anchor_home_district)
+                        anchor_home_district = anchor_home_district,
+                        psnu_level = psnu_level)
 
   ## Create area tree
   ## TODO: Get rid of reliance on data.tree

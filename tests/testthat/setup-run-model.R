@@ -45,7 +45,8 @@ a_hintr_options <- list(
   deff_artcov = 1.0,
   use_kish_recent = "true",
   deff_recent = 1.0,
-  use_survey_aggregate = "false"
+  use_survey_aggregate = "false",
+  psnu_level = NULL
 )
 
 a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)
@@ -62,8 +63,7 @@ a_hintr_calibration_options <- list(
   spectrum_aware_calibration_strat = "age_coarse",
   spectrum_infections_calibration_level = "none",
   spectrum_infections_calibration_strat = "age_coarse",
-  calibrate_method = "logistic",
-  psnu_level = 3
+  calibrate_method = "logistic"
 )
 
 a_hintr_output_calibrated <- hintr_calibrate(a_hintr_output,

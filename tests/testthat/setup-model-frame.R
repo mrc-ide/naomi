@@ -14,7 +14,8 @@ a_naomi_mf <- naomi_model_frame(a_area_merged,
                                 calendar_quarter4 = "CY2022Q3",
                                 calendar_quarter5 = "CY2023Q3",
                                 artattend = FALSE,
-                                spectrum_population_calibration = "none")
+                                spectrum_population_calibration = "none",
+                                psnu_level = NULL)
 
 a_naomi_data <- select_naomi_data(a_naomi_mf,
                                   demo_survey_hiv_indicators,
@@ -35,8 +36,7 @@ a_output_calib <- calibrate_outputs(a_output, a_naomi_data,
                                     "national", "sex_age_coarse",
                                     "national", "sex_age_coarse",
                                     "national", "sex_age_coarse",
-                                    calibrate_method = "logistic",
-                                    psnu_level = 3)
+                                    calibrate_method = "logistic")
 
 a_output_full  <- disaggregate_0to4_outputs(a_output_calib, a_naomi_data)
 

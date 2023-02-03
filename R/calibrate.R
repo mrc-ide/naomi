@@ -75,8 +75,7 @@ calibrate_outputs <- function(output,
                               spectrum_aware_calibration_strat,
                               spectrum_infections_calibration_level,
                               spectrum_infections_calibration_strat,
-                              calibrate_method = "logistic",
-                              psnu_level) {
+                              calibrate_method = "logistic") {
 
   stopifnot(inherits(output, "naomi_output"))
   stopifnot(inherits(naomi_mf, "naomi_mf"))
@@ -573,8 +572,7 @@ calibrate_outputs <- function(output,
                      spectrum_aware_calibration_strat = spectrum_aware_calibration_strat,
                      spectrum_infections_calibration_level = spectrum_infections_calibration_level,
                      spectrum_infections_calibration_strat = spectrum_infections_calibration_strat,
-                     calibrate_method = calibrate_method,
-                     psnu_level = psnu_level)
+                     calibrate_method = calibrate_method)
 
   output$indicators <- out
   output$fit$spectrum_calibration <- spectrum_calibration

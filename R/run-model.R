@@ -201,8 +201,7 @@ run_calibrate <- function(output, calibration_options) {
     spectrum_aware_calibration_strat = calibration_options$spectrum_aware_calibration_strat,
     spectrum_infections_calibration_level = calibration_options$spectrum_infections_calibration_level,
     spectrum_infections_calibration_strat = calibration_options$spectrum_infections_calibration_strat,
-    calibrate_method = calibration_options$calibrate_method,
-    psnu_level = calibration_options$psnu_level
+    calibrate_method = calibration_options$calibrate_method
   )
 
   calibrated_output <- disaggregate_0to4_outputs(
@@ -357,6 +356,10 @@ naomi_prepare_data <- function(data, options) {
     options$anchor_home_district <- TRUE
   }
 
+  if(!is.null(options$psnu_level)) {
+    options$psnu_level <- as.integer(options$psnu_level)
+  }
+
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
     population_agesex = population,
@@ -378,6 +381,7 @@ naomi_prepare_data <- function(data, options) {
     rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
     alpha_xst_term = as.logical(options$alpha_xst_term),
     adjust_area_growth = as.logical(options$adjust_area_growth),
+    psnu_level = as.integer(options$psnu_level)
   )
 
   naomi_data <- select_naomi_data(
