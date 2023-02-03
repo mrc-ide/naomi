@@ -58,4 +58,14 @@ test_that("datapack export writes correct psnu_level", {
 
   expect_true(!any(is.na(datapack)))
   expect_equal(datapack, datapack3)
+
+  ## Test level 1 data pack
+
+  tmpf1 <- tempfile(fileext = ".csv")
+  res1 <- write_datapack_csv(a_output_full, tmpf1, psnu_level = 1)
+  datapack1 <- readr_read_csv(res1)
+
+  expect_match(datapack1$area_id, "^MWI_1_")
+  expect_true(!any(is.na(datapack1)))
+  expect_match(datapack3$area_id, "^MWI_3_")
 })
