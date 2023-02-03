@@ -381,7 +381,7 @@ naomi_prepare_data <- function(data, options) {
     rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
     alpha_xst_term = as.logical(options$alpha_xst_term),
     adjust_area_growth = as.logical(options$adjust_area_growth),
-    psnu_level = as.integer(options$psnu_level)
+    psnu_level = options$psnu_level
   )
 
   naomi_data <- select_naomi_data(
