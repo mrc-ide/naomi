@@ -860,6 +860,7 @@ save_output_coarse_age_groups <- function(path, naomi_output,
               export_datapack = FALSE)
 }
 
+
 save_output_spectrum <- function(path, naomi_output, notes = NULL,
                                  overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output, notes,
@@ -970,7 +971,9 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
-    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2023.csv")
+    write_datapack_csv(naomi_output = naomi_output,
+                       path = "pepfar_datapack_indicators_2023.csv",
+                       psnu_level = naomi_output$fit$calibration_options$psnu_level)
   }
 
 

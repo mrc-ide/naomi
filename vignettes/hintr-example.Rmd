@@ -73,7 +73,8 @@ calibration_options <- list(
   spectrum_aware_calibration_strat = "sex_age_coarse",
   spectrum_infections_calibration_level = "national",
   spectrum_infections_calibration_strat = "sex_age_coarse",
-  calibrate_method = "logistic"
+  calibrate_method = "logistic", 
+  psnu_level = 3
 )
 
 hintr_options$outer_verbose <- TRUE
