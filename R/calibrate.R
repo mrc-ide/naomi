@@ -149,7 +149,7 @@ calibrate_outputs <- function(output,
   ## Calculate calibration adjustments for means PLHIV, ART number, and new infections
 
   valmean_wide <- val %>%
-    tidyr::pivot_wider(c(area_id, tidyselect::all_of(group_vars)),
+    tidyr::pivot_wider(id_cols = c(area_id, tidyselect::all_of(group_vars)),
                        names_from = indicator, values_from = mean) %>%
     dplyr::mutate(
              age_coarse = dplyr::if_else(
@@ -206,6 +206,11 @@ calibrate_outputs <- function(output,
   calibrate_one <- function(value_raw, proportion_raw, denominator_new,
                             target_val, calibrate_method) {
 
+    ## Don't calibrate for T4 and T5 where some outputs not produced
+    if(all(is.na(value_raw))) {
+      return(value_raw)
+    }
+
     if (calibrate_method == "logistic") {
       val <- calibrate_logistic_one(proportion_raw, denominator_new, target_val)
     } else if (calibrate_method == "proportional") {
@@ -259,8 +264,11 @@ calibrate_outputs <- function(output,
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
       dplyr::mutate(
-        plhiv_attend = calibrate_proportional_one(plhiv_attend,
-                                                 plhivattend_target)
+        plhiv_attend = calibrate_one(value_raw = plhiv_attend,
+                                     proportion_raw = NA,
+                                     denominator_new = NA,
+                                     target_val = plhivattend_target,
+                                     calibrate_method = "proportional")
       )
   }
 
@@ -306,9 +314,12 @@ calibrate_outputs <- function(output,
     valmean_wide <- valmean_wide %>%
       dplyr::group_by_at(artattend_aggr_var) %>%
       dplyr::mutate(
-               art_current = calibrate_proportional_one(art_current,
-                                                        artattend_target)
-             )
+        art_current = calibrate_one(value_raw = art_current,
+                                    proportion_raw = NA,
+                                    denominator_new = NA,
+                                    target_val = artattend_target,
+                                    calibrate_method = "proportional")
+      )
   }
   valmean_wide$untreated_plhiv_num = valmean_wide$plhiv - valmean_wide$art_current_residents
   valmean_wide$untreated_plhiv_attend = valmean_wide$plhiv_attend - valmean_wide$art_current
@@ -463,7 +474,15 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter3, "aware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter1, "infections"),
                   .expand(naomi_mf$calendar_quarter2, "infections"),
-                  .expand(naomi_mf$calendar_quarter3, "infections")
+                  .expand(naomi_mf$calendar_quarter3, "infections"),
+
+                  .expand(naomi_mf$calendar_quarter4, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter4, "plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter4, "infections"),
+
+                  .expand(naomi_mf$calendar_quarter5, "plhiv"),
+                  .expand(naomi_mf$calendar_quarter5, "plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter5, "infections")
                 )
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")
@@ -502,7 +521,7 @@ calibrate_outputs <- function(output,
              aware_plhiv_prop = aware_plhiv_num / plhiv,
              incidence = infections / (population - plhiv)
            ) %>%
-    tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
+    tidyr::pivot_longer(cols = c(prevalence, art_coverage, aware_plhiv_prop, incidence),
                         names_to = "indicator", values_to = "adjusted") %>%
     dplyr::select(tidyselect::all_of(byv), adjusted) %>%
     dplyr::left_join(
@@ -542,8 +561,9 @@ calibrate_outputs <- function(output,
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 
-  ## Save calibration options
 
+
+  ## Save calibration options
   calib_opts <- list(spectrum_plhiv_calibration_level = spectrum_plhiv_calibration_level,
                      spectrum_plhiv_calibration_strat  = spectrum_plhiv_calibration_strat,
                      spectrum_artnum_calibration_level = spectrum_artnum_calibration_level,

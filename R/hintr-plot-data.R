@@ -20,6 +20,10 @@ hintr_calibrate_plot <- function(output) {
     stop(t_("INVALID_CALIBRATE_OBJECT"))
   }
 
+  ## Only return indicators for T1, T2, T3
+  cq_t1t2t3 <- sort(calibration_data$output_package$meta_period$calendar_quarter)[1:3]
+  df <- dplyr::filter(df, calendar_quarter %in% cq_t1t2t3)
+  
   dflong <- df %>%
     dplyr::mutate(population_denominator = population_calibrated) %>%
     tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
@@ -145,5 +149,11 @@ hintr_comparison_plot <- function(output) {
     ## it will update the version to latest but this output will not exist
     stop(t_("OLD_MODEL_OUTPUT"))
   }
-  output_data$output_package$inputs_outputs
+
+  ## Only return indicators for T1, T2, T3 for plotting
+  cq_t1t2t3 <- sort(output_data$output_package$meta_period$calendar_quarter)[1:3]
+  plot_inputs_outputs <- output_data$output_package$inputs_outputs
+  plot_inputs_outputs <- dplyr::filter(plot_inputs_outputs, calendar_quarter %in% cq_t1t2t3)
+
+  plot_inputs_outputs
 }

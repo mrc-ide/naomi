@@ -4,12 +4,7 @@
 \alias{write_datapack_csv}
 \title{Export naomi outputs to PEPFAR Data Pack format}
 \usage{
-write_datapack_csv(
-  naomi_output,
-  path,
-  psnu_level = NULL,
-  calendar_quarter = NULL
-)
+write_datapack_csv(naomi_output, path, psnu_level = NULL)
 }
 \arguments{
 \item{naomi_output}{a naomi_output object.}
@@ -19,8 +14,6 @@ write_datapack_csv(
 \item{psnu_level}{area_level for PEPFAR PSNU to export. If NULL,
 first looks in lookup table for the correct area_level, and
 if not defaults to the highest level of the area hierarchy.}
-
-\item{calendar_quarter}{calendar_quarter to export estimates.}
 }
 \description{
 Export naomi outputs to PEPFAR Data Pack format

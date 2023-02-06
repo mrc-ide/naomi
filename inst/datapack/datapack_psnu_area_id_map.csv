@@ -1,4 +1,13 @@
 iso3,area_id,map_level,map_name,map_id,map_source
+MWI,MWI,0,Malawi,lZsCb6y0KDX,Datim
+MWI,MWI_1_1_demo,1,Northern Region,mSB01mQcm7e,Datim
+MWI,MWI_1_2_demo,1,Central Region,mwXGqccqrOI,Datim
+MWI,MWI_1_3_demo,1,Southern Region,CXewWNn3soV,Datim
+MWI,MWI_2_1_demo,2,Northern Zone,ph4GyQNp7vh,Datim
+MWI,MWI_2_2_demo,2,Central Eastern Zone,EGgIZbN4s1P,Datim
+MWI,MWI_2_3_demo,2,Central Western Zone,YrJx6ynjQTd,Datim
+MWI,MWI_2_4_demo,2,South Eastern Zone,A9Rp1ap5sTh,Datim
+MWI,MWI_2_5_demo,2,South Western Zone,VxEnfJ66ucz,Datim
 MWI,MWI_3_1_demo,3,Chitipa District,GkIwZrXy1h2,Datim
 MWI,MWI_3_2_demo,3,Karonga District,cPtvxaZqXIH,Datim
 MWI,MWI_3_5_demo,3,Nkhata Bay District,E7zpfyBt7Tw,Datim

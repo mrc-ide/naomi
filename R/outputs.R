@@ -108,6 +108,17 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
+  indicators_t4 <- c("population_t4_out" = "population",
+                     "plhiv_t4_out" = "plhiv",
+                     "plhiv_attend_t4_out" = "plhiv_attend",
+                     "infections_t4_out" = "infections",
+                     "lambda_t4_out" = "incidence")
+
+  indicators_t5 <- c("population_t5_out" = "population",
+                     "plhiv_t5_out" = "plhiv",
+                     "plhiv_attend_t5_out" = "plhiv_attend",
+                     "infections_t5_out" = "infections")
+  
   if (naomi_mf$output_aware_plhiv) {
 
     indicators_t1 <- c(indicators_t1,
@@ -127,10 +138,15 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
+  indicator_est_t4 <- Map(get_est, names(indicators_t4), indicators_t4, naomi_mf$calendar_quarter4)
+  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)  
+  
 
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
+  indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
+  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)  
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -186,7 +202,9 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t2,
                   indicator_anc_est_t2,
                   indicator_est_t3,
-                  indicator_anc_est_t3
+                  indicator_anc_est_t3,
+                  indicator_est_t4,
+                  indicator_est_t5                  
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -457,7 +475,9 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
   meta_period <- get_period_metadata(c(naomi_data$calendar_quarter1,
                                        naomi_data$calendar_quarter2,
-                                       naomi_data$calendar_quarter3))
+                                       naomi_data$calendar_quarter3,
+                                       naomi_data$calendar_quarter4,
+                                       naomi_data$calendar_quarter5))
   meta_age_group <- get_age_groups()
 
   ## # Fitting outputs
@@ -840,6 +860,7 @@ save_output_coarse_age_groups <- function(path, naomi_output,
               export_datapack = FALSE)
 }
 
+
 save_output_spectrum <- function(path, naomi_output, notes = NULL,
                                  overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output, notes,
@@ -901,7 +922,9 @@ save_output <- function(filename, dir,
   meta_period <- get_period_metadata(
     c(naomi_output$fit$model_options$calendar_quarter_t1,
       naomi_output$fit$model_options$calendar_quarter_t2,
-      naomi_output$fit$model_options$calendar_quarter_t3))
+      naomi_output$fit$model_options$calendar_quarter_t3,
+      naomi_output$fit$model_options$calendar_quarter_t4,
+      naomi_output$fit$model_options$calendar_quarter_t5))
   naomi_output$meta_period <- meta_period
 
   if (with_labels) {
@@ -948,7 +971,9 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
-    write_datapack_csv(naomi_output, "pepfar_datapack_indicators_2022.csv")
+    write_datapack_csv(naomi_output = naomi_output,
+                       path = "pepfar_datapack_indicators_2023.csv",
+                       psnu_level = naomi_output$fit$model_options$psnu_level)
   }
 
 
@@ -1075,12 +1100,12 @@ read_output_package <- function(path) {
   ## Fit list
   fit <- list()
 
-  if (file.exists(file.path(tmpd,"info/options.yml"))) {
-    # If hintr_output saved: Full model options available in "info"
-    fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
-  } else if (file.exists(file.path(tmpd, "fit/model_options.yml"))) {
+  if (file.exists(file.path(tmpd, "fit/model_options.yml"))) {
     # If naomi_output saved: Subset model options available in fit object
     fit$model_options <- yaml::read_yaml(file.path(tmpd, "fit/model_options.yml"))
+  } else if (file.exists(file.path(tmpd,"info/options.yml"))) {
+    # If hintr_output saved: Full model options available in "info"
+    fit$model_options <- yaml::read_yaml(file.path(tmpd,"info/options.yml"))
   } else if (file.exists(file.path(tmpd, "info/options.yml"))) {
     # Backwards compatibility for old version of coarse output zip
     fit$model_options <- yaml::read_yaml(file.path(tmpd, "info/options.yml"))
@@ -1225,7 +1250,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     tidyr::pivot_wider()
 
   out_0to4strat_rates <- out_0to4strat_counts %>%
-    tidyr::pivot_wider(c("area_id", "sex", "calendar_quarter", "age_group"),
+    tidyr::pivot_wider(id_cols = c("area_id", "sex", "calendar_quarter", "age_group"),
                        names_from = indicator, values_from = mean)
 
   out_0to4strat_rates <- out_0to4strat_rates %>%
@@ -1240,7 +1265,7 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
   }
 
   out_0to4strat_rates <- out_0to4strat_rates %>%
-    tidyr::pivot_longer(c(prevalence, art_coverage, aware_plhiv_prop, incidence),
+    tidyr::pivot_longer(cols = c(prevalence, art_coverage, aware_plhiv_prop, incidence),
                         names_to = "indicator", values_to = "ratio") %>%
     dplyr::select(area_id, sex, calendar_quarter, age_group, indicator, ratio) %>%
     dplyr::inner_join(out0to4, by = c("area_id", "sex", "calendar_quarter", "indicator")) %>%

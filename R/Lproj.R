@@ -17,17 +17,15 @@ create_Lproj <- function(spec, mf_model,
   ## not be subtracted when calculating PLHIV survivorship.
   spec$infections[spec$age < 10] <- 0.0
 
-
   spec_quarter <- spec %>%
     dplyr::mutate(quarter_id = convert_quarter_id(year, 2L),
                   year = NULL) %>%
     dplyr::filter(dplyr::between(quarter_id, quarter_id1 - 8, quarter_id2 + 8)) %>%
     dplyr::arrange(spectrum_region_code, quarter_id, sex, age) %>%
-    dplyr::group_by(spectrum_region_code, quarter_id, sex) %>%
-    dplyr::summarise(
+    dplyr::reframe(
       age_quarter = 0:(400-1),
       dplyr::across(c(totpop, hivpop, artpop, infections), graduate_mono, c(age, 100), age_quarter/4),
-      .groups = "drop"
+      .by = c(spectrum_region_code, quarter_id, sex)
     )
 
   ## Log-linear interpolate mid-year population to T1 and T2
@@ -52,11 +50,10 @@ create_Lproj <- function(spec, mf_model,
   ## Graduate infections over period quarters within each age
   infections_cohort <- spec_quarter %>%
     dplyr::arrange(spectrum_region_code, sex, age_quarter, quarter_id) %>%
-    dplyr::group_by(spectrum_region_code, sex, age_quarter) %>%
-    dplyr::summarise(
+    dplyr::reframe(
       quarter_id_out = seq.int(quarter_id1 - 4, quarter_id2 + 3),
       infections = graduate_mono(infections, c(min(quarter_id)-4, quarter_id), quarter_id_out),
-      .groups = "drop"
+      .by = c(spectrum_region_code, sex, age_quarter)
     ) %>%
     dplyr::rename(quarter_id = quarter_id_out) %>%
     dplyr::mutate(cohort_quarter = quarter_id - age_quarter)
@@ -95,11 +92,10 @@ create_Lproj <- function(spec, mf_model,
       dplyr::select(get_age_groups(), age_group, age_group_start),
       by = "age_group"
     ) %>%
-    dplyr::group_by(area_id, spectrum_region_code, sex, quarter_id) %>%
-    dplyr::summarise(
+    dplyr::reframe(
       age_quarter = 0:(400-1),
       population = graduate_mono(population, c(age_group_start, 100), age_quarter/4),
-      .groups = "drop"
+      .by = c(area_id, spectrum_region_code, sex, quarter_id)
     ) %>%
     dplyr::left_join(
       ## Merge age groups
@@ -184,8 +180,8 @@ create_Lproj <- function(spec, mf_model,
     dplyr::select(area_id, sex, age_group1, age_group2, totpop_ratio_area, totpop_ratio_spec, net_growth_ratio)
 
   net_growth_ratio_t1t2_aggr <- net_growth_ratio_t1t2 %>%
-    dplyr::group_by(area_id, sex, age_group1) %>%
-    dplyr::summarise(dplyr::across(c(totpop_ratio_area, totpop_ratio_spec), sum), .groups = "drop") %>%
+    dplyr::summarise(dplyr::across(c(totpop_ratio_area, totpop_ratio_spec), sum),
+                     .by = c(area_id, sex, age_group1)) %>%
     dplyr::mutate(net_growth_ratio = totpop_ratio_area / totpop_ratio_spec)
 
   if (!adjust_area_growth) {

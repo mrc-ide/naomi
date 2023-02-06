@@ -707,6 +707,111 @@ naomi_objective_function_r <- function(d, p) {
                     anc_rho_t3_out                 = anc_rho_t3_out,
                     anc_alpha_t3_out               = anc_alpha_t3_out)
 
+  ## Projection to time 4
+
+  mu_alpha_t4 <- mu_alpha_t3 + d$logit_alpha_t3t4_offset
+  alpha_t4 <- plogis(mu_alpha_t4)
+
+  infections_adult_t3t4 <- lambda_adult_t3 * (d$population_t3 - plhiv_t3)
+  plhiv_t4 <- as.vector(d$Lproj_hivpop_t3t4 %*% plhiv_t3 +
+                          d$Lproj_incid_t3t4 %*% infections_adult_t3t4 +
+                          d$Lproj_paed_t3t4 %*% plhiv_t3)
+
+  rho_t4 <- plhiv_t4 / d$population_t4
+  prop_art_t4 <- rho_t4 * alpha_t4
+  artnum_t4 <- d$population_t4 * prop_art_t4
+
+  plhiv_15to49_t4 <- as.vector(d$X_15to49 %*% plhiv_t4)
+  rho_15to49_t4 <- plhiv_15to49_t4 / as.vector(d$X_15to49 %*% d$population_t4)
+  alpha_15to49_t4 <- as.vector(d$X_15to49 %*% artnum_t4) / plhiv_15to49_t4
+
+  mu_lambda_t4 <- d$X_lambda %*% p$beta_lambda +
+    d$log_lambda_t4_offset +
+    d$Z_x %*% (log(rho_15to49_t4) + log(1.0 - d$omega * alpha_15to49_t4)) +
+    d$Z_lambda_x %*% p$ui_lambda_x
+
+  lambda_adult_t4 <- exp(mu_lambda_t4)
+
+  ## Add paediatric incidence
+  rho_15to49f_t4 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t4) / (d$X_15to49f %*% d$population_t4)
+  lambda_paed_t4 <- as.vector(d$X_paed_lambda_ratio_t4 %*% rho_15to49f_t4)
+  lambda_t4 <- lambda_adult_t4 + lambda_paed_t4
+
+  infections_t4 <- lambda_t4 * (d$population_t4 - plhiv_t4)
+
+  prop_art_ij_t4 <- as.vector(d$Xart_idx %*% prop_art_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
+  population_ij_t4 <- as.vector(d$Xart_idx %*% d$population_t4)
+  artnum_ij_t4 <- population_ij_t4 * prop_art_ij_t4
+
+  population_t4_out <- as.vector(d$A_out %*% d$population_t4)
+  plhiv_t4_out <- as.vector(d$A_out %*% plhiv_t4)
+
+  ## Calculate number of PLHIV who would attend facility in district i
+  plhiv_attend_ij_t4 <- as.vector(d$Xart_idx %*% plhiv_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_t4_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t4))
+
+
+
+  infections_t4_out <- as.vector(d$A_out %*% infections_t4)
+  lambda_t4_out <- infections_t4_out / (population_t4_out - plhiv_t4_out)
+
+  report_t4 <- list(population_t4_out              = population_t4_out,
+                    plhiv_t4_out                   = plhiv_t4_out,
+                    plhiv_attend_t4_out            = plhiv_attend_t4_out,
+                    lambda_t4_out                  = lambda_t4_out,
+                    infections_t4_out              = infections_t4_out)
+
+
+  ## Projection to time 5
+
+  mu_alpha_t5 <- mu_alpha_t4 + d$logit_alpha_t4t5_offset
+  alpha_t5 <- plogis(mu_alpha_t5)
+
+  infections_adult_t4t5 <- lambda_adult_t4 * (d$population_t4 - plhiv_t4)
+  plhiv_t5 <- as.vector(d$Lproj_hivpop_t4t5 %*% plhiv_t4 +
+                          d$Lproj_incid_t4t5 %*% infections_adult_t4t5 +
+                          d$Lproj_paed_t4t5 %*% plhiv_t4)
+
+  rho_t5 <- plhiv_t5 / d$population_t5
+  prop_art_t5 <- rho_t5 * alpha_t5
+  artnum_t5 <- d$population_t5 * prop_art_t5
+
+  plhiv_15to49_t5 <- as.vector(d$X_15to49 %*% plhiv_t5)
+  rho_15to49_t5 <- plhiv_15to49_t5 / as.vector(d$X_15to49 %*% d$population_t5)
+  alpha_15to49_t5 <- as.vector(d$X_15to49 %*% artnum_t5) / plhiv_15to49_t5
+
+  mu_lambda_t5 <- d$X_lambda %*% p$beta_lambda +
+    d$log_lambda_t5_offset +
+    d$Z_x %*% (log(rho_15to49_t5) + log(1.0 - d$omega * alpha_15to49_t5)) +
+    d$Z_lambda_x %*% p$ui_lambda_x
+
+  lambda_adult_t5 <- exp(mu_lambda_t5)
+
+  ## Add paediatric incidence
+  rho_15to49f_t5 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t5) / (d$X_15to49f %*% d$population_t5)
+  lambda_paed_t5 <- as.vector(d$X_paed_lambda_ratio_t5 %*% rho_15to49f_t5)
+  lambda_t5 <- lambda_adult_t5 + lambda_paed_t5
+
+  infections_t5 <- lambda_t5 * (d$population_t5 - plhiv_t5)
+
+  prop_art_ij_t5 <- as.vector(d$Xart_idx %*% prop_art_t5) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
+  population_ij_t5 <- as.vector(d$Xart_idx %*% d$population_t5)
+  artnum_ij_t5 <- population_ij_t5 * prop_art_ij_t5
+
+  population_t5_out <- as.vector(d$A_out %*% d$population_t5)
+  plhiv_t5_out <- as.vector(d$A_out %*% plhiv_t5)
+
+  ## Calculate number of PLHIV who would attend facility in district i
+  plhiv_attend_ij_t5 <- as.vector(d$Xart_idx %*% plhiv_t5) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_t5_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t5))
+
+  infections_t5_out <- as.vector(d$A_out %*% infections_t5)
+
+  report_t5 <- list(population_t5_out              = population_t5_out,
+                    plhiv_t5_out                   = plhiv_t5_out,
+                    plhiv_attend_t5_out            = plhiv_attend_t5_out,
+                    infections_t5_out              = infections_t5_out)
+  
   report_likelihood <- list(hhs_prev_ll           = hhs_prev_ll,
                             hhs_artcov_ll         = hhs_artcov_ll,
                             artnum_t2_ll          = artnum_t2_ll,
@@ -718,7 +823,8 @@ naomi_objective_function_r <- function(d, p) {
 
 
   v <- list(val = unname(val),
-            report = c(report_t1, report_t2, report_t3, report_likelihood))
+            report = c(report_t1, report_t2, report_t3, report_t4, report_t5,
+                       report_likelihood))
 }
 
 #' Log posterior density of BYM2

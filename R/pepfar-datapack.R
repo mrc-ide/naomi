@@ -5,7 +5,6 @@
 #' @param psnu_level area_level for PEPFAR PSNU to export. If NULL,
 #'    first looks in lookup table for the correct area_level, and
 #'    if not defaults to the highest level of the area hierarchy.
-#' @param calendar_quarter calendar_quarter to export estimates.
 #'
 #' @details
 #'
@@ -25,11 +24,9 @@
 #' @export
 write_datapack_csv <- function(naomi_output,
                                path,
-                               psnu_level = NULL,
-                               calendar_quarter = NULL) {
+                               psnu_level = NULL) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
-  stopifnot(calendar_quarter %in% naomi_output$meta_period$calendar_quarter)
 
   if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
     path <- paste0(path, ".csv")
@@ -61,101 +58,88 @@ write_datapack_csv <- function(naomi_output,
     }
   }
 
-  if (is.null(calendar_quarter)) {
-    calendar_quarter = max(naomi_output$meta_period$calendar_quarter)
-  }
-
-  tx_curr_calendar_quarter <- unique(naomi_output$meta_period$calendar_quarter)
-  tx_curr_calendar_quarter <- sort(tx_curr_calendar_quarter, decreasing = TRUE)[2]
-
+  datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
 
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
-             indicator_code = datapack_indicator_code,
-             dataelement_uid = datapack_indicator_id,
-             ) %>%
-    dplyr::select(indicator, indicator_code, dataelement_uid, is_integer)
+      indicator_code = datapack_indicator_code,
+      dataelement_uid = datapack_indicator_id,
+      ) %>%
+    dplyr::select(indicator, indicator_code, dataelement_uid, is_integer, calendar_quarter)
 
 
   datapack_age_group_map <- datapack_age_group_map %>%
     dplyr::transmute(
-             age_group,
-             age = paste0("=\"\"", datapack_age_group_label, "\"\""),
-             age_uid = datapack_age_group_id
-           )
+      age_group,
+      age = paste0("=\"\"", datapack_age_group_label, "\"\""),
+      age_uid = datapack_age_group_id
+    )
 
   datapack_sex_map <- datapack_sex_map %>%
     dplyr::rename(
-             sex_naomi = sex,
-             sex_datapack = datapack_sex_label,
-             sex_uid = datapack_sex_id
-           )
+      sex_naomi = sex,
+      sex_datapack = datapack_sex_label,
+      sex_uid = datapack_sex_id
+    )
 
   strat <-  datapack_indicator_map %>%
     tidyr::expand_grid(datapack_age_group_map) %>%
     tidyr::expand_grid(datapack_sex_map)
 
-  dat <- naomi_output$indicators %>%
+  indicators <- datapack_aggregate_1to9(naomi_output$indicators)
+  
+  dat <- indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
-             naomi_output$meta_area %>%
-             dplyr::filter(area_level == psnu_level),
-             by = "area_id"
-           ) %>%
+      naomi_output$meta_area %>%
+        dplyr::filter(area_level == psnu_level),
+      by = "area_id"
+    ) %>%
     dplyr::left_join(
-             dplyr::select(naomi_output$meta_indicator,
-                           indicator, anc_indicator, indicator_sort_order),
-             by = "indicator"
-           ) %>%
+      dplyr::select(naomi_output$meta_indicator,
+                    indicator, anc_indicator, indicator_sort_order),
+      by = "indicator"
+    ) %>%
+    dplyr::semi_join(
+      datapack_indicator_map,
+      by = c("indicator", "calendar_quarter")
+    )  %>%
     dplyr::filter(
-             indicator %in% datapack_indicator_map$indicator,
-             (calendar_quarter %in% {{ calendar_quarter }} |
-              calendar_quarter == tx_curr_calendar_quarter & indicator == "art_current"),
-             (sex_naomi %in% datapack_sex_map$sex_naomi &
-              age_group %in% datapack_age_group_map$age_group |
-              sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
-              sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
-           )%>%
+    (sex_naomi %in% datapack_sex_map$sex_naomi &
+       age_group %in% datapack_age_group_map$age_group |
+       sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
+       sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
+    )%>%
     dplyr::transmute(
-             area_id,
-             indicator,
-             indicator_sort_order,
-             sex_naomi,
-             age_group,
-             calendar_quarter,
-             value = mean,
-             rse = dplyr::if_else(mean == 0, 0.0, se / mean)
-           )
+      area_id,
+      indicator,
+      indicator_sort_order,
+      sex_naomi,
+      age_group,
+      calendar_quarter,
+      value = mean,
+      rse = dplyr::if_else(mean == 0, 0.0, se / mean)
+    )
 
   dat <- dat %>%
     dplyr::filter(!age_group %in% c("Y000_999", "Y015_049")) %>%
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
-             dplyr::filter(dat, age_group %in% c("Y000_999", "Y015_049")) %>%
-             dplyr::select(-indicator_sort_order, -age_group, -sex_naomi, -value) %>%
-             dplyr::rename(district_rse = rse),
-             by = c("area_id", "indicator", "calendar_quarter")
-           ) %>%
+      dplyr::filter(dat, age_group %in% c("Y000_999", "Y015_049")) %>%
+        dplyr::select(-indicator_sort_order, -age_group, -sex_naomi, -value) %>%
+        dplyr::rename(district_rse = rse),
+      by = c("area_id", "indicator", "calendar_quarter")
+    ) %>%
     dplyr::left_join(
-             sf::st_drop_geometry(naomi_output$meta_area) %>%
-             dplyr::select(area_name, area_id),
-             by = "area_id"
-           ) %>%
+      sf::st_drop_geometry(naomi_output$meta_area) %>%
+        dplyr::select(area_name, area_id),
+      by = "area_id"
+    ) %>%
     dplyr::arrange(calendar_quarter, indicator_sort_order, area_id, sex_naomi, age_group)
 
   ## Merge data pack Ids
-  dat <- dplyr::left_join(dat, strat, by = c("indicator", "age_group", "sex_naomi"))
-
-  ## Manually recode current quarter TX_CURR indicator to TX_CURR_SUBNAT.R
-  dat <- dat %>%
-    dplyr::mutate(
-             indicator_code = dplyr::if_else(calendar_quarter == tx_curr_calendar_quarter &
-                                             indicator == "art_current",
-                                             "TX_CURR_SUBNAT.R",
-                                             indicator_code),
-             dataelement_uid = dplyr::if_else(indicator_code == "TX_CURR_SUBNAT.R", "MktYDp33kd6", dataelement_uid)
-           )
-
+  dat <- dplyr::left_join(dat, strat,
+                          by = c("indicator", "calendar_quarter", "age_group", "sex_naomi"))
 
   ## Round integer indicators
   dat$value <- ifelse(dat$is_integer, round(dat$value), dat$value)
@@ -167,20 +151,20 @@ write_datapack_csv <- function(naomi_output,
 
   datapack <- dat %>%
     dplyr::select(
-             psnu,
-             psnu_uid,
-             area_id,
-             indicator_code,
-             dataelement_uid,
-             age,
-             age_uid,
-             sex = sex_datapack,
-             sex_uid,
-             calendar_quarter,
-             value,
-             age_sex_rse,
-             district_rse
-           )
+      psnu,
+      psnu_uid,
+      area_id,
+      indicator_code,
+      dataelement_uid,
+      age,
+      age_uid,
+      sex = sex_datapack,
+      sex_uid,
+      calendar_quarter,
+      value,
+      age_sex_rse,
+      district_rse
+    )
 
   naomi_write_csv(datapack, path)
 
@@ -192,4 +176,62 @@ read_datapack_psnu <- function() {
   readr::read_csv(system_file("datapack/datapack_psnu_area_level.csv"),
                   col_types = list(readr::col_character(),
                                    readr::col_integer()))
+}
+
+datapack_aggregate_1to9 <- function(indicators) {
+
+  
+  indicators_keep <- c("plhiv", "plhiv_attend", "untreated_plhiv_attend", "infections",
+                       "population", "art_current", "art_current_residents", "aware_plhiv_num")  
+
+  indicators1to9 <- indicators %>%
+    dplyr::filter(
+      age_group %in% c("Y001_004", "Y005_009"),
+      indicator %in% indicators_keep
+    ) %>%
+    dplyr::count(area_id, sex, age_group = "Y001_009", calendar_quarter, indicator,
+                 wt = mean, name = "mean") %>%
+    tidyr::pivot_wider(id_cols = c(area_id, sex, age_group, calendar_quarter),
+                       names_from = indicator, values_from = mean)
+
+  required_cols <- c("plhiv", "population", "art_current_residents", "infections")
+  if ( any( !required_cols %in% names(indicators1to9) )) {
+    missing_cols <- setdiff(required_cols, names(indicators1to9))
+    warning("Required indicators not in output: ", paste(missing_cols, collapse = ", "))
+
+    indicators1to9[missing_cols] <- NA_real_
+  }
+  
+
+  indicators1to9 <- indicators1to9 %>%
+    dplyr::mutate(
+      prevalence = plhiv / population,
+      art_coverage = art_current_residents / plhiv,
+      incidence = infections / (population - plhiv)
+    ) %>%
+    tidyr::pivot_longer(
+      cols = dplyr::any_of(c(indicators_keep, "prevalence", "art_coverage", "incidence")),
+      names_to = "indicator", values_to = "mean"
+    )
+
+  indicators1to9rse <- indicators %>%
+    dplyr::filter(
+      age_group %in% c("Y001_004", "Y005_009"),
+      indicator %in% indicators1to9$indicator
+    ) %>%
+    dplyr::group_by(area_id, sex, age_group = "Y001_009", calendar_quarter, indicator) %>%
+    dplyr::summarise(
+      rse = mean(dplyr::if_else(mean == 0, 0.0, se / mean))
+    )
+
+  indicators1to9 <- indicators1to9 %>%
+    dplyr::left_join(indicators1to9rse,
+                     by = c("area_id", "sex", "age_group", "calendar_quarter", "indicator")) %>%
+    dplyr::mutate(
+      se = mean * rse,
+      rse = NULL
+    )
+
+  indicators[names(indicators1to9)] %>%
+    dplyr::bind_rows(indicators1to9)
 }

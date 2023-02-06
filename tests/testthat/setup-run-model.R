@@ -17,6 +17,8 @@ a_hintr_options <- list(
   calendar_quarter_t1 = "CY2016Q1",
   calendar_quarter_t2 = "CY2018Q4",
   calendar_quarter_t3 = "CY2019Q2",
+  calendar_quarter_t4 = "CY2022Q3",
+  calendar_quarter_t5 = "CY2023Q3",  
   survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
   survey_art_coverage = "DEMO2016PHIA",
   survey_recently_infected = "DEMO2016PHIA",
@@ -43,7 +45,8 @@ a_hintr_options <- list(
   deff_artcov = 1.0,
   use_kish_recent = "true",
   deff_recent = 1.0,
-  use_survey_aggregate = "false"
+  use_survey_aggregate = "false",
+  psnu_level = NULL
 )
 
 a_hintr_output <- hintr_run_model(a_hintr_data, a_hintr_options)

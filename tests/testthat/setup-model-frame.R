@@ -11,8 +11,11 @@ a_naomi_mf <- naomi_model_frame(a_area_merged,
                                 calendar_quarter1 = "CY2016Q1",
                                 calendar_quarter2 = "CY2018Q4",
                                 calendar_quarter3 = "CY2019Q2",
+                                calendar_quarter4 = "CY2022Q3",
+                                calendar_quarter5 = "CY2023Q3",
                                 artattend = FALSE,
-                                spectrum_population_calibration = "none")
+                                spectrum_population_calibration = "none",
+                                psnu_level = NULL)
 
 a_naomi_data <- select_naomi_data(a_naomi_mf,
                                   demo_survey_hiv_indicators,

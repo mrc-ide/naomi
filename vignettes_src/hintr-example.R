@@ -7,12 +7,13 @@
 #'   %\VignetteEncoding{UTF-8}
 #' ---
 
-##+ include = FALSE
+##+ preamble, include = FALSE
 knitr::opts_chunk$set(
                     collapse = TRUE,
                     comment = "#>"
                   )
 unlink("outputs", recursive = TRUE)
+
 #'
 #'
 #' This vignette provides example
@@ -21,7 +22,7 @@ unlink("outputs", recursive = TRUE)
 
 library(naomi)
 
-##+ fit model
+##+ fit_model
 hintr_data <- list(
   pjnz = system.file("extdata/demo_mwi2019.PJNZ", package = "naomi"),
   population = system.file("extdata/demo_population_agesex.csv", package = "naomi"),
@@ -35,8 +36,10 @@ hintr_options <- list(
   area_scope = "MWI",
   area_level = "4",
   calendar_quarter_t1 = "CY2016Q1",
-  calendar_quarter_t2 = "CY2018Q3",
-  calendar_quarter_t3 = "CY2022Q3",
+  calendar_quarter_t2 = "CY2018Q4",
+  calendar_quarter_t3 = "CY2019Q3",
+  calendar_quarter_t4 = "CY2023Q3",
+  calendar_quarter_t5 = "CY2024Q3",  
   survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
   survey_art_coverage = "DEMO2016PHIA",
   survey_recently_infected = "DEMO2016PHIA",
@@ -52,6 +55,7 @@ hintr_options <- list(
   artattend = "true",
   artattend_t2 = "true",
   artattend_log_gamma_offset = -4L,
+  anchor_home_district = TRUE,
   output_aware_plhiv = "true",
   rng_seed = 17,
   no_of_samples = 20,
@@ -66,7 +70,7 @@ calibration_options <- list(
   spectrum_aware_calibration_level = "national",
   spectrum_aware_calibration_strat = "sex_age_coarse",
   spectrum_infections_calibration_level = "national",
-  spectrum_infections_calibration_strat = "age_coarse",
+  spectrum_infections_calibration_strat = "sex_age_coarse",
   calibrate_method = "logistic"
 )
 
@@ -81,6 +85,8 @@ coarse_download <- hintr_prepare_coarse_age_group_download(calibrated_paths)
 #' TO DO: add summary report download
 
 #' Read output package and generate datapack export
+
+##+ read_output
 naomi_output <- read_output_package(spectrum_download$path)
 
 datapack_path <- tempfile(fileext = ".csv")

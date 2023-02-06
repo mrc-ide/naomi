@@ -208,6 +208,8 @@ run_calibrate <- function(output, calibration_options) {
     output = calibrated_output,
     naomi_mf = model_output$naomi_data)
 
+
+
   calibration_data <- list(
     output_package = calibrated_output,
     naomi_data = model_output$naomi_data,
@@ -227,7 +229,11 @@ run_calibrate <- function(output, calibration_options) {
   output_naomi_warning(calibrated_output, "art_coverage", 1,
                        c("model_calibrate","review_output", "download_results"))
 
-  list(plot_data = indicators,
+  ## Only return indicators for T1, T2, T3
+  cq_t1t2t3 <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
+  indicators_plot <- dplyr::filter(indicators, calendar_quarter %in% cq_t1t2t3)
+  
+  list(plot_data = indicators_plot,
        calibrate_data = calibration_data)
 }
 
@@ -311,6 +317,8 @@ naomi_prepare_data <- function(data, options) {
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   calendar_quarter_t3 <- options$calendar_quarter_t3
+  calendar_quarter_t4 <- options$calendar_quarter_t4
+  calendar_quarter_t5 <- options$calendar_quarter_t5
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
@@ -352,6 +360,10 @@ naomi_prepare_data <- function(data, options) {
     options$anchor_home_district <- TRUE
   }
 
+  if(!is.null(options$psnu_level)) {
+    options$psnu_level <- as.integer(options$psnu_level)
+  }
+
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
     population_agesex = population,
@@ -361,6 +373,8 @@ naomi_prepare_data <- function(data, options) {
     calendar_quarter1 = calendar_quarter_t1,
     calendar_quarter2 = calendar_quarter_t2,
     calendar_quarter3 = calendar_quarter_t3,
+    calendar_quarter4 = calendar_quarter_t4,
+    calendar_quarter5 = calendar_quarter_t5,
     spectrum_population_calibration = options$spectrum_population_calibration,
     output_aware_plhiv = as.logical(options$output_aware_plhiv),
     artattend = as.logical(options$artattend),
@@ -371,6 +385,7 @@ naomi_prepare_data <- function(data, options) {
     rho_paed_15to49f_ratio = as.logical(options$rho_paed_15to49f_ratio),
     alpha_xst_term = as.logical(options$alpha_xst_term),
     adjust_area_growth = as.logical(options$adjust_area_growth),
+    psnu_level = options$psnu_level
   )
 
   naomi_data <- select_naomi_data(
