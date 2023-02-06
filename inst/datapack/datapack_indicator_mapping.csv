@@ -1,6 +1,6 @@
 indicator,datapack_indicator_id,datapack_indicator_code,datapack_description,is_integer,time 
 prevalence,lJtpR5byqps,HIV_PREV.T_1,HIV Prevalence,FALSE,3
-plhiv,iwSejvD8cXl,PLHIV.T_1,People living with HIV,TRUE,3
+plhiv,iwSejvD8cXl,PLHIV_Residents.T_1,People living with HIV,TRUE,3
 plhiv_attend,PLHIV_Attend.T_1,PLHIV_Attend.T_1,Number of PLHIV in ART catchment,TRUE,3
 untreated_plhiv_attend,Untreated_PLHIV_Attend.T_1,Untreated_PLHIV_Attend.T_1,Number of untreated PLHIV in ART catchment,TRUE,3
 population,KssDaTsGWnS,POP_EST.T_1,Total Population,TRUE,3
@@ -19,8 +19,8 @@ infections,NEW_INFECTIONS_SUBNAT.T_1,NEW_INFECTIONS_SUBNAT.T_1,New infections pe
 art_current,MktYDp33kd6,TX_CURR_SUBNAT.R,,TRUE,2
 incidence,Incidence_SUBNAT.Rt.T,Incidence_SUBNAT.Rt.T,,FALSE,4
 infections,NEW_INFECTIONS_SUBNAT.T,NEW_INFECTIONS_SUBNAT.T,,TRUE,4
-plhiv,PLHIV.T,PLHIV.T,,TRUE,4
+plhiv,PLHIV_Residents.T,PLHIV_Residents.T,,TRUE,4
 plhiv_attend,PLHIV_Attend.T,PLHIV_Attend.T,,TRUE,4
 infections,NEW_INFECTIONS_SUBNAT.T2,NEW_INFECTIONS_SUBNAT.T2,,TRUE,5
-plhiv,PLHIV.T2,PLHIV.T2,,TRUE,5
+plhiv,PLHIV_Residents.T2,PLHIV_Residents.T2,,TRUE,5
 plhiv_attend,PLHIV_Attend.T2,PLHIV_Attend.T2,,TRUE,5
