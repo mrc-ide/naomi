@@ -306,22 +306,28 @@ test_that("model run can be calibrated", {
 
   ## Output has been calibrated
   expect_true(!is.null(calibrated_output$plot_data_path))
-  indicators_output <- read_hintr_output(calibrated_output$plot_data_path)
+  calibrated_output_obj <- read_hintr_output(calibrated_output$model_output_path)
+  
   ## Total population outputs:
   ## * 33 age groups
   ## * 3 sexes
   ## * 9 areas
   ## * 3 output times - 14 indicators
-  ## * 1 output time - 5 indicators
-  ## * 1 output time - 4 indicators
+  ## * 1 output time - 5 indicators   [NOT INCLUDED IN PLOT OUTPUTS]
+  ## * 1 output time - 4 indicators   [NOT INCLUDED IN PLOT OUTPUTS]
   ##
   ## ANC indicators outputs
   ## 3 = number or output times
   ## 9 = number of ANC indicators
   ## 9 = number of areas
   ## 12 = number of ANC age groups
-  expect_equal(nrow(indicators_output),
+  expect_equal(nrow(calibrated_output_obj$output_package$indicators),
                33 * 3 * 9 * (3 * 14 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
+  
+  ## Plot data output: T3 and T4 indicators not included -> fewer rows
+  plot_data_output <- read_hintr_output(calibrated_output$plot_data_path)  
+  expect_equal(nrow(plot_data_output),
+               33 * 3 * 9 * (3 * 14 + 0 * 5 + 0 * 4) + 3 * 9 * 9 * 12)
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
