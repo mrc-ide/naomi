@@ -229,7 +229,11 @@ run_calibrate <- function(output, calibration_options) {
   output_naomi_warning(calibrated_output, "art_coverage", 1,
                        c("model_calibrate","review_output", "download_results"))
 
-  list(plot_data = indicators,
+  ## Only return indicators for T1, T2, T3
+  cq_t1t2t3 <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
+  indicators_plot <- dplyr::filter(indicators, calendar_quarter %in% cq_t1t2t3)
+  
+  list(plot_data = indicators_plot,
        calibrate_data = calibration_data)
 }
 

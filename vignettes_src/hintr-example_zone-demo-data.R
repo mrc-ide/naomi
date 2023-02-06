@@ -86,6 +86,7 @@ calibrated_paths <- hintr_calibrate(hintr_paths, calibration_options)
 spectrum_download <- hintr_prepare_spectrum_download(calibrated_paths)
 
 calibrate_plot_data <- hintr_calibrate_plot(calibrated_paths)
+comparison_plot_data <- hintr_comparison_plot(calibrated_paths)
 
 #' Read output package and generate datapack export
 naomi_output <- read_output_package(spectrum_download$path)
