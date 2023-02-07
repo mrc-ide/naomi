@@ -7,7 +7,7 @@ test_that("datapack_psnu_area_id_map is well formed", {
   expect_equal(anyDuplicated(psnu_map$area_id), 0)
 
   ## Remove _demo area_id. map_id included twice for these cases
-  expect_equal(anyDuplicated(psnu_map$map_id[!grepl("_demo$", psnu_map$area_id)]), 0)
+  expect_equal(anyDuplicated(psnu_map$map_id[!grepl("_demo$", psnu_map$area_id) & !is.na(psnu_map$map_id)]), 0)
 
   expect_true(all(psnu_map$map_source == "Datim"))
   expect_true(all(!is.na(psnu_map$map_name)))
