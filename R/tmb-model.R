@@ -751,7 +751,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                         sex = c("male", "female", "male", "female", "both"),
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
-             by = "artdat_sex"
+             by = "artdat_sex",
+             multiple = "all"
     )
 
   ## Map artattend_area_id to model_area_id
@@ -782,7 +783,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
              value = 1
            )
 
-  A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars)
+  A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars, multiple = "all")
 
   A_artnum <- A_artnum %>%
     {
