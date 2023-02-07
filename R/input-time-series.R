@@ -60,7 +60,7 @@ aggregate_art <- function(art, shape) {
 
 
     art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
-      dplyr::right_join(art_full, by = "area_id")
+      dplyr::right_join(art_full, by = "area_id", multiple = "all")
 
     # Function to aggregate based on area_id[0-9]$ columns in hierarchy
     aggregate_data_art <- function(col_name) {
