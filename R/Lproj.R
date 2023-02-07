@@ -24,7 +24,8 @@ create_Lproj <- function(spec, mf_model,
     dplyr::arrange(spectrum_region_code, quarter_id, sex, age) %>%
     dplyr::reframe(
       age_quarter = 0:(400-1),
-      dplyr::across(c(totpop, hivpop, artpop, infections), graduate_mono, c(age, 100), age_quarter/4),
+      dplyr::across(c(totpop, hivpop, artpop, infections),
+                    .fns = \(x) graduate_mono(x, c(age, 100), age_quarter/4)),
       .by = c(spectrum_region_code, quarter_id, sex)
     )
 
