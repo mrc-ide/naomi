@@ -245,14 +245,14 @@ create_Lproj <- function(spec, mf_model,
 
   incidLproj <- infections_age_t2 %>%
     dplyr::left_join(infections_age_1year,
-                     by = c("spectrum_region_code", "sex", "age_group_infection"),
-                     multiple = "all") %>%
+                     by = c("spectrum_region_code", "sex", "age_group_infection")) %>%
     dplyr::mutate(
       L_incid = dplyr::if_else(infections_age == 0, 0, infections_age_t2 / infections_age)
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group_infection = age_group, area_id, idx1 = idx),
-      by = c("spectrum_region_code", "sex", "age_group_infection")
+      by = c("spectrum_region_code", "sex", "age_group_infection"),
+      multiple = "all"
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group2 = age_group, area_id, idx2 = idx),
@@ -281,16 +281,16 @@ create_Lproj <- function(spec, mf_model,
     dplyr::select(spectrum_region_code, sex2 = sex, age_group2, hivpop2) %>%
     dplyr::left_join(
       hivpop_t1 %>%
-      dplyr::left_join(get_age_groups(),
-                       by = c("age_group1" = "age_group"),
-                       multiple = "all") %>%
-      dplyr::filter(
-        sex == "female",
-        age_group_start >= 15,
-        (age_group_start + age_group_span) < 50
-      ) %>%
-      dplyr::select(spectrum_region_code, sex1 = sex, age_group1, hivpop1),
-      by = "spectrum_region_code"
+        dplyr::left_join(get_age_groups(),
+                         by = c("age_group1" = "age_group")) %>%
+        dplyr::filter(
+          sex == "female",
+          age_group_start >= 15,
+          (age_group_start + age_group_span) < 50
+        ) %>%
+        dplyr::select(spectrum_region_code, sex1 = sex, age_group1, hivpop1),
+      by = "spectrum_region_code",
+      multiple = "all"
     ) %>%
     dplyr::group_by(spectrum_region_code, sex2, age_group2) %>%
     dplyr::mutate(L_paed = hivpop2 / sum(hivpop1)) %>%
@@ -300,7 +300,8 @@ create_Lproj <- function(spec, mf_model,
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex1 = sex,
                     age_group1 = age_group, area_id, idx1 = idx),
-      by = c("spectrum_region_code", "sex1", "age_group1")
+      by = c("spectrum_region_code", "sex1", "age_group1"),
+      multiple = "all"
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex2 = sex,
