@@ -319,7 +319,7 @@ aggregate_anc <- function(anc, shape) {
     anc_testing_wide <- areas %>%
       dplyr::filter(area_level <= anc_level) %>%
       spread_areas() %>%
-      dplyr::right_join(anc_full, by = "area_id")
+      dplyr::right_join(anc_full, by = "area_id", multiple = "all")
 
     # Function to aggregate based on area_id[0-9]$ columns in hierarchy
     aggregate_data_anc <- function(col_name) {
