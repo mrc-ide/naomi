@@ -1,41 +1,5 @@
 iso3,area_id,map_level,map_name,map_id,map_source
-MWI,MWI,0,Malawi,lZsCb6y0KDX,Datim
-MWI,MWI_1_1_demo,1,Northern Region,mSB01mQcm7e,Datim
-MWI,MWI_1_2_demo,1,Central Region,mwXGqccqrOI,Datim
-MWI,MWI_1_3_demo,1,Southern Region,CXewWNn3soV,Datim
-MWI,MWI_2_1_demo,2,Northern Zone,ph4GyQNp7vh,Datim
-MWI,MWI_2_2_demo,2,Central Eastern Zone,EGgIZbN4s1P,Datim
-MWI,MWI_2_3_demo,2,Central Western Zone,YrJx6ynjQTd,Datim
-MWI,MWI_2_4_demo,2,South Eastern Zone,A9Rp1ap5sTh,Datim
-MWI,MWI_2_5_demo,2,South Western Zone,VxEnfJ66ucz,Datim
-MWI,MWI_3_1_demo,3,Chitipa District,GkIwZrXy1h2,Datim
-MWI,MWI_3_2_demo,3,Karonga District,cPtvxaZqXIH,Datim
-MWI,MWI_3_5_demo,3,Nkhata Bay District,E7zpfyBt7Tw,Datim
-MWI,MWI_3_3_demo,3,Rumphi District,lPTyjLi4w3d,Datim
-MWI,MWI_3_4_demo,3,Mzimba District,vA4NcHxfMBq,Datim
-MWI,MWI_3_6_demo,3,Likoma District,ZCjuwgaMB9u,Datim
-MWI,MWI_3_8_demo,3,Kasungu District,JQKLKuVuY61,Datim
-MWI,MWI_3_7_demo,3,Nkhotakota District,YCKiBAp8QAg,Datim
-MWI,MWI_3_9_demo,3,Ntchisi District,fiRkU6gEjLz,Datim
-MWI,MWI_3_10_demo,3,Dowa District,zphK9WV8JB4,Datim
-MWI,MWI_3_11_demo,3,Salima District,msW2zpIN7up,Datim
-MWI,MWI_3_13_demo,3,Lilongwe District,ScR9iFKAasW,Datim
-MWI,MWI_3_12_demo,3,Mchinji District,kxuuIFpOXyO,Datim
-MWI,MWI_3_14_demo,3,Dedza District,PekKUkKHAzY,Datim
-MWI,MWI_3_15_demo,3,Ntcheu District,am530wpaGvr,Datim
-MWI,MWI_3_16_demo,3,Mangochi District,lLDyBx5XyUi,Datim
-MWI,MWI_3_17_demo,3,Machinga District,TYnMSwzko3z,Datim
-MWI,MWI_3_19_demo,3,Zomba District,fyEoGEPERdI,Datim
-MWI,MWI_3_21_demo,3,Mulanje District,umc2n1Z4wNv,Datim
-MWI,MWI_3_20_demo,3,Phalombe District,AZyWpGzhcaA,Datim
-MWI,MWI_3_18_demo,3,Balaka District,ir8wuHHzoSs,Datim
-MWI,MWI_3_25_demo,3,Chiradzulu District,oiPR2CiVJbf,Datim
-MWI,MWI_3_23_demo,3,Blantyre District,mxqa3CDFmIT,Datim
-MWI,MWI_3_24_demo,3,Mwanza District,wNqJp8oRIcF,Datim
-MWI,MWI_3_26_demo,3,Thyolo District,ul0y9diGujK,Datim
-MWI,MWI_3_27_demo,3,Chikwawa District,U8c0so51kT6,Datim
-MWI,MWI_3_28_demo,3,Nsanje District,rpw540fmNUz,Datim
-MWI,MWI_3_22_demo,3,Neno District,gwVYinjBAe9,Datim
+AGO,AGO,0,Angola,XOivy2uDpMF,Datim
 AGO,AGO_1_1cl,2,Bengo,uXwFHXCPYgj,Datim
 AGO,AGO_1_2bo,2,Benguela,Yhf4p9zEkYl,Datim
 AGO,AGO_1_3hv,2,Bi√©,P82LOpqd4Bx,Datim
@@ -54,69 +18,104 @@ AGO,AGO_1_15wo,2,Moxico,PSRFSnqYtBL,Datim
 AGO,AGO_1_16rk,2,Namibe,OpYCtzXa1W2,Datim
 AGO,AGO_1_17bv,2,Uige,FMBYVYHGzIg,Datim
 AGO,AGO_1_18bk,2,Zaire,KCI3Lu4vvFx,Datim
-BDI,BDI_2_1,2,DS Bubanza,qrpxARG7Ni8,Datim
-BDI,BDI_2_41,2,DS Bugarama,TI4M8sDhsQ6,Datim
-BDI,BDI_2_20,2,DS Buhiga,VaEVqCu4frF,Datim
-BDI,BDI_2_3,2,DS Bujumbura centre,tWHceAdIVWT,Datim
-BDI,BDI_2_4,2,DS Bujumbura nord,DJDI6bs21uO,Datim
-BDI,BDI_2_5,2,DS Bujumbura sud,msZN2t4uMr7,Datim
-BDI,BDI_2_13,2,DS Bukinanyana,ayKSitsj5m2,Datim
-BDI,BDI_2_9,2,DS Bururi,D133L5rAICA,Datim
-BDI,BDI_2_25,2,DS Busoni,WtVU5QT0qz3,Datim
-BDI,BDI_2_45,2,DS Butezi,M2iBIAQRVgL,Datim
-BDI,BDI_2_38,2,DS Buye,lc94DaVHOUF,Datim
-BDI,BDI_2_11,2,DS Cankuzo,reEMzTuXViP,Datim
-BDI,BDI_2_14,2,DS Cibitoke,bYZn5upeWvZ,Datim
-BDI,BDI_2_36,2,DS Fota,KuYbYubUe0R,Datim
-BDI,BDI_2_22,2,DS Gahombo,TN4Xs50havw,Datim
-BDI,BDI_2_33,2,DS Gashoho,isY2p78740h,Datim
-BDI,BDI_2_43,2,DS Gihofi,qCSbzCl6SgA,Datim
-BDI,BDI_2_16,2,DS Gitega,txk0bkCd1Qu,Datim
-BDI,BDI_2_34,2,DS Giteranyi,CzJH5yMFDDL,Datim
-BDI,BDI_2_6,2,DS Isale,Fhs1VSJaHJN,Datim
-BDI,BDI_2_31,2,DS Kiganda,fyo5RAWAbzS,Datim
-BDI,BDI_2_7,2,DS Kabezi,OtzdybaCj9J,Datim
-BDI,BDI_2_23,2,DS Kayanza,VHyESl4FqZe,Datim
-BDI,BDI_2_37,2,DS Kibumbu,KVgdXwYzZ2K,Datim
-BDI,BDI_2_17,2,DS Kibuye,QM6l6rHTT5H,Datim
-BDI,BDI_2_46,2,DS Kinyinya,oSiDcsypyOI,Datim
-BDI,BDI_2_39,2,DS Kiremba,SHKNwZi9tpB,Datim
-BDI,BDI_2_26,2,DS Kirundo,kqI0lzVvTpa,Datim
-BDI,BDI_2_15,2,DS Mabayi,j5hHyMdj3tP,Datim
-BDI,BDI_2_29,2,DS Makamba,BDfJLRZI6JM,Datim
-BDI,BDI_2_10lj,2,DS Matana,D1LszDbXnYz,Datim
-BDI,BDI_2_2,2,DS Mpanda,NvvIhQOAajp,Datim
-BDI,BDI_2_27,2,DS Mukenke,GLOIxffOylG,Datim
-BDI,BDI_2_32,2,DS Muramvya,EY5bbPLfUwO,Datim
-BDI,BDI_2_12,2,DS Murore,UJJCc7l72Hc,Datim
-BDI,BDI_2_24,2,DS Musema,vrQziAp3Be1,Datim
-BDI,BDI_2_18,2,DS Mutaho,wzD3kEmtSnj,Datim
-BDI,BDI_2_35,2,DS Muyinga,bRAFS0BaYNS,Datim
-BDI,BDI_2_40,2,DS Ngozi,c3vjODtCgan,Datim
-BDI,BDI_2_21,2,DS Nyabikere,nPFPOEgCTkp,Datim
-BDI,BDI_2_30,2,DS Nyanza-Lac,jzftQkyzDBA,Datim
-BDI,BDI_2_42,2,DS Rumonge,iglTTNBnbxk,Datim
-BDI,BDI_2_44,2,DS Rutana,dHdpENqtN2V,Datim
-BDI,BDI_2_47,2,DS Ruyigi,QwNaultrBl7,Datim
-BDI,BDI_2_48gx,2,DS Rutovu,DBwtW7GRgh5,Datim
-BDI,BDI_2_8,2,DS Rwibaga,ZEisaRR50rX,Datim
-BDI,BDI_2_19,2,DS Ryansoro,B4nTrrOQwMw,Datim
-BDI,BDI_2_28,2,DS Vumbi,flfhn0vMg6P,Datim
+BDI,BDI,3,Burundi,Qh4XMQJhbk8,Datim
+BDI,BDI_1_1,4,Bubanza,gcVhTsJOcEn,Datim
+BDI,BDI_1_2,4,Bujumbura Mairie,wAZig6EhE1E,Datim
+BDI,BDI_1_3,4,Bujumbura,XvmMVfsPylt,Datim
+BDI,BDI_1_4,4,Bururi,GfzAYfZqc5T,Datim
+BDI,BDI_1_5,4,Cankuzo,iucTbllXkD9,Datim
+BDI,BDI_1_6,4,Cibitoke,Th7r3A55KSv,Datim
+BDI,BDI_1_7,4,Gitega,uVjOumOk6WM,Datim
+BDI,BDI_1_8,4,Karusi,ROXWvjoqBC7,Datim
+BDI,BDI_1_9,4,Kayanza,WYx3txQzS4e,Datim
+BDI,BDI_1_10,4,Kirundo,Sj1YMJNo9Tt,Datim
+BDI,BDI_1_11,4,Makamba,LHbuCRhv3Uf,Datim
+BDI,BDI_1_12,4,Muramvya,XS6tMpC23XC,Datim
+BDI,BDI_1_13,4,Muyinga,hNzRCFFUg9X,Datim
+BDI,BDI_1_14,4,Mwaro,bxUZV5dPQIk,Datim
+BDI,BDI_1_15,4,Ngozi,EFTH3ILZG8X,Datim
+BDI,BDI_1_16,4,Rumonge,u8jkr79hQtx,Datim
+BDI,BDI_1_17,4,Rutana,p7hBFqXXjdJ,Datim
+BDI,BDI_1_18,4,Ruyigi,uJ2w0t9mjYS,Datim
+BDI,BDI_2_1,5,DS Bubanza,qrpxARG7Ni8,Datim
+BDI,BDI_2_41,5,DS Bugarama,TI4M8sDhsQ6,Datim
+BDI,BDI_2_20,5,DS Buhiga,VaEVqCu4frF,Datim
+BDI,BDI_2_3,5,DS Bujumbura centre,tWHceAdIVWT,Datim
+BDI,BDI_2_4,5,DS Bujumbura nord,DJDI6bs21uO,Datim
+BDI,BDI_2_5,5,DS Bujumbura sud,msZN2t4uMr7,Datim
+BDI,BDI_2_13,5,DS Bukinanyana,ayKSitsj5m2,Datim
+BDI,BDI_2_9,5,DS Bururi,D133L5rAICA,Datim
+BDI,BDI_2_25,5,DS Busoni,WtVU5QT0qz3,Datim
+BDI,BDI_2_45,5,DS Butezi,M2iBIAQRVgL,Datim
+BDI,BDI_2_38,5,DS Buye,lc94DaVHOUF,Datim
+BDI,BDI_2_11,5,DS Cankuzo,reEMzTuXViP,Datim
+BDI,BDI_2_14,5,DS Cibitoke,bYZn5upeWvZ,Datim
+BDI,BDI_2_36,5,DS Fota,KuYbYubUe0R,Datim
+BDI,BDI_2_22,5,DS Gahombo,TN4Xs50havw,Datim
+BDI,BDI_2_33,5,DS Gashoho,isY2p78740h,Datim
+BDI,BDI_2_43,5,DS Gihofi,qCSbzCl6SgA,Datim
+BDI,BDI_2_16,5,DS Gitega,txk0bkCd1Qu,Datim
+BDI,BDI_2_34,5,DS Giteranyi,CzJH5yMFDDL,Datim
+BDI,BDI_2_6,5,DS Isale,Fhs1VSJaHJN,Datim
+BDI,BDI_2_31,5,DS Kiganda,fyo5RAWAbzS,Datim
+BDI,BDI_2_7,5,DS Kabezi,OtzdybaCj9J,Datim
+BDI,BDI_2_23,5,DS Kayanza,VHyESl4FqZe,Datim
+BDI,BDI_2_37,5,DS Kibumbu,KVgdXwYzZ2K,Datim
+BDI,BDI_2_17,5,DS Kibuye,QM6l6rHTT5H,Datim
+BDI,BDI_2_46ib,5,DS Kinyinya,oSiDcsypyOI,Datim
+BDI,BDI_2_39,5,DS Kiremba,SHKNwZi9tpB,Datim
+BDI,BDI_2_26,5,DS Kirundo,kqI0lzVvTpa,Datim
+BDI,BDI_2_15,5,DS Mabayi,j5hHyMdj3tP,Datim
+BDI,BDI_2_29,5,DS Makamba,BDfJLRZI6JM,Datim
+BDI,BDI_2_2,5,DS Mpanda,NvvIhQOAajp,Datim
+BDI,BDI_2_27,5,DS Mukenke,GLOIxffOylG,Datim
+BDI,BDI_2_32,5,DS Muramvya,EY5bbPLfUwO,Datim
+BDI,BDI_2_12,5,DS Murore,UJJCc7l72Hc,Datim
+BDI,BDI_2_24,5,DS Musema,vrQziAp3Be1,Datim
+BDI,BDI_2_18,5,DS Mutaho,wzD3kEmtSnj,Datim
+BDI,BDI_2_35,5,DS Muyinga,bRAFS0BaYNS,Datim
+BDI,BDI_2_40,5,DS Ngozi,c3vjODtCgan,Datim
+BDI,BDI_2_21,5,DS Nyabikere,nPFPOEgCTkp,Datim
+BDI,BDI_2_30,5,DS Nyanza-Lac,jzftQkyzDBA,Datim
+BDI,BDI_2_42,5,DS Rumonge,iglTTNBnbxk,Datim
+BDI,BDI_2_44,5,DS Rutana,dHdpENqtN2V,Datim
+BDI,BDI_2_47,5,DS Ruyigi,QwNaultrBl7,Datim
+BDI,BDI_2_8,5,DS Rwibaga,ZEisaRR50rX,Datim
+BDI,BDI_2_19,5,DS Ryansoro,B4nTrrOQwMw,Datim
+BDI,BDI_2_28,5,DS Vumbi,flfhn0vMg6P,Datim
+BDI,BDI_2_10lj,5,DS Matana,D1LszDbXnYz,Datim
+BDI,BDI_2_48gx,5,DS Rutovu,DBwtW7GRgh5,Datim
+BDI,BDI_2_49lk,5,DS Gisuru,eUk2eJm6Uav,Datim
 BEN,BEN,0,Benin PSNU Placeholder,ohNhyTc0gIz,Datim
 BEN,BEN_1_10oz,1,Atlantique,IvPI7oE84Vq,Datim
 BEN,BEN_1_1gz,1,Couffo,oIsqSZbfuLh,Datim
 BEN,BEN_1_3xj,1,Littoral,gCxGKwGykFI,Datim
 BEN,BEN_1_11oz,1,Mono,Wx5z1fjgoHg,Datim
-BFA,BFA,0,Burkina Faso,ZeB2eGmDfGw,Datim
-BFA,BFA_1_1,1,Boucle du Mouhoun,I1JZSfp8vcM,Datim
-BFA,BFA_1_3,1,Centre,yFhT3dGnTQZ,Datim
-BFA,BFA_1_4,1,Centre-Est,YDpjfH2L57t,Datim
-BFA,BFA_1_6,1,Centre Ouest,uT6GUemcyoT,Datim
-BFA,BFA_1_8,1,Est,gg5cWa5uulZ,Datim
-BFA,BFA_1_9,1,Hauts Bassins,B8JCwqZN7RN,Datim
-BFA,BFA_1_10,1,Nord,KTFVfteCdTP,Datim
-BFA,BFA_1_12,1,Sahel,yZ1pPLPrxqK,Datim
-BFA,BFA_1_13,1,Sud-Ouest,VI3A97QVBug,Datim
+BFA,BFA,4,Burkina Faso,ZeB2eGmDfGw,Datim
+BFA,BFA_1_1,5,Boucle du Mouhoun,I1JZSfp8vcM,Datim
+BFA,BFA_1_2,5,Cascades,T5NUM0tY6zG,Datim
+BFA,BFA_1_3,5,Centre,yFhT3dGnTQZ,Datim
+BFA,BFA_1_4,5,Centre-Est,YDpjfH2L57t,Datim
+BFA,BFA_1_5,5,Centre-Nord,sClifP5VW08,Datim
+BFA,BFA_1_6,5,Centre Ouest,uT6GUemcyoT,Datim
+BFA,BFA_1_7,5,Centre-Sud,oLNC2GQBMKK,Datim
+BFA,BFA_1_8,5,Est,gg5cWa5uulZ,Datim
+BFA,BFA_1_9,5,Hauts Bassins,B8JCwqZN7RN,Datim
+BFA,BFA_1_10,5,Nord,KTFVfteCdTP,Datim
+BFA,BFA_1_11,5,Plateau Central,kO2dPAxrSOz,Datim
+BFA,BFA_1_12,5,Sahel,yZ1pPLPrxqK,Datim
+BFA,BFA_1_13,5,Sud-Ouest,VI3A97QVBug,Datim
+BWA,BWA,0,Botswana,l1KFEXKI4Dg,Datim
+BWA,BWA_1_01va,Central,Central District,dBanTQZVvtG,Datim
+BWA,BWA_1_09vh,South East,South East District,Dy1sl76KWJO,Datim
+BWA,BWA_1_05bu,Kgatleng,Kgatleng District,HQWVsxPWw8B,Datim
+BWA,BWA_1_02ek,Chobe,Chobe District,ML4czwDtK10,Datim
+BWA,BWA_1_10je,Southern,Southern,PnQKlXXlzLS,Datim
+BWA,BWA_1_03by,Ghanzi,Ghanzi District,pvsGhTskezZ,Datim
+BWA,BWA_1_04im,Kgalagadi,Kgalagadi District,TNWnoYr2nga,Datim
+BWA,BWA_1_06kw,Kweneng,Kweneng District,VUnIpCPLhPI,Datim
+BWA,BWA_1_08my,North West,North West District,Vvry5LAFBk2,Datim
+BWA,BWA_1_07rb,North East,North East District,wZl8hXAOSB0,Datim
 BWA,BWA_3_01ci,2,Boteti District,p5JLtcOw9iv,Datim
 BWA,BWA_3_02sw,2,Bobirwa District,gGqaAXuUGpb,Datim
 BWA,BWA_3_03fy,2,Selibe Phikwe District,qUdeJw9Q0Vk,Datim
@@ -144,189 +143,575 @@ BWA,BWA_3_24hp,2,Jwaneng District,dEkUfWWZQ61,Datim
 BWA,BWA_3_25be,2,Mabutsane District,GgzMAsHUgHC,Datim
 BWA,BWA_3_26he,2,Moshupa District,xLLFT8x1CF5,Datim
 BWA,BWA_3_27dj,2,Southern District,LEUjALXInGD,Datim
+CIV,CIV,0,Cote d'Ivoire,ds0ADyc9UCU,Datim
+CIV,CIV_1_01df,1,Abidjan 1,ouvLM5iBp2U,Datim
+CIV,CIV_1_02rc,1,Abidjan 2,VmeP98Y7Ob0,Datim
+CIV,CIV_1_03mp,1,Agneby-Tiassa,xWtNXMJvZls,Datim
+CIV,CIV_1_04ad,1,Bafing,seRbZf8kSR9,Datim
+CIV,CIV_1_05mk,1,Bagoue,CC1SGssRL7b,Datim
+CIV,CIV_1_06vp,1,Belier,Xg6Lgk1bCt0,Datim
+CIV,CIV_1_07ms,1,Bere,zEN1Qk6zHzg,Datim
+CIV,CIV_1_08fi,1,Bounkani,hyRzs0vha4A,Datim
+CIV,CIV_1_09mb,1,Cavally,dlKygFFZdv3,Datim
+CIV,CIV_1_10eg,1,Folon,PgWQBDixpW6,Datim
+CIV,CIV_1_11jl,1,Gbeke,Ry4fZiNgHqs,Datim
+CIV,CIV_1_12us,1,Gbokle,qF6xjc6BeFi,Datim
+CIV,CIV_1_13oh,1,Goh,CQNFlCBAutz,Datim
+CIV,CIV_1_14jp,1,Gontougo,D4iBLytNjaV,Datim
+CIV,CIV_1_15yu,1,Grand Ponts,EQv7b8QWyD6,Datim
+CIV,CIV_1_16yk,1,Guemon,wNWzpA99YfH,Datim
+CIV,CIV_1_17ut,1,Hambol,dndrrL0zj7f,Datim
+CIV,CIV_1_18pr,1,Haut-Sassandra,XZaPAzso7Hf,Datim
+CIV,CIV_1_19xj,1,Iffou,Ck8tTF5hVgt,Datim
+CIV,CIV_1_20yp,1,Indenie-Djuablin,bfjeJlr9a0H,Datim
+CIV,CIV_1_21xi,1,Kabadougou,gsQNaHt0oUW,Datim
+CIV,CIV_1_22uh,1,Loh-Djiboua,ud2hyDehnZs,Datim
+CIV,CIV_1_23wy,1,Marahoue,darR7PaS1At,Datim
+CIV,CIV_1_24ey,1,Me,Add1ZScBYek,Datim
+CIV,CIV_1_25uc,1,Moronou,JTkbBDZyhOA,Datim
+CIV,CIV_1_26ev,1,N'zi,uhdeYtg5mzU,Datim
+CIV,CIV_1_27cj,1,Nawa,Ld8rYL15Rxt,Datim
+CIV,CIV_1_28cd,1,Poro,y7mG2j0VDi1,Datim
+CIV,CIV_1_29es,1,San-Pedro,hfoIg3pAHCB,Datim
+CIV,CIV_1_30ud,1,Sud-Comoe,yEDQW7ekVrO,Datim
+CIV,CIV_1_31ez,1,Tchologo,uxxbWIq97Ob,Datim
+CIV,CIV_1_32ux,1,Tonkpi,QAvyrYDx54a,Datim
+CIV,CIV_1_33nc,1,Worodougou,k0YgiUwf6v2,Datim
+CIV,CIV_2_001ze,2,Abobo-Est,m4hsNX3VTKP,Datim
+CIV,CIV_2_002ji,2,Abobo-Ouest,z3MzML1mYwh,Datim
+CIV,CIV_2_003ou,2,Anyama,VRjvwkJGXTH,Datim
+CIV,CIV_2_004nq,2,Yopougon-Est,FWBih8friTu,Datim
+CIV,CIV_2_005pp,2,Yopougon-Ouest-Songon,ejiEtWEM5cz,Datim
+CIV,CIV_2_006tw,2,Adjame-Plateau-Attecoube,srjx8SafsPP,Datim
+CIV,CIV_2_007ha,2,Cocody-Bingerville,uum3VZlFaKv,Datim
+CIV,CIV_2_008wj,2,Koumassi,SA1Avn20OIg,Datim
+CIV,CIV_2_009cc,2,Port-Bouet-Vridi,JWHZQPi2FZX,Datim
+CIV,CIV_2_010vd,2,Treichville-Marcory,eGcjUV99Zdo,Datim
+CIV,CIV_2_011kt,2,Agboville,gn6vC2809So,Datim
+CIV,CIV_2_012mv,2,Sikensi,gbHb3TqpYeF,Datim
+CIV,CIV_2_013xi,2,Tiassale,WqS5Tgu9lhn,Datim
+CIV,CIV_2_014gb,2,Koro,jn2oT2EqFHV,Datim
+CIV,CIV_2_015ue,2,Ouaninou,LHT1bZaObZi,Datim
+CIV,CIV_2_016xf,2,Touba,HJBwHZDHtwK,Datim
+CIV,CIV_2_017vo,2,Boundiali,AY20w05Wc9q,Datim
+CIV,CIV_2_018qb,2,Kouto,C06ksmRUqhQ,Datim
+CIV,CIV_2_019ov,2,Tengrela,GZd9VUpRF9b,Datim
+CIV,CIV_2_020sr,2,Didievi,AsDwMb164Ar,Datim
+CIV,CIV_2_021yn,2,Tiebissou,rDXPCsGXk80,Datim
+CIV,CIV_2_022wj,2,Toumodi,KaRkZKjlJS9,Datim
+CIV,CIV_2_023vb,2,Yamoussoukro,eOaGQybIP0i,Datim
+CIV,CIV_2_024aw,2,Dianra,u3unejleNk6,Datim
+CIV,CIV_2_025ng,2,Kounahiri,GCgFTT50sU8,Datim
+CIV,CIV_2_026oc,2,Mankono,tqjCSI7HOIk,Datim
+CIV,CIV_2_027qw,2,Bouna,jsjlSkJ8fZ2,Datim
+CIV,CIV_2_028ys,2,Doropo,pBR0kgpRXso,Datim
+CIV,CIV_2_029qq,2,Nassian,Fm5lj3ydz01,Datim
+CIV,CIV_2_030sq,2,Tehini,vdKJdMM5Vsa,Datim
+CIV,CIV_2_031lg,2,Blolequin,psRnKDD6jKN,Datim
+CIV,CIV_2_032lc,2,Guiglo,rjpRCyaSOka,Datim
+CIV,CIV_2_033tn,2,Tai,PkzJUGMTD1e,Datim
+CIV,CIV_2_034vv,2,Toulepleu,bPFRu7vkAx4,Datim
+CIV,CIV_2_035yh,2,Kaniasso,yPDsUlyJxHL,Datim
+CIV,CIV_2_036ec,2,Minignan,FeQubuYk5yj,Datim
+CIV,CIV_2_037jr,2,Beoumi,QI4qaQRoEcK,Datim
+CIV,CIV_2_038kb,2,Botro,mJ7BXJZjbgW,Datim
+CIV,CIV_2_039vx,2,Bouake-Nord-Est,AewGtVAXTpR,Datim
+CIV,CIV_2_040ou,2,Bouake-Nord-Ouest,ycvc2l2qqUE,Datim
+CIV,CIV_2_041xc,2,Bouake-Sud,y7RJkbRqgJT,Datim
+CIV,CIV_2_042df,2,Sakassou,F5ehlSubWUq,Datim
+CIV,CIV_2_043fq,2,Fresco,ZCxKKMtE0hA,Datim
+CIV,CIV_2_044hm,2,Sassandra,xrTVfYGnCAq,Datim
+CIV,CIV_2_045st,2,Gagnoa 1,HgAGgNFJBLO,Datim
+CIV,CIV_2_046ob,2,Gagnoa 2,keuoFuCkJc9,Datim
+CIV,CIV_2_047vh,2,Oume,U7FcpSTowY0,Datim
+CIV,CIV_2_048bk,2,Bondoukou,bPtyVLYWLS1,Datim
+CIV,CIV_2_049vl,2,Koun-Fao,oBgB5TCnud9,Datim
+CIV,CIV_2_050sl,2,Sandegue,hxfdOEY4kqW,Datim
+CIV,CIV_2_051vs,2,Tanda,hGbktMoaboh,Datim
+CIV,CIV_2_052wf,2,Transua,gDqtRGMWHYh,Datim
+CIV,CIV_2_053oo,2,Dabou,lD9LV6eBHfQ,Datim
+CIV,CIV_2_054cq,2,Grand-Lahou,lWBnsQf68dS,Datim
+CIV,CIV_2_055vj,2,Jacqueville,CRixH2BASvF,Datim
+CIV,CIV_2_056ga,2,Bangolo,YJRrSeTDrY5,Datim
+CIV,CIV_2_057ii,2,Duekoue,qtas4LeSMFk,Datim
+CIV,CIV_2_058ir,2,Kouibly,MfdlUVk17qs,Datim
+CIV,CIV_2_059xu,2,Dabakala,o2U3SNx0JLJ,Datim
+CIV,CIV_2_060hz,2,Katiola,jNb2wWbxIk8,Datim
+CIV,CIV_2_061oj,2,Niakaramadougou,oeiTlj4Anh8,Datim
+CIV,CIV_2_062yq,2,Daloa,Afx3d2MkpEG,Datim
+CIV,CIV_2_063xl,2,Issia,xVqaF0orSHP,Datim
+CIV,CIV_2_064qn,2,Vavoua,MU6pT5Itenu,Datim
+CIV,CIV_2_065gw,2,Zoukougbeu,SWnJKh6SBdx,Datim
+CIV,CIV_2_066jv,2,Daoukro,FIP1evPz2kO,Datim
+CIV,CIV_2_067xq,2,M'bahiakro,QVU3rUTd6WX,Datim
+CIV,CIV_2_068zk,2,Prikro,glRlVubWojg,Datim
+CIV,CIV_2_069ml,2,Abengourou,qHfnRvlDq0u,Datim
+CIV,CIV_2_070jp,2,Agnibilekrou,nYehWt8N4nw,Datim
+CIV,CIV_2_071yt,2,Bettie,f4tnMBWJUve,Datim
+CIV,CIV_2_072yt,2,Madinani,JywGOviALHQ,Datim
+CIV,CIV_2_073eq,2,Odienne,adZqc2OAgKp,Datim
+CIV,CIV_2_074qz,2,Divo,rRlVGR4SAOy,Datim
+CIV,CIV_2_075qv,2,Guitry,Cf9M88GSMkI,Datim
+CIV,CIV_2_076mi,2,Lakota,rqem7WGjUpm,Datim
+CIV,CIV_2_077jm,2,Bouafle,zxtqOKeUsFf,Datim
+CIV,CIV_2_078rs,2,Sinfra,LUgbTJHOa8M,Datim
+CIV,CIV_2_079cx,2,Zuenoula,KgKj4XmQtQX,Datim
+CIV,CIV_2_080zq,2,Adzope,Mz99jaYsFxm,Datim
+CIV,CIV_2_081sa,2,Akoupe,UDEHiTgnxZF,Datim
+CIV,CIV_2_082cj,2,Alepe,XtadO5Nbz1l,Datim
+CIV,CIV_2_083fn,2,Yakasse-Attobrou,ZJGH98L8kgX,Datim
+CIV,CIV_2_084ip,2,Arrah,jRCAWX024ru,Datim
+CIV,CIV_2_085xj,2,Bongouanou,pKg0FPsUjcz,Datim
+CIV,CIV_2_086iu,2,M'Batto,w8PDMwI00or,Datim
+CIV,CIV_2_087sv,2,Bocanda,sg5OeSC3e76,Datim
+CIV,CIV_2_088ip,2,Dimbokro,EwBdT0P1NoK,Datim
+CIV,CIV_2_089ic,2,Kouassikouassikro,gW9ZImPVIdD,Datim
+CIV,CIV_2_090yf,2,Buyo,mtjBMrFExWI,Datim
+CIV,CIV_2_091ae,2,Gueyo,zULBF1vgW7M,Datim
+CIV,CIV_2_092aa,2,Meagui,RjWBYFdUDkK,Datim
+CIV,CIV_2_093wr,2,Soubre,jPk4oCBlN23,Datim
+CIV,CIV_2_094wl,2,Dikodougou,pGItUIZ8Vy3,Datim
+CIV,CIV_2_095av,2,Korhogo 1,h6OQqWW1691,Datim
+CIV,CIV_2_096tn,2,Korhogo 2,kYIe3TVqwDU,Datim
+CIV,CIV_2_097st,2,M'Bengue,uVNbNCxOI4R,Datim
+CIV,CIV_2_098hi,2,Sinematiali,lZWD4jGmzTz,Datim
+CIV,CIV_2_099iq,2,San-Pedro,wvQfMc2sxSi,Datim
+CIV,CIV_2_100zm,2,Tabou,O2PDFcA1UBs,Datim
+CIV,CIV_2_101oy,2,Aboisso,qzPP0iILjH9,Datim
+CIV,CIV_2_102br,2,Adiake,auvAbmX414m,Datim
+CIV,CIV_2_103wd,2,Grand-Bassam,vwUs4s32SzY,Datim
+CIV,CIV_2_104jx,2,Tiapoum,pRFO6Tocugk,Datim
+CIV,CIV_2_105gf,2,Ferkessedougou,Ro2e9NndrG9,Datim
+CIV,CIV_2_106sj,2,Kong,IO61FGcXLsJ,Datim
+CIV,CIV_2_107av,2,Ouangolodougou,eSuJxZpd2tT,Datim
+CIV,CIV_2_108po,2,Biankouma,lDZEiz8wxkg,Datim
+CIV,CIV_2_109ue,2,Danane,iclnG0nW8le,Datim
+CIV,CIV_2_110qo,2,Man,GeLP2HBm78g,Datim
+CIV,CIV_2_111zo,2,Zouhan Hounien,gxpIzB7TH6b,Datim
+CIV,CIV_2_112ky,2,Kani,n1ikU5KKyAp,Datim
+CIV,CIV_2_113zy,2,seguela,eoAobHIVIBN,Datim
+CMR,CMR,3,Cameroon,bQQJe0cC1eD,Datim
+CMR,CMR_1_1,4,Adamaoua,xkPoe5mhHE5,Datim
+CMR,CMR_1_2,4,Centre,IaFLxtEwIwk,Datim
+CMR,CMR_1_3,4,Douala,,Datim
+CMR,CMR_1_4,4,Est,KtMNtCHNQDJ,Datim
+CMR,CMR_1_5,4,Extreme Nord,jTLYjaje1D9,Datim
+CMR,CMR_1_6,4,Littoral,MTRiZG58YEx,Datim
+CMR,CMR_1_7,4,Nord,NpJ9e4IC0lg,Datim
+CMR,CMR_1_8,4,Nord Ouest,HxXMyMSODnm,Datim
+CMR,CMR_1_9,4,Ouest,zKL9YsdE5yw,Datim
+CMR,CMR_1_10,4,Sud Ouest,Jm3YTCERxvX,Datim
+CMR,CMR_1_11,4,Sud,hsuzPeRTaYP,Datim
+CMR,CMR_1_12,4,Yaound�               ,,Datim
+CMR,CMR_2_89,5,Abo,VT9tkLtgee9,Datim
+CMR,CMR_2_46,5,Abong Mbang,iTmd0p4YWhK,Datim
+CMR,CMR_2_122,5,Ako,s6P7NGophWH,Datim
+CMR,CMR_2_30,5,Akonolinga,RKsnc4nFUzT,Datim
+CMR,CMR_2_166,5,Akwaya,DoVAXL8t556,Datim
+CMR,CMR_2_183,5,Ambam,lrNc1xwDWXS,Datim
+CMR,CMR_2_23,5,Awae,nbkoU3gPiM0,Datim
+CMR,CMR_2_31,5,Ayos,ZxJNWnk4hYW,Datim
+CMR,CMR_2_140,5,Bafang,KvGZD176fRx,Datim
+CMR,CMR_2_19,5,Bafia,clasYX5teTV,Datim
+CMR,CMR_2_128,5,Bafut,RDEsqpDdyjC,Datim
+CMR,CMR_2_143,5,Baham,TdUjy3VhKQM,Datim
+CMR,CMR_2_172,5,Bakassi,JIQXtxy5dWB,Datim
+CMR,CMR_2_129,5,Bali,pl3EDv60GZ4,Datim
+CMR,CMR_2_130pg,5,Bamenda,cMnkG8Hxa71,Datim
+CMR,CMR_2_191zs,5,Bamenda 3,pz4Uqy8yjga,Datim
+CMR,CMR_2_144,5,Bamendjou,nAVFr0YyPi0,Datim
+CMR,CMR_2_141,5,Bandja,kGF6FW8H5Bk,Datim
+CMR,CMR_2_145,5,Bandjoun,FZdKDla0sab,Datim
+CMR,CMR_2_150,5,Bangangte,ZWsIJYCFqvg,Datim
+CMR,CMR_2_161,5,Bangem,St9lVTJrRaI,Datim
+CMR,CMR_2_151,5,Bangourain,y1pvTD5JtGa,Datim
+CMR,CMR_2_34,5,Bangue,bIoxP4GA2JE,Datim
+CMR,CMR_2_4,5,Bankim,J3p4cfDsjWc,Datim
+CMR,CMR_2_5,5,Banyo,QKxAMfygE74,Datim
+CMR,CMR_2_137,5,Batcham,Slsya4XJ1cX,Datim
+CMR,CMR_2_133,5,Batibo,rucXXEqjQcK,Datim
+CMR,CMR_2_51,5,Batouri,cBrzvNglqAl,Datim
+CMR,CMR_2_192rt,5,Belabo,FI6AAQeYwFH,Datim
+CMR,CMR_2_126,5,Benakuma,W4MLzWKSvB1,Datim
+CMR,CMR_2_55by,5,Bertoua,huRqm1u1OBD,Datim
+CMR,CMR_2_56,5,Betare Oya,QR0Vj8IkvWr,Datim
+CMR,CMR_2_103,5,Bibemi,pg1qjAIJeyF,Datim
+CMR,CMR_2_185,5,Biyem Assi,gOaZeiwAoCD,Datim
+CMR,CMR_2_58,5,Bogo,ms6oiVY4kHA,Datim
+CMR,CMR_2_35,5,Boko,GEWks07uHch,Datim
+CMR,CMR_2_36,5,Bonassama,dWexWkTwCVe,Datim
+CMR,CMR_2_83,5,Bourha,ptBq5K4lAU3,Datim
+CMR,CMR_2_157,5,Buea,dkNG0muACjc,Datim
+CMR,CMR_2_37,5,Cite Des Palmiers,rjDWLPMhaY0,Datim
+CMR,CMR_2_186,5,Cite Verte,NG7DU8YJlw7,Datim
+CMR,CMR_2_193df,5,Dang,lbMwXbGdkil,Datim
+CMR,CMR_2_38,5,Deido,wE76sY8tY19,Datim
+CMR,CMR_2_90,5,Dibombari,VVLMNX1DVin,Datim
+CMR,CMR_2_6,5,Djohong,m6j0i1p3GDw,Datim
+CMR,CMR_2_175,5,Djoum,Lf317dndIqE,Datim
+CMR,CMR_2_187df,5,Djoungolo,vewKgey8sOW,Datim
+CMR,CMR_2_47,5,Doume,Tk1LVQwJYXh,Datim
+CMR,CMR_2_146,5,Dschang,tHav2zlT9YE,Datim
+CMR,CMR_2_12,5,Ebebda,UVkUJt5o0py,Datim
+CMR,CMR_2_179,5,Ebolowa,w3vIrqsfGWS,Datim
+CMR,CMR_2_99,5,Edea,jEG1QQsvDeX,Datim
+CMR,CMR_2_188,5,Efoulan,JQIkiENA6nM,Datim
+CMR,CMR_2_173,5,Ekondo Titi,PtCkWF9WUyM,Datim
+CMR,CMR_2_13,5,Elig Mfomo,sJDHzjIEcte,Datim
+CMR,CMR_2_28,5,Eseka,h7r7vMKQIy8,Datim
+CMR,CMR_2_24,5,Esse,VGZnGAkKRN3,Datim
+CMR,CMR_2_14,5,Evodoula,GFXacOqu8d0,Datim
+CMR,CMR_2_167,5,Eyumodjock,dyB1QMpgHgC,Datim
+CMR,CMR_2_111,5,Figuil,MzAxbEmG17n,Datim
+CMR,CMR_2_164,5,Fontem,a2nQs7VmYiD,Datim
+CMR,CMR_2_65,5,Fotokol,SQVzPECATRQ,Datim
+CMR,CMR_2_152,5,Foumban,fiyChBcsC5L,Datim
+CMR,CMR_2_153,5,Foumbot,VY1XungWEvE,Datim
+CMR,CMR_2_118,5,Fundong,cDNpDbvmp5K,Datim
+CMR,CMR_2_138,5,Galim,zMVbYiRveLp,Datim
+CMR,CMR_2_104,5,Garoua 1,cBl9B9Gr8yM,Datim
+CMR,CMR_2_105,5,GAROUA 2,zDNvh0ltnhO,Datim
+CMR,CMR_2_57,5,Garoua Boulai,D4OFi6ze0sX,Datim
+CMR,CMR_2_106,5,Gaschiga,qaPX93BNxG3,Datim
+CMR,CMR_2_59,5,Gazawa,LiygUBQ6cii,Datim
+CMR,CMR_2_112,5,Golombe,LPNNZUYfC5R,Datim
+CMR,CMR_2_66,5,Goulfey,o6ZCLK6zgCb,Datim
+CMR,CMR_2_73,5,Guere,lA2dnK5pTzs,Datim
+CMR,CMR_2_113,5,Guider,UpWdQLS7yhK,Datim
+CMR,CMR_2_78,5,Guidiguis,aMjjaJXBSlV,Datim
+CMR,CMR_2_84,5,Hina,XtStaOc8r3G,Datim
+CMR,CMR_2_39,5,Japoma,bLF8QVYOUu3,Datim
+CMR,CMR_2_79,5,Kaele,PJ3rdiYvg9h,Datim
+CMR,CMR_2_74,5,Kar Hay,zSSrRr42yh1,Datim
+CMR,CMR_2_142,5,Kekem,OgnR5IaW7OI,Datim
+CMR,CMR_2_52,5,Kette,RIqfYxyxl6s,Datim
+CMR,CMR_2_70,5,Kolofata,WBZN0JbcddP,Datim
+CMR,CMR_2_169,5,Konye,w0khtlIwl6Q,Datim
+CMR,CMR_2_154,5,Kouoptamo,Yy8OR4h9J5x,Datim
+CMR,CMR_2_67,5,Kousseri,Z0Inwzl0go6,Datim
+CMR,CMR_2_85dh,5,Koza,ee7ftYplvV9,Datim
+CMR,CMR_2_181,5,Kribi,JiTDQrmDeYy,Datim
+CMR,CMR_2_170kj,5,Kumba-South,P88XoABjS9G,Datim
+CMR,CMR_2_194ha,5,Kumba-North,MIvAFWhI9Yc,Datim
+CMR,CMR_2_119,5,Kumbo East,VAN2Ql7Bkro,Datim
+CMR,CMR_2_120,5,Kumbo West,cLBRoC6icGa,Datim
+CMR,CMR_2_107,5,Lagdo,RiworzxSRKJ,Datim
+CMR,CMR_2_158,5,Limbe,GP5qeoiXMtA,Datim
+CMR,CMR_2_40,5,Logbaba,ZGqUbMqrxSK,Datim
+CMR,CMR_2_182,5,Lolodorf,xp3usWkmMdg,Datim
+CMR,CMR_2_48,5,Lomie,TIrAQRQkEaH,Datim
+CMR,CMR_2_91,5,Loum,Ns6ZJi0iwJj,Datim
+CMR,CMR_2_68,5,Mada,F78KglHx1Lw,Datim
+CMR,CMR_2_75,5,Maga,NGmNPjCITMZ,Datim
+CMR,CMR_2_69,5,Makary,QmnnpW7Uwm3,Datim
+CMR,CMR_2_155,5,Malentouen,mAXygaodORJ,Datim
+CMR,CMR_2_168,5,Mamfe,zU7eKPwFr69,Datim
+CMR,CMR_2_92,5,Manjo,O4ls7EsyEQP,Datim
+CMR,CMR_2_41,5,Manoka,HAijUCVbjCr,Datim
+CMR,CMR_2_60,5,Maroua 1,AB0dvYIeVs2,Datim
+CMR,CMR_2_61,5,Maroua 2,xeKBtCQWObL,Datim
+CMR,CMR_2_62,5,Maroua 3,baaPQDKEa74,Datim
+CMR,CMR_2_156,5,Massangam,exy7m4TxPrY,Datim
+CMR,CMR_2_114,5,Mayo Oulo,SapRLH9IkZp,Datim
+CMR,CMR_2_32,5,Mbalmayo,haFG5XDW24C,Datim
+CMR,CMR_2_10,5,Mbandjock,bluPTs5StEv,Datim
+CMR,CMR_2_53,5,Mbang,PAM8Jc9FcJS,Datim
+CMR,CMR_2_93,5,Mbanga,nUeu5anINhj,Datim
+CMR,CMR_2_26,5,Mbankomo,VLxcOygmtHk,Datim
+CMR,CMR_2_134,5,Mbengwi,hvNtuMClAXW,Datim
+CMR,CMR_2_171,5,Mbonge,oHNRJzfPFaX,Datim
+CMR,CMR_2_139,5,Mbouda,KE0SetC4PJD,Datim
+CMR,CMR_2_7,5,Meiganga,boMf1Zq6Fa2,Datim
+CMR,CMR_2_94,5,Melong,VFxTcRztfUD,Datim
+CMR,CMR_2_63,5,Meri,xnnHwfGglH2,Datim
+CMR,CMR_2_49,5,Messamena,YS06eYwiC8n,Datim
+CMR,CMR_2_176,5,Meyomessala,MAHWzjJcasB,Datim
+CMR,CMR_2_33,5,Mfou,PJKaNADvNfi,Datim
+CMR,CMR_2_149,5,Mifi,KPgLhnpbXzT,Datim
+CMR,CMR_2_80,5,Mindif,OSXyfij7dGq,Datim
+CMR,CMR_2_86,5,Mogode,l2FDEkk18z2,Datim
+CMR,CMR_2_87,5,Mokolo,Ic2sf6gppTN,Datim
+CMR,CMR_2_44,5,Moloundou,Dcf8i2ih1tm,Datim
+CMR,CMR_2_15,5,Monatele,YXiMSh7CqES,Datim
+CMR,CMR_2_71,5,Mora,jIPFdhfuVCg,Datim
+CMR,CMR_2_81,5,Moulvoudaye,R7G8wdEkwU9,Datim
+CMR,CMR_2_82,5,Moutourwa,Hpc63mRW9IG,Datim
+CMR,CMR_2_195os,5,Mozogo,tIzXjrNeSMQ,Datim
+CMR,CMR_2_174,5,Mundemba,GzuQHLu6ZTN,Datim
+CMR,CMR_2_159,5,Muyuka,jIXZlNwSdG3,Datim
+CMR,CMR_2_180,5,Mvangan,KrnP8YZjfnb,Datim
+CMR,CMR_2_196xd,5,Mvog-Ada,RldLwtXSsvH,Datim
+CMR,CMR_2_11,5,Nanga Eboko,fHkrk3yL1uU,Datim
+CMR,CMR_2_54,5,Ndelele,OLZqeMnDj75,Datim
+CMR,CMR_2_20,5,Ndikinimeki,oAgxCCStCQe,Datim
+CMR,CMR_2_100,5,Ndom,Q966kXsyR20,Datim
+CMR,CMR_2_136,5,Ndop,SeVI9bJFCIZ,Datim
+CMR,CMR_2_123,5,Ndu,AbJXFBhkc4U,Datim
+CMR,CMR_2_42,5,New Bell,k7lIVnxWbm7,Datim
+CMR,CMR_2_101,5,Ngambe,HBG4z9eT0gp,Datim
+CMR,CMR_2_1,5,Ngaoundal,gsAPKvb8uK2,Datim
+CMR,CMR_2_8fg,5,Ngaoundere Rural,YOwUWe1dgJv,Datim
+CMR,CMR_2_9,5,Ngaoundere Urbain,AwlrFJlARNT,Datim
+CMR,CMR_2_29,5,Ngog Mapubi,li3fcQxXdg7,Datim
+CMR,CMR_2_108,5,Ngong,qHwYB0w2vX9,Datim
+CMR,CMR_2_27,5,Ngoumou,qc293v9pKIX,Datim
+CMR,CMR_2_50,5,Nguelemendouka,MHc9aRwt9xv,Datim
+CMR,CMR_2_162,5,Nguti,JIcgSOsSpSV,Datim
+CMR,CMR_2_135,5,Njikwa,HSEc0Cyu0Yy,Datim
+CMR,CMR_2_95,5,Njombe Penja,iwzUigxHuvr,Datim
+CMR,CMR_2_124,5,Nkambe,cbmIcLlVVa1,Datim
+CMR,CMR_2_189,5,Nkolbisson,ThGVWZfLjoq,Datim
+CMR,CMR_2_190pz,5,Nkolndongo,YuCzvkHV2X5,Datim
+CMR,CMR_2_97,5,Nkondjock,oCGhqAOirsv,Datim
+CMR,CMR_2_96,5,Nkongsamba,A0XPpQxn05b,Datim
+CMR,CMR_2_21,5,Ntui,rahoVxbwRB5,Datim
+CMR,CMR_2_125,5,Nwa,o3cdCYbmdmR,Datim
+CMR,CMR_2_43,5,Nylon,AW764lDxjdr,Datim
+CMR,CMR_2_16,5,Obala,r5xWCJ4ZqYQ,Datim
+CMR,CMR_2_197is,5,Odza,hxLso7alVBa,Datim
+CMR,CMR_2_17,5,Okola,hz2Tdvrxqbp,Datim
+CMR,CMR_2_121,5,Oku,s9CiFUWGXnP,Datim
+CMR,CMR_2_184,5,Olamze,P1tSCdEj5Oj,Datim
+CMR,CMR_2_147,5,Penka Michel,vNuXJnxJ0e3,Datim
+CMR,CMR_2_64,5,Pette,hpC7j0T2CaR,Datim
+CMR,CMR_2_109,5,Pitoa,ZJAhq8N1hkR,Datim
+CMR,CMR_2_110,5,Poli,IHFtzOsbuLj,Datim
+CMR,CMR_2_102,5,Pouma,AFX0djkDX6A,Datim
+CMR,CMR_2_115,5,Rey Bouba,xWvGICWwReF,Datim
+CMR,CMR_2_88,5,Roua,EpNF1CgXoSb,Datim
+CMR,CMR_2_18,5,Saa,PLYdjomcBkA,Datim
+CMR,CMR_2_177,5,Sangmelima,o4p0ljHfz8F,Datim
+CMR,CMR_2_131,5,Santa,js5vRAkkqxB,Datim
+CMR,CMR_2_148,5,Santchou,za0SuqfH2S8,Datim
+CMR,CMR_2_25,5,Soa,Vq1CnJNw46x,Datim
+CMR,CMR_2_116,5,Tchollire,rubyTf0wsD9,Datim
+CMR,CMR_2_2,5,Tibati,QN0TvRQr8SA,Datim
+CMR,CMR_2_3,5,Tignere,iwjlpyhilt2,Datim
+CMR,CMR_2_160,5,Tiko,VZPPWeDuJqU,Datim
+CMR,CMR_2_72,5,Tokombere,eealAXfQ3UO,Datim
+CMR,CMR_2_163,5,Tombel,vqaBeYFtUn0,Datim
+CMR,CMR_2_117,5,Touboro,fVcP7WpE6VE,Datim
+CMR,CMR_2_132,5,Tubah,zipfC1pWf1y,Datim
+CMR,CMR_2_76,5,Vele,rTZNA8LtQfx,Datim
+CMR,CMR_2_165,5,Wabane,DWF1ThXXPOB,Datim
+CMR,CMR_2_127,5,Wum,VaHOXJU4rir,Datim
+CMR,CMR_2_98,5,Yabassi,GvTDrgjcU6R,Datim
+CMR,CMR_2_77,5,Yagoua,yFy56LEHSJ4,Datim
+CMR,CMR_2_45,5,Yokadouma,MDZqxU65Lqw,Datim
+CMR,CMR_2_22,5,Yoko,WquO0ev4xvO,Datim
+CMR,CMR_2_178,5,Zoetele,YxZktMjIiey,Datim
+COD,COD,0,Democratic Republic of the Congo,ANN4YCOufcP,Datim
+COD,COD_1_1,1,Bas Uele,CapcQHBO9s0,Datim
+COD,COD_1_2,1,Equateur,pnaIxiu1eiV,Datim
+COD,COD_1_3xd,1,Haut Katanga,ZUY45BaAesB,Datim
+COD,COD_1_4,1,Haut Lomami,s169qh2mTVh,Datim
+COD,COD_1_5,1,Haut Uele,ArMC6ypnjem,Datim
+COD,COD_1_6,1,Ituri,cPqdkqtQnll,Datim
+COD,COD_1_7,1,Kasai,Et5wRf6OjPk,Datim
+COD,COD_1_8,1,Kasai Central,Zwxls3VkTDC,Datim
+COD,COD_1_9,1,Kasai Oriental,XUMdwsm28QP,Datim
+COD,COD_1_10,1,Kinshasa,hIPJyWupajj,Datim
+COD,COD_1_11,1,Kongo Central,qNMpczaBFZr,Datim
+COD,COD_1_12,1,Kwango,XkarX1Zmcp6,Datim
+COD,COD_1_13,1,Kwilu,izRpjSFncTv,Datim
+COD,COD_1_14,1,Lomami,PFsFOyICSMx,Datim
+COD,COD_1_15sl,1,Lualaba,OiG8HT4e80d,Datim
+COD,COD_1_16,1,Maindombe,DH1MotF2kJ7,Datim
+COD,COD_1_17,1,Maniema,LK9v5aBEQua,Datim
+COD,COD_1_18,1,Mongala,yS4SSjbKyac,Datim
+COD,COD_1_19,1,Nord Kivu,rkcC09EiCYq,Datim
+COD,COD_1_20,1,Nord Ubangi,iw4uM5iktKQ,Datim
+COD,COD_1_21,1,Sankuru,ciZk2CpOAIM,Datim
+COD,COD_1_22,1,Sud Kivu,x0nXmiwH6un,Datim
+COD,COD_1_23,1,Sud Ubangi,aN5gX72NXh4,Datim
+COD,COD_1_24,1,Tanganyika,EJuPKFZSLsf,Datim
+COD,COD_1_25,1,Tshopo,tZmSNff3icX,Datim
+COD,COD_1_26,1,Tshuapa,j7HgiIUJrtq,Datim
 COD,COD_3_1,2,Aketi,TfWaIMM4Or1,Datim
+COD,COD_3_2,2,Likati,HBG2aW5WFUZ,Datim
 COD,COD_3_3,2,Ango,krxtjsxfpUM,Datim
+COD,COD_3_4,2,Ganga,poICGihuMn2,Datim
 COD,COD_3_5,2,Bili,TAeSRbcfizp,Datim
 COD,COD_3_6,2,Bondo,AVpB25vT5Va,Datim
-COD,COD_3_8,2,Buta,droKSgOrnNg,Datim
-COD,COD_3_4,2,Ganga,poICGihuMn2,Datim
-COD,COD_3_2,2,Likati,HBG2aW5WFUZ,Datim
 COD,COD_3_7,2,Monga,jeEaLuopQhp,Datim
-COD,COD_3_10,2,Poko,ALkCIOm23HS,Datim
+COD,COD_3_8,2,Buta,droKSgOrnNg,Datim
 COD,COD_3_9,2,Titule,LQFBaLwCy0S,Datim
+COD,COD_3_10,2,Poko,ALkCIOm23HS,Datim
 COD,COD_3_11,2,Viadana,Pc7v62OOxzU,Datim
 COD,COD_3_12,2,Basankusu,p8oY0egE7A8,Datim
-COD,COD_3_14,2,Bikoro,HIFez3BKaJG,Datim
-COD,COD_3_27,2,Bolenge,LZkTokfkhxX,Datim
-COD,COD_3_17,2,Bolomba,RdMbpIwSbfT,Datim
-COD,COD_3_20,2,Bomongo,F19P9o1KpBW,Datim
 COD,COD_3_13,2,Djombo,UI20ydTD056,Datim
+COD,COD_3_14,2,Bikoro,HIFez3BKaJG,Datim
 COD,COD_3_15,2,Iboko,sjPmRIBtDbF,Datim
-COD,COD_3_22,2,Ingende,JGQrQP1bMTW,Datim
-COD,COD_3_24,2,Irebu,C8A8zT0EJfA,Datim
+COD,COD_3_16,2,Ntondo,pJpwznQuqbB,Datim
+COD,COD_3_17,2,Bolomba,RdMbpIwSbfT,Datim
+COD,COD_3_18,2,Mampoko,tDvbrijoQgs,Datim
+COD,COD_3_19,2,Monieka,eruH4f7Y31D,Datim
+COD,COD_3_20,2,Bomongo,F19P9o1KpBW,Datim
 COD,COD_3_21,2,Lilanga Bobangi,WFlLUTZZSJh,Datim
+COD,COD_3_22,2,Ingende,JGQrQP1bMTW,Datim
 COD,COD_3_23,2,Lotumbe,LGTnoQzGzQ5,Datim
+COD,COD_3_24,2,Irebu,C8A8zT0EJfA,Datim
 COD,COD_3_25,2,Lukolela,lLEe1QYmzQ7,Datim
 COD,COD_3_26,2,Makanza,beULclqkjPT,Datim
-COD,COD_3_18,2,Mampoko,tDvbrijoQgs,Datim
+COD,COD_3_27,2,Bolenge,LZkTokfkhxX,Datim
 COD,COD_3_28,2,Mbandaka,Vig0g2MXh4O,Datim
-COD,COD_3_19,2,Monieka,eruH4f7Y31D,Datim
-COD,COD_3_16,2,Ntondo,pJpwznQuqbB,Datim
 COD,COD_3_29,2,Wangata,E7wKdHjzUc4,Datim
-COD,COD_3_39,2,Kafubu,z6HL5QkdXaU,Datim
-COD,COD_3_42,2,Kamalondo,X0CYKb13qOd,Datim
 COD,COD_3_30,2,Kambove,mj8vc80DZnW,Datim
-COD,COD_3_43,2,Kampemba,a5jLbEaqXQH,Datim
 COD,COD_3_31,2,Kapolowe,iBIl1QevIrG,Datim
+COD,COD_3_32,2,Kilela Balanda,FjfRLfEnFtm,Datim
+COD,COD_3_33,2,Manika,snMVrjxxOz3,Datim
+COD,COD_3_34,2,Panda,ItLFN5k82Cs,Datim
 COD,COD_3_35,2,Kasenga,KtqjtVhTZdP,Datim
 COD,COD_3_36,2,Kashobwe,abCVuLIqXPM,Datim
+COD,COD_3_37,2,Kikula,jf7kv5ZPbM2,Datim
+COD,COD_3_38,2,Lukafu,b224qDuKZu2,Datim
+COD,COD_3_39,2,Kafubu,z6HL5QkdXaU,Datim
+COD,COD_3_40,2,Kipushi,pCODWiMvHX4,Datim
+COD,COD_3_41,2,Likasi,PgK6EwJ52Ji,Datim
+COD,COD_3_42,2,Kamalondo,X0CYKb13qOd,Datim
+COD,COD_3_43,2,Kampemba,a5jLbEaqXQH,Datim
 COD,COD_3_44,2,Katuba,BJwJiJ0aein,Datim
 COD,COD_3_45,2,Kenya,orZLnojDCbO,Datim
-COD,COD_3_37,2,Kikula,jf7kv5ZPbM2,Datim
-COD,COD_3_32,2,Kilela Balanda,FjfRLfEnFtm,Datim
-COD,COD_3_55,2,Kilwa,mLfokzGSDJb,Datim
-COD,COD_3_40,2,Kipushi,pCODWiMvHX4,Datim
 COD,COD_3_46,2,Kisanga,Y6quIOmXjd1,Datim
 COD,COD_3_47,2,Kowe,G5QPlet452j,Datim
-COD,COD_3_41,2,Likasi,PgK6EwJ52Ji,Datim
 COD,COD_3_48,2,Lubumbashi,Ob5urm65M2B,Datim
-COD,COD_3_38,2,Lukafu,b224qDuKZu2,Datim
-COD,COD_3_53,2,Mitwaba,YaYsGFSpnDC,Datim
-COD,COD_3_54,2,Mufunga Sampwe,sDKxk72Fmkh,Datim
 COD,COD_3_49,2,Mumbunda,RxH0BNkxRaX,Datim
-COD,COD_3_34,2,Panda,ItLFN5k82Cs,Datim
-COD,COD_3_56,2,Pweto,HklkyYEG7Gv,Datim
-COD,COD_3_50,2,Ruashi,mYTgK9zSnar,Datim
-COD,COD_3_57,2,Sakania,kloe3J4FH0k,Datim
+COD,COD_3_50,2,Ruashi,JlGVapzhvz3,Datim
 COD,COD_3_51,2,Tshamilemba,OWrW8UtHRQf,Datim
 COD,COD_3_52,2,Vangu,WiUKOLzUkaA,Datim
+COD,COD_3_53,2,Mitwaba,YaYsGFSpnDC,Datim
+COD,COD_3_54,2,Mufunga Sampwe,sDKxk72Fmkh,Datim
+COD,COD_3_55,2,Kilwa,mLfokzGSDJb,Datim
+COD,COD_3_56,2,Pweto,HklkyYEG7Gv,Datim
+COD,COD_3_57,2,Sakania,kloe3J4FH0k,Datim
 COD,COD_3_58,2,Bukama,Fr3D8f0yzfl,Datim
 COD,COD_3_59,2,Butumba,rgm7RhocZpq,Datim
 COD,COD_3_60,2,Kabondo Dianda,G4NIzQIgqEN,Datim
-COD,COD_3_62,2,Kabongo,SW7oN27TfFI,Datim
-COD,COD_3_66,2,Kamina,bkHaWQ9ql5h,Datim
-COD,COD_3_69,2,Kaniama,xK3CIen1bO2,Datim
-COD,COD_3_63,2,Kayamba,QN3BvovM7r2,Datim
-COD,COD_3_67,2,Kinda,UJCsyLymXFO,Datim
-COD,COD_3_70,2,Kinkondja,lvBafzpWL2E,Datim
-COD,COD_3_64,2,Kitenge,jURa1M48QVu,Datim
-COD,COD_3_71,2,Lwamba,zK46I63dZ4B,Datim
 COD,COD_3_61,2,Malemba Nkulu,C3w5Zx7JbXB,Datim
+COD,COD_3_62,2,Kabongo,SW7oN27TfFI,Datim
+COD,COD_3_63,2,Kayamba,QN3BvovM7r2,Datim
+COD,COD_3_64,2,Kitenge,jURa1M48QVu,Datim
+COD,COD_3_65,,Baka,,Datim
+COD,COD_3_66,2,Kamina,bkHaWQ9ql5h,Datim
+COD,COD_3_67,2,Kinda,UJCsyLymXFO,Datim
+COD,COD_3_68,2,Songa,XMzW01Cc0Jh,Datim
+COD,COD_3_69,2,Kaniama,xK3CIen1bO2,Datim
+COD,COD_3_70,2,Kinkondja,lvBafzpWL2E,Datim
+COD,COD_3_71,2,Lwamba,zK46I63dZ4B,Datim
 COD,COD_3_72,2,Mukanga,MF8ta3fUbmN,Datim
 COD,COD_3_73,2,Mulongo,bjZdLKdbZmp,Datim
-COD,COD_3_68,2,Songa,XMzW01Cc0Jh,Datim
-COD,COD_3_76,2,Aba,NTMdRJGF3jX,Datim
-COD,COD_3_82,2,Boma Mangbetu,Mv3jjVvanr3,Datim
 COD,COD_3_74,2,Doruma,G3SRKJCdORI,Datim
 COD,COD_3_75,2,Dungu,dsGnuIzovnx,Datim
+COD,COD_3_76,2,Aba,NTMdRJGF3jX,Datim
 COD,COD_3_77,2,Faradje,BCRi7hI63oH,Datim
-COD,COD_3_85,2,Gombari,CopYolVldGf,Datim
-COD,COD_3_80,2,Isiro,Vr556FJGh0j,Datim
 COD,COD_3_78,2,Makoro,miS6GTGi4YI,Datim
 COD,COD_3_79,2,Niangara,S8KcUXNL7Ck,Datim
-COD,COD_3_83,2,Pawa,Qlf0RnMkHpH,Datim
+COD,COD_3_80,2,Isiro,Vr556FJGh0j,Datim
 COD,COD_3_81,2,Rungu,mLltKqL0iLn,Datim
+COD,COD_3_82,2,Boma Mangbetu,Mv3jjVvanr3,Datim
+COD,COD_3_83,2,Pawa,Qlf0RnMkHpH,Datim
 COD,COD_3_84,2,Wamba,tL1TB4XAoVG,Datim
+COD,COD_3_85,2,Gombari,CopYolVldGf,Datim
 COD,COD_3_86,2,Watsa,bE3mUVW1Jbv,Datim
 COD,COD_3_87,2,Adi,j6Qi73xAblL,Datim
 COD,COD_3_88,2,Adja,YF0bhqDhCGa,Datim
-COD,COD_3_112,2,Angumu,CU0xscbwfvQ,Datim
 COD,COD_3_89,2,Ariwara,pWGwDVst1fR,Datim
 COD,COD_3_90,2,Aru,WbX2pgzelj2,Datim
-COD,COD_3_113,2,Aungba,R2RTiizYthV,Datim
-COD,COD_3_93,2,Bambu,F7dN2qWcG5d,Datim
 COD,COD_3_91,2,Biringi,q7sdgghFvzp,Datim
-COD,COD_3_106,2,Boga,RrWQ1zYSkKE,Datim
-COD,COD_3_107,2,Bunia,y4gXCdiEYie,Datim
+COD,COD_3_92,2,Laybo,axtIYx3am08,Datim
+COD,COD_3_93,2,Bambu,F7dN2qWcG5d,Datim
 COD,COD_3_94,2,Damas,pLyKEXBkfp1,Datim
 COD,COD_3_95,2,Drodro,y1SnLJWw04y,Datim
 COD,COD_3_96,2,Fataki,ZaAxU5KQtON,Datim
-COD,COD_3_108,2,Gety,XqLMbqdrn83,Datim
 COD,COD_3_97,2,Jiba,ImgdZHUP1LC,Datim
-COD,COD_3_114,2,Kambala,rZrQYGDvmHx,Datim
 COD,COD_3_98,2,Kilo,DVjBzeE1Wnx,Datim
-COD,COD_3_109,2,Komanda,pKrD6iFu7Uv,Datim
-COD,COD_3_92,2,Laybo,axtIYx3am08,Datim
 COD,COD_3_99,2,Linga,vgocGyTstt8,Datim
 COD,COD_3_100,2,Lita,tPoQHIQ2wOc,Datim
-COD,COD_3_115,2,Logo,NYGOUPHfC6Q,Datim
-COD,COD_3_119,2,Lolwa,WYRRKUrSW1K,Datim
-COD,COD_3_116,2,Mahagi,RFwjI6w3k2V,Datim
-COD,COD_3_120,2,Mambasa,xpMGCrOahFz,Datim
-COD,COD_3_121,2,Mandima,OJLOc7nEo9m,Datim
 COD,COD_3_101,2,Mangala,Pjb0S0yJV1C,Datim
 COD,COD_3_102,2,Mongbwalu,jDJlgTLEoVb,Datim
-COD,COD_3_122,2,Nia Nia,VpeKn3k8ZFl,Datim
 COD,COD_3_103,2,Nizi,IWakTQ7RaEL,Datim
-COD,COD_3_110,2,Nyankunde,OSgOSSNPWtm,Datim
-COD,COD_3_117,2,Nyarambe,TWFsR2N6XX8,Datim
 COD,COD_3_104,2,Rethy,zoY1bvpnFbk,Datim
-COD,COD_3_118,2,Rimba,znJyBbN8KeC,Datim
-COD,COD_3_111,2,Rwampara,hO8hsJUqKGe,Datim
 COD,COD_3_105,2,Tchomia,PeOA630LbDC,Datim
-COD,COD_3_124,2,Banga Lubaka,Azbu5IAIHwb,Datim
-COD,COD_3_137,2,Bulape,KBnqh7xclTV,Datim
+COD,COD_3_106,2,Boga,RrWQ1zYSkKE,Datim
+COD,COD_3_107,2,Bunia,y4gXCdiEYie,Datim
+COD,COD_3_108,2,Gety,XqLMbqdrn83,Datim
+COD,COD_3_109,2,Komanda,pKrD6iFu7Uv,Datim
+COD,COD_3_110,2,Nyankunde,OSgOSSNPWtm,Datim
+COD,COD_3_111,2,Rwampara,hO8hsJUqKGe,Datim
+COD,COD_3_112,2,Angumu,CU0xscbwfvQ,Datim
+COD,COD_3_113,2,Aungba,R2RTiizYthV,Datim
+COD,COD_3_114,2,Kambala,rZrQYGDvmHx,Datim
+COD,COD_3_115,2,Logo,NYGOUPHfC6Q,Datim
+COD,COD_3_116,2,Mahagi,RFwjI6w3k2V,Datim
+COD,COD_3_117,2,Nyarambe,TWFsR2N6XX8,Datim
+COD,COD_3_118,2,Rimba,znJyBbN8KeC,Datim
+COD,COD_3_119,2,Lolwa,WYRRKUrSW1K,Datim
+COD,COD_3_120,2,Mambasa,xpMGCrOahFz,Datim
+COD,COD_3_121,2,Mandima,OJLOc7nEo9m,Datim
+COD,COD_3_122,2,Nia Nia,VpeKn3k8ZFl,Datim
 COD,COD_3_123,2,Dekese,RLiB1H3W2jo,Datim
+COD,COD_3_124,2,Banga Lubaka,Azbu5IAIHwb,Datim
 COD,COD_3_125,2,Ilebo,K0e8ee3Roup,Datim
-COD,COD_3_138,2,Kakenge,IAQ4KIZhY0d,Datim
+COD,COD_3_126,2,Mikope,GoRO2WASe9c,Datim
 COD,COD_3_127,2,Kalonda Ouest,FXlLMfnEl8N,Datim
 COD,COD_3_128,2,Kamonia,lYRkXHFoC7F,Datim
 COD,COD_3_129,2,Kamwesha,T8KIdEwLK43,Datim
 COD,COD_3_130,2,Kanzala,Fb2QovwGdDf,Datim
 COD,COD_3_131,2,Kitangwa,Hrw5HMApczH,Datim
-COD,COD_3_135,2,Luebo,xF5pzBizC6m,Datim
-COD,COD_3_126,2,Mikope,GoRO2WASe9c,Datim
-COD,COD_3_139,2,Mushenge,PqP5M2imwae,Datim
 COD,COD_3_132,2,Mutena,nRfpPEjB7Jv,Datim
-COD,COD_3_140,2,Mweka,HdHaKQq4v6w,Datim
-COD,COD_3_136,2,Ndjoko Mpunda,sViIDyYJU1L,Datim
 COD,COD_3_133,2,Nyanga,kG0V8dW9jZV,Datim
 COD,COD_3_134,2,Tshikapa,q3nSLobra2R,Datim
+COD,COD_3_135,2,Luebo,xF5pzBizC6m,Datim
+COD,COD_3_136,2,Ndjoko Mpunda,sViIDyYJU1L,Datim
+COD,COD_3_137,2,Bulape,KBnqh7xclTV,Datim
+COD,COD_3_138,2,Kakenge,IAQ4KIZhY0d,Datim
+COD,COD_3_139,2,Mushenge,PqP5M2imwae,Datim
+COD,COD_3_140,2,Mweka,HdHaKQq4v6w,Datim
 COD,COD_3_141,2,Bena Leka,OZObXGHtu3B,Datim
-COD,COD_3_148,2,Bena Tshadi,TEKi4PpWVzG,Datim
-COD,COD_3_158,2,Bilomba,I6Jlu7gKhCR,Datim
-COD,COD_3_152,2,Bobozo,oApJTe5LKfA,Datim
-COD,COD_3_144,2,Bunkonde,Il1HDhslWDZ,Datim
 COD,COD_3_142,2,Demba,XTlGfFHRQcD,Datim
-COD,COD_3_145,2,Dibaya,jCyTwXH0CjA,Datim
-COD,COD_3_159,2,Kalomba,ygWtE0W9XjU,Datim
-COD,COD_3_153,2,Kananga,pQEJHFV5roY,Datim
-COD,COD_3_149,2,Katende,S2qexRoiisk,Datim
-COD,COD_3_154,2,Katoka,vbfZURqJ6C5,Datim
-COD,COD_3_163,2,Luambo,PkH3Bxq17V0,Datim
-COD,COD_3_146,2,Lubondaie,greDEQO48AW,Datim
-COD,COD_3_150,2,Lubunga,Nlztxu88QKz,Datim
-COD,COD_3_164,2,Luiza,ZpWSJz0eKWI,Datim
-COD,COD_3_155,2,Lukonga,iZ3U5wMw10I,Datim
-COD,COD_3_165,2,Masuika,PfLsiT4rWd4,Datim
-COD,COD_3_160,2,Mikalayi,B6F6CmpxHEp,Datim
-COD,COD_3_151,2,Muetshi,EILIkQjEKV0,Datim
 COD,COD_3_143,2,Mutoto,Ou49kIXAhsb,Datim
-COD,COD_3_161,2,Ndekesha,HQ1qCAseEvP,Datim
-COD,COD_3_156,2,Ndesha,lwQmIxQvqlG,Datim
-COD,COD_3_162,2,Tshibala,r0zEP3D4XZ2,Datim
-COD,COD_3_157,2,Tshikaji,BsxtuG50r2p,Datim
+COD,COD_3_144,2,Bunkonde,Il1HDhslWDZ,Datim
+COD,COD_3_145,2,Dibaya,jCyTwXH0CjA,Datim
+COD,COD_3_146,2,Lubondaie,greDEQO48AW,Datim
 COD,COD_3_147,2,Tshikula,IERlC6NY3db,Datim
+COD,COD_3_148,2,Bena Tshadi,TEKi4PpWVzG,Datim
+COD,COD_3_149,2,Katende,S2qexRoiisk,Datim
+COD,COD_3_150,2,Lubunga,Nlztxu88QKz,Datim
+COD,COD_3_151,2,Muetshi,EILIkQjEKV0,Datim
+COD,COD_3_152,2,Bobozo,oApJTe5LKfA,Datim
+COD,COD_3_153,2,Kananga,pQEJHFV5roY,Datim
+COD,COD_3_154,2,Katoka,vbfZURqJ6C5,Datim
+COD,COD_3_155,2,Lukonga,iZ3U5wMw10I,Datim
+COD,COD_3_156,2,Ndesha,lwQmIxQvqlG,Datim
+COD,COD_3_157,2,Tshikaji,BsxtuG50r2p,Datim
+COD,COD_3_158,2,Bilomba,I6Jlu7gKhCR,Datim
+COD,COD_3_159,2,Kalomba,ygWtE0W9XjU,Datim
+COD,COD_3_160,2,Mikalayi,B6F6CmpxHEp,Datim
+COD,COD_3_161,2,Ndekesha,HQ1qCAseEvP,Datim
+COD,COD_3_162,2,Tshibala,r0zEP3D4XZ2,Datim
+COD,COD_3_163,2,Luambo,PkH3Bxq17V0,Datim
+COD,COD_3_164,2,Luiza,ZpWSJz0eKWI,Datim
+COD,COD_3_165,2,Masuika,PfLsiT4rWd4,Datim
 COD,COD_3_166,2,Yangala,ZHz8Tdhgoo3,Datim
+COD,COD_3_167,2,Kabeya Kamwanga,QW4663pYaVx,Datim
 COD,COD_3_168,2,Bibanga,X5sWbCPe0GR,Datim
+COD,COD_3_169,2,Citenge,tTqKLgv8OdJ,Datim
+COD,COD_3_170,2,Mukumbi,seR8vaGNnZQ,Datim
+COD,COD_3_171,2,Tshishimbi,ZKCCkuqj89g,Datim
 COD,COD_3_172,2,Bipemba,ggUNOpRzRR1,Datim
 COD,COD_3_173,2,Bonzola,agMSsny7deh,Datim
-COD,COD_3_182,2,Cilundu,TLhvHOx1oKR,Datim
-COD,COD_3_169,2,Citenge,tTqKLgv8OdJ,Datim
 COD,COD_3_174,2,Dibindi,e5u7WFHySu6,Datim
 COD,COD_3_175,2,Diulu,WJIfSxkEjaO,Datim
-COD,COD_3_167,2,Kabeya Kamwanga,QW4663pYaVx,Datim
 COD,COD_3_176,2,Kansele,JYyjKhP9nMN,Datim
-COD,COD_3_184,2,Kasansa,TP7ZQdMs6dV,Datim
 COD,COD_3_177,2,Lubilanji,a0hRX02EGEt,Datim
 COD,COD_3_178,2,Lukelenge,DQ8tCtOLdds,Datim
-COD,COD_3_183,2,Miabi,eDe6RsT59eO,Datim
 COD,COD_3_179,2,Mpokolo,EWzTbt68cWm,Datim
-COD,COD_3_170,2,Mukumbi,seR8vaGNnZQ,Datim
 COD,COD_3_180,2,Muya,H32roWMdBIF,Datim
 COD,COD_3_181,2,Nzaba,HwqLZcHHlmQ,Datim
+COD,COD_3_182,2,Cilundu,TLhvHOx1oKR,Datim
+COD,COD_3_183,2,Miabi,eDe6RsT59eO,Datim
+COD,COD_3_184,2,Kasansa,TP7ZQdMs6dV,Datim
 COD,COD_3_185,2,Tshilenge,dYOLCRtBDyy,Datim
-COD,COD_3_171,2,Tshishimbi,ZKCCkuqj89g,Datim
 COD,COD_3_186,2,Bandalungwa,Ml7XhDDDSxr,Datim
 COD,COD_3_187,2,Barumbu,b3oj7tltF3b,Datim
 COD,COD_3_188,2,Binza Meteo,kd4zgxV7h42,Datim
@@ -362,494 +747,594 @@ COD,COD_3_217,2,Ngiri Ngiri,aXdQ97wSK7F,Datim
 COD,COD_3_218,2,Nsele,UsUtCapznDy,Datim
 COD,COD_3_219,2,Police,Bf7lGUMLg7A,Datim
 COD,COD_3_220,2,Selembao,PpTLwWlbuH7,Datim
-COD,COD_3_235,2,Boko Kivulu,Y92sgHgSEqh,Datim
 COD,COD_3_221,2,Boma,MloXYCFhAHJ,Datim
-COD,COD_3_240,2,Boma Bungu,pM2rGS6q9df,Datim
-COD,COD_3_236,2,Gombe Matadi,xO1w3RTK5OW,Datim
-COD,COD_3_243,2,Inga,JWzsriLJaXQ,Datim
-COD,COD_3_225,2,Kangu,jvxgIJppxSb,Datim
-COD,COD_3_227,2,Kibunzi,r0dN0zSyxxo,Datim
-COD,COD_3_237,2,Kimpangu,ETEohvsBVFa,Datim
-COD,COD_3_245,2,Kimpese,oXJaEdhOBpD,Datim
+COD,COD_3_222,2,Massa,zCZbdZagTIC,Datim
+COD,COD_3_223,2,Sona Bata,wVtgERw7V1j,Datim
 COD,COD_3_224,2,Kimvula,rQeokN70ksF,Datim
-COD,COD_3_247,2,Kinkonzi,m6j33IBg2cI,Datim
-COD,COD_3_230,2,Kisantu,L5580CoHjjk,Datim
-COD,COD_3_248,2,Kizu,qqozl3Ik9Ss,Datim
-COD,COD_3_249,2,Kuimba,BEhZh25cWME,Datim
-COD,COD_3_238,2,Kwilu Ngongo,Nxl1ceH658e,Datim
+COD,COD_3_225,2,Kangu,jvxgIJppxSb,Datim
 COD,COD_3_226,2,Lukula,z4TKrYxjfWP,Datim
+COD,COD_3_227,2,Kibunzi,r0dN0zSyxxo,Datim
 COD,COD_3_228,2,Luozi,w552Q5GaFdk,Datim
 COD,COD_3_229,2,Mangembo,ygZI5uJLa0h,Datim
-COD,COD_3_222,2,Massa,zCZbdZagTIC,Datim
-COD,COD_3_233,2,Matadi,nFamls0dWBJ,Datim
-COD,COD_3_239,2,Mbanza Ngungu,oUduPbEBiqd,Datim
-COD,COD_3_242,2,Muanda,rknmC954KXn,Datim
+COD,COD_3_230,2,Kisantu,L5580CoHjjk,Datim
 COD,COD_3_231,2,Ngidinga,F4Ag7njmlur,Datim
 COD,COD_3_232,2,Nselo,ueuTEzU19xi,Datim
-COD,COD_3_246,2,Nsona Mpangu,DRFumGAORcQ,Datim
+COD,COD_3_233,2,Matadi,nFamls0dWBJ,Datim
 COD,COD_3_234,2,Nzanza,eY8yYcyRrd2,Datim
+COD,COD_3_235,2,Boko Kivulu,Y92sgHgSEqh,Datim
+COD,COD_3_236,2,Gombe Matadi,xO1w3RTK5OW,Datim
+COD,COD_3_237,2,Kimpangu,ETEohvsBVFa,Datim
+COD,COD_3_238,2,Kwilu Ngongo,Nxl1ceH658e,Datim
+COD,COD_3_239,2,Mbanza Ngungu,oUduPbEBiqd,Datim
+COD,COD_3_240,2,Boma Bungu,pM2rGS6q9df,Datim
+COD,COD_3_241,,Kitoma,,Datim
+COD,COD_3_242,2,Muanda,rknmC954KXn,Datim
+COD,COD_3_243,2,Inga,JWzsriLJaXQ,Datim
 COD,COD_3_244,2,Seke Banza,laQiXv9q0mw,Datim
-COD,COD_3_223,2,Sona Bata,wVtgERw7V1j,Datim
+COD,COD_3_245,2,Kimpese,oXJaEdhOBpD,Datim
+COD,COD_3_246,2,Nsona Mpangu,DRFumGAORcQ,Datim
+COD,COD_3_247,2,Kinkonzi,m6j33IBg2cI,Datim
+COD,COD_3_248,2,Kizu,qqozl3Ik9Ss,Datim
+COD,COD_3_249,2,Kuimba,BEhZh25cWME,Datim
 COD,COD_3_250,2,Tshela,JHaMpaDbNge,Datim
 COD,COD_3_251,2,Vaku,JseMB8zUjqW,Datim
-COD,COD_3_262,2,Boko,W0Fv1IE5kdX,Datim
 COD,COD_3_252,2,Feshi,UgwCqzl0YlL,Datim
+COD,COD_3_253,2,Kisanji,mW3PFlMPKZa,Datim
+COD,COD_3_254,2,Mwela Lembwa,GU7iO4fx841,Datim
 COD,COD_3_255,2,Kahemba,HmJWUBhCTAj,Datim
 COD,COD_3_256,2,Kajiji,CR0xTXqtzam,Datim
 COD,COD_3_257,2,Kasongo Lunda,xYrozMD4dK2,Datim
-COD,COD_3_263,2,Kenge,YaxR36vYVx1,Datim
-COD,COD_3_264,2,Kimbao,FaBi9OurvnI,Datim
-COD,COD_3_253,2,Kisanji,mW3PFlMPKZa,Datim
 COD,COD_3_258,2,Kitenda,Hj3eRSVZWuK,Datim
-COD,COD_3_254,2,Mwela Lembwa,GU7iO4fx841,Datim
 COD,COD_3_259,2,Panzi,wk84YZFzzbT,Datim
-COD,COD_3_265,2,Popokabaka,YGiavYg3Mg7,Datim
 COD,COD_3_260,2,Tembo,PtRvR2OEiP3,Datim
 COD,COD_3_261,2,Wamba Lwadi,wX4W1bzsyYz,Datim
+COD,COD_3_262,2,Boko,W0Fv1IE5kdX,Datim
+COD,COD_3_263,2,Kenge,YaxR36vYVx1,Datim
+COD,COD_3_264,2,Kimbao,FaBi9OurvnI,Datim
+COD,COD_3_265,2,Popokabaka,YGiavYg3Mg7,Datim
 COD,COD_3_266,2,Bagata,tjtKnCGZHIp,Datim
+COD,COD_3_267,2,Kikongo,YHRPWx3UMPK,Datim
+COD,COD_3_268,2,Sia,v2esgkDpjXV,Datim
 COD,COD_3_269,2,Bandundu,D2T7ffYHe2l,Datim
 COD,COD_3_270,2,Bulungu,qLvgqlGFjHs,Datim
 COD,COD_3_271,2,Djuma,xdtypAEqP4K,Datim
+COD,COD_3_272,2,Lusanga,fEK03OsVYNK,Datim
+COD,COD_3_273,2,Pay Kongila,rIQJGEls8Cu,Datim
+COD,COD_3_274,2,Vanga,s5oFNqlAlVU,Datim
 COD,COD_3_275,2,Gungu,VhwOCBJ4m5d,Datim
+COD,COD_3_276,2,Kingandu,opopP9jUmto,Datim
+COD,COD_3_277,2,Mukedi,N864FBZtXkq,Datim
 COD,COD_3_278,2,Idiofa,JhcpkRLod9i,Datim
 COD,COD_3_279,2,Ipamu,ZZuJm9B1ulU,Datim
-COD,COD_3_267,2,Kikongo,YHRPWx3UMPK,Datim
+COD,COD_3_280,2,Kimputu,EJ9dfdBSby9,Datim
+COD,COD_3_281,2,Koshibanda,u7VlU7eJpSY,Datim
+COD,COD_3_282,2,Mokala,OmaElL0qeNt,Datim
+COD,COD_3_283,2,Mungindu,PL5Nve8H9Es,Datim
 COD,COD_3_284,2,Kikwit Nord,vzrvi4nZCOw,Datim
 COD,COD_3_285,2,Kikwit Sud,knDTOWytdjN,Datim
-COD,COD_3_280,2,Kimputu,EJ9dfdBSby9,Datim
-COD,COD_3_276,2,Kingandu,opopP9jUmto,Datim
-COD,COD_3_281,2,Koshibanda,u7VlU7eJpSY,Datim
-COD,COD_3_272,2,Lusanga,fEK03OsVYNK,Datim
 COD,COD_3_286,2,Masi Manimba,YOI6o7bUQAl,Datim
 COD,COD_3_287,2,Moanza,KN0iRHceBDa,Datim
-COD,COD_3_282,2,Mokala,OmaElL0qeNt,Datim
 COD,COD_3_288,2,Mosango,QNJO6vL8nVc,Datim
-COD,COD_3_277,2,Mukedi,N864FBZtXkq,Datim
-COD,COD_3_283,2,Mungindu,PL5Nve8H9Es,Datim
-COD,COD_3_273,2,Pay Kongila,rIQJGEls8Cu,Datim
-COD,COD_3_268,2,Sia,v2esgkDpjXV,Datim
-COD,COD_3_274,2,Vanga,s5oFNqlAlVU,Datim
 COD,COD_3_289,2,Yasa Bonga,KoawxYIldkX,Datim
 COD,COD_3_290,2,Kabinda,hcQZXbLkSea,Datim
-COD,COD_3_303,2,Kalambayi Kabanga,tDueCMRWY7b,Datim
-COD,COD_3_297,2,Kalenda,wyIMkwjWph2,Datim
 COD,COD_3_291,2,Kalonda Est,hFSGqZvjcoh,Datim
-COD,COD_3_294,2,Kamana,FA0O2ro28rK,Datim
-COD,COD_3_293,2,Kamiji,KMuv0gXGf5J,Datim
-COD,COD_3_298,2,Kanda Kanda,ZCniSGihfVI,Datim
-COD,COD_3_295,2,Lubao,fLc2MtFMKfn,Datim
 COD,COD_3_292,2,Ludimbi Lukula,Na4yrw5U6au,Datim
-COD,COD_3_299,2,Luputa,g0FZoStS6FR,Datim
-COD,COD_3_301,2,Makota,bIBCwK0MLta,Datim
-COD,COD_3_304,2,Mulumba,ZorAk62GHQP,Datim
-COD,COD_3_302,2,Mweneditu,eYgzqAy74Cl,Datim
-COD,COD_3_305,2,NGandajika,Kfw2WKy9aVN,Datim
+COD,COD_3_293,2,Kamiji,KMuv0gXGf5J,Datim
+COD,COD_3_294,2,Kamana,FA0O2ro28rK,Datim
+COD,COD_3_295,2,Lubao,fLc2MtFMKfn,Datim
 COD,COD_3_296,2,Tshofa,atDucGVjJg4,Datim
+COD,COD_3_297,2,Kalenda,wyIMkwjWph2,Datim
+COD,COD_3_298,2,Kanda Kanda,ZCniSGihfVI,Datim
+COD,COD_3_299,2,Luputa,g0FZoStS6FR,Datim
 COD,COD_3_300,2,Wikong,Klgj2NvWmIX,Datim
-COD,COD_3_310,2,Bunkeya,APlUXrGE7PQ,Datim
-COD,COD_3_314,2,Dilala,I3BZ5GynF7z,Datim
+COD,COD_3_301,2,Makota,bIBCwK0MLta,Datim
+COD,COD_3_302,2,Mweneditu,eYgzqAy74Cl,Datim
+COD,COD_3_303,2,Kalambayi Kabanga,tDueCMRWY7b,Datim
+COD,COD_3_304,2,Mulumba,ZorAk62GHQP,Datim
+COD,COD_3_305,2,NGandajika,Kfw2WKy9aVN,Datim
 COD,COD_3_306,2,Dilolo,bPa7A9cZogC,Datim
-COD,COD_3_311,2,Fungurume,XBz3SeLhTR5,Datim
-COD,COD_3_317,2,Kafakumba,AFs0tEmVTsZ,Datim
-COD,COD_3_308,2,Kalamba,bzoT23f1Uma,Datim
-COD,COD_3_312,2,Kanzenze,tFPzF1PdQYD,Datim
-COD,COD_3_309,2,Kapanga,zrADoxyP1iP,Datim
 COD,COD_3_307,2,Kasaji,Em42dYQaT6T,Datim
-COD,COD_3_315,2,Lualaba,nkk4fjd9ncb,Datim
+COD,COD_3_308,2,Kalamba,bzoT23f1Uma,Datim
+COD,COD_3_309,2,Kapanga,zrADoxyP1iP,Datim
+COD,COD_3_310,2,Bunkeya,APlUXrGE7PQ,Datim
+COD,COD_3_311,2,Fungurume,XBz3SeLhTR5,Datim
+COD,COD_3_312,2,Kanzenze,tFPzF1PdQYD,Datim
 COD,COD_3_313,2,Lubudi,hZxBqL2oyE4,Datim
+COD,COD_3_314,2,Dilala,I3BZ5GynF7z,Datim
+COD,COD_3_315,2,Lualaba,nkk4fjd9ncb,Datim
 COD,COD_3_316,2,Mutshatsha,udJcP2om689,Datim
+COD,COD_3_317,2,Kafakumba,AFs0tEmVTsZ,Datim
 COD,COD_3_318,2,Sandoa,Ws5iRBYjate,Datim
-COD,COD_3_320,2,Banzow Moke,jfc33Rhyi7f,Datim
-COD,COD_3_325,2,Bokoro,LIMyKyWq6mU,Datim
 COD,COD_3_319,2,Bolobo,lpy4sNPFwpJ,Datim
-COD,COD_3_329,2,Bosobe,Nh9RvKcaI4s,Datim
+COD,COD_3_320,2,Banzow Moke,jfc33Rhyi7f,Datim
 COD,COD_3_321,2,Inongo,aqDrgEYTCsP,Datim
-COD,COD_3_323,2,Kiri,bSywJMz2npY,Datim
-COD,COD_3_327,2,Kwamouth,mhqQSlJOBnn,Datim
-COD,COD_3_330,2,Mimia,cuceo5ISwKt,Datim
-COD,COD_3_328,2,Mushie,TO2HjqkY6LP,Datim
-COD,COD_3_326,2,Nioki,H6R0tdw1IMY,Datim
 COD,COD_3_322,2,Ntandembelo,Ltr4h1LrRfQ,Datim
-COD,COD_3_331,2,Oshwe,y3eWips7K0A,Datim
+COD,COD_3_323,2,Kiri,bSywJMz2npY,Datim
 COD,COD_3_324,2,Pendjwa,TD0cmwWHVKG,Datim
+COD,COD_3_325,2,Bokoro,LIMyKyWq6mU,Datim
+COD,COD_3_326,2,Nioki,H6R0tdw1IMY,Datim
+COD,COD_3_327,2,Kwamouth,mhqQSlJOBnn,Datim
+COD,COD_3_328,2,Mushie,TO2HjqkY6LP,Datim
+COD,COD_3_329,2,Bosobe,Nh9RvKcaI4s,Datim
+COD,COD_3_330,2,Mimia,cuceo5ISwKt,Datim
+COD,COD_3_331,2,Oshwe,y3eWips7K0A,Datim
 COD,COD_3_332,2,Yumbi,KasNG6QooQ3,Datim
-COD,COD_3_342,2,Alunguli,mt5RPwSqCs9,Datim
-COD,COD_3_349,2,Ferekeni,PQqoUuQX8cI,Datim
 COD,COD_3_333,2,Kabambare,CZWnHT18xk2,Datim
+COD,COD_3_334,2,Lusangi,ySiy539hsZs,Datim
+COD,COD_3_335,2,Saramabila,tQbnpOJSWlL,Datim
 COD,COD_3_336,2,Kailo,qYcSGLaby10,Datim
+COD,COD_3_337,2,Kasongo,ERqZONwH42k,Datim
+COD,COD_3_338,2,Kunda,Oyo2jBxgBpQ,Datim
+COD,COD_3_339,2,Samba,ftkCiTGztA0,Datim
+COD,COD_3_340,2,Kibombo,uinpvcp6wjj,Datim
+COD,COD_3_341,2,Tunda,DR5LSFNa7wE,Datim
+COD,COD_3_342,2,Alunguli,mt5RPwSqCs9,Datim
+COD,COD_3_343,2,Kindu,JoaY2xCSFeS,Datim
+COD,COD_3_344,2,Lubutu,eo268bxdru0,Datim
+COD,COD_3_345,2,Obokote,Zh8VgS2wvym,Datim
 COD,COD_3_346,2,Kalima,vUmh9M8lscJ,Datim
 COD,COD_3_347,2,Kampene,OM4ElGBDlzw,Datim
-COD,COD_3_337,2,Kasongo,ERqZONwH42k,Datim
-COD,COD_3_340,2,Kibombo,uinpvcp6wjj,Datim
-COD,COD_3_343,2,Kindu,JoaY2xCSFeS,Datim
-COD,COD_3_338,2,Kunda,Oyo2jBxgBpQ,Datim
-COD,COD_3_344,2,Lubutu,eo268bxdru0,Datim
-COD,COD_3_334,2,Lusangi,ySiy539hsZs,Datim
-COD,COD_3_345,2,Obokote,Zh8VgS2wvym,Datim
 COD,COD_3_348,2,Pangi,tRiUpL8GMkP,Datim
+COD,COD_3_349,2,Ferekeni,PQqoUuQX8cI,Datim
 COD,COD_3_350,2,Punia,I5bKrT2hrSq,Datim
-COD,COD_3_339,2,Samba,ftkCiTGztA0,Datim
-COD,COD_3_335,2,Saramabila,tQbnpOJSWlL,Datim
-COD,COD_3_341,2,Tunda,DR5LSFNa7wE,Datim
-COD,COD_3_360,2,Binga,wQRBJpM3cqA,Datim
 COD,COD_3_351,2,Bongandanga,jeKg536yEDn,Datim
-COD,COD_3_361,2,Boso Manzi,cnP5c60lg9W,Datim
 COD,COD_3_352,2,Boso Mondanda,OtYi4jBEuOA,Datim
 COD,COD_3_353,2,Bosondjo,wihQOkR2NOB,Datim
-COD,COD_3_355,2,Bumba,lBG5qzwB4Ae,Datim
-COD,COD_3_362,2,Lisala,UjcrhPtx4xi,Datim
-COD,COD_3_356,2,Lolo,NuEpsfbXFHO,Datim
 COD,COD_3_354,2,Pimu,iKPp4z223Mm,Datim
+COD,COD_3_355,2,Bumba,lBG5qzwB4Ae,Datim
+COD,COD_3_356,2,Lolo,NuEpsfbXFHO,Datim
 COD,COD_3_357,2,Yamaluka,UpKUoh5mEJx,Datim
 COD,COD_3_358,2,Yambuku,L9jFq50FN7B,Datim
 COD,COD_3_359,2,Yamongili,YaFx5nd7gDK,Datim
-COD,COD_3_368,2,Alimbongo,eaFt479QNnl,Datim
-COD,COD_3_387,2,Bambo,k6VQqULmBgi,Datim
+COD,COD_3_360,2,Binga,wQRBJpM3cqA,Datim
+COD,COD_3_361,2,Boso Manzi,cnP5c60lg9W,Datim
+COD,COD_3_362,2,Lisala,UjcrhPtx4xi,Datim
 COD,COD_3_363,2,Beni,NDJkZAbbtqD,Datim
-COD,COD_3_369,2,Biena,NEX9RuermlV,Datim
-COD,COD_3_388,2,Binza,crgO46I0lGA,Datim
-COD,COD_3_389,2,Birambizo,HdOijyt6i4K,Datim
 COD,COD_3_364,2,Butembo,SuUwORG0OZ3,Datim
-COD,COD_3_366,2,Goma,Wg56YAsflpZ,Datim
-COD,COD_3_393,2,Itebero,tJWA5PtaCzS,Datim
-COD,COD_3_380,2,Kalunguta,zwOoKFZOlBh,Datim
-COD,COD_3_381,2,Kamango,Re83ZVBWck0,Datim
-COD,COD_3_367,2,Karisimbi,PVJQvVnCEzW,Datim
-COD,COD_3_375,2,Katoyi,jAGrl9L1TIM,Datim
 COD,COD_3_365,2,Katwa,UBLBQuJ2hXz,Datim
+COD,COD_3_366,2,Goma,Wg56YAsflpZ,Datim
+COD,COD_3_367,2,Karisimbi,PVJQvVnCEzW,Datim
+COD,COD_3_368,2,Alimbongo,eaFt479QNnl,Datim
+COD,COD_3_369,2,Biena,NEX9RuermlV,Datim
 COD,COD_3_370,2,Kayna,fxunaPsMSoo,Datim
-COD,COD_3_390,2,Kibirizi,wOZosshfExD,Datim
-COD,COD_3_394,2,Kibua,ve8ycOwPR7h,Datim
-COD,COD_3_376,2,Kirotshe,H9Qz7XtiMmX,Datim
-COD,COD_3_382,2,Kyondo,S0eQQCBVU3y,Datim
 COD,COD_3_371,2,Lubero,xvCjrdBpnwz,Datim
-COD,COD_3_383,2,Mabalako,YuvYxTilHIN,Datim
 COD,COD_3_372,2,Manguredjipa,Bv77MgZhgPg,Datim
 COD,COD_3_373,2,Masereka,NpDkJ7dW1k6,Datim
-COD,COD_3_377,2,Masisi,zkDN13Tt4x6,Datim
 COD,COD_3_374,2,Musienene,qUaA7ohOwWG,Datim
-COD,COD_3_384,2,Mutwanga,yoHcqNl8zLs,Datim
+COD,COD_3_375,2,Katoyi,jAGrl9L1TIM,Datim
+COD,COD_3_376,2,Kirotshe,H9Qz7XtiMmX,Datim
+COD,COD_3_377,2,Masisi,zkDN13Tt4x6,Datim
 COD,COD_3_378,2,Mweso,MVmBQXEHy8k,Datim
 COD,COD_3_379,2,Nyiragongo,vjSKnRJxAWw,Datim
+COD,COD_3_380,2,Kalunguta,zwOoKFZOlBh,Datim
+COD,COD_3_381,2,Kamango,Re83ZVBWck0,Datim
+COD,COD_3_382,2,Kyondo,S0eQQCBVU3y,Datim
+COD,COD_3_383,2,Mabalako,YuvYxTilHIN,Datim
+COD,COD_3_384,2,Mutwanga,yoHcqNl8zLs,Datim
 COD,COD_3_385,2,Oicha,KdCFhH0Hd40,Datim
-COD,COD_3_395,2,Pinga,UC1QqOStdsD,Datim
+COD,COD_3_386,2,Vuhovi,j2fylxCpkQ8,Datim
+COD,COD_3_387,2,Bambo,k6VQqULmBgi,Datim
+COD,COD_3_388,2,Binza,crgO46I0lGA,Datim
+COD,COD_3_389,2,Birambizo,HdOijyt6i4K,Datim
+COD,COD_3_390,2,Kibirizi,wOZosshfExD,Datim
 COD,COD_3_391,2,Rutshuru,rppTV8fRhbk,Datim
 COD,COD_3_392,2,Rwanguba,hD5NAEkW3KW,Datim
-COD,COD_3_386,2,Vuhovi,j2fylxCpkQ8,Datim
+COD,COD_3_393,2,Itebero,tJWA5PtaCzS,Datim
+COD,COD_3_394,2,Kibua,ve8ycOwPR7h,Datim
+COD,COD_3_395,2,Pinga,UC1QqOStdsD,Datim
 COD,COD_3_396,2,Walikale,jJZPlpLEMWU,Datim
-COD,COD_3_404,2,Abuzi,vDMvX5cs8XJ,Datim
 COD,COD_3_397,2,Bili,XiVVlpVBEYP,Datim
 COD,COD_3_398,2,Bosobolo,AIFraOll9jH,Datim
 COD,COD_3_399,2,Businga,VuNsE5wdKUe,Datim
-COD,COD_3_402,2,Gbadolite,xROmJf1yqmq,Datim
 COD,COD_3_400,2,Karawa,Ixg583xhp5O,Datim
 COD,COD_3_401,2,Loko,IFs678kTois,Datim
+COD,COD_3_402,2,Gbadolite,xROmJf1yqmq,Datim
 COD,COD_3_403,2,Mobayi Mbongo,IlzhRLBjj27,Datim
+COD,COD_3_404,2,Abuzi,vDMvX5cs8XJ,Datim
 COD,COD_3_405,2,Wapinda,C6ZbZ8Q7qsm,Datim
 COD,COD_3_406,2,Wasolo,ClKFg3TZH8p,Datim
 COD,COD_3_407,2,Yakoma,dNUUhrPM4HW,Datim
-COD,COD_3_411,2,Bena Dibele,r7mc1wUHkXr,Datim
-COD,COD_3_418,2,Dikungu,F7U0tLXESEF,Datim
 COD,COD_3_408,2,Djalo Djeka,PaaDbwEVrnK,Datim
 COD,COD_3_409,2,Katako Kombe,dbaAXcT9516,Datim
+COD,COD_3_410,2,Wembo Nyama,ZRQ2wNW21p2,Datim
+COD,COD_3_411,2,Bena Dibele,r7mc1wUHkXr,Datim
 COD,COD_3_412,2,Kole,rEPzZqB38XG,Datim
 COD,COD_3_413,2,Lodja,qZUowHCWMSg,Datim
-COD,COD_3_416,2,Lomela,SdWZmHkWGb3,Datim
-COD,COD_3_421,2,Lusambo,wvlKlpAFdHX,Datim
-COD,COD_3_419,2,Minga,kU8DA9oRUTT,Datim
 COD,COD_3_414,2,Omendjadi,mSWq62qDaUM,Datim
+COD,COD_3_415,2,Vanga Kete,xmOn166nyfd,Datim
+COD,COD_3_416,2,Lomela,SdWZmHkWGb3,Datim
+COD,COD_3_417,2,Tshudi Loto,W4iznbrjrSa,Datim
+COD,COD_3_418,2,Dikungu,F7U0tLXESEF,Datim
+COD,COD_3_419,2,Minga,kU8DA9oRUTT,Datim
+COD,COD_3_420,2,Tshumbe,Nwr4bXRmNm4,Datim
+COD,COD_3_421,2,Lusambo,wvlKlpAFdHX,Datim
 COD,COD_3_422,2,Ototo,cONoax462Lx,Datim
 COD,COD_3_423,2,Pania Mutombo,jbsrjYDh6kH,Datim
-COD,COD_3_417,2,Tshudi Loto,W4iznbrjrSa,Datim
-COD,COD_3_420,2,Tshumbe,Nwr4bXRmNm4,Datim
-COD,COD_3_415,2,Vanga Kete,xmOn166nyfd,Datim
-COD,COD_3_410,2,Wembo Nyama,ZRQ2wNW21p2,Datim
 COD,COD_3_424,2,Bagira,f9nH4oAVtmc,Datim
-COD,COD_3_437,2,Bunyakiri,gWpVEBTYNPe,Datim
-COD,COD_3_427,2,Fizi,uV7iIqWfNSY,Datim
-COD,COD_3_450,2,Haut Plateau,nHzqCVdgj8n,Datim
 COD,COD_3_425,2,Ibanda,FcBIwXC71d4,Datim
-COD,COD_3_431,2,Idjwi,mkhHzBsaqkm,Datim
-COD,COD_3_441,2,Itombwe,d4Y3DQcb7Dz,Datim
-COD,COD_3_432,2,Kabare,by9hoA7jitX,Datim
 COD,COD_3_426,2,Kadutu,vziq7nTKcO3,Datim
-COD,COD_3_438,2,Kalehe,A4SjUMyWHLE,Datim
-COD,COD_3_446,2,Kalole,EuCoe7E9dwk,Datim
-COD,COD_3_439,2,Kalonge,h2L0sEqDpaF,Datim
-COD,COD_3_442,2,Kamituga,WdTuCx5Ua1l,Datim
+COD,COD_3_427,2,Fizi,uV7iIqWfNSY,Datim
+COD,COD_3_428,2,Kimbi Lulenge,FJF9hmTPGqy,Datim
+COD,COD_3_429,2,Minembwe,G1UvIhTLKAL,Datim
+COD,COD_3_430,2,Nundu,PeaVlaYW7vj,Datim
+COD,COD_3_431,2,Idjwi,mkhHzBsaqkm,Datim
+COD,COD_3_432,2,Kabare,by9hoA7jitX,Datim
 COD,COD_3_433,2,Kaniola,KqsVlY5Zy8t,Datim
 COD,COD_3_434,2,Katana,PgkZYIm3BYK,Datim
-COD,COD_3_454,2,Kaziba,vvK8lHfnlcV,Datim
-COD,COD_3_428,2,Kimbi Lulenge,FJF9hmTPGqy,Datim
-COD,COD_3_443,2,Kitutu,qkfPrFllkPc,Datim
-COD,COD_3_451,2,Lemera,OGAez9z2ewx,Datim
-COD,COD_3_447,2,Lulingu,voYtta0HUM9,Datim
-COD,COD_3_429,2,Minembwe,G1UvIhTLKAL,Datim
-COD,COD_3_440,2,Minova,HGJ4uWHm4Np,Datim
 COD,COD_3_435,2,Miti Murhesa,tmYg7WsC7fN,Datim
-COD,COD_3_455,2,Mubumbano,GTc5gbgxzGB,Datim
-COD,COD_3_448,2,Mulungu,D3RN600eDlK,Datim
+COD,COD_3_436,2,Nyantende,Wcj2H7HUmFw,Datim
+COD,COD_3_437,2,Bunyakiri,gWpVEBTYNPe,Datim
+COD,COD_3_438,2,Kalehe,A4SjUMyWHLE,Datim
+COD,COD_3_439,2,Kalonge,h2L0sEqDpaF,Datim
+COD,COD_3_440,2,Minova,HGJ4uWHm4Np,Datim
+COD,COD_3_441,2,Itombwe,d4Y3DQcb7Dz,Datim
+COD,COD_3_442,2,Kamituga,WdTuCx5Ua1l,Datim
+COD,COD_3_443,2,Kitutu,qkfPrFllkPc,Datim
 COD,COD_3_444,2,Mwana,ytncAcsKu6B,Datim
 COD,COD_3_445,2,Mwenga,lTTRelYxFtO,Datim
-COD,COD_3_430,2,Nundu,PeaVlaYW7vj,Datim
-COD,COD_3_456,2,Nyangezi,fQ1VZOrnweC,Datim
-COD,COD_3_436,2,Nyantende,Wcj2H7HUmFw,Datim
-COD,COD_3_452,2,Ruzizi,yjtbEPZFQZ1,Datim
+COD,COD_3_446,2,Kalole,EuCoe7E9dwk,Datim
+COD,COD_3_447,2,Lulingu,voYtta0HUM9,Datim
+COD,COD_3_448,2,Mulungu,D3RN600eDlK,Datim
 COD,COD_3_449,2,Shabunda,uDbPNiXrHG4,Datim
+COD,COD_3_450,2,Haut Plateau,nHzqCVdgj8n,Datim
+COD,COD_3_451,2,Lemera,OGAez9z2ewx,Datim
+COD,COD_3_452,2,Ruzizi,yjtbEPZFQZ1,Datim
 COD,COD_3_453,2,Uvira,yLQc390Xq0l,Datim
+COD,COD_3_454,2,Kaziba,vvK8lHfnlcV,Datim
+COD,COD_3_455,2,Mubumbano,GTc5gbgxzGB,Datim
+COD,COD_3_456,2,Nyangezi,fQ1VZOrnweC,Datim
 COD,COD_3_457,2,Walungu,msC7W47tj7S,Datim
 COD,COD_3_458,2,Bangabola,oLAaTXP4CD3,Datim
-COD,COD_3_463,2,Bogosenubea,HXQzKRYANlF,Datim
-COD,COD_3_468,2,Bokonzi,DSVfRVWGgcG,Datim
-COD,COD_3_464,2,Bominenge,zLFLrgBzBIv,Datim
-COD,COD_3_469,2,Boto,eEoHNxf8p43,Datim
 COD,COD_3_459,2,Budjala,DGy9bguNlh3,Datim
 COD,COD_3_460,2,Bulu,dYi2EDFLNfv,Datim
+COD,COD_3_461,2,Mbaya,ZLWWceRHBJ8,Datim
+COD,COD_3_462,2,Ndage,iwXAjfbTket,Datim
+COD,COD_3_463,2,Bogosenubea,HXQzKRYANlF,Datim
+COD,COD_3_464,2,Bominenge,zLFLrgBzBIv,Datim
 COD,COD_3_465,2,Bwamanda,QKpsRfHzLJW,Datim
 COD,COD_3_466,2,Gemena,LSMFjAGz6Ka,Datim
+COD,COD_3_467,2,Tandala,jXDHXEdClaq,Datim
+COD,COD_3_468,2,Bokonzi,DSVfRVWGgcG,Datim
+COD,COD_3_469,2,Boto,eEoHNxf8p43,Datim
 COD,COD_3_470,2,Kungu,W6t5fruka2m,Datim
 COD,COD_3_471,2,Libenge,TR1tpaGtRJF,Datim
 COD,COD_3_472,2,Mawuya,S6FCj7pUu1f,Datim
-COD,COD_3_461,2,Mbaya,ZLWWceRHBJ8,Datim
-COD,COD_3_462,2,Ndage,iwXAjfbTket,Datim
-COD,COD_3_467,2,Tandala,jXDHXEdClaq,Datim
 COD,COD_3_473,2,Zongo,d1ZVoSeCxBN,Datim
-COD,COD_3_479,2,Ankoro,XeMundWC5x4,Datim
 COD,COD_3_474,2,Kabalo,EF1nwqPXnDO,Datim
 COD,COD_3_475,2,Kalemie,ROSzy7xelLo,Datim
-COD,COD_3_482,2,Kansimba,BuPSQZHRaT3,Datim
-COD,COD_3_480,2,Kiambi,QrLksEXXTCQ,Datim
-COD,COD_3_477,2,Kongolo,dw75lxOfIc7,Datim
-COD,COD_3_481,2,Manono,h4MXDgzHF4L,Datim
-COD,COD_3_478,2,Mbulula,IPLxMXUAhw0,Datim
-COD,COD_3_483,2,Moba,PAthk6X0zDu,Datim
 COD,COD_3_476,2,Nyemba,G1ue7t1kEzV,Datim
+COD,COD_3_477,2,Kongolo,dw75lxOfIc7,Datim
+COD,COD_3_478,2,Mbulula,IPLxMXUAhw0,Datim
+COD,COD_3_479,2,Ankoro,XeMundWC5x4,Datim
+COD,COD_3_480,2,Kiambi,QrLksEXXTCQ,Datim
+COD,COD_3_481,2,Manono,h4MXDgzHF4L,Datim
+COD,COD_3_482,2,Kansimba,BuPSQZHRaT3,Datim
+COD,COD_3_483,2,Moba,PAthk6X0zDu,Datim
 COD,COD_3_484,2,Nyunzu,s7Hibjz0nqP,Datim
 COD,COD_3_485,2,Bafwagbogbo,oEBaBxJzcs4,Datim
 COD,COD_3_486,2,Bafwasende,OopRayNzF7c,Datim
+COD,COD_3_487,2,Opienge,amLpYnhGWn1,Datim
 COD,COD_3_488,2,Banalia,RswKiRWTeCB,Datim
+COD,COD_3_489,2,Bengamisa,MwH5iVnURcv,Datim
 COD,COD_3_490,2,Basali,CAqruS5i6zK,Datim
 COD,COD_3_491,2,Basoko,bxvkVFyZ84v,Datim
-COD,COD_3_489,2,Bengamisa,MwH5iVnURcv,Datim
+COD,COD_3_492,2,Yalimbongo,y5lJevmKEjf,Datim
 COD,COD_3_493,2,Isangi,Of4XOrv1q6V,Datim
+COD,COD_3_494,2,Yabaondo,dXA7Mli5Ckq,Datim
+COD,COD_3_495,2,Yahisuli,gKLSkQjjbJ4,Datim
+COD,COD_3_496,2,Yakusu,zXA1dz19Zid,Datim
 COD,COD_3_497,2,Kabondo,x3lLk1CogjJ,Datim
-COD,COD_3_504,2,Lowa,IwFTZzPabgs,Datim
 COD,COD_3_498,2,Lubunga,mGKLqnVnFtL,Datim
 COD,COD_3_499,2,Makiso Kisangani,rmPsFrtIlAo,Datim
 COD,COD_3_500,2,Mangobo,KME93F5QCWx,Datim
-COD,COD_3_502,2,Opala,Nx0M4Cw2jMq,Datim
-COD,COD_3_487,2,Opienge,amLpYnhGWn1,Datim
 COD,COD_3_501,2,Tshopo,M2jD7cHaJne,Datim
+COD,COD_3_502,2,Opala,Nx0M4Cw2jMq,Datim
+COD,COD_3_503,2,Yaleko,cqyUAAVzbef,Datim
+COD,COD_3_504,2,Lowa,IwFTZzPabgs,Datim
 COD,COD_3_505,2,Ubundu,YLmMXcEbVCN,Datim
 COD,COD_3_506,2,Wanierukula,LLpNyd1Gu8j,Datim
-COD,COD_3_494,2,Yabaondo,dXA7Mli5Ckq,Datim
-COD,COD_3_495,2,Yahisuli,gKLSkQjjbJ4,Datim
 COD,COD_3_507,2,Yahuma,pq9hnyQvUj9,Datim
-COD,COD_3_496,2,Yakusu,zXA1dz19Zid,Datim
-COD,COD_3_503,2,Yaleko,cqyUAAVzbef,Datim
-COD,COD_3_492,2,Yalimbongo,y5lJevmKEjf,Datim
 COD,COD_3_508,2,Befale,XB4aIuoGACa,Datim
+COD,COD_3_509,2,Mompono,PxW60JcddKZ,Datim
 COD,COD_3_510,2,Boende,zUSjV060YKg,Datim
+COD,COD_3_511,2,Wema,NHF3fusWf6S,Datim
 COD,COD_3_512,2,Bokungu,pQfsSriiNGr,Datim
 COD,COD_3_513,2,Busanga,vyVmadWM5sz,Datim
+COD,COD_3_514,2,Yalifafu,Lq6e0Q6m0uk,Datim
 COD,COD_3_515,2,Djolu,mTnE4VrnqR1,Datim
-COD,COD_3_517,2,Ikela,UTgcUslA3yi,Datim
 COD,COD_3_516,2,Lingomo,lCO6nKlHKgA,Datim
-COD,COD_3_509,2,Mompono,PxW60JcddKZ,Datim
+COD,COD_3_517,2,Ikela,UTgcUslA3yi,Datim
 COD,COD_3_518,2,Mondombe,Qvght7Lr5u8,Datim
 COD,COD_3_519,2,Monkoto,zzc3T548sAL,Datim
-COD,COD_3_511,2,Wema,NHF3fusWf6S,Datim
-COD,COD_3_514,2,Yalifafu,Lq6e0Q6m0uk,Datim
-CMR,CMR_3_1,2,Ngaoundal,gsAPKvb8uK2,Datim
-CMR,CMR_3_2,2,Tibati,QN0TvRQr8SA,Datim
-CMR,CMR_3_3,2,Tignere,iwjlpyhilt2,Datim
-CMR,CMR_3_4,2,Bankim,J3p4cfDsjWc,Datim
-CMR,CMR_3_5,2,Banyo,QKxAMfygE74,Datim
-CMR,CMR_3_6,2,Djohong,m6j0i1p3GDw,Datim
-CMR,CMR_3_7,2,Meiganga,boMf1Zq6Fa2,Datim
-CMR,CMR_3_8,2,Ngaoundere Rural,YOwUWe1dgJv,Datim
-CMR,CMR_3_9,2,Ngaoundere Urbain,AwlrFJlARNT,Datim
-CMR,CMR_3_10,2,Mbandjock,bluPTs5StEv,Datim
-CMR,CMR_3_11,2,Nanga Eboko,fHkrk3yL1uU,Datim
-CMR,CMR_3_12,2,Ebebda,UVkUJt5o0py,Datim
-CMR,CMR_3_13,2,Elig Mfomo,sJDHzjIEcte,Datim
-CMR,CMR_3_14,2,Evodoula,GFXacOqu8d0,Datim
-CMR,CMR_3_15,2,Monatele,YXiMSh7CqES,Datim
-CMR,CMR_3_16,2,Obala,r5xWCJ4ZqYQ,Datim
-CMR,CMR_3_17,2,Okola,hz2Tdvrxqbp,Datim
-CMR,CMR_3_18,2,Saa,PLYdjomcBkA,Datim
-CMR,CMR_3_19,2,Bafia,clasYX5teTV,Datim
-CMR,CMR_3_20,2,Ndikinimeki,oAgxCCStCQe,Datim
-CMR,CMR_3_21,2,Ntui,rahoVxbwRB5,Datim
-CMR,CMR_3_22,2,Yoko,WquO0ev4xvO,Datim
-CMR,CMR_3_23,2,Awae,nbkoU3gPiM0,Datim
-CMR,CMR_3_24,2,Esse,VGZnGAkKRN3,Datim
-CMR,CMR_3_25,2,Soa,Vq1CnJNw46x,Datim
-CMR,CMR_3_26,2,Mbankomo,VLxcOygmtHk,Datim
-CMR,CMR_3_27,2,Ngoumou,qc293v9pKIX,Datim
-CMR,CMR_3_28,2,Eseka,h7r7vMKQIy8,Datim
-CMR,CMR_3_29,2,Ngog Mapubi,li3fcQxXdg7,Datim
-CMR,CMR_3_30,2,Akonolinga,RKsnc4nFUzT,Datim
-CMR,CMR_3_31,2,Ayos,ZxJNWnk4hYW,Datim
-CMR,CMR_3_32,2,Mbalmayo,haFG5XDW24C,Datim
-CMR,CMR_3_33,2,Mfou,PJKaNADvNfi,Datim
-CMR,CMR_3_34,2,Bangue,bIoxP4GA2JE,Datim
-CMR,CMR_3_35,2,Boko,GEWks07uHch,Datim
-CMR,CMR_3_36,2,Bonassama,dWexWkTwCVe,Datim
-CMR,CMR_3_37,2,Cite Des Palmiers,rjDWLPMhaY0,Datim
-CMR,CMR_3_38,2,Deido,wE76sY8tY19,Datim
-CMR,CMR_3_39,2,Japoma,bLF8QVYOUu3,Datim
-CMR,CMR_3_40,2,Logbaba,ZGqUbMqrxSK,Datim
-CMR,CMR_3_41,2,Manoka,HAijUCVbjCr,Datim
-CMR,CMR_3_42,2,New Bell,k7lIVnxWbm7,Datim
-CMR,CMR_3_43,2,Nylon,AW764lDxjdr,Datim
-CMR,CMR_3_44,2,Moloundou,Dcf8i2ih1tm,Datim
-CMR,CMR_3_45,2,Yokadouma,MDZqxU65Lqw,Datim
-CMR,CMR_3_46,2,Abong Mbang,iTmd0p4YWhK,Datim
-CMR,CMR_3_47,2,Doume,Tk1LVQwJYXh,Datim
-CMR,CMR_3_48,2,Lomie,TIrAQRQkEaH,Datim
-CMR,CMR_3_49,2,Messamena,YS06eYwiC8n,Datim
-CMR,CMR_3_50,2,Nguelemendouka,MHc9aRwt9xv,Datim
-CMR,CMR_3_51,2,Batouri,cBrzvNglqAl,Datim
-CMR,CMR_3_52,2,Kette,RIqfYxyxl6s,Datim
-CMR,CMR_3_53,2,Mbang,PAM8Jc9FcJS,Datim
-CMR,CMR_3_54,2,Ndelele,OLZqeMnDj75,Datim
-CMR,CMR_3_55,2,Bertoua,huRqm1u1OBD,Datim
-CMR,CMR_3_56,2,Betare Oya,QR0Vj8IkvWr,Datim
-CMR,CMR_3_57,2,Garoua Boulai,D4OFi6ze0sX,Datim
-CMR,CMR_3_58,2,Bogo,ms6oiVY4kHA,Datim
-CMR,CMR_3_59,2,Gazawa,LiygUBQ6cii,Datim
-CMR,CMR_3_60,2,Maroua 1,AB0dvYIeVs2,Datim
-CMR,CMR_3_61,2,Maroua 2,xeKBtCQWObL,Datim
-CMR,CMR_3_62,2,Maroua 3,baaPQDKEa74,Datim
-CMR,CMR_3_63,2,Meri,xnnHwfGglH2,Datim
-CMR,CMR_3_64,2,Pette,hpC7j0T2CaR,Datim
-CMR,CMR_3_65,2,Fotokol,SQVzPECATRQ,Datim
-CMR,CMR_3_66,2,Goulfey,o6ZCLK6zgCb,Datim
-CMR,CMR_3_67,2,Kousseri,Z0Inwzl0go6,Datim
-CMR,CMR_3_68,2,Mada,F78KglHx1Lw,Datim
-CMR,CMR_3_69,2,Makary,QmnnpW7Uwm3,Datim
-CMR,CMR_3_70,2,Kolofata,WBZN0JbcddP,Datim
-CMR,CMR_3_71,2,Mora,jIPFdhfuVCg,Datim
-CMR,CMR_3_72,2,Tokombere,eealAXfQ3UO,Datim
-CMR,CMR_3_73,2,Guere,lA2dnK5pTzs,Datim
-CMR,CMR_3_74,2,Kar Hay,zSSrRr42yh1,Datim
-CMR,CMR_3_75,2,Maga,NGmNPjCITMZ,Datim
-CMR,CMR_3_76,2,Vele,rTZNA8LtQfx,Datim
-CMR,CMR_3_77,2,Yagoua,yFy56LEHSJ4,Datim
-CMR,CMR_3_78,2,Guidiguis,aMjjaJXBSlV,Datim
-CMR,CMR_3_79,2,Kaele,PJ3rdiYvg9h,Datim
-CMR,CMR_3_80,2,Mindif,OSXyfij7dGq,Datim
-CMR,CMR_3_81,2,Moulvoudaye,R7G8wdEkwU9,Datim
-CMR,CMR_3_82,2,Moutourwa,Hpc63mRW9IG,Datim
-CMR,CMR_3_83,2,Bourha,ptBq5K4lAU3,Datim
-CMR,CMR_3_84,2,Hina,XtStaOc8r3G,Datim
-CMR,CMR_3_85,2,Koza,ee7ftYplvV9,Datim
-CMR,CMR_3_86,2,Mogode,l2FDEkk18z2,Datim
-CMR,CMR_3_87,2,Mokolo,Ic2sf6gppTN,Datim
-CMR,CMR_3_88,2,Roua,EpNF1CgXoSb,Datim
-CMR,CMR_3_89,2,Abo,VT9tkLtgee9,Datim
-CMR,CMR_3_90,2,Dibombari,VVLMNX1DVin,Datim
-CMR,CMR_3_91,2,Loum,Ns6ZJi0iwJj,Datim
-CMR,CMR_3_92,2,Manjo,O4ls7EsyEQP,Datim
-CMR,CMR_3_93,2,Mbanga,nUeu5anINhj,Datim
-CMR,CMR_3_94,2,Melong,VFxTcRztfUD,Datim
-CMR,CMR_3_95,2,Njombe Penja,iwzUigxHuvr,Datim
-CMR,CMR_3_96,2,Nkongsamba,A0XPpQxn05b,Datim
-CMR,CMR_3_97,2,Nkondjock,oCGhqAOirsv,Datim
-CMR,CMR_3_98,2,Yabassi,GvTDrgjcU6R,Datim
-CMR,CMR_3_99,2,Edea,jEG1QQsvDeX,Datim
-CMR,CMR_3_100,2,Ndom,Q966kXsyR20,Datim
-CMR,CMR_3_101,2,Ngambe,HBG4z9eT0gp,Datim
-CMR,CMR_3_102,2,Pouma,AFX0djkDX6A,Datim
-CMR,CMR_3_103,2,Bibemi,pg1qjAIJeyF,Datim
-CMR,CMR_3_104,2,Garoua 1,cBl9B9Gr8yM,Datim
-CMR,CMR_3_105,2,GAROUA 2,zDNvh0ltnhO,Datim
-CMR,CMR_3_106,2,Gaschiga,qaPX93BNxG3,Datim
-CMR,CMR_3_107,2,Lagdo,RiworzxSRKJ,Datim
-CMR,CMR_3_108,2,Ngong,qHwYB0w2vX9,Datim
-CMR,CMR_3_109,2,Pitoa,ZJAhq8N1hkR,Datim
-CMR,CMR_3_110,2,Poli,IHFtzOsbuLj,Datim
-CMR,CMR_3_111,2,Figuil,MzAxbEmG17n,Datim
-CMR,CMR_3_112,2,Golombe,LPNNZUYfC5R,Datim
-CMR,CMR_3_113,2,Guider,UpWdQLS7yhK,Datim
-CMR,CMR_3_114,2,Mayo Oulo,SapRLH9IkZp,Datim
-CMR,CMR_3_115,2,Rey Bouba,xWvGICWwReF,Datim
-CMR,CMR_3_116,2,Tchollire,rubyTf0wsD9,Datim
-CMR,CMR_3_117,2,Touboro,fVcP7WpE6VE,Datim
-CMR,CMR_3_118,2,Fundong,cDNpDbvmp5K,Datim
-CMR,CMR_3_119,2,Kumbo East,VAN2Ql7Bkro,Datim
-CMR,CMR_3_120,2,Kumbo West,cLBRoC6icGa,Datim
-CMR,CMR_3_121,2,Oku,s9CiFUWGXnP,Datim
-CMR,CMR_3_122,2,Ako,s6P7NGophWH,Datim
-CMR,CMR_3_123,2,Ndu,AbJXFBhkc4U,Datim
-CMR,CMR_3_124,2,Nkambe,cbmIcLlVVa1,Datim
-CMR,CMR_3_125,2,Nwa,o3cdCYbmdmR,Datim
-CMR,CMR_3_126,2,Benakuma,W4MLzWKSvB1,Datim
-CMR,CMR_3_127,2,Wum,VaHOXJU4rir,Datim
-CMR,CMR_3_128,2,Bafut,RDEsqpDdyjC,Datim
-CMR,CMR_3_129,2,Bali,pl3EDv60GZ4,Datim
-CMR,CMR_3_130,2,Bamenda,cMnkG8Hxa71,Datim
-CMR,CMR_3_131,2,Santa,js5vRAkkqxB,Datim
-CMR,CMR_3_132,2,Tubah,zipfC1pWf1y,Datim
-CMR,CMR_3_133,2,Batibo,rucXXEqjQcK,Datim
-CMR,CMR_3_134,2,Mbengwi,hvNtuMClAXW,Datim
-CMR,CMR_3_135,2,Njikwa,HSEc0Cyu0Yy,Datim
-CMR,CMR_3_136,2,Ndop,SeVI9bJFCIZ,Datim
-CMR,CMR_3_137,2,Batcham,Slsya4XJ1cX,Datim
-CMR,CMR_3_138,2,Galim,zMVbYiRveLp,Datim
-CMR,CMR_3_139,2,Mbouda,KE0SetC4PJD,Datim
-CMR,CMR_3_140,2,Bafang,KvGZD176fRx,Datim
-CMR,CMR_3_141,2,Bandja,kGF6FW8H5Bk,Datim
-CMR,CMR_3_142,2,Kekem,OgnR5IaW7OI,Datim
-CMR,CMR_3_143,2,Baham,TdUjy3VhKQM,Datim
-CMR,CMR_3_144,2,Bamendjou,nAVFr0YyPi0,Datim
-CMR,CMR_3_145,2,Bandjoun,FZdKDla0sab,Datim
-CMR,CMR_3_146,2,Dschang,tHav2zlT9YE,Datim
-CMR,CMR_3_147,2,Penka Michel,vNuXJnxJ0e3,Datim
-CMR,CMR_3_148,2,Santchou,za0SuqfH2S8,Datim
-CMR,CMR_3_149,2,Mifi,KPgLhnpbXzT,Datim
-CMR,CMR_3_150,2,Bangangte,ZWsIJYCFqvg,Datim
-CMR,CMR_3_151,2,Bangourain,y1pvTD5JtGa,Datim
-CMR,CMR_3_152,2,Foumban,fiyChBcsC5L,Datim
-CMR,CMR_3_153,2,Foumbot,VY1XungWEvE,Datim
-CMR,CMR_3_154,2,Kouoptamo,Yy8OR4h9J5x,Datim
-CMR,CMR_3_155,2,Malentouen,mAXygaodORJ,Datim
-CMR,CMR_3_156,2,Massangam,exy7m4TxPrY,Datim
-CMR,CMR_3_157,2,Buea,dkNG0muACjc,Datim
-CMR,CMR_3_158,2,Limbe,GP5qeoiXMtA,Datim
-CMR,CMR_3_159,2,Muyuka,jIXZlNwSdG3,Datim
-CMR,CMR_3_160,2,Tiko,VZPPWeDuJqU,Datim
-CMR,CMR_3_161,2,Bangem,St9lVTJrRaI,Datim
-CMR,CMR_3_162,2,Nguti,JIcgSOsSpSV,Datim
-CMR,CMR_3_163,2,Tombel,vqaBeYFtUn0,Datim
-CMR,CMR_3_164,2,Fontem,a2nQs7VmYiD,Datim
-CMR,CMR_3_165,2,Wabane,DWF1ThXXPOB,Datim
-CMR,CMR_3_166,2,Akwaya,DoVAXL8t556,Datim
-CMR,CMR_3_167,2,Eyumodjock,dyB1QMpgHgC,Datim
-CMR,CMR_3_168,2,Mamfe,zU7eKPwFr69,Datim
-CMR,CMR_3_169,2,Konye,w0khtlIwl6Q,Datim
-CMR,CMR_3_170,2,Kumba,MIvAFWhI9Yc,Datim
-CMR,CMR_3_171,2,Mbonge,oHNRJzfPFaX,Datim
-CMR,CMR_3_172,2,Bakassi,JIQXtxy5dWB,Datim
-CMR,CMR_3_173,2,Ekondo Titi,PtCkWF9WUyM,Datim
-CMR,CMR_3_174,2,Mundemba,GzuQHLu6ZTN,Datim
-CMR,CMR_3_175,2,Djoum,Lf317dndIqE,Datim
-CMR,CMR_3_176,2,Meyomessala,MAHWzjJcasB,Datim
-CMR,CMR_3_177,2,Sangmelima,o4p0ljHfz8F,Datim
-CMR,CMR_3_178,2,Zoetele,YxZktMjIiey,Datim
-CMR,CMR_3_179,2,Ebolowa,w3vIrqsfGWS,Datim
-CMR,CMR_3_180,2,Mvangan,KrnP8YZjfnb,Datim
-CMR,CMR_3_181,2,Kribi,JiTDQrmDeYy,Datim
-CMR,CMR_3_182,2,Lolodorf,xp3usWkmMdg,Datim
-CMR,CMR_3_183,2,Ambam,lrNc1xwDWXS,Datim
-CMR,CMR_3_184,2,Olamze,P1tSCdEj5Oj,Datim
-CMR,CMR_3_185,2,Biyem Assi,gOaZeiwAoCD,Datim
-CMR,CMR_3_186,2,Cite Verte,NG7DU8YJlw7,Datim
-CMR,CMR_3_187,2,Djoungolo,vewKgey8sOW,Datim
-CMR,CMR_3_188,2,Efoulan,JQIkiENA6nM,Datim
-CMR,CMR_3_189,2,Nkolbisson,ThGVWZfLjoq,Datim
-CMR,CMR_3_190,2,Nkolndongo,YuCzvkHV2X5,Datim
+GHA,GHA,3,Ghana,y3zhsvdXlhN,Datim
+GHA,GHA_1_1bd,4,Ahafo Region,sI8H8XIESqg,Datim
+GHA,GHA_1_2sq,4,Ashanti Region,EZWRBKRQxEO,Datim
+GHA,GHA_1_3rg,4,Bono East Region,yL8t43BussR,Datim
+GHA,GHA_1_4cd,4,Bono Region,cQ6Tf6jJg14,Datim
+GHA,GHA_1_5pe,4,Central Region,ahZ07WgEqeO,Datim
+GHA,GHA_1_6jx,4,Eastern Region,pkRfRtgmafc,Datim
+GHA,GHA_1_7ki,4,Greater Accra Region,FW78Ou6KKFU,Datim
+GHA,GHA_1_8ul,4,North East Region,GjRhc3dBQLs,Datim
+GHA,GHA_1_9xt,4,Northern Region,s5jaAHfnfqL,Datim
+GHA,GHA_1_10xy,4,Oti Region,JE6tZdbYGTd,Datim
+GHA,GHA_1_11tg,4,Savannah Region,PVchTJXoxyp,Datim
+GHA,GHA_1_12da,4,Upper East Region,bOhuUIHQFaW,Datim
+GHA,GHA_1_13la,4,Upper West Region,qmO4XhUr5Sh,Datim
+GHA,GHA_1_14qm,4,Volta Region,AP2ovCVE25H,Datim
+GHA,GHA_1_15lb,4,Western North Region,vLwiWNngHVa,Datim
+GHA,GHA_1_16lt,4,Western Region,tLIGKHiJJAj,Datim
+GHA,GHA_2_128oi,5,Ablekuma Central,n1Am3nVWwDO,Datim
+GHA,GHA_2_129zj,5,Ablekuma North,ZkJIHwUnrE3,Datim
+GHA,GHA_2_130da,5,Ablekuma West,TWDsM7m9ud9,Datim
+GHA,GHA_2_95vw,5,Abuakwa North,st0QNOPsyvP,Datim
+GHA,GHA_2_73el,5,Abura Asebu Kwamankese,waF6uxCOn29,Datim
+GHA,GHA_2_131qc,5,Accra Metro,Yb0CyMwuScE,Datim
+GHA,GHA_2_96mn,5,Achiase,K6xoYrdpD0d,Datim
+GHA,GHA_2_132kc,5,Ada East,f1tudOIC8Mw,Datim
+GHA,GHA_2_133yr,5,Ada West,nFbaiDcLU0f,Datim
+GHA,GHA_2_220kz,5,Adaklu,SHhWSzsvyAM,Datim
+GHA,GHA_2_7ys,5,Adansi Akrofuom,kvhDxQ3rv71,Datim
+GHA,GHA_2_8il,5,Adansi Asokwa,yESq2tcIkjG,Datim
+GHA,GHA_2_9kn,5,Adansi North,XPfocNXxT1C,Datim
+GHA,GHA_2_10rl,5,Adansi South,FnherguXYyF,Datim
+GHA,GHA_2_134ad,5,Adentan,D7jMG2fyvRX,Datim
+GHA,GHA_2_221eq,5,Afadjato South,yDJ4US7JbYq,Datim
+GHA,GHA_2_11kd,5,Afigya-Kwabre North,wk1WUcFe9Ve,Datim
+GHA,GHA_2_12la,5,Afigya Kwabre South,GWOjeAFn4JA,Datim
+GHA,GHA_2_97br,5,Afram Plains South,cTJQplxxhsk,Datim
+GHA,GHA_2_74bk,5,Agona East,kvdPyz6cmw0,Datim
+GHA,GHA_2_75qm,5,Agona West,t1gmK7NKiUp,Datim
+GHA,GHA_2_222ty,5,Agortime-Ziope,ZSuohFICpvk,Datim
+GHA,GHA_2_13oz,5,Ahafo-Ano North,tg2242naMSg,Datim
+GHA,GHA_2_14fh,5,Ahafo-Ano South East,S3erp6IBx6V,Datim
+GHA,GHA_2_15xd,5,Ahafo Ano South West,CFE72dd2pSu,Datim
+GHA,GHA_2_238nj,5,Ahanta West,sa9jhxnPbob,Datim
+GHA,GHA_2_76ps,5,Ajumako-Enyan-Essiam,eppCkc8W5ST,Datim
+GHA,GHA_2_223er,5,Akatsi North,Vz3iwp7mExH,Datim
+GHA,GHA_2_224ay,5,Akatsi South,s1qkNROK1ap,Datim
+GHA,GHA_2_98we,5,Akuapim North,ZhJi6LAMcsn,Datim
+GHA,GHA_2_99uj,5,Akuapim South,JkQSgbFSbae,Datim
+GHA,GHA_2_100xh,5,Akyemansa,YANR0GJFOyw,Datim
+GHA,GHA_2_16mv,5,Amansie Central,wsl8XDWIV6l,Datim
+GHA,GHA_2_17kb,5,Amansie South,sfiPiyHgDXv,Datim
+GHA,GHA_2_18oy,5,Amansie West,QBdyh3KtQBY,Datim
+GHA,GHA_2_225su,5,Anloga,y99tfBZrNGT,Datim
+GHA,GHA_2_252lv,5,Aowin,fNkWZbs4vdL,Datim
+GHA,GHA_2_19uk,5,Asante Akim Central,LOxuM1TyMNK,Datim
+GHA,GHA_2_20vi,5,Asante Akim North,xAalmDkY2RT,Datim
+GHA,GHA_2_21po,5,Asante Akim South,hLI0kbCLZ7R,Datim
+GHA,GHA_2_22ba,5,Asante Mampong,qYwDhwyqCaV,Datim
+GHA,GHA_2_101mm,5,Asene Manso Akroso,UW0L10Q4ReK,Datim
+GHA,GHA_2_135xf,5,Ashaiman,VqYQFdf4H2e,Datim
+GHA,GHA_2_77rh,5,Asikuma-Odoben-Brakwa,ZGGEiRcu5nw,Datim
+GHA,GHA_2_23vb,5,Asokore Mampong,t1Jp0nIXbOS,Datim
+GHA,GHA_2_24nh,5,Asokwa,m28NEDwu9ZJ,Datim
+GHA,GHA_2_78lo,5,Assin Foso,iBp0bH990h0,Datim
+GHA,GHA_2_79yx,5,Assin North,m4VLtEad4rJ,Datim
+GHA,GHA_2_80gt,5,Assin South,junBOEn5MP3,Datim
+GHA,GHA_2_1rw,5,Asunafo North,ug533fOLevW,Datim
+GHA,GHA_2_2ya,5,Asunafo South,DN36MEMarn5,Datim
+GHA,GHA_2_102jl,5,Asuogyaman,vC7z06YS9Nh,Datim
+GHA,GHA_2_3kh,5,Asutifi North,cstVOCO36Jo,Datim
+GHA,GHA_2_4py,5,Asutifi South,HOlZqvciO0D,Datim
+GHA,GHA_2_62wl,5,Atebubu-Amanten,oTmisTekxqj,Datim
+GHA,GHA_2_103fq,5,Atiwa,wJyGAyrWTL6,Datim
+GHA,GHA_2_104wu,5,Atiwa West,SHoTNl17Kj8,Datim
+GHA,GHA_2_25om,5,Atwima Kwanwoma,mWNFkLAbQk0,Datim
+GHA,GHA_2_26yn,5,Atwima Mponua,CpUwwBgrxJn,Datim
+GHA,GHA_2_27yf,5,Atwima Nwabiagya,SUYyDXUT4nZ,Datim
+GHA,GHA_2_28fq,5,Atwima Nwabiagya North,xJZVpJRq2U8,Datim
+GHA,GHA_2_81zw,5,Awutu Senya,iaiIy1BQnIM,Datim
+GHA,GHA_2_82ql,5,Awutu Senya East,HDPnDSxuxqN,Datim
+GHA,GHA_2_136ug,5,Ayawaso Central,TYCmtsJGDMc,Datim
+GHA,GHA_2_137ww,5,Ayawaso East,mvCKthpQLNl,Datim
+GHA,GHA_2_138vm,5,Ayawaso North,qj1Tj9uNwv0,Datim
+GHA,GHA_2_139xz,5,Ayawaso West,RhmMrN4j41w,Datim
+GHA,GHA_2_105ph,5,Ayensuano,NakVrMoevQP,Datim
+GHA,GHA_2_50ok,5,Banda,BzqDIALYiCa,Datim
+GHA,GHA_2_194yq,5,Bawku,QERjXgrnrLe,Datim
+GHA,GHA_2_195yx,5,Bawku West,MHF18AsEbBR,Datim
+GHA,GHA_2_29op,5,Bekwai Municipal,VNYVBpMkScZ,Datim
+GHA,GHA_2_51wi,5,Berekum Municipal,FXZMO37MRGc,Datim
+GHA,GHA_2_52xe,5,Berekum West,YKWlW1MvpUe,Datim
+GHA,GHA_2_253up,5,Bia East,evTXIwqlgok,Datim
+GHA,GHA_2_254nd,5,Bia West,ybZB41NnUrI,Datim
+GHA,GHA_2_179hm,5,Biakoye,EcpUbMMg6YI,Datim
+GHA,GHA_2_255lt,5,Bibiani-Anhwiaso-Bekwai,eu7N7BOz6sX,Datim
+GHA,GHA_2_196lq,5,Binduri,NXrQcoUWTIM,Datim
+GHA,GHA_2_106um,5,Birim Central,P8S0lR0nyqG,Datim
+GHA,GHA_2_107bu,5,Birim North,ODmQzDmGJmu,Datim
+GHA,GHA_2_108fc,5,Birim South,lr7NZNLnXLw,Datim
+GHA,GHA_2_256bl,5,Bodi,V1RTQuHZv6A,Datim
+GHA,GHA_2_187fp,5,Bole,LJdC5ZN2696,Datim
+GHA,GHA_2_197rs,5,Bolgatanga East,APLllSic1Vm,Datim
+GHA,GHA_2_198nw,5,Bolgatanga Municipal,SNxz3abUIj7,Datim
+GHA,GHA_2_199zd,5,Bongo,EFinURwMeDU,Datim
+GHA,GHA_2_30qs,5,Bosome Freho,chcxpkyokPB,Datim
+GHA,GHA_2_31ng,5,Bosomtwi,ZnSs7h3WCNe,Datim
+GHA,GHA_2_200ot,5,Builsa North,zep6W8NtEWw,Datim
+GHA,GHA_2_201oj,5,Builsa South,pc78djQ9s1A,Datim
+GHA,GHA_2_157nk,5,Bunkpurugu-Nakpanduri,ADQncQC2Np8,Datim
+GHA,GHA_2_83tw,5,Cape Coast,PO8KRypFqWR,Datim
+GHA,GHA_2_188gm,5,Central Gonja,FsMg5n3Ohy2,Datim
+GHA,GHA_2_226lw,5,Central Tongu,L1b0JPvOM3D,Datim
+GHA,GHA_2_158fr,5,Chereponi,qJEeft5AoU0,Datim
+GHA,GHA_2_209nt,5,Daffiama-Bussie-Issa,JW7srrWUbmp,Datim
+GHA,GHA_2_109bi,5,Denkyembour,U35PF33XOSY,Datim
+GHA,GHA_2_53dx,5,Dormaa East,JBrJZqx0Rpy,Datim
+GHA,GHA_2_54fx,5,Dormaa Municipal,LaCXB6goBNr,Datim
+GHA,GHA_2_55xk,5,Dormaa West,gHy8tYYBKwc,Datim
+GHA,GHA_2_110wm,5,East Akim - Abuakwa South,AAYCLOJu6mw,Datim
+GHA,GHA_2_189cf,5,East Gonja,IQ7lJtBREtk,Datim
+GHA,GHA_2_159zh,5,East Mamprusi,il7PdwuKe5o,Datim
+GHA,GHA_2_239pt,5,Effia-Kwesimintsim,VYb2AAqZeF1,Datim
+GHA,GHA_2_84ye,5,Effutu,bShonmkBGYD,Datim
+GHA,GHA_2_32wh,5,Ejisu,PHV0K07H2FM,Datim
+GHA,GHA_2_33zl,5,Ejura-Sekyedumase,TcWFlfbo2Uv,Datim
+GHA,GHA_2_85qq,5,Ekumfi,dexCSK4SJbE,Datim
+GHA,GHA_2_240hw,5,Ellembele,hp6AAOGZHde,Datim
+GHA,GHA_2_111tr,5,Fanteakwa North,iBARA7PXmRr,Datim
+GHA,GHA_2_112lw,5,Fanteakwa South,g0jEcbi8qkm,Datim
+GHA,GHA_2_140fs,5,Ga Central,yBL1SwSWGjR,Datim
+GHA,GHA_2_141xf,5,Ga East,hj9rijhWNuv,Datim
+GHA,GHA_2_142bj,5,Ga North,srI30hzHbha,Datim
+GHA,GHA_2_143sd,5,Ga South,lvwZsseSb7x,Datim
+GHA,GHA_2_144az,5,Ga West,Sm7BLYzUlhh,Datim
+GHA,GHA_2_202of,5,Garu,WWSBYke7ZLj,Datim
+GHA,GHA_2_86dk,5,Gomoa Central,FnfueAtLJJN,Datim
+GHA,GHA_2_87td,5,Gomoa East,y5Y7gV8h7R9,Datim
+GHA,GHA_2_88he,5,Gomoa West,bFg4JIz04H8,Datim
+GHA,GHA_2_163mo,5,Gushiegu,MppmIIBjxdM,Datim
+GHA,GHA_2_227ij,5,Ho,kSv6PGNIAgu,Datim
+GHA,GHA_2_228xh,5,Ho West,dOEDyNhqHjN,Datim
+GHA,GHA_2_229qb,5,Hohoe,KtrynPLZott,Datim
+GHA,GHA_2_56ee,5,Jaman North,wa27pIuCADS,Datim
+GHA,GHA_2_57fn,5,Jaman South,YUODt6FjyKO,Datim
+GHA,GHA_2_180re,5,Jasikan,FC0jeGdIsBS,Datim
+GHA,GHA_2_210un,5,Jirapa,brQzWxwwo8f,Datim
+GHA,GHA_2_241vt,5,Jomoro,dASd72VnJPh,Datim
+GHA,GHA_2_34oj,5,Juaben,QqC0ViUe1ys,Datim
+GHA,GHA_2_257wv,5,Juaboso,nZfPo3mvwQq,Datim
+GHA,GHA_2_181jb,5,Kadjebi,QBMZ6WPpD8e,Datim
+GHA,GHA_2_164yd,5,Karaga,NgdAGyFtwh8,Datim
+GHA,GHA_2_203yl,5,Kassena Nankena,hiSuBt0t8kq,Datim
+GHA,GHA_2_204cz,5,Kasena-Nankana West,rW8VAKSgF07,Datim
+GHA,GHA_2_230yh,5,Keta,G5pet3iHkdZ,Datim
+GHA,GHA_2_231oq,5,Ketu North,MozR5tABNeD,Datim
+GHA,GHA_2_232nw,5,Ketu South,SRebLmh9NoB,Datim
+GHA,GHA_2_63yr,5,Kintampo North,gaLfqCeZydm,Datim
+GHA,GHA_2_64oq,5,Kintampo South,KHtmEaz2wiI,Datim
+GHA,GHA_2_89da,5,Komenda-Edina-Eguafo-Abrem,BfKBcS4MBVu,Datim
+GHA,GHA_2_145fe,5,Korle-Klottey,dwEOl8DbsWx,Datim
+GHA,GHA_2_165zz,5,Kpandai,vpvxubMqoiO,Datim
+GHA,GHA_2_233sj,5,Kpando,PMwMm6qMzvd,Datim
+GHA,GHA_2_146sx,5,Kpone Katamanso,s0DkNlHN5wC,Datim
+GHA,GHA_2_182ta,5,Krachi East,EmGn2zD0jOq,Datim
+GHA,GHA_2_183lz,5,Krachi Nchumuru,ol3jaEDwyXA,Datim
+GHA,GHA_2_184tq,5,Krachi West,ntIKLnpXGOO,Datim
+GHA,GHA_2_147ap,5,Krowor,QRILScZBOvG,Datim
+GHA,GHA_2_35us,5,Kumasi,wuocP5rqcwE,Datim
+GHA,GHA_2_166nm,5,Kumbungu,FnsjINaaaVk,Datim
+GHA,GHA_2_36px,5,Kwabre East,gUrPaVYxJec,Datim
+GHA,GHA_2_37fs,5,Kwadaso,W5obbNEZjFO,Datim
+GHA,GHA_2_113zw,5,Kwaebibirem,rDxqqCmg4hJ,Datim
+GHA,GHA_2_114uq,5,Kwahu East,Y1FpPcv1IgT,Datim
+GHA,GHA_2_115gw,5,Kwahu North,nQvTGfdb636,Datim
+GHA,GHA_2_116uy,5,Kwahu South,J6VS1w1lyHv,Datim
+GHA,GHA_2_117qt,5,Kwahu West,t79bTQVrD0k,Datim
+GHA,GHA_2_148ot,5,La Dadekotopon,N4NfZi7gFkJ,Datim
+GHA,GHA_2_149uh,5,La Nkwantanan Madina,YdBItYPG5fx,Datim
+GHA,GHA_2_211nb,5,Lambussie,sDeXocshMr7,Datim
+GHA,GHA_2_212zb,5,Lawra,WTLGo8Hy4Bh,Datim
+GHA,GHA_2_150zu,5,Ledzokuku,CH0tqLOk2jH,Datim
+GHA,GHA_2_118gs,5,Lower Manya-Krobo,tkCsZFNE6xZ,Datim
+GHA,GHA_2_160ci,5,Mamprugu-Moagduri,WRLsCzI2tjI,Datim
+GHA,GHA_2_90my,5,Mfantsiman,pUDPBhA9WT6,Datim
+GHA,GHA_2_167tl,5,Mion,mRa9X5Hy8T2,Datim
+GHA,GHA_2_242gb,5,Mpohor,LvEUM36Galx,Datim
+GHA,GHA_2_205pd,5,Nabdam,ZB1ay9EbHmR,Datim
+GHA,GHA_2_213rj,5,Nadowli-Kaleo,ovjfRkibQIT,Datim
+GHA,GHA_2_214yz,5,Nandom,ELWLgRTBu4Y,Datim
+GHA,GHA_2_168gf,5,Nanton,D8d4RqQFJk3,Datim
+GHA,GHA_2_169rs,5,Nanumba North,jEoUxureXA0,Datim
+GHA,GHA_2_170wm,5,Nanumba South,JtGSOpPtnoO,Datim
+GHA,GHA_2_119mb,5,New Juabeng North,S6acB7Gm4Uw,Datim
+GHA,GHA_2_120hg,5,New Juaben South,S4tuSgAramn,Datim
+GHA,GHA_2_151uq,5,Ningo Prampram,Z4puJ6xzTDV,Datim
+GHA,GHA_2_65ok,5,Nkoranza North,UvOxqsUTId5,Datim
+GHA,GHA_2_66sb,5,Nkoranza  South,pBg64vO2AjC,Datim
+GHA,GHA_2_185jy,5,Nkwanta North,uByD65B5por,Datim
+GHA,GHA_2_186oq,5,Nkwanta South,hR3IHvXLtw9,Datim
+GHA,GHA_2_234wn,5,North Dayi,S3SiKUA4lXU,Datim
+GHA,GHA_2_190ap,5,North Gonja,noi9TwmhOLX,Datim
+GHA,GHA_2_235mn,5,North Tongu,eywLfRqhYe6,Datim
+GHA,GHA_2_191ec,5,North East Gonja,h6qXhVZGYM9,Datim
+GHA,GHA_2_121zq,5,Nsawam Adoagyiri,GuJVSPxa7XY,Datim
+GHA,GHA_2_243ey,5,Nzema East,PQTD6ghAb7f,Datim
+GHA,GHA_2_38eg,5,Obuasi,g43oZxaBwWz,Datim
+GHA,GHA_2_39xy,5,Obuasi East,OaE8ELhkwBl,Datim
+GHA,GHA_2_40bf,5,Offinso,dIQ7xfetnn3,Datim
+GHA,GHA_2_41fs,5,Offinso North,L0u0dgxFcoX,Datim
+GHA,GHA_2_42dw,5,Oforikrom,awzXTO6Z7zM,Datim
+GHA,GHA_2_152jh,5,Okai Koi North,nKrePdz2xuC,Datim
+GHA,GHA_2_122qi,5,Okere,Ej9vgSHlblv,Datim
+GHA,GHA_2_43pu,5,Old Tafo,skThz5eGWxV,Datim
+GHA,GHA_2_244tv,5,Prestea-Huni Valley,sHqutkoLysi,Datim
+GHA,GHA_2_67qi,5,Pru,Wj6tg8G4q81,Datim
+GHA,GHA_2_68zd,5,Pru West,bmjwONKIVze,Datim
+GHA,GHA_2_206oy,5,Pusiga,EMwEWdFtBK7,Datim
+GHA,GHA_2_171nv,5,Saboba,J9nZjLGo5Wj,Datim
+GHA,GHA_2_172fx,5,Sagnarigu,Zlms7s1qBtm,Datim
+GHA,GHA_2_173bk,5,Savelugu,OWyCWLqXccf,Datim
+GHA,GHA_2_192vs,5,Sawla-Tuna-Kalba,n1A6cTx3yfH,Datim
+GHA,GHA_2_258wy,5,Sefwi-Akontombra,ZeLOIyOxNMC,Datim
+GHA,GHA_2_259id,5,Sefwi-Wiawso,rbw3CnvEij2,Datim
+GHA,GHA_2_245yu,5,Sekondi Takoradi,PkMWvz5RuBJ,Datim
+GHA,GHA_2_44gq,5,Sekyere Afram Plains,TzPzF7DABvm,Datim
+GHA,GHA_2_45al,5,Sekyere Central,hYCjomAev7P,Datim
+GHA,GHA_2_46ho,5,Sekyere East,J2kaNstR3FY,Datim
+GHA,GHA_2_47xy,5,Sekyere Kumawu,B879bBvViat,Datim
+GHA,GHA_2_48fk,5,Sekyere South,zNx28ZerUc4,Datim
+GHA,GHA_2_69ic,5,Sene East,Uumchn5aHm6,Datim
+GHA,GHA_2_70kv,5,Sene West,QkLMVZzwGec,Datim
+GHA,GHA_2_153xq,5,Shai Osudoku,R4i8b9khNsW,Datim
+GHA,GHA_2_246ls,5,Shama,xgANiKHEBHU,Datim
+GHA,GHA_2_215jx,5,Sissala East,QacwqcOV2ZM,Datim
+GHA,GHA_2_216zz,5,Sissala West,t8Gb9bTW6IU,Datim
+GHA,GHA_2_236ni,5,South Dayi,wMobcNrSYXy,Datim
+GHA,GHA_2_237in,5,South Tongu,kLchyD0tsN2,Datim
+GHA,GHA_2_260kk,5,Suaman,TLyVFdlYgHu,Datim
+GHA,GHA_2_49am,5,Suame,D0waaXKqldS,Datim
+GHA,GHA_2_123de,5,Suhum,B4ivfuSLlBm,Datim
+GHA,GHA_2_58ju,5,Sunyani Municipal,rvKwvAFACQD,Datim
+GHA,GHA_2_59bd,5,Sunyani West,Tkp4bFs9Itt,Datim
+GHA,GHA_2_60ld,5,Tain,dXzCOeo5YRR,Datim
+GHA,GHA_2_207og,5,Talensi,w1GbBoO05zg,Datim
+GHA,GHA_2_174bk,5,Tamale,UUKQGiE9iiK,Datim
+GHA,GHA_2_5wp,5,Tano North,UFRAY5cq9rC,Datim
+GHA,GHA_2_6ih,5,Tano South,jcEEoIwH4TK,Datim
+GHA,GHA_2_247ze,5,Tarkwa-Nsueam,H75KCQrm07K,Datim
+GHA,GHA_2_175vf,5,Tatale-Sangule,Suffme9FrNH,Datim
+GHA,GHA_2_71nq,5,Techiman Municipal,qZ1nNbKvWgH,Datim
+GHA,GHA_2_72mn,5,Techiman North,gmDHqPPR3jj,Datim
+GHA,GHA_2_154hc,5,Tema,DZQQk8pntpD,Datim
+GHA,GHA_2_155pw,5,Tema West,RM1Ihj3ae3w,Datim
+GHA,GHA_2_208ts,5,Tempane,nR4lpXaer0A,Datim
+GHA,GHA_2_176jg,5,Tolon,UN4QDMcH23J,Datim
+GHA,GHA_2_91fh,5,Twifo Ati-Mokwa,qSi7luoQKy8,Datim
+GHA,GHA_2_92cs,5,Twifo-Hemang Lower Denkyira,Wk2T019e7iO,Datim
+GHA,GHA_2_93ip,5,Upper Denkyira East,JqdkdWrplIr,Datim
+GHA,GHA_2_94oi,5,Upper Denkyira West,c86Ih95bjhq,Datim
+GHA,GHA_2_124tt,5,Upper Manya-Krobo,EqgptJWxwEv,Datim
+GHA,GHA_2_125cb,5,Upper West Akim,yt0yBMiwdFh,Datim
+GHA,GHA_2_217rm,5,Wa East,cZSPo4wlNtZ,Datim
+GHA,GHA_2_218iv,5,Wa Municipal,SkZsFL2pGKt,Datim
+GHA,GHA_2_219iw,5,Wa West,qPbikO234Nc,Datim
+GHA,GHA_2_248qd,5,Wassa Amenfi Central,Vi2MJdML7sN,Datim
+GHA,GHA_2_249jn,5,Wassa Amenfi East,ayclR3WPTD7,Datim
+GHA,GHA_2_250rg,5,Wassa Amenfi West,B0qI4RYtgB5,Datim
+GHA,GHA_2_251fp,5,Wassa East,Sy923O3IoFO,Datim
+GHA,GHA_2_156si,5,Weija-Gbawe,Vo4suK5BEOT,Datim
+GHA,GHA_2_61fi,5,Wenchi,n0XUcNIvXEG,Datim
+GHA,GHA_2_126ym,5,West Akim,YgLttd6Q0Di,Datim
+GHA,GHA_2_193bk,5,West Gonja,ldfg1ERXsvP,Datim
+GHA,GHA_2_161xp,5,West Mamprusi,dEdbsALGqws,Datim
+GHA,GHA_2_177hp,5,Yendi,kJRnwdWsf8c,Datim
+GHA,GHA_2_127hw,5,Yilo-Krobo,xHBIYZbTvJG,Datim
+GHA,GHA_2_162cq,5,Yunyoo-Nasuan,XPLb8QeAjXN,Datim
+GHA,GHA_2_178nh,5,Zabzugu,TmlvkDvFJsr,Datim
+GHA,GHA_2_261ga,5,Guan,,Datim
+HTI,HTI,0,Haiti,JTypsdEUNPw,Datim
+HTI,HTI_1_6hs,1,Nord-Est,PplaGqQY6em,Datim
+HTI,HTI_1_5cf,1,Nord,x3Jtz1p08DG,Datim
+HTI,HTI_1_9qz,1,Sud,uKnSONcq5z2,Datim
+HTI,HTI_1_8rs,1,Ouest,LefKJliT7Um,Datim
+HTI,HTI_1_1as,1,Artibonite,R1TD9cLgVJC,Datim
+HTI,HTI_1_4pn,1,Nippes,H6NcMrB8ch1,Datim
+HTI,HTI_1_7kq,1,Nord-Ouest,Tx7mEkhSvGY,Datim
+HTI,HTI_1_10lw,1,Sud-Est,lYnn6SJIRpE,Datim
+HTI,HTI_1_3he,1,Grande-Anse,DRiysZWQJ57,Datim
+HTI,HTI_1_2wp,1,Centre,yyFZmLNIBaZ,Datim
 HTI,HTI_2_1nl,2,Acul-du-Nord,g9tvk3Npz0O,Datim
 HTI,HTI_2_2ya,2,Anse D'Hainault,wzBlWonPLOp,Datim
 HTI,HTI_2_3ol,2,Anse-à-Veau,XXuTiMjae3r,Datim
@@ -864,6 +1349,7 @@ HTI,HTI_2_11ax,2,Cayes,Se7nBqbicpl,Datim
 HTI,HTI_2_12xi,2,Cerca-la-Source,FXlLvz2pJaT,Datim
 HTI,HTI_2_13kb,2,Chardonnières,mLFKTGjlEg1,Datim
 HTI,HTI_2_14rd,2,Corail,NsradCS3NV6,Datim
+HTI,HTI_2_15gu,2,C�teaux,,Datim
 HTI,HTI_2_16dp,2,Croix-des-Bouquets,X1q3hSFTVw4,Datim
 HTI,HTI_2_17in,2,Dessalines,lDgHhlAPrbI,Datim
 HTI,HTI_2_18ls,2,Fort-Liberté,prA0IseYHWD,Datim
@@ -891,6 +1377,7 @@ HTI,HTI_2_39nq,2,Saint-Marc,A4RKAXHmMJz,Datim
 HTI,HTI_2_40sm,2,Saint-Raphaël,R2NsUDhdF8x,Datim
 HTI,HTI_2_41ar,2,Trou-du-Nord,UPRsMongHVh,Datim
 HTI,HTI_2_42gd,2,Vallières,ONUWhpgEbVk,Datim
+KEN,KEN,0,Kenya,HfVjCurKxh2,Datim
 KEN,KEN_2_30,1,Baringo County,Tbq3JMDALZt,Datim
 KEN,KEN_2_36,1,Bomet County,sphpbVxO6pn,Datim
 KEN,KEN_2_39,1,Bungoma County,A1gVLZ5bHiS,Datim
@@ -938,6 +1425,13 @@ KEN,KEN_2_27,1,Uasin Gishu County,cS6agZiN32t,Datim
 KEN,KEN_2_38,1,Vihiga County,hhmLIpoAvAg,Datim
 KEN,KEN_2_08,1,Wajir County,q93HBF7r7P4,Datim
 KEN,KEN_2_24,1,West Pokot County,Y2tnI4r0GkW,Datim
+LBR,LBR,4,Liberia,kH29I939rDQ,Datim
+LBR,LBR_1_4ki,5,Grand Bassa County,FotNFTcvfuC,Datim
+LBR,LBR_1_9no,5,Margibi County,hVxRYPVlafi,Datim
+LBR,LBR_1_10lr,5,Maryland County,uSCHwx6umLy,Datim
+LBR,LBR_1_11dp,5,Montserrado County,HBfS8tgOaFO,Datim
+LBR,LBR_1_12re,5,Nimba County,An6NhwX8CAL,Datim
+LSO,LSO,0,Lesotho,qllxzIjjurr,Datim
 LSO,LSO_1_1,1,Maseru,tKOXiaNhAyJ,Datim
 LSO,LSO_1_2,1,Butha Buthe,mvPRqBFtVC0,Datim
 LSO,LSO_1_3,1,Leribe,FjSmRywOWUp,Datim
@@ -948,6 +1442,103 @@ LSO,LSO_1_7,1,Quthing,HuwCoDZG0FY,Datim
 LSO,LSO_1_8,1,Qacha's Nek,zTaMbxvQtJ6,Datim
 LSO,LSO_1_9,1,Mokhotlong,tjhYqc1MlVo,Datim
 LSO,LSO_1_10,1,Thaba Tseka,jyhIrCoB31x,Datim
+LSO,LSO_2_1,2,Qiloane Community  Council,IXp5ZJ8z9Tn,Datim
+LSO,LSO_2_2,2,Ratau Community Council,hAJv23nYrrd,Datim
+LSO,LSO_2_3,2,Likolobeng Community Council,ZOLeJAwhjF5,Datim
+LSO,LSO_2_4,2,Manonyane Community Council,taIUDP11Ki2,Datim
+LSO,LSO_2_5,2,Mohlakeng Community Council,sZJpJlYtIak,Datim
+LSO,LSO_2_6,2,Mazenod Community Council,GRWiVzTuync,Datim
+LSO,LSO_2_7,2,Lilala Community Council,spLPiiugfoR,Datim
+LSO,LSO_2_8,2,Makhoarane Community Council,K5PZ9dvhQJf,Datim
+LSO,LSO_2_9,2,Kubake Community Council,hM1J38kPc2N,Datim
+LSO,LSO_2_10,2,Makhoalipana Community Council,yyCwXLmEGpg,Datim
+LSO,LSO_2_11,2,Semonkong Urban Council,XMcQYLjB8K4,Datim
+LSO,LSO_2_12,2,Maseru City Council,htODjaD2ySX,Datim
+LSO,LSO_2_13,2,Ngoajane Community Council,NZKGn3XgZZp,Datim
+LSO,LSO_2_14,2,Likila Community Council,WyOfJom3iNL,Datim
+LSO,LSO_2_15,2,Nqoe Community Council,so2NUlVeTfZ,Datim
+LSO,LSO_2_16,2,Ts'a le Moleka Community Council,t2eDDhfW4zs,Datim
+LSO,LSO_2_17,2,Butha Buthe Urban Council,fxi85XzrRPr,Datim
+LSO,LSO_2_18,2,Matsoku Community Council,SxlwPEdpkgv,Datim
+LSO,LSO_2_19,2,Bolahla Community Council,DPS1VEac9ui,Datim
+LSO,LSO_2_20,2,Ramapepe Community Council,f9bpdJmE8M3,Datim
+LSO,LSO_2_21,2,Mamafubelu Community Council,EjR7Q4gOYB4,Datim
+LSO,LSO_2_22,2,Menkhoaneng Community Council,QrManOoqkDe,Datim
+LSO,LSO_2_23,,,,Datim
+LSO,LSO_2_24,2,Sephokong Community Council,jOeLlznzFI4,Datim
+LSO,LSO_2_25,2,Litjotjela Community Council,AG00avSwaAo,Datim
+LSO,LSO_2_26,2,Hleoheng Community Council,cxuDpjraSvA,Datim
+LSO,LSO_2_27,2,Manka Community Council,ioWy9jyCEe1,Datim
+LSO,LSO_2_28,2,Tsuili-Tsuili Community Council,HylTHBT9ErW,Datim
+LSO,LSO_2_29,,,,Datim
+LSO,LSO_2_30,2,Hlotse Urban Council,GNtoe3EfoZz,Datim
+LSO,LSO_2_31,,,,Datim
+LSO,LSO_2_32,2,Makeoana  Community Council,mc09XoTEEBf,Datim
+LSO,LSO_2_33,2,Mapoteng Community Council,FVmd2inX9Z2,Datim
+LSO,LSO_2_34,2,Kueneng Community Council,PhxdgSMjv6U,Datim
+LSO,LSO_2_35,2,Tebe-tebe Community Council,tS7dhRV9Z2c,Datim
+LSO,LSO_2_36,2,Phuthiatsana Community Council,FQ4KJDVMLRi,Datim
+LSO,LSO_2_37,2,Motanasela Community Council,xMYeQ4986lO,Datim
+LSO,LSO_2_38,2,Senekane Community Council,piDKQjVAAS5,Datim
+LSO,LSO_2_39,2,Kanana Community Council,JwsiHFycLOz,Datim
+LSO,LSO_2_40,2,Maseru Urban Council,bySVovr7KFc,Datim
+LSO,LSO_2_41,2,Teya-Teyaneng Urban Council,MJ8AT5za0DX,Datim
+LSO,LSO_2_42,2,Metsi-Maholo Community Council,tkEKLVYJd4i,Datim
+LSO,LSO_2_43,2,Mamants'o Community Council,bfsH26de83Y,Datim
+LSO,LSO_2_44,2,Ramoetsana Community Council,K33c3OXRPDN,Datim
+LSO,LSO_2_45,2,Lehlakeng Community Council,GpdrodKD74X,Datim
+LSO,LSO_2_46,2,Makoabating Community Council,gyQ6V9RMo76,Datim
+LSO,LSO_2_47,2,Ts'ana Talana Community Council,N7JCSr2AjEm,Datim
+LSO,LSO_2_48,2,Qibing Community Council,FrrnE72wBIa,Datim
+LSO,LSO_2_49,2,Mafeteng Urban Council,ICtt2tPPO8a,Datim
+LSO,LSO_2_50,2,Siloe Community Council,Yf0LFgFap5j,Datim
+LSO,LSO_2_51,2,Mashaleng Community Council,UAPA1HuOxQh,Datim
+LSO,LSO_2_52,2,Khoelenya Community Council,F2QeRmrdknL,Datim
+LSO,LSO_2_53,2,Lithipeng Community Council,apZ7ev5v4qW,Datim
+LSO,LSO_2_54,2,Thaba Mokhele Community Council,omsg7o8aZgq,Datim
+LSO,LSO_2_55,2,Qhoasing Community Council,xiuj93ppY3J,Datim
+LSO,LSO_2_56,2,Senqunyane Community Council,mes8wr6g6Km,Datim
+LSO,LSO_2_57,2,Mohale's Hoek Urban Council,Gc5NwtH4WCj,Datim
+LSO,LSO_2_58,2,Mtjanyane Community Council,La8OhH8ySRf,Datim
+LSO,LSO_2_59,2,Qomoqomong Community Council,M9weVOFvi8T,Datim
+LSO,LSO_2_60,2,Tosing Community Council,tNj17wY2GBS,Datim
+LSO,LSO_2_61,2,Telle Community Council,mPE4NQaK0iP,Datim
+LSO,LSO_2_62,2,Ts'itsong Community Council,zOHCAcDsChK,Datim
+LSO,LSO_2_63,,,,Datim
+LSO,LSO_2_64,2,Qanya Community Council,OJOZPMsgVlh,Datim
+LSO,LSO_2_65,2,Nts'upe Community Council,dqlHcxiA0U4,Datim
+LSO,LSO_2_66,2,Tsoelikana Community Council,y5EGgO2pYYv,Datim
+LSO,LSO_2_67,2,Qacha's Nek Urban council,SQIzbx2UoeG,Datim
+LSO,LSO_2_68,2,Seate Community Council,YNiRCIBlskt,Datim
+LSO,LSO_2_69,2,Mphokojoana Community Council,l6eTwKumTUe,Datim
+LSO,LSO_2_70,2,Sanqebethu Community Council,V8lXtWPvdau,Datim
+LSO,LSO_2_71,2,Menoaneng Community Council,JRP96zO3a3H,Datim
+LSO,LSO_2_72,2,Mokhotlong Urban Council,YYCKh2preda,Datim
+LSO,LSO_2_73,2,Tenesolo Community Council,SPqPljn5MDM,Datim
+LSO,LSO_2_74,2,Khutlo-se-Metsi Community Council,HVBg4UwzRZ0,Datim
+LSO,LSO_2_75,2,Litsoetsoe Community Council,XsWvqVgMbKP,Datim
+LSO,LSO_2_76,2,Bokong Community Council,weptmsxtotq,Datim
+LSO,LSO_2_77,2,Linakeng Community Council,vQ6pDqdQCpd,Datim
+LSO,LSO_2_78,2,Thaba Tseka Urban Council,vmmOamZKN1R,Datim
+MLI,MLI,4,Mali,N3xTKNKu5KM,Datim
+MLI,MLI_1_01et,5,Bamako,Vq03leDlPyK,Datim
+MLI,MLI_1_03na,5,Kayes,yDUa15cMHKa,Datim
+MLI,MLI_1_05uv,5,Koulikoro,ZLIr1DNTnMK,Datim
+MLI,MLI_1_07kx,5,Mopti,soAIcPzcYzE,Datim
+MLI,MLI_1_08ug,5,S√©gou,ejikLJvqypx,Datim
+MLI,MLI_1_09px,5,Sikasso,rkkI2f77q5t,Datim
+MOZ,MOZ,0,Mozambique,h11OyvlPxpJ,Datim
+MOZ,MOZ_2_01,1,Cidade De Maputo,NCUTZ4cYJra,Datim
+MOZ,MOZ_2_02,1,Maputo,YOJg1GA3qHT,Datim
+MOZ,MOZ_2_03,1,Gaza,sAFsng0gK1E,Datim
+MOZ,MOZ_2_04,1,Inhambane,VESMH20BX4e,Datim
+MOZ,MOZ_2_05,1,Sofala,SEWXP7RQHGN,Datim
+MOZ,MOZ_2_06,1,Manica,aoD09rD9W63,Datim
+MOZ,MOZ_2_07,1,Tete,TAW0CceBfZ5,Datim
+MOZ,MOZ_2_08,1,Zambezia,BdBJXnCZRJ5,Datim
+MOZ,MOZ_2_09,1,Nampula,hxMhtp0apCm,Datim
+MOZ,MOZ_2_10,1,Cabo Delgado,Zpnu5qr8aoR,Datim
+MOZ,MOZ_2_11,1,Niassa,Oi0uBOAAVj9,Datim
 MOZ,MOZ_3_1209,3,Kampfumu,oMVRVkQ4d6Q,Datim
 MOZ,MOZ_3_1210,3,Nlhamankulu,Pw3doHDr3sw,Datim
 MOZ,MOZ_3_1211,3,Kamaxakeni,IYDPRaPGDFu,Datim
@@ -1087,7 +1678,7 @@ MOZ,MOZ_3_1017,3,Quissanga,LOKCcb4nHry,Datim
 MOZ,MOZ_3_1005,3,Ibo,vWzkPAeBxlo,Datim
 MOZ,MOZ_3_1008,3,Meluco,zOra9muIVhA,Datim
 MOZ,MOZ_3_1010,3,Montepuez,gC1CuJI7U4O,Datim
-MOZ,MOZ_3_1006,3,Macomia,"NAIy78Rvj1R",Datim
+MOZ,MOZ_3_1006,3,Macomia,NAIy78Rvj1R,Datim
 MOZ,MOZ_3_1012,3,Muidumbe,yFhTDhuvGvh,Datim
 MOZ,MOZ_3_1009,3,Mocimboa Da Praia,O2z5wEyPOg8,Datim
 MOZ,MOZ_3_1011,3,Mueda,VP9rX1d18Xv,Datim
@@ -1109,6 +1700,15 @@ MOZ,MOZ_3_1109,3,Mavago,WYLJVeRp9kP,Datim
 MOZ,MOZ_3_1113,3,Muembe,TbQ9Og6Mg2r,Datim
 MOZ,MOZ_3_1116,3,Sanga,Sv3e9Erafn0,Datim
 MOZ,MOZ_3_1103,3,Lago,UlTlUIybBkP,Datim
+MWI,MWI,0,Malawi,lZsCb6y0KDX,Datim
+MWI,MWI_1_1,1,Northern Region,mSB01mQcm7e,Datim
+MWI,MWI_1_2,1,Central Region,mwXGqccqrOI,Datim
+MWI,MWI_1_3,1,Southern Region,CXewWNn3soV,Datim
+MWI,MWI_2_1,2,Northern Zone,ph4GyQNp7vh,Datim
+MWI,MWI_2_2,2,Central Eastern Zone,EGgIZbN4s1P,Datim
+MWI,MWI_2_3,2,Central Western Zone,YrJx6ynjQTd,Datim
+MWI,MWI_2_4,2,South Eastern Zone,A9Rp1ap5sTh,Datim
+MWI,MWI_2_5,2,South Western Zone,VxEnfJ66ucz,Datim
 MWI,MWI_3_01,3,Chitipa District,GkIwZrXy1h2,Datim
 MWI,MWI_3_02,3,Karonga District,cPtvxaZqXIH,Datim
 MWI,MWI_3_03,3,Nkhata Bay District,E7zpfyBt7Tw,Datim
@@ -1137,39 +1737,96 @@ MWI,MWI_3_25,3,Thyolo District,ul0y9diGujK,Datim
 MWI,MWI_3_26,3,Chikwawa District,U8c0so51kT6,Datim
 MWI,MWI_3_27,3,Nsanje District,rpw540fmNUz,Datim
 MWI,MWI_3_28,3,Neno District,gwVYinjBAe9,Datim
-"NAM","NAM_2_11",2,Andara,EU2LFjnUoDe,Datim
-"NAM","NAM_2_20",2,Eenhana,S1IBLD18mtu,Datim
-"NAM","NAM_2_21",2,Engela,e1a8dK5TE6S,Datim
-"NAM","NAM_2_23",2,Gobabis,ho9XZGO2xwb,Datim
-"NAM","NAM_2_33",2,Grootfontein,pu4bDzrPVNO,Datim
-"NAM","NAM_2_02",2,Karasburg,BRlm2H3PtTw,Datim
-"NAM","NAM_2_38",2,Katima Mulilo,rLlgwmoLsNZ,Datim
-"NAM","NAM_2_03",2,Keetmanshoop,MoS2ZmKSIk3,Datim
-"NAM","NAM_2_17",2,Khorixas,EH9NQ6mDfGj,Datim
-"NAM","NAM_2_09",2,Mariental,hmJydtJou7V,Datim
-"NAM","NAM_2_14",2,Nkurenkuru,INU6NqUEjiG,Datim
-"NAM","NAM_2_12",2,Nyangana,EIzDG2iU7QA,Datim
-"NAM","NAM_2_34",2,Okahandja,iMaVLYizifi,Datim
-"NAM","NAM_2_24",2,Okahao,BOeHH7hRtfF,Datim
-"NAM","NAM_2_35",2,Okakarara,zgdgaDyKL7W,Datim
-"NAM","NAM_2_22",2,Okongo,vnMTivFAdYZ,Datim
-"NAM","NAM_2_05",2,Omaruru,PbiAN2iuMNC,Datim
-"NAM","NAM_2_30",2,Omuthiya,DbKN1FBhTpa,Datim
-"NAM","NAM_2_31",2,Onandjokwe,YUe7e0hebL4,Datim
-"NAM","NAM_2_18",2,Opuwo,Hb7N9vIk71A,Datim
-"NAM","NAM_2_29",2,Oshakati,NUNNhuEIKSi,Datim
-"NAM","NAM_2_25",2,Oshikuku,nefXINwu0Lq,Datim
-"NAM","NAM_2_36",2,Otjiwarongo,BKA8mKOpaX9,Datim
-"NAM","NAM_2_26",2,Outapi,KYONoFZCJgv,Datim
-"NAM","NAM_2_19",2,Outjo,dZqqyXzAgDx,Datim
-"NAM","NAM_2_10",2,Rehoboth,ltNu9G8IFBM,Datim
-"NAM","NAM_2_13",2,Rundu,uTYaIAY3Rdg,Datim
-"NAM","NAM_2_06",2,Swakopmund,o7vpmMqL7Sf,Datim
-"NAM","NAM_2_27",2,Tsandi,F4beFAJLYBP,Datim
-"NAM","NAM_2_32",2,Tsumeb,yC4ye65DZNI,Datim
-"NAM","NAM_2_07",2,Usakos,ToudRH4CDr9,Datim
-"NAM","NAM_2_08",2,Walvis Bay,BXwmiCump7T,Datim
-"NAM","NAM_2_16",2,Windhoek,liTRatgsSjS,Datim
+MWI,MWI_1_1_demo,1,Northern Region,mSB01mQcm7e,Datim
+MWI,MWI_1_2_demo,1,Central Region,mwXGqccqrOI,Datim
+MWI,MWI_1_3_demo,1,Southern Region,CXewWNn3soV,Datim
+MWI,MWI_2_1_demo,2,Northern Zone,ph4GyQNp7vh,Datim
+MWI,MWI_2_2_demo,2,Central Eastern Zone,EGgIZbN4s1P,Datim
+MWI,MWI_2_3_demo,2,Central Western Zone,YrJx6ynjQTd,Datim
+MWI,MWI_2_4_demo,2,South Eastern Zone,A9Rp1ap5sTh,Datim
+MWI,MWI_2_5_demo,2,South Western Zone,VxEnfJ66ucz,Datim
+MWI,MWI_3_1_demo,3,Chitipa District,GkIwZrXy1h2,Datim
+MWI,MWI_3_2_demo,3,Karonga District,cPtvxaZqXIH,Datim
+MWI,MWI_3_5_demo,3,Nkhata Bay District,E7zpfyBt7Tw,Datim
+MWI,MWI_3_3_demo,3,Rumphi District,lPTyjLi4w3d,Datim
+MWI,MWI_3_4_demo,3,Mzimba District,vA4NcHxfMBq,Datim
+MWI,MWI_3_6_demo,3,Likoma District,ZCjuwgaMB9u,Datim
+MWI,MWI_3_8_demo,3,Kasungu District,JQKLKuVuY61,Datim
+MWI,MWI_3_7_demo,3,Nkhotakota District,YCKiBAp8QAg,Datim
+MWI,MWI_3_9_demo,3,Ntchisi District,fiRkU6gEjLz,Datim
+MWI,MWI_3_10_demo,3,Dowa District,zphK9WV8JB4,Datim
+MWI,MWI_3_11_demo,3,Salima District,msW2zpIN7up,Datim
+MWI,MWI_3_13_demo,3,Lilongwe District,ScR9iFKAasW,Datim
+MWI,MWI_3_12_demo,3,Mchinji District,kxuuIFpOXyO,Datim
+MWI,MWI_3_14_demo,3,Dedza District,PekKUkKHAzY,Datim
+MWI,MWI_3_15_demo,3,Ntcheu District,am530wpaGvr,Datim
+MWI,MWI_3_16_demo,3,Mangochi District,lLDyBx5XyUi,Datim
+MWI,MWI_3_17_demo,3,Machinga District,TYnMSwzko3z,Datim
+MWI,MWI_3_19_demo,3,Zomba District,fyEoGEPERdI,Datim
+MWI,MWI_3_21_demo,3,Mulanje District,umc2n1Z4wNv,Datim
+MWI,MWI_3_20_demo,3,Phalombe District,AZyWpGzhcaA,Datim
+MWI,MWI_3_18_demo,3,Balaka District,ir8wuHHzoSs,Datim
+MWI,MWI_3_25_demo,3,Chiradzulu District,oiPR2CiVJbf,Datim
+MWI,MWI_3_23_demo,3,Blantyre District,mxqa3CDFmIT,Datim
+MWI,MWI_3_24_demo,3,Mwanza District,wNqJp8oRIcF,Datim
+MWI,MWI_3_26_demo,3,Thyolo District,ul0y9diGujK,Datim
+MWI,MWI_3_27_demo,3,Chikwawa District,U8c0so51kT6,Datim
+MWI,MWI_3_28_demo,3,Nsanje District,rpw540fmNUz,Datim
+MWI,MWI_3_22_demo,3,Neno District,gwVYinjBAe9,Datim
+NAM,NAM,0,Namibia,FFVkaV9Zk1S,Datim
+NAM,NAM_1_01,1,Karas,Vh2EJnEZSsW,Datim
+NAM,NAM_1_02,1,Erongo,DZGJZHBfYq5,Datim
+NAM,NAM_1_03,1,Hardap,PsPP6q4tzAb,Datim
+NAM,NAM_1_04,1,Kavango East,LlAP0m3z5FB,Datim
+NAM,NAM_1_05,1,Kavango West,N7oaQl2LpPr,Datim
+NAM,NAM_1_06,1,Khomas,ENfUmELYWwh,Datim
+NAM,NAM_1_07,1,Kunene,nfuEhMjGIza,Datim
+NAM,NAM_1_08,1,Ohangwena,YigsloDQQ6k,Datim
+NAM,NAM_1_09,1,Omaheke,TEdVtDQdJpG,Datim
+NAM,NAM_1_10,1,Omusati,DhlC62YWEPo,Datim
+NAM,NAM_1_11,1,Oshana,hQVyqacAwmf,Datim
+NAM,NAM_1_12,1,Oshikoto,qBO4qIIG6Ti,Datim
+NAM,NAM_1_13,1,Otjozondjupa,XsmWQQueMp8,Datim
+NAM,NAM_1_14,1,Zambezi,tWbwLzdYexL,Datim
+NAM,NAM_2_01,,,,Datim
+NAM,NAM_2_11,2,Andara,EU2LFjnUoDe,Datim
+NAM,NAM_2_20,2,Eenhana,S1IBLD18mtu,Datim
+NAM,NAM_2_21,2,Engela,e1a8dK5TE6S,Datim
+NAM,NAM_2_23,2,Gobabis,ho9XZGO2xwb,Datim
+NAM,NAM_2_33,2,Grootfontein,pu4bDzrPVNO,Datim
+NAM,NAM_2_02,2,Karasburg,BRlm2H3PtTw,Datim
+NAM,NAM_2_38,2,Katima Mulilo,rLlgwmoLsNZ,Datim
+NAM,NAM_2_03,2,Keetmanshoop,MoS2ZmKSIk3,Datim
+NAM,NAM_2_17,2,Khorixas,EH9NQ6mDfGj,Datim
+NAM,NAM_2_09,2,Mariental,hmJydtJou7V,Datim
+NAM,NAM_2_15,,,,Datim
+NAM,NAM_2_14,2,Nkurenkuru,INU6NqUEjiG,Datim
+NAM,NAM_2_12,2,Nyangana,EIzDG2iU7QA,Datim
+NAM,NAM_2_34,2,Okahandja,iMaVLYizifi,Datim
+NAM,NAM_2_24,2,Okahao,BOeHH7hRtfF,Datim
+NAM,NAM_2_35,2,Okakarara,zgdgaDyKL7W,Datim
+NAM,NAM_2_22,2,Okongo,vnMTivFAdYZ,Datim
+NAM,NAM_2_05,2,Omaruru,PbiAN2iuMNC,Datim
+NAM,NAM_2_30,2,Omuthiya,DbKN1FBhTpa,Datim
+NAM,NAM_2_31,2,Onandjokwe,YUe7e0hebL4,Datim
+NAM,NAM_2_28,,,,Datim
+NAM,NAM_2_18,2,Opuwo,Hb7N9vIk71A,Datim
+NAM,NAM_2_29,2,Oshakati,NUNNhuEIKSi,Datim
+NAM,NAM_2_25,2,Oshikuku,nefXINwu0Lq,Datim
+NAM,NAM_2_36,2,Otjiwarongo,BKA8mKOpaX9,Datim
+NAM,NAM_2_26,2,Outapi,KYONoFZCJgv,Datim
+NAM,NAM_2_19,2,Outjo,dZqqyXzAgDx,Datim
+NAM,NAM_2_10,2,Rehoboth,ltNu9G8IFBM,Datim
+NAM,NAM_2_04,,,,Datim
+NAM,NAM_2_13,2,Rundu,uTYaIAY3Rdg,Datim
+NAM,NAM_2_06,2,Swakopmund,o7vpmMqL7Sf,Datim
+NAM,NAM_2_27,2,Tsandi,F4beFAJLYBP,Datim
+NAM,NAM_2_32,2,Tsumeb,yC4ye65DZNI,Datim
+NAM,NAM_2_37,,,,Datim
+NAM,NAM_2_07,2,Usakos,ToudRH4CDr9,Datim
+NAM,NAM_2_08,2,Walvis Bay,BXwmiCump7T,Datim
+NAM,NAM_2_16,2,Windhoek,liTRatgsSjS,Datim
+NGA,NGA,0,Nigeria,PqlFzhuPcF1,Datim
 NGA,NGA_2_AB,1,Abia,PSyoMabuxF4,Datim
 NGA,NGA_2_AN,1,Anambra,LXdsxJVo6Gk,Datim
 NGA,NGA_2_EB,1,Ebonyi,GBuVMaobpww,Datim
@@ -1207,21 +1864,1017 @@ NGA,NGA_2_KT,1,Katsina,EuopELCVYdk,Datim
 NGA,NGA_2_KB,1,Kebbi,LaLcSZWEEMv,Datim
 NGA,NGA_2_SO,1,Sokoto,abbiqwv4nNw,Datim
 NGA,NGA_2_ZA,1,Zamfara,WXvWYq7i2Az,Datim
+NGA,NGA_3_001,2,ab Aba North,BY7bSKwPjPJ,Datim
+NGA,NGA_3_002,2,ab Aba South,sneW3AzybWl,Datim
+NGA,NGA_3_003,2,ab Arochukwu,utjfWYGFWf9,Datim
+NGA,NGA_3_004,2,ab Bende,hxL0g5v8Utk,Datim
+NGA,NGA_3_005,2,ab Ikwuano,B313k9dIuCR,Datim
+NGA,NGA_3_006,2,ab Isiala-Ngwa North,GCY4ic15Vx9,Datim
+NGA,NGA_3_007,2,ab Isiala-Ngwa South,SQAfXNZsq0o,Datim
+NGA,NGA_3_008,2,ab Isuikwuato,UcRhSWkBEBj,Datim
+NGA,NGA_3_009,2,ab Obingwa,xQ0mrXizc76,Datim
+NGA,NGA_3_010,2,ab Ohafia,pZTnyzppDlO,Datim
+NGA,NGA_3_011,2,ab Osisioma Ngwa,L1aZjDe1sH1,Datim
+NGA,NGA_3_012,2,ab Ugwunagbo,WRdsg318pjK,Datim
+NGA,NGA_3_013,2,ab Ukwa East,rUPLBHykOK5,Datim
+NGA,NGA_3_014,2,ab Ukwa West,JReXS37mwcG,Datim
+NGA,NGA_3_015,2,ab Umu Nneochi,hJwaMaptWAC,Datim
+NGA,NGA_3_016,2,ab Umuahia North,Saab1FHVbPD,Datim
+NGA,NGA_3_017,2,ab Umuahia South,sjaIPoRZPBo,Datim
+NGA,NGA_3_018,2,an Aguata,DFMlCbHb8A8,Datim
+NGA,NGA_3_019,2,an Anambra East,WympM6A8Dyz,Datim
+NGA,NGA_3_020,2,an Anambra West,ia5DjoyiJml,Datim
+NGA,NGA_3_021,2,an Anaocha,sgqANA29vHG,Datim
+NGA,NGA_3_022,2,an Awka North,Z69WtGQ0Urd,Datim
+NGA,NGA_3_023,2,an Awka South,JyswUUSs0Ga,Datim
+NGA,NGA_3_024,2,an Ayamelum,cAtDMHGqXDY,Datim
+NGA,NGA_3_025,2,an Dunukofia,LnzMu6ek3Y9,Datim
+NGA,NGA_3_026,2,an Ekwusigo,UjwHpQb8RFM,Datim
+NGA,NGA_3_027,2,an Idemili North,EXvdc4ppwoz,Datim
+NGA,NGA_3_028,2,an Idemili South,GzWt3GqoM7i,Datim
+NGA,NGA_3_029,2,an Ihiala,kKXpnEpWHau,Datim
+NGA,NGA_3_030,2,an Njikoka,jjP9tmzofKz,Datim
+NGA,NGA_3_031,2,an Nnewi North,zfiun4GPDku,Datim
+NGA,NGA_3_032,2,an Nnewi South,NF6SfRY1kto,Datim
+NGA,NGA_3_033,2,an Ogbaru,ECHIr3eP4t4,Datim
+NGA,NGA_3_034,2,an Onitsha North,DR7pw2aSUwX,Datim
+NGA,NGA_3_035,2,an Onitsha South,JyWT5Q3Xqkf,Datim
+NGA,NGA_3_036,2,an Orumba North,R1QrxLfGQAu,Datim
+NGA,NGA_3_037,2,an Orumba South,HJYYvGcFd4u,Datim
+NGA,NGA_3_038,2,an Oyi,DPtWPT96gZF,Datim
+NGA,NGA_3_039,2,eb Abakaliki,EzsXkY9WARj,Datim
+NGA,NGA_3_040,2,eb Afikpo North,KN2TmcAVqzi,Datim
+NGA,NGA_3_041,2,eb Afikpo South,ZrkJxE1QhrW,Datim
+NGA,NGA_3_042,2,eb Ebonyi,J4yYjIqL7mG,Datim
+NGA,NGA_3_043,2,eb Ezza North,tIuMJ7BIDWY,Datim
+NGA,NGA_3_044,2,eb Ezza South,UHy5pRsQvje,Datim
+NGA,NGA_3_045,2,eb Ikwo,MTm3lyt1uyA,Datim
+NGA,NGA_3_046,2,eb Ishielu,vPNckbEJmgJ,Datim
+NGA,NGA_3_047,2,eb Ivo,k8q2pBQgUN8,Datim
+NGA,NGA_3_048,2,eb Izzi,I0BlgP4H1OY,Datim
+NGA,NGA_3_049,2,eb Ohaozara,DUdIkrprTo5,Datim
+NGA,NGA_3_050,2,eb Ohaukwu,IgQnoCiFkNF,Datim
+NGA,NGA_3_051,2,eb Onicha,LVqMvb9kkzH,Datim
+NGA,NGA_3_052,2,en Aninri,hu1xt1ogF4p,Datim
+NGA,NGA_3_053,2,en Awgu,j44sQg7jgxN,Datim
+NGA,NGA_3_054,2,en Enugu East,HlABmTwBpu6,Datim
+NGA,NGA_3_055,2,en Enugu North,pLAiWmFjn0V,Datim
+NGA,NGA_3_056,2,en Enugu South,HhCbsjlKoWA,Datim
+NGA,NGA_3_057,2,en Ezeagu,H3vPz5cLc8w,Datim
+NGA,NGA_3_058,2,en Igbo Etiti,XSjMKY9mf7k,Datim
+NGA,NGA_3_059,2,en Igbo Eze North,ai7N2iAo0JE,Datim
+NGA,NGA_3_060,2,en Igbo Eze South,WSdmE5ogw0T,Datim
+NGA,NGA_3_061,2,en Isiuzo,WihGaIxuEIs,Datim
+NGA,NGA_3_062,2,en Nkanu East,fEruEcd3780,Datim
+NGA,NGA_3_063,2,en Nkanu West,PWOBEq85BOf,Datim
+NGA,NGA_3_064,2,en Nsukka,ITdnyCiBvz7,Datim
+NGA,NGA_3_065,2,en Oji River,xu2XtcwkKms,Datim
+NGA,NGA_3_066,2,en Udenu,Jw8aS21k2oW,Datim
+NGA,NGA_3_067,2,en Udi,OY7K8rR5ukn,Datim
+NGA,NGA_3_068,2,en Uzo Uwani,os29wbUTQz7,Datim
+NGA,NGA_3_069,2,im Aboh Mbaise,QT7WqfzOT7X,Datim
+NGA,NGA_3_070,2,im Ahiazu Mbaise,EyHfmrBzsuk,Datim
+NGA,NGA_3_071,2,im Ehime Mbano,Ymb6umwsISK,Datim
+NGA,NGA_3_072,2,im Ezinihitte,dzjXm8e1cNs,Datim
+NGA,NGA_3_073,2,im Ideato North,CRvHqQVBlD6,Datim
+NGA,NGA_3_074,2,im Ideato South,laM7jR9mtfj,Datim
+NGA,NGA_3_075,2,im Ihitte Uboma,V7JZ4QSddM4,Datim
+NGA,NGA_3_076,2,im Ikeduru,JVBsHZWT7pB,Datim
+NGA,NGA_3_077,2,im Isiala Mbano,W0Bnlz2CdRD,Datim
+NGA,NGA_3_078,2,im Isu,ZzZelaZBCYJ,Datim
+NGA,NGA_3_079,2,im Mbaitoli,GEwjVcMYoao,Datim
+NGA,NGA_3_080,2,im Ngor Okpala,vpCKW3gWNhV,Datim
+NGA,NGA_3_081,2,im Njaba,qNzCWtO8dMh,Datim
+NGA,NGA_3_082,2,im Nkwerre,iz3ehfkjBvm,Datim
+NGA,NGA_3_083,2,im Nwangele,eUmxQeRPiBM,Datim
+NGA,NGA_3_084,2,im Obowo,VTczXNlh45U,Datim
+NGA,NGA_3_085,2,im Oguta,fIJ193PGC3L,Datim
+NGA,NGA_3_086,2,im Ohaji Egbema,k396XseVgOV,Datim
+NGA,NGA_3_087,2,im Okigwe,Hl9Yfii9vCN,Datim
+NGA,NGA_3_088,2,im Onuimo,uTRRg2zhU4D,Datim
+NGA,NGA_3_089,2,im Orlu,MHK8b5HRHWg,Datim
+NGA,NGA_3_090,2,im Orsu,jU19ZJn6TI8,Datim
+NGA,NGA_3_091,2,im Oru East,FHkaaPwowJN,Datim
+NGA,NGA_3_092,2,im Oru West,GSZ1YWRPxPk,Datim
+NGA,NGA_3_093,2,im Owerri Municipal,mVuyipSx9aU,Datim
+NGA,NGA_3_094,2,im Owerri North,FjiNyXde6Ae,Datim
+NGA,NGA_3_095,2,im Owerri West,lx2r0T1GnaQ,Datim
+NGA,NGA_3_096,2,ad Demsa,p7M264Wg1qB,Datim
+NGA,NGA_3_097,2,ad Fufore,dv4N89160b6,Datim
+NGA,NGA_3_098,2,ad Ganye,EorvxnuHvOc,Datim
+NGA,NGA_3_099,2,ad Girei,g353MwNv1ST,Datim
+NGA,NGA_3_100,2,ad Gombi,I0NB6gmLUsA,Datim
+NGA,NGA_3_101,2,ad Guyuk,w4bclNyjW8p,Datim
+NGA,NGA_3_102,2,ad Hong,fpBVTbTedSf,Datim
+NGA,NGA_3_103,2,ad Jada,qrAb13XpOC2,Datim
+NGA,NGA_3_104,2,ad Lamurde,YrmqAeqD90Z,Datim
+NGA,NGA_3_105,2,ad Madagali,wvoQtDWsFy9,Datim
+NGA,NGA_3_106,2,ad Maiha,GlcpSBFFUZF,Datim
+NGA,NGA_3_107,2,ad Mayo-Belwa,PekU6CGZl4z,Datim
+NGA,NGA_3_108,2,ad Michika,DqggvhYh4iJ,Datim
+NGA,NGA_3_109,2,ad Mubi North,Lfi7NDdKEEs,Datim
+NGA,NGA_3_110,2,ad Mubi South,m6LBTfgy4N4,Datim
+NGA,NGA_3_111,2,ad Numan,Z0saBqitaCS,Datim
+NGA,NGA_3_112,2,ad Shelleng,LH0JbbkkKBP,Datim
+NGA,NGA_3_113,2,ad Song,FlBE3mL1gu7,Datim
+NGA,NGA_3_114,2,ad Toungo,IlQNjQ4xhtJ,Datim
+NGA,NGA_3_115,2,ad Yola North,f8yDBoPVWu1,Datim
+NGA,NGA_3_116,2,ad Yola South,ygm0La5inNU,Datim
+NGA,NGA_3_117,2,ba Alkaleri,Ci3pNStApME,Datim
+NGA,NGA_3_118,2,ba Bauchi,BzVMcmlV7bF,Datim
+NGA,NGA_3_119,2,ba Bogoro,S809bXXP7Fv,Datim
+NGA,NGA_3_120,2,ba Damban,x8OYFzpULVk,Datim
+NGA,NGA_3_121,2,ba Darazo,YDeeZ5qc9GH,Datim
+NGA,NGA_3_122,2,ba Dass,keN9s8FpxDq,Datim
+NGA,NGA_3_123,2,ba Gamawa,gRNPhXiBuz0,Datim
+NGA,NGA_3_124,2,ba Ganjuwa,WLCeQxnQcYa,Datim
+NGA,NGA_3_125,2,ba Giade,oxcaQN6VXDF,Datim
+NGA,NGA_3_126,2,ba Itas-Gadau,UCkm3Xfi1pW,Datim
+NGA,NGA_3_127,2,ba Jama'are,R44BnPDW4MP,Datim
+NGA,NGA_3_128,2,ba Katagum,GP2BJihG1v6,Datim
+NGA,NGA_3_129,2,ba Kirfi,YvQJTMAxBGq,Datim
+NGA,NGA_3_130,2,ba Misau,F5eeDhZQibe,Datim
+NGA,NGA_3_131,2,ba Ningi,DSafrXaCblk,Datim
+NGA,NGA_3_132,2,ba Shira,ATFOMtmPNUT,Datim
+NGA,NGA_3_133,2,ba Tafawa-Balewa,axJ2Bz7NMBy,Datim
+NGA,NGA_3_134,2,ba Toro,Rag21iTLDMN,Datim
+NGA,NGA_3_135,2,ba Warji,dIi3XUCSsXQ,Datim
+NGA,NGA_3_136,2,ba Zaki,xq8JtKyFs3r,Datim
+NGA,NGA_3_137,2,bo Abadam,CUS7o0LhAty,Datim
+NGA,NGA_3_138,2,bo Askira-Uba,B6B6G0suyIH,Datim
+NGA,NGA_3_139,2,bo Bama,cff8nY3Y9t6,Datim
+NGA,NGA_3_140,2,bo Bayo,IoVUPBw3cBJ,Datim
+NGA,NGA_3_141,2,bo Biu,nUCOl5r6nTX,Datim
+NGA,NGA_3_142,2,bo Chibok,XgcKWaZe33a,Datim
+NGA,NGA_3_143,2,bo Damboa,DEPsFEGZ6jU,Datim
+NGA,NGA_3_144,2,bo Dikwa,SqVuiOLlKb8,Datim
+NGA,NGA_3_145,2,bo Gubio,Ssbz4SEc1IM,Datim
+NGA,NGA_3_146,2,bo Guzamala,ZeCCooHQrB4,Datim
+NGA,NGA_3_147,2,bo Gwoza,MdJ6fZJNIWg,Datim
+NGA,NGA_3_148,2,bo Hawul,JvtwguXEkD5,Datim
+NGA,NGA_3_149,2,bo Jere,GeeiQ1SxW8a,Datim
+NGA,NGA_3_150,2,bo Kaga,nvpWc1dxZ2a,Datim
+NGA,NGA_3_151,2,bo Kala-Balge,vSNtNuibM9P,Datim
+NGA,NGA_3_152,2,bo Konduga,h4dMPsRKUmh,Datim
+NGA,NGA_3_153,2,bo Kukawa,iE5LhdbOoQI,Datim
+NGA,NGA_3_154,2,bo Kwaya Kusar,v9EkkU2JyKZ,Datim
+NGA,NGA_3_155,2,bo Mafa,ynzQSRhyaHe,Datim
+NGA,NGA_3_156,2,bo Magumeri,ZtstX7En5ot,Datim
+NGA,NGA_3_157,2,bo Maiduguri,qhRYYAbgQVH,Datim
+NGA,NGA_3_158,2,bo Marte,js4XVdXgkfq,Datim
+NGA,NGA_3_159,2,bo Mobbar,aBEaAM8Eabm,Datim
+NGA,NGA_3_160,2,bo Monguno,I5QvelpUvDa,Datim
+NGA,NGA_3_161,2,bo Ngala,WQwHVPPsqW2,Datim
+NGA,NGA_3_162,2,bo Nganzai,a76Ey6R5Ynz,Datim
+NGA,NGA_3_163,2,bo Shani,xJCynBk9mXI,Datim
+NGA,NGA_3_164,2,go Akko,hQDiS6TSZdz,Datim
+NGA,NGA_3_165,2,go Balanga,MMtwgHXDdXV,Datim
+NGA,NGA_3_166,2,go Billiri,NeOiTtsL5sa,Datim
+NGA,NGA_3_167,2,go Dukku,VQgRF8xzLJH,Datim
+NGA,NGA_3_168,2,go Funakaye,ar43MQufI9v,Datim
+NGA,NGA_3_169,2,go Gombe,kbvQ8m0PGSU,Datim
+NGA,NGA_3_170,2,go Kaltungo,VFdjWHMxQJ7,Datim
+NGA,NGA_3_171,2,go Kwami,ipw9D3TRP8p,Datim
+NGA,NGA_3_172,2,go Nafada-Bajoga,fgDvaz58q64,Datim
+NGA,NGA_3_173,2,go Shongom,gArfGStpgDM,Datim
+NGA,NGA_3_174,2,go Yamaltu-Deba,Dz65VTZfbUd,Datim
+NGA,NGA_3_175,2,ta Ardo-kola,H5GOeDtLBhH,Datim
+NGA,NGA_3_176,2,ta Bali,lXfgXUKqsUm,Datim
+NGA,NGA_3_177,2,ta Donga,aKSDHehzXnK,Datim
+NGA,NGA_3_178,2,ta Gashaka,nb8lDm5Kxwr,Datim
+NGA,NGA_3_179,2,ta Gassol,rDwTrMp6vv2,Datim
+NGA,NGA_3_180,2,ta Ibi,F2Cl8Zfwmt8,Datim
+NGA,NGA_3_181,2,ta Jalingo,SQwOj385pC9,Datim
+NGA,NGA_3_182,2,ta Karin-Lamido,U2CLKBu9ujk,Datim
+NGA,NGA_3_183,2,ta Kurmi,brUuT9VMVFK,Datim
+NGA,NGA_3_184,2,ta Lau,kLf49CxvV8q,Datim
+NGA,NGA_3_185,2,ta Sardauna,kK6VT8uaxyv,Datim
+NGA,NGA_3_186,2,ta Takum,RVH0MzfkLrW,Datim
+NGA,NGA_3_187,2,ta Ussa,ItOKwnnX5uy,Datim
+NGA,NGA_3_188,2,ta Wukari,klGoPCX1HTv,Datim
+NGA,NGA_3_189,2,ta Yorro,sOXGqHbV8Ji,Datim
+NGA,NGA_3_190,2,ta Zing,Sn2IQYMF2pQ,Datim
+NGA,NGA_3_191,2,yo Bade,FLrj0Vb8jh2,Datim
+NGA,NGA_3_192,2,yo Bursari,yMpsqMmo7oI,Datim
+NGA,NGA_3_193,2,yo Damaturu,fhHfL7tA9l8,Datim
+NGA,NGA_3_194,2,yo Fika,sUHLkFR6mEd,Datim
+NGA,NGA_3_195,2,yo Fune,p7SAVi1RX6S,Datim
+NGA,NGA_3_196,2,yo Geidam,VdbX8KqjeJa,Datim
+NGA,NGA_3_197,2,yo Gujba,hMDFkMbJ3w6,Datim
+NGA,NGA_3_198,2,yo Gulani,zrM1BT9UvRe,Datim
+NGA,NGA_3_199,2,yo Jakusko,VND5WSq5w5Z,Datim
+NGA,NGA_3_200,2,yo Karasuwa,d8TsB5IWT3K,Datim
+NGA,NGA_3_201,2,yo Machina,pEXfJwykmi5,Datim
+NGA,NGA_3_202,2,yo Nangere,HIRvIJ4Phtk,Datim
+NGA,NGA_3_203,2,yo Nguru,nw2xsoZj1Qf,Datim
+NGA,NGA_3_204,2,yo Potiskum,wXVrXNmb0Gl,Datim
+NGA,NGA_3_205,2,yo Tarmuwa,mYpTNEl06Rp,Datim
+NGA,NGA_3_206,2,yo Yunusari,XGNY7RJSFaK,Datim
+NGA,NGA_3_207,2,yo Yusufari,xwVots58cXd,Datim
+NGA,NGA_3_208,2,ak Abak,XBIWanrEkbP,Datim
+NGA,NGA_3_209,2,ak Eastern Obolo,ALVyRcoCEeE,Datim
+NGA,NGA_3_210,2,ak Eket,LtNhTo6ObDy,Datim
+NGA,NGA_3_211,2,ak Esit Eket,DbuyCcoGr3o,Datim
+NGA,NGA_3_212,2,ak Essien Udim,Z5atgpujIuB,Datim
+NGA,NGA_3_213,2,ak Etim Ekpo,KF4B3lAghd8,Datim
+NGA,NGA_3_214,2,ak Etinan,fpXkddgSxc2,Datim
+NGA,NGA_3_215,2,ak Ibeno,KTBSBPINZ9K,Datim
+NGA,NGA_3_216,2,ak Ibesikpo Asutan,FJORitdoOgZ,Datim
+NGA,NGA_3_217,2,ak Ibiono Ibom,RFu8InHRI0P,Datim
+NGA,NGA_3_218,2,ak Ika,uU7VK6bHY0b,Datim
+NGA,NGA_3_219,2,ak Ikono,QyiNd4lpoYO,Datim
+NGA,NGA_3_220,2,ak Ikot Abasi,KXQgiiDCxNB,Datim
+NGA,NGA_3_221,2,ak Ikot Ekpene,Hav0LhcZr8l,Datim
+NGA,NGA_3_222,2,ak Ini,UEO4kGjgWGz,Datim
+NGA,NGA_3_223,2,ak Itu,zxPmBggJpRL,Datim
+NGA,NGA_3_224,2,ak Mbo,UcOzBtlIxjs,Datim
+NGA,NGA_3_225,2,ak Mkpat Enin,U76V7Aagy0M,Datim
+NGA,NGA_3_226,2,ak Nsit Atai,bTbhVIeXl5B,Datim
+NGA,NGA_3_227,2,ak Nsit Ibom,QzoJtRtnwEK,Datim
+NGA,NGA_3_228,2,ak Nsit Ubium,uURIdxN44t7,Datim
+NGA,NGA_3_229,2,ak Obot Akara,OcjOTIIz6PZ,Datim
+NGA,NGA_3_230,2,ak Okobo,yNiTlEQJJOr,Datim
+NGA,NGA_3_231,2,ak Onna,qEnUjTAp97f,Datim
+NGA,NGA_3_232,2,ak Oron,Aa1whDXzJ2c,Datim
+NGA,NGA_3_233,2,ak Oruk Anam,R3xzKk95P1a,Datim
+NGA,NGA_3_234,2,ak Udung Uko,iyBox8IdIwz,Datim
+NGA,NGA_3_235,2,ak Ukanafun,VrBYQf8rbPc,Datim
+NGA,NGA_3_236,2,ak Uruan,fxkXzAmjGtQ,Datim
+NGA,NGA_3_237,2,ak Urue-Offong-Oruko,HqzA0kbnPTT,Datim
+NGA,NGA_3_238,2,ak Uyo,HzF1QcC3jfm,Datim
+NGA,NGA_3_239,2,by Brass,e340iNYBFKT,Datim
+NGA,NGA_3_240,2,by Ekeremor,WzDT4si39yH,Datim
+NGA,NGA_3_241,2,by Kolokuma-Opokuma,NncixRTUNA8,Datim
+NGA,NGA_3_242,2,by Nembe,h5mI0PnkLy2,Datim
+NGA,NGA_3_243,2,by Ogbia,UPDz1QKEaPi,Datim
+NGA,NGA_3_244,2,by Sagbama,a7N7uRgXtvy,Datim
+NGA,NGA_3_245,2,by Southern IJaw,XrKyi1pvgsU,Datim
+NGA,NGA_3_246,2,by Yenagoa,zr3XYkgbfIc,Datim
+NGA,NGA_3_247,2,cr Abi,e7J1RT47WsJ,Datim
+NGA,NGA_3_248,2,cr Akamkpa,NIaJ9yoGyDs,Datim
+NGA,NGA_3_249,2,cr Akpabuyo,R40riAkajr9,Datim
+NGA,NGA_3_250,2,cr Bakassi,XZLfq0naEiG,Datim
+NGA,NGA_3_251,2,cr Bekwarra,uUHJXESBL6v,Datim
+NGA,NGA_3_252,2,cr Biase,proG1Con5sh,Datim
+NGA,NGA_3_253,2,cr Boki,virmrpkYGXf,Datim
+NGA,NGA_3_254,2,cr Calabar Municipal,KmN1vtO0Xv3,Datim
+NGA,NGA_3_255,2,cr Calabar South,CXhkcOKexa8,Datim
+NGA,NGA_3_256,2,cr Etung,HySQRcghuzV,Datim
+NGA,NGA_3_257,2,cr Ikom,GIXuVsi53km,Datim
+NGA,NGA_3_258,2,cr Obanliku,dhr29sgXCMz,Datim
+NGA,NGA_3_259,2,cr Obubra,QYalSmXneXl,Datim
+NGA,NGA_3_260,2,cr Obudu,Z9MZT1BTsJ5,Datim
+NGA,NGA_3_261,2,cr Odukpani,gsS9Cpuu01y,Datim
+NGA,NGA_3_262,2,cr Ogoja,pQ5yVgpTBiz,Datim
+NGA,NGA_3_263,2,cr Yakuur,ErgzW0NbtKg,Datim
+NGA,NGA_3_264,2,cr Yala,rtUy9A3YHEU,Datim
+NGA,NGA_3_265,2,de Aniocha North,sOvdseHOfPM,Datim
+NGA,NGA_3_266,2,de Aniocha South,jjdlSy7XvmM,Datim
+NGA,NGA_3_267,2,de Bomadi,vIWJt7NIoFp,Datim
+NGA,NGA_3_268,2,de Burutu,AMSQzhoDGn0,Datim
+NGA,NGA_3_269,2,de Ethiope East,rGJKS4OLyqd,Datim
+NGA,NGA_3_270,2,de Ethiope West,ozapfg9XcmM,Datim
+NGA,NGA_3_271,2,de Ika North East,fSlbRfrxgBX,Datim
+NGA,NGA_3_272,2,de Ika South,Q7RlCFBv0PT,Datim
+NGA,NGA_3_273,2,de Isoko North,RXyzOWGy8sf,Datim
+NGA,NGA_3_274,2,de Isoko South,X8NUW1sxr3s,Datim
+NGA,NGA_3_275,2,de Ndokwa East,nzvY9GKkpym,Datim
+NGA,NGA_3_276,2,de Ndokwa West,ip6npch0teY,Datim
+NGA,NGA_3_277,2,de Okpe,TF6DZGTsVO2,Datim
+NGA,NGA_3_278,2,de Oshimili North,qUFyVUUSqUb,Datim
+NGA,NGA_3_279,2,de Oshimili South,pA7KmJWZWi5,Datim
+NGA,NGA_3_280,2,de Patani,G1wJbuwm1Pj,Datim
+NGA,NGA_3_281,2,de Sapele,c8wRDtzO14l,Datim
+NGA,NGA_3_282,2,de Udu,KEKFFPFTneN,Datim
+NGA,NGA_3_283,2,de Ughelli North,XYbM1RspaLs,Datim
+NGA,NGA_3_284,2,de Ughelli South,EQLuOekanSM,Datim
+NGA,NGA_3_285,2,de Ukwuani,h1vcs9cuaTf,Datim
+NGA,NGA_3_286,2,de Uvwie,yyaZXER8YfR,Datim
+NGA,NGA_3_287,2,de Warri North,zKZKB0aNzsZ,Datim
+NGA,NGA_3_288,2,de Warri South,MNVESOkGZ0T,Datim
+NGA,NGA_3_289,2,de Warri South-West,F2sisT8xwGl,Datim
+NGA,NGA_3_290,2,ed Akoko Edo,pQHIzaJsi8t,Datim
+NGA,NGA_3_291,2,ed Egor,NYHYee8uWfQ,Datim
+NGA,NGA_3_292,2,ed Esan Central,lMKXLq9dXVW,Datim
+NGA,NGA_3_293,2,ed Esan North-East,a661mTq8jD4,Datim
+NGA,NGA_3_294,2,ed Esan South-East,MgiGNCxuQsJ,Datim
+NGA,NGA_3_295,2,ed Esan West,vB0zMLI52Y0,Datim
+NGA,NGA_3_296,2,ed Etsako Central,p3BuvMLV3IA,Datim
+NGA,NGA_3_297,2,ed Etsako East ,GxvqAACzQY4,Datim
+NGA,NGA_3_298,2,ed Etsako West,fYRobXvSy5e,Datim
+NGA,NGA_3_299,2,ed Igueben,Ne0WWZQ8HJ5,Datim
+NGA,NGA_3_300,2,ed Ikpoba-Okha,n6VEZ4pTBrX,Datim
+NGA,NGA_3_301,2,ed Oredo,WOZEZlUXOvg,Datim
+NGA,NGA_3_302,2,ed Orhionmwon,qkLeWHFPNM6,Datim
+NGA,NGA_3_303,2,ed Ovia North-East,X6OJDLsUnzI,Datim
+NGA,NGA_3_304,2,ed Ovia South-West,c8v5QxYg2ce,Datim
+NGA,NGA_3_305,2,ed Owan East,bCyBh5BKp0Q,Datim
+NGA,NGA_3_306,2,ed Owan West,l5vfZdLFrQB,Datim
+NGA,NGA_3_307,2,ed Uhunmwonde,cgWurQSVEBH,Datim
+NGA,NGA_3_308,2,ri Abua-Odual,ObllIYWxwRA,Datim
+NGA,NGA_3_309,2,ri Ahoada East,GBwKRrWGuVY,Datim
+NGA,NGA_3_310,2,ri Ahoada West,Nd9sbZcqorj,Datim
+NGA,NGA_3_311,2,ri Akuku Toru,gdQCMg31viH,Datim
+NGA,NGA_3_312,2,ri Andoni,pp8zV2OXmvU,Datim
+NGA,NGA_3_313,2,ri Asari-Toru,SExBRzuDiYb,Datim
+NGA,NGA_3_314,2,ri Bonny,kyuGgrpjwZF,Datim
+NGA,NGA_3_315,2,ri Degema,O9l6BemolrN,Datim
+NGA,NGA_3_316,2,ri Eleme,UdnUbXV7O9o,Datim
+NGA,NGA_3_317,2,ri Emohua,UGwCX5IBQQj,Datim
+NGA,NGA_3_318,2,ri Etche,y5pPli7WP1V,Datim
+NGA,NGA_3_319,2,ri Gokana,N0dXOBSVO7k,Datim
+NGA,NGA_3_320,2,ri Ikwerre,SL33bchlaKT,Datim
+NGA,NGA_3_321,2,ri Khana,sZumF7t54ek,Datim
+NGA,NGA_3_322,2,ri Obio-Akpor,QUXP7f16K3Z,Datim
+NGA,NGA_3_323,2,ri Ogba-Egbema-Ndoni,xZFseUogJWo,Datim
+NGA,NGA_3_324,2,ri Ogu-Bolo,wXnjvr9p2zU,Datim
+NGA,NGA_3_325,2,ri Okrika,nNo5gV3to2B,Datim
+NGA,NGA_3_326,2,ri Omumma,xdzbsxe1MQa,Datim
+NGA,NGA_3_327,2,ri Opobo-Nkoro,RgaAXlRX33Y,Datim
+NGA,NGA_3_328,2,ri Oyigbo,I0tQo5iW5NZ,Datim
+NGA,NGA_3_329,2,ri Port-Harcourt,y3iWYd0poWG,Datim
+NGA,NGA_3_330,2,ri Tai ,tFy20OB0Wyw,Datim
+NGA,NGA_3_331,2,be Ado,qRUSFz9WFB6,Datim
+NGA,NGA_3_332,2,be Agatu,lUn6tmhyebg,Datim
+NGA,NGA_3_333,2,be Apa,OG6fY4TsvRM,Datim
+NGA,NGA_3_334,2,be Buruku,QBFbFh5zJWX,Datim
+NGA,NGA_3_335,2,be Gboko,i0MUgv6vIAM,Datim
+NGA,NGA_3_336,2,be Guma,YbtVeNOCICl,Datim
+NGA,NGA_3_337,2,be Gwer East,PJJsxvEhEW5,Datim
+NGA,NGA_3_338,2,be Gwer West,bU41bAD1r84,Datim
+NGA,NGA_3_339,2,be Katsina-Ala,DluyXbyv63Q,Datim
+NGA,NGA_3_340,2,be Konshisha,gpgLJrma8Tm,Datim
+NGA,NGA_3_341,2,be Kwande,v7xGqiid6Pg,Datim
+NGA,NGA_3_342,2,be Logo,ZewNOZ5xMp9,Datim
+NGA,NGA_3_343,2,be Makurdi,Q2Gb99dokfK,Datim
+NGA,NGA_3_344,2,be Obi,PuJqb4zMn4A,Datim
+NGA,NGA_3_345,2,be Ogbadibo,TaAqWZoyAof,Datim
+NGA,NGA_3_346,2,be Ohimini,nWLwNNNzJ7N,Datim
+NGA,NGA_3_347,2,be Oju,L9g3RB3Jqy3,Datim
+NGA,NGA_3_348,2,be Okpokwu,Sf0fPuVTEf1,Datim
+NGA,NGA_3_349,2,be Otukpo,RM45QszoeEi,Datim
+NGA,NGA_3_350,2,be Tarka,eFnaQTWW1DC,Datim
+NGA,NGA_3_351,2,be Ukum,cvkiCumu2an,Datim
+NGA,NGA_3_352,2,be Ushongo,apUWJiF9sQ2,Datim
+NGA,NGA_3_353,2,be Vandeikya,FJ28GRyMVq9,Datim
+NGA,NGA_3_354,2,fc Abaji,nX918whVxYP,Datim
+NGA,NGA_3_355,2,fc Abuja Municipal Area Council,uosU9sINAPe,Datim
+NGA,NGA_3_356,2,fc Bwari,JkmyrqDGshk,Datim
+NGA,NGA_3_357,2,fc Gwagwalada,V91ICEXLeks,Datim
+NGA,NGA_3_358,2,fc Kuje,qK6jo6jLIav,Datim
+NGA,NGA_3_359,2,fc Kwali,sQbPVIKsxwT,Datim
+NGA,NGA_3_360,2,ko Adavi,WK5gDvZgOD6,Datim
+NGA,NGA_3_361,2,ko Ajaokuta,xJy5KJJn8gz,Datim
+NGA,NGA_3_362,2,ko Ankpa,logPshzwZGg,Datim
+NGA,NGA_3_363,2,ko Bassa,merMznnVwIA,Datim
+NGA,NGA_3_364,2,ko Dekina,OQ5fZjjCoDR,Datim
+NGA,NGA_3_365,2,ko Ibaji,cNr80ZanaDp,Datim
+NGA,NGA_3_366,2,ko Idah,xwBUYtnRhqv,Datim
+NGA,NGA_3_367,2,ko Igalamela-Odolu,spxEj5Dlg70,Datim
+NGA,NGA_3_368,2,ko Ijumu,JdodeJT1030,Datim
+NGA,NGA_3_369,2,ko Kabba Bunu,LRXpCvMxrYU,Datim
+NGA,NGA_3_370,2,ko Kogi,XKv4TrYPA47,Datim
+NGA,NGA_3_371,2,ko Lokoja,D4zacvYxq0b,Datim
+NGA,NGA_3_372,2,ko Mopa-Muro,CdZWAGT8Qes,Datim
+NGA,NGA_3_373,2,ko Ofu,MvoR4rmtllj,Datim
+NGA,NGA_3_374,2,ko Ogori-Magongo,cMvadwiBado,Datim
+NGA,NGA_3_375,2,ko Okehi,ROj1N52eCYd,Datim
+NGA,NGA_3_376,2,ko Okene,WKSMZvuda1v,Datim
+NGA,NGA_3_377,2,ko Olamaboro,Re4VU7MrOUM,Datim
+NGA,NGA_3_378,2,ko Omala,deDUnu6PVkl,Datim
+NGA,NGA_3_379,2,ko Yagba East,wYSTfYinFO7,Datim
+NGA,NGA_3_380,2,ko Yagba West,BvUDTXGnj8s,Datim
+NGA,NGA_3_381,2,kw Asa,E1WP6qD8CZm,Datim
+NGA,NGA_3_382,2,kw Baruten,AYikj7W0R0w,Datim
+NGA,NGA_3_383,2,kw Edu,VrDETBStvFP,Datim
+NGA,NGA_3_384,2,kw Ekiti,sEvO47HfVfV,Datim
+NGA,NGA_3_385,2,kw Ifelodun,V9SCtrA3Uh5,Datim
+NGA,NGA_3_386,2,kw Ilorin East,FxENiNIpifl,Datim
+NGA,NGA_3_387,2,kw Ilorin South,L589JlvsLup,Datim
+NGA,NGA_3_388,2,kw Ilorin West,IhUKbniSTiQ,Datim
+NGA,NGA_3_389,2,kw Irepodun,BxzOTRISQFy,Datim
+NGA,NGA_3_390,2,kw Isin,JrlQdGeVnSa,Datim
+NGA,NGA_3_391,2,kw Kaiama,HOgqXpFfAgJ,Datim
+NGA,NGA_3_392,2,kw Moro,P9k9CPeUisR,Datim
+NGA,NGA_3_393,2,kw Offa,syjevgeVeYf,Datim
+NGA,NGA_3_394,2,kw Oke Ero,P4AJqqADkFr,Datim
+NGA,NGA_3_395,2,kw Oyun,FT85lF1kbUI,Datim
+NGA,NGA_3_396,2,kw Patigi ,DZdOPZ0KKX8,Datim
+NGA,NGA_3_397,2,na Akwanga,tKAh5zuMYhT,Datim
+NGA,NGA_3_398,2,na Awe,K17UuwVu7Jf,Datim
+NGA,NGA_3_399,2,na Doma,tGdZvabgJw6,Datim
+NGA,NGA_3_400,2,na Karu,EusV10zkN3t,Datim
+NGA,NGA_3_401,2,na Keana,IbcfQbdZNdC,Datim
+NGA,NGA_3_402,2,na Keffi,gZ8SPQ2CKQG,Datim
+NGA,NGA_3_403,2,na Kokona,JBqBHvcmICE,Datim
+NGA,NGA_3_404,2,na Lafia,TMbbzVpDDad,Datim
+NGA,NGA_3_405,2,na Nasarawa,PM4sFTtfJQa,Datim
+NGA,NGA_3_406,2,na Nasarawa Eggon,MZ2jaWNX1Oq,Datim
+NGA,NGA_3_407,2,na Obi,ljMQwl1DOCb,Datim
+NGA,NGA_3_408,2,na Toto,rQBtRTixEgZ,Datim
+NGA,NGA_3_409,2,na Wamba,ldTia6dCApK,Datim
+NGA,NGA_3_410,2,ni Agaie,lPbWOmkCL2b,Datim
+NGA,NGA_3_411,2,ni Agwara,Hv2MoShsZw0,Datim
+NGA,NGA_3_412,2,ni Bida,bT2GvywtrWr,Datim
+NGA,NGA_3_413,2,ni Borgu,n1p57xvZS27,Datim
+NGA,NGA_3_414,2,ni Bosso,rWxhYYc4CUd,Datim
+NGA,NGA_3_415,2,ni Chanchaga,zDW6C2cJ9zt,Datim
+NGA,NGA_3_416,2,ni Edati,UznsLpQC71p,Datim
+NGA,NGA_3_417,2,ni Gbako,JBG1Q6nxI90,Datim
+NGA,NGA_3_418,2,ni Gurara,nuDn0S9i6sk,Datim
+NGA,NGA_3_419,2,ni Katcha,UpkhGdjtFUs,Datim
+NGA,NGA_3_420,2,ni Kontagora ,J3K9h8I4IBV,Datim
+NGA,NGA_3_421,2,ni Lapai,JP7S5oKBlf2,Datim
+NGA,NGA_3_422,2,ni Lavun,idG1XlGCMTq,Datim
+NGA,NGA_3_423,2,ni Magama,kuQXJAjDaCJ,Datim
+NGA,NGA_3_424,2,ni Mariga,KeCUS5x3EgL,Datim
+NGA,NGA_3_425,2,ni Mashegu,YRqSIEu2EBe,Datim
+NGA,NGA_3_426,2,ni Mokwa,NhVur1uOseT,Datim
+NGA,NGA_3_427,2,ni Muya,HTynaak9XDD,Datim
+NGA,NGA_3_428,2,ni Paikoro,Fq5ztsHKN20,Datim
+NGA,NGA_3_429,2,ni Rafi,GMnfyPIKHxo,Datim
+NGA,NGA_3_430,2,ni Rijau,SbFrewIebN4,Datim
+NGA,NGA_3_431,2,ni Shiroro,c4BzVjGvVi8,Datim
+NGA,NGA_3_432,2,ni Suleja,M7plide67qX,Datim
+NGA,NGA_3_433,2,ni Tafa,WJ7Ba8U4Yoq,Datim
+NGA,NGA_3_434,2,ni Wushishi,xqcqxtydENu,Datim
+NGA,NGA_3_435,2,pl Barkin Ladi,gevUQQwMYsl,Datim
+NGA,NGA_3_436,2,pl Bassa,fRmH1IcpdA7,Datim
+NGA,NGA_3_437,2,pl Bokkos,D1XE609n41l,Datim
+NGA,NGA_3_438,2,pl Jos East,txdQuyYCpbb,Datim
+NGA,NGA_3_439,2,pl Jos North,Kxb2aLH6aQE,Datim
+NGA,NGA_3_440,2,pl Jos South,zBpF1qbeHxk,Datim
+NGA,NGA_3_441,2,pl Kanam,KW1MmI5AJ5C,Datim
+NGA,NGA_3_442,2,pl Kanke,h4GiCPKLpaj,Datim
+NGA,NGA_3_443,2,pl Langtang North,giwECr4xdr7,Datim
+NGA,NGA_3_444,2,pl Langtang South,ol9Cy7ZHtmM,Datim
+NGA,NGA_3_445,2,pl Mangu,vnYPxzWEwMO,Datim
+NGA,NGA_3_446,2,pl Mikang,DU7QFC4eurr,Datim
+NGA,NGA_3_447,2,pl Pankshin,VsRXIP925Kr,Datim
+NGA,NGA_3_448,2,pl Qua'an Pan,iWTaRRoO3JH,Datim
+NGA,NGA_3_449,2,pl Riyom,FaxOzvxNTmQ,Datim
+NGA,NGA_3_450,2,pl Shendam,xcD0RUmcq3U,Datim
+NGA,NGA_3_451,2,pl Wase,E7AUIdZIUma,Datim
+NGA,NGA_3_452,2,ek Ado-Ekiti,w537PeRTb2k,Datim
+NGA,NGA_3_453,2,ek Efon,v6VKDsRhry2,Datim
+NGA,NGA_3_454,2,ek Ekiti East,Z8NBMmojNEN,Datim
+NGA,NGA_3_455,2,ek Ekiti South-West,gaRACh9QB6a,Datim
+NGA,NGA_3_456,2,ek Ekiti West,WFsEvMCIS56,Datim
+NGA,NGA_3_457,2,ek Emure,LoolSVHi1Jq,Datim
+NGA,NGA_3_458,2,ek Gbonyin,MtwzdW6p7T4,Datim
+NGA,NGA_3_459,2,ek Ido-Osi,WCjxJ6kxKRS,Datim
+NGA,NGA_3_460,2,ek Ijero,GBgnruQv8ym,Datim
+NGA,NGA_3_461,2,ek Ikere,FLIkT6NShZE,Datim
+NGA,NGA_3_462,2,ek Ikole,n3F9ZEqPUtq,Datim
+NGA,NGA_3_463,2,ek Ilejemeje,QeuyxdulDDC,Datim
+NGA,NGA_3_464,2,ek Irepodun-Ifelodun,ZoU6u0WrIM1,Datim
+NGA,NGA_3_465,2,ek Ise-Orun,jeHlpPF831R,Datim
+NGA,NGA_3_466,2,ek Moba,An7rsUOrIhI,Datim
+NGA,NGA_3_467,2,ek Oye,Ewz6HKTS15C,Datim
+NGA,NGA_3_468,2,la Agege,OycwDoCnlAB,Datim
+NGA,NGA_3_469,2,la Ajeromi-Ifelodun,tkA4PRXk0W7,Datim
+NGA,NGA_3_470,2,la Alimosho,AUIjfqeZEFH,Datim
+NGA,NGA_3_471,2,la Amuwo-Odofin,HOJVVYgS5vV,Datim
+NGA,NGA_3_472,2,la Apapa,dAeoz9ttxAz,Datim
+NGA,NGA_3_473,2,la Badagry,KVW9Io1khx7,Datim
+NGA,NGA_3_474,2,la Epe,uzCT1lOZhL5,Datim
+NGA,NGA_3_475,2,la Eti-Osa,VHITI10xoZc,Datim
+NGA,NGA_3_476,2,la Ibeju-Lekki,ISi4PDO97U5,Datim
+NGA,NGA_3_477,2,la Ifako-Ijaiye,sSg7pUov51f,Datim
+NGA,NGA_3_478,2,la Ikeja,u8skYaLV6QF,Datim
+NGA,NGA_3_479,2,la Ikorodu,HjGwmHbL0Y4,Datim
+NGA,NGA_3_480,2,la Kosofe,fQ6LC2LWI8S,Datim
+NGA,NGA_3_481,2,la Lagos Island,ZpDPMnrCgAN,Datim
+NGA,NGA_3_482,2,la Lagos Mainland,ghorQdinizS,Datim
+NGA,NGA_3_483,2,la Mushin,DvkBcDk4DRQ,Datim
+NGA,NGA_3_484,2,la Ojo,b1Z9Yv3VcVr,Datim
+NGA,NGA_3_485,2,la Oshodi-Isolo,lJkmYJB9kHr,Datim
+NGA,NGA_3_486,2,la Shomolu,MxHHoeHUJ4J,Datim
+NGA,NGA_3_487,2,la Surulere,wHyFh9VVK2m,Datim
+NGA,NGA_3_488,2,og Abeokuta North,ac13I392HZi,Datim
+NGA,NGA_3_489,2,og Abeokuta South,DGsvApy6NF9,Datim
+NGA,NGA_3_490,2,og Ado-Odo Ota,ZF2mGWrqp1t,Datim
+NGA,NGA_3_491,2,og Ewekoro,D19ydhlaHnt,Datim
+NGA,NGA_3_492,2,og Ifo,Ln5bTDtGDif,Datim
+NGA,NGA_3_493,2,og Ijebu East,vDdqmCWm4Ca,Datim
+NGA,NGA_3_494,2,og Ijebu North,MFGZuaAykM3,Datim
+NGA,NGA_3_495,2,og Ijebu North-East,jUV75YrmoXh,Datim
+NGA,NGA_3_496,2,og Ijebu Ode,pYomDDNQ6hO,Datim
+NGA,NGA_3_497,2,og Ikenne,kAWl47kmoyv,Datim
+NGA,NGA_3_498,2,og Imeko-Afon,mvsGm4vAS0k,Datim
+NGA,NGA_3_499,2,og Ipokia,D6rivmJFt33,Datim
+NGA,NGA_3_500,2,og Obafemi Owode,Li453nnViez,Datim
+NGA,NGA_3_501,2,og Odeda,NWkcNnhkkZr,Datim
+NGA,NGA_3_502,2,og Odogbolu,UHsCCQQ8HOl,Datim
+NGA,NGA_3_503,2,og Ogun Waterside,sXqBQgQKqQj,Datim
+NGA,NGA_3_504,2,og Remo North,xvaHIN4Xroj,Datim
+NGA,NGA_3_505,2,og Sagamu,cx0xFi6L7Fp,Datim
+NGA,NGA_3_506,2,og Yewa North,XY5wcfahN5W,Datim
+NGA,NGA_3_507,2,og Yewa South,ewh51nY512W,Datim
+NGA,NGA_3_508,2,on Akoko North East,PJ710HPntzX,Datim
+NGA,NGA_3_509,2,on Akoko North West,a1YObf4CR93,Datim
+NGA,NGA_3_510,2,on Akoko South East,SiZyocWf5kz,Datim
+NGA,NGA_3_511,2,on Akoko South West,LM0SzUjIbAE,Datim
+NGA,NGA_3_512,2,on Akure North,oV6tlXANpkd,Datim
+NGA,NGA_3_513,2,on Akure South,FpADQG6JcC5,Datim
+NGA,NGA_3_514,2,on Ese-Odo,GeeOYDsTZJU,Datim
+NGA,NGA_3_515,2,on Idanre,InBkYWArQFT,Datim
+NGA,NGA_3_516,2,on Ifedore,Vx6DDE2P1e8,Datim
+NGA,NGA_3_517,2,on Ilaje,nxPuG6XnkxA,Datim
+NGA,NGA_3_518,2,on Ile Oluji Okeigbo,O65wXRg0Ic3,Datim
+NGA,NGA_3_519,2,on Irele,AZsdgJCaQWl,Datim
+NGA,NGA_3_520,2,on Odigbo,dZRlykTqZhw,Datim
+NGA,NGA_3_521,2,on Okitipupa,cealFXAKL2I,Datim
+NGA,NGA_3_522,2,on Ondo East,xvPzCr7ZYEE,Datim
+NGA,NGA_3_523,2,on Ondo West,GAGxDMx8uvm,Datim
+NGA,NGA_3_524,2,on Ose,WLQLVZAd77i,Datim
+NGA,NGA_3_525,2,on Owo,yQa2xS9x96u,Datim
+NGA,NGA_3_526,2,os Aiyedade,tNxqnAq8Xc0,Datim
+NGA,NGA_3_527,2,os Aiyedire,ndLdNK4zUD7,Datim
+NGA,NGA_3_528,2,os Atakunmosa East,suKyhw89Qaq,Datim
+NGA,NGA_3_529,2,os Atakunmosa West,DWAW5pcNEL2,Datim
+NGA,NGA_3_530,2,os Boluwaduro,ONCf0MkPt7j,Datim
+NGA,NGA_3_531,2,os Boripe,k3vaaxirnVU,Datim
+NGA,NGA_3_532,2,os Ede North,h5AxqPwPdT3,Datim
+NGA,NGA_3_533,2,os Ede South,PWfDHBvn1hw,Datim
+NGA,NGA_3_534,2,os Egbedore,cpcIeES6ouI,Datim
+NGA,NGA_3_535,2,os Ejigbo,dzhjTRHGqu0,Datim
+NGA,NGA_3_536,2,os Ife Central,tr5rm0vaxGG,Datim
+NGA,NGA_3_537,2,os Ife East,Wf7A67DZQDR,Datim
+NGA,NGA_3_538,2,os Ife North,OqZ11xWhJlB,Datim
+NGA,NGA_3_539,2,os Ife South,Am4PwcNA5tQ,Datim
+NGA,NGA_3_540,2,os Ifedayo,CcjiElAynqW,Datim
+NGA,NGA_3_541,2,os Ifelodun,llqmYXa4TEq,Datim
+NGA,NGA_3_542,2,os Ila,k9ilIScUQLb,Datim
+NGA,NGA_3_543,2,os Ilesha East,dxMNL5PwvQa,Datim
+NGA,NGA_3_544,2,os Ilesha West,K3QRzs0XJAw,Datim
+NGA,NGA_3_545,2,os Irepodun,Xzs7E1b7S5U,Datim
+NGA,NGA_3_546,2,os Irewole,AIWlVFpaxFZ,Datim
+NGA,NGA_3_547,2,os Isokan,rhg7o351Ogx,Datim
+NGA,NGA_3_548,2,os Iwo,VWzOuFbOVsE,Datim
+NGA,NGA_3_549,2,os Obokun,dbhjolBPkSA,Datim
+NGA,NGA_3_550,2,os Odo-Otin,GjyQSlHTYcS,Datim
+NGA,NGA_3_551,2,os Ola-Oluwa,c9h9bKztIqJ,Datim
+NGA,NGA_3_552,2,os Olorunda,kabZQyVo8MM,Datim
+NGA,NGA_3_553,2,os Oriade,CNt1ZK0RFeB,Datim
+NGA,NGA_3_554,2,os Orolu,xPVXbnfePYE,Datim
+NGA,NGA_3_555,2,os Osogbo,wLldH8OpVNF,Datim
+NGA,NGA_3_556,2,oy Afijio,IlkoZAYAoQs,Datim
+NGA,NGA_3_557,2,oy Akinyele,vpR6qB6b19O,Datim
+NGA,NGA_3_558,2,oy Atiba,vmUxBIASp0I,Datim
+NGA,NGA_3_559,2,oy Atisbo,dxrlspj18NY,Datim
+NGA,NGA_3_560,2,oy Egbeda,zvDjtdkAuTP,Datim
+NGA,NGA_3_561,2,oy Ibadan North,iydYKfCH5Cl,Datim
+NGA,NGA_3_562,2,oy Ibadan North-East,dFj2ILZVfUi,Datim
+NGA,NGA_3_563,2,oy Ibadan North-West,iZCbzoOssS4,Datim
+NGA,NGA_3_564,2,oy Ibadan South-East,CtGoE7JQAiX,Datim
+NGA,NGA_3_565,2,oy Ibadan South-West,KCu09ZdJTEL,Datim
+NGA,NGA_3_566,2,oy Ibarapa Central,AZ20YeJChyC,Datim
+NGA,NGA_3_567,2,oy Ibarapa East,GOOy2mVNRd1,Datim
+NGA,NGA_3_568,2,oy Ibarapa North,M0ujki7803y,Datim
+NGA,NGA_3_569,2,oy Ido,QiWl2gmww69,Datim
+NGA,NGA_3_570,2,oy Irepo,fV2Ogk0TO7p,Datim
+NGA,NGA_3_571,2,oy Iseyin,ZA3JkbqwvuA,Datim
+NGA,NGA_3_572,2,oy Itesiwaju,Kcr5bLQVHEd,Datim
+NGA,NGA_3_573,2,oy Iwajowa,bRYPnMBCWrq,Datim
+NGA,NGA_3_574,2,oy Kajola,XXgCDEMk4Ha,Datim
+NGA,NGA_3_575,2,oy Lagelu,sjFUh2vg03X,Datim
+NGA,NGA_3_576,2,oy Ogbomoso North,ELWNSBUCfD3,Datim
+NGA,NGA_3_577,2,oy Ogbomoso South,p7y3haZd6OO,Datim
+NGA,NGA_3_578,2,oy Ogo Oluwa,yNLdrMwLReu,Datim
+NGA,NGA_3_579,2,oy Olorunsogo,p3M4FdE8RkC,Datim
+NGA,NGA_3_580,2,oy Oluyole,rWgqvOVxhQN,Datim
+NGA,NGA_3_581,2,oy Ona Ara,SMv1QuqswmC,Datim
+NGA,NGA_3_582,2,oy Orelope,WZhoAUn8Opk,Datim
+NGA,NGA_3_583,2,oy Ori Ire,oJiN1pog19z,Datim
+NGA,NGA_3_584,2,oy Oyo East,RBnV0s4V6wj,Datim
+NGA,NGA_3_585,2,oy Oyo West,YMlSzHMFp3b,Datim
+NGA,NGA_3_586,2,oy Saki East,UTmAHL0WmBn,Datim
+NGA,NGA_3_587,2,oy Saki West,leA9yz8ggzz,Datim
+NGA,NGA_3_588,2,oy Surulere,vO4O9o8Y2Be,Datim
+NGA,NGA_3_589,2,jg Auyo,T4bC8V6Pxvf,Datim
+NGA,NGA_3_590,2,jg Babura,J5F2X2qqq3L,Datim
+NGA,NGA_3_591,2,jg Biriniwa,yFfZIhVPEO6,Datim
+NGA,NGA_3_592,2,jg Birnin Kudu,ZpjKf61i2Uc,Datim
+NGA,NGA_3_593,2,jg Buji,SS3cAEgAw2T,Datim
+NGA,NGA_3_594,2,jg Dutse,obbfFvgh8Um,Datim
+NGA,NGA_3_595,2,jg Gagarawa,JYp856h1BYV,Datim
+NGA,NGA_3_596,2,jg Garki,xImwHFotapN,Datim
+NGA,NGA_3_597,2,jg Gumel,ujfhm07rpYT,Datim
+NGA,NGA_3_598,2,jg Guri,RgWOMoZpSj1,Datim
+NGA,NGA_3_599,2,jg Gwaram,WlY47shYnnr,Datim
+NGA,NGA_3_600,2,jg Gwiwa,wrEDuANgaVk,Datim
+NGA,NGA_3_601,2,jg Hadejia,vPxA5Pt1JGZ,Datim
+NGA,NGA_3_602,2,jg Jahun,sW1EiA2DlI3,Datim
+NGA,NGA_3_603,2,jg Kafin Hausa,algIunF3eLD,Datim
+NGA,NGA_3_604,2,jg Kaugama,aS2udX8k7bI,Datim
+NGA,NGA_3_605,2,jg Kazaure,WvxEjK4hxfo,Datim
+NGA,NGA_3_606,2,jg Kiri Kasamma,OPQ08mpFkNS,Datim
+NGA,NGA_3_607,2,jg Kiyawa,ahLDLd3w2Xt,Datim
+NGA,NGA_3_608,2,jg Maigatari,FuEmzawu1KF,Datim
+NGA,NGA_3_609,2,jg Malam Madori,kWn84cyfCtm,Datim
+NGA,NGA_3_610,2,jg Miga,eHuUs7BORtc,Datim
+NGA,NGA_3_611,2,jg Ringim,f0TB3r61i5b,Datim
+NGA,NGA_3_612,2,jg Roni,m2vUPXG3sSF,Datim
+NGA,NGA_3_613,2,jg Sule Tankarkar,CJ1qAtITXnn,Datim
+NGA,NGA_3_614,2,jg Taura,aChfL7S45l8,Datim
+NGA,NGA_3_615,2,jg Yankwashi,cFeHqZjzf5w,Datim
+NGA,NGA_3_616,2,kd Birnin Gwari,z7cRKbwx8L7,Datim
+NGA,NGA_3_617,2,kd Chikun,A279VIsHpTI,Datim
+NGA,NGA_3_618,2,kd Giwa,t4pYfQ9Skx4,Datim
+NGA,NGA_3_619,2,kd Igabi,dlxwQg99WoE,Datim
+NGA,NGA_3_620,2,kd Ikara,pad3e5xOCdP,Datim
+NGA,NGA_3_621,2,kd Jaba,uFaSs80gLIx,Datim
+NGA,NGA_3_622,2,kd Jema'a,vufh9kqDnPj,Datim
+NGA,NGA_3_623,2,kd Kachia,ILwIROK4TTR,Datim
+NGA,NGA_3_624,2,kd Kaduna North,U42lUlqw14s,Datim
+NGA,NGA_3_625,2,kd Kaduna South,QaeAxjVVGmA,Datim
+NGA,NGA_3_626,2,kd Kagarko,Bc82bF99cN1,Datim
+NGA,NGA_3_627,2,kd Kajuru,Vpd9OutI5QE,Datim
+NGA,NGA_3_628,2,kd Kaura,tkNy2sER8xX,Datim
+NGA,NGA_3_629,2,kd Kauru,fk5t7pAg7Cm,Datim
+NGA,NGA_3_630,2,kd Kubau,k2dAp9r2mRa,Datim
+NGA,NGA_3_631,2,kd Kudan,tXeGc4P4bXe,Datim
+NGA,NGA_3_632,2,kd Lere,xgIRJYISVOB,Datim
+NGA,NGA_3_633,2,kd Makarfi,oPl04jv6omI,Datim
+NGA,NGA_3_634,2,kd Sabon Gari,n81KW6HQJ9Q,Datim
+NGA,NGA_3_635,2,kd Sanga,igUyFcgaVHP,Datim
+NGA,NGA_3_636,2,kd Soba,sWKNZPZj231,Datim
+NGA,NGA_3_637,2,kd Zango-Kataf,LRJl5ilFu2M,Datim
+NGA,NGA_3_638,2,kd Zaria,bKXKmhOnPpK,Datim
+NGA,NGA_3_639,2,kn Ajingi,qScxHQJRXT2,Datim
+NGA,NGA_3_640,2,kn Albasu,WPpXY9AvyHg,Datim
+NGA,NGA_3_641,2,kn Bagwai,LQ07jvCf7L7,Datim
+NGA,NGA_3_642,2,kn Bebeji,TRlSNplN5Jg,Datim
+NGA,NGA_3_643,2,kn Bichi,Ndb1V96smxI,Datim
+NGA,NGA_3_644,2,kn Bunkure,e3D11bIhjMM,Datim
+NGA,NGA_3_645,2,kn Dala,i39m25bqb6I,Datim
+NGA,NGA_3_646,2,kn Dambatta,qJxw5bx87ef,Datim
+NGA,NGA_3_647,2,kn Dawakin Kudu,QuSjorQMTIB,Datim
+NGA,NGA_3_648,2,kn Dawakin Tofa,lxaYSoNWlnj,Datim
+NGA,NGA_3_649,2,kn Doguwa,bFp5n4wtPuS,Datim
+NGA,NGA_3_650,2,kn Fagge,WdewJdiYf0U,Datim
+NGA,NGA_3_651,2,kn Gabasawa,mHXT2rANtG6,Datim
+NGA,NGA_3_652,2,kn Garko,eszzmm9ElDQ,Datim
+NGA,NGA_3_653,2,kn Garum Mallam,ObXsOXMfFKl,Datim
+NGA,NGA_3_654,2,kn Gaya,ytb5bLhe4XQ,Datim
+NGA,NGA_3_655,2,kn Gezawa,pK6V4j3qOzW,Datim
+NGA,NGA_3_656,2,kn Gwale,jdlsTHZtuOE,Datim
+NGA,NGA_3_657,2,kn Gwarzo,M7JgWP2RFy2,Datim
+NGA,NGA_3_658,2,kn Kabo,rHIUe15ZV19,Datim
+NGA,NGA_3_659,2,kn Kano Municipal,sD1YPwvBkpv,Datim
+NGA,NGA_3_660,2,kn Karaye,PHt2f7SlMsk,Datim
+NGA,NGA_3_661,2,kn Kibiya,jWZPRJUEiFJ,Datim
+NGA,NGA_3_662,2,kn Kiru,npR1mmZD3MR,Datim
+NGA,NGA_3_663,2,kn Kumbotso,pdPUuTMC9Y9,Datim
+NGA,NGA_3_664,2,kn Kunchi,I2rGvpGOy25,Datim
+NGA,NGA_3_665,2,kn Kura,IkjqwHIYoJZ,Datim
+NGA,NGA_3_666,2,kn Madobi,itgq4MoNDVI,Datim
+NGA,NGA_3_667,2,kn Makoda,RMEbH3T3o0l,Datim
+NGA,NGA_3_668,2,kn Minjibir,o1OVapsXXrH,Datim
+NGA,NGA_3_669,2,kn Nassarawa,u813QHCYeuq,Datim
+NGA,NGA_3_670,2,kn Rano,cH8gyiz4Kyy,Datim
+NGA,NGA_3_671,2,kn Rimin Gado,gXzbTBd3j3Y,Datim
+NGA,NGA_3_672,2,kn Rogo,QH3Meqh4VJQ,Datim
+NGA,NGA_3_673,2,kn Shanono,M6afPJHQb72,Datim
+NGA,NGA_3_674,2,kn Sumaila,PEMshgXYnEs,Datim
+NGA,NGA_3_675,2,kn Takai,wOuof2XtCzo,Datim
+NGA,NGA_3_676,2,kn Tarauni,bEYcwtSvhR6,Datim
+NGA,NGA_3_677,2,kn Tofa,hAZCYOuJZBb,Datim
+NGA,NGA_3_678,2,kn Tsanyawa,uzq1THfmxvH,Datim
+NGA,NGA_3_679,2,kn Tudun Wada,zsRdNJpmNeE,Datim
+NGA,NGA_3_680,2,kn Ungogo,ULLI5OowYdm,Datim
+NGA,NGA_3_681,2,kn Warawa,DHXag0phdG0,Datim
+NGA,NGA_3_682,2,kn Wudil,vDDwD4zbB1o,Datim
+NGA,NGA_3_683,2,kt Bakori,E7bvNe8kEF0,Datim
+NGA,NGA_3_684,2,kt Batagarawa,dURSfL69IMw,Datim
+NGA,NGA_3_685,2,kt Batsari,duzPZ6Bukjf,Datim
+NGA,NGA_3_686,2,kt Baure,eDBqlezxH0a,Datim
+NGA,NGA_3_687,2,kt Bindawa,dutkWvnYS9i,Datim
+NGA,NGA_3_688,2,kt Charanchi,aoi69JaAW3P,Datim
+NGA,NGA_3_689,2,kt Dan Musa,H3TXFP8cHtr,Datim
+NGA,NGA_3_690,2,kt Dandume,O3zSmYC7dRp,Datim
+NGA,NGA_3_691,2,kt Danja,GbrZHS1OjjD,Datim
+NGA,NGA_3_692,2,kt Daura,QGI0cnzjZIP,Datim
+NGA,NGA_3_693,2,kt Dutsi,oZK7wQ8AS05,Datim
+NGA,NGA_3_694,2,kt Dutsin-Ma,PwTVkZPuTDA,Datim
+NGA,NGA_3_695,2,kt Faskari,AUZAz1oqQ7F,Datim
+NGA,NGA_3_696,2,kt Funtua,uYJi1Sc1OlZ,Datim
+NGA,NGA_3_697,2,kt Ingawa,clxrlIljUkQ,Datim
+NGA,NGA_3_698,2,kt Jibia,tiBbmPwovlH,Datim
+NGA,NGA_3_699,2,kt Kafur,UbrsWhXj70k,Datim
+NGA,NGA_3_700,2,kt Kaita,Mq9Y1QEWTTf,Datim
+NGA,NGA_3_701,2,kt Kankara,Oc78WrIzv4O,Datim
+NGA,NGA_3_702,2,kt Kankia,WeHFx8CmMqV,Datim
+NGA,NGA_3_703,2,kt Katsina,XDgdj9Pdsiq,Datim
+NGA,NGA_3_704,2,kt Kurfi,Lge2fmokEKv,Datim
+NGA,NGA_3_705,2,kt Kusada,ACvgKttmG58,Datim
+NGA,NGA_3_706,2,kt Mai'Adua,jHgdqXImWVH,Datim
+NGA,NGA_3_707,2,kt Malumfashi,b3NvwiCilSH,Datim
+NGA,NGA_3_708,2,kt Mani,AmRHP7t5r7s,Datim
+NGA,NGA_3_709,2,kt Mashi,CxUtCqUjMHr,Datim
+NGA,NGA_3_710,2,kt Matazu,gp5qHsPu52e,Datim
+NGA,NGA_3_711,2,kt Musawa,A8BaTswwST4,Datim
+NGA,NGA_3_712,2,kt Rimi,KX6WxCBO8sd,Datim
+NGA,NGA_3_713,2,kt Sabuwa,P5LcMSudkwP,Datim
+NGA,NGA_3_714,2,kt Safana,smhArjDWLuv,Datim
+NGA,NGA_3_715,2,kt Sandamu,F8RVAawTj3q,Datim
+NGA,NGA_3_716,2,kt Zango,cSqqluzYmPt,Datim
+NGA,NGA_3_717,2,ke Aleiro,BZ0DpSTBjIr,Datim
+NGA,NGA_3_718,2,ke Arewa-Dandi,cyhHIcJZjHi,Datim
+NGA,NGA_3_719,2,ke Argungu,bhS2NNwWzkb,Datim
+NGA,NGA_3_720,2,ke Augie,HQHZPaPqaMC,Datim
+NGA,NGA_3_721,2,ke Bagudo,Zelc7Ij8pQq,Datim
+NGA,NGA_3_722,2,ke Birnin Kebbi,yY15GJ9MSfL,Datim
+NGA,NGA_3_723,2,ke Bunza,FNMrAWtZWQ4,Datim
+NGA,NGA_3_724,2,ke Dandi,nnmWMcj4mCA,Datim
+NGA,NGA_3_725,2,ke Fakai,PK80KRcgF8c,Datim
+NGA,NGA_3_726,2,ke Gwandu,Jp7qmiWQpke,Datim
+NGA,NGA_3_727,2,ke Jega,g0DDonzdUA9,Datim
+NGA,NGA_3_728,2,ke Kalgo,A6bbzR080Zg,Datim
+NGA,NGA_3_729,2,ke Koko Besse,XyOr2mBaTzz,Datim
+NGA,NGA_3_730,2,ke Maiyama,dHqBHka5u3Y,Datim
+NGA,NGA_3_731,2,ke Ngaski,GoyPAqsi8hE,Datim
+NGA,NGA_3_732,2,ke Sakaba,udN1v10a2tK,Datim
+NGA,NGA_3_733,2,ke Shanga,oy7nF3sX05H,Datim
+NGA,NGA_3_734,2,ke Suru,NpxFn7xBbot,Datim
+NGA,NGA_3_735,2,ke Wasagu-Danko,jcUO5qAgLQd,Datim
+NGA,NGA_3_736,2,ke Yauri,R81UH1R1lTl,Datim
+NGA,NGA_3_737,2,ke Zuru ,O4lKV4nabSL,Datim
+NGA,NGA_3_738,2,so Binji,JAbWcsjaThI,Datim
+NGA,NGA_3_739,2,so Bodinga,mU4xLJkmJ1n,Datim
+NGA,NGA_3_740,2,so Dange-shnsi,EFiZIMdk7CK,Datim
+NGA,NGA_3_741,2,so Gada,OOozvPmus5h,Datim
+NGA,NGA_3_742,2,so Goronyo,QW6ipnJ667p,Datim
+NGA,NGA_3_743,2,so Gudu,NPq76gDFefd,Datim
+NGA,NGA_3_744,2,so Gwadabawa,RQ3XEd1s9pT,Datim
+NGA,NGA_3_745,2,so Illela,Ot1rO9XQIUx,Datim
+NGA,NGA_3_746,2,so Isa,VfF0gugE9nG,Datim
+NGA,NGA_3_747,2,so Kebbe,dlGASWuvQ3Y,Datim
+NGA,NGA_3_748,2,so Kware,kaz5efadUMl,Datim
+NGA,NGA_3_749,2,so Rabah,L00lRsjGRNa,Datim
+NGA,NGA_3_750,2,so Sabo Birni,EcW5sxrn7Kx,Datim
+NGA,NGA_3_751,2,so Shagari,UoqWfOPE4kb,Datim
+NGA,NGA_3_752,2,so Silame,hBETnzuLuGS,Datim
+NGA,NGA_3_753,2,so Sokoto North,c4XamXWAJm5,Datim
+NGA,NGA_3_754,2,so Sokoto South,wwWXkcdr5x5,Datim
+NGA,NGA_3_755,2,so Tambuwal,N0H1zZzTWGq,Datim
+NGA,NGA_3_756,2,so Tangaza,IXHQSYJ6zKL,Datim
+NGA,NGA_3_757,2,so Tureta,loFfnXvTMpH,Datim
+NGA,NGA_3_758,2,so Wamako,NiS8nFDiIJ6,Datim
+NGA,NGA_3_759,2,so Wurno,DylD4aLFi5r,Datim
+NGA,NGA_3_760,2,so Yabo,nLtWhDsKEsm,Datim
+NGA,NGA_3_761,2,za Anka,yPpyV8PRdT5,Datim
+NGA,NGA_3_762,2,za Bakura,uW0EwEqDoz3,Datim
+NGA,NGA_3_763,2,za Birnin Magaji,xDEHgP4W3sw,Datim
+NGA,NGA_3_764,2,za Bukkuyum,nMO6MfPJMqO,Datim
+NGA,NGA_3_765,2,za Bungudu,WQbcocy1CDP,Datim
+NGA,NGA_3_766,2,za Gummi,P36E1ppaM9q,Datim
+NGA,NGA_3_767,2,za Gusau,R83C21BuCL5,Datim
+NGA,NGA_3_768,2,za Kaura Namoda,rZBbOn6W1wi,Datim
+NGA,NGA_3_769,2,za Maradun,tO5pER5YEmw,Datim
+NGA,NGA_3_770,2,za Maru,XZdFyxcLSxk,Datim
+NGA,NGA_3_771,2,za Shinkafi,AKMBCyOdsMJ,Datim
+NGA,NGA_3_772,2,za Talata Mafara,JncTzTWoM1A,Datim
+NGA,NGA_3_773,2,za Tsafe,t07Wu4dK2Se,Datim
+NGA,NGA_3_774,2,za Zurmi ,rktJXq6SLZh,Datim
+RWA,RWA,0,Rwanda,XtxUYCsDWrR,Datim
 RWA,RWA_1_1,1,Kigali City,tuBMCugGRaW,Datim
 RWA,RWA_1_2,1,South,Bx71ekAkh9C,Datim
 RWA,RWA_1_3,1,West,aoTnpGNer6B,Datim
 RWA,RWA_1_4,1,North,ywrW3s6hdK0,Datim
 RWA,RWA_1_5,1,East,h420jGWIrGG,Datim
+RWA,RWA_2_11,2,Nyarugenge,jTVZDjqTZMd,Datim
+RWA,RWA_2_12,2,Gasabo,DNl04xA5EHw,Datim
+RWA,RWA_2_13,2,Kicukiro,GFHwILhoJZm,Datim
+RWA,RWA_2_21,2,Nyanza,t1yFBKpeJ3g,Datim
+RWA,RWA_2_22,2,Gisagara,N7QewyoSyOm,Datim
+RWA,RWA_2_23,2,Nyaruguru,MM9eEsWLFws,Datim
+RWA,RWA_2_24,2,Huye,jSmIAmJPziA,Datim
+RWA,RWA_2_25,2,Nyamagabe,PIa2bvV6I4Z,Datim
+RWA,RWA_2_26,2,Ruhango,PFs18sbpNbl,Datim
+RWA,RWA_2_27,2,Muhanga,JxLYPWKiJKM,Datim
+RWA,RWA_2_28,2,Kamonyi,iDEedbBwnh8,Datim
+RWA,RWA_2_31,2,Karongi,LwFQculiO5N,Datim
+RWA,RWA_2_32,2,Rutsiro,Stih03rHJbz,Datim
+RWA,RWA_2_33,2,Rubavu,bur2q3ac5Ai,Datim
+RWA,RWA_2_34,2,Nyabihu,NqejNYmb0MV,Datim
+RWA,RWA_2_35,2,Ngororero,wMb9hDBe7wL,Datim
+RWA,RWA_2_36,2,Rusizi,LkRSrPeoBg4,Datim
+RWA,RWA_2_37,2,Nyamasheke,ADKjeDl9Ehr,Datim
+RWA,RWA_2_41,2,Rulindo,JJkULcSPd8f,Datim
+RWA,RWA_2_42,2,Gakenke,mI9FRITv8sx,Datim
+RWA,RWA_2_43,2,Musanze,GnnUDzkZG5J,Datim
+RWA,RWA_2_44,2,Burera,Gp3wiTjSpXt,Datim
+RWA,RWA_2_45,2,Gicumbi,yXSoIp3pm8h,Datim
+RWA,RWA_2_51,2,Rwamagana,LAqkN1BOIZt,Datim
+RWA,RWA_2_52,2,Nyagatare,Y05lBO2eOvv,Datim
+RWA,RWA_2_53,2,Gatsibo,t322Y1Ega8t,Datim
+RWA,RWA_2_54,2,Kayonza,FvIvxTjfIYv,Datim
+RWA,RWA_2_55,2,Kirehe,QLjf0UY4SXv,Datim
+RWA,RWA_2_56,2,Ngoma,d4A13IVOEAA,Datim
+RWA,RWA_2_57,2,Bugesera,x34m8BI6gR6,Datim
+SEN,SEN,4,Senegal,N5GhQWVpVFs,Datim
+SEN,SEN_1_01dq,5,Dakar,k8ehaCWrGKk,Datim
+SEN,SEN_1_05es,5,Kaolack,E6hJSi00Opm,Datim
+SEN,SEN_1_07ko,5,Kolda,qR4BO4zkFrI,Datim
+SEN,SEN_1_10eh,5,Saint-Louis,WDwPAH57opV,Datim
+SEN,SEN_1_11sl,5,Sedhiou,rLqGxiPN7pE,Datim
+SEN,SEN_1_13gi,5,Thi�s,pgTxj4cYQ68,Datim
+SEN,SEN_1_14dx,5,Ziguinchor,MfZZmUhDlxq,Datim
+SLE,SLE,4,Sierra Leone,ODOymOOWyl0,Datim
+SLE,SLE_1_3dg,5,Northern Province,C9rocsaPfRF,Datim
+SLE,SLE_1_5pa,5,Western Area,Nhp6D9iqWfN,Datim
+SLE,SLE_1_1rl,5,Eastern Province,V7vjLM38Snx,Datim
+SLE,SLE_1_4zx,5,Southern Province,XBACQmleShG,Datim
+SLE,SLE_1_2zy,5,North Western,,Datim
+SLE,SLE_2_2vj,6,Kenema,GBV7CsmDD37,Datim
+SLE,SLE_2_3mi,6,Kono,lG6CEZEBBz8,Datim
+SLE,SLE_2_11ah,6,Bo District,iQP6sMIxs34,Datim
+SLE,SLE_2_7yg,6,Bombali,ZNM46EmjhIW,Datim
+SLE,SLE_2_4xr,6,Kambia,QaqUu9vgorH,Datim
+SLE,SLE_2_6st,6,Port Loko,AeZKV2y4FmE,Datim
+SLE,SLE_2_15pb,6,Western Area Rural,sNMoVbgC08a,Datim
+SLE,SLE_2_16cp,6,Western Area Urban,I2wk4Eupd1p,Datim
+SSD,SSD_39,2,Abiemnhom County,KpqchxZh5om,Datim
+SSD,SSD_61,2,Abyei Area,asS6qKTNGdz,Datim
+SSD,SSD_15,2,Akobo County,kD5Taovu6hV,Datim
+SSD,SSD_48,2,Akok County,x3R8hRe7Syk,Datim
+SSD,SSD_34,2,Aweil Central County,PXBmCDrzTVD,Datim
+SSD,SSD_35,2,Aweil East County,lyUSdwzGOOn,Datim
+SSD,SSD_36,2,Aweil North County,kWI3KPnSSow,Datim
+SSD,SSD_37,2,Aweil South County,Wfh0AVZmweH,Datim
+SSD,SSD_38,2,Aweil West County,yzo4zzmIqnM,Datim
+SSD,SSD_26,2,Awerial County,adRdxZzhbo6,Datim
+SSD,SSD_16,2,Ayod County,bZZIRdmpvzl,Datim
+SSD,SSD_49,2,Baliet County,M7BDwkygi3N,Datim
+SSD,SSD_7,2,Budi County,VinRZs6sjJC,Datim
+SSD,SSD_27,2,Cueibet County,H1glVXjRnq2,Datim
+SSD,SSD_17,2,Duk County,fTm0225fPSI,Datim
+SSD,SSD_71,2,Ezo County,ajEbxwHWO67,Datim
+SSD,SSD_50,2,Fashoda County,D2Y1fZWjpnE,Datim
+SSD,SSD_62,2,Gogorial East County,wXvymgZL74L,Datim
+SSD,SSD_63,2,Gogorial West County,bXPcszbDNQl,Datim
+SSD,SSD_40,2,Guit County,jroL3hiQ0EZ,Datim
+SSD,SSD_72,2,Ibba County,gnFRCSeNZWd,Datim
+SSD,SSD_8,2,Ikotos County,inoumocfPzI,Datim
+SSD,SSD_1,2,Juba County,LkPG7laQW7D,Datim
+SSD,SSD_68,2,Jur River County,fDOVpkhiy36,Datim
+SSD,SSD_2,2,KajoKeji County,pS6gZ9UzcCh,Datim
+SSD,SSD_9,2,Kapoeta East County,MRjKULkQGpJ,Datim
+SSD,SSD_10,2,Kapoeta North County,Dot5BC25vGE,Datim
+SSD,SSD_11,2,Kapoeta South County,KoIhkstxZvm,Datim
+SSD,SSD_18,2,Khorflus County,DjPJvo6RGcf,Datim
+SSD,SSD_41,2,Koch County,IGD83r0LTFw,Datim
+SSD,SSD_3,2,Lainya County,eCA3mk4eZwR,Datim
+SSD,SSD_42,2,Leer County,QHZWRMZbmbh,Datim
+SSD,SSD_51,2,Longechuk County,n0FAHuR77LM,Datim
+SSD,SSD_12,2,Lopa/Lafon County,FYUOhjfUrmi,Datim
+SSD,SSD_52,2,Maban County,yqUtGXIjI3D,Datim
+SSD,SSD_13,2,Magwi County,AlOhkfswoxd,Datim
+SSD,SSD_53,2,Maiwut County,XWzXu5BUhSB,Datim
+SSD,SSD_54,2,Malakal County,atw5vNMFioR,Datim
+SSD,SSD_55,2,Manyo County,MAhDT07Z48L,Datim
+SSD,SSD_73,2,Maridi County,tgHdEExgYbV,Datim
+SSD,SSD_43,2,Mayendit County,jmLWq9iBHeL,Datim
+SSD,SSD_44,2,Mayom County,mnN9e4CYVOT,Datim
+SSD,SSD_56,2,Melut County,gIr0XOjgftp,Datim
+SSD,SSD_4,2,Morobo County,w24vxDsKLb4,Datim
+SSD,SSD_74,2,Mundri East County,WBcewaQuWIK,Datim
+SSD,SSD_75,2,Mundri West County,irNiBftx83p,Datim
+SSD,SSD_76,2,Mvolo County,IU6nfWD1aTy,Datim
+SSD,SSD_77,2,Nagero County,uLhi7cdmfWA,Datim
+SSD,SSD_57,2,Nasir County,iEpM5Avy9ZK,Datim
+SSD,SSD_19,2,Nyirol County,ZHFKJsMPZVi,Datim
+SSD,SSD_78,2,Nzara County,Imiv5NhvFyj,Datim
+SSD,SSD_20,2,Old Fangak County,SwpbCcZVH20,Datim
+SSD,SSD_45,2,Panyijar County,DGiPR0gbRdc,Datim
+SSD,SSD_58,2,Panyikang County,v3RddolFXEJ,Datim
+SSD,SSD_46,2,Pariang County,qwv9YqyyQOp,Datim
+SSD,SSD_21,2,Pibor County,ftyaOT8OyxI,Datim
+SSD,SSD_22,2,Pocholla County,wCOgOZTTNup,Datim
+SSD,SSD_69,2,Raja County,tkrSbsxwMOE,Datim
+SSD,SSD_59,2,Renk County,um9Gwcmuy4r,Datim
+SSD,SSD_47,2,Rubkona County,x7b9JfWWuF6,Datim
+SSD,SSD_28,2,Rumbek Centre County,h4zbL6Xn2Hv,Datim
+SSD,SSD_29,2,Rumbek East County,ylsCHquNG6v,Datim
+SSD,SSD_30,2,Rumbek North County,HQTZB2b3mz2,Datim
+SSD,SSD_23,2,South Bor County,X4a9cVukNWE,Datim
+SSD,SSD_79,2,Tambura County,j65zifK0OX3,Datim
+SSD,SSD_5,2,Terekeka County,Eh5wo7Ai5Gi,Datim
+SSD,SSD_64,2,Tonj East County,LPzoiYctXli,Datim
+SSD,SSD_65,2,Tonj North County,Uakzo4ezfDB,Datim
+SSD,SSD_66,2,Tonj South County,x2BWrk9gLX5,Datim
+SSD,SSD_14,2,Torit County,P4PW99wpsn1,Datim
+SSD,SSD_67,2,Twic County,xlbin1zVtRm,Datim
+SSD,SSD_24,2,Twic East County,GnzoMbgSC0E,Datim
+SSD,SSD_60,2,Ulang County,Rk6BrmOQ8iU,Datim
+SSD,SSD_70,2,Wau County,QDSfxRXtbr1,Datim
+SSD,SSD_31,2,Wulu County,n1bnpEXQuaZ,Datim
+SSD,SSD_25,2,Wuror County,i11Ndz059Ov,Datim
+SSD,SSD_80,2,Yambio County,TSKONml3tdl,Datim
+SSD,SSD_6,2,Yei County,CSkFLNHPX4y,Datim
+SSD,SSD_32,2,Yirol East County,ggmBKwXPaC6,Datim
+SSD,SSD_33,2,Yirol West County,bQt6U1hAycX,Datim
+SWZ,SWZ,0,Eswatini,V0qMZH29CtN,Datim
 SWZ,SWZ_1_1,1,Hhohho,qYzGABaWyCf,Datim
 SWZ,SWZ_1_2,1,Lubombo,nxGb6sd7p7D,Datim
 SWZ,SWZ_1_3,1,Manzini,Z3IDOaDDkwG,Datim
 SWZ,SWZ_1_4,1,Shiselweni,qRppsyyTP4A,Datim
+SWZ,SWZ_2_01,2,Hhukwini,BsnYUeC2kCe,Datim
+SWZ,SWZ_2_02,2,Lobamba,ciLrwlyi1dv,Datim
+SWZ,SWZ_2_03,2,Madlangampisi,b5weT1q4MfP,Datim
+SWZ,SWZ_2_04,2,Maphalaleni,CNDSgcmTH4Q,Datim
+SWZ,SWZ_2_05,2,Mayiwane,OhgScho6vYA,Datim
+SWZ,SWZ_2_06,2,Mbabane East,vD9ROI7sqBM,Datim
+SWZ,SWZ_2_07,2,Mbabane West,S7lV81CEWVs,Datim
+SWZ,SWZ_2_08,2,Mhlangatane,aD6LNvdiMuV,Datim
+SWZ,SWZ_2_09,2,Motshane,rXyxyoAgbIR,Datim
+SWZ,SWZ_2_10,2,Ndzingeni,Hk6eLAQeGnM,Datim
+SWZ,SWZ_2_11,2,Nkhaba,S3gYw3DaEYU,Datim
+SWZ,SWZ_2_12,2,Ntfonjeni,fYsR7D2x5lM,Datim
+SWZ,SWZ_2_13,2,Piggs Peak,aCPtdZU2C7R,Datim
+SWZ,SWZ_2_14,2,Timphisini,B4BHK4Zs2AZ,Datim
+SWZ,SWZ_2_15,2,Dvokodvweni,lXwHa7SD4QL,Datim
+SWZ,SWZ_2_16,2,Hlane,uJZLZCxaiCv,Datim
+SWZ,SWZ_2_17,2,Lomahasha,zsWF9xspgml,Datim
+SWZ,SWZ_2_18,2,Lubuli,qEZhQDqKZi7,Datim
+SWZ,SWZ_2_19,2,Lugongolweni,uNOgcI63aoU,Datim
+SWZ,SWZ_2_20,2,Matsanjeni North,hrmFtjJCnrh,Datim
+SWZ,SWZ_2_21,2,Mhlume,UuDvnvLz0H9,Datim
+SWZ,SWZ_2_22,2,Mpolonjeni,OBnYjEViQox,Datim
+SWZ,SWZ_2_23,2,Nkilongo,Z6EmLU1vAmX,Datim
+SWZ,SWZ_2_24,2,Siphofaneni,LIh273fHrkD,Datim
+SWZ,SWZ_2_25,2,Sithobela,GPQ5dOXSJfN,Datim
+SWZ,SWZ_2_26,2,Ekukhanyeni,xeiMMTy3SY4,Datim
+SWZ,SWZ_2_27,2,Kwaluseni,DJ30KUNp7Jx,Datim
+SWZ,SWZ_2_28,2,La-Mgabhi,Yl3DJJIPERH,Datim
+SWZ,SWZ_2_29,2,Lobamba Lomdzala,f3zKfAOJsML,Datim
+SWZ,SWZ_2_30,2,Ludzeludze,JDURHImj6NG,Datim
+SWZ,SWZ_2_31,2,Mafutseni,ACzdZfcPxje,Datim
+SWZ,SWZ_2_32,2,Mahlangatsha,PK6GbgkXVE2,Datim
+SWZ,SWZ_2_33,2,Mangcongco,okBWKV156wa,Datim
+SWZ,SWZ_2_34,2,Manzini North,uGmlcjolWJQ,Datim
+SWZ,SWZ_2_35,2,Manzini South,i5qTJgJrmMa,Datim
+SWZ,SWZ_2_36,2,Mhlambanyatsi,YGw2DwrpAeA,Datim
+SWZ,SWZ_2_37,2,Mkhiweni,OWTpaz9X1RX,Datim
+SWZ,SWZ_2_38,2,Mtfongwaneni,jtVZLAnFKFD,Datim
+SWZ,SWZ_2_39,2,Ngwempisi,xWSoWDJ2evF,Datim
+SWZ,SWZ_2_40,2,Nhlambeni,vqtG7OAEDWt,Datim
+SWZ,SWZ_2_41,2,Ntontozi,L6Iqk7wmaBa,Datim
+SWZ,SWZ_2_42,2,Gege,ijnBguRRO3K,Datim
+SWZ,SWZ_2_43,2,Hosea,GprWfFROQSq,Datim
+SWZ,SWZ_2_44,2,Kubuta,kRxaSQeQ8A1,Datim
+SWZ,SWZ_2_45,2,Maseyisini,WCiZxCsRf8I,Datim
+SWZ,SWZ_2_46,2,Matsanjeni,hyBeaZdYL7f,Datim
+SWZ,SWZ_2_47,2,Mtsambama,xWi9gh8oZKO,Datim
+SWZ,SWZ_2_48,2,Ngudzeni,GTMGd9gNu7k,Datim
+SWZ,SWZ_2_49,2,Nkwene,MZatYJirZun,Datim
+SWZ,SWZ_2_50,2,Sandleni,sPyITBca9iC,Datim
+SWZ,SWZ_2_51,2,Shiselweni 1,WgBe5A1iCY5,Datim
+SWZ,SWZ_2_52,2,Shiselweni 2,EGlefU013zq,Datim
+SWZ,SWZ_2_53,2,Sigwe,zMN61WfsIic,Datim
+SWZ,SWZ_2_54,2,Somntongo,g48XD8px8NN,Datim
+SWZ,SWZ_2_55,2,Zombodze,fEVhqXYvT54,Datim
+TGO,TGO,0,Togo,EIUtrKbw8PQ,Datim
 TGO,TGO_1_1,1,Central,ueF1XbqtAji,Datim
 TGO,TGO_1_2,1,Kara,bG0tPuIiB3V,Datim
 TGO,TGO_1_3,1,LOME COMMUNE,TNwwQ7F2jjz,Datim
 TGO,TGO_1_4,1,MARITIME,wiqOd9chmFE,Datim
 TGO,TGO_1_5,1,PLATEAUX,LIAbgVL6Vet,Datim
 TGO,TGO_1_6,1,Savanes,eWPNSLTHCsx,Datim
+TZA,TZA,0,Tanzania,mdXu6iCbn2G,Datim
+TZA,TZA_3_01zq,1,Dodoma,bmRqeKE3Srw,Datim
+TZA,TZA_3_02sc,1,Arusha,SUd0Latzp0z,Datim
+TZA,TZA_3_03po,1,Kilimanjaro,r1X2R3xCahF,Datim
+TZA,TZA_3_04zs,1,Tanga,Y1o37mwZv9D,Datim
+TZA,TZA_3_05sv,1,Morogoro,wXiGo7bLJfZ,Datim
+TZA,TZA_3_06to,1,Pwani,i9EWbwJTLpl,Datim
+TZA,TZA_3_07io,1,Dar es Salaam,rFkiQ8zxMya,Datim
+TZA,TZA_3_08cj,1,Lindi,kLhRnbNgmQo,Datim
+TZA,TZA_3_09mr,1,Mtwara,Goel5yB7uSx,Datim
+TZA,TZA_3_10wc,1,Ruvuma,T2bw9bxntl8,Datim
+TZA,TZA_3_11zv,1,Iringa,umVF3kzCQOj,Datim
+TZA,TZA_3_12hu,1,Mbeya,gscKZEtokgV,Datim
+TZA,TZA_3_13qs,1,Singida,gqw9hkhwrIe,Datim
+TZA,TZA_3_14vc,1,Tabora,sDCgdgl39zn,Datim
+TZA,TZA_3_15an,1,Rukwa,S0aB3rpTY1t,Datim
+TZA,TZA_3_16xo,1,Kigoma,cnqQSriMwp8,Datim
+TZA,TZA_3_17us,1,Shinyanga,mpJGV1W05dg,Datim
+TZA,TZA_3_18yl,1,Kagera,v49jxVQO1c2,Datim
+TZA,TZA_3_19se,1,Mwanza,Bb8nvv4bXgX,Datim
+TZA,TZA_3_20ps,1,Mara,agaHu16ZNX0,Datim
+TZA,TZA_3_21pw,1,Manyara,JVO85UvyzFx,Datim
+TZA,TZA_3_22bx,1,Njombe,c5WrtS2Uejj,Datim
+TZA,TZA_3_23ry,1,Katavi,QSPGnwVWfKl,Datim
+TZA,TZA_3_24if,1,Simiyu,fEexAr9qoty,Datim
+TZA,TZA_3_25qf,1,Geita,owcgF3FNBz9,Datim
+TZA,TZA_3_26qq,1,Songwe,ZDKmiYKQpq7,Datim
+TZA,TZA_3_51vs,1,Kaskazini Unguja,z18WXalvHis,Datim
+TZA,TZA_3_52qn,1,Kusini Unguja,AQseEBNFuq7,Datim
+TZA,TZA_3_53ws,1,Mjini Magharibi,UjIWyffxj8z,Datim
+TZA,TZA_3_54qt,1,Kaskazini Pemba,WPIvRWeSgQI,Datim
+TZA,TZA_3_55dv,1,Kusini Pemba,WCjxS2szrtn,Datim
 TZA,TZA_4_001yc,2,Bahi DC,dgdbOACMjkJ,Datim
 TZA,TZA_4_002dk,2,Chamwino DC,YLCO37nNRDr,Datim
 TZA,TZA_4_003hu,2,Chemba DC,y9AY8FOTj8O,Datim
@@ -1417,142 +3070,173 @@ TZA,TZA_4_192if,2,Micheweni,suZa3dTHksq,Datim
 TZA,TZA_4_193kt,2,Wete,CtMgY8VZogi,Datim
 TZA,TZA_4_194of,2,Chake Chake,Iy2ohDSmZYT,Datim
 TZA,TZA_4_195fv,2,Mkoani,vafMiWl7iKa,Datim
-UGA,UGA_3_001,2,Abim District,PttNphGaVik,Datim
-UGA,UGA_3_002,2,Adjumani District,wEMidDdxt0Y,Datim
-UGA,UGA_3_003,2,Agago District,GcYxWQadLDB,Datim
-UGA,UGA_3_004,2,Alebtong District,D6upnSGqMuH,Datim
-UGA,UGA_3_005,2,Amolatar District,goAaVw5euIo,Datim
-UGA,UGA_3_006,2,Amudat District,KPUVZnaLTDR,Datim
-UGA,UGA_3_007,2,Amuria District,kyxzmUPEuDx,Datim
-UGA,UGA_3_008,2,Amuru District,LehfgDTxQgE,Datim
-UGA,UGA_3_009,2,Apac District,HDDanYisp0p,Datim
-UGA,UGA_3_011,2,Budaka District,tfsNJ75IDKn,Datim
-UGA,UGA_3_012,2,Bududa District,oO3AikVUwsa,Datim
-UGA,UGA_3_013,2,Bugiri District,hdHzOX7oN7H,Datim
-UGA,UGA_3_014,2,Bugweri District,bNc4hKtrE0e,Datim
-UGA,UGA_3_015,2,Buhweju District,CRf8LcPIIol,Datim
-UGA,UGA_3_016,2,Buikwe District,lR8aTjNz6XY,Datim
-UGA,UGA_3_017,2,Bukedea District,fpDeHp6TgVr,Datim
-UGA,UGA_3_018,2,Bukomansimbi District,ZqIdMKJYNyc,Datim
-UGA,UGA_3_019,2,Bukwo District,Rdt1TyOWaxM,Datim
-UGA,UGA_3_020,2,Bulambuli District,pfr8iz9jJTi,Datim
-UGA,UGA_3_021,2,Buliisa District,C2tMKsD3c9Y,Datim
-UGA,UGA_3_022,2,Bundibugyo District,F5GLJu0abYn,Datim
-UGA,UGA_3_023,2,Bunyangabu District,MfDcA52W2Mq,Datim
-UGA,UGA_3_024,2,Bushenyi District,cb9SBT9Dkul,Datim
-UGA,UGA_3_025,2,Busia District,cPDahRsvkf0,Datim
-UGA,UGA_3_026,2,Butaleja District,x7jcXKDYjwv,Datim
-UGA,UGA_3_027,2,Butambala District,Quu8PXwIv8m,Datim
-UGA,UGA_3_028,2,Butebo District,WRgQri3NDOl,Datim
-UGA,UGA_3_029,2,Buvuma District,FsHHbzluiJb,Datim
-UGA,UGA_3_030,2,Buyende District,cv1b58B0y2U,Datim
-UGA,UGA_3_031,2,Dokolo District,G7b1qt8AWXX,Datim
-UGA,UGA_3_032,2,Gomba District,I9I7WFHjAte,Datim
-UGA,UGA_3_033,2,Gulu District,tMliWxidVmG,Datim
-UGA,UGA_3_034,2,Hoima District,aBfifMwaD01,Datim
-UGA,UGA_3_035,2,Ibanda District,PNg9TjYhMHF,Datim
-UGA,UGA_3_036,2,Iganga District,tT1gKtPhvCL,Datim
-UGA,UGA_3_037,2,Isingiro District,R82ZOAg1BN1,Datim
-UGA,UGA_3_038,2,Jinja District,h2wCziavPlv,Datim
-UGA,UGA_3_039,2,Kaabong District,ZnMLQFOFj1H,Datim
-UGA,UGA_3_040,2,Kabale District,lEMyFfXc5fI,Datim
-UGA,UGA_3_041,2,Kabarole District,ONYuNfx7Zx8,Datim
-UGA,UGA_3_042,2,Kaberamaido District,hcORKLsjQcP,Datim
-UGA,UGA_3_043,2,Kagadi District,QIqtoDj9tee,Datim
-UGA,UGA_3_044,2,Kakumiro District,gwAugxS9KhZ,Datim
-UGA,UGA_3_045,2,Kalaki District,pG8eoCppGvF,Datim
-UGA,UGA_3_046,2,Kalangala District,bntHIKmdtv7,Datim
-UGA,UGA_3_047,2,Kaliro District,btv31DCkh3k,Datim
-UGA,UGA_3_048,2,Kalungu District,NnAkN5yfxOs,Datim
-UGA,UGA_3_049,2,Kampala District,VZF9UFmohwY,Datim
-UGA,UGA_3_050,2,Kamuli District,h6FBV6CyGKR,Datim
-UGA,UGA_3_051,2,Kamwenge District,oSleoOgcMmJ,Datim
-UGA,UGA_3_052,2,Kanungu District,BZK6tOqdyJK,Datim
-UGA,UGA_3_053,2,Kapchorwa District,iWgkJm78Jes,Datim
-UGA,UGA_3_054,2,Kapelebyong District,OiT27konvR0,Datim
-UGA,UGA_3_055,2,Karenga District,Sb5HzC36Kkm,Datim
-UGA,UGA_3_056,2,Kasese District,dgzHXyQWBIu,Datim
-UGA,UGA_3_057,2,Kassanda District,m9F275cBmJI,Datim
-UGA,UGA_3_058,2,Katakwi District,AUY4rGf5rCC,Datim
-UGA,UGA_3_059,2,Kayunga District,yhEeMg6lF5S,Datim
-UGA,UGA_3_060,2,Kazo District,dDMUN4wq1lL,Datim
-UGA,UGA_3_061,2,Kibaale District,k00te8l2zsS,Datim
-UGA,UGA_3_062,2,Kiboga District,ouyiEelNaXp,Datim
-UGA,UGA_3_063,2,Kibuku District,AlBctVMMqTZ,Datim
-UGA,UGA_3_064,2,Kikuube District,oN3maBtKWd3,Datim
-UGA,UGA_3_065,2,Kiruhura District,z2Hf7UvjJGf,Datim
-UGA,UGA_3_066,2,Kiryandongo District,R5JFD4AykLF,Datim
-UGA,UGA_3_067,2,Kisoro District,CrULNvqXGDj,Datim
-UGA,UGA_3_068,2,Kitagwenda District,b98JFSZUYP3,Datim
-UGA,UGA_3_069,2,Kitgum District,shZLXgVt6IU,Datim
-UGA,UGA_3_070,2,Koboko District,S8ztvJDIhX7,Datim
-UGA,UGA_3_071,2,Kole District,sOvyWDakEpr,Datim
-UGA,UGA_3_072,2,Kotido District,xi1tbUw0pLk,Datim
-UGA,UGA_3_073,2,Kumi District,u57HZ1OQLOW,Datim
-UGA,UGA_3_074,2,Kwania District,AleGvYmLIii,Datim
-UGA,UGA_3_075,2,Kween District,Vs3EnUbSIxB,Datim
-UGA,UGA_3_076,2,Kyankwanzi District,Lryv2UvMIDv,Datim
-UGA,UGA_3_077,2,Kyegegwa District,RsafOroWEu3,Datim
-UGA,UGA_3_078,2,Kyenjojo District,uzmvGujZv2K,Datim
-UGA,UGA_3_079,2,Kyotera District,rX4hscrLBeJ,Datim
-UGA,UGA_3_080,2,Lamwo District,vG7S9jJp8I1,Datim
-UGA,UGA_3_081,2,Lira District,sVmb2FInHpI,Datim
-UGA,UGA_3_082,2,Luuka District,a3vfnv7B3iM,Datim
-UGA,UGA_3_083,2,Luwero District,kdQx4oc4vxQ,Datim
-UGA,UGA_3_084,2,Lwengo District,lUwH3eBWnc8,Datim
-UGA,UGA_3_085,2,Lyantonde District,U0X3FFbxLG6,Datim
-UGA,UGA_3_086,2,Madi-Okollo District,vZzDic7wByf,Datim
-UGA,UGA_3_087,2,Manafwa District,vozdznXvEio,Datim
-UGA,UGA_3_088,2,Maracha District,ieGmEgBpNRi,Datim
-UGA,UGA_3_089,2,Masaka District,GgXE4SpT2qg,Datim
-UGA,UGA_3_090,2,Masindi District,zmdjGbqC0jW,Datim
-UGA,UGA_3_091,2,Mayuge District,sprbpgBWUqd,Datim
-UGA,UGA_3_092,2,Mbale District,ZZY86jSqrRe,Datim
-UGA,UGA_3_093,2,Mbarara District,qBnATrM2yWb,Datim
-UGA,UGA_3_094,2,Mitooma District,oWQXNhdnVWe,Datim
-UGA,UGA_3_095,2,Mityana District,PerVslp3sdX,Datim
-UGA,UGA_3_096,2,Moroto District,CYSpjqfwZAp,Datim
-UGA,UGA_3_097,2,Moyo District,ieDi203bOKl,Datim
-UGA,UGA_3_098,2,Mpigi District,JqCmwAjmAdl,Datim
-UGA,UGA_3_099,2,Mubende District,EhwbIln9cBp,Datim
-UGA,UGA_3_100,2,Mukono District,ofADu4tfYGx,Datim
-UGA,UGA_3_101,2,Nabilatuk District,q57q1mvQl3j,Datim
-UGA,UGA_3_102,2,Nakapiripirit District,jkEggeCHfCb,Datim
-UGA,UGA_3_103,2,Nakaseke District,EOY02xi5HPB,Datim
-UGA,UGA_3_104,2,Nakasongola District,N4R2sGukDe4,Datim
-UGA,UGA_3_105,2,Namayingo District,UlbBdvDSNO8,Datim
-UGA,UGA_3_106,2,Namisindwa District,iSGuv0XmkFW,Datim
-UGA,UGA_3_107,2,Namutumba District,XcRTJKgyvXV,Datim
-UGA,UGA_3_108,2,Napak District,jDaD6QQu0qK,Datim
-UGA,UGA_3_109,2,Nebbi District,k65flOHCxLR,Datim
-UGA,UGA_3_110,2,Ngora District,zBtTOW32g52,Datim
-UGA,UGA_3_111,2,Ntoroko District,H2TYawpBDO9,Datim
-UGA,UGA_3_112,2,Ntungamo District,AuSNxhrQO7b,Datim
-UGA,UGA_3_113,2,Nwoya District,vd1oDNwAfsr,Datim
-UGA,UGA_3_114,2,Obongi District,Y983wAMNvuN,Datim
-UGA,UGA_3_115,2,Omoro District,qToFRBvP3hw,Datim
-UGA,UGA_3_116,2,Otuke District,bliiq8a0ZMa,Datim
-UGA,UGA_3_117,2,Oyam District,HRlOm3DhuKZ,Datim
-UGA,UGA_3_118,2,Pader District,jwkn9GjFWAw,Datim
-UGA,UGA_3_119,2,Pakwach District,XyRGfsANEyO,Datim
-UGA,UGA_3_120,2,Pallisa District,n5ZEsWziYrd,Datim
-UGA,UGA_3_121,2,Rakai District,wrwOewzkKXu,Datim
-UGA,UGA_3_122,2,Rubanda District,yg0nBKIzEKK,Datim
-UGA,UGA_3_123,2,Rubirizi District,wCtC32IBgsy,Datim
-UGA,UGA_3_124,2,Rukiga District,aTrdZQqac3E,Datim
-UGA,UGA_3_125,2,Rukungiri District,SUzUiosYLZd,Datim
-UGA,UGA_3_126,2,Rwampara District,y84DcGXdwjF,Datim
-UGA,UGA_3_127,2,Serere District,aaBbWMyFu8Q,Datim
-UGA,UGA_3_128,2,Sheema District,AUQrr5i5UwN,Datim
-UGA,UGA_3_129,2,Sironko District,QgIToMQuTui,Datim
-UGA,UGA_3_130,2,Soroti District,yCVI5WlzkF0,Datim
-UGA,UGA_3_131,2,Sembabule District,tpymemEYnck,Datim
-UGA,UGA_3_132,2,Tororo District,KDlDc415aZB,Datim
-UGA,UGA_3_133,2,Wakiso District,U5duvbj7rlb,Datim
-UGA,UGA_3_134,2,Yumbe District,vHFjx27wlUq,Datim
-UGA,UGA_3_135,2,Zombo District,TmTuXKs7fJw,Datim
-UGA,UGA_3_136rx,2,Arua District,iVSPmqWhay3,Datim
-UGA,UGA_3_137zk,2,Terego District,NaBrh0Wr8yK,Datim
+UGA,UGA,3,Uganda,FETQ6OmnsKB,Datim
+UGA,UGA_1_01,4,Mid Northern,o6ubHRhxI6L,Datim
+UGA,UGA_1_02,4,South Western,GnzvOAH4vbv,Datim
+UGA,UGA_1_03,4,Mid Eastern,SASxELbP5WQ,Datim
+UGA,UGA_1_04,4,Mid Western,rk94lTevBpH,Datim
+UGA,UGA_1_05,4,East Central,n1khKizMllw,Datim
+UGA,UGA_1_06,4,Kampala,W9SXhGMa1Pv,Datim
+UGA,UGA_1_07,4,North East,L6yAOrpaOv6,Datim
+UGA,UGA_1_08,4,Central 2,RJArI0aiqI1,Datim
+UGA,UGA_1_09,4,Central 1,fcXZBNIEKop,Datim
+UGA,UGA_1_10,4,West Nile,SlMFkDA2fCx,Datim
+UGA,UGA_3_001,5,Abim District,PttNphGaVik,Datim
+UGA,UGA_3_002,5,Adjumani District,wEMidDdxt0Y,Datim
+UGA,UGA_3_003,5,Agago District,GcYxWQadLDB,Datim
+UGA,UGA_3_004,5,Alebtong District,D6upnSGqMuH,Datim
+UGA,UGA_3_005,5,Amolatar District,goAaVw5euIo,Datim
+UGA,UGA_3_006,5,Amudat District,KPUVZnaLTDR,Datim
+UGA,UGA_3_007,5,Amuria District,kyxzmUPEuDx,Datim
+UGA,UGA_3_008,5,Amuru District,LehfgDTxQgE,Datim
+UGA,UGA_3_009,5,Apac District,HDDanYisp0p,Datim
+UGA,UGA_3_011,5,Budaka District,tfsNJ75IDKn,Datim
+UGA,UGA_3_012,5,Bududa District,oO3AikVUwsa,Datim
+UGA,UGA_3_013,5,Bugiri District,hdHzOX7oN7H,Datim
+UGA,UGA_3_014,5,Bugweri District,bNc4hKtrE0e,Datim
+UGA,UGA_3_015,5,Buhweju District,CRf8LcPIIol,Datim
+UGA,UGA_3_016,5,Buikwe District,lR8aTjNz6XY,Datim
+UGA,UGA_3_017,5,Bukedea District,fpDeHp6TgVr,Datim
+UGA,UGA_3_018,5,Bukomansimbi District,ZqIdMKJYNyc,Datim
+UGA,UGA_3_019,5,Bukwo District,Rdt1TyOWaxM,Datim
+UGA,UGA_3_020,5,Bulambuli District,pfr8iz9jJTi,Datim
+UGA,UGA_3_021,5,Buliisa District,C2tMKsD3c9Y,Datim
+UGA,UGA_3_022,5,Bundibugyo District,F5GLJu0abYn,Datim
+UGA,UGA_3_023,5,Bunyangabu District,MfDcA52W2Mq,Datim
+UGA,UGA_3_024,5,Bushenyi District,cb9SBT9Dkul,Datim
+UGA,UGA_3_025,5,Busia District,cPDahRsvkf0,Datim
+UGA,UGA_3_026,5,Butaleja District,x7jcXKDYjwv,Datim
+UGA,UGA_3_027,5,Butambala District,Quu8PXwIv8m,Datim
+UGA,UGA_3_028,5,Butebo District,WRgQri3NDOl,Datim
+UGA,UGA_3_029,5,Buvuma District,FsHHbzluiJb,Datim
+UGA,UGA_3_030,5,Buyende District,cv1b58B0y2U,Datim
+UGA,UGA_3_031,5,Dokolo District,G7b1qt8AWXX,Datim
+UGA,UGA_3_032,5,Gomba District,I9I7WFHjAte,Datim
+UGA,UGA_3_033ca,5,Gulu District,tMliWxidVmG,Datim
+UGA,UGA_3_034yp,5,Hoima District,aBfifMwaD01,Datim
+UGA,UGA_3_035,5,Ibanda District,PNg9TjYhMHF,Datim
+UGA,UGA_3_036,5,Iganga District,tT1gKtPhvCL,Datim
+UGA,UGA_3_037,5,Isingiro District,R82ZOAg1BN1,Datim
+UGA,UGA_3_038wj,5,Jinja District,h2wCziavPlv,Datim
+UGA,UGA_3_039,5,Kaabong District,ZnMLQFOFj1H,Datim
+UGA,UGA_3_040,5,Kabale District,lEMyFfXc5fI,Datim
+UGA,UGA_3_041yd,5,Kabarole District,ONYuNfx7Zx8,Datim
+UGA,UGA_3_042,5,Kaberamaido District,hcORKLsjQcP,Datim
+UGA,UGA_3_043,5,Kagadi District,QIqtoDj9tee,Datim
+UGA,UGA_3_044,5,Kakumiro District,gwAugxS9KhZ,Datim
+UGA,UGA_3_045,5,Kalaki District,pG8eoCppGvF,Datim
+UGA,UGA_3_046,5,Kalangala District,bntHIKmdtv7,Datim
+UGA,UGA_3_047,5,Kaliro District,btv31DCkh3k,Datim
+UGA,UGA_3_048df,5,Kalungu District,NnAkN5yfxOs,Datim
+UGA,UGA_3_049,5,Kampala District,VZF9UFmohwY,Datim
+UGA,UGA_3_050,5,Kamuli District,h6FBV6CyGKR,Datim
+UGA,UGA_3_051,5,Kamwenge District,oSleoOgcMmJ,Datim
+UGA,UGA_3_052,5,Kanungu District,BZK6tOqdyJK,Datim
+UGA,UGA_3_053,5,Kapchorwa District,iWgkJm78Jes,Datim
+UGA,UGA_3_054,5,Kapelebyong District,OiT27konvR0,Datim
+UGA,UGA_3_055,5,Karenga District,Sb5HzC36Kkm,Datim
+UGA,UGA_3_056,5,Kasese District,dgzHXyQWBIu,Datim
+UGA,UGA_3_057,5,Kassanda District,m9F275cBmJI,Datim
+UGA,UGA_3_058,5,Katakwi District,AUY4rGf5rCC,Datim
+UGA,UGA_3_059,5,Kayunga District,yhEeMg6lF5S,Datim
+UGA,UGA_3_060,5,Kazo District,dDMUN4wq1lL,Datim
+UGA,UGA_3_061,5,Kibaale District,k00te8l2zsS,Datim
+UGA,UGA_3_062,5,Kiboga District,ouyiEelNaXp,Datim
+UGA,UGA_3_063,5,Kibuku District,AlBctVMMqTZ,Datim
+UGA,UGA_3_064,5,Kikuube District,oN3maBtKWd3,Datim
+UGA,UGA_3_065,5,Kiruhura District,z2Hf7UvjJGf,Datim
+UGA,UGA_3_066,5,Kiryandongo District,R5JFD4AykLF,Datim
+UGA,UGA_3_067,5,Kisoro District,CrULNvqXGDj,Datim
+UGA,UGA_3_068,5,Kitagwenda District,b98JFSZUYP3,Datim
+UGA,UGA_3_069,5,Kitgum District,shZLXgVt6IU,Datim
+UGA,UGA_3_070,5,Koboko District,S8ztvJDIhX7,Datim
+UGA,UGA_3_071,5,Kole District,sOvyWDakEpr,Datim
+UGA,UGA_3_072,5,Kotido District,xi1tbUw0pLk,Datim
+UGA,UGA_3_073,5,Kumi District,u57HZ1OQLOW,Datim
+UGA,UGA_3_074,5,Kwania District,AleGvYmLIii,Datim
+UGA,UGA_3_075,5,Kween District,Vs3EnUbSIxB,Datim
+UGA,UGA_3_076,5,Kyankwanzi District,Lryv2UvMIDv,Datim
+UGA,UGA_3_077,5,Kyegegwa District,RsafOroWEu3,Datim
+UGA,UGA_3_078,5,Kyenjojo District,uzmvGujZv2K,Datim
+UGA,UGA_3_079,5,Kyotera District,rX4hscrLBeJ,Datim
+UGA,UGA_3_080,5,Lamwo District,vG7S9jJp8I1,Datim
+UGA,UGA_3_081qi,5,Lira District,sVmb2FInHpI,Datim
+UGA,UGA_3_082,5,Luuka District,a3vfnv7B3iM,Datim
+UGA,UGA_3_083,5,Luwero District,kdQx4oc4vxQ,Datim
+UGA,UGA_3_084zt,5,Lwengo District,lUwH3eBWnc8,Datim
+UGA,UGA_3_085,5,Lyantonde District,U0X3FFbxLG6,Datim
+UGA,UGA_3_086,5,Madi-Okollo District,vZzDic7wByf,Datim
+UGA,UGA_3_087,5,Manafwa District,vozdznXvEio,Datim
+UGA,UGA_3_088,5,Maracha District,ieGmEgBpNRi,Datim
+UGA,UGA_3_089li,5,Masaka District,GgXE4SpT2qg,Datim
+UGA,UGA_3_089kh,5,Masaka City,,Datim
+UGA,UGA_3_090,5,Masindi District,zmdjGbqC0jW,Datim
+UGA,UGA_3_091,5,Mayuge District,sprbpgBWUqd,Datim
+UGA,UGA_3_092cg,5,Mbale District,ZZY86jSqrRe,Datim
+UGA,UGA_3_093da,5,Mbarara District,qBnATrM2yWb,Datim
+UGA,UGA_3_094,5,Mitooma District,oWQXNhdnVWe,Datim
+UGA,UGA_3_095,5,Mityana District,PerVslp3sdX,Datim
+UGA,UGA_3_096,5,Moroto District,CYSpjqfwZAp,Datim
+UGA,UGA_3_097,5,Moyo District,ieDi203bOKl,Datim
+UGA,UGA_3_098,5,Mpigi District,JqCmwAjmAdl,Datim
+UGA,UGA_3_099,5,Mubende District,EhwbIln9cBp,Datim
+UGA,UGA_3_100,5,Mukono District,ofADu4tfYGx,Datim
+UGA,UGA_3_101,5,Nabilatuk District,q57q1mvQl3j,Datim
+UGA,UGA_3_102,5,Nakapiripirit District,jkEggeCHfCb,Datim
+UGA,UGA_3_103,5,Nakaseke District,EOY02xi5HPB,Datim
+UGA,UGA_3_104,5,Nakasongola District,N4R2sGukDe4,Datim
+UGA,UGA_3_105,5,Namayingo District,UlbBdvDSNO8,Datim
+UGA,UGA_3_106,5,Namisindwa District,iSGuv0XmkFW,Datim
+UGA,UGA_3_107,5,Namutumba District,XcRTJKgyvXV,Datim
+UGA,UGA_3_108,5,Napak District,jDaD6QQu0qK,Datim
+UGA,UGA_3_109,5,Nebbi District,k65flOHCxLR,Datim
+UGA,UGA_3_110,5,Ngora District,zBtTOW32g52,Datim
+UGA,UGA_3_111,5,Ntoroko District,H2TYawpBDO9,Datim
+UGA,UGA_3_112,5,Ntungamo District,AuSNxhrQO7b,Datim
+UGA,UGA_3_113,5,Nwoya District,vd1oDNwAfsr,Datim
+UGA,UGA_3_114,5,Obongi District,Y983wAMNvuN,Datim
+UGA,UGA_3_115ak,5,Omoro District,qToFRBvP3hw,Datim
+UGA,UGA_3_116,5,Otuke District,bliiq8a0ZMa,Datim
+UGA,UGA_3_117,5,Oyam District,HRlOm3DhuKZ,Datim
+UGA,UGA_3_118,5,Pader District,jwkn9GjFWAw,Datim
+UGA,UGA_3_119,5,Pakwach District,XyRGfsANEyO,Datim
+UGA,UGA_3_120,5,Pallisa District,n5ZEsWziYrd,Datim
+UGA,UGA_3_121,5,Rakai District,wrwOewzkKXu,Datim
+UGA,UGA_3_122,5,Rubanda District,yg0nBKIzEKK,Datim
+UGA,UGA_3_123,5,Rubirizi District,wCtC32IBgsy,Datim
+UGA,UGA_3_124,5,Rukiga District,aTrdZQqac3E,Datim
+UGA,UGA_3_125,5,Rukungiri District,SUzUiosYLZd,Datim
+UGA,UGA_3_126,5,Rwampara District,y84DcGXdwjF,Datim
+UGA,UGA_3_127,5,Serere District,aaBbWMyFu8Q,Datim
+UGA,UGA_3_128,5,Sheema District,AUQrr5i5UwN,Datim
+UGA,UGA_3_129,5,Sironko District,QgIToMQuTui,Datim
+UGA,UGA_3_130yp,5,Soroti District,yCVI5WlzkF0,Datim
+UGA,UGA_3_131,5,Sembabule District,tpymemEYnck,Datim
+UGA,UGA_3_132,5,Tororo District,KDlDc415aZB,Datim
+UGA,UGA_3_133,5,Wakiso District,U5duvbj7rlb,Datim
+UGA,UGA_3_134,5,Yumbe District,vHFjx27wlUq,Datim
+UGA,UGA_3_135,5,Zombo District,TmTuXKs7fJw,Datim
+UGA,UGA_3_136rx,5,Arua District,iVSPmqWhay3,Datim
+UGA,UGA_3_137zk,5,Terego District,NaBrh0Wr8yK,Datim
+UGA,UGA_3_138ks,5,Gulu City,,Datim
+UGA,UGA_3_139rd,5,Mbarara City,,Datim
+UGA,UGA_3_140ap,5,Hoima City,,Datim
+UGA,UGA_3_141cf,5,Jinja City,,Datim
+UGA,UGA_3_142yf,5,Mbale City,,Datim
+UGA,UGA_3_143os,5,Lira City,,Datim
+UGA,UGA_3_144ih,5,Soroti City,,Datim
+UGA,UGA_3_145gu,5,Fort portal City,,Datim
+UGA,UGA_3_146ps,5,Arua City,,Datim
+ZAF,ZAF,0,South Africa,cDGPF739ZZr,Datim
+ZAF,ZAF_1_LIM,1,lp Limpopo Province,JUneyNLhmdu,Datim
+ZAF,ZAF_1_GT,1,gp Gauteng Province,n2MDD1blKzk,Datim
+ZAF,ZAF_1_MP,1,mp Mpumalanga Province,SVUPDvRDR87,Datim
+ZAF,ZAF_1_NC,1,nc Northern Cape Province,xbQNSk1ky2j,Datim
+ZAF,ZAF_1_NW,1,nw North West Province,IbXpiC7pQHp,Datim
+ZAF,ZAF_1_WC,1,wc Western Cape Province,NB4LMI17VJk,Datim
+ZAF,ZAF_1_KZN,1,kz KwaZulu-Natal Province,BBbedoFVZXY,Datim
+ZAF,ZAF_1_EC,1,ec Eastern Cape Province,NH0uTP3U708,Datim
+ZAF,ZAF_1_FS,1,fs Free State Province,wBVXKX2Yvg0,Datim
 ZAF,ZAF_2_DC35,2,lp Capricorn District Municipality,zPlOd5VH1r4,Datim
 ZAF,ZAF_2_TSH,2,gp City of Tshwane Metropolitan Municipality,jP6YHtU87iQ,Datim
 ZAF,ZAF_2_DC32,2,mp Ehlanzeni District Municipality,pqFvbVz4qqH,Datim
@@ -1603,8 +3287,261 @@ ZAF,ZAF_2_DC34,2,lp Vhembe District Municipality,BFHI8ktsvQ1,Datim
 ZAF,ZAF_2_DC1,2,wc West Coast District Municipality,tYc1vr3hkQT,Datim
 ZAF,ZAF_2_DC14,2,ec Joe Gqabi District Municipality,L59auomWK9a,Datim
 ZAF,ZAF_2_DC48,2,gp West Rand District Municipality,cCDFkhO0ITL,Datim
-ZAF,ZAF_2_DC4,2,wc Garden Route District Municipality,IOb5dQ3OH9g,Datim
 ZAF,ZAF_2_DC6,2,nc Namakwa District Municipality,rTOv2mSieIJ,Datim
+ZAF,ZAF_3_LIM354,3,lp Polokwane Local Municipality,skpQVcIzxkE,Datim
+ZAF,ZAF_3_TSH2,3,gp Tshwane 2 Local Municipality,Jgd0zBKuHbm,Datim
+ZAF,ZAF_3_MP326,3,mp City of Mbombela Local Municipality,Ea0tiOAhfQE,Datim
+ZAF,ZAF_3_NC451,3,nc Joe Morolong Local Municipality,C4r4KQM4Bga,Datim
+ZAF,ZAF_3_NW405,3,nw JB Marks Local Municipality,o6waNef1lli,Datim
+ZAF,ZAF_3_CPTKL,3,wc Klipfontein Health sub-District,Xr27iGXunhS,Datim
+ZAF,ZAF_3_KZN434,3,kz Ubuhlebezwe Local Municipality,GqopJ97KaAW,Datim
+ZAF,ZAF_3_CPTE,3,wc Cape Town Eastern Health sub-District,P7uLfoPWa2j,Datim
+ZAF,ZAF_3_EC104,3,ec Makana Local Municipality,tzcImWOHxTT,Datim
+ZAF,ZAF_3_KZN221,3,kz uMshwathi Local Municipality,f9AyKaUIXfi,Datim
+ZAF,ZAF_3_LIM351,3,lp Blouberg Local Municipality,k6WaAJ5EcLH,Datim
+ZAF,ZAF_3_KZN272,3,kz Jozini Local Municipality,VMhecXNtZz8,Datim
+ZAF,ZAF_3_CPTTY,3,wc Tygerberg Health sub-District,Qbw8XUMuPDe,Datim
+ZAF,ZAF_3_KZN286,3,kz Nkandla Local Municipality,u5tDFzWbCwA,Datim
+ZAF,ZAF_3_EKUN1,3,gp Ekurhuleni North 1 Local Municipality,LxMoklHIayz,Datim
+ZAF,ZAF_3_ETH,3,kz eThekwini Metropolitan Municipality Sub,NlX1mBFnTfd,Datim
+ZAF,ZAF_3_EC157,3,ec King Sabata Dalindyebo Local Municipality,m9Q4H1NiXPQ,Datim
+ZAF,ZAF_3_NW373,3,nw Rustenburg Local Municipality,MzXMAlDmVYp,Datim
+ZAF,ZAF_3_MP313,3,mp Steve Tshwete Local Municipality,OOLXsiOmElr,Datim
+ZAF,ZAF_3_GT423,3,gp Lesedi Local Municipality,TuJryGIux0P,Datim
+ZAF,ZAF_3_LIM472,3,lp Elias Motsoaledi Local Municipality,wQf37j8gufW,Datim
+ZAF,ZAF_3_FS184,3,fs Matjhabeng Local Municipality,C8bcDMSOBNS,Datim
+ZAF,ZAF_3_EC135,3,ec Intsika Yethu Local Municipality,LzI1Aqz2zE0,Datim
+ZAF,ZAF_3_LIM333,3,lp Greater Tzaneen Local Municipality,igxBmx3z9SL,Datim
+ZAF,ZAF_3_EC155,3,ec Nyandeni Health sub-District,VDhJfm06Jkv,Datim
+ZAF,ZAF_3_EC441,3,ec Matatiele Local Municipality,CslOGPFjCGC,Datim
+ZAF,ZAF_3_EC124,3,ec Amahlathi Local Municipality,XzKgahqXvhA,Datim
+ZAF,ZAF_3_LIM334,3,lp Ba-Phalaborwa Local Municipality,z1tNxqzlzwn,Datim
+ZAF,ZAF_3_MP325,3,mp Bushbuckridge Local Municipality,pQcaBXpjH4u,Datim
+ZAF,ZAF_3_KZN216,3,kz Ray Nkonyeni Local Municipality,XWzywhO0xak,Datim
+ZAF,ZAF_3_EC136,3,ec Emalahleni Local Municipality,NlhPVQEKfmH,Datim
+ZAF,ZAF_3_NW394,3,nw Greater Taung Local Municipality,bkeEJD484j7,Datim
+ZAF,ZAF_3_LIM367,3,lp Mogalakwena Local Municipality,UuIBYJJ204u,Datim
+ZAF,ZAF_3_KZN242,3,kz Nquthu Local Municipality,QrbP1u3WF5A,Datim
+ZAF,ZAF_3_EC442,3,ec Umzimvubu Health sub-District,w589pQ7mkgb,Datim
+ZAF,ZAF_3_MP321,3,mp Thaba Chweu Local Municipality,eFtwFu6uCTv,Datim
+ZAF,ZAF_3_MP312,3,mp Emalahleni Local Municipality,wb9AlnMQ7Ly,Datim
+ZAF,ZAF_3_FS194,3,fs Maluti-a-Phofung Local Municipality,FXwsp2b12ba,Datim
+ZAF,ZAF_3_MAN4,3,fs Thaba N'chu Health sub-District,yUo23HztVpt,Datim
+ZAF,ZAF_3_KZN265,3,kz Nongoma Local Municipality,MmbSZqsjiPt,Datim
+ZAF,ZAF_3_BUF,3,ec Buffalo City Local Municipality,QPEuCIzKBZb,Datim
+ZAF,ZAF_3_NW381,3,nw Ratlou Local Municipality,qGjPrqtiRZw,Datim
+ZAF,ZAF_3_EC129,3,ec Raymond Mhlaba Local Municipality,XeyQABePuXa,Datim
+ZAF,ZAF_3_EC443,3,ec Mbizana Local Municipality,Mqgc8hLJZmu,Datim
+ZAF,ZAF_3_LIM353,3,lp Molemole Local Municipality,tRNrjkKndew,Datim
+ZAF,ZAF_3_NW383,3,nw Mahikeng Local Municipality,BmhJTZsfLqG,Datim
+ZAF,ZAF_3_EC154,3,ec Port St Johns Local Municipality,eH8Yqx05VGU,Datim
+ZAF,ZAF_3_EC126,3,ec Ngqushwa Local Municipality,Jzv6D8MtbeH,Datim
+ZAF,ZAF_3_EC139,3,ec Enoch Mgijima Local Municipality,uwZ6kIFBeRN,Datim
+ZAF,ZAF_3_LIM331,3,lp Greater Giyani Local Municipality,gvb9vE05rpo,Datim
+ZAF,ZAF_3_EKUN2,3,gp Ekurhuleni North 2 Health sub-District,K9GdUGILK1S,Datim
+ZAF,ZAF_3_FS196,3,fs Mantsopa Local Municipality,x1Ls7DEDROq,Datim
+ZAF,ZAF_3_KZN266,3,kz Ulundi Local Municipality,eQLaDwaqBbT,Datim
+ZAF,ZAF_3_FS185,3,fs Nala Local Municipality,uG0iBmY9x7S,Datim
+ZAF,ZAF_3_TSH3,3,gp Tshwane 3 Local Municipality,vQ3MumZt4Ie,Datim
+ZAF,ZAF_3_EKUE2,3,gp Ekurhuleni East 2 Local Municipality,xMTTHM2fftG,Datim
+ZAF,ZAF_3_GT421,3,gp Emfuleni Local Municipality,hmFJXC3ZOPj,Datim
+ZAF,ZAF_3_EKUS1,3,gp Ekurhuleni South 1 Local Municipality,OoScyXDPGtM,Datim
+ZAF,ZAF_3_WC032,3,wc Overstrand Local Municipality,GnMBce18VFF,Datim
+ZAF,ZAF_3_JHBG,3,gp Johannesburg G Health sub-District,DPnhkLN88vc,Datim
+ZAF,ZAF_3_MP315,3,mp Thembisile Hani Local Municipality,M7k2FwX2pQy,Datim
+ZAF,ZAF_3_MP303,3,mp Mkhondo Local Municipality,B7fgWZECPeK,Datim
+ZAF,ZAF_3_FS195,3,fs Phumelela Local Municipality,Oo1o6LUGLtI,Datim
+ZAF,ZAF_3_KZN276,3,kz Big 5 Hlabisa Local Municipality,iTV3niNzXaD,Datim
+ZAF,ZAF_3_LIM471,3,lp Ephraim Mogale Local Municipality,SXHoHn2RUXC,Datim
+ZAF,ZAF_3_NW372,3,nw Madibeng Local Municipality,rBDCWqb7seg,Datim
+ZAF,ZAF_3_NC076,3,nc Thembelihle Local Municipality,Lc3lMdS0bna,Datim
+ZAF,ZAF_3_MP306,3,mp Dipaleseng Local Municipality,CmgIA6ZasEa,Datim
+ZAF,ZAF_3_WC022,3,wc Witzenberg Local Municipality,tcJQBzO3bBS,Datim
+ZAF,ZAF_3_EC121,3,ec Mbhashe Local Municipality,BmB1vGlbHa0,Datim
+ZAF,ZAF_3_CPTKH,3,wc Khayelitsha Health sub-District,v9XCremlqAX,Datim
+ZAF,ZAF_3_LIM335,3,lp Maruleng Local Municipality,Ek0jh44N5so,Datim
+ZAF,ZAF_3_WC023,3,wc Drakenstein Local Municipality,WSedstKFY4b,Datim
+ZAF,ZAF_3_EKUE1,3,gp Ekurhuleni East 1 Local Municipality,c8P5lXZo5U1,Datim
+ZAF,ZAF_3_NC092,3,nc Dikgatlong Local Municipality,w2Ca39SiK3s,Datim
+ZAF,ZAF_3_CPTS,3,wc Cape Town Southern Health sub-District,mzomxZiNvUH,Datim
+ZAF,ZAF_3_FS191,3,fs Setsoto Local Municipality,J2pT6LrlERj,Datim
+ZAF,ZAF_3_JHBF,3,gp Johannesburg F Health sub-District,oI1rnMlEJz1,Datim
+ZAF,ZAF_3_KZN271,3,kz Umhlabuyalingana Local Municipality,Qr9P4g4BdF5,Datim
+ZAF,ZAF_3_LIM476,3,lp Fetakgomo-Greater Tubatse Local Municipality,SeaGNKpLVRU,Datim
+ZAF,ZAF_3_LIM332,3,lp Greater Letaba Local Municipality,j3cmhkFeTDD,Datim
+ZAF,ZAF_3_KZN436,3,kz Dr Nkosazana Dlamini Zuma Local Municipality,WQQkVlzugtj,Datim
+ZAF,ZAF_3_FS205,3,fs Mafube Local Municipality,vP7BudIlWLK,Datim
+ZAF,ZAF_3_KZN252,3,kz Newcastle Local Municipality,d1lcvOCDFJ3,Datim
+ZAF,ZAF_3_MP316,3,mp Dr JS Moroka Local Municipality,o8O6rw75u3H,Datim
+ZAF,ZAF_3_KZN237,3,kz Inkosi Langalibalele Local Municipality,DOs1dhcqU78,Datim
+ZAF,ZAF_3_NW382,3,nw Tswaing Local Municipality,u12pB1p4FXC,Datim
+ZAF,ZAF_3_NW384,3,nw Ditsobotla Local Municipality,NVWLiqrB9Px,Datim
+ZAF,ZAF_3_NMAA,3,ec Nelson Mandela A Health sub-District,CRVuSAtKilx,Datim
+ZAF,ZAF_3_MP324,3,mp Nkomazi Local Municipality,gUzBGRaXFU4,Datim
+ZAF,ZAF_3_EC101,3,ec Dr Beyers Naudé Local Municipality,iN8hnadZvk9,Datim
+ZAF,ZAF_3_NC084,3,nc !Kheis Local Municipality,ydGvHcrvZri,Datim
+ZAF,ZAF_3_KZN293,3,kz Ndwedwe Local Municipality,DrgPY3dGTbg,Datim
+ZAF,ZAF_3_FS192,3,fs Dihlabeng Local Municipality,b0AuEG9wuo7,Datim
+ZAF,ZAF_3_KZN238,3,kz Alfred Duma Local Municipality,cROE42XaZhr,Datim
+ZAF,ZAF_3_KZN285,3,kz Mthonjaneni Local Municipality,cfqLGWHRA06,Datim
+ZAF,ZAF_3_EC105,3,ec Ndlambe Local Municipality,ko7oDeVWEeQ,Datim
+ZAF,ZAF_3_CPTN,3,wc Cape Town Northern Health sub-District,Tpye0N2eFz6,Datim
+ZAF,ZAF_3_WC053,3,wc Beaufort West Local Municipality,j4nC4bCdWUY,Datim
+ZAF,ZAF_3_LIM368,3,lp Mookgophong/Modimolle Local Municipality,oKN8qn6A3n9,Datim
+ZAF,ZAF_3_TSH5,3,gp Tshwane 5 Local Municipality,PSDpC7k4tvo,Datim
+ZAF,ZAF_3_FS203,3,fs Ngwathe Local Municipality,P5Stpk6ABoV,Datim
+ZAF,ZAF_3_FS162,3,fs Kopanong Local Municipality,RBjaXltoV6R,Datim
+ZAF,ZAF_3_NW375,3,nw Moses Kotane Local Municipality,NSwQM3Xjw3K,Datim
+ZAF,ZAF_3_NW404,3,nw Maquassi Hills Local Municipality,ViNLB6qfMeB,Datim
+ZAF,ZAF_3_LIM361,3,lp Thabazimbi Local Municipality,tYfHFIoHSC1,Datim
+ZAF,ZAF_3_NW403,3,nw City of Matlosana Local Municipality,pJ86GOgGlui,Datim
+ZAF,ZAF_3_FS181,3,fs Masilonyana Local Municipality,Zffl7AthEEm,Datim
+ZAF,ZAF_3_NW385,3,nw Ramotshere Moiloa Local Municipality,Pph7m8P4iYR,Datim
+ZAF,ZAF_3_LIM345,3,lp Collins Chabane Local Municipality,xKKNUarFptX,Datim
+ZAF,ZAF_3_EC122,3,ec Mnquma Local Municipality,Lb4ba8PPgPS,Datim
+ZAF,ZAF_3_CPTW,3,wc Cape Town Western Health sub-District,gnyeVm1kO0r,Datim
+ZAF,ZAF_3_EC156,3,ec Mhlontlo Health sub-District,G6G6ZjRAzeo,Datim
+ZAF,ZAF_3_MP307,3,mp Govan Mbeki Local Municipality,rWsVQAMbvld,Datim
+ZAF,ZAF_3_KZN284,3,kz uMlalazi Local Municipality,pWdHN41uiRP,Datim
+ZAF,ZAF_3_KZN261,3,kz eDumbe Local Municipality,e75DWL3OSX3,Datim
+ZAF,ZAF_3_EC106,3,ec Sundays River Valley Local Municipality,FlvyQqF3Ztw,Datim
+ZAF,ZAF_3_TSH7,3,gp Tshwane 7 Local Municipality,PHv1qPlJD91,Datim
+ZAF,ZAF_3_TSH1,3,gp Tshwane 1 Local Municipality,qLQnLlFj8TL,Datim
+ZAF,ZAF_3_WC033,3,wc Cape Agulhas Local Municipality,nSNNvxqwONL,Datim
+ZAF,ZAF_3_KZN213,3,kz Umzumbe Local Municipality,Rt8UXcd34h5,Datim
+ZAF,ZAF_3_EC131,3,ec Inxuba Yethemba Health sub-District,xIoit3SXya2,Datim
+ZAF,ZAF_3_MP301,3,mp Chief Albert Luthuli Local Municipality,Bb6SoYxKBW9,Datim
+ZAF,ZAF_3_EC153,3,ec Ingquza Hill Local Municipality,Ui5a3DF84Vw,Datim
+ZAF,ZAF_3_NW371,3,nw Moretele Local Municipality,wmJR8FCgTft,Datim
+ZAF,ZAF_3_KZN214,3,kz uMuziwabantu Local Municipality,DdUJ8eMODYD,Datim
+ZAF,ZAF_3_NC087,3,nc Dawid Kruiper Local Municipality,ESyggdnlz10,Datim
+ZAF,ZAF_3_LIM355,3,lp Lepelle-Nkumpi Local Municipality,o5VGD8sDmFr,Datim
+ZAF,ZAF_3_MAN1,3,fs Bloemfontein Health sub-District,a5wfCrw7izZ,Datim
+ZAF,ZAF_3_LIM473,3,lp Makhuduthamaga Local Municipality,Yzo2ylVb6Vl,Datim
+ZAF,ZAF_3_KZN235,3,kz Okhahlamba Local Municipality,dvHSbaM5yjN,Datim
+ZAF,ZAF_3_EC123,3,ec Great Kei Local Municipality,Zg6b2DyJe2X,Datim
+ZAF,ZAF_3_KZN224,3,kz Impendle Local Municipality,pKpJB0to5Hc,Datim
+ZAF,ZAF_3_EC137,3,ec Engcobo Health sub-District,diGGc8zzqNf,Datim
+ZAF,ZAF_3_KZN212,3,kz Umdoni Local Municipality,q9hs4q9W9FE,Datim
+ZAF,ZAF_3_KZN222,3,kz uMngeni Local Municipality,YM5mBj58bbh,Datim
+ZAF,ZAF_3_JHBE,3,gp Johannesburg E Health sub-District,a5UyMYoJiBB,Datim
+ZAF,ZAF_3_WC013,3,wc Bergrivier Local Municipality,hzIuB0qKoVx,Datim
+ZAF,ZAF_3_KZN263,3,kz Abaqulusi Local Municipality,VQ81fQp6JGu,Datim
+ZAF,ZAF_3_KZN225,3,kz Msunduzi Local Municipality,Hadi7Geu8w2,Datim
+ZAF,ZAF_3_EC138,3,ec Sakhisizwe Health sub-District,nSHUg3R94rU,Datim
+ZAF,ZAF_3_MP302,3,mp Msukaligwa Local Municipality,tKDzivBHmnD,Datim
+ZAF,ZAF_3_EC141,3,ec Elundini Local Municipality,LZxVAz2SXlu,Datim
+ZAF,ZAF_3_KZN433,3,kz Greater Kokstad Local Municipality,l7E6mNAbmUe,Datim
+ZAF,ZAF_3_GT481,3,gp Mogale City Local Municipality,TqvHS9fmaG1,Datim
+ZAF,ZAF_3_LIM344,3,lp Makhado Local Municipality,QKOpYpClxob,Datim
+ZAF,ZAF_3_NC452,3,nc Ga-Segonyana Local Municipality,bxdcLd9MbCH,Datim
+ZAF,ZAF_3_WC034,3,wc Swellendam Local Municipality,yCzXUBA1zHP,Datim
+ZAF,ZAF_3_NC085,3,nc Tsantsabane Local Municipality,WamY40yRpkG,Datim
+ZAF,ZAF_3_FS193,3,fs Nketoana Local Municipality,Nu19DAcL0eE,Datim
+ZAF,ZAF_3_CPTMP,3,wc Mitchells Plain Health sub-District,awPTFCVyuH5,Datim
+ZAF,ZAF_3_WC043,3,wc Mossel Bay Local Municipality,GVjoBFArFRH,Datim
+ZAF,ZAF_3_NC094,3,nc Phokwane Local Municipality,FH5HvhKNirA,Datim
+ZAF,ZAF_3_TSH6,3,gp Tshwane 6 Local Municipality,UmwGr8Tv38c,Datim
+ZAF,ZAF_3_MP305,3,mp Lekwa Local Municipality,PrHEQZZRBZy,Datim
+ZAF,ZAF_3_MP314,3,mp Emakhazeni Local Municipality,OH11IZTTb7Z,Datim
+ZAF,ZAF_3_WC025,3,wc Breede Valley Local Municipality,jcoDWd7cOg2,Datim
+ZAF,ZAF_3_KZN294,3,kz Maphumulo Local Municipality,DYxE06QRqOf,Datim
+ZAF,ZAF_3_MP311,3,mp Victor Khanye Local Municipality,Jgob3l0wKys,Datim
+ZAF,ZAF_3_JHBB,3,gp Johannesburg B Health sub-District,O6HPLoa2WbQ,Datim
+ZAF,ZAF_3_NMAB,3,ec Nelson Mandela B Health sub-District,fj6gFXwBr11,Datim
+ZAF,ZAF_3_KZN292,3,kz KwaDukuza Local Municipality,UoqMn6fuMnQ,Datim
+ZAF,ZAF_3_JHBA,3,gp Johannesburg A Health sub-District,mr2p5Mqbony,Datim
+ZAF,ZAF_3_LIM343,3,lp Thulamela Local Municipality,VL3NAF0EWPs,Datim
+ZAF,ZAF_3_WC051,3,wc Laingsburg Local Municipality,z0YWGHcALwT,Datim
+ZAF,ZAF_3_NMAC,3,ec Nelson Mandela C Health sub-District,iCoAcyom7Ql,Datim
+ZAF,ZAF_3_NC074,3,nc Kareeberg Local Municipality,PtJjYz7Keev,Datim
+ZAF,ZAF_3_KZN244,3,kz Msinga Local Municipality,ASUbd69mMAO,Datim
+ZAF,ZAF_3_WC026,3,wc Langeberg Local Municipality,wSDdK4Qdf2c,Datim
+ZAF,ZAF_3_NC078,3,nc Siyancuma Local Municipality,cV11A5364HQ,Datim
+ZAF,ZAF_3_KZN275,3,kz Mtubatuba Local Municipality,QBEYzexAdsv,Datim
+ZAF,ZAF_3_KZN435,3,kz Umzimkhulu Local Municipality,ZGpw4FGxMqO,Datim
+ZAF,ZAF_3_WC011,3,wc Matzikama Local Municipality,W7tD6VB0M5B,Datim
+ZAF,ZAF_3_LIM362,3,lp Lephalale Local Municipality,Cl6NspckP7r,Datim
+ZAF,ZAF_3_NC453,3,nc Gamagara Local Municipality,BK0Co7tISGb,Datim
+ZAF,ZAF_3_NC062,3,nc Nama Khoi Local Municipality,xCzK2w8Ub1N,Datim
+ZAF,ZAF_3_MAN2,3,fs Botshabelo Health sub-District,hR61MSHzAC3,Datim
+ZAF,ZAF_3_JHBD,3,gp Johannesburg D Health sub-District,zf2BeMdf62h,Datim
+ZAF,ZAF_3_GT485,3,gp Rand West City Local Municipality,gQY0ESgHC8Q,Datim
+ZAF,ZAF_3_NW392,3,nw Naledi Local Municipality,dg9uCGVLCEC,Datim
+ZAF,ZAF_3_EC145,3,ec Walter Sisulu Local Municipality,tzpX2CDB1jA,Datim
+ZAF,ZAF_3_WC015,3,wc Swartland Local Municipality,R5uEi0RhPIg,Datim
+ZAF,ZAF_3_EC142,3,ec Senqu Local Municipality,e9zPThDPiJj,Datim
+ZAF,ZAF_3_FS204,3,fs Metsimaholo Local Municipality,IX8Eqz8t2kV,Datim
+ZAF,ZAF_3_KZN226,3,kz Mkhambathini Local Municipality,bmTskd2XS29,Datim
+ZAF,ZAF_3_FS182,3,fs Tokologo Local Municipality,XvsNorrayHt,Datim
+ZAF,ZAF_3_LIM341,3,lp Musina Local Municipality,B7YbadRnLWs,Datim
+ZAF,ZAF_3_EC444,3,ec Ntabankulu Local Municipality,h1Y6W3XNp4R,Datim
+ZAF,ZAF_3_KZN281,3,kz uMfolozi Local Municipality,oiukKexEqh4,Datim
+ZAF,ZAF_3_JHBC,3,gp Johannesburg C Health sub-District,o0CzjRVpRJ6,Datim
+ZAF,ZAF_3_GT484,3,gp Merafong City Local Municipality,tH6571fJs0m,Datim
+ZAF,ZAF_3_WC014,3,wc Saldanha Bay Local Municipality,PuALpAHHDQ7,Datim
+ZAF,ZAF_3_KZN254,3,kz Dannhauser Local Municipality,Cfcpi1acLdI,Datim
+ZAF,ZAF_3_EC108,3,ec Kouga Local Municipality,y611FMr8GKq,Datim
+ZAF,ZAF_3_TSH4,3,gp Tshwane 4 Local Municipality,f3ZdI0ihEQE,Datim
+ZAF,ZAF_3_EC109,3,ec Kou-Kamma Local Municipality,jcbLyqon2Iu,Datim
+ZAF,ZAF_3_NC091,3,nc Sol Plaatje Local Municipality,uKexrQESegn,Datim
+ZAF,ZAF_3_NW374,3,nw Kgetlengrivier Local Municipality,kBV9TLdRSjf,Datim
+ZAF,ZAF_3_NC082,3,nc Kai !Garib Local Municipality,dEH2UYLxrhz,Datim
+ZAF,ZAF_3_KZN282,3,kz City of uMhlathuze Local Municipality,QAP8Lt9EWhI,Datim
+ZAF,ZAF_3_MP304,3,mp Dr Pixley Ka Isaka Seme Local Municipality,hobSH0yvAJF,Datim
+ZAF,ZAF_3_EKUS2,3,gp Ekurhuleni South 2 Local Municipality,hGT2SBC4dH3,Datim
+ZAF,ZAF_3_KZN253,3,kz Emadlangeni Local Municipality,fybhiF1ptDy,Datim
+ZAF,ZAF_3_FS163,3,fs Mohokare Local Municipality,lR9VfN1MUJU,Datim
+ZAF,ZAF_3_WC044,3,wc George Local Municipality,QZGPckmY5xb,Datim
+ZAF,ZAF_3_NC073,3,nc Emthanjeni Local Municipality,EPzdEEJOIBE,Datim
+ZAF,ZAF_3_KZN245,3,kz Umvoti Local Municipality,OfFU4MDL6O9,Datim
+ZAF,ZAF_3_KZN262,3,kz uPhongolo Local Municipality,oE1zSYtAqqW,Datim
+ZAF,ZAF_3_GT422,3,gp Midvaal Local Municipality,WyzzWNalTjF,Datim
+ZAF,ZAF_3_WC052,3,wc Prince Albert Local Municipality,q9zVM83Ok97,Datim
+ZAF,ZAF_3_FS183,3,fs Tswelopele Local Municipality,vskEzBxGZms,Datim
+ZAF,ZAF_3_WC041,3,wc Kannaland Local Municipality,ZlNN992Djx6,Datim
+ZAF,ZAF_3_EC102,3,ec Blue Crane Route Local Municipality,KuBfr3UDvuG,Datim
+ZAF,ZAF_3_FS201,3,fs Moqhaka Local Municipality,M1Oi3xILOPd,Datim
+ZAF,ZAF_3_KZN227,3,kz Richmond Local Municipality,Fdr6Wsz9ior,Datim
+ZAF,ZAF_3_MAN3,3,fs Naledi Local Municipality,SN8v7ZPWekl,Datim
+ZAF,ZAF_3_NC075,3,nc Renosterberg Local Municipality,VCKjyQYAejK,Datim
+ZAF,ZAF_3_KZN291,3,kz Mandeni Local Municipality,T3ywi56W4q5,Datim
+ZAF,ZAF_3_NC067,3,nc KhÃ¢i-Ma Local Municipality,uNq0zNlYKxp,Datim
+ZAF,ZAF_3_WC048,3,wc Knysna Local Municipality,fiyeFm2xeup,Datim
+ZAF,ZAF_3_KZN241,3,kz Endumeni Local Municipality,NNgk51fw3Ir,Datim
+ZAF,ZAF_3_NC072,3,nc Umsobomvu Local Municipality,hG0kYBApY8q,Datim
+ZAF,ZAF_3_KZN223,3,kz Mpofana Local Municipality,WnoSNeQvVmz,Datim
+ZAF,ZAF_3_WC045,3,wc Oudtshoorn Local Municipality,TsdLgDvzmVD,Datim
+ZAF,ZAF_3_NC066,3,nc Karoo Hoogland Local Municipality,JDTqXK8G2QN,Datim
+ZAF,ZAF_3_NC077,3,nc Siyathemba Local Municipality,CcfqsX4s43b,Datim
+ZAF,ZAF_3_WC012,3,wc Cederberg Local Municipality,ksMLylvMzNP,Datim
+ZAF,ZAF_3_NW396,3,nw Lekwa-Teemane Local Municipality,AtRjtPCnHVx,Datim
+ZAF,ZAF_3_WC024,3,wc Stellenbosch Local Municipality,OxB0MEQ6v5p,Datim
+ZAF,ZAF_3_WC031,3,wc Theewaterskloof Local Municipality,YhxtXhcRtGf,Datim
+ZAF,ZAF_3_NW393,3,nw Mamusa Local Municipality,mwT1m4aHRbB,Datim
+ZAF,ZAF_3_NW397,3,nw Kagisano-Molopo Local Municipality,GgEQZ8xQGN5,Datim
+ZAF,ZAF_3_NC093,3,nc Magareng Local Municipality,SUPV76dVq09,Datim
+ZAF,ZAF_3_WC047,3,wc Bitou Local Municipality,yRVEbmJ6NSd,Datim
+ZAF,ZAF_3_WC042,3,wc Hessequa Local Municipality,G8Cz8sSwpxh,Datim
+ZAF,ZAF_3_NC071,3,nc Ubuntu Local Municipality,LC53goWSRvX,Datim
+ZAF,ZAF_3_LIM366,3,lp Bela-Bela Local Municipality,eMb1EbNrnfH,Datim
+ZAF,ZAF_3_NC064,3,nc Kamiesberg Local Municipality,Z78sSA4ttK1,Datim
+ZAF,ZAF_3_NC061,3,nc Richtersveld Local Municipality,EvoaFOK1BNB,Datim
+ZAF,ZAF_3_NC065,3,nc Hantam Local Municipality,Cys3pF3x3Hs,Datim
+ZAF,ZAF_3_FS161,3,fs Letsemeng Local Municipality,Cpo7ALU6BXC,Datim
+ZAF,ZAF_3_NC086,3,nc Kgatelopele Local Municipality,EAPIMkmLd5X,Datim
+ZAF,ZAF_2_DC4,2,wc Garden Route District Municipality,IOb5dQ3OH9g,Datim
+ZMB,ZMB,0,Zambia,f5RoebaDLMx,Datim
+ZMB,ZMB_1_10gh,1,Central Province,glHv5VLHKi0,Datim
+ZMB,ZMB_1_11,1,Copperbelt Province,ujvP4QAHDoM,Datim
+ZMB,ZMB_1_12sg,1,Eastern Province,KL9KJYtIrPo,Datim
+ZMB,ZMB_1_13,1,Luapula Province,Vx5hU3RgmjC,Datim
+ZMB,ZMB_1_14fz,1,Lusaka Province,fKHv5qcp1nN,Datim
+ZMB,ZMB_1_15pi,1,Muchinga Province,QPIMzDJei82,Datim
+ZMB,ZMB_1_16,1,Northern Province,IJ4fAvJ0HJf,Datim
+ZMB,ZMB_1_17xt,1,Southern Province,ecXXey5nCpd,Datim
+ZMB,ZMB_1_18,1,Western Province,ZP7sUNCemnF,Datim
+ZMB,ZMB_1_19,1,NorthWestern Province,LuBA2MsPgGd,Datim
 ZMB,ZMB_2_1,2,Chibombo District,C3hzjEbUGY7,Datim
 ZMB,ZMB_2_2,2,Chisamba District,w1I54NxWBAX,Datim
 ZMB,ZMB_2_3,2,Chitambo District,BATZOkeA239,Datim
@@ -1628,7 +3565,6 @@ ZMB,ZMB_2_20,2,Mufulira District,GcuK6LNsXMg,Datim
 ZMB,ZMB_2_21,2,Ndola District,Q12UEW61lN1,Datim
 ZMB,ZMB_2_22,2,Chadiza District,lRPR9ANGlm4,Datim
 ZMB,ZMB_2_23,2,Chasefu District,toCagUMIx9Y,Datim
-ZMB,ZMB_2_24,2,Chipangali District,a6IV5KjoVVl,Datim
 ZMB,ZMB_2_25,2,Chipata District,WM6uJb7CSb0,Datim
 ZMB,ZMB_2_26,2,Kasenengwa District,povv2qRdZ3Q,Datim
 ZMB,ZMB_2_27,2,Katete District,EedkCkeXAoE,Datim
@@ -1721,6 +3657,18 @@ ZMB,ZMB_2_113,2,Mushindamo District,VcmojzLvzmT,Datim
 ZMB,ZMB_2_114,2,Mwinilunga District,wyjZ8L6fcge,Datim
 ZMB,ZMB_2_115,2,Solwezi District,aUCEtB44Q1u,Datim
 ZMB,ZMB_2_116,2,Zambezi District,j7KiCT3SdRf,Datim
+ZMB,ZMB_2_24,2,Chipangali District,a6IV5KjoVVl,Datim
+ZWE,ZWE,0,Zimbabwe,a71G4Gtcttv,Datim
+ZWE,ZWE_1_10,1,Bulawayo,Gq3yijKpYtE,Datim
+ZWE,ZWE_1_11,1,Harare,N3hBufW5udb,Datim
+ZWE,ZWE_1_12,1,Manicaland,ZyJ62ad8arA,Datim
+ZWE,ZWE_1_13,1,Mashonaland Central,qvhPwMGUgmP,Datim
+ZWE,ZWE_1_14,1,Mashonaland East,VgWQIctY7iL,Datim
+ZWE,ZWE_1_15,1,Mashonaland West,Xkfs44Or8VB,Datim
+ZWE,ZWE_1_16,1,Masvingo,ilghQXI6qYq,Datim
+ZWE,ZWE_1_17,1,Matabeleland North,JAyjF08jkOy,Datim
+ZWE,ZWE_1_18,1,Matabeleland South,hb829DJhS1q,Datim
+ZWE,ZWE_1_19,1,Midlands,i0ugMWVcB6M,Datim
 ZWE,ZWE_2_1,2,Bulawayo,gRcDzd8Havi,Datim
 ZWE,ZWE_2_2,2,Chitungwiza,mDpdX1kRyEm,Datim
 ZWE,ZWE_2_3,2,Harare,tnA2yp5DV8B,Datim
@@ -1784,397 +3732,3 @@ ZWE,ZWE_2_60,2,Kwekwe,KrzWTSmFARO,Datim
 ZWE,ZWE_2_61,2,Mberengwa,vs33LF3cnHy,Datim
 ZWE,ZWE_2_62,2,Shurugwi,XQwyooJ2rFg,Datim
 ZWE,ZWE_2_63,2,Zvishavane,W4O6XMG1LlA,Datim
-CIV,CIV_2_001ze,2,Abobo-Est,m4hsNX3VTKP,Datim
-CIV,CIV_2_002ji,2,Abobo-Ouest,z3MzML1mYwh,Datim
-CIV,CIV_2_003ou,2,Anyama,VRjvwkJGXTH,Datim
-CIV,CIV_2_004nq,2,Yopougon-Est,FWBih8friTu,Datim
-CIV,CIV_2_005pp,2,Yopougon-Ouest-Songon,ejiEtWEM5cz,Datim
-CIV,CIV_2_006tw,2,Adjame-Plateau-Attecoube,srjx8SafsPP,Datim
-CIV,CIV_2_007ha,2,Cocody-Bingerville,uum3VZlFaKv,Datim
-CIV,CIV_2_008wj,2,Koumassi,SA1Avn20OIg,Datim
-CIV,CIV_2_009cc,2,Port-Bouet-Vridi,JWHZQPi2FZX,Datim
-CIV,CIV_2_010vd,2,Treichville-Marcory,eGcjUV99Zdo,Datim
-CIV,CIV_2_011kt,2,Agboville,gn6vC2809So,Datim
-CIV,CIV_2_012mv,2,Sikensi,gbHb3TqpYeF,Datim
-CIV,CIV_2_013xi,2,Tiassale,WqS5Tgu9lhn,Datim
-CIV,CIV_2_014gb,2,Koro,jn2oT2EqFHV,Datim
-CIV,CIV_2_015ue,2,Ouaninou,LHT1bZaObZi,Datim
-CIV,CIV_2_016xf,2,Touba,HJBwHZDHtwK,Datim
-CIV,CIV_2_017vo,2,Boundiali,AY20w05Wc9q,Datim
-CIV,CIV_2_018qb,2,Kouto,C06ksmRUqhQ,Datim
-CIV,CIV_2_019ov,2,Tengrela,GZd9VUpRF9b,Datim
-CIV,CIV_2_020sr,2,Didievi,AsDwMb164Ar,Datim
-CIV,CIV_2_021yn,2,Tiebissou,rDXPCsGXk80,Datim
-CIV,CIV_2_022wj,2,Toumodi,KaRkZKjlJS9,Datim
-CIV,CIV_2_023vb,2,Yamoussoukro,eOaGQybIP0i,Datim
-CIV,CIV_2_024aw,2,Dianra,u3unejleNk6,Datim
-CIV,CIV_2_025ng,2,Kounahiri,GCgFTT50sU8,Datim
-CIV,CIV_2_026oc,2,Mankono,tqjCSI7HOIk,Datim
-CIV,CIV_2_027qw,2,Bouna,jsjlSkJ8fZ2,Datim
-CIV,CIV_2_028ys,2,Doropo,pBR0kgpRXso,Datim
-CIV,CIV_2_029qq,2,Nassian,Fm5lj3ydz01,Datim
-CIV,CIV_2_030sq,2,Tehini,vdKJdMM5Vsa,Datim
-CIV,CIV_2_031lg,2,Blolequin,psRnKDD6jKN,Datim
-CIV,CIV_2_032lc,2,Guiglo,rjpRCyaSOka,Datim
-CIV,CIV_2_033tn,2,Tai,PkzJUGMTD1e,Datim
-CIV,CIV_2_034vv,2,Toulepleu,bPFRu7vkAx4,Datim
-CIV,CIV_2_035yh,2,Kaniasso,yPDsUlyJxHL,Datim
-CIV,CIV_2_036ec,2,Minignan,FeQubuYk5yj,Datim
-CIV,CIV_2_037jr,2,Beoumi,QI4qaQRoEcK,Datim
-CIV,CIV_2_038kb,2,Botro,mJ7BXJZjbgW,Datim
-CIV,CIV_2_039vx,2,Bouake-Nord-Est,AewGtVAXTpR,Datim
-CIV,CIV_2_040ou,2,Bouake-Nord-Ouest,ycvc2l2qqUE,Datim
-CIV,CIV_2_041xc,2,Bouake-Sud,y7RJkbRqgJT,Datim
-CIV,CIV_2_042df,2,Sakassou,F5ehlSubWUq,Datim
-CIV,CIV_2_043fq,2,Fresco,ZCxKKMtE0hA,Datim
-CIV,CIV_2_044hm,2,Sassandra,xrTVfYGnCAq,Datim
-CIV,CIV_2_045st,2,Gagnoa 1,HgAGgNFJBLO,Datim
-CIV,CIV_2_046ob,2,Gagnoa 2,keuoFuCkJc9,Datim
-CIV,CIV_2_047vh,2,Oume,U7FcpSTowY0,Datim
-CIV,CIV_2_048bk,2,Bondoukou,bPtyVLYWLS1,Datim
-CIV,CIV_2_049vl,2,Koun-Fao,oBgB5TCnud9,Datim
-CIV,CIV_2_050sl,2,Sandegue,hxfdOEY4kqW,Datim
-CIV,CIV_2_051vs,2,Tanda,hGbktMoaboh,Datim
-CIV,CIV_2_052wf,2,Transua,gDqtRGMWHYh,Datim
-CIV,CIV_2_053oo,2,Dabou,lD9LV6eBHfQ,Datim
-CIV,CIV_2_054cq,2,Grand-Lahou,lWBnsQf68dS,Datim
-CIV,CIV_2_055vj,2,Jacqueville,CRixH2BASvF,Datim
-CIV,CIV_2_056ga,2,Bangolo,YJRrSeTDrY5,Datim
-CIV,CIV_2_057ii,2,Duekoue,qtas4LeSMFk,Datim
-CIV,CIV_2_058ir,2,Kouibly,MfdlUVk17qs,Datim
-CIV,CIV_2_059xu,2,Dabakala,o2U3SNx0JLJ,Datim
-CIV,CIV_2_060hz,2,Katiola,jNb2wWbxIk8,Datim
-CIV,CIV_2_061oj,2,Niakaramadougou,oeiTlj4Anh8,Datim
-CIV,CIV_2_062yq,2,Daloa,Afx3d2MkpEG,Datim
-CIV,CIV_2_063xl,2,Issia,xVqaF0orSHP,Datim
-CIV,CIV_2_064qn,2,Vavoua,MU6pT5Itenu,Datim
-CIV,CIV_2_065gw,2,Zoukougbeu,SWnJKh6SBdx,Datim
-CIV,CIV_2_066jv,2,Daoukro,FIP1evPz2kO,Datim
-CIV,CIV_2_067xq,2,M'bahiakro,QVU3rUTd6WX,Datim
-CIV,CIV_2_068zk,2,Prikro,glRlVubWojg,Datim
-CIV,CIV_2_069ml,2,Abengourou,qHfnRvlDq0u,Datim
-CIV,CIV_2_070jp,2,Agnibilekrou,nYehWt8N4nw,Datim
-CIV,CIV_2_071yt,2,Bettie,f4tnMBWJUve,Datim
-CIV,CIV_2_072yt,2,Madinani,JywGOviALHQ,Datim
-CIV,CIV_2_073eq,2,Odienne,adZqc2OAgKp,Datim
-CIV,CIV_2_074qz,2,Divo,rRlVGR4SAOy,Datim
-CIV,CIV_2_075qv,2,Guitry,Cf9M88GSMkI,Datim
-CIV,CIV_2_076mi,2,Lakota,rqem7WGjUpm,Datim
-CIV,CIV_2_077jm,2,Bouafle,zxtqOKeUsFf,Datim
-CIV,CIV_2_078rs,2,Sinfra,LUgbTJHOa8M,Datim
-CIV,CIV_2_079cx,2,Zuenoula,KgKj4XmQtQX,Datim
-CIV,CIV_2_080zq,2,Adzope,Mz99jaYsFxm,Datim
-CIV,CIV_2_081sa,2,Akoupe,UDEHiTgnxZF,Datim
-CIV,CIV_2_082cj,2,Alepe,XtadO5Nbz1l,Datim
-CIV,CIV_2_083fn,2,Yakasse-Attobrou,ZJGH98L8kgX,Datim
-CIV,CIV_2_084ip,2,Arrah,jRCAWX024ru,Datim
-CIV,CIV_2_085xj,2,Bongouanou,pKg0FPsUjcz,Datim
-CIV,CIV_2_086iu,2,M'Batto,w8PDMwI00or,Datim
-CIV,CIV_2_087sv,2,Bocanda,sg5OeSC3e76,Datim
-CIV,CIV_2_088ip,2,Dimbokro,EwBdT0P1NoK,Datim
-CIV,CIV_2_089ic,2,Kouassikouassikro,gW9ZImPVIdD,Datim
-CIV,CIV_2_090yf,2,Buyo,mtjBMrFExWI,Datim
-CIV,CIV_2_091ae,2,Gueyo,zULBF1vgW7M,Datim
-CIV,CIV_2_092aa,2,Meagui,RjWBYFdUDkK,Datim
-CIV,CIV_2_093wr,2,Soubre,jPk4oCBlN23,Datim
-CIV,CIV_2_094wl,2,Dikodougou,pGItUIZ8Vy3,Datim
-CIV,CIV_2_095av,2,Korhogo 1,h6OQqWW1691,Datim
-CIV,CIV_2_096tn,2,Korhogo 2,kYIe3TVqwDU,Datim
-CIV,CIV_2_097st,2,M'Bengue,uVNbNCxOI4R,Datim
-CIV,CIV_2_098hi,2,Sinematiali,lZWD4jGmzTz,Datim
-CIV,CIV_2_099iq,2,San-Pedro,wvQfMc2sxSi,Datim
-CIV,CIV_2_100zm,2,Tabou,O2PDFcA1UBs,Datim
-CIV,CIV_2_101oy,2,Aboisso,qzPP0iILjH9,Datim
-CIV,CIV_2_102br,2,Adiake,auvAbmX414m,Datim
-CIV,CIV_2_103wd,2,Grand-Bassam,vwUs4s32SzY,Datim
-CIV,CIV_2_104jx,2,Tiapoum,pRFO6Tocugk,Datim
-CIV,CIV_2_105gf,2,Ferkessedougou,Ro2e9NndrG9,Datim
-CIV,CIV_2_106sj,2,Kong,IO61FGcXLsJ,Datim
-CIV,CIV_2_107av,2,Ouangolodougou,eSuJxZpd2tT,Datim
-CIV,CIV_2_108po,2,Biankouma,lDZEiz8wxkg,Datim
-CIV,CIV_2_109ue,2,Danane,iclnG0nW8le,Datim
-CIV,CIV_2_110qo,2,Man,GeLP2HBm78g,Datim
-CIV,CIV_2_111zo,2,Zouhan Hounien,gxpIzB7TH6b,Datim
-CIV,CIV_2_112ky,2,Kani,n1ikU5KKyAp,Datim
-CIV,CIV_2_113zy,2,seguela,eoAobHIVIBN,Datim
-MLI,MLI_1_01et,1,Bamako,Vq03leDlPyK,Datim
-MLI,MLI_1_03na,1,Kayes,yDUa15cMHKa,Datim
-MLI,MLI_1_05uv,1,Koulikoro,ZLIr1DNTnMK,Datim
-MLI,MLI_1_07kx,1,Mopti,soAIcPzcYzE,Datim
-MLI,MLI_1_08ug,1,S√©gou,ejikLJvqypx,Datim
-MLI,MLI_1_09px,1,Sikasso,rkkI2f77q5t,Datim
-SEN,SEN_1_01dq,1,Dakar,k8ehaCWrGKk,Datim
-SEN,SEN_1_05es,1,Kaolack,E6hJSi00Opm,Datim
-SEN,SEN_1_07ko,1,Kolda,qR4BO4zkFrI,Datim
-SEN,SEN_1_10eh,1,Saint-Louis,WDwPAH57opV,Datim
-SEN,SEN_1_11sl,1,Sedhiou,rLqGxiPN7pE,Datim
-SEN,SEN_1_13gi,1,Thi√®s,pgTxj4cYQ68,Datim
-SEN,SEN_1_14dx,1,Ziguinchor,MfZZmUhDlxq,Datim
-LBR,LBR_1_4ki,1,Grand Bassa County,FotNFTcvfuC,Datim
-LBR,LBR_1_9no,1,Margibi County,hVxRYPVlafi,Datim
-LBR,LBR_1_10lr,1,Maryland County,uSCHwx6umLy,Datim
-LBR,LBR_1_11dp,1,Montserrado County,HBfS8tgOaFO,Datim
-GHA,GHA_2_128oi,2,Ablekuma Central,n1Am3nVWwDO,Datim
-GHA,GHA_2_129zj,2,Ablekuma North,ZkJIHwUnrE3,Datim
-GHA,GHA_2_130da,2,Ablekuma West,TWDsM7m9ud9,Datim
-GHA,GHA_2_95vw,2,Abuakwa North,st0QNOPsyvP,Datim
-GHA,GHA_2_73el,2,Abura Asebu Kwamankese,waF6uxCOn29,Datim
-GHA,GHA_2_131qc,2,Accra Metro,Yb0CyMwuScE,Datim
-GHA,GHA_2_96mn,2,Achiase,K6xoYrdpD0d,Datim
-GHA,GHA_2_132kc,2,Ada East,f1tudOIC8Mw,Datim
-GHA,GHA_2_133yr,2,Ada West,nFbaiDcLU0f,Datim
-GHA,GHA_2_220kz,2,Adaklu,SHhWSzsvyAM,Datim
-GHA,GHA_2_7ys,2,Adansi Akrofuom,kvhDxQ3rv71,Datim
-GHA,GHA_2_8il,2,Adansi Asokwa,yESq2tcIkjG,Datim
-GHA,GHA_2_9kn,2,Adansi North,XPfocNXxT1C,Datim
-GHA,GHA_2_10rl,2,Adansi South,FnherguXYyF,Datim
-GHA,GHA_2_134ad,2,Adentan,D7jMG2fyvRX,Datim
-GHA,GHA_2_221eq,2,Afadjato South,yDJ4US7JbYq,Datim
-GHA,GHA_2_11kd,2,Afigya-Kwabre North,wk1WUcFe9Ve,Datim
-GHA,GHA_2_12la,2,Afigya Kwabre South,GWOjeAFn4JA,Datim
-GHA,GHA_2_97br,2,Afram Plains South,cTJQplxxhsk,Datim
-GHA,GHA_2_74bk,2,Agona East,kvdPyz6cmw0,Datim
-GHA,GHA_2_75qm,2,Agona West,t1gmK7NKiUp,Datim
-GHA,GHA_2_222ty,2,Agortime-Ziope,ZSuohFICpvk,Datim
-GHA,GHA_2_13oz,2,Ahafo-Ano North,tg2242naMSg,Datim
-GHA,GHA_2_14fh,2,Ahafo-Ano South East,S3erp6IBx6V,Datim
-GHA,GHA_2_15xd,2,Ahafo Ano South West,CFE72dd2pSu,Datim
-GHA,GHA_2_238nj,2,Ahanta West,sa9jhxnPbob,Datim
-GHA,GHA_2_76ps,2,Ajumako-Enyan-Essiam,eppCkc8W5ST,Datim
-GHA,GHA_2_223er,2,Akatsi North,Vz3iwp7mExH,Datim
-GHA,GHA_2_224ay,2,Akatsi South,s1qkNROK1ap,Datim
-GHA,GHA_2_98we,2,Akuapim North,ZhJi6LAMcsn,Datim
-GHA,GHA_2_99uj,2,Akuapim South,JkQSgbFSbae,Datim
-GHA,GHA_2_100xh,2,Akyemansa,YANR0GJFOyw,Datim
-GHA,GHA_2_16mv,2,Amansie Central,wsl8XDWIV6l,Datim
-GHA,GHA_2_17kb,2,Amansie South,sfiPiyHgDXv,Datim
-GHA,GHA_2_18oy,2,Amansie West,QBdyh3KtQBY,Datim
-GHA,GHA_2_225su,2,Anloga,y99tfBZrNGT,Datim
-GHA,GHA_2_252lv,2,Aowin,fNkWZbs4vdL,Datim
-GHA,GHA_2_19uk,2,Asante Akim Central,LOxuM1TyMNK,Datim
-GHA,GHA_2_20vi,2,Asante Akim North,xAalmDkY2RT,Datim
-GHA,GHA_2_21po,2,Asante Akim South,hLI0kbCLZ7R,Datim
-GHA,GHA_2_22ba,2,Asante Mampong,qYwDhwyqCaV,Datim
-GHA,GHA_2_101mm,2,Asene Manso Akroso,UW0L10Q4ReK,Datim
-GHA,GHA_2_135xf,2,Ashaiman,VqYQFdf4H2e,Datim
-GHA,GHA_2_77rh,2,Asikuma-Odoben-Brakwa,ZGGEiRcu5nw,Datim
-GHA,GHA_2_23vb,2,Asokore Mampong,t1Jp0nIXbOS,Datim
-GHA,GHA_2_24nh,2,Asokwa,m28NEDwu9ZJ,Datim
-GHA,GHA_2_78lo,2,Assin Foso,iBp0bH990h0,Datim
-GHA,GHA_2_79yx,2,Assin North,m4VLtEad4rJ,Datim
-GHA,GHA_2_80gt,2,Assin South,junBOEn5MP3,Datim
-GHA,GHA_2_1rw,2,Asunafo North,ug533fOLevW,Datim
-GHA,GHA_2_2ya,2,Asunafo South,DN36MEMarn5,Datim
-GHA,GHA_2_102jl,2,Asuogyaman,vC7z06YS9Nh,Datim
-GHA,GHA_2_3kh,2,Asutifi North,cstVOCO36Jo,Datim
-GHA,GHA_2_4py,2,Asutifi South,HOlZqvciO0D,Datim
-GHA,GHA_2_62wl,2,Atebubu-Amanten,oTmisTekxqj,Datim
-GHA,GHA_2_103fq,2,Atiwa,wJyGAyrWTL6,Datim
-GHA,GHA_2_104wu,2,Atiwa West,SHoTNl17Kj8,Datim
-GHA,GHA_2_25om,2,Atwima Kwanwoma,mWNFkLAbQk0,Datim
-GHA,GHA_2_26yn,2,Atwima Mponua,CpUwwBgrxJn,Datim
-GHA,GHA_2_27yf,2,Atwima Nwabiagya,SUYyDXUT4nZ,Datim
-GHA,GHA_2_28fq,2,Atwima Nwabiagya North,xJZVpJRq2U8,Datim
-GHA,GHA_2_81zw,2,Awutu Senya,iaiIy1BQnIM,Datim
-GHA,GHA_2_82ql,2,Awutu Senya East,HDPnDSxuxqN,Datim
-GHA,GHA_2_136ug,2,Ayawaso Central,TYCmtsJGDMc,Datim
-GHA,GHA_2_137ww,2,Ayawaso East,mvCKthpQLNl,Datim
-GHA,GHA_2_138vm,2,Ayawaso North,qj1Tj9uNwv0,Datim
-GHA,GHA_2_139xz,2,Ayawaso West,RhmMrN4j41w,Datim
-GHA,GHA_2_105ph,2,Ayensuano,NakVrMoevQP,Datim
-GHA,GHA_2_50ok,2,Banda,BzqDIALYiCa,Datim
-GHA,GHA_2_194yq,2,Bawku,QERjXgrnrLe,Datim
-GHA,GHA_2_195yx,2,Bawku West,MHF18AsEbBR,Datim
-GHA,GHA_2_29op,2,Bekwai Municipal,VNYVBpMkScZ,Datim
-GHA,GHA_2_51wi,2,Berekum Municipal,FXZMO37MRGc,Datim
-GHA,GHA_2_52xe,2,Berekum West,YKWlW1MvpUe,Datim
-GHA,GHA_2_253up,2,Bia East,evTXIwqlgok,Datim
-GHA,GHA_2_254nd,2,Bia West,ybZB41NnUrI,Datim
-GHA,GHA_2_179hm,2,Biakoye,EcpUbMMg6YI,Datim
-GHA,GHA_2_255lt,2,Bibiani-Anhwiaso-Bekwai,eu7N7BOz6sX,Datim
-GHA,GHA_2_196lq,2,Binduri,NXrQcoUWTIM,Datim
-GHA,GHA_2_106um,2,Birim Central,P8S0lR0nyqG,Datim
-GHA,GHA_2_107bu,2,Birim North,ODmQzDmGJmu,Datim
-GHA,GHA_2_108fc,2,Birim South,lr7NZNLnXLw,Datim
-GHA,GHA_2_256bl,2,Bodi,V1RTQuHZv6A,Datim
-GHA,GHA_2_187fp,2,Bole,LJdC5ZN2696,Datim
-GHA,GHA_2_197rs,2,Bolgatanga East,APLllSic1Vm,Datim
-GHA,GHA_2_198nw,2,Bolgatanga Municipal,SNxz3abUIj7,Datim
-GHA,GHA_2_199zd,2,Bongo,EFinURwMeDU,Datim
-GHA,GHA_2_30qs,2,Bosome Freho,chcxpkyokPB,Datim
-GHA,GHA_2_31ng,2,Bosomtwi,ZnSs7h3WCNe,Datim
-GHA,GHA_2_200ot,2,Builsa North,zep6W8NtEWw,Datim
-GHA,GHA_2_201oj,2,Builsa South,pc78djQ9s1A,Datim
-GHA,GHA_2_157nk,2,Bunkpurugu-Nakpanduri,ADQncQC2Np8,Datim
-GHA,GHA_2_83tw,2,Cape Coast,PO8KRypFqWR,Datim
-GHA,GHA_2_188gm,2,Central Gonja,FsMg5n3Ohy2,Datim
-GHA,GHA_2_226lw,2,Central Tongu,L1b0JPvOM3D,Datim
-GHA,GHA_2_158fr,2,Chereponi,qJEeft5AoU0,Datim
-GHA,GHA_2_209nt,2,Daffiama-Bussie-Issa,JW7srrWUbmp,Datim
-GHA,GHA_2_109bi,2,Denkyembour,U35PF33XOSY,Datim
-GHA,GHA_2_53dx,2,Dormaa East,JBrJZqx0Rpy,Datim
-GHA,GHA_2_54fx,2,Dormaa Municipal,LaCXB6goBNr,Datim
-GHA,GHA_2_55xk,2,Dormaa West,gHy8tYYBKwc,Datim
-GHA,GHA_2_110wm,2,East Akim - Abuakwa South,AAYCLOJu6mw,Datim
-GHA,GHA_2_189cf,2,East Gonja,IQ7lJtBREtk,Datim
-GHA,GHA_2_159zh,2,East Mamprusi,il7PdwuKe5o,Datim
-GHA,GHA_2_239pt,2,Effia-Kwesimintsim,VYb2AAqZeF1,Datim
-GHA,GHA_2_84ye,2,Effutu,bShonmkBGYD,Datim
-GHA,GHA_2_32wh,2,Ejisu,PHV0K07H2FM,Datim
-GHA,GHA_2_33zl,2,Ejura-Sekyedumase,TcWFlfbo2Uv,Datim
-GHA,GHA_2_85qq,2,Ekumfi,dexCSK4SJbE,Datim
-GHA,GHA_2_240hw,2,Ellembele,hp6AAOGZHde,Datim
-GHA,GHA_2_111tr,2,Fanteakwa North,iBARA7PXmRr,Datim
-GHA,GHA_2_112lw,2,Fanteakwa South,g0jEcbi8qkm,Datim
-GHA,GHA_2_140fs,2,Ga Central,yBL1SwSWGjR,Datim
-GHA,GHA_2_141xf,2,Ga East,hj9rijhWNuv,Datim
-GHA,GHA_2_142bj,2,Ga North,srI30hzHbha,Datim
-GHA,GHA_2_143sd,2,Ga South,lvwZsseSb7x,Datim
-GHA,GHA_2_144az,2,Ga West,Sm7BLYzUlhh,Datim
-GHA,GHA_2_202of,2,Garu,WWSBYke7ZLj,Datim
-GHA,GHA_2_86dk,2,Gomoa Central,FnfueAtLJJN,Datim
-GHA,GHA_2_87td,2,Gomoa East,y5Y7gV8h7R9,Datim
-GHA,GHA_2_88he,2,Gomoa West,bFg4JIz04H8,Datim
-GHA,GHA_2_163mo,2,Gushiegu,MppmIIBjxdM,Datim
-GHA,GHA_2_227ij,2,Ho,kSv6PGNIAgu,Datim
-GHA,GHA_2_228xh,2,Ho West,dOEDyNhqHjN,Datim
-GHA,GHA_2_229qb,2,Hohoe,KtrynPLZott,Datim
-GHA,GHA_2_56ee,2,Jaman North,wa27pIuCADS,Datim
-GHA,GHA_2_57fn,2,Jaman South,YUODt6FjyKO,Datim
-GHA,GHA_2_180re,2,Jasikan,FC0jeGdIsBS,Datim
-GHA,GHA_2_210un,2,Jirapa,brQzWxwwo8f,Datim
-GHA,GHA_2_241vt,2,Jomoro,dASd72VnJPh,Datim
-GHA,GHA_2_34oj,2,Juaben,QqC0ViUe1ys,Datim
-GHA,GHA_2_257wv,2,Juaboso,nZfPo3mvwQq,Datim
-GHA,GHA_2_181jb,2,Kadjebi,QBMZ6WPpD8e,Datim
-GHA,GHA_2_164yd,2,Karaga,NgdAGyFtwh8,Datim
-GHA,GHA_2_203yl,2,Kassena Nankena,hiSuBt0t8kq,Datim
-GHA,GHA_2_204cz,2,Kasena-Nankana West,rW8VAKSgF07,Datim
-GHA,GHA_2_230yh,2,Keta,G5pet3iHkdZ,Datim
-GHA,GHA_2_231oq,2,Ketu North,MozR5tABNeD,Datim
-GHA,GHA_2_232nw,2,Ketu South,SRebLmh9NoB,Datim
-GHA,GHA_2_63yr,2,Kintampo North,gaLfqCeZydm,Datim
-GHA,GHA_2_64oq,2,Kintampo South,KHtmEaz2wiI,Datim
-GHA,GHA_2_89da,2,Komenda-Edina-Eguafo-Abrem,BfKBcS4MBVu,Datim
-GHA,GHA_2_145fe,2,Korle-Klottey,dwEOl8DbsWx,Datim
-GHA,GHA_2_165zz,2,Kpandai,vpvxubMqoiO,Datim
-GHA,GHA_2_233sj,2,Kpando,PMwMm6qMzvd,Datim
-GHA,GHA_2_146sx,2,Kpone Katamanso,s0DkNlHN5wC,Datim
-GHA,GHA_2_182ta,2,Krachi East,EmGn2zD0jOq,Datim
-GHA,GHA_2_183lz,2,Krachi Nchumuru,ol3jaEDwyXA,Datim
-GHA,GHA_2_184tq,2,Krachi West,ntIKLnpXGOO,Datim
-GHA,GHA_2_147ap,2,Krowor,QRILScZBOvG,Datim
-GHA,GHA_2_35us,2,Kumasi,wuocP5rqcwE,Datim
-GHA,GHA_2_166nm,2,Kumbungu,FnsjINaaaVk,Datim
-GHA,GHA_2_36px,2,Kwabre East,gUrPaVYxJec,Datim
-GHA,GHA_2_37fs,2,Kwadaso,W5obbNEZjFO,Datim
-GHA,GHA_2_113zw,2,Kwaebibirem,rDxqqCmg4hJ,Datim
-GHA,GHA_2_114uq,2,Kwahu East,Y1FpPcv1IgT,Datim
-GHA,GHA_2_115gw,2,Kwahu North,nQvTGfdb636,Datim
-GHA,GHA_2_116uy,2,Kwahu South,J6VS1w1lyHv,Datim
-GHA,GHA_2_117qt,2,Kwahu West,t79bTQVrD0k,Datim
-GHA,GHA_2_148ot,2,La Dadekotopon,N4NfZi7gFkJ,Datim
-GHA,GHA_2_149uh,2,La Nkwantanan Madina,YdBItYPG5fx,Datim
-GHA,GHA_2_211nb,2,Lambussie,sDeXocshMr7,Datim
-GHA,GHA_2_212zb,2,Lawra,WTLGo8Hy4Bh,Datim
-GHA,GHA_2_150zu,2,Ledzokuku,CH0tqLOk2jH,Datim
-GHA,GHA_2_118gs,2,Lower Manya-Krobo,tkCsZFNE6xZ,Datim
-GHA,GHA_2_160ci,2,Mamprugu-Moagduri,WRLsCzI2tjI,Datim
-GHA,GHA_2_90my,2,Mfantsiman,pUDPBhA9WT6,Datim
-GHA,GHA_2_167tl,2,Mion,mRa9X5Hy8T2,Datim
-GHA,GHA_2_242gb,2,Mpohor,LvEUM36Galx,Datim
-GHA,GHA_2_205pd,2,Nabdam,ZB1ay9EbHmR,Datim
-GHA,GHA_2_213rj,2,Nadowli-Kaleo,ovjfRkibQIT,Datim
-GHA,GHA_2_214yz,2,Nandom,ELWLgRTBu4Y,Datim
-GHA,GHA_2_168gf,2,Nanton,D8d4RqQFJk3,Datim
-GHA,GHA_2_169rs,2,Nanumba North,jEoUxureXA0,Datim
-GHA,GHA_2_170wm,2,Nanumba South,JtGSOpPtnoO,Datim
-GHA,GHA_2_119mb,2,New Juabeng North,S6acB7Gm4Uw,Datim
-GHA,GHA_2_120hg,2,New Juaben South,S4tuSgAramn,Datim
-GHA,GHA_2_151uq,2,Ningo Prampram,Z4puJ6xzTDV,Datim
-GHA,GHA_2_65ok,2,Nkoranza North,UvOxqsUTId5,Datim
-GHA,GHA_2_66sb,2,Nkoranza  South,pBg64vO2AjC,Datim
-GHA,GHA_2_185jy,2,Nkwanta North,uByD65B5por,Datim
-GHA,GHA_2_186oq,2,Nkwanta South,hR3IHvXLtw9,Datim
-GHA,GHA_2_234wn,2,North Dayi,S3SiKUA4lXU,Datim
-GHA,GHA_2_190ap,2,North Gonja,noi9TwmhOLX,Datim
-GHA,GHA_2_235mn,2,North Tongu,eywLfRqhYe6,Datim
-GHA,GHA_2_191ec,2,North East Gonja,h6qXhVZGYM9,Datim
-GHA,GHA_2_121zq,2,Nsawam Adoagyiri,GuJVSPxa7XY,Datim
-GHA,GHA_2_243ey,2,Nzema East,PQTD6ghAb7f,Datim
-GHA,GHA_2_38eg,2,Obuasi,g43oZxaBwWz,Datim
-GHA,GHA_2_39xy,2,Obuasi East,OaE8ELhkwBl,Datim
-GHA,GHA_2_40bf,2,Offinso,dIQ7xfetnn3,Datim
-GHA,GHA_2_41fs,2,Offinso North,L0u0dgxFcoX,Datim
-GHA,GHA_2_42dw,2,Oforikrom,awzXTO6Z7zM,Datim
-GHA,GHA_2_152jh,2,Okai Koi North,nKrePdz2xuC,Datim
-GHA,GHA_2_122qi,2,Okere,Ej9vgSHlblv,Datim
-GHA,GHA_2_43pu,2,Old Tafo,skThz5eGWxV,Datim
-GHA,GHA_2_244tv,2,Prestea-Huni Valley,sHqutkoLysi,Datim
-GHA,GHA_2_67qi,2,Pru,Wj6tg8G4q81,Datim
-GHA,GHA_2_68zd,2,Pru West,bmjwONKIVze,Datim
-GHA,GHA_2_206oy,2,Pusiga,EMwEWdFtBK7,Datim
-GHA,GHA_2_171nv,2,Saboba,J9nZjLGo5Wj,Datim
-GHA,GHA_2_172fx,2,Sagnarigu,Zlms7s1qBtm,Datim
-GHA,GHA_2_173bk,2,Savelugu,OWyCWLqXccf,Datim
-GHA,GHA_2_192vs,2,Sawla-Tuna-Kalba,n1A6cTx3yfH,Datim
-GHA,GHA_2_258wy,2,Sefwi-Akontombra,ZeLOIyOxNMC,Datim
-GHA,GHA_2_259id,2,Sefwi-Wiawso,rbw3CnvEij2,Datim
-GHA,GHA_2_245yu,2,Sekondi Takoradi,PkMWvz5RuBJ,Datim
-GHA,GHA_2_44gq,2,Sekyere Afram Plains,TzPzF7DABvm,Datim
-GHA,GHA_2_45al,2,Sekyere Central,hYCjomAev7P,Datim
-GHA,GHA_2_46ho,2,Sekyere East,J2kaNstR3FY,Datim
-GHA,GHA_2_47xy,2,Sekyere Kumawu,B879bBvViat,Datim
-GHA,GHA_2_48fk,2,Sekyere South,zNx28ZerUc4,Datim
-GHA,GHA_2_69ic,2,Sene East,Uumchn5aHm6,Datim
-GHA,GHA_2_70kv,2,Sene West,QkLMVZzwGec,Datim
-GHA,GHA_2_153xq,2,Shai Osudoku,R4i8b9khNsW,Datim
-GHA,GHA_2_246ls,2,Shama,xgANiKHEBHU,Datim
-GHA,GHA_2_215jx,2,Sissala East,QacwqcOV2ZM,Datim
-GHA,GHA_2_216zz,2,Sissala West,t8Gb9bTW6IU,Datim
-GHA,GHA_2_236ni,2,South Dayi,wMobcNrSYXy,Datim
-GHA,GHA_2_237in,2,South Tongu,kLchyD0tsN2,Datim
-GHA,GHA_2_260kk,2,Suaman,TLyVFdlYgHu,Datim
-GHA,GHA_2_49am,2,Suame,D0waaXKqldS,Datim
-GHA,GHA_2_123de,2,Suhum,B4ivfuSLlBm,Datim
-GHA,GHA_2_58ju,2,Sunyani Municipal,rvKwvAFACQD,Datim
-GHA,GHA_2_59bd,2,Sunyani West,Tkp4bFs9Itt,Datim
-GHA,GHA_2_60ld,2,Tain,dXzCOeo5YRR,Datim
-GHA,GHA_2_207og,2,Talensi,w1GbBoO05zg,Datim
-GHA,GHA_2_174bk,2,Tamale,UUKQGiE9iiK,Datim
-GHA,GHA_2_5wp,2,Tano North,UFRAY5cq9rC,Datim
-GHA,GHA_2_6ih,2,Tano South,jcEEoIwH4TK,Datim
-GHA,GHA_2_247ze,2,Tarkwa-Nsueam,H75KCQrm07K,Datim
-GHA,GHA_2_175vf,2,Tatale-Sangule,Suffme9FrNH,Datim
-GHA,GHA_2_71nq,2,Techiman Municipal,qZ1nNbKvWgH,Datim
-GHA,GHA_2_72mn,2,Techiman North,gmDHqPPR3jj,Datim
-GHA,GHA_2_154hc,2,Tema,DZQQk8pntpD,Datim
-GHA,GHA_2_155pw,2,Tema West,RM1Ihj3ae3w,Datim
-GHA,GHA_2_208ts,2,Tempane,nR4lpXaer0A,Datim
-GHA,GHA_2_176jg,2,Tolon,UN4QDMcH23J,Datim
-GHA,GHA_2_91fh,2,Twifo Ati-Mokwa,qSi7luoQKy8,Datim
-GHA,GHA_2_92cs,2,Twifo-Hemang Lower Denkyira,Wk2T019e7iO,Datim
-GHA,GHA_2_93ip,2,Upper Denkyira East,JqdkdWrplIr,Datim
-GHA,GHA_2_94oi,2,Upper Denkyira West,c86Ih95bjhq,Datim
-GHA,GHA_2_124tt,2,Upper Manya-Krobo,EqgptJWxwEv,Datim
-GHA,GHA_2_125cb,2,Upper West Akim,yt0yBMiwdFh,Datim
-GHA,GHA_2_217rm,2,Wa East,cZSPo4wlNtZ,Datim
-GHA,GHA_2_218iv,2,Wa Municipal,SkZsFL2pGKt,Datim
-GHA,GHA_2_219iw,2,Wa West,qPbikO234Nc,Datim
-GHA,GHA_2_248qd,2,Wassa Amenfi Central,Vi2MJdML7sN,Datim
-GHA,GHA_2_249jn,2,Wassa Amenfi East,ayclR3WPTD7,Datim
-GHA,GHA_2_250rg,2,Wassa Amenfi West,B0qI4RYtgB5,Datim
-GHA,GHA_2_251fp,2,Wassa East,Sy923O3IoFO,Datim
-GHA,GHA_2_156si,2,Weija-Gbawe,Vo4suK5BEOT,Datim
-GHA,GHA_2_61fi,2,Wenchi,n0XUcNIvXEG,Datim
-GHA,GHA_2_126ym,2,West Akim,YgLttd6Q0Di,Datim
-GHA,GHA_2_193bk,2,West Gonja,ldfg1ERXsvP,Datim
-GHA,GHA_2_161xp,2,West Mamprusi,dEdbsALGqws,Datim
-GHA,GHA_2_177hp,2,Yendi,kJRnwdWsf8c,Datim
-GHA,GHA_2_127hw,2,Yilo-Krobo,xHBIYZbTvJG,Datim
-GHA,GHA_2_162cq,2,Yunyoo-Nasuan,XPLb8QeAjXN,Datim
-GHA,GHA_2_178nh,2,Zabzugu,TmlvkDvFJsr,Datim
-SLE,SLE_2_4xr,2,Kambia,QaqUu9vgorH,Datim
-SLE,SLE_2_6st,2,Port Loko,AeZKV2y4FmE,Datim
-SLE,SLE_2_15pb,2,Western Area Rural,sNMoVbgC08a,Datim
-SLE,SLE_2_16cp,2,Western Area Urban,I2wk4Eupd1p,Datim
