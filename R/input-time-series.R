@@ -81,7 +81,7 @@ aggregate_art <- function(art, shape) {
       dplyr::bind_rows()
 
   }
-
+browser()
   art_long <- lapply(art_dat, aggregate_art_by_level) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
@@ -90,7 +90,7 @@ aggregate_art <- function(art, shape) {
     dplyr::left_join(
       areas %>%
         dplyr::select(area_id, area_name, area_level,
-                      area_level_label, parent_area_id,area_sort_order),
+                      area_level_label, parent_area_id, area_sort_order),
       by = c("area_id")
     ) %>%
     dplyr::select(area_id, area_level, area_level_label,parent_area_id,

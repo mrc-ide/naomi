@@ -96,7 +96,7 @@ prepare_tmb_inputs <- function(naomi_data,
 
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
-    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id") %>%
+    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id", multiple = "all") %>%
     dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
