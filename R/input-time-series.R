@@ -81,7 +81,7 @@ aggregate_art <- function(art, shape) {
       dplyr::bind_rows()
 
   }
-browser()
+
   art_long <- lapply(art_dat, aggregate_art_by_level) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
