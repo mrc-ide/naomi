@@ -759,7 +759,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
   A_artnum <- A_artnum %>%
     dplyr::left_join(
       area_aggregation,
-      by = c("attend_area_id" = "area_id")
+      by = c("attend_area_id" = "area_id"),
+      multiple = "all"
     ) %>%
     dplyr::mutate(attend_area_id = model_area_id,
                   model_area_id = NULL)

@@ -91,9 +91,9 @@ hintr_calibrate_plot <- function(output) {
     dplyr::select(age_group_out, age_group)
 
   dfexpand <- dflong %>%
-    dplyr::inner_join(region_out, by = "spectrum_region_code") %>%
-    dplyr::inner_join(sex_join, by = "sex") %>%
-    dplyr::inner_join(age_group_join, by = "age_group") %>%
+    dplyr::inner_join(region_out, by = "spectrum_region_code", multiple = "all") %>%
+    dplyr::inner_join(sex_join, by = "sex", multiple = "all") %>%
+    dplyr::inner_join(age_group_join, by = "age_group", multiple = "all") %>%
     dplyr::count(spectrum_region_code = spectrum_region_code_out,
                  spectrum_region_name = spectrum_region_name_out,
                  sex = sex_out,
