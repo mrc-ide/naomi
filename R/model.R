@@ -53,7 +53,8 @@ naomi_output_frame <- function(mf_model,
              mf_model %>%
              dplyr::select("area_id", "sex", "age_group", "idx"),
       by = c("model_area_id" = "area_id",
-             "sex", "age_group")) %>%
+             "sex", "age_group"),
+      multiple = "all") %>%
     dplyr::right_join(
              mf_out %>%
              dplyr::mutate(out_idx = dplyr::row_number())

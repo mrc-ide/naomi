@@ -96,7 +96,7 @@ prepare_tmb_inputs <- function(naomi_data,
 
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
-    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id") %>%
+    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id", multiple = "all") %>%
     dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
@@ -751,14 +751,16 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                         sex = c("male", "female", "male", "female", "both"),
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
-             by = "artdat_sex"
+             by = "artdat_sex",
+             multiple = "all"
     )
 
   ## Map artattend_area_id to model_area_id
   A_artnum <- A_artnum %>%
     dplyr::left_join(
       area_aggregation,
-      by = c("attend_area_id" = "area_id")
+      by = c("attend_area_id" = "area_id"),
+      multiple = "all"
     ) %>%
     dplyr::mutate(attend_area_id = model_area_id,
                   model_area_id = NULL)
@@ -782,7 +784,7 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
              value = 1
            )
 
-  A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars)
+  A_artnum <- dplyr::left_join(A_artnum, df_art_attend, by = by_vars, multiple = "all")
 
   A_artnum <- A_artnum %>%
     {

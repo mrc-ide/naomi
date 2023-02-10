@@ -1,3 +1,7 @@
+# naomi 2.9.2
+
+* INTERNAL ONLY: Update code to silence warning messages from dplyr v1.1.0. No changes to model or interface.
+
 # naomi 2.9.1
 
 * Update PEPFAR Datim UID mapping and PSNU level for 2023 Target Setting Tool.

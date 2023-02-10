@@ -46,7 +46,8 @@ spread_areas <- function(areas, min_level = min(areas$area_level), max_level = m
           !!paste0("area_name", level) := area_name,
           parent_area_id)
        ,
-        by = stats::setNames(c("parent_area_id"), c(paste0("area_id", level - 1L)))
+        by = stats::setNames(c("parent_area_id"), c(paste0("area_id", level - 1L))),
+        multiple = "all"
       )
 
   }
