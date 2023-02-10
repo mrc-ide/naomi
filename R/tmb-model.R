@@ -665,7 +665,11 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
   fit
 }
 
-rmvnorm_sparseprec <- function(n, mean = rep(0, nrow(prec)), prec = diag(lenth(mean))) {
+rmvnorm_sparseprec <- function(
+  n,
+  mean = rep(0, nrow(prec)),
+  prec = diag(length(mean))
+  ) {
 
   z = matrix(rnorm(n * length(mean)), ncol = n)
   L_inv = Matrix::Cholesky(prec)
