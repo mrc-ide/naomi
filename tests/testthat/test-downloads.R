@@ -161,3 +161,16 @@ test_that("comparison report download can be created", {
   expect_equal(messages$progress[[1]]$message,
                "Generating comparison report")
 })
+
+test_that("output description is translated", {
+  text <- build_output_description(a_hintr_options)
+  expect_match(
+    text,
+    "Naomi output uploaded from Naomi web app\\n\\nArea scope - MWI\\n.+")
+
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  text <- build_output_description(a_hintr_options)
+  expect_match(text, paste0("Paquet Naomi téléchargée depuis l'application ",
+                            "web Naomi\\n\\nPérimètre de zone - MWI\\n.+"))
+})

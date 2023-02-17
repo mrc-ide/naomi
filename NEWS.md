@@ -1,3 +1,7 @@
+# naomi 2.8.3
+
+* Fix translation of output descriptions which are used as the resource description for files uploaded to the ADR.
+
 # naomi 2.9.2
 
 * INTERNAL ONLY: Update code to silence warning messages from dplyr v1.1.0. No changes to model or interface.

@@ -268,5 +268,8 @@
     "BIRTHS_CLIENTS_RATIO": "Relação nascimentos-clientes",
     "BIRTHS_CLIENTS_RATIO_DESC": "Rácio de nascimentos nas instalações para clientes CPN",
     "ANC_KNOWN_NEG_DESC": "Número de participantes de CPN VIH negativos recentemente testados e cientes do status antes da primeira visita de CPN",
-    "BIRTHS_FACILITY_DESC": "Número de nascimentos em estabelecimentos de saúde"
+    "BIRTHS_FACILITY_DESC": "Número de nascimentos em estabelecimentos de saúde",
+    "DOWNLOAD_OUTPUT_DESCRIPTION": "Pacote Naomi descarregado a partir da aplicação web Naomi",
+    "DOWNLOAD_SUMMARY_DESCRIPTION": "Relatório de síntese da Naomi carregado da aplicação web Naomi",
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi"
 }
