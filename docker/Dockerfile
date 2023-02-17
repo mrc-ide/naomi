@@ -15,7 +15,7 @@ RUN install_packages --repo=https://mrc-ide.r-universe.dev \
     pkgbuild \
     testthat.buildkite
 
-RUN instal_remote \
+RUN install_remote \
     mrc-ide/naomi.options@mrc-3993-options
 
 ## Model run will try to parallelise over as many threads as are available
