@@ -1,3 +1,8 @@
+# naomi 2.9.4
+
+* Implement Spectrum ART scaling adjustment in Naomi calibration.
+* Add PEPFAR area ID mapping for Ethiopia.
+
 # naomi 2.9.3
 
 * Update PEPFAR Datim UID mapping for CMR.

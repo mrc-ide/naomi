@@ -191,6 +191,25 @@ read_dp_art_dec31 <- function(dp) {
     stop("Invalid percentage on ART entered for adult ART")
   }
 
+  ## # Adult on ART adjustment factor
+  ## 
+  ## * Implemented from around Spectrum 6.2 (a few versions before)
+  ## * Allows user to specify scalar to reduce number on ART in each year ("<AdultARTAdjFactor>")
+  ## * Enabled / disabled by checkbox flag ("<AdultARTAdjFactorFlag>")
+  ## * Scaling factor only applies to number inputs, not percentages (John Stover email, 20 Feb 2023)
+  ##   -> Even if scaling factor specified in a year with percentage input, ignore it.
+
+  if (exists_dptag("<AdultARTAdjFactorFlag>") &&
+        dpsub("<AdultARTAdjFactorFlag>", 2, 4) == 1) {
+
+    adult_artadj_factor <- sapply(dpsub("<AdultARTAdjFactor>", 3:4, timedat.idx), as.numeric)
+
+    ## Only apply if is number (! is percentage)
+    adult_artadj_factor <- adult_artadj_factor ^ as.numeric(!art15plus_isperc)
+
+    art15plus_num <- art15plus_num * adult_artadj_factor
+  }
+
   art15plus_num[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_num[art15plus_isperc == 1] / 100
 
   art15plus <- as.data.frame.table(art15plus_num,
@@ -241,7 +260,7 @@ read_dp_art_dec31 <- function(dp) {
   child_art_isperc <- as.integer(child_art_isperc)
   names(child_art_isperc) <- proj.years
 
-  child_art_need<- dpsub("<ChildARTCalc MV2>", 9, timedat.idx)
+  child_art_need <- dpsub("<ChildARTCalc MV2>", 9, timedat.idx)
   child_art_need <- as.numeric(child_art_need)
   child_art_need <- stats::approx(proj.years, child_art_need, proj.years + 0.5, rule = 2)$y
   names(child_art_need) <- proj.years
@@ -250,6 +269,22 @@ read_dp_art_dec31 <- function(dp) {
                                 child_art_isperc == 0  & !is.na(child_art_0to14) ~ child_art_0to14,
                                 child_art_isperc == 1 ~ child_art_need * child_art_0to14 / 100)
   names(child_art) <- proj.years
+
+  ## # Child on ART adjustment factor
+  ## 
+  ## * Implemented same as adult adjustment factor above
+
+  if (exists_dptag("<ChildARTAdjFactorFlag>") &&
+        dpsub("<ChildARTAdjFactorFlag>", 2, 4) == 1) {
+
+    child_artadj_factor <- as.numeric(dpsub("<ChildARTAdjFactor MV>", 2, timedat.idx))
+
+    ## Only apply if is number (! is percentage)
+    child_artadj_factor <- child_artadj_factor ^ !child_art_isperc
+
+    child_art <- child_art * child_artadj_factor
+  }
+
 
   if (any(is.na(child_art))) {
     stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
