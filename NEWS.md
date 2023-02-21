@@ -1,3 +1,12 @@
+# naomi 2.9.4
+
+* Implement Spectrum ART scaling adjustment in Naomi calibration.
+* Add PEPFAR area ID mapping for Ethiopia.
+
+# naomi 2.9.3
+
+* Update PEPFAR Datim UID mapping for CMR.
+
 # naomi 2.9.2
 
 * INTERNAL ONLY: Update code to silence warning messages from dplyr v1.1.0. No changes to model or interface.
