@@ -1,6 +1,15 @@
-# naomi 2.8.3
+# naomi 2.9.5
 
 * Fix translation of output descriptions which are used as the resource description for files uploaded to the ADR.
+
+# naomi 2.9.4
+
+* Implement Spectrum ART scaling adjustment in Naomi calibration.
+* Add PEPFAR area ID mapping for Ethiopia.
+
+# naomi 2.9.3
+
+* Update PEPFAR Datim UID mapping for CMR.
 
 # naomi 2.9.2
 
