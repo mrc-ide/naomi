@@ -34,7 +34,7 @@ Imports:
     knitr,
     magrittr,
     mvtnorm,
-    naomi.options (>= 0.1.5),
+    naomi.options (>= 0.1.6),
     plotly,
     prettyunits,
     qs,
