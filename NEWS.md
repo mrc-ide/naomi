@@ -1,3 +1,7 @@
+# naomi 2.9.5
+
+* Fix translation of output descriptions which are used as the resource description for files uploaded to the ADR.
+
 # naomi 2.9.4
 
 * Implement Spectrum ART scaling adjustment in Naomi calibration.

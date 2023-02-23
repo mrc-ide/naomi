@@ -268,5 +268,8 @@
     "BIRTHS_CLIENTS_RATIO": "Rapport naissances-clients",
     "BIRTHS_CLIENTS_RATIO_DESC": "Rapport entre le nombre de naissances à l'établissement et le nombre de clients de la CPN",
     "ANC_KNOWN_NEG_DESC": "Nombre de femmes séronégatives en CPN récemment testées et conscientes de leur statut avant la première visite en CPN",
-    "BIRTHS_FACILITY_DESC": "Nombre de naissances dans les établissements de santé"
+    "BIRTHS_FACILITY_DESC": "Nombre de naissances dans les établissements de santé",
+    "DOWNLOAD_OUTPUT_DESCRIPTION": "Paquet Naomi téléchargée depuis l'application web Naomi",
+    "DOWNLOAD_SUMMARY_DESCRIPTION": "Rapport de synthèse Naomi téléchargé depuis l'application web Naomi",
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi"
 }

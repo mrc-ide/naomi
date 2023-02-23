@@ -98,3 +98,34 @@ hintr_prepare_comparison_report_download <- function(output,
     )
   )
 }
+
+build_output_description <- function(options) {
+  build_description(t_("DOWNLOAD_OUTPUT_DESCRIPTION"), options)
+}
+
+build_summary_report_description <- function(options) {
+  build_description(t_("DOWNLOAD_SUMMARY_DESCRIPTION"), options)
+}
+
+build_comparison_report_description <- function(options) {
+  build_description(t_("DOWNLOAD_COMPARISON_DESCRIPTION"), options)
+}
+
+build_description <- function(type_text, options) {
+  write_options <- function(name, value) {
+    sprintf("%s - %s", name, value)
+  }
+  lang <- traduire::translator()$language()
+  labels <- c("OPTIONS_GENERAL_AREA_SCOPE_LABEL",
+            "OPTIONS_GENERAL_AREA_LEVEL_LABEL",
+            "OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL",
+            "OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL")
+  translated_labels <- naomi.options::translate_labels(labels, lang = lang)
+  opt_text <- Map(write_options,
+                  translated_labels,
+                  c(options[["area_scope"]],
+                    options[["area_level"]],
+                    options[["calendar_quarter_t2"]],
+                    options[["calendar_quarter_t3"]]))
+  paste0(c(type_text, "", opt_text), collapse = "\n")
+}

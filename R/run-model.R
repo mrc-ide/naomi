@@ -232,7 +232,7 @@ run_calibrate <- function(output, calibration_options) {
   ## Only return indicators for T1, T2, T3
   cq_t1t2t3 <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
   indicators_plot <- dplyr::filter(indicators, calendar_quarter %in% cq_t1t2t3)
-  
+
   list(plot_data = indicators_plot,
        calibrate_data = calibration_data)
 }
@@ -713,34 +713,3 @@ format_options <- function(options) {
 
   options
 }
-
-build_output_description <- function(options) {
-  build_description("Naomi output uploaded from Naomi web app", options)
-}
-
-build_summary_report_description <- function(options) {
-  build_description("Naomi summary report uploaded from Naomi web app",
-                    options)
-}
-
-build_comparison_report_description <- function(options) {
-  build_description("Naomi comparison report uploaded from Naomi web app",
-                    options)
-}
-
-build_description <- function(type_text, options) {
-  write_options <- function(name, value) {
-    sprintf("%s - %s", name, value)
-  }
-  opt_text <- Map(write_options,
-                  c(t_("OPTIONS_GENERAL_AREA_SCOPE_LABEL"),
-                    t_("OPTIONS_GENERAL_AREA_LEVEL_LABEL"),
-                    t_("OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL"),
-                    t_("OPTIONS_OUTPUT_PROJECTION_QUARTER_LABEL")),
-                  c(options[["area_scope"]],
-                    options[["area_level"]],
-                    options[["calendar_quarter_t2"]],
-                    options[["calendar_quarter_t3"]]))
-  paste0(c(type_text, "", opt_text), collapse = "\n")
-}
-
