@@ -563,6 +563,16 @@ if (sum(is.na(programme_data)) <3 ) {
 #-------------------------------------------------------------------------------
 anc_t1 <- outputs$fit$data_options$anc_prev_year_t1
 anc_t2 <- outputs$fit$data_options$anc_prev_year_t2
+
+# Quick fix to prevent ANC plots from rendering if ANC T1 is not in the same year
+# as model T1
+# TO DO: Refactor align_inputs_outputs script to align based on data inclusion 
+# vs. matching on years
+
+if(anc_t1 != naomi:::calendar_quarter_to_year(calendar_quarter1)){
+  anc_t1 <- NULL
+}
+
 has_anc <- !is_empty(anc_t1) && !is_empty(anc_t2)
 
 if (has_anc) {
