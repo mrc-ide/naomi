@@ -1,6 +1,6 @@
 # naomi 2.9.6
 
-* Fix for summary report failing to render when ANC data included at T1 in a different year to model T1. This fix will prevent ANC comparison plots from rendering in this case. 
+* Fix for comparison report failing to render when ANC data included at T1 in a different year to model T1. This fix will prevent ANC comparison plots from rendering in this case. 
 
 # naomi 2.9.5
 
