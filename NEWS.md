@@ -1,3 +1,7 @@
+# naomi 2.9.6
+
+* Fix for comparison report failing to render when ANC data included at T1 in a different year to model T1. This fix will prevent ANC comparison plots for T1 from rendering in this case. 
+
 # naomi 2.9.5
 
 * Fix translation of output descriptions which are used as the resource description for files uploaded to the ADR.

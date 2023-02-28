@@ -677,3 +677,19 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
   expect_length(rvest::html_element(html, ".art-scatter"), 0)
   expect_length(rvest::html_element(html, ".art-plotly"), 0)
 })
+
+test_that("can generate comparison report with ANC data at T1 not macthed to model T1", {
+  ## Create a model output with only 1 option chosen for survey_prevalence
+  model_output <- a_hintr_output_calibrated$model_output_path
+  output <- qs::qread(model_output)
+  options <- yaml::read_yaml(text = output$info$options.yml)
+  options$anc_prevalence_year1 <- "2017"
+  options$anc_art_coverage_year1 <- "2017"
+  output$info$options.yml <- yaml::as.yaml(options)
+  out <- tempfile(fileext = ".qs")
+  model_output <- qs::qsave(output, preset = "fast", out)
+
+  t <- tempfile(fileext = ".html")
+  generate_comparison_report(t, out, quiet = TRUE)
+  expect_true(file.size(t) > 2000)
+})
