@@ -1,3 +1,8 @@
+# naomi 2.9.7
+
+* Display PLHIV number indicators to nearest 1.
+* Drop input time series indicator "ART proportion <15" nd "ART adult-to-child ratio" in favour of "ART child-to-adult ratio" indicator.
+
 # naomi 2.9.6
 
 * Fix for comparison report failing to render when ANC data included at T1 in a different year to model T1. This fix will prevent ANC comparison plots for T1 from rendering in this case. 

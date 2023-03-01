@@ -463,8 +463,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c( "art_total","art_adult","art_child",
-                     "art_adult_child_ratio","art_prop_u15","art_new_total",
+                  c( "art_total","art_adult", "art_child",
+                     "art_child_adult_ratio", "art_new_total",
                      "art_new_adult","art_new_child","vl_tested_12mos_total",
                      "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
                      "vl_suppressed_12mos_adult","vl_suppressed_12mos_child" , "vl_coverage_total",
@@ -479,8 +479,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   data1 <- prepare_input_time_series_art(test1_file,
                                          a_hintr_data$shape)
   expect_setequal(unique(data1$plot),
-                  c("art_adult" , "art_adult_child_ratio", "art_child" ,
-                    "art_prop_u15", "art_total", "art_adult_f","art_adult_m",
+                  c("art_adult" , "art_child_adult_ratio", "art_child" ,
+                    "art_total", "art_adult_f","art_adult_m",
                     "art_adult_sex_ratio", "art_new_total","art_new_adult",
                     "art_new_adult_f", "art_new_adult_m", "art_new_child",
                     "vl_tested_12mos_total","vl_tested_12mos_adult", "vl_tested_12mos_adult_f",
@@ -543,7 +543,7 @@ test_that("data can be aggregated without all indicators", {
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
                   c( "art_total" ,"art_adult","art_child",
-                     "art_adult_child_ratio","art_prop_u15","vl_tested_12mos_total",
+                     "art_child_adult_ratio", "vl_tested_12mos_total",
                      "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
                      "vl_suppressed_12mos_adult","vl_suppressed_12mos_child","vl_coverage_total",
                      "vl_coverage_adult" ,"vl_coverage_child","vl_prop_suppressed_total",
@@ -557,8 +557,8 @@ test_that("data can be aggregated without all indicators", {
   data <- prepare_input_time_series_art(no_vls,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c("art_total", "art_adult","art_child","art_adult_child_ratio",
-                    "art_prop_u15","art_new_total","art_new_adult","art_new_child"))
+                  c("art_total", "art_adult","art_child","art_child_adult_ratio",
+                    "art_new_total","art_new_adult","art_new_child"))
 
   # data with no art_new or vls indicators
   no_vls_art_new <- no_vls
@@ -566,9 +566,9 @@ test_that("data can be aggregated without all indicators", {
 
   data <- prepare_input_time_series_art(no_vls_art_new,
                                         a_hintr_data$shape)
-  expect_setequal(unique(data$plot),
-                  c("art_total", "art_adult","art_child","art_adult_child_ratio",
-                    "art_prop_u15"))
+  expect_setequal(
+    unique(data$plot),
+    c("art_total", "art_adult", "art_child", "art_child_adult_ratio"))
 
 })
 
