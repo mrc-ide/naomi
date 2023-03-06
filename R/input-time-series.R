@@ -152,8 +152,7 @@ prepare_input_time_series_art <- function(art, shape) {
     ) %>%
     dplyr::mutate(
       art_adult_sex_ratio = art_adult_f / art_adult_m,
-      art_adult_child_ratio = art_adult / art_child,
-      art_prop_u15 = round(art_child/(art_adult+art_child),3),
+      art_child_adult_ratio = art_child / art_adult
     )
 
   # if art_new column exists in art data, calculate variables
@@ -241,7 +240,7 @@ prepare_input_time_series_art <- function(art, shape) {
   # Remove age disaggregated variables if paeds data is not present
   if(!("Y000_014" %in% age_level)) {
     art_plot_data_long <-  dplyr::filter(art_plot_data_long,
-                                    !(plot %in% c("art_child","art_adult_child_ratio", "art_prop_u15",
+                                    !(plot %in% c("art_child","art_child_adult_ratio",
                                                   "art_new_child","vl_tested_12mos_child",
                                                   "vl_suppressed_12mos_child","vl_coverage_child",
                                                   "vl_prop_suppressed_child")))

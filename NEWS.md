@@ -1,3 +1,8 @@
+# naomi 2.9.8
+
+* Display PLHIV number indicators to nearest 1.
+* Drop input time series indicator "ART proportion <15" nd "ART adult-to-child ratio" in favour of "ART child-to-adult ratio" indicator.
+
 # naomi 2.9.7
 
 * Change default PEPFAR PSNU level for Namibia to level 1 (Region / Health Province).
