@@ -1,4 +1,3 @@
-# naomi 2.9.7
 # naomi 2.9.8
 
 * Display PLHIV number indicators to nearest 1.
