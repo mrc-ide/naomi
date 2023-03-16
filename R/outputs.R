@@ -124,15 +124,21 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
     indicators_t1 <- c(indicators_t1,
                        "aware_plhiv_prop_t1_out" = "aware_plhiv_prop",
                        "aware_plhiv_num_t1_out" = "aware_plhiv_num",
-                       "unaware_plhiv_num_t1_out" = "unaware_plhiv_num")
+                       "unaware_plhiv_num_t1_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t1_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t1_out" = "unaware_plhiv_attend")
     indicators_t2 <- c(indicators_t2,
                        "aware_plhiv_prop_t2_out" = "aware_plhiv_prop",
                        "aware_plhiv_num_t2_out" = "aware_plhiv_num",
-                       "unaware_plhiv_num_t2_out" = "unaware_plhiv_num")
+                       "unaware_plhiv_num_t2_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t2_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t2_out" = "unaware_plhiv_attend")
     indicators_t3 <- c(indicators_t3,
                        "aware_plhiv_prop_t3_out" = "aware_plhiv_prop",
                        "aware_plhiv_num_t3_out" = "aware_plhiv_num",
-                       "unaware_plhiv_num_t3_out" = "unaware_plhiv_num")
+                       "unaware_plhiv_num_t3_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t3_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t3_out" = "unaware_plhiv_attend")
   }
 
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)

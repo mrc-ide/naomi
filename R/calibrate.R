@@ -27,6 +27,8 @@
 #' * `art_coverage`
 #' * `aware_plhiv_prop`
 #' * `incidence`
+#' * `plhiv_attend`
+#' * `aware_plhiv_attend`
 #'
 #' Steps in the calibration:
 #'
@@ -108,7 +110,8 @@ calibrate_outputs <- function(output,
   val <- indicators %>%
     dplyr::filter(indicator %in%
                     c("population", "plhiv", "art_current_residents", "art_current", "plhiv_attend", "untreated_plhiv_attend",
-                      "aware_plhiv_num", "unaware_plhiv_num", "infections")) %>%
+                      "aware_plhiv_num", "unaware_plhiv_num", "aware_plhiv_attend", "unaware_plhiv_attend",
+                      "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
 
@@ -373,17 +376,33 @@ calibrate_outputs <- function(output,
                                                  plhiv - art_current_residents,
                                                  unaware_target,
                                                  calibrate_method)
-             )
+      )
+
+
+    ## Calibrate unaware PLHIV attending
+    valmean_wide <- valmean_wide %>%
+      dplyr::group_by_at(unaware_aggr_var) %>%
+      dplyr::mutate(
+        unaware_plhiv_attend = calibrate_one(value_raw = unaware_plhiv_attend,
+                                             proportion_raw = unaware_plhiv_prop,
+                                             denominator_new = plhiv_attend - art_current,
+                                             target_val = unaware_target,
+                                             calibrate_method = calibrate_method)
+      )
 
   }
 
   valmean_wide <- valmean_wide %>%
-    dplyr::mutate(aware_plhiv_num = plhiv - unaware_plhiv_num)
+    dplyr::mutate(
+      aware_plhiv_num = plhiv - unaware_plhiv_num,
+      aware_plhiv_attend = plhiv_attend - unaware_plhiv_attend
+    )
 
   val_adj <- valmean_wide %>%
     tidyr::pivot_longer(cols = c(population, plhiv, art_current_residents, art_current,
                                  untreated_plhiv_num, plhiv_attend, untreated_plhiv_attend,
-                                 unaware_plhiv_num, aware_plhiv_num, infections),
+                                 unaware_plhiv_num, aware_plhiv_num, unaware_plhiv_attend, aware_plhiv_attend,
+                                 infections),
                         names_to = "indicator", values_to = "adjusted")
 
 
@@ -472,6 +491,12 @@ calibrate_outputs <- function(output,
                   .expand(naomi_mf$calendar_quarter1, "aware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter2, "aware_plhiv_num"),
                   .expand(naomi_mf$calendar_quarter3, "aware_plhiv_num"),
+                  .expand(naomi_mf$calendar_quarter1, "unaware_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter2, "unaware_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter3, "unaware_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter1, "aware_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter2, "aware_plhiv_attend"),
+                  .expand(naomi_mf$calendar_quarter3, "aware_plhiv_attend"),                  
                   .expand(naomi_mf$calendar_quarter1, "infections"),
                   .expand(naomi_mf$calendar_quarter2, "infections"),
                   .expand(naomi_mf$calendar_quarter3, "infections"),
