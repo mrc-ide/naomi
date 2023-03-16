@@ -14,6 +14,7 @@ anc_tested_pos,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.New.Pos.T_1,# Pregnant Women who 
 art_current,xghQXueYJxu,TX_CURR_SUBNAT.T_1,Total # of PLHIV on ART,TRUE,3
 art_coverage,PopART.Rt.T_1,PopART.Rt.T_1,ART coverage,FALSE,3
 aware_plhiv_num,nF19GOjcnoD,DIAGNOSED_SUBNAT.T_1,Number of PLHIV aware of HIV positive status,TRUE,3
+aware_plhiv_attend,DIAGNOSED_SUBNAT_Attend.T_1,DIAGNOSED_SUBNAT_Attend.T_1,Number of PLHIV aware of HIV positive status in ART catchment,TRUE,3
 incidence,Incidence_SUBNAT.Rt.T_1,Incidence_SUBNAT.Rt.T_1,HIV incidence rate per year,FALSE,3
 infections,NEW_INFECTIONS_SUBNAT.T_1,NEW_INFECTIONS_SUBNAT.T_1,New infections per year,TRUE,3
 art_current,MktYDp33kd6,TX_CURR_SUBNAT.R,,TRUE,2
