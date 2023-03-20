@@ -811,7 +811,7 @@ Type objective_function<Type>::operator() ()
     REPORT(aware_plhiv_num_t1_out);
     REPORT(unaware_plhiv_num_t1_out);
     REPORT(aware_plhiv_attend_t1_out);
-    REPORT(unaware_plhiv_attend_t1_out)      
+    REPORT(unaware_plhiv_attend_t1_out);
     REPORT(lambda_t1_out);
     REPORT(infections_t1_out);
     REPORT(anc_clients_t1_out);
@@ -837,6 +837,8 @@ Type objective_function<Type>::operator() ()
     REPORT(aware_plhiv_prop_t2_out);
     REPORT(aware_plhiv_num_t2_out);
     REPORT(unaware_plhiv_num_t2_out);
+    REPORT(aware_plhiv_attend_t2_out);
+    REPORT(unaware_plhiv_attend_t2_out);
     REPORT(lambda_t2_out);
     REPORT(infections_t2_out);
     REPORT(anc_clients_t2_out);
@@ -964,6 +966,8 @@ Type objective_function<Type>::operator() ()
     REPORT(aware_plhiv_prop_t3_out);
     REPORT(aware_plhiv_num_t3_out);
     REPORT(unaware_plhiv_num_t3_out);
+    REPORT(aware_plhiv_attend_t3_out);
+    REPORT(unaware_plhiv_attend_t3_out);
     REPORT(lambda_t3_out);
     REPORT(infections_t3_out);
     REPORT(anc_clients_t3_out);

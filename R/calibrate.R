@@ -162,6 +162,7 @@ calibrate_outputs <- function(output,
 
   if (!naomi_mf$output_aware_plhiv) {
     valmean_wide$unaware_plhiv_num <- NA_real_
+    valmean_wide$unaware_plhiv_attend <- NA_real_
   }
 
   valmean_wide <- valmean_wide %>%
@@ -224,7 +225,6 @@ calibrate_outputs <- function(output,
 
     val
   }
-
 
   ## Calibrate PLHIV
   plhiv_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
