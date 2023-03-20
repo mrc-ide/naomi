@@ -312,7 +312,7 @@ test_that("model run can be calibrated", {
   ## * 33 age groups
   ## * 3 sexes
   ## * 9 areas
-  ## * 3 output times - 14 indicators
+  ## * 3 output times - 16 indicators
   ## * 1 output time - 5 indicators   [NOT INCLUDED IN PLOT OUTPUTS]
   ## * 1 output time - 4 indicators   [NOT INCLUDED IN PLOT OUTPUTS]
   ##
@@ -322,12 +322,12 @@ test_that("model run can be calibrated", {
   ## 9 = number of areas
   ## 12 = number of ANC age groups
   expect_equal(nrow(calibrated_output_obj$output_package$indicators),
-               33 * 3 * 9 * (3 * 14 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
+               33 * 3 * 9 * (3 * 16 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
   
   ## Plot data output: T3 and T4 indicators not included -> fewer rows
   plot_data_output <- read_hintr_output(calibrated_output$plot_data_path)  
   expect_equal(nrow(plot_data_output),
-               33 * 3 * 9 * (3 * 14 + 0 * 5 + 0 * 4) + 3 * 9 * 9 * 12)
+               33 * 3 * 9 * (3 * 16 + 0 * 5 + 0 * 4) + 3 * 9 * 9 * 12)
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
@@ -505,7 +505,7 @@ test_that("Model can be run without .shiny90 file", {
 
   indicators_output <- read_hintr_output(calibrated_output$model_output_path)
   ## Check there is some data
-  ## 11 indicators (3 fewer because missing awareness of status indicators
+  ## 11 indicators (5 fewer because missing awareness of status indicators)
   expect_equal(nrow(indicators_output$output_package$indicators),
                33 * 3 * 9 * (3 * 11 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
 })
