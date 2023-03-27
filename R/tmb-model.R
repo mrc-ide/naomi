@@ -156,7 +156,7 @@ prepare_tmb_inputs <- function(naomi_data,
   X_paed_lambda_ratio_t2 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t2, df)
   X_paed_lambda_ratio_t3 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t3, df)
   X_paed_lambda_ratio_t4 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t4, df)
-  X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)  
+  X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)
 
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
@@ -403,7 +403,7 @@ prepare_tmb_inputs <- function(naomi_data,
     Lproj_incid_t4t5 = naomi_data$Lproj_t4t5$Lproj_incid,
     Lproj_paed_t4t5 = naomi_data$Lproj_t4t5$Lproj_paed,
     logit_alpha_t4t5_offset = df$logit_alpha_t4t5_offset,
-    log_lambda_t5_offset = df$log_lambda_t5_offset,    
+    log_lambda_t5_offset = df$log_lambda_t5_offset,
     ##
     A_out = naomi_data$A_out,
     A_anc_out = naomi_data$A_anc_out,
@@ -601,7 +601,7 @@ fit_tmb <- function(tmb_input,
     warning(paste("convergence error:", f$message))
 
   if(outer_verbose)
-    message(paste("converged:", f$message))
+    message(paste(t_("FALSE_CONVERGENCE_WARNING"), f$message))
 
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par

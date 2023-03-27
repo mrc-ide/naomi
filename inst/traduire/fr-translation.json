@@ -269,5 +269,6 @@
     "BIRTHS_FACILITY_DESC": "Nombre de naissances dans les établissements de santé",
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Paquet Naomi téléchargée depuis l'application web Naomi",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Rapport de synthèse Naomi téléchargé depuis l'application web Naomi",
-    "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi"
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
+    "FALSE_CONVERGENCE_WARNING": "Model fit to input data is not optimised. Please review model estimates"
 }
