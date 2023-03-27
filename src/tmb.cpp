@@ -734,6 +734,10 @@ Type objective_function<Type>::operator() ()
     vector<Type> aware_plhiv_num_t1_out(plhiv_t1_out - unaware_plhiv_num_t1_out);
     vector<Type> aware_plhiv_prop_t1_out(aware_plhiv_num_t1_out / plhiv_t1_out);
 
+    vector<Type> unaware_plhiv_attend_ij_t1((Xart_idx * unaware_plhiv_num_t1) * (Xart_gamma * gamma_art_t1));
+    vector<Type> unaware_plhiv_attend_t1_out(A_out * (A_artattend_mf * unaware_plhiv_attend_ij_t1));
+    vector<Type> aware_plhiv_attend_t1_out(plhiv_attend_t1_out - unaware_plhiv_attend_t1_out);
+
     vector<Type> infections_t1_out(A_out * infections_t1);
     vector<Type> lambda_t1_out(infections_t1_out / (population_t1_out - plhiv_t1_out));
 
@@ -757,6 +761,11 @@ Type objective_function<Type>::operator() ()
     vector<Type> unaware_plhiv_num_t2_out(A_out * unaware_plhiv_num_t2);
     vector<Type> aware_plhiv_num_t2_out(plhiv_t2_out - unaware_plhiv_num_t2_out);
     vector<Type> aware_plhiv_prop_t2_out(aware_plhiv_num_t2_out / plhiv_t2_out);
+
+    vector<Type> unaware_plhiv_attend_ij_t2((Xart_idx * unaware_plhiv_num_t2) * (Xart_gamma * gamma_art_t2));
+    vector<Type> unaware_plhiv_attend_t2_out(A_out * (A_artattend_mf * unaware_plhiv_attend_ij_t2));
+    vector<Type> aware_plhiv_attend_t2_out(plhiv_attend_t2_out - unaware_plhiv_attend_t2_out);
+
 
     vector<Type> infections_t2_out(A_out * infections_t2);
     vector<Type> lambda_t2_out(infections_t2_out / (population_t2_out - plhiv_t2_out));
@@ -801,6 +810,8 @@ Type objective_function<Type>::operator() ()
     REPORT(aware_plhiv_prop_t1_out);
     REPORT(aware_plhiv_num_t1_out);
     REPORT(unaware_plhiv_num_t1_out);
+    REPORT(aware_plhiv_attend_t1_out);
+    REPORT(unaware_plhiv_attend_t1_out);
     REPORT(lambda_t1_out);
     REPORT(infections_t1_out);
     REPORT(anc_clients_t1_out);
@@ -826,6 +837,8 @@ Type objective_function<Type>::operator() ()
     REPORT(aware_plhiv_prop_t2_out);
     REPORT(aware_plhiv_num_t2_out);
     REPORT(unaware_plhiv_num_t2_out);
+    REPORT(aware_plhiv_attend_t2_out);
+    REPORT(unaware_plhiv_attend_t2_out);
     REPORT(lambda_t2_out);
     REPORT(infections_t2_out);
     REPORT(anc_clients_t2_out);
@@ -920,6 +933,11 @@ Type objective_function<Type>::operator() ()
     vector<Type> aware_plhiv_num_t3_out(plhiv_t3_out - unaware_plhiv_num_t3_out);
     vector<Type> aware_plhiv_prop_t3_out(aware_plhiv_num_t3_out / plhiv_t3_out);
 
+    vector<Type> unaware_plhiv_attend_ij_t3((Xart_idx * unaware_plhiv_num_t3) * (Xart_gamma * gamma_art_t2));  // Note: using same ART attendance as T2
+    vector<Type> unaware_plhiv_attend_t3_out(A_out * (A_artattend_mf * unaware_plhiv_attend_ij_t3));
+    vector<Type> aware_plhiv_attend_t3_out(plhiv_attend_t3_out - unaware_plhiv_attend_t3_out);
+
+
     vector<Type> infections_t3_out(A_out * infections_t3);
     vector<Type> lambda_t3_out(infections_t3_out / (population_t3_out - plhiv_t3_out));
 
@@ -948,6 +966,8 @@ Type objective_function<Type>::operator() ()
     REPORT(aware_plhiv_prop_t3_out);
     REPORT(aware_plhiv_num_t3_out);
     REPORT(unaware_plhiv_num_t3_out);
+    REPORT(aware_plhiv_attend_t3_out);
+    REPORT(unaware_plhiv_attend_t3_out);
     REPORT(lambda_t3_out);
     REPORT(infections_t3_out);
     REPORT(anc_clients_t3_out);

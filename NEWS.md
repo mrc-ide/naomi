@@ -1,3 +1,7 @@
+# naomi 2.9.9
+
+* Add indicators `aware_plhiv_attend` and `unaware_plhiv_attend` for consistent facility attendance cascades.
+
 # naomi 2.9.8
 
 * Display PLHIV number indicators to nearest 1.

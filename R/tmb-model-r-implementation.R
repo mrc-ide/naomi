@@ -481,6 +481,11 @@ naomi_objective_function_r <- function(d, p) {
   aware_plhiv_num_t1_out <- plhiv_t1_out - unaware_plhiv_num_t1_out
   aware_plhiv_prop_t1_out <- aware_plhiv_num_t1_out / plhiv_t1_out
 
+  unaware_plhiv_attend_ij_t1 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t1) * as.vector(d$Xart_gamma %*% gamma_art)
+  unaware_plhiv_attend_t1_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t1))
+  aware_plhiv_attend_t1_out <- plhiv_attend_t1_out - unaware_plhiv_attend_t1_out
+  
+
   infections_t1_out <- as.vector(d$A_out %*% infections_t1)
   lambda_t1_out <- infections_t1_out / (population_t1_out - plhiv_t1_out)
 
@@ -506,6 +511,10 @@ naomi_objective_function_r <- function(d, p) {
   aware_plhiv_num_t2_out <- plhiv_t2_out - unaware_plhiv_num_t2_out
   aware_plhiv_prop_t2_out <- aware_plhiv_num_t2_out / plhiv_t2_out
 
+  unaware_plhiv_attend_ij_t2 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t2) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  unaware_plhiv_attend_t2_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t2))
+  aware_plhiv_attend_t2_out <- plhiv_attend_t2_out - unaware_plhiv_attend_t2_out
+  
   infections_t2_out <- as.vector(d$A_out %*% infections_t2)
   lambda_t2_out <- infections_t2_out / (population_t2_out - plhiv_t2_out)
 
@@ -550,6 +559,8 @@ naomi_objective_function_r <- function(d, p) {
                     aware_plhiv_prop_t1_out        = aware_plhiv_prop_t1_out,
                     aware_plhiv_num_t1_out         = aware_plhiv_num_t1_out,
                     unaware_plhiv_num_t1_out       = unaware_plhiv_num_t1_out,
+                    aware_plhiv_attend_t1_out      = aware_plhiv_attend_t1_out,
+                    unaware_plhiv_attend_t1_out    = unaware_plhiv_attend_t1_out,
                     lambda_t1_out                  = lambda_t1_out,
                     infections_t1_out              = infections_t1_out,
                     anc_clients_t1_out             = anc_clients_t1_out,
@@ -575,6 +586,8 @@ naomi_objective_function_r <- function(d, p) {
                     aware_plhiv_prop_t2_out        = aware_plhiv_prop_t2_out,
                     aware_plhiv_num_t2_out         = aware_plhiv_num_t2_out,
                     unaware_plhiv_num_t2_out       = unaware_plhiv_num_t2_out,
+                    aware_plhiv_attend_t2_out      = aware_plhiv_attend_t2_out,
+                    unaware_plhiv_attend_t2_out    = unaware_plhiv_attend_t2_out,
                     lambda_t2_out                  = lambda_t2_out,
                     infections_t2_out              = infections_t2_out,
                     anc_clients_t2_out             = anc_clients_t2_out,
@@ -667,6 +680,10 @@ naomi_objective_function_r <- function(d, p) {
   aware_plhiv_num_t3_out <- plhiv_t3_out - unaware_plhiv_num_t3_out
   aware_plhiv_prop_t3_out <- aware_plhiv_num_t3_out / plhiv_t3_out
 
+  unaware_plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  unaware_plhiv_attend_t3_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t3))
+  aware_plhiv_attend_t3_out <- plhiv_attend_t3_out - unaware_plhiv_attend_t3_out
+  
   infections_t3_out <- as.vector(d$A_out %*% infections_t3)
   lambda_t3_out <- infections_t3_out / (population_t3_out - plhiv_t3_out)
 
@@ -695,6 +712,8 @@ naomi_objective_function_r <- function(d, p) {
                     aware_plhiv_prop_t3_out        = aware_plhiv_prop_t3_out,
                     aware_plhiv_num_t3_out         = aware_plhiv_num_t3_out,
                     unaware_plhiv_num_t3_out       = unaware_plhiv_num_t3_out,
+                    aware_plhiv_attend_t3_out      = aware_plhiv_attend_t3_out,
+                    unaware_plhiv_attend_t3_out    = unaware_plhiv_attend_t3_out,
                     lambda_t3_out                  = lambda_t3_out,
                     infections_t3_out              = infections_t3_out,
                     anc_clients_t3_out             = anc_clients_t3_out,
