@@ -221,7 +221,7 @@
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Vous avez choisi d'ajuster le modèle sans estimer la fréquentation des TARV voisines. Vous pouvez revoir votre sélection pour inclure cette option..",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 50% pour: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour: {{rows}}",
-    "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}",
+    "WARNING_CONVERGENCE": "Model fit to input data is not optimised. Please review model estimates",
     "POPULATION_RATIO": "La population proportion",
     "PLHIV_RATIO": "PVVIH proportion",
     "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi nombre de clients CPN 2015 à aujourd'hui est Spectrum cascade de test CPN",
@@ -269,6 +269,5 @@
     "BIRTHS_FACILITY_DESC": "Nombre de naissances dans les établissements de santé",
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Paquet Naomi téléchargée depuis l'application web Naomi",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Rapport de synthèse Naomi téléchargé depuis l'application web Naomi",
-    "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
-    "FALSE_CONVERGENCE_WARNING": "Model fit to input data is not optimised. Please review model estimates"
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi"
 }

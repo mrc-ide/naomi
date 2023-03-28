@@ -223,7 +223,7 @@
     "WARNING_OPTIONS_MISSING_ARTATTEND": "You have chosen to fit model without estimating neighbouring ART attendance. You may wish to review your selection to include this option.",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "HIV prevalence is higher than 50% for: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "ART coverage is higher than 100% for: {{rows}}",
-    "WARNING_CONVERGENCE": "Convergence error: {{msg}}",
+    "WARNING_CONVERGENCE": "Model fit to input data is not optimised. Please review model estimates",
     "NAVIGATOR_ART_IS_SPECTRUM_DESC": "Total on ART in Naomi matches Spectrum ART",
     "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi num ANC clients 2015 to present is Spectrum ANC testing cascade",
     "NAVIGATOR_PACKAGE_CREATED_DESC": "Naomi package created",
@@ -270,5 +270,4 @@
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Naomi output uploaded from Naomi web app",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Naomi summary report uploaded from Naomi web app",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app",
-    "FALSE_CONVERGENCE_WARNING": "Model fit to input data is not optimised. Please review model estimates"
 }

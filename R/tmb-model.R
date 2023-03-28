@@ -586,22 +586,20 @@ fit_tmb <- function(tmb_input,
   obj <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 0L,
                       inner_verbose, progress)
 
-  trace <- if(outer_verbose) 1 else 0
+  trace <- if (outer_verbose) 1 else 0
   f <- withCallingHandlers(
     stats::nlminb(obj$par, obj$fn, obj$gr,
-                  control = list(trace = trace,
-                                 iter.max = max_iter)),
+                  control = list(trace = trace, iter.max = max_iter)),
     warning = function(w) {
-      if(grepl("NA/NaN function evaluation", w$message))
+      if (grepl("NA/NaN function evaluation", w$message)) {
         invokeRestart("muffleWarning")
+      }
     }
   )
 
-  if(f$convergence != 0)
-    warning(paste("convergence error:", f$message))
-
-  if(outer_verbose)
-    message(paste(t_("FALSE_CONVERGENCE_WARNING"), f$message))
+  if (outer_verbose) {
+    message(paste("Model convergence:", f$message))
+  }
 
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par
