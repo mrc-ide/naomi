@@ -304,6 +304,8 @@ naomi_model_frame <- function(area_merged,
                      untreated_plhiv_attend = untreated_plhiv_num,
                      unaware_plhiv_num = unaware_spectrum / sum(unaware_spectrum),
                      aware_plhiv_num = (plhiv_spectrum - unaware_spectrum) / sum(plhiv_spectrum - unaware_spectrum),
+                     unaware_plhiv_attend = unaware_plhiv_num,
+                     aware_plhiv_attend = aware_plhiv_num,
                      infections = infections_spectrum / sum(infections_spectrum)) %>%
     tidyr::pivot_longer(cols = c(population,
                                  plhiv,
@@ -314,6 +316,8 @@ naomi_model_frame <- function(area_merged,
                                  untreated_plhiv_attend,
                                  unaware_plhiv_num,
                                  aware_plhiv_num,
+                                 unaware_plhiv_attend,
+                                 aware_plhiv_attend,
                                  infections),
                         names_to = "indicator", values_to = "distribution") %>%
     dplyr::ungroup()
