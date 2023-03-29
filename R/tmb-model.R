@@ -589,7 +589,8 @@ fit_tmb <- function(tmb_input,
   trace <- if (outer_verbose) 1 else 0
   f <- withCallingHandlers(
     stats::nlminb(obj$par, obj$fn, obj$gr,
-                  control = list(trace = trace, iter.max = max_iter)),
+                  control = list(trace = trace,
+                                 iter.max = max_iter)),
     warning = function(w) {
       if (grepl("NA/NaN function evaluation", w$message)) {
         invokeRestart("muffleWarning")
