@@ -89,8 +89,8 @@ run_model <- function(data, options, validate) {
                  max_iter = options$max_iterations %||% 250,
                  progress = progress)
 
-  if (f$convergence != 0) {
-    naomi_warning(t_("WARNING_CONVERGENCE"))
+  if (fit$convergence != 0) {
+    naomi_warning(t_("WARNING_CONVERGENCE"), "model_fit")
   }
 
   progress$finalise_fit()
