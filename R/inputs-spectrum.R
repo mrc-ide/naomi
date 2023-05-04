@@ -183,9 +183,19 @@ read_dp_art_dec31 <- function(dp) {
   art15plus_num <- sapply(dpsub("<HAARTBySex MV>", 4:5, timedat.idx), as.numeric)
   dimnames(art15plus_num) <- list(sex = c("male", "female"), year = proj.years)
 
-  art15plus_need <- sapply(dpsub("<NeedARTDec31 MV>", 3:4, timedat.idx), as.numeric)
+  ## In Spectrum 2023, "<NeedARTDec31 MV>" was updated to include children in the totals
+  ## -> now need to sum over 5-year age groups for age 15+ to get the adult ART need
+  
+  male_15plus_needart <- dpsub("<NeedARTDec31 MV>", 4:17*3 + 3, timedat.idx)
+  male_15plus_needart <- vapply(lapply(male_15plus_needart, as.numeric), sum, numeric(1))
+
+  female_15plus_needart <- dpsub("<NeedARTDec31 MV>", 4:17*3 + 4, timedat.idx)
+  female_15plus_needart <- vapply(lapply(female_15plus_needart, as.numeric), sum, numeric(1))
+
+  art15plus_need <- rbind(male_15plus_needart, female_15plus_needart)
   dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
 
+  
   if (any(art15plus_num[art15plus_isperc == 1] < 0 |
           art15plus_num[art15plus_isperc == 1] > 100)) {
     stop("Invalid percentage on ART entered for adult ART")
