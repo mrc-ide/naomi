@@ -1,3 +1,9 @@
+# naomi 2.9.10
+
+* Update PJNZ extraction for adult ART need Dec 31 for 2023 PJNZ files. Previously child ART was
+  note recorded in the .DP file tag `<NeedARTDec31 MV>`, and so it was fine to extract the total
+  value. Now child ART is recorded, and so need to sum the adult age groups only.
+
 # naomi 2.9.9
 
 * Add indicators `aware_plhiv_attend` and `unaware_plhiv_attend` for consistent facility attendance cascades.
