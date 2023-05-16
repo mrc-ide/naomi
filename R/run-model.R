@@ -229,9 +229,19 @@ run_calibrate <- function(output, calibration_options) {
   output_naomi_warning(calibrated_output, "art_coverage", 1,
                        c("model_calibrate","review_output", "download_results"))
 
-  ## Only return indicators for T1, T2, T3
+  ## Only return calendar quarters T1, T2, T3 and target setting indicators
+  ## for plotting
+  ## TODO: We should ideally save all data out here and manage splitting this
+  ## for the web app in API layer. But at the moment we return all data in
+  ## one big request, so we need to limit its size for performance.
   cq_t1t2t3 <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
-  indicators_plot <- dplyr::filter(indicators, calendar_quarter %in% cq_t1t2t3)
+  exclude_indicators <- c(
+    "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
+    "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
+    "anc_tested_neg", "population")
+  indicators_plot <- dplyr::filter(indicators,
+                                   calendar_quarter %in% cq_t1t2t3 &
+                                     !(indicator %in% exclude_indicators))
 
   list(plot_data = indicators_plot,
        calibrate_data = calibration_data)
