@@ -235,7 +235,6 @@ run_calibrate <- function(output, calibration_options) {
   ## for the web app in API layer. But at the moment we return all data in
   ## one big request, so we need to limit its size for performance.
   cq_keep <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
-  browser()
   iso3 <- get_iso3_from_meta_area(calibrated_output$meta_area)
   if (length(iso3) > 0 && iso3 == "COD") {
     t3 <- calibrated_output$fit$model_options$calendar_quarter_t3
