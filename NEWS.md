@@ -1,3 +1,8 @@
+# naomi 2.9.11
+
+* Remove ANC and population indicator from plot data to reduce download size for web front end
+* Remove time 3 data for DRC to temporarily reduce the download size for web front end
+
 # naomi 2.9.10
 
 * Update PJNZ extraction for adult ART need Dec 31 for 2023 PJNZ files. Previously child ART was
