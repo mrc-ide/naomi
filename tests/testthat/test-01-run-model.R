@@ -324,7 +324,7 @@ test_that("model run can be calibrated", {
   expect_equal(nrow(calibrated_output_obj$output_package$indicators),
                33 * 3 * 9 * (3 * 16 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
 
-  ## Plot data output: T3 and T4 indicators not included -> fewer rows
+  ## Plot data output: T4 and T5 indicators not included -> fewer rows
   ## Also excluded ANC indicator outputs and population
   plot_data_output <- read_hintr_output(calibrated_output$plot_data_path)
   expect_equal(nrow(plot_data_output),
@@ -361,6 +361,34 @@ test_that("model run can be calibrated", {
   expect_error(
     hintr_calibrate(calibrated_output, calibration_options),
     "Calibration cannot be re-run for this model fit please re-run fit step.")
+})
+
+test_that("plotting data excludes t3 for DRC", {
+  ## TODO: This is temporary until we can deal with bigger data in the
+  ## front end
+  plot_data_path <- tempfile(fileext = ".qs")
+  calibration_output_path <- tempfile(fileext = ".qs")
+  mockery::stub(hintr_calibrate, "get_iso3_from_meta_area", "COD", depth = 2)
+  calibrated_output <- hintr_calibrate(a_hintr_output,
+                                       a_hintr_calibration_options,
+                                       plot_data_path,
+                                       calibration_output_path)
+
+  expect_s3_class(calibrated_output, "hintr_output")
+  expect_equal(calibrated_output$plot_data_path, plot_data_path)
+  expect_true(!is.null(calibrated_output$plot_data_path))
+
+  ## Total outputs:
+  ## * 33 age groups
+  ## * 3 sexes
+  ## * 9 areas
+  ## * 2 output times
+  ## * 15 indicators
+  ## Plot data output: T3, T4 & T5 indicators not included -> fewer rows
+  ## Also excluded ANC indicator outputs and population
+  plot_data_output <- read_hintr_output(calibrated_output$plot_data_path)
+  expect_equal(nrow(plot_data_output),
+               33 * 3 * 9 * 2 * 15)
 })
 
 test_that("calibrating model with 'none' returns same results", {

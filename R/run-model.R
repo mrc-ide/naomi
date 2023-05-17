@@ -234,17 +234,27 @@ run_calibrate <- function(output, calibration_options) {
   ## TODO: We should ideally save all data out here and manage splitting this
   ## for the web app in API layer. But at the moment we return all data in
   ## one big request, so we need to limit its size for performance.
-  cq_t1t2t3 <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
+  cq_keep <- sort(calibrated_output$meta_period$calendar_quarter)[1:3]
+  browser()
+  iso3 <- get_iso3_from_meta_area(calibrated_output$meta_area)
+  if (length(iso3) > 0 && iso3 == "COD") {
+    t3 <- calibrated_output$fit$model_options$calendar_quarter_t3
+    cq_keep <- cq_keep[cq_keep != t3]
+  }
   exclude_indicators <- c(
     "anc_prevalence", "anc_art_coverage", "anc_clients", "anc_plhiv",
     "anc_already_art", "anc_art_new", "anc_known_pos", "anc_tested_pos",
     "anc_tested_neg", "population")
   indicators_plot <- dplyr::filter(indicators,
-                                   calendar_quarter %in% cq_t1t2t3 &
+                                   calendar_quarter %in% cq_keep &
                                      !(indicator %in% exclude_indicators))
 
   list(plot_data = indicators_plot,
        calibrate_data = calibration_data)
+}
+
+get_iso3_from_meta_area <- function(meta_area) {
+  meta_area[meta_area$area_level == 0, ]$area_id
 }
 
 #' Get id to label mapping for calibration plot data type
