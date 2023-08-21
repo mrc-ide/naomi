@@ -759,7 +759,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
              by = "artdat_sex",
-             multiple = "all"
+             multiple = "all",
+             relationship = "many-to-many"
     )
 
   ## Map artattend_area_id to model_area_id

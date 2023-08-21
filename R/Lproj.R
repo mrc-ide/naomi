@@ -254,7 +254,8 @@ create_Lproj <- function(spec, mf_model,
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group_infection = age_group, area_id, idx1 = idx),
       by = c("spectrum_region_code", "sex", "age_group_infection"),
-      multiple = "all"
+      multiple = "all",
+      relationship = "many-to-many"
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group2 = age_group, area_id, idx2 = idx),
