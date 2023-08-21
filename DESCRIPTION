@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.9.10
+Version: 2.9.11
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -17,6 +17,7 @@ RoxygenNote: 7.2.1
 Additional_repositories:
     https://mrc-ide.r-universe.dev
 Imports:
+    DBI,
     Matrix,
     R6,
     TMB,
@@ -24,6 +25,7 @@ Imports:
     brio,
     data.tree,
     dplyr (>= 1.1.0),
+    duckdb,
     eppasm (>= 0.7.1),
     first90 (>= 1.6.1),
     forcats,
