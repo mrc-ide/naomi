@@ -23,7 +23,7 @@ hintr_calibrate_plot <- function(output) {
   ## Only return indicators for T1, T2, T3
   cq_t1t2t3 <- sort(calibration_data$output_package$meta_period$calendar_quarter)[1:3]
   df <- dplyr::filter(df, calendar_quarter %in% cq_t1t2t3)
-  
+
   dflong <- df %>%
     dplyr::mutate(population_denominator = population_calibrated) %>%
     tidyr:: pivot_longer(c(tidyselect::ends_with("raw"),
@@ -91,9 +91,12 @@ hintr_calibrate_plot <- function(output) {
     dplyr::select(age_group_out, age_group)
 
   dfexpand <- dflong %>%
-    dplyr::inner_join(region_out, by = "spectrum_region_code", multiple = "all") %>%
-    dplyr::inner_join(sex_join, by = "sex", multiple = "all") %>%
-    dplyr::inner_join(age_group_join, by = "age_group", multiple = "all") %>%
+    dplyr::inner_join(region_out, by = "spectrum_region_code", multiple = "all",
+                      relationship = "many-to-many") %>%
+    dplyr::inner_join(sex_join, by = "sex", multiple = "all",
+                      relationship = "many-to-many") %>%
+    dplyr::inner_join(age_group_join, by = "age_group", multiple = "all",
+                      relationship = "many-to-many") %>%
     dplyr::count(spectrum_region_code = spectrum_region_code_out,
                  spectrum_region_name = spectrum_region_name_out,
                  sex = sex_out,

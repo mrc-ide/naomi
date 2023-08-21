@@ -1216,7 +1216,8 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::inner_join(
              naomi_mf$spectrum_0to4distribution,
              by = c("spectrum_region_code", "calendar_quarter", "indicator"),
-             multiple = "all"
+             multiple = "all",
+             relationship = "many-to-many"
            ) %>%
     dplyr::mutate(mean_strat = mean * distribution) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, indicator, mean_strat)
@@ -1241,7 +1242,8 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::select(area_id, sex, area_id_out, sex_out)
 
   strat_mean_counts_out <- strat_mean_counts_model %>%
-    dplyr::left_join(A_0to4_long, by = c("area_id", "sex"), multiple = "all") %>%
+    dplyr::left_join(A_0to4_long, by = c("area_id", "sex"), multiple = "all",
+                     relationship = "many-to-many") %>%
     dplyr::count(area_id = area_id_out, sex = sex_out, age_group, calendar_quarter, indicator,
                  wt = mean_strat, name = "distribution") %>%
     dplyr::group_by(area_id, sex, calendar_quarter, indicator) %>%
@@ -1250,7 +1252,9 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   out_0to4strat_counts <- out0to4 %>%
     dplyr::inner_join(strat_mean_counts_out,
-                      by = c("area_id", "sex", "calendar_quarter", "indicator"), multiple = "all") %>%
+                      by = c("area_id", "sex", "calendar_quarter", "indicator"),
+                      multiple = "all",
+                      relationship = "many-to-many") %>%
     tidyr::pivot_longer(c(mean, se, median, mode, lower, upper)) %>%
     dplyr::mutate(value = value * distribution,
                   distribution = NULL) %>%
