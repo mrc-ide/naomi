@@ -96,7 +96,9 @@ prepare_tmb_inputs <- function(naomi_data,
 
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
-    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id", multiple = "all") %>%
+    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id",
+                     multiple = "all",
+                     relationship = "many-to-many") %>%
     dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
@@ -156,7 +158,7 @@ prepare_tmb_inputs <- function(naomi_data,
   X_paed_lambda_ratio_t2 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t2, df)
   X_paed_lambda_ratio_t3 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t3, df)
   X_paed_lambda_ratio_t4 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t4, df)
-  X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)  
+  X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)
 
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
@@ -403,7 +405,7 @@ prepare_tmb_inputs <- function(naomi_data,
     Lproj_incid_t4t5 = naomi_data$Lproj_t4t5$Lproj_incid,
     Lproj_paed_t4t5 = naomi_data$Lproj_t4t5$Lproj_paed,
     logit_alpha_t4t5_offset = df$logit_alpha_t4t5_offset,
-    log_lambda_t5_offset = df$log_lambda_t5_offset,    
+    log_lambda_t5_offset = df$log_lambda_t5_offset,
     ##
     A_out = naomi_data$A_out,
     A_anc_out = naomi_data$A_anc_out,
@@ -739,7 +741,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                       artdat_age_start = age_group_start,
                       artdat_age_end = age_group_start + age_group_span
                     ),
-             by = "artdat_age_group"
+             by = "artdat_age_group",
+             relationship = "many-to-many"
            ) %>%
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(

@@ -79,8 +79,7 @@ test_that("model fit without survey ART and survey recency data", {
   options$include_art_t2 = "false"
   options$artattend <- "false"
   expect_error(hintr_run_model(a_hintr_data, options), NA)
-}
-)
+})
 
 test_that("progress messages are printed", {
   skip_on_covr()
