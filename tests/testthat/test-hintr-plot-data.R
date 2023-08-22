@@ -56,11 +56,18 @@ test_that("there is metadata for every indicator in comparison data", {
 test_that("hintr data can be saved and read as qs or duckdb type", {
   t_qs <- tempfile(fileext = ".qs")
   t_db <- tempfile(fileext = ".duckdb")
+  t_rds <- tempfile(fileext = ".rds")
   d <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
 
   hintr_save(d, t_qs)
   hintr_save(d, t_db)
+  ## Can't use hintr_save for rds as we're no longer serialising as rds
+  ## but we could still have historic data saved as rds so we need to
+  ## be able to read it
+  saveRDS(d, t_rds)
+  expect_equal(read_hintr_output(t_rds), d)
   expect_equal(read_hintr_output(t_qs), read_hintr_output(t_db))
+  expect_equal(read_hintr_output(t_rds), read_hintr_output(t_qs))
 
   t <- tempfile(fileext = ".thing")
   expect_error(hintr_save(d, t),
@@ -70,4 +77,8 @@ test_that("hintr data can be saved and read as qs or duckdb type", {
   expect_error(hintr_save(x, t_db),
                paste("Trying to save invalid object as duckdb database.",
                      "Only data frames can be saved as database."))
+
+  expect_error(read_hintr_output(t),
+               paste("Cannot read hintr data of invalid type, got 'thing',",
+                     "must be one of rds, qs or duckdb."))
 })

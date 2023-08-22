@@ -1331,9 +1331,12 @@ read_hintr_output <- function(path) {
     qs::qread(path)
   } else if (type == "duckdb") {
     read_duckdb(path)
-  } else {
+  } else if (type == "rds") {
     ## Model & plot data output before v2.8.0 were saved as RDS
     readRDS(path)
+  } else {
+    stop(sprintf(paste("Cannot read hintr data of invalid type, got '%s',",
+                       "must be one of rds, qs or duckdb."), type))
   }
 }
 
