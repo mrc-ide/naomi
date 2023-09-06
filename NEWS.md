@@ -1,6 +1,6 @@
 # naomi 2.9.11
 
-* Automatically set T4 and T5 to 24- and 36-months ahead of T3 if not specified in model options
+* Automatically set T4 and T5 to 24- and 36-months ahead of T3 if not specified in model options.
 
 # naomi 2.9.10
 

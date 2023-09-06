@@ -328,7 +328,7 @@ naomi_prepare_data <- function(data, options) {
 
   if(is.null(options$calendar_quarter_t5)) {
     # If T5 is not specified, set T4 to 36-months after T3
-    t5 <- calendar_quarter_to_quarter_id(calendar_quarter_t3) + 9
+    t4 <- calendar_quarter_to_quarter_id(calendar_quarter_t4) + 3
     calendar_quarter_t5 <- quarter_id_to_calendar_quarter(t5)
   } else{
     calendar_quarter_t5 <- options$calendar_quarter_t5
