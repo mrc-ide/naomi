@@ -317,8 +317,23 @@ naomi_prepare_data <- function(data, options) {
   calendar_quarter_t1 <- options$calendar_quarter_t1
   calendar_quarter_t2 <- options$calendar_quarter_t2
   calendar_quarter_t3 <- options$calendar_quarter_t3
-  calendar_quarter_t4 <- options$calendar_quarter_t4
-  calendar_quarter_t5 <- options$calendar_quarter_t5
+
+  if(is.null(options$calendar_quarter_t4)) {
+    # If T4 is not specified, set T4 to 24-months after T3
+    t4 <- calendar_quarter_to_quarter_id(calendar_quarter_t3) + 6
+    calendar_quarter_t4 <- quarter_id_to_calendar_quarter(t4)
+  } else{
+    calendar_quarter_t4 <- options$calendar_quarter_t4
+  }
+
+  if(is.null(options$calendar_quarter_t5)) {
+    # If T5 is not specified, set T4 to 36-months after T3
+    t5 <- calendar_quarter_to_quarter_id(calendar_quarter_t3) + 9
+    calendar_quarter_t5 <- quarter_id_to_calendar_quarter(t5)
+  } else{
+    calendar_quarter_t5 <- options$calendar_quarter_t5
+  }
+
   prev_survey_ids  <- options$survey_prevalence
   recent_survey_ids <- options$survey_recently_infected
   artcov_survey_ids <- options$survey_art_coverage
@@ -363,6 +378,8 @@ naomi_prepare_data <- function(data, options) {
   if(!is.null(options$psnu_level)) {
     options$psnu_level <- as.integer(options$psnu_level)
   }
+
+
 
   naomi_mf <- naomi_model_frame(
     area_merged = area_merged,
