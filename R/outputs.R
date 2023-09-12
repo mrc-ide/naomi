@@ -118,7 +118,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "plhiv_t5_out" = "plhiv",
                      "plhiv_attend_t5_out" = "plhiv_attend",
                      "infections_t5_out" = "infections")
-  
+
   if (naomi_mf$output_aware_plhiv) {
 
     indicators_t1 <- c(indicators_t1,
@@ -145,14 +145,14 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
   indicator_est_t4 <- Map(get_est, names(indicators_t4), indicators_t4, naomi_mf$calendar_quarter4)
-  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)  
-  
+  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)
+
 
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
   indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
-  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)  
+  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -210,7 +210,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t3,
                   indicator_anc_est_t3,
                   indicator_est_t4,
-                  indicator_est_t5                  
+                  indicator_est_t5
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -1216,7 +1216,8 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::inner_join(
              naomi_mf$spectrum_0to4distribution,
              by = c("spectrum_region_code", "calendar_quarter", "indicator"),
-             multiple = "all"
+             multiple = "all",
+             relationship = "many-to-many"
            ) %>%
     dplyr::mutate(mean_strat = mean * distribution) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, indicator, mean_strat)
@@ -1241,7 +1242,8 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::select(area_id, sex, area_id_out, sex_out)
 
   strat_mean_counts_out <- strat_mean_counts_model %>%
-    dplyr::left_join(A_0to4_long, by = c("area_id", "sex"), multiple = "all") %>%
+    dplyr::left_join(A_0to4_long, by = c("area_id", "sex"), multiple = "all",
+                     relationship = "many-to-many") %>%
     dplyr::count(area_id = area_id_out, sex = sex_out, age_group, calendar_quarter, indicator,
                  wt = mean_strat, name = "distribution") %>%
     dplyr::group_by(area_id, sex, calendar_quarter, indicator) %>%
@@ -1250,7 +1252,9 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   out_0to4strat_counts <- out0to4 %>%
     dplyr::inner_join(strat_mean_counts_out,
-                      by = c("area_id", "sex", "calendar_quarter", "indicator"), multiple = "all") %>%
+                      by = c("area_id", "sex", "calendar_quarter", "indicator"),
+                      multiple = "all",
+                      relationship = "many-to-many") %>%
     tidyr::pivot_longer(c(mean, se, median, mode, lower, upper)) %>%
     dplyr::mutate(value = value * distribution,
                   distribution = NULL) %>%
@@ -1322,10 +1326,24 @@ get_period_metadata <- function(calendar_quarters) {
 #' @return The read data
 #' @export
 read_hintr_output <- function(path) {
-  if (tolower(tools::file_ext(path)) == "qs") {
+  type <- tolower(tools::file_ext(path))
+  if (type == "qs") {
     qs::qread(path)
-  } else {
+  } else if (type == "duckdb") {
+    read_duckdb(path)
+  } else if (type == "rds") {
     ## Model & plot data output before v2.8.0 were saved as RDS
     readRDS(path)
+  } else {
+    stop(sprintf(paste("Cannot read hintr data of invalid type, got '%s',",
+                       "must be one of rds, qs or duckdb."), type))
   }
 }
+
+read_duckdb <- function(path) {
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = path)
+  on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
+  DBI::dbGetQuery(con, sprintf("SELECT * from %s", DUCKDB_OUTPUT_TABLE_NAME))
+}
+
+

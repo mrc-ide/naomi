@@ -1,3 +1,7 @@
+# naomi 2.9.11
+
+* hintr data frame outputs can now be saved as a duckdb database.
+
 # naomi 2.9.10
 
 * Update PJNZ extraction for adult ART need Dec 31 for 2023 PJNZ files. Previously child ART was
