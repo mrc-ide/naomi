@@ -17,7 +17,7 @@
 #' areas
 #'
 #' @export
-  create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
+create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
                          area_merged = NULL) {
 
   if(is.null(area_merged) &&
@@ -255,7 +255,7 @@ get_area_collection <- function(areas, level = NULL, area_scope = NULL) {
 create_area_aggregation <- function(model_area_ids, areas, drop_partial_areas = TRUE) {
 
   stopifnot(methods::is(areas, "naomi_areas"))
-  
+
   area_id_out <- areas$tree$Get("area_id",
                                 traversal = "level")
   area_id_out_leaves <- areas$tree$Get("leaves",
@@ -266,7 +266,7 @@ create_area_aggregation <- function(model_area_ids, areas, drop_partial_areas = 
   area_id_out <- area_id_out[!duplicated(area_id_out)]
 
   stopifnot(model_area_ids %in% unlist(area_id_out_leaves))
-  
+
   leaf_in_model <- lapply(area_id_out_leaves, `%in%`, model_area_ids)
   if(drop_partial_areas) {
     all_leaves_in_model <- vapply(leaf_in_model, all, logical(1))

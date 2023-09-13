@@ -138,8 +138,23 @@ is_hintr_output <- function(object) {
   inherits(object, "hintr_output")
 }
 
+DUCKDB_OUTPUT_TABLE_NAME <- "data"
+
 hintr_save <- function(obj, file) {
-  qs::qsave(obj, file, preset = "fast")
+  type <- tolower(tools::file_ext(file))
+  if (type == "qs") {
+    qs::qsave(obj, file, preset = "fast")
+  } else if (type == "duckdb") {
+    if (!is.data.frame(obj)) {
+      stop(paste("Trying to save invalid object as duckdb database.",
+              "Only data frames can be saved as database."))
+    }
+    con <- DBI::dbConnect(duckdb::duckdb(), dbdir = file)
+    DBI::dbWriteTable(con, DUCKDB_OUTPUT_TABLE_NAME, obj)
+    DBI::dbDisconnect(con, shutdown = TRUE)
+  } else {
+    stop(sprintf("Cannot save as type '%s', must be 'qs' or 'duckdb'.", type))
+  }
 }
 
 assert_model_output_version <- function(obj, version = NULL) {
