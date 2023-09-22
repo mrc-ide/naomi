@@ -274,3 +274,24 @@ test_that("Option adjust_area_growth handles cases with projection_dur >5 years"
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_t1t2$Lproj_paed)), 0)
   expect_equal(sum(is.na(naomi_data_longdur$Lproj_t1t2$Lproj_incid)), 0)
 })
+
+test_that("Handle backwards regression when T4 and T5 options are missing", {
+
+  a_hintr_data <- format_data_input(a_hintr_data)
+  a_hintr_options <- format_options(a_hintr_options)
+
+  options_old <- a_hintr_options
+
+  # Check that T4 and T5 are 24- and 36-months after T3 when options are not specificed
+  options_old$calendar_quarter_t4 <- NULL
+  options_old$calendar_quarter_t5 <- NULL
+  naomi_data <- naomi_prepare_data(a_hintr_data, options_old)
+
+  t3 <- calendar_quarter_to_quarter_id(naomi_data$model_options$calendar_quarter_t3)
+  t4 <- calendar_quarter_to_quarter_id(naomi_data$model_options$calendar_quarter_t4)
+  t5 <- calendar_quarter_to_quarter_id(naomi_data$model_options$calendar_quarter_t5)
+
+  expect_equal(t4 - t3, 6)
+  expect_equal(t5 - t3, 9)
+
+})
