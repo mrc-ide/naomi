@@ -1,3 +1,7 @@
+# naomi 2.9.13
+
+* Ensure duckdb connection is readonly
+
 # naomi 2.9.12
 
 * Automatically set T4 and T5 to 24- and 36-months ahead of T3 if not specified in model options.
