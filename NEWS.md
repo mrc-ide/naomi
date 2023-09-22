@@ -1,3 +1,7 @@
+# naomi 2.9.12
+
+* Ensure duckdb connection is readonly
+
 # naomi 2.9.11
 
 * hintr data frame outputs can now be saved as a duckdb database.
