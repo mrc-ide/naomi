@@ -1,6 +1,10 @@
+# naomi 2.9.14
+
+* Fix scrambled translation keys in summary report.
+
 # naomi 2.9.13
 
-* Ensure duckdb connection is readonly
+* Ensure duckdb connection is readonly.
 
 # naomi 2.9.12
 
