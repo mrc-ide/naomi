@@ -106,7 +106,7 @@ hintr_prepare_comparison_report_download <- function(output,
 #' @return Path to output file and metadata for file
 #' @export
 hintr_prepare_agyw_download <- function(output, pjnz,
-                                        path = tempfile(fileext = ".html")) {
+                                        path = tempfile(fileext = ".xlsx")) {
   ## TODO: Do we need a version restriction on this?
   assert_model_output_version(output, "2.7.16")
   progress <- new_simple_progress()
