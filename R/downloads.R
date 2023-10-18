@@ -87,14 +87,41 @@ hintr_prepare_comparison_report_download <- function(output,
   model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
-    ## Just using the summary report as a placeholder - eventually
-    ## this will call a separate method to generate comparison report
     path = generate_comparison_report(path, output$model_output_path,
       quiet = TRUE),
     metadata = list(
       description = build_comparison_report_description(options),
       areas = options$area_scope,
       type = "comparison"
+    )
+  )
+}
+
+#' Prepare AGYW tool download
+#'
+#' @param hintr_output object
+#' @param path Path to save output file
+#' @param pjnz Path to input PJNZ file
+#'
+#' @return Path to output file and metadata for file
+#' @export
+hintr_prepare_agyw_download <- function(output, pjnz,
+                                        path = tempfile(fileext = ".html")) {
+  ## TODO: Do we need a version restriction on this?
+  assert_model_output_version(output, "2.7.16")
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_AGYW")
+  dummy_data <- data.frame(x = c(1, 2, 3), y = c(3, 4, 5))
+  writexl::write_xlsx(list(sheet = dummy_data), path = path)
+
+  model_output <- read_hintr_output(output$model_output_path)
+  options <- yaml::read_yaml(text = model_output$info$options.yml)
+  list(
+    path = path,
+    metadata = list(
+      description = build_agyw_tool_description(options),
+      areas = options$area_scope,
+      type = "agyw"
     )
   )
 }
@@ -111,11 +138,15 @@ build_comparison_report_description <- function(options) {
   build_description(t_("DOWNLOAD_COMPARISON_DESCRIPTION"), options)
 }
 
+build_agyw_tool_description <- function(options) {
+  build_description(t_("DOWNLOAD_AGYW_DESCRIPTION"), options)
+}
+
 build_description <- function(type_text, options) {
   write_options <- function(name, value) {
     sprintf("%s - %s", name, value)
   }
-  lang <- traduire::translator()$language()
+  lang <- traduire::translator(package = "naomi")$language()
   labels <- c("OPTIONS_GENERAL_AREA_SCOPE_LABEL",
             "OPTIONS_GENERAL_AREA_LEVEL_LABEL",
             "OPTIONS_GENERAL_CALENDAR_QUARTER_T2_LABEL",

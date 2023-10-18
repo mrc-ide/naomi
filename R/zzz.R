@@ -29,3 +29,7 @@ naomi_init_traduire <- function() {
                                 fallback = "en",
                                 languages = languages)
 }
+
+t_ <- function(...) {
+  traduire::t_(..., package = "naomi")
+}

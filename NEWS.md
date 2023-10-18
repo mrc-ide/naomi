@@ -1,3 +1,7 @@
+# naomi 2.9.15
+
+* Add placeholder function `hintr_prepare_agyw_download` for creating AGYW tool.
+
 # naomi 2.9.14
 
 * Fix scrambled translation keys in summary report.
