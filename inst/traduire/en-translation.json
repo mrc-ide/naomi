@@ -91,6 +91,7 @@
     "PROGRESS_DOWNLOAD_COARSE": "Generating coarse-output download",
     "PROGRESS_DOWNLOAD_SUMMARY": "Generating summary report",
     "PROGRESS_DOWNLOAD_COMPARISON": "Generating comparison report",
+    "PROGRESS_DOWNLOAD_AGYW": "Generating AGYW tool",
     "PLHIV_MAP_PLOT_TITLE": "People living with HIV (15+)",
     "ART_CURRENT_MAP_PLOT_TITLE": "Residents receiving ART (15+)",
     "INFECTIONS_MAP_PLOT_TITLE": "Annual HIV infections (15+)",
@@ -273,5 +274,6 @@
     "BIRTHS_CLIENTS_RATIO_DESC": "Ratio of births at facility to ANC clients",
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Naomi output uploaded from Naomi web app",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Naomi summary report uploaded from Naomi web app",
-    "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app"
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app",
+    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app"
 }

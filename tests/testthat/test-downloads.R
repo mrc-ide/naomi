@@ -162,6 +162,29 @@ test_that("comparison report download can be created", {
                "Generating comparison report")
 })
 
+test_that("AGYW download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock(new_simple_progress = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_agyw_download(a_hintr_output_calibrated,
+                                         a_hintr_data$pjnz))
+  })
+  expect_true(file.exists(out$path))
+
+  expect_type(out$metadata$description, "character")
+  expect_length(out$metadata$description, 1)
+  expect_equal(out$metadata$areas, "MWI")
+
+  read <- readxl::read_xlsx(out$path)
+  expect_equal(read,
+               data.frame(x = c(1, 2, 3), y = c(3, 4, 5)),
+               ignore_attr = TRUE)
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message, "Generating AGYW tool")
+})
+
 test_that("output description is translated", {
   text <- build_output_description(a_hintr_options)
   expect_match(

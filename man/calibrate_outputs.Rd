@@ -58,6 +58,8 @@ The following indicators are calibrated:
 \item \code{art_coverage}
 \item \code{aware_plhiv_prop}
 \item \code{incidence}
+\item \code{plhiv_attend}
+\item \code{aware_plhiv_attend}
 }
 
 Steps in the calibration:
