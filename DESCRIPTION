@@ -25,7 +25,7 @@ Imports:
     brio,
     data.tree,
     dplyr (>= 1.1.0),
-    duckdb,
+    duckdb (== 0.9.1),
     eppasm (>= 0.7.1),
     first90 (>= 1.6.1),
     forcats,
@@ -78,6 +78,7 @@ Remotes:
     reside-ic/traduire,
     mrc-ide/naomi.options,
     mrc-ide/mockr,
-    mrc-ide/testthat.buildkite
+    mrc-ide/testthat.buildkite,
+    duckdb/duckdb-r@v0.9.1
 Config/testthat/edition: 3
 Config/testthat/parallel: true
