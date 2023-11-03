@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.9.14
+Version: 2.9.15
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -25,7 +25,7 @@ Imports:
     brio,
     data.tree,
     dplyr (>= 1.1.0),
-    duckdb,
+    duckdb (== 0.9.1),
     eppasm (>= 0.7.1),
     first90 (>= 1.6.1),
     forcats,
@@ -51,6 +51,7 @@ Imports:
     traduire,
     utils,
     withr,
+    writexl,
     yaml,
     zip,
     zoo
@@ -61,6 +62,7 @@ Suggests:
     lubridate,
     mockery,
     mockr,
+    readxl,
     rvest,
     scales,
     testthat (>= 2.1.0),
@@ -77,6 +79,7 @@ Remotes:
     reside-ic/traduire,
     mrc-ide/naomi.options,
     mrc-ide/mockr,
-    mrc-ide/testthat.buildkite
+    mrc-ide/testthat.buildkite,
+    duckdb/duckdb-r@v0.9.1
 Config/testthat/edition: 3
 Config/testthat/parallel: true
