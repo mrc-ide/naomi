@@ -111,6 +111,12 @@ hintr_prepare_agyw_download <- function(output, pjnz,
   assert_model_output_version(output, "2.7.16")
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_AGYW")
+
+  template_path <- naomi.resources::get_workbook_template_path()
+  browser()
+
+  risk_populations <- agyw_generate_risk_populations(output)
+
   dummy_data <- data.frame(x = c(1, 2, 3), y = c(3, 4, 5))
   writexl::write_xlsx(list(sheet = dummy_data), path = path)
 

@@ -164,11 +164,12 @@ test_that("comparison report download can be created", {
 
 test_that("AGYW download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
-  with_mock(new_simple_progress = mock_new_simple_progress, {
+  with_mocked_bindings(
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_agyw_download(a_hintr_output_calibrated,
-                                         a_hintr_data$pjnz))
-  })
+                                         a_hintr_data$pjnz)),
+    new_simple_progress = mock_new_simple_progress)
+
   expect_true(file.exists(out$path))
 
   expect_type(out$metadata$description, "character")
