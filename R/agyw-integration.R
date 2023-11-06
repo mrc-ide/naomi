@@ -1405,15 +1405,14 @@ agyw_calculate_incidence_male <- function(outputs,
 
 agyw_generate_risk_populations <- function(naomi_output) {
 
-
   # Read in naomi outputs
-  if(tolower(tools::file_ext(naomi_output)) %in% c("rds", "qs")) {
+  if (tolower(tools::file_ext(naomi_output)) %in% c("rds", "qs")) {
     # Read files if hintr rds provided
     model_object <- read_hintr_output(naomi_output)
     outputs <- model_object$output_package
+    outputs$indicators$area_level <- area_level_from_id(outputs$indicators$area_id)
     options <- yaml::read_yaml(text = model_object$info$options.yml)
-
-  } else if(grepl("\\.zip$", naomi_output)) {
+  } else if (grepl("\\.zip$", naomi_output)) {
     # Read files if output zip is provided
     output_zip <- naomi_output
     outputs <- naomi::read_output_package(output_zip)
@@ -1422,7 +1421,7 @@ agyw_generate_risk_populations <- function(naomi_output) {
   }
 
 
-
+  browser()
   #' Disaggregate KP PSEs to five-year age-bands using Naomi population
 
   #' Naomi population
@@ -1431,7 +1430,7 @@ agyw_generate_risk_populations <- function(naomi_output) {
     dplyr::filter(calendar_quarter == options$calendar_quarter_t2,
                   indicator == "population") %>%
     dplyr::mutate(iso3 = options$area_scope) %>%
-    dplyr::select(iso3, area_id, area_level,sex, age_group, area_level, population = mean)
+    dplyr::select(iso3, area_id, area_level, sex, age_group, population = mean)
 
   #' Disaggregate KP PSEs from Oli's analysis to 5-year bands
   fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop)

@@ -112,10 +112,10 @@ hintr_prepare_agyw_download <- function(output, pjnz,
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_AGYW")
 
-  template_path <- naomi.resources::get_workbook_template_path()
-  browser()
+  ## TODO: Remove hardcoding of ISO3
+  template_path <- naomi.resources::get_agyw_workbook_path("BWA")
 
-  risk_populations <- agyw_generate_risk_populations(output)
+  risk_populations <- agyw_generate_risk_populations(output$model_output_path)
 
   dummy_data <- data.frame(x = c(1, 2, 3), y = c(3, 4, 5))
   writexl::write_xlsx(list(sheet = dummy_data), path = path)

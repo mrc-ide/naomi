@@ -163,6 +163,9 @@ test_that("comparison report download can be created", {
 })
 
 test_that("AGYW download can be created", {
+  out <- hintr_prepare_agyw_download(a_hintr_output_calibrated,
+                                     a_hintr_data$pjnz)
+
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   with_mocked_bindings(
     messages <- naomi_evaluate_promise(
