@@ -11,11 +11,9 @@
 agyw_format_naomi <- function(outputs, options){
 
   naomi_ind <- outputs$indicators %>%
-    dplyr::filter(indicator %in% c("population", "plhiv", "infections","incidence"),
-                  calendar_quarter == options$calendar_quarter_t2,
-                  area_level == options$area_level) %>%
-    dplyr::mutate(mean = dplyr::if_else(indicator == "incidence", mean/100, mean))
-
+    dplyr::filter(indicator %in% c("population", "plhiv", "infections","incidence",
+                                   "prevalence"),
+                  calendar_quarter == options$calendar_quarter_t2)
 
 
   summarise_naomi_ind <- function(dat, age_cat) {
@@ -25,17 +23,19 @@ agyw_format_naomi <- function(outputs, options){
                                               "Y040_044", "Y045_049")}
 
     dat %>%
-      dplyr::select(area_id, area_name, age_group, sex, indicator, mean) %>%
+      dplyr::select(area_id, area_name, area_level,calendar_quarter,
+                    age_group, sex, indicator, mean) %>%
       tidyr::pivot_wider(names_from = indicator, values_from = mean) %>%
-      dplyr::group_by(area_id, area_name, sex) %>%
+      dplyr::group_by(area_id, area_name, area_level, calendar_quarter, sex) %>%
       dplyr::summarise(
         "population" = sum(population * as.integer(age_group %in% age_groups)),
         "plhiv" = sum(plhiv * as.integer(age_group %in% age_groups)),
         "infections" = sum(infections * as.integer(age_group %in% age_groups)),
         .groups = "drop") %>%
       dplyr::mutate(age_group = age_cat,
-                    incidence = (infections/(population-plhiv))*100) %>%
-      tidyr::pivot_longer(cols = c(population, plhiv, infections, incidence),
+                    incidence = (infections/(population-plhiv)),
+                    prevalence = plhiv/population) %>%
+      tidyr::pivot_longer(cols = c(population, plhiv, infections, incidence, prevalence),
                           names_to = "indicator",
                           values_to = "mean") %>%
       dplyr::mutate(age_group_label = dplyr::if_else(age_group == "Y015_024", "15-24", "25-49"))
@@ -52,7 +52,11 @@ agyw_format_naomi <- function(outputs, options){
     dplyr::select(names(df1)) %>%
     # Add aggregate indicators
     dplyr::bind_rows(df1) %>%
-    # Format for workbook
+    # Format incidence from 1000 person years to 100 person years
+    dplyr::mutate(mean = dplyr::if_else(indicator == "incidence", mean * 100, mean))
+
+  # Format for workbook
+  df3 <- df2 %>%
     dplyr::mutate(indicator = dplyr::recode(indicator,
                                             "population" = "Pop", "plhiv" = "PLHIV",
                                             "infections" = "new","incidence" = "Inci"),
@@ -62,28 +66,30 @@ agyw_format_naomi <- function(outputs, options){
                   mean = as.character(mean))
 
   # Incidence categories
-  df3 <- df2 %>%
+  df4 <- df3 %>%
     dplyr::filter(indicator == "Inci") %>%
-    dplyr::mutate(mean = dplyr::case_when(mean<0.003 ~ "Low",
-                                          mean>=0.003 & mean<0.01 ~ "Moderate",
-                                          mean>=0.01 & mean<0.03 ~ "High",
-                                          mean>=0.03 ~ "Very High",
+    dplyr::mutate(mean = dplyr::case_when(mean < 0.3 ~ "Low",
+                                          mean >= 0.3 & mean< 1 ~ "Moderate",
+                                          mean >= 1 & mean < 3 ~ "High",
+                                          mean >= 3 ~ "Very High",
                                           TRUE ~ NA_character_),
                   indicator = "Incicategory")
 
   # Incidence for all age groups + sexes
-  df4 <- naomi_ind %>%
-    dplyr::filter(indicator == "incidence", age_group == "Y000_999", sex == "both")
+  df5 <- naomi_ind %>%
+    dplyr::filter(indicator == "incidence", age_group == "Y000_999", sex == "both",
+                  area_level == options$area_level)
 
   country <- outputs$meta_area$area_name[outputs$meta_area$area_id == options$area_scope]
 
 
   # Format
-  naomi_wide <- dplyr::bind_rows(df2, df3) %>%
+  naomi_wide <- dplyr::bind_rows(df3, df4) %>%
+  dplyr::filter(area_level == options$area_level) %>%
   tidyr::pivot_wider(id_cols = c(area_id,area_name),
                      names_from = c(indicator,age_group_label,sex),
                      names_sep = "", values_from = mean) %>%
-    dplyr::mutate(Country = country, newAll = df4$mean) %>%
+    dplyr::mutate(Country = country, newAll = df5$mean) %>%
     dplyr::select(Country,area_id,area_name,`Pop15-24all`,`Pop15-24f`,`Pop15-24m`,
                   `PLHIV15-24all`,`PLHIV15-24f`,`PLHIV15-24m`,
                   newAll, `new15-24all`,`new15-24f`,`new15-24m`,
@@ -125,7 +131,8 @@ agyw_format_naomi <- function(outputs, options){
                   `new15-49all`,`new15-49f`,`new15-49m`,
                   `Inci15-49f`,`Incicategory15-49f`,`Inci15-49m`,`Incicategory15-49m`)
 
-  naomi_wide
+  v <- list(naomi_long = df2,
+            naomi_wide = naomi_wide)
 
   }
 
@@ -566,11 +573,17 @@ agyw_adjust_sexbehav_msm_pwid <- function(outputs,
 #' 3.
 #' 4.
 #'
-agyw_calculate_prevalence_female <- function(outputs,
+agyw_calculate_prevalence_female <- function(naomi_output,
                                              options,
                                              fsw_est,
                                              female_srb,
                                              survey_year_sample = 2018) {
+
+
+  # 'Naomi general population prevalence
+  naomi_gen_pop_prev <- naomi_output %>%
+    dplyr::filter(sex == "female", age_group == "Y015_049", indicator == "prevalence") %>%
+    dplyr::select(area_id, gen_prev = mean)
 
   #' Extract country specific national FSW prevalence
   iso3 <- options$area_scope
@@ -617,10 +630,7 @@ agyw_calculate_prevalence_female <- function(outputs,
     ) %>%
     tidyr::separate(indicator, into = c("behav", "indicator"))
 
-  naomi_gen_pop_prev <- outputs$indicators %>%
-    dplyr::filter(calendar_quarter == options$calendar_quarter_t2, sex == "female",
-                  age_group == "Y015_049", indicator == "prevalence") %>%
-    dplyr::select(area_id, gen_prev = mean)
+
 
   kp_prev <- fsw_prev %>%
     dplyr::select(iso3,area_id,median) %>%
@@ -632,6 +642,8 @@ agyw_calculate_prevalence_female <- function(outputs,
   kp_fit <- lm(prev_fsw_logodds ~ prev_logodds, data = kp_prev)
 
 
+
+
   ind_dat <- ind %>%
     dplyr::mutate(
       nosex12m_id = ifelse(behav == "nosex12m", 1, 0),
@@ -641,6 +653,8 @@ agyw_calculate_prevalence_female <- function(outputs,
       all_id = ifelse(behav == "all", 1, 0),
       year = as.numeric(substr(survey_id,4,7))) %>%
     dplyr::filter(indicator == "prevalence", !is.na(estimate))
+
+
 
   #' Younger age groups regression
   fit_y <- glm(estimate ~ -1 + all_id + nosex12m_id + sexcohab_id + sexnonreg_id + sexpaid12m_id,
@@ -750,20 +764,18 @@ agyw_calculate_prevalence_female <- function(outputs,
 #' 4.
 #'
 
-agyw_calculate_prevalence_male <- function(outputs,
+agyw_calculate_prevalence_male <- function(naomi_output,
                                            options,
                                            msm_est,
                                            male_srb,
                                            survey_year_sample = 2018) {
 
 
-
   # Naomi general population prevalence
-  naomi_gen_pop_prev <- outputs$indicators %>%
-    dplyr::filter(calendar_quarter == options$calendar_quarter_t2, sex == "male",
-                  age_group == "Y015_049", indicator == "prevalence") %>%
+  naomi_gen_pop_prev <- naomi_output %>%
+    dplyr::filter(sex == "male", age_group == "Y015_024", indicator == "prevalence") %>%
     dplyr::mutate(logit_gen_prev = log(mean / (1-mean))) %>%
-    dplyr::select(area_id, logit_gen_prev, area_level)
+    dplyr::select(area_id, prevalence = mean, logit_gen_prev, , area_level)
 
 
   #' Extract country specific national MSM + PWID prevalence
@@ -792,7 +804,10 @@ agyw_calculate_prevalence_male <- function(outputs,
                   pwid_lor = median_PWID - logit_gen_prev_PWID) %>%
     dplyr::select(-c("logit_gen_prev_PWID","logit_gen_prev_MSM","median_PWID","median_MSM","area_level"))
 
+
+  # ----------------------------------------------------------------------------
   #' Format SRB survey estimates
+
 
   srb_survey <- naomi.resources::load_agyw_exdata("srb_survey_male", iso3)
 
@@ -861,6 +876,8 @@ agyw_calculate_prevalence_male <- function(outputs,
   or_o <- odds_estimate / odds_estimate[1]
   lor_o <- log(odds_estimate / odds_estimate[1])
   lor_o <- lor_o[-1]
+
+  # ----------------------------------------------------------------------------
 
 
   #' Naomi estimates of PLHIV and population by district and age band
@@ -996,21 +1013,21 @@ logit_scale_prev <- function(lor, N_fine, plhiv) {
 #' 3.
 #' 4.
 
-agyw_calculate_incidence_female <- function(outputs,
+agyw_calculate_incidence_female <- function(naomi_output,
                                             options,
                                             female_srb,
                                             female_logit_prevalence,
                                             survey_year = 2018) {
 
-  naomi_incidence <- outputs$indicators %>%
-    dplyr::select(-lower,-upper,-se, -median, -mode, -indicator_label) %>%
-    dplyr::filter(calendar_quarter == options$calendar_quarter_t2,
-                  indicator %in% c("population", "plhiv", "infections", "incidence"),
-                  sex == "female") %>%
+  naomi_indicators <- naomi_output  %>%
+    dplyr::filter(indicator %in% c("population", "plhiv","prevalence","infections", "incidence"),
+                  sex == "female", area_level == options$area_level) %>%
     tidyr::pivot_wider(names_from = indicator, values_from = mean) %>%
-    #' In terms of new infections per hundred person years
-    #' (Naomi estimate is per 1000 person years)
-    dplyr::mutate(incidence = incidence / 10)
+    dplyr::mutate(
+      incidence_cat = cut(incidence,
+                          c(0, 0.3, 1, 3, 10^6),
+                          labels = c("Low", "Moderate", "High", "Very High"),
+                          include.lowest = TRUE, right = TRUE))
 
   risk_group_prevalence <- female_logit_prevalence %>%
     dplyr::select(area_id, age_group, starts_with("prev_"))
@@ -1019,7 +1036,7 @@ agyw_calculate_incidence_female <- function(outputs,
     dplyr::filter(year == survey_year) %>%
     dplyr::select(area_id, age_group, indicator, estimate_smoothed) %>%
     tidyr::pivot_wider(names_from = indicator, values_from = estimate_smoothed, values_fn = mean) %>%
-    dplyr::left_join(naomi_incidence, by = dplyr::join_by(area_id, age_group)) %>%
+    dplyr::left_join(naomi_indicators, by = dplyr::join_by(area_id, age_group)) %>%
     dplyr::left_join(risk_group_prevalence, by = dplyr::join_by(area_id, age_group)) %>%
     dplyr::filter(!is.na(population))
 
@@ -1100,8 +1117,8 @@ agyw_calculate_incidence_female <- function(outputs,
                                               "Y045_049")}
 
 
-    dat %>%
-      dplyr::group_by(area_id, area_name, sex, calendar_quarter) %>%
+    x <- dat %>%
+      dplyr::group_by(area_id, area_name, area_level, sex, calendar_quarter) %>%
       dplyr::summarise(
         "population" = sum(population * as.integer(age_group %in% age_groups)),
         "plhiv" = sum(plhiv * as.integer(age_group %in% age_groups)),
@@ -1122,11 +1139,11 @@ agyw_calculate_incidence_female <- function(outputs,
         "infections_sexcohab" = sum(infections_sexcohab * as.integer(age_group %in% age_groups)),
         "infections_sexnonreg" = sum(infections_sexnonreg * as.integer(age_group %in% age_groups)),
         "infections_sexpaid12m" = sum(infections_sexpaid12m * as.integer(age_group %in% age_groups)),
+        "sexnonregplus" = sum(susceptible_sexnonreg, susceptible_sexpaid12m)/(population-plhiv),
         .groups = "drop") %>%
       dplyr::mutate(age_group = age_cat,
                     nosex12m = susceptible_nosex12m/(population-plhiv),
                     sexcohab = susceptible_sexcohab/(population-plhiv),
-                    sexnonregplus = sum(susceptible_sexnonreg,susceptible_sexpaid12m)/(population-plhiv),
                     sexnonreg = susceptible_sexnonreg/(population-plhiv),
                     sexpaid12m = susceptible_sexpaid12m/(population-plhiv),
                     incidence = (infections/(population-plhiv))*100,
@@ -1179,7 +1196,9 @@ agyw_calculate_incidence_female <- function(outputs,
                   incidence_sexnonreg, incidence_sexpaid12m,
                   infections_nosex12m,infections_sexcohab,
                   infections_sexnonreg, infections_sexpaid12m,
-                  incidence_cat)
+                  incidence_cat) %>%
+    dplyr::mutate_if(is.numeric, as.numeric) %>%
+    dplyr::mutate_if(is.factor, as.character)
 
 }
 
@@ -1195,30 +1214,27 @@ agyw_calculate_incidence_female <- function(outputs,
 #'
 #' @export
 
-agyw_calculate_incidence_male <- function(outputs,
+agyw_calculate_incidence_male <- function(naomi_output,
                                           options,
                                           male_srb,
                                           male_logit_prevalence,
                                           survey_year = 2018) {
 
 
-  naomi_indicators <- outputs$indicators %>%
-    dplyr::select(-lower,-upper,-se, -median, -mode, -indicator_label,
-                  -age_group_label) %>%
-    dplyr::filter(calendar_quarter == options$calendar_quarter_t2,
-                  indicator %in% c("population", "plhiv","prevalence","infections", "incidence"),
-                  sex == "male") %>%
+  naomi_indicators <- naomi_output  %>%
+    dplyr::filter(indicator %in% c("population", "plhiv","prevalence","infections", "incidence"),
+                  sex == "male", area_level == options$area_level) %>%
     tidyr::pivot_wider(names_from = indicator, values_from = mean) %>%
     dplyr::mutate(
-      #' In terms of new infections per hundred person years (Naomi estimate is per 1000 person years)
-      incidence = incidence * 10,
       incidence_cat = cut(incidence,
                           c(0, 0.3, 1, 3, 10^6),
                           labels = c("Low", "Moderate", "High", "Very High"),
                           include.lowest = TRUE, right = TRUE))
 
   risk_group_prevalence <- male_logit_prevalence %>%
-    dplyr::select(area_id, age_group, starts_with("prev_"))
+    dplyr::select(area_id, age_group, gen_prev, starts_with( "prev_")) %>%
+    dplyr::mutate(msm_pr = prev_msm/ gen_prev,
+                  pwid_pr = prev_pwid / gen_prev)
 
   df <- male_srb %>%
     dplyr::filter(year == survey_year) %>%
@@ -1245,12 +1261,12 @@ agyw_calculate_incidence_male <- function(outputs,
 
   df1 <- df %>%
     dplyr::mutate(
-      msm_pr = prev_msm/ prevalence,
-      pwid_pr = prev_pwid / prevalence,
+      msm_pr = round(prev_msm/ prevalence, 2),
+      pwid_pr = round(prev_pwid / prevalence, 2),
       # correcting since the reference cat is reg cohabiting not gen pop
       # need more sustainable fix for this
-      rr_msm = ifelse(msm_pr>2.5, msm_pr, 2.5),
-      rr_pwid = ifelse(pwid_pr>2.5, pwid_pr, 2.5),
+      rr_msm = dplyr::if_else(msm_pr > 2.5, msm_pr, 2.5),
+      rr_pwid = dplyr::if_else(pwid_pr > 2.5, pwid_pr, 2.5),
       rr_sexnonreg = dplyr::case_when(
         age_group %in% Y015_024 ~ rr_sexnonreg_young,
         age_group %in% Y025_049 ~ rr_sexnonreg_old,
@@ -1296,7 +1312,7 @@ agyw_calculate_incidence_male <- function(outputs,
                                               "Y045_049")}
 
     dat %>%
-      dplyr::group_by(area_id, area_name, sex, calendar_quarter) %>%
+      dplyr::group_by(area_id, area_name, area_level, sex, calendar_quarter) %>%
       dplyr::summarise(
         "population" = sum(population * as.integer(age_group %in% age_groups)),
         "plhiv" = sum(plhiv * as.integer(age_group %in% age_groups)),
@@ -1321,11 +1337,11 @@ agyw_calculate_incidence_male <- function(outputs,
         "infections_sexnonreg" = sum(infections_sexnonreg * as.integer(age_group %in% age_groups)),
         "infections_msm" = sum(infections_msm * as.integer(age_group %in% age_groups)),
         "infections_pwid" = sum(infections_pwid * as.integer(age_group %in% age_groups)),
+        "sexnonregplus" = sum(susceptible_sexnonreg)/(population-plhiv),
         .groups = "drop") %>%
       dplyr::mutate(age_group = age_cat,
                     nosex12m = susceptible_nosex12m/(population-plhiv),
                     sexcohab = susceptible_sexcohab/(population-plhiv),
-                    sexnonregplus = sum(susceptible_sexnonreg)/(population-plhiv),
                     sexnonreg = susceptible_sexnonreg/(population-plhiv),
                     msm = susceptible_msm/(population-plhiv),
                     pwid = susceptible_pwid/(population-plhiv),
@@ -1361,6 +1377,7 @@ agyw_calculate_incidence_male <- function(outputs,
   #' Check that sum of disaggregated infections is the same as total infections
   #  TO DO: add warning for sum not matching - contact admin
   sum_infections <- df3$infections_nosex12m + df3$infections_sexcohab + df3$infections_sexnonreg + df3$infections_msm + df3$infections_pwid
+
   stopifnot(max(df3$infections - sum_infections) < 10^{-9})
 
 
@@ -1382,7 +1399,11 @@ agyw_calculate_incidence_male <- function(outputs,
                   incidence_nosex12m, incidence_sexcohab,
                   incidence_sexnonreg, incidence_msm, incidence_pwid,
                   infections_nosex12m,infections_sexcohab,
-                  infections_sexnonreg, infections_msm, infections_pwid)
+                  infections_sexnonreg, infections_msm, infections_pwid) %>%
+    dplyr::mutate_if(is.numeric, as.numeric) %>%
+    dplyr::mutate_if(is.factor, as.character)
+
+
 
 }
 
@@ -1421,17 +1442,15 @@ agyw_generate_risk_populations <- function(naomi_output) {
     options <- yaml::read_yaml(options)
   }
 
-
-
-  #' Disaggregate KP PSEs to five-year age-bands using Naomi population
+  #' Format naomi output
+  naomi <- agyw_format_naomi(outputs, options)
 
   #' Naomi population
-  #'
-  naomi_pop <- outputs$indicators %>%
-    dplyr::filter(calendar_quarter == options$calendar_quarter_t2,
-                  indicator == "population") %>%
-    dplyr::mutate(iso3 = options$area_scope) %>%
-    dplyr::select(iso3, area_id, area_level,sex, age_group, area_level, population = mean)
+  naomi_pop <- naomi$naomi_long %>%
+    dplyr::filter(indicator == "population") %>%
+    dplyr::select(area_id, area_level,sex, age_group, area_level, population = mean)
+
+  naomi_pop$iso3 <- options$area_scope
 
   #' Disaggregate KP PSEs from Oli's analysis to 5-year bands
   fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop)
@@ -1443,31 +1462,32 @@ agyw_generate_risk_populations <- function(naomi_output) {
   male_srb <- agyw_adjust_sexbehav_msm_pwid(outputs, options, msm_est, pwid_est)
 
   #' Calculate risk group prevalence
-  female_logit_prevalence <- agyw_calculate_prevalence_female(outputs,
+  female_logit_prevalence <- agyw_calculate_prevalence_female(naomi$naomi_long,
                                                               options,
                                                               fsw_est,
                                                               female_srb)
 
-  male_logit_prevalence <- agyw_calculate_prevalence_male(outputs,
+  male_logit_prevalence <- agyw_calculate_prevalence_male(naomi$naomi_long,
                                                           options,
                                                           msm_est,
                                                           male_srb)
 
   #' Calculate risk group incidence
-  female_incidence <- agyw_calculate_incidence_female(outputs, options,
+  female_incidence <- agyw_calculate_incidence_female(naomi$naomi_long,
+                                                      options,
                                                       female_srb,
                                                       female_logit_prevalence)
 
-  male_incidence <- agyw_calculate_incidence_male(outputs, options,
+  male_incidence <- agyw_calculate_incidence_male(naomi$naomi_long,
+                                                  options,
                                                   male_srb,
                                                   male_logit_prevalence)
 
-  # ' Get Naomi output
-  naomi_output <- agyw_format_naomi(outputs, options)
+
 
   v <- list(female_incidence = female_incidence,
             male_incidence = male_incidence,
-            naomi_output = naomi_output)
+            naomi_output = naomi$naomi_wide)
 
   v
 
