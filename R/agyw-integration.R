@@ -156,10 +156,11 @@ agyw_disaggregate_fsw <- function(outputs,
 
   #' Extract country specific national FSW PSEs
   iso3 <- options$area_scope
-  pse <- naomi.resources::load_agyw_exdata("fsw_pse", iso3)
+
+  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+    dplyr::filter(kp == "FSW", indicator == "pse_prop")
 
   fsw_pse <- pse %>%
-    dplyr::filter(iso3 == options$area_scope, indicator == "pse_prop") %>%
     dplyr::rename(prop_fsw = median) %>%
     dplyr::select(-indicator,-lower,-upper)
 
@@ -193,7 +194,7 @@ agyw_disaggregate_fsw <- function(outputs,
 
   #' Calculate proportion of sexually active population using Kinh's country specific
   #' estimates of age at first sex and naomi population
-  afs <- naomi.resources::load_agyw_exdata("afs", "BWA")
+  afs <- naomi.resources::load_agyw_exdata("afs", iso3)
 
   #' Select birth cohort from 2000, to turn 15 in 2015
   cohort <- 2000
@@ -282,10 +283,11 @@ agyw_disaggregate_pwid <- function(outputs,
 
   #' Extract country specific national PWID PSEs
   iso3 <- options$area_scope
-  pse <- naomi.resources::load_agyw_exdata("pwid_pse", iso3)
+
+  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+    dplyr::filter(kp == "PWID", indicator == "pse_prop")
 
   pwid_pse <- pse %>%
-    dplyr::filter(iso3 == options$area_scope, indicator == "pse_prop") %>%
     dplyr::rename(prop_pwid = median) %>%
     dplyr::select(-indicator,-lower,-upper)
 
@@ -299,8 +301,9 @@ agyw_disaggregate_pwid <- function(outputs,
     dplyr::mutate(total_pwid = population * prop_pwid) %>%
     dplyr::select(iso3, area_id, total_pwid, age_group, area_level)
 
-  #' Assumption form literature that 9% of PWID are female and remove them from
-  #' the male calculation
+  #' Assumption from literature that 9% of PWID are female so remove them from
+  #' the male denominator
+
   pwid$total_pwid <- pwid$total_pwid * 0.91
 
   #' PWID age distribution parameters in ZAF from Thembisa
@@ -352,10 +355,10 @@ agyw_disaggregate_msm <- function(outputs,
 
   #' Extract country specific national MSM PSEs
   iso3 <- options$area_scope
-  pse <- naomi.resources::load_agyw_exdata("msm_pse", iso3)
+  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+    dplyr::filter(kp == "PWID", indicator == "pse_prop")
 
   msm_pse <- pse %>%
-    dplyr::filter(iso3 == options$area_scope, indicator == "pse_prop") %>%
     dplyr::rename(prop_msm = median) %>%
     dplyr::select(-indicator,-lower,-upper)
 
@@ -418,8 +421,8 @@ agyw_disaggregate_msm <- function(outputs,
 #'
 #' * `nosex12m`:
 #' * `sexcohab`:
-#' * `sexonregplus`:
-#' * `sexonreg`:
+#' * `sexnonregplus`:
+#' * `sexnonreg`:
 #' * `sexpaid12m`:
 #' * `nosex12m`:
 #'
@@ -447,7 +450,6 @@ agyw_adjust_sexbehav_fsw <- function(outputs,
   fsw_df <- fsw_est %>% dplyr::select(age_group, fsw_match_area = area_id, fsw_prop)
 
   #' Load female SRB proportions
-
   female_srb <- naomi.resources::load_agyw_exdata("srb_female", options$area_scope)
 
   adj_female_srb <- female_srb %>%
@@ -520,7 +522,6 @@ agyw_adjust_sexbehav_msm_pwid <- function(outputs,
   pwid_df <- pwid_est %>% dplyr::select(age_group, kp_match_area = area_id, pwid_prop)
 
   #' Load male SRB proportions
-
   male_srb <- naomi.resources::load_agyw_exdata("srb_male", options$area_scope)
 
   adj_male_srb <- male_srb %>%
@@ -595,9 +596,8 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 
   #' Extract country specific national FSW prevalence
   iso3 <- options$area_scope
-  pse <- naomi.resources::load_agyw_exdata("fsw_pse", iso3)
-
-  fsw_prev <- pse %>% dplyr::filter(indicator=="prev")
+   fsw_prev <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+    dplyr::filter(kp == "FSW", indicator == "prevalence")
 
   kp_prev <- fsw_prev %>%
     dplyr::select(iso3,area_id,median) %>%
@@ -724,17 +724,11 @@ agyw_calculate_prevalence_male <- function(naomi_output,
   #' Extract country specific national MSM + PWID prevalence
   iso3 <- options$area_scope
 
-  msm <- naomi.resources::load_agyw_exdata("msm_pse", iso3)
-  pwid <- naomi.resources::load_agyw_exdata("pwid_pse", iso3)
+  msm_pwid_prev <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+    dplyr::filter(indicator == "prevalence", kp %in% c("MSM", "PWID"))
 
-  msm_prev <- msm %>% dplyr::filter(indicator=="prev") %>%
-    dplyr::mutate(kp = "MSM")
-  pwid_prev <- pwid %>% dplyr::filter(indicator=="prev") %>%
-    dplyr::mutate(kp = "PWID")
-
-
-  # KP population prevalence
-  kp_prev <- dplyr::bind_rows(msm_prev, pwid_prev) %>%
+# KP population prevalence
+  kp_prev <- msm_pwid_prev %>%
     dplyr::select(-indicator,-lower, - upper) %>%
     dplyr::mutate(median = log(median / (1-median))) %>%
     # Add in Naomi general pop prevalence
