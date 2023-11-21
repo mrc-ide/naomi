@@ -56,20 +56,34 @@ aggregate_art <- function(art, shape) {
 
     art_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
                                 age_sex_df) %>%
-      dplyr::left_join(max_dat, by = c("area_id", "sex", "age_group", "calendar_quarter"))
+      dplyr::left_join(max_dat, by = c("area_id", "sex", "age_group", "calendar_quarter")) %>%
+      dplyr::mutate(area_level = art_level)
 
 
     art_number_wide <- spread_areas(areas %>% dplyr::filter(area_level <= art_level)) %>%
       dplyr::right_join(art_full, by = "area_id", multiple = "all")
 
+
     # Function to aggregate based on area_id[0-9]$ columns in hierarchy
     aggregate_data_art <- function(col_name) {
-      df <- art_number_wide %>%
-        dplyr::group_by(eval(as.name(col_name)), sex, age_group, calendar_quarter) %>%
-        dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(.),
-                            .groups = "drop") %>%
-        dplyr::rename(area_id = `eval(as.name(col_name))`)
+
+      max_col_name <- paste0("area_id", art_level)
+
+      if(col_name == max_col_name) {
+        # Don't aggregate lowest level of data to retain missing values
+        df <- art_number_wide %>% dplyr::select(area_id, sex, age_group, calendar_quarter,
+                                                all_of(cols_keep))
+      } else {
+
+        df <- art_number_wide %>%
+          dplyr::group_by(eval(as.name(col_name)), sex, age_group, calendar_quarter) %>%
+          dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
+                              .groups = "drop") %>%
+          dplyr::rename(area_id = `eval(as.name(col_name))`)
+      }
+
     }
+
 
     # Aggregated data frame for area levels > data provided
     aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE)
@@ -113,8 +127,9 @@ aggregate_art <- function(art, shape) {
 ##' @param shape Path to file containing geojson areas data or area data object
 ##'
 ##' @return Data formatted for plotting input time series containing columns
-##' area_id, area_name, area_level, area_level_label, time_period, year,
-##' quarter, plot and value
+##' area_id, area_name, area_level, area_level_label, parent_area_id, area_sort_order,
+##' time_period, year, quarter, calendar_quarter, area_hierarchy, plot, value and
+##' missing_ids
 ##'
 ##' @export
 prepare_input_time_series_art <- function(art, shape) {
@@ -126,28 +141,24 @@ prepare_input_time_series_art <- function(art, shape) {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
-  ## Check if art is object or file path
-  if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_columns = TRUE)
-  }
-
-
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
   art_long <- aggregate_art(art, shape)
   sex_level <- unique(art_long$sex)
   age_level <- unique(art_long$age_group)
+  admin_level <- max(art_long$area_level)
 
   ## Shape data for plot
   art_plot_data <- art_long %>%
     dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
                     area_sort_order,time_period, year, quarter, calendar_quarter,area_hierarchy) %>%
+    dplyr::mutate(na_rm = area_level != admin_level) %>%
     dplyr::summarise(
-      art_total = sum(art_current, na.rm = TRUE),
-      art_adult = sum(art_current * as.integer(age_group == "Y015_999"), na.rm = TRUE),
-      art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
-      art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
-      art_child = sum(art_current * as.integer(age_group == "Y000_014"), na.rm = TRUE),
+      art_total = sum(art_current,  na.rm = na_rm),
+      art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm),
+      art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm),
+      art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm),
+      art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm),
       .groups = "drop"
     ) %>%
     dplyr::mutate(
@@ -159,50 +170,52 @@ prepare_input_time_series_art <- function(art, shape) {
   if(any(grep("art_new", colnames(art_long)))) {
 
     art_new_data <- art_long %>%
+      dplyr::mutate(na_rm = area_level != admin_level) %>%
       dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
                       area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) %>%
       dplyr::summarise(
-        art_new_total = sum(art_new, na.rm = TRUE),
-        art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = TRUE),
-        art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
-        art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
-        art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = TRUE),
+        art_new_total = sum(art_new, na.rm = na_rm),
+        art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm),
+        art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
+        art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
+        art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm),
         .groups = "drop"
       )
 
     art_plot_data <- dplyr::left_join(art_plot_data, art_new_data,
-                               by = c("area_id", "area_name", "area_level",
-                                      "area_level_label", "parent_area_id",
-                                      "area_sort_order", "time_period",
-                                      "year", "quarter", "calendar_quarter",
-                                      "area_hierarchy"))
+                                      by = c("area_id", "area_name", "area_level",
+                                             "area_level_label", "parent_area_id",
+                                             "area_sort_order", "time_period",
+                                             "year", "quarter", "calendar_quarter",
+                                             "area_hierarchy"))
   }
 
   # if VL columns exist in art data, calculate variables
   if(any(grep("vl", colnames(art_long)))) {
 
     vl_data <- art_long %>%
+      dplyr::mutate(na_rm = area_level != admin_level) %>%
       dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
                       area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) %>%
       dplyr::summarise(
-        vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = TRUE),
-        vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = TRUE),
-        vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
-        vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
-        vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = TRUE),
-        vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = TRUE),
-        vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = TRUE),
-        vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = TRUE),
-        vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = TRUE),
-        vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = TRUE),
+        vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm),
+        vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
+        vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
+        vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
+        vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
+        vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm),
+        vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
+        vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
+        vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
+        vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
         .groups = "drop")
 
     art_plot_data <- dplyr::left_join(art_plot_data, vl_data,
-                               by = c("area_id", "area_name", "area_level",
-                                      "area_level_label", "parent_area_id",
-                                      "area_sort_order", "time_period",
-                                      "year", "quarter", "calendar_quarter",
-                                      "area_hierarchy")) %>%
+                                      by = c("area_id", "area_name", "area_level",
+                                             "area_level_label", "parent_area_id",
+                                             "area_sort_order", "time_period",
+                                             "year", "quarter", "calendar_quarter",
+                                             "area_hierarchy")) %>%
       dplyr::mutate(
         vl_coverage_total = vl_tested_12mos_total/ art_total,
         vl_coverage_adult = vl_tested_12mos_adult / art_adult,
@@ -226,28 +239,63 @@ prepare_input_time_series_art <- function(art, shape) {
                         values_to = "value") %>%
     dplyr::mutate_at(dplyr::vars(value), ~replace(., is.nan(.), 0))
 
-# Remove sex disaggregated variables if only sex aggregated data is present
+  # Remove sex disaggregated variables if only sex aggregated data is present
   if(all(!c("male", "female") %in% sex_level)) {
     art_plot_data_long <-  dplyr::filter(art_plot_data_long,
-                                    !(plot %in% c("art_adult_f","art_adult_m", "art_adult_sex_ratio",
-                                                  "art_new_adult_f", "art_new_adult_m",
-                                                  "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m",
-                                                  "vl_suppressed_12mos_adult_f", "vl_suppressed_12mos_adult_m",
-                                                  "vl_coverage_adult_f", "vl_coverage_adult_m",
-                                                  "vl_prop_suppressed_adult_f", "vl_prop_suppressed_adult_m")))
+                                         !(plot %in% c("art_adult_f","art_adult_m", "art_adult_sex_ratio",
+                                                       "art_new_adult_f", "art_new_adult_m",
+                                                       "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m",
+                                                       "vl_suppressed_12mos_adult_f", "vl_suppressed_12mos_adult_m",
+                                                       "vl_coverage_adult_f", "vl_coverage_adult_m",
+                                                       "vl_prop_suppressed_adult_f", "vl_prop_suppressed_adult_m")))
   }
 
   # Remove age disaggregated variables if paeds data is not present
   if(!("Y000_014" %in% age_level)) {
     art_plot_data_long <-  dplyr::filter(art_plot_data_long,
-                                    !(plot %in% c("art_child","art_child_adult_ratio",
-                                                  "art_new_child","vl_tested_12mos_child",
-                                                  "vl_suppressed_12mos_child","vl_coverage_child",
-                                                  "vl_prop_suppressed_child")))
+                                         !(plot %in% c("art_child","art_child_adult_ratio",
+                                                       "art_new_child","vl_tested_12mos_child",
+                                                       "vl_suppressed_12mos_child","vl_coverage_child",
+                                                       "vl_prop_suppressed_child")))
   }
+
   art_plot_data_long <- art_plot_data_long %>%
     dplyr::arrange(area_sort_order, calendar_quarter)
-  return(art_plot_data_long)
+
+  # Tag data with NAs at the lowest admin level
+  area_level <- max(art_plot_data_long$area_level)
+
+  hierarchy_wide <- spread_areas(areas %>% dplyr::filter(area_level <= admin_level)) %>%
+    dplyr::select(dplyr::starts_with("area_id"))
+
+
+  missing_map <- art_plot_data_long %>%
+    #' For edge cases where data is provided at different admin levels for
+    #' different years (get max area level by year)
+    dplyr::select(calendar_quarter, area_level) %>%
+    dplyr::group_by(calendar_quarter) %>%
+    dplyr::summarise(area_level = max(area_level)) %>%
+    #' Select lowest admin level for each year
+    dplyr::left_join(art_plot_data_long %>%
+                       dplyr::select(area_id, area_name, area_level, calendar_quarter, plot, value),
+                     multiple = "all", by = dplyr::join_by(calendar_quarter, area_level)) %>%
+    #' Joint to wide hierarchy
+    dplyr::left_join(hierarchy_wide, by = dplyr::join_by(area_id)) %>%
+    #' Filter for districts with missing value
+    dplyr::filter(is.na(value)) %>%
+    dplyr::select(missing = area_id, dplyr::everything()) %>%
+    # Get into long format
+    tidyr::pivot_longer(cols = dplyr::starts_with("area_id"), values_to = "area_id") %>%
+    # Aggregate missing observations by area_id at all levels
+    dplyr::group_by(area_id, plot, calendar_quarter) %>%
+    dplyr::summarise(missing_ids = strsplit(paste0(missing, collapse = ","), split = ","), .groups = "drop")
+
+
+  df_final <- art_plot_data_long %>%
+    dplyr::left_join(missing_map, by = dplyr::join_by(area_id, calendar_quarter, plot)) %>%
+    dplyr::mutate(value = tidyr::replace_na(value, 0), missing = NULL)
+
+  return(df_final)
 }
 
 
@@ -283,18 +331,16 @@ aggregate_anc <- function(anc, shape) {
     anc <- read_anc_testing(anc)
   }
 
-  ## Select only required columns; to avoid column name clash with
-  ## any additional columns in ANC data set
+  # Aggregate based on what columns exist in dataset
+  cols_list <- c("anc_clients", "anc_known_pos", "anc_already_art",
+                 "anc_tested", "anc_tested_pos", "anc_known_neg", "births_facility")
+  cols_keep <- intersect(cols_list, colnames(anc))
+
   anc <- anc %>%
-    dplyr::select(area_id, age_group, year, anc_clients, anc_known_pos,
-                  anc_already_art, anc_tested, anc_tested_pos, anc_known_neg,
-                  births_facility)
+    dplyr::select(area_id, age_group, year, dplyr::any_of(cols_list))
 
   anc_testing <- anc %>%
-    dplyr::left_join(
-      dplyr::select(areas, area_id, area_level),
-      by = "area_id"
-    )
+    dplyr::left_join( dplyr::select(areas, area_id, area_level), by = "area_id")
 
   # Split data by year and aggregate from lowest level available
   anc_dat <- split(anc_testing , f = anc_testing$year)
@@ -306,6 +352,7 @@ aggregate_anc <- function(anc, shape) {
     anc_level <- max(anc_testing$area_level)
     max_dat <- dplyr::filter(anc_testing, area_level == anc_level)
     max_shape <- dplyr::filter(areas, area_level == anc_level)
+
 
     # Ensure entries exist for all programme data age/sex/quarter combinations X
     # shape file area_ids at finest stratification
@@ -320,21 +367,24 @@ aggregate_anc <- function(anc, shape) {
       spread_areas() %>%
       dplyr::right_join(anc_full, by = "area_id", multiple = "all")
 
+
     # Function to aggregate based on area_id[0-9]$ columns in hierarchy
     aggregate_data_anc <- function(col_name) {
-      df <- anc_testing_wide %>%
-        dplyr::group_by(eval(as.name(col_name)), age_group, year) %>%
-        dplyr::summarise(
-          anc_clients = sum(anc_clients),
-          anc_known_pos = sum(anc_known_pos),
-          anc_already_art = sum(anc_already_art),
-          anc_tested = sum(anc_tested),
-          anc_tested_pos = sum(anc_tested_pos),
-          anc_known_neg = sum(anc_known_neg),
-          births_facility = sum(births_facility),
-          .groups = "drop"
-        ) %>%
-        dplyr::rename(area_id = `eval(as.name(col_name))`)
+
+      max_admin <- paste0("area_id", anc_level)
+
+      if(col_name == max_admin) {
+        # Don't aggregate lowest level of data to retain missing values
+        df <- anc_testing_wide %>% dplyr::select(area_id, age_group, year,
+                                                 all_of(cols_keep))
+      } else {
+
+        df <- anc_testing_wide %>%
+          dplyr::group_by(eval(as.name(col_name)), age_group, year) %>%
+          dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
+                              .groups = "drop") %>%
+          dplyr::rename(area_id = `eval(as.name(col_name))`)
+      }
     }
 
     # Aggregated data frame for area levels
@@ -358,8 +408,7 @@ aggregate_anc <- function(anc, shape) {
                      by = "area_id") %>%
     dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group, time_period, year, quarter,
-                  calendar_quarter, anc_clients, anc_known_pos, anc_already_art,
-                  anc_tested, anc_tested_pos, anc_known_neg, births_facility) %>%
+                  calendar_quarter, dplyr::all_of(cols_keep)) %>%
     dplyr::ungroup() %>%
     dplyr::arrange(year, area_sort_order)
 
@@ -377,27 +426,22 @@ aggregate_anc <- function(anc, shape) {
 ##' @param shape Path to file containing geojson areas data or shape sf object
 ##'
 ##' @return Data formatted for plotting input ANC time series containing columns
-##' area_id, area_name, area_level, area_level_label, age_group, time_period,
-##' time_step, plot and value
+##' area_id, area_name, area_level, area_level_label, parent_area_id, area_sort_order,
+##' time_period, year, quarter, calendar_quarter, area_hierarchy, plot, value and
+##' missing_ids
 ##' @export
 prepare_input_time_series_anc <- function(anc, shape) {
-
 
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
-  }
-
-  if(inherits(shape, "sf")) {
+  } else {
     areas <- shape %>% sf::st_drop_geometry()
   }
 
-  ## Check if art is object or file path
-  if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    anc <- read_anc_testing(anc)
-  }
+  ## Shape data for plot
+  anc_long <- aggregate_anc(anc, shape)
 
-  anc_long <- aggregate_anc(anc, shape)## Shape data for plot
   anc_plot_data_long <- anc_long %>%
     dplyr::mutate(
       anc_total_pos = anc_known_pos + anc_tested_pos,
@@ -417,7 +461,37 @@ prepare_input_time_series_anc <- function(anc, shape) {
                         names_to = "plot",
                         values_to = "value") %>%
     dplyr::arrange(area_sort_order, calendar_quarter)
-  return(anc_plot_data_long)
+
+  # Tag data with NAs at the lowest admin level
+  anc_level <- max(anc_plot_data_long$area_level)
+  hierarchy_wide <- spread_areas(areas %>% dplyr::filter(area_level <= anc_level))
+
+  missing_map <- anc_plot_data_long %>%
+    #' For edge cases where data is provided at different admin levels for
+    #' different years (get max area level by year)
+    dplyr::select(calendar_quarter, area_level) %>%
+    dplyr::group_by(calendar_quarter) %>%
+    dplyr::summarise(area_level = max(area_level)) %>%
+    #' Select lowest admin level for each year
+    dplyr::left_join(anc_plot_data_long %>%
+                       dplyr::select(area_id, area_name, area_level, calendar_quarter, plot, value),
+                     multiple = "all", by = dplyr::join_by(calendar_quarter, area_level)) %>%
+    #' Joint to wide hierarchy
+    dplyr::left_join(hierarchy_wide, by = dplyr::join_by(area_id)) %>%
+    #' Filter for districts with missing value
+    dplyr::filter(is.na(value)) %>%
+    dplyr::select(missing = area_id, dplyr::everything()) %>%
+    # Get into long format
+    tidyr::pivot_longer(cols = dplyr::starts_with("area_id"), values_to = "area_id") %>%
+    # Aggregate missing observations by area_id at all levels
+    dplyr::group_by(area_id, plot, calendar_quarter) %>%
+    dplyr::summarise(missing_ids = strsplit(paste0(missing, collapse = ","), split = ","), .groups = "drop")
+
+  df_final <- anc_plot_data_long %>%
+    dplyr::left_join(missing_map, by = dplyr::join_by(area_id, calendar_quarter, plot)) %>%
+    dplyr::mutate(value = tidyr::replace_na(value, 0), missing = NULL)
+
+  return(df_final)
 }
 
 ##' Return the translated label & description for a set of plot types
