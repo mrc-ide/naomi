@@ -400,8 +400,7 @@ aggregate_anc <- function(anc, shape) {
   anc_long <- lapply(anc_dat, aggregate_anc_by_level) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(time_period = as.character(year), quarter = "Q4", sex = "female",
-                  calendar_quarter = paste0("CY", time_period, quarter),
-                  births_facility = dplyr::if_else(is.na(births_facility), 0, births_facility)) %>%
+                  calendar_quarter = paste0("CY", time_period, quarter)) %>%
     dplyr::left_join(areas %>%
                        dplyr::select(area_id, area_name, area_level,area_level_label,
                                      parent_area_id, area_sort_order),
@@ -450,7 +449,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
       anc_art_among_known = anc_already_art / anc_known_pos,
       anc_art_coverage = anc_already_art / anc_total_pos,
       births_clients_ratio = births_facility / anc_clients
-    ) %>%
+      ) %>%
     dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id,
                   area_sort_order, age_group,  time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_tested, anc_tested_pos,
