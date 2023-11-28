@@ -76,10 +76,11 @@ aggregate_art <- function(art, shape) {
       } else {
 
         df <- art_number_wide %>%
-          dplyr::group_by(eval(as.name(col_name)), sex, age_group, calendar_quarter) %>%
+          dplyr::group_by(!!col_name := .data[[col_name]], sex, age_group, calendar_quarter) %>%
           dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
                               .groups = "drop") %>%
-          dplyr::rename(area_id = `eval(as.name(col_name))`)
+          dplyr::rename_with(~gsub("[0-9]$", "", .))
+
       }
 
     }
@@ -107,7 +108,7 @@ aggregate_art <- function(art, shape) {
                       area_level_label, parent_area_id, area_sort_order),
       by = c("area_id")
     ) %>%
-    dplyr::select(area_id, area_level, area_level_label,parent_area_id,
+    dplyr::select(area_id, area_level, area_name, area_level_label,parent_area_id,
                   area_sort_order, sex, age_group,time_period, year, quarter,
                   calendar_quarter, dplyr::everything()) %>%
     dplyr::arrange(year, area_sort_order)
@@ -380,10 +381,10 @@ aggregate_anc <- function(anc, shape) {
       } else {
 
         df <- anc_testing_wide %>%
-          dplyr::group_by(eval(as.name(col_name)), age_group, year) %>%
+          dplyr::group_by(!!col_name := .data[[col_name]], sex, age_group, calendar_quarter) %>%
           dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
                               .groups = "drop") %>%
-          dplyr::rename(area_id = `eval(as.name(col_name))`)
+          %>% dplyr::rename_with(~gsub("[0-9]$", "", .))
       }
     }
 
