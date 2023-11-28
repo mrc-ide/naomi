@@ -381,7 +381,7 @@ aggregate_anc <- function(anc, shape) {
       } else {
 
         df <- anc_testing_wide %>%
-          dplyr::group_by(!!col_name := .data[[col_name]], sex, age_group, calendar_quarter) %>%
+          dplyr::group_by(!!col_name := .data[[col_name]], age_group, year) %>%
           dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
                               .groups = "drop") %>%
           dplyr::rename_with(~gsub("[0-9]$", "", .))
