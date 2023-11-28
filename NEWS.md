@@ -1,3 +1,9 @@
+# naomi 2.9.16
+
+* Change programme data aggregation scripts to aggregate and tag missing data. Changes in the outputs of the following functions:
+   - `aggregate_art()` and `aggregate_anc()`:  Data aggregated retaining missing values at lowest admin level and summed totals at higher admin levels.
+   - `prepare_input_time_series_art()` and `prepare_input_time_series_anc()`: New column containing a list of area_ids corresponding to missing districts included in aggreagated totals. 
+
 # naomi 2.9.15
 
 * Add placeholder function `hintr_prepare_agyw_download` for creating AGYW tool.
