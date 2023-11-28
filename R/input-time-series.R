@@ -289,7 +289,7 @@ prepare_input_time_series_art <- function(art, shape) {
     tidyr::pivot_longer(cols = dplyr::starts_with("area_id"), values_to = "area_id") %>%
     # Aggregate missing observations by area_id at all levels
     dplyr::group_by(area_id, plot, calendar_quarter) %>%
-    dplyr::summarise(missing_ids = strsplit(paste0(missing, collapse = ","), split = ","), .groups = "drop")
+    dplyr::summarise(missing_ids = list(missing), .groups = "drop")
 
 
   df_final <- art_plot_data_long %>%
@@ -384,7 +384,7 @@ aggregate_anc <- function(anc, shape) {
           dplyr::group_by(!!col_name := .data[[col_name]], sex, age_group, calendar_quarter) %>%
           dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
                               .groups = "drop") %>%
-          %>% dplyr::rename_with(~gsub("[0-9]$", "", .))
+          dplyr::rename_with(~gsub("[0-9]$", "", .))
       }
     }
 
@@ -485,7 +485,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
     tidyr::pivot_longer(cols = dplyr::starts_with("area_id"), values_to = "area_id") %>%
     # Aggregate missing observations by area_id at all levels
     dplyr::group_by(area_id, plot, calendar_quarter) %>%
-    dplyr::summarise(missing_ids = strsplit(paste0(missing, collapse = ","), split = ","), .groups = "drop")
+    dplyr::summarise(missing_ids = list(missing), .groups = "drop")
 
   df_final <- anc_plot_data_long %>%
     dplyr::left_join(missing_map, by = dplyr::join_by(area_id, calendar_quarter, plot)) %>%
