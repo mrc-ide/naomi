@@ -1,6 +1,6 @@
 # naomi 2.9.17
 
-* Bump version of naomi.options to include defaults for 2024 HIV estimates
+* Bump version of naomi.options v1.2.0 to include defaults for 2024 HIV estimates
   - Extends calendar quarter model options drop downs from `December 2025` to `December 2027`
   - Updates T2, T3, T4, and T5 defaults all 1-year ahead
   - Updates default 'current' ANC input year to 2023
