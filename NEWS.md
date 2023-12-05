@@ -1,3 +1,7 @@
+# naomi 2.9.18
+
+* Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2024.csv`.
+
 # naomi 2.9.17
 
 * Bump version of naomi.options v1.2.0 to include defaults for 2024 HIV estimates
