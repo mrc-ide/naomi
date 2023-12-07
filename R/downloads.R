@@ -113,7 +113,7 @@ hintr_prepare_agyw_download <- function(output, pjnz,
   progress$update_progress("PROGRESS_DOWNLOAD_AGYW")
 
   ## TODO: Remove hardcoding of ISO3
-  template_path <- naomi.resources::get_agyw_workbook_path("BWA")
+  template_path <- naomi.resources::get_agyw_workbook_path()
 
   risk_populations <- agyw_generate_risk_populations(output$model_output_path)
 
