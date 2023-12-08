@@ -15,6 +15,10 @@ agyw_format_naomi <- function(outputs, options){
                                    "prevalence"),
                   calendar_quarter == options$calendar_quarter_t2)
 
+  naomi_ind_labelled <- naomi_ind %>%
+    dplyr::left_join(outputs$meta_area %>% dplyr::select(area_id, area_name),
+                     by = dplyr::join_by(area_id))
+
 
   summarise_naomi_ind <- function(dat, age_cat) {
 
@@ -23,7 +27,7 @@ agyw_format_naomi <- function(outputs, options){
                                               "Y040_044", "Y045_049")}
 
     dat %>%
-      dplyr::select(area_id, area_name, area_level,calendar_quarter,
+      dplyr::select(area_id, area_name, area_level, calendar_quarter,
                     age_group, sex, indicator, mean) %>%
       tidyr::pivot_wider(names_from = indicator, values_from = mean) %>%
       dplyr::group_by(area_id, area_name, area_level, calendar_quarter, sex) %>%
@@ -42,13 +46,14 @@ agyw_format_naomi <- function(outputs, options){
   }
 
   # Naomi indicators for aggregate age groups
-  df1 <- dplyr::bind_rows(summarise_naomi_ind(naomi_ind, "Y015_024"),
-                          summarise_naomi_ind(naomi_ind, "Y025_049"))
+  df1 <- dplyr::bind_rows(summarise_naomi_ind(naomi_ind_labelled, "Y015_024"),
+                          summarise_naomi_ind(naomi_ind_labelled, "Y025_049"))
 
   # Naomi indicators for 5-year age groups + 15-49
-  df2 <- naomi_ind %>%
+  df2 <- naomi_ind_labelled %>%
     dplyr::filter(age_group %in% c("Y015_019", "Y020_024", "Y025_029", "Y030_034",
                                    "Y035_039", "Y040_044", "Y045_049", "Y015_049")) %>%
+    dplyr::left_join(outputs$meta_age_group, by = dplyr::join_by(age_group)) %>%
     dplyr::select(names(df1)) %>%
     # Add aggregate indicators
     dplyr::bind_rows(df1) %>%
@@ -241,7 +246,7 @@ agyw_disaggregate_fsw <- function(outputs,
   #' Adjusting country specific sexual debut estimates with age distribution of
   #' FSW from Thembisa
   #'Downloaded from: https://www.thembisa.org/content/downloadPage/Thembisa4_3
-  zaf_propensity <- naomi.resources::load_agyw_exdata("zaf_propensity")
+  zaf_propensity <- naomi.resources::load_agyw_exdata("zaf_propensity", iso3 = "ZAF")
 
   fsw_est <- df %>%
     #  Add FSW propensity estimates from ZAF
