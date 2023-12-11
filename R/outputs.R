@@ -868,8 +868,10 @@ save_output_coarse_age_groups <- function(path, naomi_output,
 
 
 save_output_spectrum <- function(path, naomi_output, notes = NULL,
+                                 vmmc_path = NULL,
                                  overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output, notes,
+              vmmc_path = vmmc_path,
               overwrite = overwrite, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE,
               export_datapack = TRUE)
@@ -882,6 +884,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
 #' @param notes Notes to include in output zip
+#' @param vmmc_path Path to "?" sheet from VMMC workbook as a csv
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson
@@ -895,6 +898,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 save_output <- function(filename, dir,
                         naomi_output,
                         notes = NULL,
+                        vmmc_path = NULL,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
@@ -950,6 +954,11 @@ save_output <- function(filename, dir,
   if (!is.null(notes)) {
     assert_scalar_character(notes)
     writeLines(notes, "notes.txt")
+  }
+
+  if (!is.null(vmmc_path)) {
+    assert_scalar_character(vmmc_path)
+    ## Add it to relevant place in download
   }
 
   if(!single_csv) {

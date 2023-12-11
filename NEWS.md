@@ -1,3 +1,7 @@
+# naomi 2.9.19
+
+* Add optional `vmmc_path` to spectrum download function
+
 # naomi 2.9.18
 
 * Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2024.csv`.

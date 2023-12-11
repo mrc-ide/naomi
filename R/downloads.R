@@ -7,6 +7,7 @@
 #' @return Path to output file and metadata for file
 #' @export
 hintr_prepare_spectrum_download <- function(output,
+                                            vmmc_path = NULL,
                                             path = tempfile(fileext = ".zip"),
                                             notes = NULL) {
   assert_model_output_version(output)
@@ -15,7 +16,8 @@ hintr_prepare_spectrum_download <- function(output,
   model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
-    path = save_output_spectrum(path, model_output$output_package, notes),
+    path = save_output_spectrum(path, model_output$output_package, notes,
+                                vmmc_path),
     metadata = list(
       description = build_output_description(options),
       areas = options$area_scope,
