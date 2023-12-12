@@ -179,7 +179,8 @@ test_that("AGYW download can be created", {
 
   # Areas
   meta_area_demo <- output$output_package$meta_area %>%
-    dplyr::mutate(area_id = dplyr::if_else(area_id == "MWI", "MWI_demo", area_id))
+    dplyr::mutate(area_id = dplyr::if_else(area_id == "MWI", "MWI_demo", area_id),
+                  parent_area_id = dplyr::if_else(parent_area_id == "MWI", "MWI_demo", parent_area_id))
 
   # Save out demo output package
   demo <- output
@@ -194,14 +195,11 @@ test_that("AGYW download can be created", {
   agyw_output_demo <- a_hintr_output_calibrated
   agyw_output_demo$model_output_path <- out_demo
 
-  # Generate AGYW outputs
-  out <- hintr_prepare_agyw_download(agyw_output_demo,
-                                     a_hintr_data$pjnz)
-
+  # Test agyw download
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   with_mocked_bindings(
     messages <- naomi_evaluate_promise(
-      out <- hintr_prepare_agyw_download(a_hintr_output_calibrated,
+      out <- hintr_prepare_agyw_download(agyw_output_demo,
                                          a_hintr_data$pjnz)),
     new_simple_progress = mock_new_simple_progress)
 

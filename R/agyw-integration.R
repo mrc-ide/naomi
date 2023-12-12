@@ -16,7 +16,8 @@ agyw_format_naomi <- function(outputs, options){
                   calendar_quarter == options$calendar_quarter_t2)
 
   naomi_ind_labelled <- naomi_ind %>%
-    dplyr::left_join(outputs$meta_area %>% dplyr::select(area_id, area_name),
+    dplyr::left_join(outputs$meta_area %>% dplyr::select(area_id, area_name,
+                                                         area_level),
                      by = dplyr::join_by(area_id))
 
 
@@ -81,7 +82,7 @@ agyw_format_naomi <- function(outputs, options){
                   indicator = "Incicategory")
 
   # Incidence for all age groups + sexes
-  df5 <- naomi_ind %>%
+  df5 <- naomi_ind_labelled %>%
     dplyr::filter(indicator == "incidence", age_group == "Y000_999", sex == "both",
                   area_level == options$area_level)
 
@@ -635,7 +636,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
   calculate_prevalence <- function(x){
 
     #' Log odds ratio from SRB group survey prevalence
-    lor <- naomi.resources:::load_agyw_exdata("srb_survey_lor", "BWA") %>%
+    lor <- naomi.resources:::load_agyw_exdata("srb_survey_lor", iso3) %>%
       dplyr::filter(sex == "female")
 
     lor_15to29 <- lor$lor_15to29
@@ -684,6 +685,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 
   logit_prev
 
+
 }
 
 #' Calculate prevalence for male SRB groups.
@@ -691,6 +693,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
 #' @param male_srb
+#' @param areas
 #' @param msm_est .
 #' @param survey_year Year of survey to sample estimates.
 #'
@@ -705,6 +708,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 #'
 
 agyw_calculate_prevalence_male <- function(naomi_output,
+                                           areas,
                                            options,
                                            msm_est,
                                            male_srb,
@@ -748,7 +752,7 @@ agyw_calculate_prevalence_male <- function(naomi_output,
 
   # Match KP estimates (admin0 or admin1) with SAE estimates
   msm_analysis_level <- paste0("area_id",unique(msm_est$area_level))
-  areas_wide <-  naomi::spread_areas(outputs$meta_area) %>%
+  areas_wide <-  naomi::spread_areas(areas) %>%
     sf::st_drop_geometry()
   map <- dplyr::select(areas_wide, area_id, dplyr::all_of(msm_analysis_level)) %>%
     dplyr::rename(kp_match_area = 2)
@@ -775,7 +779,7 @@ agyw_calculate_prevalence_male <- function(naomi_output,
   calculate_prevalence <- function(x){
 
     #' Log odds ratio from SRB group survey prevalence
-    lor <- naomi.resources:::load_agyw_exdata("srb_survey_lor", "BWA") %>%
+    lor <- naomi.resources:::load_agyw_exdata("srb_survey_lor", iso3) %>%
       dplyr::filter(sex == "male")
 
     lor_15to29 <- lor$lor_15to29
@@ -1300,14 +1304,13 @@ agyw_generate_risk_populations <- function(naomi_output) {
     # Read files if hintr rds provided
     model_object <- read_hintr_output(naomi_output)
     outputs <- model_object$output_package
-    outputs$indicators$area_level <- area_level_from_id(outputs$indicators$area_id)
-    options <- yaml::read_yaml(text = model_object$info$options.yml)
+    options <- outputs$fit$model_options
+
   } else if (grepl("\\.zip$", naomi_output)) {
     # Read files if output zip is provided
     output_zip <- naomi_output
     outputs <- naomi::read_output_package(output_zip)
-    options <- unz(output_zip, "info/options.yml")
-    options <- yaml::read_yaml(options)
+    options <- outputs$fit$model_options
   }
 
   #' Format naomi output
@@ -1336,6 +1339,7 @@ agyw_generate_risk_populations <- function(naomi_output) {
                                                               female_srb)
 
   male_logit_prevalence <- agyw_calculate_prevalence_male(naomi$naomi_long,
+                                                          outputs$meta_area,
                                                           options,
                                                           msm_est,
                                                           male_srb)
