@@ -162,8 +162,40 @@ test_that("comparison report download can be created", {
                "Generating comparison report")
 })
 
+
 test_that("AGYW download can be created", {
-  out <- hintr_prepare_agyw_download(a_hintr_output_calibrated,
+
+  #' Create naomi outputs with "MWI_demo" iso3 to align with testing data in
+  #' naomi.resources
+  output <- qs::qread(a_hintr_output_calibrated$model_output_path)
+
+  # Create demo datasets
+  # Indicators
+  ind_demo <- output$output_package$indicators %>%
+    dplyr::mutate(area_id = dplyr::if_else(area_id == "MWI", "MWI_demo", area_id))
+  # Options
+  options_demo <- output$output_package$fit$model_options
+  options_demo$area_scope <- "MWI_demo"
+
+  # Areas
+  meta_area_demo <- output$output_package$meta_area %>%
+    dplyr::mutate(area_id = dplyr::if_else(area_id == "MWI", "MWI_demo", area_id))
+
+  # Save out demo output package
+  demo <- output
+  demo$output_package$indicators <- ind_demo
+  demo$output_package$fit$model_options <- options_demo
+  demo$output_package$meta_area <- meta_area_demo
+
+  out_demo <- tempfile(fileext = ".qs")
+  qs::qsave(demo, preset = "fast", out_demo)
+
+  # Add to existing hintr_test data
+  agyw_output_demo <- a_hintr_output_calibrated
+  agyw_output_demo$model_output_path <- out_demo
+
+  # Generate AGYW outputs
+  out <- hintr_prepare_agyw_download(agyw_output_demo,
                                      a_hintr_data$pjnz)
 
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
@@ -188,6 +220,7 @@ test_that("AGYW download can be created", {
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message, "Generating AGYW tool")
 })
+
 
 test_that("output description is translated", {
   text <- build_output_description(a_hintr_options)
