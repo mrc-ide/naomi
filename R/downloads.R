@@ -1,13 +1,14 @@
 #' Prepare spectrum download
 #'
 #' @param output hintr output object
+#' @param vmmc_file File object, with path, filename and hash for VMMC input
 #' @param path Path to save output file
 #' @param notes User added notes from front end of app as a string
 #'
 #' @return Path to output file and metadata for file
 #' @export
 hintr_prepare_spectrum_download <- function(output,
-                                            vmmc_path = NULL,
+                                            vmmc_file = NULL,
                                             path = tempfile(fileext = ".zip"),
                                             notes = NULL) {
   assert_model_output_version(output)
@@ -17,7 +18,7 @@ hintr_prepare_spectrum_download <- function(output,
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     path = save_output_spectrum(path, model_output$output_package, notes,
-                                vmmc_path),
+                                vmmc_file$path),
     metadata = list(
       description = build_output_description(options),
       areas = options$area_scope,
