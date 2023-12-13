@@ -58,7 +58,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
 
   # (1) Data provided at different levels for different years
-  # Create dummy data simillar to MOZ edge case:
+  # Create dummy data similar to MOZ edge case:
   # ART data at admin1 2014-2016, admin2 2015-2016
   data <- aggregate_art(a_hintr_data$art_number,
                         a_hintr_data$shape)
@@ -133,7 +133,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
   expect_equal(unique(check2$n), 16)
 
   # (3) Data provided at more than one level for different years
-  # Expected behavior - aggregate up from lowest  level available at each year
+  # Expected behavior - aggregate up from lowestnlevel available at each year
   # discard additional aggregated data
   # TO DO: improve this to retain all data present and add in missing aggregates
 
@@ -156,7 +156,8 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
 
   # (4) Test that ART data can be aggregated with missing records
-  # Expected behavior - create NAs when missing data is summed up area hierarchy
+  # Expected behavior - retain NAs at lowest admin levels, aggregate with
+  # missing data at higher admin levels
   art <- system.file("extdata/demo_art_number.csv", package = "naomi")
   shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
 
@@ -164,12 +165,20 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
   missing <- dplyr::filter(art_agg4, is.na(art_current))
 
   # Likoma + parent areas ART data missing for 2012 in aggregated data
-  expect_equal(unique(missing$area_name), c("Malawi - Demo","Northern","Likoma"))
+  #  Check for missing data at Likoma
+  expect_equal(unique(missing$area_name), c("Likoma"))
   expect_equal(unique(missing$year), 2012)
+
   # Missing records filled in for correct age/sex stratifications
-  expect_equal(nrow(missing), 10)
+  expect_equal(nrow(missing), 2)
   expect_equal(unique(missing$sex), "both")
   expect_equal(unique(missing$age_group), c("Y000_014","Y015_999"))
+
+  # Aggregated data present at higher admin levels
+  dat <- art_agg4 %>% dplyr::filter(calendar_quarter == "CY2012Q4",
+                                    area_id %in% c("MWI","MWI_2_1_demo"))
+
+  expect_equal(dat$art_current, c(24045, 376706, 2476, 38788))
 
 
   # Test that ART data is aggregated correctly when provided with different age/sex
@@ -177,7 +186,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   # (4) Test that ART data can be aggregated with missing records
   # Expected behavior - create NAs when missing data is summed up area hierarchy
-  art <- readr::read_csv(a_hintr_data$art_number)
+  art <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
   art_over_15 <- art %>% dplyr::filter(age_group == "Y015_999")
   art_under_15 <- art %>% dplyr::filter(age_group == "Y000_014")
 
@@ -215,6 +224,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
 
 test_that("data can be formatted for ART input time series", {
+
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
 
@@ -222,12 +232,13 @@ test_that("data can be formatted for ART input time series", {
   expect_setequal(colnames(data),
                   c("area_id", "area_name",  "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order",  "time_period", "year",
-                    "quarter","calendar_quarter", "area_hierarchy", "plot", "value"))
+                    "quarter","calendar_quarter", "area_hierarchy", "plot",
+                    "value",  "missing_ids"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
 
-  ## Check that there is only a single age_group, time_period + quater value for
+  ## Check that there is only a single age_group, time_period + quarter value for
   ## each area_id
 
   dup_strata <- data %>%
@@ -239,10 +250,12 @@ test_that("data can be formatted for ART input time series", {
 
 
 test_that("ANC data can be aggregated", {
+
   data <- aggregate_anc(a_hintr_data$anc_testing,
                         a_hintr_data$shape)
 
   expect_true(nrow(data) > 50) ## Check that we have read out some data
+
   expect_setequal(
     colnames(data),
     c(
@@ -301,7 +314,7 @@ test_that("ANC data can be aggregated", {
 test_that("ANC data can be aggregated when avalible at different admin levels", {
 
   # (1) Data provided at different levels for different years
-  # Create dummy data simillar to MOZ edge case:
+  # Create dummy data similar to MOZ edge case:
   # ART data at admin1 2014-2016, admin2 2015-2016
   data <- aggregate_anc(a_hintr_data$anc_testing,
                         a_hintr_data$shape)
@@ -398,9 +411,9 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
 
   expect_equal(check1$n, c(5, 5, 3))
 
-  # (4) Test that ART data can be aggregated with missing records
-  # Expected behavior - create NAs when missing data is summed up area hierarchy
-  # Remove ANC Likoma data for 2012
+  # (4) Test that ANC data can be aggregated with missing records
+  # Expected behavior - retain NAs at lowest admin levels, aggregate with
+  # missing data at higher admin levels
   anc <- system.file("extdata/demo_anc_testing.csv", package = "naomi")
   shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
 
@@ -408,19 +421,27 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
     dplyr::filter(!(area_id == "MWI_4_7_demo" & year == "2012"))
 
   anc_agg4 <- aggregate_anc(test_data4, a_hintr_data$shape)
+
   missing <- dplyr::filter(anc_agg4, is.na(anc_clients))
 
-
   # Likoma + parents areas ANC data missing for 2012 in aggregated data
-  expect_equal(unique(missing$area_name), c("Malawi - Demo","Northern","Likoma"))
+  expect_equal(unique(missing$area_name), c("Likoma"))
   expect_equal(unique(missing$year), 2012)
+
   # Missing records filled in for correct age/sex stratifications
-  expect_equal(nrow(missing), 5)
+  expect_equal(nrow(missing), 1)
   expect_equal(unique(missing$age_group), c("Y015_049"))
+
+  # Aggregated data present at higher admin levels
+  dat <- anc_agg4 %>% dplyr::filter(calendar_quarter == "CY2012Q4",
+                                    area_id %in% c("MWI","MWI_2_1_demo"))
+
+  expect_equal(dat$anc_clients, c( 638233,74262))
 })
 
 
 test_that("data can be formatted for ANC input time series", {
+
   data <- prepare_input_time_series_anc(a_hintr_data$anc_testing,
                                         a_hintr_data$shape)
   expect_true(nrow(data) > 100) ## Check that we have read out some data
@@ -428,7 +449,7 @@ test_that("data can be formatted for ANC input time series", {
                   c("area_id", "area_name", "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "plot", "value", "area_hierarchy"))
+                    "plot", "value", "area_hierarchy", "missing_ids"))
 
   expect_setequal(unique(data$plot),
                   c("anc_clients", "anc_tested", "anc_tested_pos",
@@ -447,7 +468,6 @@ test_that("data can be formatted for ANC input time series", {
 
   expect_true(nrow(dup_strata) == 0)
 })
-
 
 
 test_that("plots are filtered according to avalible disaggregates", {
@@ -533,7 +553,7 @@ test_that("can get plot type descriptions from key", {
 
 test_that("data can be aggregated without all indicators", {
 
-  art <- readr::read_csv(a_hintr_data$art_number)
+  art <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
 
   # data with no art_new
   no_art_new <- art
@@ -602,7 +622,11 @@ test_that("ANC data without births_facility can be aggregated", {
                     "anc_tested", "anc_tested_pos", "anc_known_neg",
                     "births_facility", "area_hierarchy"))
 
-  expect_equal(data$births_facility, rep(0, nrow(data)))
+  admin01 <- dplyr::filter(data, area_level < 2)
+  admin2 <- dplyr::filter(data, area_level == 2)
+
+  expect_equal(admin01$births_facility, rep(0, nrow(admin01)))
+  expect_equal(admin2$births_facility, rep(NA_integer_, nrow(admin2)))
 })
 
 test_that("aggregate_anc() and aggregate_art() discard additional columns", {
@@ -621,7 +645,7 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
                     "anc_tested", "anc_tested_pos", "anc_known_neg",
                     "births_facility", "area_hierarchy"))
 
-  art <- readr::read_csv(a_hintr_data$art_number)
+  art <- readr::read_csv(a_hintr_data$art_number, show_col_types = FALSE)
   art$area_level <- 4
   data <- aggregate_art(art, a_hintr_data$shape)
 
@@ -660,5 +684,88 @@ test_that("there is metadata for every indicator", {
     system_file("metadata", "time_series_plot_metadata.csv"),
     col_types = readr::cols(.default = "c"))
   expect_setequal(plot_types, metadata$id)
+})
+
+test_that("missing data is tagged correctly in aggregated plot data", {
+
+  # Missing ART data
+  art <- system.file("extdata/demo_art_number.csv", package = "naomi")
+  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
+
+  art_plot <- prepare_input_time_series_art(art, shape)
+
+  # Likoma ART data missing for 2012 in test data
+  # Check that Likoma + parent areas have missing data labels corresponding to
+  # Likoma
+  missing <- dplyr::filter(art_plot, missing_ids != "NULL", grepl("art", plot),
+                           year == 2012)
+
+  expect_equal(unique(missing$area_id), c("MWI","MWI_1_1_demo","MWI_2_1_demo",
+                                          "MWI_3_6_demo","MWI_4_7_demo"))
+  expect_equal(unique(missing$missing_ids), list("MWI_4_7_demo"))
+
+
+  # Viral load data missing for all districts in test data
+  # Check higher admin levels missing data labels contain all districts and
+  # district level missing data labels contain individual districts
+  missing_vl <- dplyr::filter(art_plot, missing_ids != "NULL", grepl("vl", plot))
+
+  summary <- missing_vl %>%
+    dplyr::group_by(area_id, missing_ids) %>%
+    dplyr::summarise()
+
+  expect_equal(lengths(summary[summary$area_id == "MWI", ]$missing_ids), 32)
+  expect_equal(lengths(summary[summary$area_id == "MWI_1_1_demo", ]$missing_ids), 7)
+  expect_equal(lengths(summary[summary$area_id == "MWI_2_1_demo", ]$missing_ids), 7)
+  expect_equal(lengths(summary[summary$area_id == "MWI_3_1_demo", ]$missing_ids), 1)
+
+  expect_equal(summary[summary$area_id == "MWI_3_1_demo", ]$missing_ids, list("MWI_4_1_demo"))
+  expect_equal(summary[summary$area_id == "MWI_4_1_demo", ]$missing_ids, list("MWI_4_1_demo"))
+
+
+  # Create ANC test data with missing values
+  # * All data missing for  Likoma for 2012 in test data
+  # * Facility births missing for all districts
+
+  anc <- system.file("extdata/demo_anc_testing.csv", package = "naomi")
+  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
+
+  test_data <- read_anc_testing(anc) %>%
+    dplyr::filter(!(area_id == "MWI_4_7_demo" & year == "2012")) %>%
+    dplyr::mutate(births_facility = NA_real_)
+
+  anc_plot <- prepare_input_time_series_anc(test_data, a_hintr_data$shape)
+
+  # Likoma ANC data missing for 2012 in test data
+  # Check that Likoma + parent areas have missing data labels corresponding to
+  # Likoma
+  missing <- dplyr::filter(anc_plot, missing_ids != "NULL", year == 2012,
+                           grepl("anc", plot))
+
+  expect_equal(unique(missing$area_id), c("MWI","MWI_1_1_demo","MWI_2_1_demo",
+                                          "MWI_3_6_demo","MWI_4_7_demo"))
+
+  expect_equal(unique(missing$missing_ids), list("MWI_4_7_demo"))
+
+
+  # Facility births missing for all districts
+  # Check higher admin levels missing data labels contain all districts and
+  # district level missing data labels contain individual districts
+
+  missing_births <- dplyr::filter(anc_plot, missing_ids != "NULL", grepl("births", plot))
+
+  summary <- missing_births %>%
+    dplyr::group_by(area_id, missing_ids) %>%
+    dplyr::summarise()
+
+  expect_equal(lengths(summary[summary$area_id == "MWI", ]$missing_ids), 32)
+  expect_equal(lengths(summary[summary$area_id == "MWI_1_1_demo", ]$missing_ids), 7)
+  expect_equal(lengths(summary[summary$area_id == "MWI_2_1_demo", ]$missing_ids), 7)
+  expect_equal(lengths(summary[summary$area_id == "MWI_3_1_demo", ]$missing_ids), 1)
+
+  expect_equal(summary[summary$area_id == "MWI_3_1_demo", ]$missing_ids, list("MWI_4_1_demo"))
+  expect_equal(summary[summary$area_id == "MWI_4_1_demo", ]$missing_ids, list("MWI_4_1_demo"))
+
+
 })
 
