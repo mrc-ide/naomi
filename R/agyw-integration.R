@@ -206,8 +206,7 @@ agyw_disaggregate_fsw <- function(outputs,
   cohort <- 2000
 
   afs <- afs %>%
-    dplyr::filter(yob == cohort, sex == "female", ISO_A3 == options$area_scope) %>%
-    dplyr::mutate(iso3 = ISO_A3, ISO_A3 = NULL) %>%
+    dplyr::filter(yob == cohort, sex == "female", iso3 == options$area_scope) %>%
     dplyr::full_join(dplyr::select(fsw,iso3,area_id), multiple = "all", by = dplyr::join_by(iso3))
 
   df <- data.frame()
