@@ -167,7 +167,7 @@ test_that("AGYW download can be created", {
 
   #' Create naomi outputs with "MWI_demo" iso3 to align with testing data in
   #' naomi.resources
-  output <- qs::qread(a_hintr_output_calibrated$model_output_path)
+  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
 
   # Create demo datasets
   # Indicators
@@ -189,7 +189,7 @@ test_that("AGYW download can be created", {
   demo$output_package$meta_area <- meta_area_demo
 
   out_demo <- tempfile(fileext = ".qs")
-  qs::qsave(demo, preset = "fast", out_demo)
+  hintr_save(demo, out_demo)
 
   # Add to existing hintr_test data
   agyw_output_demo <- a_hintr_output_calibrated
@@ -209,10 +209,12 @@ test_that("AGYW download can be created", {
   expect_length(out$metadata$description, 1)
   expect_equal(out$metadata$areas, "MWI")
 
-  read <- readxl::read_xlsx(out$path)
-  expect_equal(read,
-               data.frame(x = c(1, 2, 3), y = c(3, 4, 5)),
-               ignore_attr = TRUE)
+  outputs_female <- openxlsx::readWorkbook(out$path, sheet = "All outputs - F")
+  expect_true(nrow(outputs_female) > 10)
+  outputs_male <- openxlsx::readWorkbook(out$path, sheet = "All outputs - M")
+  expect_true(nrow(outputs_male) > 10)
+  naomi_outputs <- openxlsx::readWorkbook(out$path, sheet = "NAOMI outputs")
+  expect_true(nrow(naomi_outputs) > 4)
 
   ## Progress messages printed
   expect_length(messages$progress, 1)

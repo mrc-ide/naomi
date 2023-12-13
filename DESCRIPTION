@@ -38,6 +38,7 @@ Imports:
     mvtnorm,
     naomi.resources,
     naomi.options (>= 1.2.0),
+    openxlsx,
     plotly,
     prettyunits,
     qs,
@@ -51,7 +52,6 @@ Imports:
     traduire,
     utils,
     withr,
-    writexl,
     yaml,
     zip,
     zoo
