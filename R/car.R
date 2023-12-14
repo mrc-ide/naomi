@@ -74,7 +74,17 @@ scale_gmrf_precision <- function(Q,
                                  A = matrix(1, ncol = ncol(Q)),
                                  eps = sqrt(.Machine$double.eps)) {
 
-  nb <- spdep::mat2listw(abs(Q), style = "B")$neighbours
+  # spdep is annoying warning with style = "M" but not clear from docs
+  # if this means style missing or style Matrix. And none of the other
+  # options for style seemingly do the same thing as style = "M"
+  # so just ignoring this warning for now
+  withCallingHandlers({
+    nb <- spdep::mat2listw(abs(Q), style = "M")$neighbours
+  }, warning = function(w) {
+    if (startsWith(conditionMessage(w), "style is M")) {
+      invokeRestart("muffleWarning")
+    }
+  })
   comp <- spdep::n.comp.nb(nb)
 
   for (k in seq_len(comp$nc)) {
