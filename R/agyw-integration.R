@@ -775,6 +775,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 #'
 
 agyw_calculate_prevalence_male <- function(naomi_output,
+                                           outputs,
                                            options,
                                            msm_est,
                                            male_srb,
@@ -1415,6 +1416,7 @@ agyw_generate_risk_populations <- function(naomi_output,
                                                               survey_year)
 
   male_logit_prevalence <- agyw_calculate_prevalence_male(naomi$naomi_long,
+                                                          outputs,
                                                           options,
                                                           msm_est,
                                                           male_srb,
