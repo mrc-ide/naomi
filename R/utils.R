@@ -123,3 +123,22 @@ area_level_from_id <- function(area_ids) {
     level
   })
 }
+
+#' Write list of data frames into an xlsx file
+#'
+#' @param template Path to xlsx file with empty sheets
+#' @param sheets Named list of data frames to write into template. The names
+#'   must match the destination sheet in the xlsx
+#' @param path Path to output the filled in xlsx
+#'
+#' @return Path to complete xlsx file
+#' @keywords internal
+write_xlsx_sheets <- function(template, sheets, path) {
+  wb <- openxlsx::loadWorkbook(template)
+  for (sheet in names(sheets)) {
+    openxlsx::writeData(wb, sheet, sheets[[sheet]])
+  }
+
+  openxlsx::saveWorkbook(wb, path)
+  path
+}

@@ -1,3 +1,21 @@
+# naomi 2.9.18
+
+* Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2024.csv`.
+
+# naomi 2.9.17
+
+* Bump version of naomi.options v1.2.0 to include defaults for 2024 HIV estimates
+  - Extends calendar quarter model options drop downs from `December 2025` to `December 2027`
+  - Updates T2, T3, T4, and T5 defaults all 1-year ahead
+  - Updates default 'current' ANC input year to 2023
+  - Updates TZA defaults to 2022 PHIA survey
+
+# naomi 2.9.16
+
+* Change programme data aggregation scripts to aggregate and tag missing data. Changes in the outputs of the following functions:
+   - `aggregate_art()` and `aggregate_anc()`:  Data aggregated retaining missing values at lowest admin level and summed totals at higher admin levels.
+   - `prepare_input_time_series_art()` and `prepare_input_time_series_anc()`: New column containing a list of area_ids corresponding to missing districts included in aggreagated totals. 
+
 # naomi 2.9.15
 
 * Add placeholder function `hintr_prepare_agyw_download` for creating AGYW tool.
