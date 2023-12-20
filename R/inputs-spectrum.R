@@ -688,3 +688,60 @@ read_dp <- function(pjnz) {
   dpfile <- grep(".DP$", utils::unzip(pjnz, list = TRUE)$Name, value = TRUE)
   utils::read.csv(unz(pjnz, dpfile), as.is = TRUE)
 }
+
+
+#' Read key population summary data from PJNZ
+#'
+#' Reads key population summary data from Spectrum PJNZ.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' dp <- dp <- naomi:::read_dp(pjnz)
+#' read_dp_keypop_summary(dp)
+#'
+#' @noRd
+#'
+read_dp_keypop_summary <- function(dp) {
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+
+  kp_name <- c("FSW", "MSM", "TG", "PWID")
+
+  if (exists_dptag("<KeyPops MV>")) {
+    kp_tab <- dpsub("<KeyPops MV>", 2:5, 4:7)
+    kp_tab <- sapply(kp_tab, as.numeric)
+  } else {
+    kp_tab <- matrix(NA, 4, 4)
+  }
+
+  if (exists_dptag("<KeyPopsYear MV>")) {
+    kp_year <- as.integer(dpsub("<KeyPopsYear MV>", 2, 4))
+  } else {
+    kp_year <- NA_integer_
+  }
+
+    if (exists_dptag("<KeyPopsFName MV>")) {
+    kp_file <- as.character(dpsub("<KeyPopsFName MV>", 2, 4))
+  } else {
+    kp_file <- NA_character_
+  }
+
+  kp_summary <- data.frame(
+    key_population = kp_name,
+    year = kp_year,
+    population_size = kp_tab[1, ],
+    hiv_prevalence = kp_tab[2, ],
+    art_coverage = kp_tab[3, ],
+    infections = kp_tab[4, ],
+    workbook_file = kp_file
+  )
+
+  kp_summary
+}

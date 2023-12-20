@@ -1,3 +1,8 @@
+# naomi 2.9.19
+
+* Add function `xxx()` to extract key population totals from the Spectrum PJNZ file. Data are extracted from summary table saved in AIM Programme Statistics input for key populations.
+
+
 # naomi 2.9.18
 
 * Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2024.csv`.
