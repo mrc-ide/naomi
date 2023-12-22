@@ -155,6 +155,7 @@ agyw_format_naomi <- function(outputs, options){
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
 #' @param naomi_population Naomi population estimates for T2.
+#' @param kp_consensus Key pop consensus estimates.
 #'
 #'
 #' @return District level FSW estimates by 5-year age bands for ages 15-49.
@@ -163,7 +164,8 @@ agyw_format_naomi <- function(outputs, options){
 
 agyw_disaggregate_fsw <- function(outputs,
                                   options,
-                                  naomi_pop)
+                                  naomi_pop,
+                                  kp_consensus)
 {
 
   #' Extract country specific national FSW PSEs
@@ -188,7 +190,6 @@ agyw_disaggregate_fsw <- function(outputs,
     dplyr::select(iso3, area_id, total_fsw, age_group, area_level, spectrum_region_code)
 
   #' Check for consensus estimate of FSW
-  kp_consensus <- extract_kp_workbook(pjnz)
   fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$population_size
 
   if(!is.na(fsw_consensus)){
@@ -308,12 +309,14 @@ agyw_disaggregate_fsw <- function(outputs,
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
 #' @param naomi_population Naomi population estimates for T2.
+#' @param kp_consensus Key pop consensus estimates.
 #'
 #' @return District level PWID estimates by 5-year age bands for ages 15-49.
 
 agyw_disaggregate_pwid <- function(outputs,
                                    options,
-                                   naomi_pop)
+                                   naomi_pop,
+                                   kp_consensus)
 {
 
   #' Extract country specific national PWID PSEs
@@ -337,7 +340,6 @@ agyw_disaggregate_pwid <- function(outputs,
     dplyr::select(iso3, area_id, total_pwid, age_group, area_level)
 
   #' Check for consensus estimate of MSM
-  kp_consensus <- extract_kp_workbook(pjnz)
   pwid_consensus <- kp_consensus[kp_consensus$key_population == "PWID", ]$population_size
 
   if(!is.na(pwid_consensus)){
@@ -402,12 +404,14 @@ agyw_disaggregate_pwid <- function(outputs,
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
 #' @param naomi_population Naomi population estimates for T2.
+#' @param kp_consensus Key pop consensus estimates.
 #'
 #' @return District level MSM estimates by 5-year age bands for ages 15-49.
 
 agyw_disaggregate_msm <- function(outputs,
                                   options,
-                                  naomi_pop)
+                                  naomi_pop,
+                                  kp_consensus)
 {
 
   #' Extract country specific national MSM PSEs
@@ -430,7 +434,6 @@ agyw_disaggregate_msm <- function(outputs,
     dplyr::select(iso3, area_id, total_msm, age_group, area_level)
 
   #' Check for consensus estimate of MSM
-  kp_consensus <- extract_kp_workbook(pjnz)
   msm_consensus <- kp_consensus[kp_consensus$key_population == "MSM", ]$population_size
 
   if(!is.na(msm_consensus)){
@@ -1460,9 +1463,10 @@ agyw_generate_risk_populations <- function(naomi_output,
   naomi_pop$iso3 <- options$area_scope
 
   #' Disaggregate KP PSEs from Oli's analysis to 5-year bands
-  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop)
-  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop)
-  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop)
+  kp_consensus <- extract_kp_workbook(pjnz)
+  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
+  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
+  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
 
   #' Adjust SAE model output with KP proportions
   female_srb <- agyw_adjust_sexbehav_fsw(outputs, options, fsw_est)

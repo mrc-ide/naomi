@@ -220,7 +220,6 @@ test_that("AGYW download can be created", {
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message, "Generating AGYW tool")
 
-
   # Test agyw workbook with no kp workbook saved into spectrum
   risk_prop <- agyw_generate_risk_populations(agyw_output_demo$model_output_path,
                                               a_hintr_data$pjnz)
@@ -230,8 +229,8 @@ test_that("AGYW download can be created", {
                           consensus_estimate = NA))
 
   # Test agyw workbook with mock workbook saved into spectrum
-
-  mock_extract_kp_workbook <- mockery::mock(readRDS(test_path("testdata/kp_workbook_spectrum.rds")))
+  kp_consensus <- readRDS(file.path("testdata/kp_workbook_spectrum.rds"))
+  mock_extract_kp_workbook <- mockery::mock(kp_consensus)
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
   with_mocked_bindings(
