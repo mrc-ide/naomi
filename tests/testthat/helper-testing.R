@@ -3,6 +3,8 @@ expect_no_error <- function(object) {
 }
 
 with_mock <- function(..., .parent = parent.frame()) {
+  ## Don't use this, this should be removed, now testthat have
+  ## added with_mocked_bindings that should be preferred
   mockr::with_mock(..., .parent = .parent, .env = "naomi")
 }
 
