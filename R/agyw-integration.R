@@ -15,9 +15,16 @@ agyw_format_naomi <- function(outputs, options){
                                    "prevalence"),
                   calendar_quarter == options$calendar_quarter_t2)
 
+  area_labels <- outputs$meta_area %>%
+    dplyr::select(area_id, area_name,area_level, spectrum_region_code)
+  area_label_cols <- intersect(names(naomi_ind), names(area_labels))
+
+  age_labels <- outputs$meta_age_group
+  age_label_cols <- intersect(names(naomi_ind), names(age_labels))
+
   naomi_ind_labelled <- naomi_ind %>%
-    dplyr::left_join(outputs$meta_area %>% dplyr::select(area_id, area_name,area_level),
-                     by = dplyr::join_by(area_id))
+    dplyr::left_join(area_labels, by = area_label_cols) %>%
+    dplyr::left_join(age_labels, by = age_label_cols)
 
 
   summarise_naomi_ind <- function(dat, age_cat) {
@@ -27,10 +34,11 @@ agyw_format_naomi <- function(outputs, options){
                                               "Y040_044", "Y045_049")}
 
     dat %>%
-      dplyr::select(area_id, area_name, area_level, calendar_quarter,
+      dplyr::select(area_id, area_name, area_level, spectrum_region_code, calendar_quarter,
                     age_group, sex, indicator, mean) %>%
       tidyr::pivot_wider(names_from = indicator, values_from = mean) %>%
-      dplyr::group_by(area_id, area_name, area_level, calendar_quarter, sex) %>%
+      dplyr::group_by(area_id, area_name, area_level,spectrum_region_code,
+                      calendar_quarter, sex) %>%
       dplyr::summarise(
         "population" = sum(population * as.integer(age_group %in% age_groups)),
         "plhiv" = sum(plhiv * as.integer(age_group %in% age_groups)),
@@ -53,8 +61,6 @@ agyw_format_naomi <- function(outputs, options){
   df2 <- naomi_ind_labelled %>%
     dplyr::filter(age_group %in% c("Y015_019", "Y020_024", "Y025_029", "Y030_034",
                                    "Y035_039", "Y040_044", "Y045_049", "Y015_049")) %>%
-    # age group label already in the naomi_ind_labelled data frame
-    dplyr::left_join(outputs$meta_age_group , by = dplyr::join_by(age_group)) %>%
     dplyr::select(names(df1)) %>%
     # Add aggregate indicators
     dplyr::bind_rows(df1) %>%
@@ -179,7 +185,36 @@ agyw_disaggregate_fsw <- function(outputs,
     dplyr::left_join(naomi_pop %>% dplyr::filter(sex == "female"),
                      by = dplyr::join_by(iso3, area_id, age_group)) %>%
     dplyr::mutate(total_fsw = population * prop_fsw) %>%
-    dplyr::select(iso3, area_id, total_fsw, age_group, area_level)
+    dplyr::select(iso3, area_id, total_fsw, age_group, area_level, spectrum_region_code)
+
+  #' Check for consensus estimate of FSW
+  kp_consensus <- extract_kp_workbook(pjnz)
+  fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$population_size
+
+  if(!is.na(fsw_consensus)){
+
+    # Check if consensus estimate is larger than age matched population denominator
+    pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "female",]$population
+    stopifnot(fsw_consensus < pop)
+
+    # Scale total FSW population to consensus PSE estimate
+    fsw_scaled <- fsw %>%
+      dplyr::mutate(
+        relative_prop = total_fsw/sum(total_fsw),
+        consensus_pse = fsw_consensus,
+        total_fsw = consensus_pse * relative_prop)
+
+    fsw <- fsw_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+
+  }
+
+
+
+
+
+
+
+
 
   #' FSW age distribution parameters in ZAF from Thembisa
   #' Downloaded from: https://www.thembisa.org/content/downloadPage/Thembisa4_3
@@ -265,7 +300,8 @@ agyw_disaggregate_fsw <- function(outputs,
     # Calculate FSW proportions
     dplyr::mutate(
       fsw = dist * total_fsw,
-      fsw_prop = fsw / population
+      fsw_prop = fsw / population,
+      consensus_estimate = fsw_consensus
     ) %>%
     dplyr::select(-eversexpop, -eversexpop_prop, -propensity, -dist, -total_fsw)
 
@@ -307,6 +343,27 @@ agyw_disaggregate_pwid <- function(outputs,
     dplyr::mutate(total_pwid = population * prop_pwid) %>%
     dplyr::select(iso3, area_id, total_pwid, age_group, area_level)
 
+  #' Check for consensus estimate of MSM
+  kp_consensus <- extract_kp_workbook(pjnz)
+  pwid_consensus <- kp_consensus[kp_consensus$key_population == "PWID", ]$population_size
+
+  if(!is.na(pwid_consensus)){
+
+    # Check if consensus estimate is larger than age matched population denominator
+    pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
+    stopifnot(pwid_consensus < pop)
+
+    # Scale total PWID population to consensus PSE estimate
+    pwid_scaled <- pwid %>%
+      dplyr::mutate(
+        relative_prop = total_pwid/sum(total_pwid),
+        consensus_pse = pwid_consensus,
+        total_pwid = consensus_pse * relative_prop)
+
+    pwid <- pwid_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+  }
+
+
   #' Assumption from literature that 9% of PWID are female so remove them from
   #' the male denominator
 
@@ -340,7 +397,8 @@ agyw_disaggregate_pwid <- function(outputs,
       by = c("area_id", "iso3")
     ) %>%
     dplyr::mutate(pwid = dist * total_pwid,
-                  pwid_prop = pwid / population) %>%
+                  pwid_prop = pwid / population,
+                  consensus_estimate = pwid_consensus) %>%
     dplyr::select( -dist, -total_pwid, -sex)
 
   pwid_est
@@ -362,7 +420,7 @@ agyw_disaggregate_msm <- function(outputs,
   #' Extract country specific national MSM PSEs
   iso3 <- options$area_scope
   pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
-    dplyr::filter(kp == "PWID", indicator == "pse_prop")
+    dplyr::filter(kp == "MSM", indicator == "pse_prop")
 
   msm_pse <- pse %>%
     dplyr::rename(prop_msm = median) %>%
@@ -378,6 +436,25 @@ agyw_disaggregate_msm <- function(outputs,
     dplyr::mutate(total_msm = population * prop_msm) %>%
     dplyr::select(iso3, area_id, total_msm, age_group, area_level)
 
+  #' Check for consensus estimate of MSM
+  kp_consensus <- extract_kp_workbook(pjnz)
+  msm_consensus <- kp_consensus[kp_consensus$key_population == "MSM", ]$population_size
+
+  if(!is.na(msm_consensus)){
+
+    # Check if consensus estimate is larger than age matched population denominator
+    pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
+    stopifnot(msm_consensus < pop)
+
+    # Scale total MSM population to consensus PSE estimate
+    msm_scaled <- msm %>%
+      dplyr::mutate(
+        relative_prop = total_msm/sum(total_msm),
+        consensus_pse = msm_consensus,
+        total_msm = consensus_pse * relative_prop)
+
+    msm <- msm_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+  }
 
 
   #' MSM age distribution parameters in ZAF from Thembisa
@@ -464,7 +541,8 @@ agyw_disaggregate_msm <- function(outputs,
     ) %>%
     # Calculate FSW proportions
     dplyr::mutate(msm = dist * total_msm,
-                  msm_prop = msm / population) %>%
+                  msm_prop = msm / population,
+                  consensus_estimate = msm_consensus) %>%
     dplyr::select(-eversexpop, -eversexpop_prop, -propensity, - dist, -total_msm)
 
   msm_est
@@ -1359,9 +1437,15 @@ agyw_calculate_incidence_male <- function(naomi_output,
 #' for countries without recent household surveys, leave at 2018 - the spatiotemporal
 #' model of sexual behaviour fitted to all countries has the most data for in roughly 2018
 
+naomi_output <-"~/Downloads/MWI 2023 naomi_outputs.zip"
+pjnz <- "~/Downloads/Malawi_2023_National_HIV_estimates_Spectrum_AIM_model.pjnz"
+# #
+ naomi_output <- agyw_output_demo$model_output_path
+ pjnz <- a_hintr_data$pjnz
 
 
 agyw_generate_risk_populations <- function(naomi_output,
+                                           pjnz,
                                            survey_year = 2018) {
 
   # Read in naomi outputs
@@ -1384,7 +1468,8 @@ agyw_generate_risk_populations <- function(naomi_output,
   #' Naomi population
   naomi_pop <- naomi$naomi_long %>%
     dplyr::filter(indicator == "population") %>%
-    dplyr::select(area_id, area_level,sex, age_group, area_level, population = mean)
+    dplyr::select(area_id, area_level,sex, age_group, area_level,
+                  spectrum_region_code, population = mean)
 
   naomi_pop$iso3 <- options$area_scope
 
@@ -1424,11 +1509,17 @@ agyw_generate_risk_populations <- function(naomi_output,
                                                   male_logit_prevalence,
                                                   survey_year)
 
+  meta <- data.frame(kp = c("FSW", "MSM", "PWID"),
+                     consensus_estimate = c(unique(fsw_est$consensus_estimate),
+                                            unique(msm_est$consensus_estimate),
+                                            unique(pwid_est$consensus_estimate)))
+
 
 
   v <- list(female_incidence = female_incidence,
             male_incidence = male_incidence,
-            naomi_output = naomi$naomi_wide)
+            naomi_output = naomi$naomi_wide,
+            meta_consensus = meta)
 
   v
 
