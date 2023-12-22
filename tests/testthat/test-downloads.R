@@ -195,8 +195,9 @@ test_that("AGYW download can be created", {
   agyw_output_demo <- a_hintr_output_calibrated
   agyw_output_demo$model_output_path <- out_demo
 
-  # Test agyw download
+
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+
   with_mocked_bindings(
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_agyw_download(agyw_output_demo,
@@ -219,6 +220,31 @@ test_that("AGYW download can be created", {
   ## Progress messages printed
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message, "Generating AGYW tool")
+
+
+  # Test agyw workbook with no kp workbook saved into spectrum
+  risk_prop <- agyw_generate_risk_populations(agyw_output_demo$model_output_path,
+                                              a_hintr_data$pjnz)
+
+  expect_equal(risk_prop$meta_consensus,
+               data.frame(kp = c("FSW", "MSM", "PWID"),
+                          consensus_estimate = NA))
+
+  # Test agyw workbook with mock workbook saved into spectrum
+
+  mock_extract_kp_workbook <- mockery::mock(readRDS(test_path("testdata/kp_workbook_spectrum.rds")))
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+
+  with_mock(new_simple_progress = mock_new_simple_progress,
+            extract_kp_workbook = mock_extract_kp_workbook, {
+    risk_prop_scaled <- agyw_generate_risk_populations(agyw_output_demo$model_output_path,
+                                                    a_hintr_data$pjnz)
+  })
+
+  expect_equal(risk_prop_scaled$meta_consensus,
+               data.frame(kp = c("FSW", "MSM", "PWID"),
+                          consensus_estimate = c(40000, 35500, 5000)))
+
 })
 
 

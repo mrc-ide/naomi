@@ -114,7 +114,8 @@ hintr_prepare_agyw_download <- function(output, pjnz,
 
   template_path <- naomi.resources::get_agyw_workbook_path()
 
-  risk_populations <- agyw_generate_risk_populations(output$model_output_path)
+  risk_populations <- agyw_generate_risk_populations(output$model_output_path,
+                                                     pjnz)
 
   sheets <- list(
     "All outputs - F" = risk_populations$female_incidence,
