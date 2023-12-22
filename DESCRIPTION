@@ -36,7 +36,7 @@ Imports:
     knitr,
     magrittr,
     mvtnorm,
-    naomi.resources,
+    naomi.resources (>= 0.0.2),
     naomi.options (>= 1.2.0),
     openxlsx,
     plotly,
