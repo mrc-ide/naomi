@@ -209,13 +209,6 @@ agyw_disaggregate_fsw <- function(outputs,
   }
 
 
-
-
-
-
-
-
-
   #' FSW age distribution parameters in ZAF from Thembisa
   #' Downloaded from: https://www.thembisa.org/content/downloadPage/Thembisa4_3
   gamma_mean <- 29
@@ -1436,13 +1429,6 @@ agyw_calculate_incidence_male <- function(naomi_output,
 #' Survey year should be updated to most current household survey in the country -
 #' for countries without recent household surveys, leave at 2018 - the spatiotemporal
 #' model of sexual behaviour fitted to all countries has the most data for in roughly 2018
-
-naomi_output <-"~/Downloads/MWI 2023 naomi_outputs.zip"
-pjnz <- "~/Downloads/Malawi_2023_National_HIV_estimates_Spectrum_AIM_model.pjnz"
-# #
- naomi_output <- agyw_output_demo$model_output_path
- pjnz <- a_hintr_data$pjnz
-
 
 agyw_generate_risk_populations <- function(naomi_output,
                                            pjnz,
