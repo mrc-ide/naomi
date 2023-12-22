@@ -195,7 +195,6 @@ test_that("AGYW download can be created", {
   agyw_output_demo <- a_hintr_output_calibrated
   agyw_output_demo$model_output_path <- out_demo
 
-
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
   with_mocked_bindings(
@@ -235,11 +234,12 @@ test_that("AGYW download can be created", {
   mock_extract_kp_workbook <- mockery::mock(readRDS(test_path("testdata/kp_workbook_spectrum.rds")))
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
-  with_mock(new_simple_progress = mock_new_simple_progress,
-            extract_kp_workbook = mock_extract_kp_workbook, {
-    risk_prop_scaled <- agyw_generate_risk_populations(agyw_output_demo$model_output_path,
-                                                    a_hintr_data$pjnz)
-  })
+  with_mocked_bindings(
+    risk_prop_scaled <- agyw_generate_risk_populations(
+      agyw_output_demo$model_output_path, a_hintr_data$pjnz),
+    new_simple_progress = mock_new_simple_progress,
+    extract_kp_workbook = mock_extract_kp_workbook
+  )
 
   expect_equal(risk_prop_scaled$meta_consensus,
                data.frame(kp = c("FSW", "MSM", "PWID"),
