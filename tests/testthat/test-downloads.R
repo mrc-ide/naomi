@@ -73,11 +73,13 @@ test_that("spectrum download can be created", {
 test_that("spectrum download can include vmmc data", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   notes <- "these are my\nmultiline notes"
-  vmmc_path <- file.path("testdata", "vmmc.xlsx")
+  vmmc_file <- list(path = file.path("testdata", "vmmc.xlsx"),
+                    hash = "123",
+                    filename = "vmmc.xlsx")
   testthat::with_mocked_bindings(
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
-                                             vmmc_path,
+                                             vmmc_file,
                                              notes = notes)),
     new_simple_progress = mock_new_simple_progress
   )
