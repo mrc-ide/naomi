@@ -70,6 +70,30 @@ test_that("spectrum download can be created", {
   expect_equal(saved_notes, c("these are my", "multiline notes"))
 })
 
+test_that("spectrum download can include vmmc data", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  notes <- "these are my\nmultiline notes"
+  vmmc_path <- file.path("testdata", "vmmc.xlsx")
+  testthat::with_mocked_bindings(
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
+                                             vmmc_path,
+                                             notes = notes)),
+    new_simple_progress = mock_new_simple_progress
+  )
+  expect_true(file.exists(out$path))
+
+  t <- tempfile()
+  unzip(out$path, PEPFAR_DATAPACK_PATH, exdir = t)
+  datapack <- utils::read.csv(file.path(t, PEPFAR_DATAPACK_PATH))
+  # TODO: Expand the checks here
+  expect_true("psnu_uid" %in% colnames(datapack))
+
+  unzip(out$path, "notes.txt", exdir = t)
+  saved_notes <- readLines(file.path(t, "notes.txt"))
+  expect_equal(saved_notes, c("these are my", "multiline notes"))
+})
+
 test_that("coarse age group download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   with_mock(new_simple_progress = mock_new_simple_progress, {
