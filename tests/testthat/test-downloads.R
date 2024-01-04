@@ -79,8 +79,8 @@ test_that("spectrum download can include vmmc data", {
   testthat::with_mocked_bindings(
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
-                                             vmmc_file,
-                                             notes = notes)),
+                                             notes = notes,
+                                             vmmc_file = vmmc_file)),
     new_simple_progress = mock_new_simple_progress
   )
   expect_true(file.exists(out$path))

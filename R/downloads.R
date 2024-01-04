@@ -1,16 +1,17 @@
 #' Prepare spectrum download
 #'
 #' @param output hintr output object
-#' @param vmmc_file File object, with path, filename and hash for VMMC input
 #' @param path Path to save output file
-#' @param notes User added notes from front end of app as a string
+#' @param notes Optional, user added notes from front end of app as a string
+#' @param vmmc_file Optional file object, with path, filename and hash for
+#'   VMMC input
 #'
 #' @return Path to output file and metadata for file
 #' @export
 hintr_prepare_spectrum_download <- function(output,
-                                            vmmc_file = NULL,
                                             path = tempfile(fileext = ".zip"),
-                                            notes = NULL) {
+                                            notes = NULL,
+                                            vmmc_file = NULL) {
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")

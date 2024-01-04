@@ -20,3 +20,4 @@ vignettes_src/model-workflow.Rmd
 tests/testthat/testdata/fit.RDS
 .vscode
 .Rprofile
+.idea
