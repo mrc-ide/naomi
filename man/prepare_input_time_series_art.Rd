@@ -13,8 +13,9 @@ prepare_input_time_series_art(art, shape)
 }
 \value{
 Data formatted for plotting input time series containing columns
-area_id, area_name, area_level, area_level_label, time_period, year,
-quarter, plot and value
+area_id, area_name, area_level, area_level_label, parent_area_id, area_sort_order,
+time_period, year, quarter, calendar_quarter, area_hierarchy, plot, value and
+missing_ids
 }
 \description{
 Take uploaded ART and shape file paths and format as data which

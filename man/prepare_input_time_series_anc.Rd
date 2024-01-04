@@ -13,8 +13,9 @@ prepare_input_time_series_anc(anc, shape)
 }
 \value{
 Data formatted for plotting input ANC time series containing columns
-area_id, area_name, area_level, area_level_label, age_group, time_period,
-time_step, plot and value
+area_id, area_name, area_level, area_level_label, parent_area_id, area_sort_order,
+time_period, year, quarter, calendar_quarter, area_hierarchy, plot, value and
+missing_ids
 }
 \description{
 Take uploaded ANC and shape file paths or objects and format as data which

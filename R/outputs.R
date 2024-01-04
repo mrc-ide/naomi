@@ -884,7 +884,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
 #' @param notes Notes to include in output zip
-#' @param vmmc_path Path to "?" sheet from VMMC workbook as a csv
+#' @param vmmc_path Path to VMMC excel workbook
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson
@@ -958,7 +958,10 @@ save_output <- function(filename, dir,
 
   if (!is.null(vmmc_path)) {
     assert_scalar_character(vmmc_path)
-    ## Add it to relevant place in download
+    ## Skip the first row, the file has two rows of headers
+    vmmc_datapack <- openxlsx::read.xlsx(vmmc$path, sheet = "Datapack inputs",
+                                         startRow = 2)
+    ## TODO: Add it to relevant place in download
   }
 
   if(!single_csv) {
