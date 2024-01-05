@@ -940,6 +940,8 @@ save_output <- function(filename, dir,
     art_attendance <- naomi_output$art_attendance
   }
 
+  vmmc_path <- normalizePath(vmmc_path)
+
   tmpd <- tempfile()
   dir.create(tmpd)
   old <- setwd(tmpd)
@@ -954,7 +956,7 @@ save_output <- function(filename, dir,
   if (!is.null(vmmc_path)) {
     assert_scalar_character(vmmc_path)
     ## Skip the first row, the file has two rows of headers
-    vmmc_datapack <- openxlsx::read.xlsx(vmmc$path, sheet = "Datapack inputs",
+    vmmc_datapack <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
                                          startRow = 2)
     ## TODO: Add it to relevant place in download
   }
