@@ -41,6 +41,9 @@ map_outputs(
 
 \item{breaks}{Number of break points to create in scale}
 }
+\value{
+Mapped outputs
+}
 \description{
 Create output map plot
 }

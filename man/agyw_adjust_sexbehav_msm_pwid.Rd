@@ -19,8 +19,11 @@ agyw_adjust_sexbehav_msm_pwid(outputs, options, msm_est, pwid_est)
 }
 \value{
 District level estimates of male sexual risk behaviour groups
-
+}
+\description{
 Estimates are generated for the following groups:
+}
+\details{
 \itemize{
 \item \code{nosex12m}:
 \item \code{sexcohab}:
@@ -35,11 +38,5 @@ Calculation steps:
 \item Align admin0/admin1 MSM and PWID proportions with SRB SAE estimates.
 \item Subtracting MSM and PWID proportionally from all SRB groups.
 }
-
-Load male SRB proportions
-Subtracting MSM and PWID proportionally from all SRB risk groups
-(FSW was just from high-risk females)
 }
-\description{
-Adjust male sexual behavior risk groups by MSM + PWID proportions
-}
+\keyword{internal}

@@ -12,3 +12,4 @@ odds(p)
 \description{
 Calculate the odds
 }
+\keyword{internal}

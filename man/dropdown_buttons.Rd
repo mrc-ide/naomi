@@ -6,6 +6,14 @@
 \usage{
 dropdown_buttons(df, var)
 }
+\arguments{
+\item{df}{Input data frame}
+
+\item{var}{Column}
+}
+\value{
+Drop down buttons for plotly filter
+}
 \description{
 Automatically make drop drop buttons for plotly filter
 }

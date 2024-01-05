@@ -66,7 +66,7 @@ create_edge_list <- function(adj_matrix) {
 #'
 #' @details
 #'
-#' This implements the same thing as [`INLA::inla.scale.model`]. The marginal
+#' This implements the same thing as INLA::inla.scale.model. The marginal
 #' variance of each connected component is one.
 #'
 #' @export

@@ -14,6 +14,7 @@
 ##' @importFrom stats approx
 ##' @importFrom utils unzip
 ##' @importFrom utils type.convert
+##' @name Imports
 NULL
 
 naomi_init_traduire <- function() {

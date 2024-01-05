@@ -25,27 +25,10 @@ agyw_calculate_incidence_female(
 }
 \value{
 Wide format output required for the AGYW workbook.
-
+}
+\description{
 While maintaining age/sex/district-specific HIV incidence from Naomi, distribute
 HIV incidence between our 4 different behavioural groups utilizing IRRs from the
 literature
-
-Risk ratios for people non-regular sex partners relative to those with a
-single cohabiting sex partner
-ALPHA Network pooled analysis (Slaymaker et al CROI 2020), Jia et al systematic review, Ssempijja et al JAIDS 2022
-Tiered HIV risk ratio for the FSW group depending on district-level HIV
-incidence in general population
-Jones et al medRxiv "HIV incidence among women engaging in sex work in sub-Saharan Africa: a systematic review and meta-analysis"
-https://www.medrxiv.org/content/10.1101/2023.10.17.23297108v2
-linear relationship between log(FSW incidence) and log(gen pop incidence)
-regression points shared in confidence, y = mx + b slope is 0.604104017 and
-intercept is 0.075090952
-TODO: Get distributions on these and using a sampling method to get
-uncertainty in economic analysis e.g.
-Calculate risk group incidence
-Calculate risk group incidence for aggregate age groups
-Check that sum of disaggregated infections is the same as total infections
 }
-\description{
-Calculate incidence for female SRB groups.
-}
+\keyword{internal}

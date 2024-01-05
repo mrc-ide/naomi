@@ -30,11 +30,10 @@ handle_naomi_warnings <- function(expr) {
 ##' Generate naomi warning for specific strata of simulated outputs
 ##'
 ##'
-##' @param naomi_output
+##' @param naomi_output Naomi output object
 ##' @param ind Naomi output indicator
 ##' @param threshold Numerical threshold to trigger warning
 ##' @param locations Location where warning should be displayed in front end
-
 output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 
 

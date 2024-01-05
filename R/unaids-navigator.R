@@ -3,8 +3,6 @@
 #' @param naomi_output a naomi_output object.
 #' @param path path to save Navigator checklist CSV.
 #'
-#' @details
-#'
 #' @export
 write_navigator_checklist <- function(naomi_output,
                                       path) {

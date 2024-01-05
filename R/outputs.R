@@ -318,12 +318,7 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' @param indicators Naomi indicators created by `extract_indicators()`
 #' @param meta_areas
 #'
-#' @details
-#'
-#'
 #' @export
-
-
 align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 
   stopifnot(inherits(naomi_data, "naomi_data"))

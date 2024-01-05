@@ -11,14 +11,9 @@ logit_scale_prev(lor, N_fine, plhiv)
 
 \item{N_fine}{Number of individuals in each group}
 
-\item{plhiv}{Total number of people living with HIV
-theta represents prevalence in baseline risk group
-plogis(lor + theta) is prevalence in each risk group
-plogis(lor + theta) * N_fine is PLHIV in each risk group
-Optimisation for baseline risk group prevalence
-On the logit scale should be more numerically stable
-Return prevalence}
+\item{plhiv}{Total number of people living with HIV}
 }
 \description{
 Calculate prevalence and PLHIV using logit-scale disaggregation
 }
+\keyword{internal}

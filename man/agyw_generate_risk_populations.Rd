@@ -21,5 +21,7 @@ agyw_generate_risk_populations(naomi_output, pjnz, survey_year = 2018)
 Wide format output required for the AGYW workbook
 }
 \description{
-Calculate incidence in high risk male key populations
+Survey year should be updated to most current household survey in the country -
+for countries without recent household surveys, leave at 2018 - the spatiotemporal
+model of sexual behaviour fitted to all countries has the most data for in roughly 2018
 }

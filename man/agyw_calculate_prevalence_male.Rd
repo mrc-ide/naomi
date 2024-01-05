@@ -14,9 +14,13 @@ agyw_calculate_prevalence_male(
 )
 }
 \arguments{
+\item{areas}{Areas}
+
 \item{options}{Naomi model options.}
 
 \item{msm_est}{.}
+
+\item{male_srb}{Male srb}
 
 \item{outputs}{Naomi output.}
 
@@ -24,7 +28,8 @@ agyw_calculate_prevalence_male(
 }
 \value{
 SRB PSEs with logit prevalence estimates.
-
+}
+\description{
 To calculate district-age-sex-sexual behaviour-specific HIV prevalence, we maintain
 HIV prevalence from Naomi for a district-age-sex, but disaggregate to different
 risk behaviours using:
@@ -34,13 +39,5 @@ sex vs one cohabiting vs non-regular sexual partner(s), and
 among 15-24 year olds for MSM (due to the young age distribution of MSM) or
 among 15-49 year olds for PWID (due to the older age distribution of PWID)
 applied to all age groups among MSM and PWID in districts by admin-1 unit.
-Naomi estimates of PLHIV and population by district and age band
-Extract country specific national MSM + PWID prevalence
-Modelled estimates of proportion in each risk group
-Calculate prevalence in each category
-Log odds ratio from SRB group survey prevalence
-Calculate logit prevalence and format
 }
-\description{
-Calculate prevalence for male SRB groups.
-}
+\keyword{internal}

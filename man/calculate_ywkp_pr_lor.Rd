@@ -9,11 +9,9 @@ calculate_ywkp_pr_lor(prev, fit = ywkp_fit)
 \arguments{
 \item{prev}{(General population) prevalence}
 
-\item{fit}{A model relating log-odds prevalence to YWKP log odds prevalence
-Ensure that the LOR is above that of e.g. the sexnonreg risk group
-Prevalence ratio
-Log-odds ratio}
+\item{fit}{A model relating log-odds prevalence to YWKP log odds prevalence}
 }
 \description{
 Calculate YWKP prevalence ratio and log odds ratio
 }
+\keyword{internal}

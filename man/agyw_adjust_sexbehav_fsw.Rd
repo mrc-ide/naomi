@@ -17,8 +17,11 @@ agyw_adjust_sexbehav_fsw(outputs, options, fsw_est)
 }
 \value{
 District level estimates of female sexual risk behaviour groups
-
+}
+\description{
 Estimates are generated for the following groups:
+}
+\details{
 \itemize{
 \item \code{nosex12m}:
 \item \code{sexcohab}:
@@ -32,11 +35,6 @@ Calculation steps:
 \enumerate{
 \item Align admin0/admin1 FSW proportions with SRB SAE estimates.
 \item Subtract the proportion of FSW from total high risk female population.
-Match FSW estimates (admin0 or admin1) with SAE estimates
-Allocate admin1 FSW proportions
-Load female SRB proportions
 }
 }
-\description{
-Adjust female sexual behavior risk groups by FSW proportions
-}
+\keyword{internal}

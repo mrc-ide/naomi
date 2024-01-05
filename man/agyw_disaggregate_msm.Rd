@@ -17,18 +17,8 @@ agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
 }
 \value{
 District level MSM estimates by 5-year age bands for ages 15-49.
-Extract country specific national MSM PSEs
-Check for consensus estimate of MSM
-MSM age distribution parameters in ZAF from Thembisa
-Downloaded from: https://www.thembisa.org/content/downloadPage/Thembisa4_3report
-Distribution function of the gamma
-Calculate proportion of sexually active population using Kinh's country specific
-estimates of age at first sex and naomi population
-Select birth cohort from 2000, to turn 15 in 2015
-Calculate sexually active population by age and sex for each district
-Adjusting country specific sexual debut estimates with age distribution of
-MSM from Thembisa
 }
 \description{
 Disaggregate admin1 MSM proportions from Oli's KP model to 5-age groups
 }
+\keyword{internal}
