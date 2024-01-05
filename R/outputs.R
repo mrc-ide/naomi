@@ -940,7 +940,9 @@ save_output <- function(filename, dir,
     art_attendance <- naomi_output$art_attendance
   }
 
-  vmmc_path <- normalizePath(vmmc_path)
+  if (!is.null(vmmc_path)) {
+    vmmc_path <- normalizePath(vmmc_path)
+  }
 
   tmpd <- tempfile()
   dir.create(tmpd)
