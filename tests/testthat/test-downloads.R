@@ -165,35 +165,7 @@ test_that("comparison report download can be created", {
 
 test_that("AGYW download can be created", {
 
-  #' Create naomi outputs with "MWI_demo" iso3 to align with testing data in
-  #' naomi.resources
-  output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
-
-  # Create demo datasets
-  # Indicators
-  ind_demo <- output$output_package$indicators %>%
-    dplyr::mutate(area_id = dplyr::if_else(area_id == "MWI", "MWI_demo", area_id))
-  # Options
-  options_demo <- output$output_package$fit$model_options
-  options_demo$area_scope <- "MWI_demo"
-
-  # Areas
-  meta_area_demo <- output$output_package$meta_area %>%
-    dplyr::mutate(area_id = dplyr::if_else(area_id == "MWI", "MWI_demo", area_id),
-                  parent_area_id = dplyr::if_else(parent_area_id == "MWI", "MWI_demo", parent_area_id))
-
-  # Save out demo output package
-  demo <- output
-  demo$output_package$indicators <- ind_demo
-  demo$output_package$fit$model_options <- options_demo
-  demo$output_package$meta_area <- meta_area_demo
-
-  out_demo <- tempfile(fileext = ".qs")
-  hintr_save(demo, out_demo)
-
-  # Add to existing hintr_test data
-  agyw_output_demo <- a_hintr_output_calibrated
-  agyw_output_demo$model_output_path <- out_demo
+  agyw_output_demo <- make_agyw_testfiles(a_hintr_output_calibrated)
 
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
