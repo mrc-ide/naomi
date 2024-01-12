@@ -1,3 +1,7 @@
+# naomi 2.9.19
+
+* Silence `spdep v1.2-8` warnings from `mat2listw()` (issue #421).
+
 # naomi 2.9.18
 
 * Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2024.csv`.
