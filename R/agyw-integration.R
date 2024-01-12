@@ -848,7 +848,7 @@ agyw_calculate_prevalence_male <- function(naomi_output,
                                            male_srb,
                                            survey_year_sample = 2018) {
 
-  #' Naomi estimates of PLHIV and population by district and age band
+  # Naomi estimates of PLHIV and population by district and age band
   naomi_est <- naomi_output %>%
     dplyr::filter(calendar_quarter == options$calendar_quarter_t2,
                   sex == "male",
