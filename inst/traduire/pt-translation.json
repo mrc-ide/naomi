@@ -273,5 +273,10 @@
     "BIRTHS_FACILITY_DESC": "Número de nascimentos em estabelecimentos de saúde",
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Pacote Naomi descarregado a partir da aplicação web Naomi",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Relatório de síntese da Naomi carregado da aplicação web Naomi",
-    "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi"
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi",
+    "AGYW_ERROR_KP_PREFIX": " Available KP PSE estimates for: \n",
+    "AGYW_ERROR_FSRB_PREFIX": " Available female sexual risk behaviour survey estimates for: \n",
+    "AGYW_ERROR_MSRB_PREFIX": " Available male sexual risk behaviour survey estimates for: \n",
+    "AGYW_ERROR_NAOMI_MISMATCH": "\n\n Do not match Naomi estimates for: \n",
+    "AGYW_ERROR_CONTACT_SUPPORT": "\n\nTo update estimates, please contact Naomi support."
 }

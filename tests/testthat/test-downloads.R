@@ -218,6 +218,19 @@ test_that("AGYW download can be created", {
 
 })
 
+test_that("Error thrown when AGYW resources are out of date", {
+
+  kp_error <- paste0("Available KP PSE estimates for: \n",
+                     "MWI_1_1; MWI_1_2; MWI_1_3",
+                     "\n\n Do not match Naomi estimates for: \n",
+                     "MWI_2_1_demo; MWI_2_2_demo; MWI_2_3_demo; MWI_2_4_demo; MWI_2_5_demo",
+                     "\n\nTo update estimates, please contact Naomi support.")
+
+ expect_error(hintr_prepare_agyw_download(a_hintr_output_calibrated,
+                                          a_hintr_data$pjnz), kp_error)
+
+})
+
 
 test_that("output description is translated", {
   text <- build_output_description(a_hintr_options)

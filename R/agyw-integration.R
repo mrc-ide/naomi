@@ -1189,10 +1189,9 @@ agyw_calculate_incidence_female <- function(naomi_output,
   # Check that sum of disaggregated infections is the same as total infections
   sum_infections <- df3$infections_nosex12m + df3$infections_sexcohab + df3$infections_sexnonreg + df3$infections_sexpaid12m
 
-  # TO DO: Flag this to add in warning - stop please contact support (usually an issue with mapping boundaries)
-  # ADD IN WARNIING HERE
-  stopifnot(max(df3$infections - sum_infections) < 10^{-9})
-
+  if(max(df3$infections - sum_infections) > 10^{-9}){
+    stop("Risk group proportions do not sum correctly. Please contact suppport.")
+  }
 
   df3 %>%
     dplyr::mutate(concat = paste0(area_id, age_group), iso3 = options$area_scope) %>%
@@ -1394,7 +1393,9 @@ agyw_calculate_incidence_male <- function(naomi_output,
   #  TO DO: add warning for sum not matching - contact admin
   sum_infections <- df3$infections_nosex12m + df3$infections_sexcohab + df3$infections_sexnonreg + df3$infections_msm + df3$infections_pwid
 
-  stopifnot(max(df3$infections - sum_infections) < 10^{-9})
+  if(max(df3$infections - sum_infections) > 10^{-9}){
+    stop("Risk group proportions do not sum correctly. Please contact suppport.")
+  }
 
 
   df3 %>%
@@ -1454,6 +1455,10 @@ agyw_generate_risk_populations <- function(naomi_output,
     outputs <- naomi::read_output_package(output_zip)
     options <- outputs$fit$model_options
   }
+
+  # Check for concordence between area_ids in agyw resources from `naomi.resources`
+  #  and Naomi estimates
+  assert_agyw_resource_hierarchy(outputs, options)
 
   # Format naomi output
   naomi <- agyw_format_naomi(outputs, options)
@@ -1516,6 +1521,63 @@ agyw_generate_risk_populations <- function(naomi_output,
             meta_consensus = meta)
 
   v
+
+}
+
+#' Throw warning when area hierarchy in external AGYW resources read in from
+#'  `naomi.resources` do not match Naomi outputs used to update AGYW estimates.
+#'
+#'  @param naomi_output Naomi outputs.
+#'  @param options Naomi options.
+
+
+assert_agyw_resource_hierarchy <- function(naomi_output,
+                                           options){
+
+  # iso3 from model options
+  iso3 <- options$area_scope
+
+  # KP PSE's
+  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3)
+
+  # SRB SAE model estimates
+  female_srb <- naomi.resources::load_agyw_exdata("srb_female", options$area_scope)
+  male_srb <- naomi.resources::load_agyw_exdata("srb_male", options$area_scope)
+
+  # Naomi area_ids at lowest admin-level
+  naomi_hierarchy <- outputs$meta_area %>% dplyr::filter(area_level == options$area_level)
+  naomi_ids <- unique(naomi_hierarchy$area_id)
+
+  pse_diff <- setdiff(unique(pse$area_id), unique(outputs$meta_area$area_id))
+  female_srb_diff <- setdiff(unique(female_srb$area_id), naomi_ids)
+  male_srb_diff <- setdiff(unique(male_srb$area_id), naomi_ids)
+
+  if(length(pse_diff) != 0 ){
+
+    stop(paste0(t_("AGYW_ERROR_KP_PREFIX"),
+             paste0(unique(pse$area_id), collapse = "; "),
+             t_("AGYW_ERROR_NAOMI_MISMATCH"),
+             paste0(unique(naomi_ids), collapse = "; "),
+             t_("AGYW_ERROR_CONTACT_SUPPORT")))
+  }
+
+  if(length(female_srb_diff) != 0 ){
+
+    stop(paste0(t_("AGYW_ERROR_FSRB_PREFIX"),
+                paste0(unique(pse$area_id), collapse = "; "),
+                t_("AGYW_ERROR_NAOMI_MISMATCH"),
+                paste0(unique(naomi_ids), collapse = "; "),
+                t_("AGYW_ERROR_CONTACT_SUPPORT")))
+  }
+
+  if(length(male_srb_diff) != 0 ){
+
+    stop(paste0(t_("AGYW_ERROR_MSRB_PREFIX"),
+                paste0(unique(pse$area_id), collapse = "; "),
+                t_("AGYW_ERROR_NAOMI_MISMATCH"),
+                paste0(unique(naomi_ids), collapse = "; "),
+                t_("AGYW_ERROR_CONTACT_SUPPORT")))
+  }
 
 }
 
