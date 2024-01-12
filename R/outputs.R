@@ -955,14 +955,6 @@ save_output <- function(filename, dir,
     writeLines(notes, "notes.txt")
   }
 
-  if (!is.null(vmmc_path)) {
-    assert_scalar_character(vmmc_path)
-    ## Skip the first row, the file has two rows of headers
-    vmmc_datapack <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
-                                         startRow = 2)
-    ## TODO: Add it to relevant place in download
-  }
-
   if(!single_csv) {
     naomi_write_csv(art_attendance, "art_attendance.csv")
     naomi_write_csv(sf::st_drop_geometry(naomi_output$meta_area),
@@ -988,6 +980,15 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
+
+    if (!is.null(vmmc_path)) {
+      assert_scalar_character(vmmc_path)
+      ## Skip the first row, the file has two rows of headers
+      vmmc_datapack <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
+                                           startRow = 2)
+      ## TODO: Add it to relevant place in download
+    }
+
     write_datapack_csv(naomi_output = naomi_output,
                        path = PEPFAR_DATAPACK_PATH,
                        psnu_level = naomi_output$fit$model_options$psnu_level)
