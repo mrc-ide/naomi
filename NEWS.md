@@ -1,6 +1,7 @@
 # naomi 2.9.19
 
 * Add optional `vmmc_path` to spectrum download function
+* Silence `spdep v1.2-8` warnings from `mat2listw()` (issue #421).
 
 # naomi 2.9.18
 
