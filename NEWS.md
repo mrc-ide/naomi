@@ -1,6 +1,7 @@
 # naomi 2.9.19
 
-* Add optional `vmmc_path` to spectrum download function
+* Add optional `vmmc_path` to Spectrum download function for path to DMMPT2 output Excel file.
+* Add DMMPT2 outputs to PEPFAR Datapack CSV download, if DMMPT2 output file exists.
 * Silence `spdep v1.2-8` warnings from `mat2listw()` (issue #421).
 
 # naomi 2.9.18

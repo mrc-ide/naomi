@@ -69,3 +69,18 @@ test_that("datapack export writes correct psnu_level", {
   expect_true(!any(is.na(datapack1)))
   expect_match(datapack3$area_id, "^MWI_3_")
 })
+
+test_that("datapack export includes DMMPT2 VMMC data", {
+
+  vmmc_path <- file.path("testdata", "vmmc.xlsx")
+  vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs", startRow = 2)
+  vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
+
+  tmpf <- tempfile(fileext = ".csv")
+  res <- write_datapack_csv(a_output_full, tmpf, dmppt2_output = vmmc_datapack)
+
+  datapack1 <- readr_read_csv(res)
+  expect_true(!any(is.na(datapack1)))
+  expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
+                    datapack1$indicator_code))
+})

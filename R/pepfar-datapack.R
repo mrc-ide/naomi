@@ -7,6 +7,8 @@ PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2024.csv"
 #' @param psnu_level area_level for PEPFAR PSNU to export. If NULL,
 #'    first looks in lookup table for the correct area_level, and
 #'    if not defaults to the highest level of the area hierarchy.
+#' @param dmppt2_output data frame containing the _Datapack inputs_
+#'    sheet of DMPPT2 output file.
 #'
 #' @details
 #'
@@ -26,7 +28,8 @@ PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2024.csv"
 #' @export
 write_datapack_csv <- function(naomi_output,
                                path,
-                               psnu_level = NULL) {
+                               psnu_level = NULL,
+                               dmppt2_output = NULL) {
 
   stopifnot(inherits(naomi_output, "naomi_output"))
 
@@ -49,15 +52,19 @@ write_datapack_csv <- function(naomi_output,
     }
   }
 
-  if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
+  ## If using the demo data, don't print this warning.
+  ## The demo data only contain levels 0:2, but have ISO3 = "MWI", for which psnu_level = 3.
+  ## A better way to handle this is to change the ISO3 for the demo data to an artificial
+  ## code. However, some hint validation needs to be relaxed to enable this.
+  is_demo_data <- "MWI_2_5_demo" %in% naomi_output$meta_area$area_id &&
+    setequal(0:2, naomi_output$meta_area$area_level)
+  if(is_demo_data) {
+    psnu_level <- 2L
+  }
 
-    ## If using the demo data, don't print this warning.
-    ## The demo data only contain levels 0:2, but have ISO3 = "MWI", for which psnu_level = 3.
-    ## A better way to handle this is to change the ISO3 for the demo data to an artificial
-    ## code. However, some hint validation needs to be relaxed to enable this.
-    if (!("MWI_2_5_demo" %in% naomi_output$meta_area$area_id && setequal(0:2, naomi_output$meta_area$area_level))) {
-      warning("PSNU level ", psnu_level, " not included in model outputs.")
-    }
+  
+  if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
+    warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
 
   datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
@@ -90,6 +97,22 @@ write_datapack_csv <- function(naomi_output,
 
   indicators <- datapack_aggregate_1to9(naomi_output$indicators)
 
+  ## Append VMMC indicators from DMPPT2 output to Naomi indicators
+  if(!is.null(dmppt2_output)) {
+
+    ## TO DO: add check for area_id
+    
+    dmppt2_output <- dmppt2_output %>%
+      dplyr::left_join(
+        dplyr::select(datapack_indicator_map, indicator, calendar_quarter),
+        by = "indicator"
+      ) %>%
+      dplyr::rename(mean = value) %>%
+      dplyr::mutate(se = 0.0)
+
+    indicators <- dplyr::bind_rows(indicators, dmppt2_output)
+  }
+  
   dat <- indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
@@ -105,7 +128,7 @@ write_datapack_csv <- function(naomi_output,
     dplyr::semi_join(
       datapack_indicator_map,
       by = c("indicator", "calendar_quarter")
-    )  %>%
+    ) %>%
     dplyr::filter(
     (sex_naomi %in% datapack_sex_map$sex_naomi &
        age_group %in% datapack_age_group_map$age_group |
@@ -138,6 +161,10 @@ write_datapack_csv <- function(naomi_output,
       by = "area_id"
     ) %>%
     dplyr::arrange(calendar_quarter, indicator_sort_order, area_id, sex_naomi, age_group)
+
+
+  dat$district_rse[is.na(dat$district_rse) & dat$indicator %in% c("circ_new", "circ_ever")] <- 0.0
+    
 
   ## Merge data pack Ids
   dat <- dplyr::left_join(dat, strat,
@@ -236,4 +263,29 @@ datapack_aggregate_1to9 <- function(indicators) {
 
   indicators[names(indicators1to9)] %>%
     dplyr::bind_rows(indicators1to9)
+}
+
+transform_dmppt2 <- function(x) {
+
+  if(any(names(x)[3:11] != c("area_id", "15-24", "25-34", "35-49", "50+",
+                             "15-24", "25-34", "35-49", "50+"))) {
+    stop("DMMPT2 output file does not have expected column names.")
+  }
+
+  names(x)[4:7] <- paste0("circ_new:", names(x)[4:7])
+  names(x)[8:11] <- paste0("circ_ever:", names(x)[8:11])
+
+  xl <- x %>%
+    tidyr::pivot_longer(cols = 4:11, names_sep = ":", names_to = c("indicator", "age")) %>%
+    dplyr::mutate(
+      sex = "male",
+      age_group = dplyr::recode(age,
+                                "15-24" = "Y015_024",
+                                "25-34" = "Y025_034",
+                                "35-49" = "Y035_049",
+                                "50+" = "Y050_999")
+    ) %>%
+    dplyr::select(area_id, sex, age_group, indicator, value)
+
+  xl
 }
