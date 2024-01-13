@@ -990,7 +990,7 @@ save_output <- function(filename, dir,
     }
 
     write_datapack_csv(naomi_output = naomi_output,
-                       path = PEPFAR_DATAPACK_PATH,
+                       path = PEPFAR_DATAPACK_FILENAME,   # global defined in R/pepfar-datapack.R
                        psnu_level = naomi_output$fit$model_options$psnu_level)
   }
 

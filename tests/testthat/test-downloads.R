@@ -80,14 +80,15 @@ test_that("spectrum download can include vmmc data", {
     messages <- naomi_evaluate_promise(
       out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
                                              notes = notes,
-                                             vmmc_file = vmmc_file)),
+                                             vmmc_file = vmmc_file)
+    ),
     new_simple_progress = mock_new_simple_progress
   )
   expect_true(file.exists(out$path))
 
   t <- tempfile()
-  unzip(out$path, PEPFAR_DATAPACK_PATH, exdir = t)
-  datapack <- utils::read.csv(file.path(t, PEPFAR_DATAPACK_PATH))
+  unzip(out$path, PEPFAR_DATAPACK_FILENAME, exdir = t)
+  datapack <- utils::read.csv(file.path(t, PEPFAR_DATAPACK_FILENAME))
   # TODO: Expand the checks here
   expect_true("psnu_uid" %in% colnames(datapack))
 
