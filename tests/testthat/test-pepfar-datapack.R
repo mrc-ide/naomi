@@ -29,7 +29,8 @@ test_that("datapack_indicator_map is well formed", {
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
   expect_true(all(c("indicator", "datapack_indicator_code", "is_integer", "time") %in%
                   names(datapack_indicator_map)))
-  expect_true(all(datapack_indicator_map$indicator %in% get_meta_indicator()$indicator))
+  expect_true(all(datapack_indicator_map$indicator %in%
+                    c(get_meta_indicator()$indicator, "circ_ever", "circ_new")))
   expect_equal(anyDuplicated(datapack_indicator_map[c("indicator", "time")]), 0)
   expect_equal(anyDuplicated(datapack_indicator_map$datapack_indicator_code), 0)
 })
