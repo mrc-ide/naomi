@@ -11,20 +11,14 @@ agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
 
 \item{options}{Naomi model options.}
 
-\item{kp_consensus}{Key pop consensus estimates.}
+\item{naomi_pop}{Naomi population estimates for T2.}
 
-\item{naomi_population}{Naomi population estimates for T2.}
+\item{kp_consensus}{Key pop consensus estimates.}
 }
 \value{
 District level PWID estimates by 5-year age bands for ages 15-49.
-Extract country specific national PWID PSEs
-Check for consensus estimate of MSM
-Assumption from literature that 9\% of PWID are female so remove them from
-the male denominator
-PWID age distribution
-Review of literature - Hines et al Lancet Global Health 2020
-Distribution function of the gamma
 }
 \description{
 Disaggregate admin1 PWID proportions from Oli's KP model to 5-age groups
 }
+\keyword{internal}

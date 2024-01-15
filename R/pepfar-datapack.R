@@ -1,3 +1,5 @@
+PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2024.csv"
+
 #' Export naomi outputs to PEPFAR Data Pack format
 #'
 #' @param naomi_output a naomi_output object.
@@ -87,7 +89,7 @@ write_datapack_csv <- function(naomi_output,
     tidyr::expand_grid(datapack_sex_map)
 
   indicators <- datapack_aggregate_1to9(naomi_output$indicators)
-  
+
   dat <- indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
@@ -180,9 +182,9 @@ read_datapack_psnu <- function() {
 
 datapack_aggregate_1to9 <- function(indicators) {
 
-  
+
   indicators_keep <- c("plhiv", "plhiv_attend", "untreated_plhiv_attend", "infections",
-                       "population", "art_current", "art_current_residents", "aware_plhiv_num")  
+                       "population", "art_current", "art_current_residents", "aware_plhiv_num")
 
   indicators1to9 <- indicators %>%
     dplyr::filter(
@@ -201,7 +203,7 @@ datapack_aggregate_1to9 <- function(indicators) {
 
     indicators1to9[missing_cols] <- NA_real_
   }
-  
+
 
   indicators1to9 <- indicators1to9 %>%
     dplyr::mutate(

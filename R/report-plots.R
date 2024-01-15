@@ -12,12 +12,8 @@
 ##' @param legend_label Legend label
 ##' @param breaks Number of break points to create in scale
 ##'
-##' @return
+##' @return Mapped outputs
 ##' @export
-##'
-##'
-##'
-
 map_outputs <- function(naomi_geom,
                         indicator,
                         calendar_quarter,
@@ -81,9 +77,8 @@ map_outputs <- function(naomi_geom,
 #' @param masc_label Label for male sex group, default is "Male"
 #' @param fem_label Label for female sex group, default is "Female"
 #'
-##' @return
-##' @export
-
+#' @return Pop pyramid
+#' @export
 pop_pyramid_outputs <- function(naomi_output,
                                 calendar_quarter = 2,
                                 indicator,
@@ -176,7 +171,7 @@ pop_pyramid_outputs <- function(naomi_output,
 ##' @param above_label Label for districts with values higher than national average, default is "Above"
 ##' @param below_label Label for districts with values higher than national average, default is "Below"
 ##'
-##' @return
+##' @return District barplot
 ##' @export
 district_barplot <- function(naomi_output,
                              indicator,
@@ -304,10 +299,9 @@ district_barplot <- function(naomi_output,
 
 #' Automatically make drop drop buttons for plotly filter
 #'
-#' @param df
-#' @param var
-
-
+#' @param df Input data frame
+#' @param var Column
+#' @return Drop down buttons for plotly filter
 dropdown_buttons <- function(df, var) {
 
   levels <- unique(df[[var]])
@@ -332,7 +326,6 @@ dropdown_buttons <- function(df, var) {
 #' @param sex_disag Sex filter.
 #'
 #' @export
-
 bar_plotly <- function(df,
                        ind,
                        quarter,

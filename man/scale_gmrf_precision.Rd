@@ -23,6 +23,6 @@ This function scales the precision matrix of a GMRF such that the geometric
 mean of the marginal variance is one.
 }
 \details{
-This implements the same thing as \code{\link[INLA:inla.scale.model]{INLA::inla.scale.model}}. The marginal
+This implements the same thing as INLA::inla.scale.model. The marginal
 variance of each connected component is one.
 }

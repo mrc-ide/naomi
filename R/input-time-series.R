@@ -11,7 +11,6 @@
 ##'  year, quarter,calendar_quarter and art_current
 ##'
 ##' @export
-
 aggregate_art <- function(art, shape) {
 
   ## Check if shape is object or file path
@@ -271,18 +270,18 @@ prepare_input_time_series_art <- function(art, shape) {
 
 
   missing_map <- art_plot_data_long %>%
-    #' For edge cases where data is provided at different admin levels for
-    #' different years (get max area level by year)
+    # For edge cases where data is provided at different admin levels for
+    # different years (get max area level by year)
     dplyr::select(calendar_quarter, area_level) %>%
     dplyr::group_by(calendar_quarter) %>%
     dplyr::summarise(area_level = max(area_level)) %>%
-    #' Select lowest admin level for each year
+    # Select lowest admin level for each year
     dplyr::left_join(art_plot_data_long %>%
                        dplyr::select(area_id, area_name, area_level, calendar_quarter, plot, value),
                      multiple = "all", by = dplyr::join_by(calendar_quarter, area_level)) %>%
-    #' Joint to wide hierarchy
+    # Joint to wide hierarchy
     dplyr::left_join(hierarchy_wide, by = dplyr::join_by(area_id)) %>%
-    #' Filter for districts with missing value
+    # Filter for districts with missing value
     dplyr::filter(is.na(value)) %>%
     dplyr::select(missing = area_id, dplyr::everything()) %>%
     # Get into long format
@@ -314,7 +313,6 @@ prepare_input_time_series_art <- function(art, shape) {
 ##' births_clients_ratio
 
 ##' @export
-
 aggregate_anc <- function(anc, shape) {
 
   ## Recursively aggregate ANC data up from lowest level of programm data provided
@@ -467,18 +465,18 @@ prepare_input_time_series_anc <- function(anc, shape) {
   hierarchy_wide <- spread_areas(areas %>% dplyr::filter(area_level <= anc_level))
 
   missing_map <- anc_plot_data_long %>%
-    #' For edge cases where data is provided at different admin levels for
-    #' different years (get max area level by year)
+    # For edge cases where data is provided at different admin levels for
+    # different years (get max area level by year)
     dplyr::select(calendar_quarter, area_level) %>%
     dplyr::group_by(calendar_quarter) %>%
     dplyr::summarise(area_level = max(area_level)) %>%
-    #' Select lowest admin level for each year
+    # Select lowest admin level for each year
     dplyr::left_join(anc_plot_data_long %>%
                        dplyr::select(area_id, area_name, area_level, calendar_quarter, plot, value),
                      multiple = "all", by = dplyr::join_by(calendar_quarter, area_level)) %>%
-    #' Joint to wide hierarchy
+    # Joint to wide hierarchy
     dplyr::left_join(hierarchy_wide, by = dplyr::join_by(area_id)) %>%
-    #' Filter for districts with missing value
+    # Filter for districts with missing value
     dplyr::filter(is.na(value)) %>%
     dplyr::select(missing = area_id, dplyr::everything()) %>%
     # Get into long format

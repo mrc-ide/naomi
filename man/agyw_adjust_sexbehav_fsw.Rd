@@ -11,12 +11,7 @@ agyw_adjust_sexbehav_fsw(outputs, options, fsw_est)
 
 \item{options}{Naomi model options.}
 
-\item{fsw_est}{5-year estimates of FSW PSEs generated from \code{agyw_disaggregate_fsw()}.}
-
-\item{female_sae_path}{Path to female estimates of sexual behavior risk group.}
-}
-\value{
-District level estimates of female sexual risk behaviour groups
+\item{fsw_est}{5-year estimates of FSW PSEs generated from \code{agyw_disaggregate_fsw()}.
 
 Estimates are generated for the following groups:
 \itemize{
@@ -32,11 +27,12 @@ Calculation steps:
 \enumerate{
 \item Align admin0/admin1 FSW proportions with SRB SAE estimates.
 \item Subtract the proportion of FSW from total high risk female population.
-Match FSW estimates (admin0 or admin1) with SAE estimates
-Allocate admin1 FSW proportions
-Load female SRB proportions
+}}
 }
+\value{
+District level estimates of female sexual risk behaviour groups
 }
 \description{
 Adjust female sexual behavior risk groups by FSW proportions
 }
+\keyword{internal}

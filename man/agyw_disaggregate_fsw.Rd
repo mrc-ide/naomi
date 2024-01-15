@@ -11,9 +11,9 @@ agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
 
 \item{options}{Naomi model options.}
 
-\item{kp_consensus}{Key pop consensus estimates.}
+\item{naomi_pop}{Naomi population estimates for T2.}
 
-\item{naomi_population}{Naomi population estimates for T2.}
+\item{kp_consensus}{Key pop consensus estimates.}
 }
 \value{
 District level FSW estimates by 5-year age bands for ages 15-49.
@@ -21,3 +21,4 @@ District level FSW estimates by 5-year age bands for ages 15-49.
 \description{
 Dissagreggate admin1 FSW proportions from Oli's KP model to 5-age groups
 }
+\keyword{internal}

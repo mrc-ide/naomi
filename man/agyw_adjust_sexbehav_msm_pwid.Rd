@@ -14,32 +14,44 @@ agyw_adjust_sexbehav_msm_pwid(outputs, options, msm_est, pwid_est)
 \item{msm_est}{5-year estimates of MSM PSEs generated from \code{agyw__disaggregate_msm()}.}
 
 \item{pwid_est}{5-year estimates of MSM PSEs generated from \code{agyw__disaggregate_pwid()}.}
-
-\item{sae_path}{Path to female estimates of sexual behavior risk group.}
 }
 \value{
 District level estimates of male sexual risk behaviour groups
-
-Estimates are generated for the following groups:
-\itemize{
-\item \code{nosex12m}:
-\item \code{sexcohab}:
-\item \code{sexonregplus}:
-\item \code{sexonreg}:
-\item \code{msm}:
-\item \code{pwid}:
-}
-
-Calculation steps:
-\enumerate{
-\item Align admin0/admin1 MSM and PWID proportions with SRB SAE estimates.
-\item Subtracting MSM and PWID proportionally from all SRB groups.
-}
-
-Load male SRB proportions
-Subtracting MSM and PWID proportionally from all SRB risk groups
-(FSW was just from high-risk females)
 }
 \description{
 Adjust male sexual behavior risk groups by MSM + PWID proportions
 }
+\keyword{*}
+\keyword{1.}
+\keyword{2.}
+\keyword{Align}
+\keyword{Calculation}
+\keyword{Estimates}
+\keyword{MSM}
+\keyword{PWID}
+\keyword{SAE}
+\keyword{SRB}
+\keyword{Subtracting}
+\keyword{`msm`:}
+\keyword{`nosex12m`:}
+\keyword{`pwid`:}
+\keyword{`sexcohab`:}
+\keyword{`sexonreg`:}
+\keyword{`sexonregplus`:}
+\keyword{admin0/admin1}
+\keyword{all}
+\keyword{and}
+\keyword{are}
+\keyword{estimates.}
+\keyword{following}
+\keyword{for}
+\keyword{from}
+\keyword{generated}
+\keyword{groups.}
+\keyword{groups:}
+\keyword{internal}
+\keyword{proportionally}
+\keyword{proportions}
+\keyword{steps:}
+\keyword{the}
+\keyword{with}

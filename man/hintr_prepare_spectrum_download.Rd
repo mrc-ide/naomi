@@ -7,7 +7,8 @@
 hintr_prepare_spectrum_download(
   output,
   path = tempfile(fileext = ".zip"),
-  notes = NULL
+  notes = NULL,
+  vmmc_file = NULL
 )
 }
 \arguments{
@@ -15,7 +16,10 @@ hintr_prepare_spectrum_download(
 
 \item{path}{Path to save output file}
 
-\item{notes}{User added notes from front end of app as a string}
+\item{notes}{Optional, user added notes from front end of app as a string}
+
+\item{vmmc_file}{Optional file object, with path, filename and hash for
+VMMC input}
 }
 \value{
 Path to output file and metadata for file

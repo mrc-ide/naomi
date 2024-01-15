@@ -1,8 +1,12 @@
-# naomi 2.9.19
+# naomi 2.9.20
 
 * Generate PSE workbook from naomi outputs.
 * Add function `extract_kp_workbook()` to extract key population totals from the Spectrum PJNZ file. Data are extracted from summary table saved in AIM Programme Statistics input for key populations.
 
+# naomi 2.9.19
+
+* Add optional `vmmc_path` to spectrum download function
+* Silence `spdep v1.2-8` warnings from `mat2listw()` (issue #421).
 
 # naomi 2.9.18
 

@@ -7,6 +7,8 @@
 output_naomi_warning(naomi_output, ind, threshold, locations)
 }
 \arguments{
+\item{naomi_output}{Naomi output object}
+
 \item{ind}{Naomi output indicator}
 
 \item{threshold}{Numerical threshold to trigger warning}
