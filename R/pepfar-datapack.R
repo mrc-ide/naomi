@@ -64,8 +64,7 @@ write_datapack_csv <- function(naomi_output,
 
   
   if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
-    naomi_warning(paste0("PSNU level ", psnu_level, " not included in model outputs."),
-                  "download_results")
+    warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
 
   datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
