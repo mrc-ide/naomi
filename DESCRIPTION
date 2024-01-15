@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.9.18
+Version: 2.9.19
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -13,7 +13,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Additional_repositories:
     https://mrc-ide.r-universe.dev
 Imports:
@@ -37,6 +37,7 @@ Imports:
     magrittr,
     mvtnorm,
     naomi.options (>= 1.2.0),
+    openxlsx,
     plotly,
     prettyunits,
     qs,

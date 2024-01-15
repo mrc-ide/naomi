@@ -35,7 +35,7 @@ pop_pyramid_outputs(
 \item{fem_label}{Label for female sex group, default is "Female"}
 }
 \value{
-
+Pop pyramid
 }
 \description{
 Create population pyramid plot

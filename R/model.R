@@ -158,7 +158,7 @@ naomi_model_frame <- function(area_merged,
                         calendar_quarter_t2 = calendar_quarter2,
                         calendar_quarter_t3 = calendar_quarter3,
                         calendar_quarter_t4 = calendar_quarter4,
-                        calendar_quarter_t5 = calendar_quarter5,                        
+                        calendar_quarter_t5 = calendar_quarter5,
                         artattend = artattend,
                         artattend_t2 = artattend_t2,
                         anchor_home_district = anchor_home_district,
@@ -334,7 +334,7 @@ naomi_model_frame <- function(area_merged,
   pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
   pop_t3 <- interpolate_population_agesex(pop_subset, calendar_quarter3)
   pop_t4 <- interpolate_population_agesex(pop_subset, calendar_quarter4)
-  pop_t5 <- interpolate_population_agesex(pop_subset, calendar_quarter5)  
+  pop_t5 <- interpolate_population_agesex(pop_subset, calendar_quarter5)
   population_est <- dplyr::bind_rows(
                              dplyr::mutate(pop_t1, time_step = "quarter1"),
                              dplyr::mutate(pop_t2, time_step = "quarter2"),
@@ -425,7 +425,7 @@ naomi_model_frame <- function(area_merged,
              dplyr::filter(time_step == "quarter5") %>%
              dplyr::select(area_id, sex, age_group, population_t5 = population),
              by = c("area_id", "sex", "age_group")
-          )    
+          )
 
   stopifnot(!is.na(mf_model[["population_t1"]]))
   stopifnot(!is.na(mf_model[["population_t2"]]))
@@ -438,7 +438,7 @@ naomi_model_frame <- function(area_merged,
   zeropop3 <- mf_model[["population_t3"]] == 0
   zeropop4 <- mf_model[["population_t4"]] == 0
   zeropop5 <- mf_model[["population_t5"]] == 0
-  
+
   if(any(zeropop1) || any(zeropop2) || any(zeropop3) || any(zeropop4) || any(zeropop5)) {
     warning(paste("Zero population input for",
                   sum(zeropop1) + sum(zeropop2) + sum(zeropop3) + sum(zeropop4) + sum(zeropop5),
@@ -582,7 +582,7 @@ naomi_model_frame <- function(area_merged,
                       spec_artcov_t5 = art_coverage,
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
-           )  
+           )
 
   ## Projection matrices
 
@@ -601,7 +601,7 @@ naomi_model_frame <- function(area_merged,
                              population_colname1 = "population_t2",
                              population_colname2 = "population_t3",
                              adjust_area_growth = adjust_area_growth)
-  
+
   Lproj_t3t4 <- create_Lproj(spec = spec,
                              mf_model = mf_model,
                              quarter_id1 = quarter_id3,
@@ -617,7 +617,7 @@ naomi_model_frame <- function(area_merged,
                              population_colname1 = "population_t4",
                              population_colname2 = "population_t5",
                              adjust_area_growth = adjust_area_growth)
-  
+
 
 
   ## Adjacency matrix
@@ -706,18 +706,18 @@ naomi_model_frame <- function(area_merged,
              spec_prev15to49_t5 = sum(population_t5 * spec_prev_t5 * age15to49) / sum(population_t5 * age15to49),
              spec_artcov15to49_t5 =
                sum(population_t5 * spec_prev_t5 * spec_artcov_t5 * age15to49) /
-               sum(population_t5 * spec_prev_t5 * age15to49),             
+               sum(population_t5 * spec_prev_t5 * age15to49),
              logit_rho_offset = 0,
              logit_alpha_offset = 0,
              logit_alpha_t1t2_offset = qlogis(spec_artcov_t2) - qlogis(spec_artcov_t1),
              logit_alpha_t2t3_offset = qlogis(spec_artcov_t3) - qlogis(spec_artcov_t2),
              logit_alpha_t3t4_offset = qlogis(spec_artcov_t4) - qlogis(spec_artcov_t3),
-             logit_alpha_t4t5_offset = qlogis(spec_artcov_t5) - qlogis(spec_artcov_t4),                          
+             logit_alpha_t4t5_offset = qlogis(spec_artcov_t5) - qlogis(spec_artcov_t4),
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
              log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
              log_lambda_t3_offset = log(spec_incid_t3) - log(spec_prev15to49_t3) - log(1 - omega * spec_artcov15to49_t3),
              log_lambda_t4_offset = log(spec_incid_t4) - log(spec_prev15to49_t4) - log(1 - omega * spec_artcov15to49_t4),
-             log_lambda_t5_offset = log(spec_incid_t5) - log(spec_prev15to49_t5) - log(1 - omega * spec_artcov15to49_t5),             
+             log_lambda_t5_offset = log(spec_incid_t5) - log(spec_prev15to49_t5) - log(1 - omega * spec_artcov15to49_t5),
              log_lambda_t1_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t1_offset),
              log_lambda_t2_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t2_offset),
              log_lambda_t3_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t3_offset),
@@ -752,7 +752,7 @@ naomi_model_frame <- function(area_merged,
              spec_prev15to49f_t2 = NULL,
              spec_prev15to49f_t3 = NULL,
              spec_prev15to49f_t4 = NULL,
-             spec_prev15to49f_t5 = NULL             
+             spec_prev15to49f_t5 = NULL
            ) %>%
     dplyr::ungroup()
 
@@ -782,7 +782,7 @@ naomi_model_frame <- function(area_merged,
             calendar_quarter2 = calendar_quarter2,
             calendar_quarter3 = calendar_quarter3,
             calendar_quarter4 = calendar_quarter4,
-            calendar_quarter5 = calendar_quarter5,            
+            calendar_quarter5 = calendar_quarter5,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
             model_options = model_options,
@@ -1507,6 +1507,8 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
 }
 
 
+#' Build artnum model frame
+#'
 #' @rdname artnum_mf
 #'
 #' @param calendar_quarter Calendar quarter
@@ -1654,11 +1656,13 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
 
 
+#' Tag data inputs
+#'
 #' @param full_data Raw model input data
 #' @param filtered_data Model input data filtered by model option specifications
+#' @return Tagged inputs
 #'
-
-
+#' @keywords internal
 tag_data_inputs <- function(full_data, filtered_data, cols = list()) {
 
   #  Get intersecting colnames to silence anti_join message

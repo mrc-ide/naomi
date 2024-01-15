@@ -358,7 +358,7 @@ extract_dhs <- function(SurveyId){
               dob_cmc = v011,
               indweight = v005 / 1e6)
 
-  #' Male recode
+  # Male recode
   if(SurveyId %in% mrd$SurveyId){
 
     mr <- mrd %>% filter(SurveyId == !!SurveyId) %>% .$path %>% readRDS

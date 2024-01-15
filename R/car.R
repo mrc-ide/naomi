@@ -9,7 +9,7 @@
 #' package to convert shapefile to neighbor list to adjacency matrix.
 #'
 #' @export
-create_adj_matrix <- function(sh){
+create_adj_matrix <- function(sh) {
 
   s2_current <- sf::sf_use_s2()
   on.exit(invisible(
@@ -66,7 +66,7 @@ create_edge_list <- function(adj_matrix) {
 #'
 #' @details
 #'
-#' This implements the same thing as [`INLA::inla.scale.model`]. The marginal
+#' This implements the same thing as INLA::inla.scale.model. The marginal
 #' variance of each connected component is one.
 #'
 #' @export
@@ -74,7 +74,9 @@ scale_gmrf_precision <- function(Q,
                                  A = matrix(1, ncol = ncol(Q)),
                                  eps = sqrt(.Machine$double.eps)) {
 
-  nb <- spdep::mat2listw(abs(Q), style = "M")$neighbours
+  ## `style = ` argument is arbitrary; it will throw a warning if NULL (default),
+  ## but the neighbours list does not depend on it.
+  nb <- spdep::mat2listw(abs(Q), style = "B", zero.policy = TRUE)$neighbours
   comp <- spdep::n.comp.nb(nb)
 
   for (k in seq_len(comp$nc)) {

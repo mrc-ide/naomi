@@ -318,12 +318,7 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' @param indicators Naomi indicators created by `extract_indicators()`
 #' @param meta_areas
 #'
-#' @details
-#'
-#'
 #' @export
-
-
 align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 
   stopifnot(inherits(naomi_data, "naomi_data"))
@@ -868,8 +863,10 @@ save_output_coarse_age_groups <- function(path, naomi_output,
 
 
 save_output_spectrum <- function(path, naomi_output, notes = NULL,
+                                 vmmc_path = NULL,
                                  overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output, notes,
+              vmmc_path = vmmc_path,
               overwrite = overwrite, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE,
               export_datapack = TRUE)
@@ -882,6 +879,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
 #' @param notes Notes to include in output zip
+#' @param vmmc_path Path to VMMC excel workbook
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson
@@ -895,6 +893,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 save_output <- function(filename, dir,
                         naomi_output,
                         notes = NULL,
+                        vmmc_path = NULL,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
@@ -941,6 +940,10 @@ save_output <- function(filename, dir,
     art_attendance <- naomi_output$art_attendance
   }
 
+  if (!is.null(vmmc_path)) {
+    vmmc_path <- normalizePath(vmmc_path)
+  }
+
   tmpd <- tempfile()
   dir.create(tmpd)
   old <- setwd(tmpd)
@@ -977,8 +980,17 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
+
+    if (!is.null(vmmc_path)) {
+      assert_scalar_character(vmmc_path)
+      ## Skip the first row, the file has two rows of headers
+      vmmc_datapack <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
+                                           startRow = 2)
+      ## TODO: Add it to relevant place in download
+    }
+
     write_datapack_csv(naomi_output = naomi_output,
-                       path = "pepfar_datapack_indicators_2024.csv",
+                       path = PEPFAR_DATAPACK_FILENAME,   # global defined in R/pepfar-datapack.R
                        psnu_level = naomi_output$fit$model_options$psnu_level)
   }
 
