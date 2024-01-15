@@ -64,7 +64,8 @@ write_datapack_csv <- function(naomi_output,
 
   
   if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
-    warning("PSNU level ", psnu_level, " not included in model outputs.")
+    naomi_warning(paste0("PSNU level ", psnu_level, " not included in model outputs."),
+                  "download_results")
   }
 
   datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
@@ -100,8 +101,6 @@ write_datapack_csv <- function(naomi_output,
   ## Append VMMC indicators from DMPPT2 output to Naomi indicators
   if(!is.null(dmppt2_output)) {
 
-    ## TO DO: add check for area_id
-    
     dmppt2_output <- dmppt2_output %>%
       dplyr::left_join(
         dplyr::select(datapack_indicator_map, indicator, calendar_quarter),
@@ -109,7 +108,7 @@ write_datapack_csv <- function(naomi_output,
       ) %>%
       dplyr::rename(mean = value) %>%
       dplyr::mutate(se = 0.0)
-
+    
     indicators <- dplyr::bind_rows(indicators, dmppt2_output)
   }
   
