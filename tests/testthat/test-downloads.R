@@ -89,8 +89,11 @@ test_that("spectrum download can include vmmc data", {
   t <- tempfile()
   unzip(out$path, PEPFAR_DATAPACK_FILENAME, exdir = t)
   datapack <- utils::read.csv(file.path(t, PEPFAR_DATAPACK_FILENAME))
-  # TODO: Expand the checks here
+
   expect_true("psnu_uid" %in% colnames(datapack))
+  expect_true(!any(is.na(datapack)))
+  expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
+                    datapack$indicator_code))
 
   unzip(out$path, "notes.txt", exdir = t)
   saved_notes <- readLines(file.path(t, "notes.txt"))

@@ -25,3 +25,5 @@ plhiv_attend,PLHIV_Attend.T,PLHIV_Attend.T,,TRUE,4
 infections,NEW_INFECTIONS_SUBNAT.T2,NEW_INFECTIONS_SUBNAT.T2,,TRUE,5
 plhiv,PLHIV_Residents.T2,PLHIV_Residents.T2,,TRUE,5
 plhiv_attend,PLHIV_Attend.T2,PLHIV_Attend.T2,,TRUE,5
+circ_ever,ZayJeEa6pCa,VMMC_TOTALCIRC_SUBNAT.T_1,,TRUE,3
+circ_new,SSun4i7nHlV,VMMC_CIRC_SUBNAT.T_1,,TRUE,3
