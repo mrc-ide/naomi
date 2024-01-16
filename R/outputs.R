@@ -20,7 +20,7 @@ get_meta_indicator <- function() {
 
 
 
-add_stats <- function(df, mode = NULL, sample = NULL, prefix = "", na.rm = FALSE){
+add_stats <- function(df, mode = NULL, sample = NULL, prefix = "", na.rm = FALSE) {
 
   v <- df
 
@@ -982,16 +982,18 @@ save_output <- function(filename, dir,
   if (export_datapack) {
 
     if (!is.null(vmmc_path)) {
-      assert_scalar_character(vmmc_path)
       ## Skip the first row, the file has two rows of headers
-      vmmc_datapack <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
-                                           startRow = 2)
-      ## TODO: Add it to relevant place in download
+      vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
+                                               startRow = 2)
+      vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
+    } else {
+      vmmc_datapack <- NULL
     }
 
     write_datapack_csv(naomi_output = naomi_output,
                        path = PEPFAR_DATAPACK_FILENAME,   # global defined in R/pepfar-datapack.R
-                       psnu_level = naomi_output$fit$model_options$psnu_level)
+                       psnu_level = naomi_output$fit$model_options$psnu_level,
+                       dmppt2_output = vmmc_datapack)
   }
 
 
