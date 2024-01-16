@@ -1527,11 +1527,13 @@ agyw_generate_risk_populations <- function(naomi_output,
 #' Throw warning when area hierarchy in external AGYW resources read in from
 #'  `naomi.resources` do not match Naomi outputs used to update AGYW estimates.
 #'
-#'  @param naomi_output Naomi outputs.
+#'  @param outputs Naomi outputs.
 #'  @param options Naomi options.
+#'  @return Resource hierarchy
+#'  @keywords internal
 
 
-assert_agyw_resource_hierarchy <- function(naomi_output,
+assert_agyw_resource_hierarchy <- function(outputs,
                                            options){
 
   # iso3 from model options
