@@ -109,21 +109,6 @@ is_empty <- function(x) {
   length(x) == 0 || is.null(x) || is.na(x) || !nzchar(x)
 }
 
-area_level_from_id <- function(area_ids) {
-  ## Area ids are of format <iso3>_<area_level>_<area_num>
-  ## so we can split and return the 2nd
-  split_ids <- strsplit(area_ids, "_")
-  vnapply(split_ids, function(id)  {
-    if (length(id) == 1) {
-      ## This is our top level ID i.e. level = 0
-      level = 0
-    } else {
-      level = as.numeric(id[2])
-    }
-    level
-  })
-}
-
 #' Write list of data frames into an xlsx file
 #'
 #' @param template Path to xlsx file with empty sheets
