@@ -78,6 +78,11 @@ prepare_tmb_inputs <- function(naomi_data,
   A_vls_t1 <- create_survey_Amat(naomi_data$vls_t1_dat)
   A_recent_t1 <- create_survey_Amat(naomi_data$recent_t1_dat)
 
+  A_prev_t2 <- create_survey_Amat(naomi_data$prev_t2_dat)
+  A_artcov_t2 <- create_survey_Amat(naomi_data$artcov_t2_dat)
+  A_vls_t2 <- create_survey_Amat(naomi_data$vls_t2_dat)
+  A_recent_t2 <- create_survey_Amat(naomi_data$recent_t2_dat)
+
   ## ART attendance aggregation
   # Default model for ART attending: Anchor home district = add random effect for home district
 
@@ -173,7 +178,8 @@ prepare_tmb_inputs <- function(naomi_data,
 
   ## If no sex stratified prevalence data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$prev_t1_dat$sex)) {
+  if ( ! all(c("male", "female") %in% naomi_data$prev_t1_dat$sex) &&
+       ! all(c("male", "female") %in% naomi_data$prev_t2_dat$sex) ) {
     f_rho_xs <- ~0
   } else {
     f_rho_xs <- ~0 + area_idf
@@ -182,6 +188,7 @@ prepare_tmb_inputs <- function(naomi_data,
   ## If no sex stratified ART coverage data, don't estimate spatial variation in
   ## sex odds ratio
   if ( ! all(c("male", "female") %in% naomi_data$artcov_t1_dat$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artcov_t2_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
     f_alpha_xs <- ~0
@@ -211,7 +218,7 @@ prepare_tmb_inputs <- function(naomi_data,
   ##
 
   has_t1_art <- nrow(naomi_data$artcov_t1_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
-  has_t2_art <- nrow(naomi_data$artnum_t2_dat) > 0
+  has_t2_art <- nrow(naomi_data$artcov_t2_dat) > 0 | nrow(naomi_data$artnum_t2_dat) > 0
 
   if( !has_t1_art | !has_t2_art ) {
     f_alpha_t2 <- ~0
@@ -250,7 +257,8 @@ prepare_tmb_inputs <- function(naomi_data,
 
   ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
-  if(nrow(naomi_data$recent_t1_dat) == 0) {
+  if(nrow(naomi_data$recent_t1_dat) == 0 &&
+     nrow(naomi_data$recent_t2_dat) == 0) {
     f_lambda <- ~0
     f_lambda_x <- ~0
   } else {
@@ -357,6 +365,19 @@ prepare_tmb_inputs <- function(naomi_data,
     x_recent_t1 = naomi_data$recent_t1_dat$x_eff,
     n_recent_t1 = naomi_data$recent_t1_dat$n_eff,
     A_recent_t1 = A_recent_t1,
+    ##
+    x_prev_t2 = naomi_data$prev_t2_dat$x_eff,
+    n_prev_t2 = naomi_data$prev_t2_dat$n_eff,
+    A_prev_t2 = A_prev_t2,
+    x_artcov_t2 = naomi_data$artcov_t2_dat$x_eff,
+    n_artcov_t2 = naomi_data$artcov_t2_dat$n_eff,
+    A_artcov_t2 = A_artcov_t2,
+    x_vls_t2 = naomi_data$vls_t2_dat$x_eff,
+    n_vls_t2 = naomi_data$vls_t2_dat$n_eff,
+    A_vls_t2 = A_vls_t2,
+    x_recent_t2 = naomi_data$recent_t2_dat$x_eff,
+    n_recent_t2 = naomi_data$recent_t2_dat$n_eff,
+    A_recent_t2 = A_recent_t2,
     ##
     ## ANC testing input data
     x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,

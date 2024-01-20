@@ -350,6 +350,29 @@ naomi_objective_function_r <- function(d, p) {
   val <- val - sum(hhs_recent_t1_ll)
 
 
+  rho_obs_t2 <- as.vector(d$A_prev_t2 %*% plhiv_t2) / as.vector(d$A_prev_t2 %*% d$population_t2)
+  hhs_prev_t2_ll <-  ldbinom(d$x_prev_t2, d$n_prev_t2, rho_obs_t2)
+  val <- val - sum(hhs_prev_t2_ll)
+
+  alpha_obs_t2 <- as.vector(d$A_artcov_t2 %*% artnum_t2) / as.vector(d$A_artcov_t2 %*% plhiv_t2)
+  hhs_artcov_t2_ll <- ldbinom(d$x_artcov_t2, d$n_artcov_t2, alpha_obs_t2)
+  val <- val - sum(hhs_artcov_t2_ll)
+
+  vls_obs_t2 <- nu * as.vector(d$A_vls_t2 %*% artnum_t2) / as.vector(d$A_vls_t2 %*% plhiv_t2)
+  hhs_vls_t2_ll <- ldbinom(d$x_vls_t2, d$n_vls_t2, vls_obs_t2)
+  val <- val - sum(hhs_vls_t2_ll)
+
+  pR_infections_obs_t2 <- as.vector(d$A_recent_t2 %*% infections_t2)
+  pR_plhiv_obs_t2 <- as.vector(d$A_recent_t2 %*% plhiv_t2)
+  pR_population_obs_t2 <- as.vector(d$A_recent_t2 %*% d$population_t2)
+  pR_lambda_obs_t2 <- pR_infections_obs_t2 / (pR_population_obs_t2 - pR_plhiv_obs_t2)
+  pR_rho_obs_t2 <- pR_plhiv_obs_t2 / pR_population_obs_t2
+  pR_t2<- 1.0 - exp(-(pR_lambda_obs_t2 * (1.0 - pR_rho_obs_t2) / pR_rho_obs_t2 *
+                        (OmegaT - betaT * d$ritaT) + betaT))
+  hhs_recent_t2_ll <- ldbinom(d$x_recent_t2, d$n_recent_t2, pR_t2)
+  val <- val - sum(hhs_recent_t2_ll)
+
+
   ## ANC prevalence and ART coverage model
   ## Note: currently this operates on the entire population vector, producing
   ##       lots of zeros for males and female age groups not exposed to fertility.
@@ -836,7 +859,11 @@ naomi_objective_function_r <- function(d, p) {
   report_likelihood <- list(hhs_prev_t1_ll        = hhs_prev_t1_ll,
                             hhs_artcov_t1_ll      = hhs_artcov_t1_ll,
                             hhs_vls_t1_ll         = hhs_vls_t1_ll,
-                            hhs_recent_t1_ll      = hhs_recent_t1_ll,                            
+                            hhs_recent_t1_ll      = hhs_recent_t1_ll,
+                            hhs_prev_t2_ll        = hhs_prev_t2_ll,
+                            hhs_artcov_t2_ll      = hhs_artcov_t2_ll,
+                            hhs_vls_t2_ll         = hhs_vls_t2_ll,
+                            hhs_recent_t2_ll      = hhs_recent_t2_ll,                            
                             artnum_t2_ll          = artnum_t2_ll,
                             artnum_t1_ll          = artnum_t1_ll,
                             anc_rho_obs_t1_ll     = anc_rho_obs_t1_ll,

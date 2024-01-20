@@ -134,7 +134,7 @@ naomi_data <- select_naomi_data(naomi_mf = naomi_mf,
                                 anc_prev_year_t1 = hintr_options$anc_prevalence_year1,
                                 anc_prev_year_t2 = hintr_options$anc_prevalence_year2,
                                 anc_artcov_year_t1 = hintr_options$anc_art_coverage_year1,
-                                anc_artcov_year_t2 = hintr_options$anc_art_coverage_year1)
+                                anc_artcov_year_t2 = hintr_options$anc_art_coverage_year2)
 
 
 #' 5. Fit model

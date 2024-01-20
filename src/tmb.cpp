@@ -144,7 +144,24 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(n_recent_t1);
   DATA_VECTOR(x_recent_t1);
   DATA_SPARSE_MATRIX(A_recent_t1);
+
   
+  DATA_VECTOR(n_prev_t2);
+  DATA_VECTOR(x_prev_t2);
+  DATA_SPARSE_MATRIX(A_prev_t2);
+
+  DATA_VECTOR(n_artcov_t2);
+  DATA_VECTOR(x_artcov_t2);
+  DATA_SPARSE_MATRIX(A_artcov_t2);
+
+  DATA_VECTOR(n_vls_t2);
+  DATA_VECTOR(x_vls_t2);
+  DATA_SPARSE_MATRIX(A_vls_t2);
+
+  DATA_VECTOR(n_recent_t2);
+  DATA_VECTOR(x_recent_t2);
+  DATA_SPARSE_MATRIX(A_recent_t2);
+
 
   // ANC data
 
@@ -600,6 +617,29 @@ Type objective_function<Type>::operator() ()
   vector<Type> hhs_recent_t1_ll = dbinom(x_recent_t1, n_recent_t1, pR_t1, true);
   val -= sum(hhs_recent_t1_ll);
 
+
+  vector<Type> rho_obs_t2((A_prev_t2 * plhiv_t2) / (A_prev_t2 * population_t2));
+  vector<Type> hhs_prev_t2_ll = dbinom(x_prev_t2, n_prev_t2, rho_obs_t2, true);
+  val -= sum(hhs_prev_t2_ll);
+
+  vector<Type> alpha_obs_t2((A_artcov_t2 * artnum_t2) / (A_artcov_t2 * plhiv_t2));
+  vector<Type> hhs_artcov_t2_ll = dbinom(x_artcov_t2, n_artcov_t2, alpha_obs_t2, true);
+  val -= sum(hhs_artcov_t2_ll);
+
+  vector<Type> vls_obs_t2(nu * (A_vls_t2 * artnum_t2) / (A_vls_t2 * plhiv_t2));
+  vector<Type> hhs_vls_t2_ll = dbinom(x_vls_t2, n_vls_t2, vls_obs_t2, true);
+  val -= sum(hhs_vls_t2_ll);
+
+  vector<Type> pR_infections_obs_t2(A_recent_t2 * infections_t2);
+  vector<Type> pR_plhiv_obs_t2(A_recent_t2 * plhiv_t2);
+  vector<Type> pR_population_obs_t2(A_recent_t2 * population_t2);
+  vector<Type> pR_lambda_obs_t2(pR_infections_obs_t2 / (pR_population_obs_t2 - pR_plhiv_obs_t2));
+  vector<Type> pR_rho_obs_t2(pR_plhiv_obs_t2 / pR_population_obs_t2);
+  vector<Type> pR_t2(1.0 - exp(-(pR_lambda_obs_t2 * (1.0 - pR_rho_obs_t2) / pR_rho_obs_t2 *
+				 (OmegaT - betaT * ritaT) + betaT)));
+  vector<Type> hhs_recent_t2_ll = dbinom(x_recent_t2, n_recent_t2, pR_t2, true);
+  val -= sum(hhs_recent_t2_ll);
+  
 
   // ANC prevalence and ART coverage model
   // Note: currently this operates on the entire population vector, producing
@@ -1147,6 +1187,10 @@ Type objective_function<Type>::operator() ()
     REPORT(hhs_artcov_t1_ll);
     REPORT(hhs_vls_t1_ll);
     REPORT(hhs_recent_t1_ll);
+    REPORT(hhs_prev_t2_ll);
+    REPORT(hhs_artcov_t2_ll);
+    REPORT(hhs_vls_t2_ll);
+    REPORT(hhs_recent_t2_ll);    
     REPORT(artnum_t2_ll);
     REPORT(artnum_t1_ll);
     REPORT(anc_rho_obs_t1_ll);
