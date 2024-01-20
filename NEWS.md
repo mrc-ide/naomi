@@ -1,3 +1,8 @@
+# naomi 2.10.0
+
+* Implement survey data at T1 and T2.
+
+
 # naomi 2.9.19
 
 * Add optional `vmmc_path` to Spectrum download function for path to DMMPT2 output Excel file.

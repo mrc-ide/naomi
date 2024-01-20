@@ -73,10 +73,10 @@ prepare_tmb_inputs <- function(naomi_data,
   A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat)
   A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat)
 
-  A_prev <- create_survey_Amat(naomi_data$prev_dat)
-  A_artcov <- create_survey_Amat(naomi_data$artcov_dat)
-  A_vls <- create_survey_Amat(naomi_data$vls_dat)
-  A_recent <- create_survey_Amat(naomi_data$recent_dat)
+  A_prev_t1 <- create_survey_Amat(naomi_data$prev_t1_dat)
+  A_artcov_t1 <- create_survey_Amat(naomi_data$artcov_t1_dat)
+  A_vls_t1 <- create_survey_Amat(naomi_data$vls_t1_dat)
+  A_recent_t1 <- create_survey_Amat(naomi_data$recent_t1_dat)
 
   ## ART attendance aggregation
   # Default model for ART attending: Anchor home district = add random effect for home district
@@ -173,7 +173,7 @@ prepare_tmb_inputs <- function(naomi_data,
 
   ## If no sex stratified prevalence data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$prev_dat$sex)) {
+  if ( ! all(c("male", "female") %in% naomi_data$prev_t1_dat$sex)) {
     f_rho_xs <- ~0
   } else {
     f_rho_xs <- ~0 + area_idf
@@ -181,7 +181,7 @@ prepare_tmb_inputs <- function(naomi_data,
 
   ## If no sex stratified ART coverage data, don't estimate spatial variation in
   ## sex odds ratio
-  if ( ! all(c("male", "female") %in% naomi_data$artcov_dat$sex) &&
+  if ( ! all(c("male", "female") %in% naomi_data$artcov_t1_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
     f_alpha_xs <- ~0
@@ -210,7 +210,7 @@ prepare_tmb_inputs <- function(naomi_data,
   ## T1 ART data may be either survey or programme
   ##
 
-  has_t1_art <- nrow(naomi_data$artcov_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
+  has_t1_art <- nrow(naomi_data$artcov_t1_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
   has_t2_art <- nrow(naomi_data$artnum_t2_dat) > 0
 
   if( !has_t1_art | !has_t2_art ) {
@@ -250,7 +250,7 @@ prepare_tmb_inputs <- function(naomi_data,
 
   ## If no recent infection data, do not estimate incidence sex ratio or
   ## district random effects
-  if(nrow(naomi_data$recent_dat) == 0) {
+  if(nrow(naomi_data$recent_t1_dat) == 0) {
     f_lambda <- ~0
     f_lambda_x <- ~0
   } else {
@@ -345,18 +345,18 @@ prepare_tmb_inputs <- function(naomi_data,
     X_paed_lambda_ratio_t5 = X_paed_lambda_ratio_t5,
     ##
     ## Household survey input data
-    x_prev = naomi_data$prev_dat$x_eff,
-    n_prev = naomi_data$prev_dat$n_eff,
-    A_prev = A_prev,
-    x_artcov = naomi_data$artcov_dat$x_eff,
-    n_artcov = naomi_data$artcov_dat$n_eff,
-    A_artcov = A_artcov,
-    x_vls = naomi_data$vls_dat$x_eff,
-    n_vls = naomi_data$vls_dat$n_eff,
-    A_vls = A_vls,
-    x_recent = naomi_data$recent_dat$x_eff,
-    n_recent = naomi_data$recent_dat$n_eff,
-    A_recent = A_recent,
+    x_prev_t1 = naomi_data$prev_t1_dat$x_eff,
+    n_prev_t1 = naomi_data$prev_t1_dat$n_eff,
+    A_prev_t1 = A_prev_t1,
+    x_artcov_t1 = naomi_data$artcov_t1_dat$x_eff,
+    n_artcov_t1 = naomi_data$artcov_t1_dat$n_eff,
+    A_artcov_t1 = A_artcov_t1,
+    x_vls_t1 = naomi_data$vls_t1_dat$x_eff,
+    n_vls_t1 = naomi_data$vls_t1_dat$n_eff,
+    A_vls_t1 = A_vls_t1,
+    x_recent_t1 = naomi_data$recent_t1_dat$x_eff,
+    n_recent_t1 = naomi_data$recent_t1_dat$n_eff,
+    A_recent_t1 = A_recent_t1,
     ##
     ## ANC testing input data
     x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,

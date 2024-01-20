@@ -188,9 +188,9 @@ test_that("use_survey_aggregate option affects selected data", {
   )
 
   naomi_data_aggregate <- naomi_prepare_data(input_data_aggregate, options_aggregate)
-  expect_equal(nrow(naomi_data_aggregate$prev_dat), 3)
-  expect_equal(nrow(naomi_data_aggregate$artcov_dat), 2)
-  expect_equal(nrow(naomi_data_aggregate$recent_dat), 1)
+  expect_equal(nrow(naomi_data_aggregate$prev_t1_dat), 3)
+  expect_equal(nrow(naomi_data_aggregate$artcov_t1_dat), 2)
+  expect_equal(nrow(naomi_data_aggregate$recent_t1_dat), 1)
 
   ## Aggregate data with standard model options -- returns no data and an error.
   expect_error(

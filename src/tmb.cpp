@@ -122,21 +122,31 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(Q_x);
   DATA_SCALAR(Q_x_rankdef);
 
-  DATA_VECTOR(n_prev);
-  DATA_VECTOR(x_prev);
-  DATA_SPARSE_MATRIX(A_prev);
+  
+  // /////////////////////
+  // // Likelihood data //
+  // /////////////////////
+  
+  // Survey data
+  
+  DATA_VECTOR(n_prev_t1);
+  DATA_VECTOR(x_prev_t1);
+  DATA_SPARSE_MATRIX(A_prev_t1);
 
-  DATA_VECTOR(n_artcov);
-  DATA_VECTOR(x_artcov);
-  DATA_SPARSE_MATRIX(A_artcov);
+  DATA_VECTOR(n_artcov_t1);
+  DATA_VECTOR(x_artcov_t1);
+  DATA_SPARSE_MATRIX(A_artcov_t1);
 
-  DATA_VECTOR(n_vls);
-  DATA_VECTOR(x_vls);
-  DATA_SPARSE_MATRIX(A_vls);
+  DATA_VECTOR(n_vls_t1);
+  DATA_VECTOR(x_vls_t1);
+  DATA_SPARSE_MATRIX(A_vls_t1);
 
-  DATA_VECTOR(n_recent);
-  DATA_VECTOR(x_recent);
-  DATA_SPARSE_MATRIX(A_recent);
+  DATA_VECTOR(n_recent_t1);
+  DATA_VECTOR(x_recent_t1);
+  DATA_SPARSE_MATRIX(A_recent_t1);
+  
+
+  // ANC data
 
   DATA_VECTOR(x_anc_clients_t2);
   DATA_VECTOR(offset_anc_clients_t2);
@@ -158,6 +168,8 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(x_anc_artcov_t2);
   DATA_SPARSE_MATRIX(A_anc_artcov_t2);
 
+  // ART programme data
+  
   DATA_SPARSE_MATRIX(A_artattend_t1);
   DATA_VECTOR(x_artnum_t1);
 
@@ -566,25 +578,27 @@ Type objective_function<Type>::operator() ()
 
   // likelihood for household survey data
 
-  vector<Type> rho_obs_t1((A_prev * plhiv_t1) / (A_prev * population_t1));
-  vector<Type> hhs_prev_ll = dbinom(x_prev, n_prev, rho_obs_t1, true);
-  val -= sum(hhs_prev_ll);
+  vector<Type> rho_obs_t1((A_prev_t1 * plhiv_t1) / (A_prev_t1 * population_t1));
+  vector<Type> hhs_prev_t1_ll = dbinom(x_prev_t1, n_prev_t1, rho_obs_t1, true);
+  val -= sum(hhs_prev_t1_ll);
 
-  vector<Type> alpha_obs_t1((A_artcov * artnum_t1) / (A_artcov * plhiv_t1));
-  vector<Type> hhs_artcov_ll = dbinom(x_artcov, n_artcov, alpha_obs_t1, true);
-  val -= sum(hhs_artcov_ll);
+  vector<Type> alpha_obs_t1((A_artcov_t1 * artnum_t1) / (A_artcov_t1 * plhiv_t1));
+  vector<Type> hhs_artcov_t1_ll = dbinom(x_artcov_t1, n_artcov_t1, alpha_obs_t1, true);
+  val -= sum(hhs_artcov_t1_ll);
 
-  vector<Type> vls_obs_t1(nu * (A_vls * artnum_t1) / (A_vls * plhiv_t1));
-  val -= dbinom(x_vls, n_vls, vls_obs_t1, true).sum();
+  vector<Type> vls_obs_t1(nu * (A_vls_t1 * artnum_t1) / (A_vls_t1 * plhiv_t1));
+  vector<Type> hhs_vls_t1_ll = dbinom(x_vls_t1, n_vls_t1, vls_obs_t1, true);
+  val -= sum(hhs_vls_t1_ll);
 
-  vector<Type> pR_infections_obs_t1(A_recent * infections_t1);
-  vector<Type> pR_plhiv_obs_t1(A_recent * plhiv_t1);
-  vector<Type> pR_population_obs_t1(A_recent * population_t1);
+  vector<Type> pR_infections_obs_t1(A_recent_t1 * infections_t1);
+  vector<Type> pR_plhiv_obs_t1(A_recent_t1 * plhiv_t1);
+  vector<Type> pR_population_obs_t1(A_recent_t1 * population_t1);
   vector<Type> pR_lambda_obs_t1(pR_infections_obs_t1 / (pR_population_obs_t1 - pR_plhiv_obs_t1));
   vector<Type> pR_rho_obs_t1(pR_plhiv_obs_t1 / pR_population_obs_t1);
-  vector<Type> pR(1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
-			      (OmegaT - betaT * ritaT) + betaT)));
-  val -= dbinom(x_recent, n_recent, pR, true).sum();
+  vector<Type> pR_t1(1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
+				 (OmegaT - betaT * ritaT) + betaT)));
+  vector<Type> hhs_recent_t1_ll = dbinom(x_recent_t1, n_recent_t1, pR_t1, true);
+  val -= sum(hhs_recent_t1_ll);
 
 
   // ANC prevalence and ART coverage model
@@ -1129,8 +1143,10 @@ Type objective_function<Type>::operator() ()
 
   if(report_likelihood){
 
-    REPORT(hhs_prev_ll);
-    REPORT(hhs_artcov_ll);
+    REPORT(hhs_prev_t1_ll);
+    REPORT(hhs_artcov_t1_ll);
+    REPORT(hhs_vls_t1_ll);
+    REPORT(hhs_recent_t1_ll);
     REPORT(artnum_t2_ll);
     REPORT(artnum_t1_ll);
     REPORT(anc_rho_obs_t1_ll);

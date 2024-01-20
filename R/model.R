@@ -805,10 +805,10 @@ naomi_model_frame <- function(area_merged,
 #' @param survey_hiv_indicators Data frame of survey estimates, or NULL to exclude any survey data.
 #' @param anc_testing Data frame of ANC routine testing outcomes, or NULL to exclude any ANC data.
 #' @param art_number Data frame of number currently receiving ART, or NULL to exclude any ART data.
-#' @param prev_survey_ids A character vector of `survey_id`s for prevalence data.
-#' @param artcov_survey_ids A character vector of `survey_id`s for ART coverage data.
-#' @param recent_survey_ids A character vector of `survey_id`s for recent HIV infection status.
-#' @param vls_survey_ids A character vector of `survey_id`s for survey VLS among all HIV+ persons.
+#' @param prev_survey_ids_t1 A character vector of `survey_id`s for prevalence data at T1.
+#' @param artcov_survey_ids_t1 A character vector of `survey_id`s for ART coverage data at T1.
+#' @param recent_survey_ids_t1 A character vector of `survey_id`s for recent HIV infection status at T1.
+#' @param vls_survey_ids_t1 A character vector of `survey_id`s for survey VLS among all HIV+ personsat T1.
 #' @param artnum_calendar_quarter_t1 Calendar quarter for first time point for number on ART.
 #' @param artnum_calendar_quarter_t2 Calendar quarter for second time point for number on ART.
 #' @param anc_clients_year_t2 Calendar year (possibly multiple) for number of ANC clients at year 2.
@@ -849,10 +849,10 @@ select_naomi_data <- function(
   survey_hiv_indicators,
   anc_testing,
   art_number,
-  prev_survey_ids,
-  artcov_survey_ids,
-  recent_survey_ids,
-  vls_survey_ids = NULL,
+  prev_survey_ids_t1,
+  artcov_survey_ids_t1,
+  recent_survey_ids_t1,
+  vls_survey_ids_t1 = NULL,
   artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
   artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
   anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(
@@ -936,55 +936,55 @@ select_naomi_data <- function(
     }
   }
 
-  common_surveys <- intersect(artcov_survey_ids, vls_survey_ids)
+  common_surveys <- intersect(artcov_survey_ids_t1, vls_survey_ids_t1)
   if (length(common_surveys)) {
     stop(t_("ART_COV_AND_VLS_SAME_SURVEY",
             list(survey_ids = paste(common_surveys, collapse = ", ")),
             count = length(common_surveys)))
   }
 
-  survey_prev_tagged <- survey_mf(survey_ids = prev_survey_ids,
-                                 indicator = "prevalence",
-                                 survey_hiv_indicators = survey_hiv_indicators,
-                                 naomi_mf = naomi_mf,
-                                 use_kish = use_kish_prev,
-                                 deff = deff_prev,
-                                 use_aggregate = use_survey_aggregate)
-
-
-
-  if (nrow(survey_prev_tagged$model_input) == 0) {
+  survey_prev_tagged_t1 <- survey_mf(survey_ids = prev_survey_ids_t1,
+                                     indicator = "prevalence",
+                                     survey_hiv_indicators = survey_hiv_indicators,
+                                     naomi_mf = naomi_mf,
+                                     use_kish = use_kish_prev,
+                                     deff = deff_prev,
+                                     use_aggregate = use_survey_aggregate)
+  
+  
+  
+  if (nrow(survey_prev_tagged_t1$model_input) == 0) {
     stop("No prevalence survey data found for survey: ",
-         paste0(prev_survey_ids, collapse = ", "),
+         paste0(prev_survey_ids_t1, collapse = ", "),
          ". Prevalence data are required for Naomi. Check your selections.")
   }
-
-  survey_artcov_tagged <- survey_mf(survey_ids = artcov_survey_ids,
+  
+  survey_artcov_tagged_t1 <- survey_mf(survey_ids = artcov_survey_ids_t1,
                                    indicator = "art_coverage",
                                    survey_hiv_indicators = survey_hiv_indicators,
                                    naomi_mf = naomi_mf,
                                    use_kish = use_kish_artcov,
                                    deff = deff_artcov,
                                    use_aggregate = use_survey_aggregate)
+  
+  survey_recent_tagged_t1 <- survey_mf(survey_ids = recent_survey_ids_t1,
+                                       indicator = "recent_infected",
+                                       survey_hiv_indicators = survey_hiv_indicators,
+                                       naomi_mf = naomi_mf,
+                                       use_kish = use_kish_recent,
+                                       deff = deff_recent,
+                                       min_age = 15,
+                                       max_age = 80,
+                                       use_aggregate = use_survey_aggregate)
 
-  survey_recent_tagged <- survey_mf(survey_ids = recent_survey_ids,
-                                   indicator = "recent_infected",
-                                   survey_hiv_indicators = survey_hiv_indicators,
-                                   naomi_mf = naomi_mf,
-                                   use_kish = use_kish_recent,
-                                   deff = deff_recent,
-                                   min_age = 15,
-                                   max_age = 80,
-                                   use_aggregate = use_survey_aggregate)
 
-
-  survey_vls_tagged <- survey_mf(survey_ids = vls_survey_ids,
-                                indicator = "viral_suppression_plhiv",
-                                survey_hiv_indicators = survey_hiv_indicators,
-                                naomi_mf = naomi_mf,
-                                use_kish = use_kish_vls,
-                                deff = deff_vls,
-                                use_aggregate = use_survey_aggregate)
+  survey_vls_tagged_t1 <- survey_mf(survey_ids = vls_survey_ids_t1,
+                                    indicator = "viral_suppression_plhiv",
+                                    survey_hiv_indicators = survey_hiv_indicators,
+                                    naomi_mf = naomi_mf,
+                                    use_kish = use_kish_vls,
+                                    deff = deff_vls,
+                                    use_aggregate = use_survey_aggregate)
 
   # Meta areas
   meta_areas <- naomi_mf$areas %>%
@@ -1066,10 +1066,10 @@ select_naomi_data <- function(
 
 
   # Add data into naomi_mf
-  naomi_mf$prev_dat <- survey_prev_tagged$model_input
-  naomi_mf$artcov_dat <- survey_artcov_tagged$model_input
-  naomi_mf$recent_dat <- survey_recent_tagged$model_input
-  naomi_mf$vls_dat <- survey_vls_tagged$model_input
+  naomi_mf$prev_t1_dat <- survey_prev_tagged_t1$model_input
+  naomi_mf$artcov_t1_dat <- survey_artcov_tagged_t1$model_input
+  naomi_mf$recent_t1_dat <- survey_recent_tagged_t1$model_input
+  naomi_mf$vls_t1_dat <- survey_vls_tagged_t1$model_input
 
   naomi_mf$anc_prev_t1_dat <- anc_prev_t1_dat
   naomi_mf$anc_artcov_t1_dat <- anc_artcov_t1_dat
@@ -1082,18 +1082,18 @@ select_naomi_data <- function(
 
 
   naomi_mf <- update_mf_offsets(naomi_mf,
-                                naomi_mf$prev_dat,
-                                naomi_mf$artcov_dat,
-                                naomi_mf$vls_dat)
+                                naomi_mf$prev_t1_dat,
+                                naomi_mf$artcov_t1_dat,
+                                naomi_mf$vls_t1_dat)
 
   surv_df <- survey_hiv_indicators
   data_options <- list(prev_survey_available = unique(surv_df$survey_id[surv_df$indicator == "prevalence"]),
                        prev_survey_available_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$indicator == "prevalence"]),
                        artcov_survey_available = unique(surv_df$survey_id[surv_df$indicator == "art_coverage"]),
-                       prev_survey_ids = prev_survey_ids,
-                       prev_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids]),
-                       artcov_survey_ids = artcov_survey_ids,
-                       artcov_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% artcov_survey_ids]),
+                       prev_survey_ids_t1 = prev_survey_ids_t1,
+                       prev_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids_t1]),
+                       artcov_survey_ids_t1= artcov_survey_ids_t1,
+                       artcov_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% artcov_survey_ids_t1]),
                        artnum_calendar_quarter_t1 = artnum_calendar_quarter_t1,
                        artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
                        anc_prev_year_t1 = anc_artcov_year_t1,
@@ -1104,10 +1104,10 @@ select_naomi_data <- function(
   naomi_mf$data_options <- data_options
 
   # Combine and add full tagged data
-  survey_full_mf <- rbind(survey_prev_tagged$raw_input,
-                          survey_artcov_tagged$raw_input,
-                          survey_recent_tagged$raw_input,
-                          survey_vls_tagged$raw_input) %>%
+  survey_full_mf <- rbind(survey_prev_tagged_t1$raw_input,
+                          survey_artcov_tagged_t1$raw_input,
+                          survey_recent_tagged_t1$raw_input,
+                          survey_vls_tagged_t1$raw_input) %>%
     dplyr::left_join(meta_areas, by = "area_id") %>%
     dplyr::arrange(area_level, area_id, survey_id, survey_mid_calendar_quarter)%>%
     dplyr::select(-c(area_level))

@@ -327,25 +327,27 @@ naomi_objective_function_r <- function(d, p) {
 
   ## likelihood for household survey data
 
-  rho_obs_t1 <- as.vector(d$A_prev %*% plhiv_t1) / as.vector(d$A_prev %*% d$population_t1)
-  hhs_prev_ll <-  ldbinom(d$x_prev, d$n_prev, rho_obs_t1)
-  val <- val - sum(hhs_prev_ll)
+  rho_obs_t1 <- as.vector(d$A_prev_t1 %*% plhiv_t1) / as.vector(d$A_prev_t1 %*% d$population_t1)
+  hhs_prev_t1_ll <-  ldbinom(d$x_prev_t1, d$n_prev_t1, rho_obs_t1)
+  val <- val - sum(hhs_prev_t1_ll)
 
-  alpha_obs_t1 <- as.vector(d$A_artcov %*% artnum_t1) / as.vector(d$A_artcov %*% plhiv_t1)
-  hhs_artcov_ll <- ldbinom(d$x_artcov, d$n_artcov, alpha_obs_t1)
-  val <- val - sum(hhs_artcov_ll)
+  alpha_obs_t1 <- as.vector(d$A_artcov_t1 %*% artnum_t1) / as.vector(d$A_artcov_t1 %*% plhiv_t1)
+  hhs_artcov_t1_ll <- ldbinom(d$x_artcov_t1, d$n_artcov_t1, alpha_obs_t1)
+  val <- val - sum(hhs_artcov_t1_ll)
 
-  vls_obs_t1 <- nu * as.vector(d$A_vls %*% artnum_t1) / as.vector(d$A_vls %*% plhiv_t1)
-  val <- val - sum(ldbinom(d$x_vls, d$n_vls, vls_obs_t1))
+  vls_obs_t1 <- nu * as.vector(d$A_vls_t1 %*% artnum_t1) / as.vector(d$A_vls_t1 %*% plhiv_t1)
+  hhs_vls_t1_ll <- ldbinom(d$x_vls_t1, d$n_vls_t1, vls_obs_t1)
+  val <- val - sum(hhs_vls_t1_ll)
 
-  pR_infections_obs_t1 <- as.vector(d$A_recent %*% infections_t1)
-  pR_plhiv_obs_t1 <- as.vector(d$A_recent %*% plhiv_t1)
-  pR_population_obs_t1 <- as.vector(d$A_recent %*% d$population_t1)
+  pR_infections_obs_t1 <- as.vector(d$A_recent_t1 %*% infections_t1)
+  pR_plhiv_obs_t1 <- as.vector(d$A_recent_t1 %*% plhiv_t1)
+  pR_population_obs_t1 <- as.vector(d$A_recent_t1 %*% d$population_t1)
   pR_lambda_obs_t1 <- pR_infections_obs_t1 / (pR_population_obs_t1 - pR_plhiv_obs_t1)
   pR_rho_obs_t1 <- pR_plhiv_obs_t1 / pR_population_obs_t1
-  pR <- 1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
-                      (OmegaT - betaT * d$ritaT) + betaT))
-  val <- val - sum(ldbinom(d$x_recent, d$n_recent, pR))
+  pR_t1<- 1.0 - exp(-(pR_lambda_obs_t1 * (1.0 - pR_rho_obs_t1) / pR_rho_obs_t1 *
+                        (OmegaT - betaT * d$ritaT) + betaT))
+  hhs_recent_t1_ll <- ldbinom(d$x_recent_t1, d$n_recent_t1, pR_t1)
+  val <- val - sum(hhs_recent_t1_ll)
 
 
   ## ANC prevalence and ART coverage model
@@ -831,8 +833,10 @@ naomi_objective_function_r <- function(d, p) {
                     plhiv_attend_t5_out            = plhiv_attend_t5_out,
                     infections_t5_out              = infections_t5_out)
   
-  report_likelihood <- list(hhs_prev_ll           = hhs_prev_ll,
-                            hhs_artcov_ll         = hhs_artcov_ll,
+  report_likelihood <- list(hhs_prev_t1_ll        = hhs_prev_t1_ll,
+                            hhs_artcov_t1_ll      = hhs_artcov_t1_ll,
+                            hhs_vls_t1_ll         = hhs_vls_t1_ll,
+                            hhs_recent_t1_ll      = hhs_recent_t1_ll,                            
                             artnum_t2_ll          = artnum_t2_ll,
                             artnum_t1_ll          = artnum_t1_ll,
                             anc_rho_obs_t1_ll     = anc_rho_obs_t1_ll,
