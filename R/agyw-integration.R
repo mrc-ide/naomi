@@ -87,12 +87,57 @@ agyw_format_naomi <- function(outputs, options){
                                           TRUE ~ NA_character_),
                   indicator = "Incicategory")
 
-  # Incidence for all age groups + sexes
-  df5 <- naomi_ind_labelled %>%
-    dplyr::filter(indicator == "incidence", age_group == "Y000_999", sex == "both",
+  # New infections for all age groups + sexes
+  df5 <- naomi_ind %>%
+    dplyr::filter(indicator == "infections", age_group == "Y000_999", sex == "both",
                   area_level == options$area_level)
 
-  country <- outputs$meta_area$area_name[outputs$meta_area$area_id == options$area_scope]
+  # Not all country names in meta_area match the country names in the spreadsheet - need
+  # to match to populate tabs
+  # country <- outputs$meta_area$area_name[outputs$meta_area$area_id == options$area_scope]
+  country <- dplyr::mutate(data.frame(iso3 = options$area_scope),
+                           country = fct_recode(iso3,
+                                             "Botswana" = "BWA",
+                                             "Cameroon" = "CMR",
+                                             "Kenya" = "KEN",
+                                             "Lesotho" = "LSO",
+                                             "Mozambique" = "MOZ",
+                                             "Malawi" = "MWI",
+                                             "Namibia" = "NAM",
+                                             "Eswatini" = "SWZ",
+                                             "Tanzania" = "TZA",
+                                             "Uganda" = "UGA",
+                                             "South Africa" = "ZAF",
+                                             "Zambia" = "ZMB",
+                                             "Zimbabwe" = "ZWE",
+                                             "Angola" = "AGO",
+                                             "Burundi" = "BDI",
+                                             "Democratic Republic of the Congo" = "COD",
+                                             "Gabon" = "GAB",
+                                             "Rwanda" = "RWA",
+                                             "Ethiopia" = "ETH",
+                                             "Haiti" = "HTI",
+                                             "Chad" = "TCD",
+                                             "Cote D'Ivoire" = "CIV",
+                                             "Ghana" = "GHA",
+                                             "Guinea" = "GIN",
+                                             "Liberia" = "LBR",
+                                             "Mali" = "MLI",
+                                             "Niger" = "NER",
+                                             "Sierra Leone" = "SLE",
+                                             "Togo" = "TGO",
+                                             "Burkina Faso" = "BFA",
+                                             "Congo" = "COG",
+                                             "Benin" = "BEN",
+                                             "Central African Republic" = "CAF",
+                                             "The Gambia" = "GMB",
+                                             "Guinea bissau" = "GNB",
+                                             "Equatorial Guinea" = "GNQ",
+                                             "Niger" = "NER",
+                                             "Nigeria" = "NGA",
+                                             "Senegal" = "SEN"))
+
+
 
 
   # Format
@@ -101,7 +146,7 @@ agyw_format_naomi <- function(outputs, options){
   tidyr::pivot_wider(id_cols = c(area_id,area_name),
                      names_from = c(indicator,age_group_label,sex),
                      names_sep = "", values_from = mean) %>%
-    dplyr::mutate(Country = country, newAll = df5$mean) %>%
+    dplyr::mutate(Country = country$country[1], newAll = df5$mean) %>%
     dplyr::select(Country,area_id,area_name,`Pop15-24all`,`Pop15-24f`,`Pop15-24m`,
                   `PLHIV15-24all`,`PLHIV15-24f`,`PLHIV15-24m`,
                   newAll, `new15-24all`,`new15-24f`,`new15-24m`,
@@ -142,6 +187,17 @@ agyw_format_naomi <- function(outputs, options){
                   `PLHIV15-49all`,`PLHIV15-49f`,`PLHIV15-49m`,
                   `new15-49all`,`new15-49f`,`new15-49m`,
                   `Inci15-49f`,`Incicategory15-49f`,`Inci15-49m`,`Incicategory15-49m`)
+
+  ## Clean up area names and Country names
+  if(options$area_scope=="AGO") {
+    naomi_wide$area_name <- stringr::str_to_title(naomi_wide$area_name)
+  }
+  if(options$area_scope=="COD") {
+    naomi_wide$Country <- "Democratic Republic of the Congo"
+  }
+  if(options$area_scope %in% c("TCD","GIN")) {
+    naomi_wide$area_name <- iconv(naomi_wide$area_name, from="UTF-8",to="LATIN1")
+  }
 
   v <- list(naomi_long = df2,
             naomi_wide = naomi_wide)
@@ -1080,8 +1136,8 @@ agyw_calculate_incidence_female <- function(naomi_output,
 
   rr_sexpaid12m <- rr_reg_dat$rr_sexpaid12m
   # This gives implausibly high RRs for very low districts (e.g. IRR = 297!)
-  # capping at 100
-  rr_sexpaid12m[rr_sexpaid12m > 100] <- 100
+  # capping at 35
+  rr_sexpaid12m[rr_sexpaid12m > 35] <- 35
 
   # TODO: Get distributions on these and using a sampling method to get
   # uncertainty in economic analysis e.g.
@@ -1200,7 +1256,7 @@ agyw_calculate_incidence_female <- function(naomi_output,
                   iso3, area_level,
                   population, plhiv, infections, incidence, incidence_cat,
                   prev_nosex12m, prev_sexcohab, prev_sexnonreg, prev_sexpaid12m,
-                  rr_sexpaid12m, rr_sexnonreg,
+                  rr_sexpaid12m, # rr_sexnonreg,
                   population_nosex12m, population_sexcohab,
                   population_sexnonreg, population_sexpaid12m,
                   plhiv_nosex12m, plhiv_sexcohab,
