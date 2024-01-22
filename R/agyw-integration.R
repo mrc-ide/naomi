@@ -88,57 +88,56 @@ agyw_format_naomi <- function(outputs, options){
                   indicator = "Incicategory")
 
   # New infections for all age groups + sexes
-  df5 <- naomi_ind %>%
+  df5 <- naomi_ind_labelled %>%
     dplyr::filter(indicator == "infections", age_group == "Y000_999", sex == "both",
                   area_level == options$area_level)
 
   # Not all country names in meta_area match the country names in the spreadsheet - need
   # to match to populate tabs
-  # country <- outputs$meta_area$area_name[outputs$meta_area$area_id == options$area_scope]
-  country <- dplyr::mutate(data.frame(iso3 = options$area_scope),
-                           country = fct_recode(iso3,
-                                             "Botswana" = "BWA",
-                                             "Cameroon" = "CMR",
-                                             "Kenya" = "KEN",
-                                             "Lesotho" = "LSO",
-                                             "Mozambique" = "MOZ",
-                                             "Malawi" = "MWI",
-                                             "Namibia" = "NAM",
-                                             "Eswatini" = "SWZ",
-                                             "Tanzania" = "TZA",
-                                             "Uganda" = "UGA",
-                                             "South Africa" = "ZAF",
-                                             "Zambia" = "ZMB",
-                                             "Zimbabwe" = "ZWE",
-                                             "Angola" = "AGO",
-                                             "Burundi" = "BDI",
-                                             "Democratic Republic of the Congo" = "COD",
-                                             "Gabon" = "GAB",
-                                             "Rwanda" = "RWA",
-                                             "Ethiopia" = "ETH",
-                                             "Haiti" = "HTI",
-                                             "Chad" = "TCD",
-                                             "Cote D'Ivoire" = "CIV",
-                                             "Ghana" = "GHA",
-                                             "Guinea" = "GIN",
-                                             "Liberia" = "LBR",
-                                             "Mali" = "MLI",
-                                             "Niger" = "NER",
-                                             "Sierra Leone" = "SLE",
-                                             "Togo" = "TGO",
-                                             "Burkina Faso" = "BFA",
-                                             "Congo" = "COG",
-                                             "Benin" = "BEN",
-                                             "Central African Republic" = "CAF",
-                                             "The Gambia" = "GMB",
-                                             "Guinea bissau" = "GNB",
-                                             "Equatorial Guinea" = "GNQ",
-                                             "Niger" = "NER",
-                                             "Nigeria" = "NGA",
-                                             "Senegal" = "SEN"))
 
+  country_name_db <- tibble::tribble(~country, ~iso3,
+                                     "Botswana", "BWA",
+                                     "Cameroon", "CMR",
+                                     "Kenya", "KEN",
+                                     "Lesotho", "LSO",
+                                     "Mozambique", "MOZ",
+                                     "Malawi", "MWI_demo",
+                                     "Malawi", "MWI",
+                                     "Namibia", "NAM",
+                                     "Eswatini", "SWZ",
+                                     "Tanzania", "TZA",
+                                     "Uganda", "UGA",
+                                     "South Africa", "ZAF",
+                                     "Zambia", "ZMB",
+                                     "Zimbabwe", "ZWE",
+                                     "Angola", "AGO",
+                                     "Burundi", "BDI",
+                                     "Democratic Republic of the Congo", "COD",
+                                     "Gabon", "GAB",
+                                     "Rwanda", "RWA",
+                                     "Ethiopia", "ETH",
+                                     "Haiti", "HTI",
+                                     "Chad", "TCD",
+                                     "Cote D'Ivoire", "CIV",
+                                     "Ghana", "GHA",
+                                     "Guinea", "GIN",
+                                     "Liberia", "LBR",
+                                     "Mali", "MLI",
+                                     "Niger", "NER",
+                                     "Sierra Leone", "SLE",
+                                     "Togo", "TGO",
+                                     "Burkina Faso", "BFA",
+                                     "Congo", "COG",
+                                     "Benin", "BEN",
+                                     "Central African Republic", "CAF",
+                                     "The Gambia", "GMB",
+                                     "Guinea bissau", "GNB",
+                                     "Equatorial Guinea", "GNQ",
+                                     "Niger", "NER",
+                                     "Nigeria", "NGA",
+                                     "Senegal", "SEN")
 
-
+  country_name <- country_name_db[country_name_db$iso3 == options$area_scope,]$country
 
   # Format
   naomi_wide <- dplyr::bind_rows(df3, df4) %>%
@@ -146,7 +145,7 @@ agyw_format_naomi <- function(outputs, options){
   tidyr::pivot_wider(id_cols = c(area_id,area_name),
                      names_from = c(indicator,age_group_label,sex),
                      names_sep = "", values_from = mean) %>%
-    dplyr::mutate(Country = country$country[1], newAll = df5$mean) %>%
+    dplyr::mutate(Country = country_name, newAll = df5$mean) %>%
     dplyr::select(Country,area_id,area_name,`Pop15-24all`,`Pop15-24f`,`Pop15-24m`,
                   `PLHIV15-24all`,`PLHIV15-24f`,`PLHIV15-24m`,
                   newAll, `new15-24all`,`new15-24f`,`new15-24m`,
@@ -192,9 +191,7 @@ agyw_format_naomi <- function(outputs, options){
   if(options$area_scope=="AGO") {
     naomi_wide$area_name <- stringr::str_to_title(naomi_wide$area_name)
   }
-  if(options$area_scope=="COD") {
-    naomi_wide$Country <- "Democratic Republic of the Congo"
-  }
+
   if(options$area_scope %in% c("TCD","GIN")) {
     naomi_wide$area_name <- iconv(naomi_wide$area_name, from="UTF-8",to="LATIN1")
   }
