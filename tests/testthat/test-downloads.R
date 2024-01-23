@@ -246,6 +246,17 @@ test_that("AGYW download can be created", {
                data.frame(kp = c("FSW", "MSM", "PWID"),
                           consensus_estimate = c(40000, 35500, 5000)))
 
+  # Test for warning when KP workbook has PSE consensus estimates that
+  # are >5% of the age matched population
+  kp_consensus_bad <- readRDS(file.path("testdata/kp_workbook_spectrum_bad.rds"))
+  mock_extract_kp_workbook <- mockery::mock(kp_consensus_bad)
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+
+
+  expect_equal(risk_prop_scaled$meta_consensus,
+               data.frame(kp = c("FSW", "MSM", "PWID"),
+                          consensus_estimate = c(260000, 260000, 260000)))
+
 })
 
 test_that("Error thrown when AGYW resources are out of date", {

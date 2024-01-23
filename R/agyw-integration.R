@@ -248,16 +248,21 @@ agyw_disaggregate_fsw <- function(outputs,
 
     # Check if consensus estimate is larger than age matched population denominator
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "female",]$population
-    stopifnot(fsw_consensus < pop)
+    prop_pop <- fsw_consensus / pop
 
-    # Scale total FSW population to consensus PSE estimate
-    fsw_scaled <- fsw %>%
-      dplyr::mutate(
-        relative_prop = total_fsw/sum(total_fsw),
-        consensus_pse = fsw_consensus,
-        total_fsw = consensus_pse * relative_prop)
+    if(prop_pop >= 0.05) {
+      t_("FSW_CONSENSUS_WARNING")
+    } else {
 
-    fsw <- fsw_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+      # Scale total FSW population to consensus PSE estimate
+      fsw_scaled <- fsw %>%
+        dplyr::mutate(
+          relative_prop = total_fsw/sum(total_fsw),
+          consensus_pse = fsw_consensus,
+          total_fsw = consensus_pse * relative_prop)
+
+      fsw <- fsw_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+    }
 
   }
 
@@ -396,20 +401,26 @@ agyw_disaggregate_pwid <- function(outputs,
   pwid_consensus <- kp_consensus[kp_consensus$key_population == "PWID", ]$population_size
 
   if(!is.na(pwid_consensus)){
-
     # Check if consensus estimate is larger than age matched population denominator
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
-    stopifnot(pwid_consensus < pop)
+    prop_pop <- pwid_consensus / pop
 
-    # Scale total PWID population to consensus PSE estimate
-    pwid_scaled <- pwid %>%
-      dplyr::mutate(
-        relative_prop = total_pwid/sum(total_pwid),
-        consensus_pse = pwid_consensus,
-        total_pwid = consensus_pse * relative_prop)
+    if(prop_pop >= 0.05) {
+      t_("PWID_CONSENSUS_WARNING")
+    } else {
 
-    pwid <- pwid_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+      # Scale total PWID population to consensus PSE estimate
+      pwid_scaled <- pwid %>%
+        dplyr::mutate(
+          relative_prop = total_pwid/sum(total_pwid),
+          consensus_pse = pwid_consensus,
+          total_pwid = consensus_pse * relative_prop)
+
+      pwid <- pwid_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+    }
+
   }
+
 
 
   # Assumption from literature that 9% of PWID are female so remove them from
@@ -497,15 +508,24 @@ agyw_disaggregate_msm <- function(outputs,
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
     stopifnot(msm_consensus < pop)
 
-    # Scale total MSM population to consensus PSE estimate
-    msm_scaled <- msm %>%
-      dplyr::mutate(
-        relative_prop = total_msm/sum(total_msm),
-        consensus_pse = msm_consensus,
-        total_msm = consensus_pse * relative_prop)
+    if(prop_pop >= 0.05) {
+      t_("MSM_CONSENSUS_WARNING")
+    } else {
 
-    msm <- msm_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+      # Scale total MSM population to consensus PSE estimate
+      msm_scaled <- msm %>%
+        dplyr::mutate(
+          relative_prop = total_msm/sum(total_msm),
+          consensus_pse = msm_consensus,
+          total_msm = consensus_pse * relative_prop)
+
+      msm <- msm_scaled %>% dplyr::select(-consensus_pse, relative_prop)
+    }
+
   }
+
+
+
 
 
   # MSM age distribution parameters in ZAF from Thembisa
