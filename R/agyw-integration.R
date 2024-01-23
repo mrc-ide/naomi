@@ -418,7 +418,8 @@ agyw_disaggregate_pwid <- function(outputs,
   pwid$total_pwid <- pwid$total_pwid * 0.91
 
   # PWID age distribution
-  # Review of literature - Hines et al Lancet Global Health 2020
+  # Review of literature - Hines et al Lancet Global Health 2020:
+  # DOI:https://doi.org/10.1016/S2214-109X(19)30462-0
   gamma_mean <- 29.4
   gamma_sd <- 7
   beta <- gamma_mean / gamma_sd^2 # rate
