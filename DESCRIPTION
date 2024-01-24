@@ -36,7 +36,7 @@ Imports:
     knitr,
     magrittr,
     mvtnorm,
-    naomi.resources (>= 0.0.2),
+    naomi.resources (>= 0.0.3),
     naomi.options (>= 1.2.0),
     openxlsx,
     plotly,
@@ -78,6 +78,7 @@ Remotes:
     first90=mrc-ide/first90release,
     reside-ic/traduire,
     mrc-ide/naomi.options,
+    mrc-ide/naomi.resources@update-workbook,
     mrc-ide/mockr,
     mrc-ide/testthat.buildkite,
     duckdb/duckdb-r@v0.9.1
