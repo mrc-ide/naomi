@@ -121,7 +121,9 @@ is_empty <- function(x) {
 write_xlsx_sheets <- function(template, sheets, path) {
   wb <- openxlsx::loadWorkbook(template)
   for (sheet in names(sheets)) {
-    openxlsx::writeData(wb, sheet, sheets[[sheet]])
+    openxlsx::writeData(wb, sheet, sheets[[sheet]],
+                        startRow = 2,
+                        colNames = FALSE)
   }
 
   openxlsx::saveWorkbook(wb, path)
