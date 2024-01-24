@@ -1657,3 +1657,12 @@ assert_agyw_resource_hierarchy <- function(outputs,
 
 }
 
+write_agyw_workbook <- function(sheets, dest) {
+  template_path <- naomi.resources::get_agyw_workbook_path()
+  withCallingHandlers(
+    write_xlsx_sheets(template_path, sheets, dest),
+    error = function(e) {
+      e$message <- t_("AGYW_ERROR_WRITE", list(message = e$message))
+      stop(e)
+    })
+}

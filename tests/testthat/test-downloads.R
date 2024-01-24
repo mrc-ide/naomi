@@ -285,3 +285,10 @@ test_that("output description is translated", {
   expect_match(text, paste0("Paquet Naomi téléchargée depuis l'application ",
                             "web Naomi\\n\\nPérimètre de zone - MWI\\n.+"))
 })
+
+test_that("failing to write data into xlsx sheet gives a useful error", {
+  sheets_to_write <- list(x = data.frame(x = c(1, 2, 3)))
+  dest <- tempfile()
+  expect_error(write_agyw_workbook(sheets_to_write, dest),
+               "Failed to build workbook, please contact support: Sheet 'x' does not exist")
+})

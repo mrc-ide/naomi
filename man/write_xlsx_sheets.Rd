@@ -7,7 +7,7 @@
 write_xlsx_sheets(template, sheets, path)
 }
 \arguments{
-\item{template}{Path to xlsx file with empty sheets}
+\item{template}{Path to xlsx file with sheets}
 
 \item{sheets}{Named list of data frames to write into template. The names
 must match the destination sheet in the xlsx}
@@ -18,6 +18,7 @@ must match the destination sheet in the xlsx}
 Path to complete xlsx file
 }
 \description{
-Write list of data frames into an xlsx file
+This doesn't write colmn headers into the workbook, it expects
+that these already exist.
 }
 \keyword{internal}

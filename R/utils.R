@@ -111,7 +111,10 @@ is_empty <- function(x) {
 
 #' Write list of data frames into an xlsx file
 #'
-#' @param template Path to xlsx file with empty sheets
+#' This doesn't write colmn headers into the workbook, it expects
+#' that these already exist.
+#'
+#' @param template Path to xlsx file with sheets
 #' @param sheets Named list of data frames to write into template. The names
 #'   must match the destination sheet in the xlsx
 #' @param path Path to output the filled in xlsx

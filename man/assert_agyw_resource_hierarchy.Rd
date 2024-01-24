@@ -5,9 +5,11 @@
 \title{Throw warning when area hierarchy in external AGYW resources read in from
 \code{naomi.resources} do not match Naomi outputs used to update AGYW estimates.}
 \usage{
-assert_agyw_resource_hierarchy(naomi_output, options)
+assert_agyw_resource_hierarchy(outputs, options)
 }
 \description{
-@param naomi_output Naomi outputs.
+@param outputs Naomi outputs.
 @param options Naomi options.
+@return Resource hierarchy
+@keywords internal
 }

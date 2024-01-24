@@ -281,6 +281,7 @@
     "AGYW_ERROR_MSRB_PREFIX": " Available male sexual risk behaviour survey estimates for: \n",
     "AGYW_ERROR_NAOMI_MISMATCH": "\n\n Do not match Naomi estimates for: \n",
     "AGYW_ERROR_CONTACT_SUPPORT": "\n\nTo update estimates, please contact Naomi support.",
+    "AGYW_ERROR_WRITE": "Failed to build workbook, please contact support: {{message}}",
     "FSW_CONSENSUS_WARNING": "Consensus estimate for FSW is larger than 5% of total females aged 15-59. Modelled estimates for FWS PSEs will be used.",
     "MSM_CONSENSUS_WARNING": "Consensus estimate for MSM is larger than 5% of total males aged 15-59. Modelled estimates for FWS PSEs will be used.",
     "PWID_CONSENSUS_WARNING": "Consensus estimate for PWID is larger than 5% of total males aged 15-59. Modelled estimates for PWID PSEs will be used."

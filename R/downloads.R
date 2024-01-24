@@ -116,8 +116,6 @@ hintr_prepare_agyw_download <- function(output, pjnz,
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_AGYW")
 
-  template_path <- naomi.resources::get_agyw_workbook_path()
-
   risk_populations <- agyw_generate_risk_populations(output$model_output_path,
                                                      pjnz)
 
@@ -126,7 +124,7 @@ hintr_prepare_agyw_download <- function(output, pjnz,
     "All outputs - M" = risk_populations$male_incidence,
     "NAOMI outputs" = risk_populations$naomi_output
   )
-  write_xlsx_sheets(template_path, sheets, path = path)
+  write_agyw_workbook(sheets, dest = path)
 
   model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
