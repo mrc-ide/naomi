@@ -12,6 +12,7 @@
 \alias{calendar_quarter_to_quarter_id}
 \alias{quarter_id_to_calendar_quarter}
 \alias{calendar_quarter_to_year}
+\alias{calendar_quarter_to_quarter}
 \title{Time period indexing}
 \usage{
 quarter_year_labels(quarter_id)
@@ -35,6 +36,8 @@ calendar_quarter_to_quarter_id(calendar_quarter)
 quarter_id_to_calendar_quarter(quarter_id)
 
 calendar_quarter_to_year(calendar_quarter)
+
+calendar_quarter_to_quarter(calendar_quarter)
 }
 \arguments{
 \item{quarter_id}{vector of integer quarter IDs.}
@@ -65,5 +68,6 @@ year_labels(quarter_ids)
 quarter_year_labels(quarter_ids)
 calendar_quarter_labels("CY2015Q2")
 calendar_quarter_to_year("CY2015Q2")
+calendar_quarter_to_quarter("CY2015Q2")
 
 }

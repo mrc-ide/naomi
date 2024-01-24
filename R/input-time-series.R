@@ -35,13 +35,12 @@ aggregate_art <- function(art, shape) {
   art_number <- art |>
     dplyr::left_join(areas |> dplyr::select(area_id, area_level), by = "area_id")
 
-  aggregate_art_by_level <- function(art_number) {
+  aggregate_art_by_level <- function(art_number, level) {
 
     ## Recursively aggregate ART data up from lowest level of programme data provided
     # Levels to aggregate up from
-    art_level <- max(art_number$area_level)
-    max_dat <- dplyr::filter(art_number, area_level == art_level)
-    max_shape <- dplyr::filter(areas, area_level == art_level)
+    max_dat <- dplyr::filter(art_number, area_level == level)
+    max_shape <- dplyr::filter(areas, area_level == level)
 
     # Ensure entries exist for all programme data age/sex/quarter combinations X
     # shape file area_ids at finest stratification
@@ -53,17 +52,17 @@ aggregate_art <- function(art, shape) {
     art_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
                                 age_sex_df) |>
       dplyr::left_join(max_dat, by = c("area_id", "sex", "age_group", "calendar_quarter")) |>
-      dplyr::mutate(area_level = art_level)
+      dplyr::mutate(area_level = level)
 
 
-    art_number_wide <- spread_areas(areas |> dplyr::filter(area_level <= art_level)) |>
+    art_number_wide <- spread_areas(areas |> dplyr::filter(area_level <= level)) |>
       dplyr::right_join(art_full, by = "area_id", multiple = "all")
 
 
     # Function to aggregate based on area_id[0-9]$ columns in hierarchy
     aggregate_data_art <- function(col_name) {
 
-      max_col_name <- paste0("area_id", art_level)
+      max_col_name <- paste0("area_id", level)
 
       if (col_name == max_col_name) {
         # Don't aggregate lowest level of data to retain missing values
@@ -85,17 +84,23 @@ aggregate_art <- function(art, shape) {
     # Aggregated data frame for area levels > data provided
     aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(art_number_wide), value = TRUE)
 
-    aggregated_art <- aggregate_cols |>
+    aggregate_cols |>
       lapply(function(x) aggregate_data_art(x)) |>
       dplyr::bind_rows() |>
       dplyr::ungroup() |>
       dplyr::bind_rows()
-
   }
 
-  art_long <- aggregate_art_by_level(art_number) |>
-    dplyr::mutate(year = year_labels(calendar_quarter_to_quarter_id(calendar_quarter)),
-                  quarter = stringr::str_sub(calendar_quarter,-2,-1),
+  max_levels <- art_number |> dplyr::summarise(area_level = max(area_level),
+                                              .by = "calendar_quarter")
+
+  ## Note we can have the case here that different calendar quarters have
+  ## a different max level e.g. Mozambique
+  art_long <- lapply(unique(max_levels$area_level),
+                     function(level) aggregate_art_by_level(art_number, level)) |>
+    dplyr::bind_rows() |>
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter),
+                  quarter = calendar_quarter_to_quarter(calendar_quarter),
                   time_period = paste0(year, " ", quarter)) |>
     dplyr::left_join(
       areas |>
