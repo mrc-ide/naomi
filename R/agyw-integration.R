@@ -506,7 +506,7 @@ agyw_disaggregate_msm <- function(outputs,
 
     # Check if consensus estimate is larger than age matched population denominator
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
-    stopifnot(msm_consensus < pop)
+    prop_pop <- msm_consensus / pop
 
     if(prop_pop >= 0.05) {
       t_("MSM_CONSENSUS_WARNING")

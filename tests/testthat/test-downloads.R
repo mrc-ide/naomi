@@ -242,22 +242,76 @@ test_that("AGYW download can be created", {
     extract_kp_workbook = mock_extract_kp_workbook
   )
 
+  # Check that consensus estimates extracted and saved out
   expect_equal(risk_prop_scaled$meta_consensus,
                data.frame(kp = c("FSW", "MSM", "PWID"),
                           consensus_estimate = c(40000, 35500, 5000)))
 
-  # Test for warning when KP workbook has PSE consensus estimates that
-  # are >5% of the age matched population
+  # Test that PSE tool adjusted to KP consensus estimates correctly
+  model_object <- read_hintr_output(agyw_output_demo$model_output_path)
+  outputs <- model_object$output_package
+  options <- outputs$fit$model_options
+  naomi <- agyw_format_naomi(outputs, options)
+
+  # Naomi population
+  naomi_pop <- naomi$naomi_long %>%
+    dplyr::filter(indicator == "population") %>%
+    dplyr::select(area_id, area_level,sex, age_group, area_level,
+                  spectrum_region_code, population = mean)
+
+  naomi_pop$iso3 <- options$area_scope
+
+  # KP PSEs adjusted to consensus estimates when consensus estimates are
+  #  < 5% of age matched population  denominator
+  kp_consensus <- readRDS(file.path("testdata/kp_workbook_spectrum.rds"))
+
+  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
+  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
+  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
+
+  fsw <- sum(fsw_est$fsw)
+  pwid <- sum(pwid_est$pwid)
+  msm <- sum(msm_est$msm)
+
+  # Note that PWID will be 90% of KP workbook consensus estimate due to exclusion
+  # of female PWID
+  expect_equal(c(fsw, pwid, msm), c(40000, 4550, 35500))
+
+
+  # KP PSEs **not** adjusted to consensus estimates when consensus estimates are
+  #  > 5% of age matched population denominator
   kp_consensus_bad <- readRDS(file.path("testdata/kp_workbook_spectrum_bad.rds"))
   mock_extract_kp_workbook <- mockery::mock(kp_consensus_bad)
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
+  with_mocked_bindings(
+    risk_prop_scaled <- agyw_generate_risk_populations(
+      agyw_output_demo$model_output_path, a_hintr_data$pjnz),
+    new_simple_progress = mock_new_simple_progress,
+    extract_kp_workbook = mock_extract_kp_workbook
+  )
 
+  # Check that bad consensus estimates extracted and saved out
   expect_equal(risk_prop_scaled$meta_consensus,
                data.frame(kp = c("FSW", "MSM", "PWID"),
                           consensus_estimate = c(260000, 260000, 260000)))
 
+
+  # KP PSEs use default proportions from Oli's mode when consensus estimates are
+  #  >= 5% of age matched population  denominator
+
+  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus_bad)
+  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus_bad)
+  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus_bad)
+
+  fsw <- sum(fsw_est$fsw)
+  pwid <- sum(pwid_est$pwid)
+  msm <- sum(msm_est$msm)
+
+  expect_equal(c(fsw, pwid, msm), c(62306.311, 7398.486, 24794.842))
+
 })
+
 
 test_that("Error thrown when AGYW resources are out of date", {
 
