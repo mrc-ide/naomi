@@ -250,9 +250,7 @@ agyw_disaggregate_fsw <- function(outputs,
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "female",]$population
     prop_pop <- fsw_consensus / pop
 
-    if(prop_pop >= 0.05) {
-      t_("FSW_CONSENSUS_WARNING")
-    } else {
+    if(prop_pop < 0.05) {
 
       # Scale total FSW population to consensus PSE estimate
       fsw_scaled <- fsw %>%
@@ -405,9 +403,7 @@ agyw_disaggregate_pwid <- function(outputs,
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
     prop_pop <- pwid_consensus / pop
 
-    if(prop_pop >= 0.05) {
-      t_("PWID_CONSENSUS_WARNING")
-    } else {
+    if(prop_pop < 0.05) {
 
       # Scale total PWID population to consensus PSE estimate
       pwid_scaled <- pwid %>%
@@ -508,9 +504,7 @@ agyw_disaggregate_msm <- function(outputs,
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
     prop_pop <- msm_consensus / pop
 
-    if(prop_pop >= 0.05) {
-      t_("MSM_CONSENSUS_WARNING")
-    } else {
+    if(prop_pop < 0.05) {
 
       # Scale total MSM population to consensus PSE estimate
       msm_scaled <- msm %>%

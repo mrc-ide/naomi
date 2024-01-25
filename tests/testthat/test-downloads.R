@@ -263,8 +263,6 @@ test_that("AGYW download can be created", {
 
   # KP PSEs adjusted to consensus estimates when consensus estimates are
   #  < 5% of age matched population  denominator
-  kp_consensus <- readRDS(file.path("testdata/kp_workbook_spectrum.rds"))
-
   fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
   pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
   msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
