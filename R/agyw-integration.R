@@ -1101,7 +1101,8 @@ agyw_calculate_incidence_female <- function(naomi_output,
                                             options,
                                             female_srb,
                                             female_logit_prevalence,
-                                            survey_year = 2018) {
+                                            survey_year = 2018,
+                                            kp_consensus) {
 
   naomi_indicators <- naomi_output  %>%
     dplyr::filter(indicator %in% c("population", "plhiv","prevalence","infections", "incidence"),
@@ -1123,7 +1124,6 @@ agyw_calculate_incidence_female <- function(naomi_output,
     dplyr::left_join(naomi_indicators, by = dplyr::join_by(area_id, age_group)) %>%
     dplyr::left_join(risk_group_prevalence, by = dplyr::join_by(area_id, age_group)) %>%
     dplyr::filter(!is.na(population))
-
 
   # Risk ratios for people non-regular sex partners relative to those with a
   # single cohabiting sex partner
@@ -1283,6 +1283,17 @@ agyw_calculate_incidence_female <- function(naomi_output,
     dplyr::mutate_if(is.numeric, as.numeric) %>%
     dplyr::mutate_if(is.factor, as.character)
 
+
+
+  # Check for consensus estimate of FSW infections
+  fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$infections
+
+  if(!is.na(fsw_consensus)){
+
+    print("Add code here to scale new infections")
+
+    }
+
 }
 
 #' Calculate incidence in high risk male key populations
@@ -1300,7 +1311,8 @@ agyw_calculate_incidence_male <- function(naomi_output,
                                           options,
                                           male_srb,
                                           male_logit_prevalence,
-                                          survey_year = 2018) {
+                                          survey_year = 2018,
+                                          kp_consensus) {
 
 
   naomi_indicators <- naomi_output  %>%
@@ -1487,6 +1499,17 @@ agyw_calculate_incidence_male <- function(naomi_output,
                   infections_sexnonreg, infections_msm, infections_pwid) %>%
     dplyr::mutate_if(is.numeric, as.numeric) %>%
     dplyr::mutate_if(is.factor, as.character)
+
+
+  # Check for consensus estimate of MSM and PWID infections
+  male_consensus <- kp_consensus[kp_consensus$key_population %in% c("MSM","PWID"),]$infections
+
+
+  if(!anyNA(male_consensus)){
+
+    print("Add code here to scale new infections")
+
+  }
 
 
 
