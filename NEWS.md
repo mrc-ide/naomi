@@ -1,3 +1,7 @@
+# naomi 2.9.20
+
+* Update ART aggregation code to speed up data generation.
+
 # naomi 2.9.19
 
 * Add optional `vmmc_path` to Spectrum download function for path to DMMPT2 output Excel file.
