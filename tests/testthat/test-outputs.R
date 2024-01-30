@@ -509,6 +509,37 @@ test_that("navigator checklist returns results for uncalibrated model output", {
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])
 })
 
+test_that("navigator checklist runs with multiple artcov surveys", {
+  # This test checks issue-122 has been resolved
+  out <- read_hintr_output(a_hintr_output$model_output_path)
+  out$output_package$fit$data_options$artcov_survey_ids <-
+    c(out$output_package$fit$data_options$artcov_survey_ids, "other")
+  checklist <- tempfile(fileext = ".csv")
+  write_navigator_checklist(out$output_package, checklist)
+  checklist <- utils::read.csv(checklist)
+
+  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
+                          "ANC_is_Spectrum"            = FALSE,
+                          "Package_created"            = TRUE,
+                          "Package_has_all_data"       = TRUE,
+                          "Opt_recent_qtr"             = FALSE,
+                          "Opt_future_proj_qtr"        = FALSE,
+                          "Opt_area_ID_selected"       = TRUE,
+                          "Opt_calendar_survey_match"  = TRUE,
+                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_ART_coverage"           = TRUE,
+                          "Opt_ANC_data"               = TRUE,
+                          "Opt_ART_data"               = TRUE,
+                          "Opt_ART_attendance_yes"     = FALSE,
+                          "Model_fit"                  = TRUE,
+                          "Cal_Population"             = FALSE,
+                          "Cal_PLHIV"                  = FALSE,
+                          "Cal_ART"                    = FALSE,
+                          "Cal_KOS"                    = FALSE,
+                          "Cal_new_infections"         = FALSE,
+                          "Cal_method"                 = FALSE)
+})
+
 test_that("meta_indicator table contains same indicators as outputs", {
   expect_setequal(a_output_full$meta_indicator$indicator,
                   a_output_full$indicators$indicator)
