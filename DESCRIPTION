@@ -79,7 +79,6 @@ Remotes:
     reside-ic/traduire,
     mrc-ide/naomi.options,
     mrc-ide/mockr,
-    mrc-ide/testthat.buildkite,
-    duckdb/duckdb-r@v0.9.1
+    mrc-ide/testthat.buildkite
 Config/testthat/edition: 3
 Config/testthat/parallel: true
