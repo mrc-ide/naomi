@@ -1189,6 +1189,39 @@ agyw_calculate_incidence_female <- function(naomi_output,
       infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
       infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg)
 
+  # Check for consensus estimate of FSW infections
+  fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$infections
+
+  if(!is.na(fsw_consensus)){
+
+    # scale new infections if there's a KP consensus estimate
+    # sum prior count of new infections
+    fsw_sum <- sum(df1$infections_sexpaid12m)
+    # generate a ratio to scale FSW new infections by
+    fsw_ratio <- fsw_consensus / fsw_sum
+    # adjust district-level new infections and incidence for FSW
+    df1 <- df1 %>%
+      dplyr::mutate(
+        infections_sexpaid12m = infections_sexpaid12m * fsw_ratio,
+        incidence_sexpaid12m = infections_sexpaid12m / susceptible_sexpaid12m,
+      )
+    # Error here to catch that the KP adjustment has made the number of new infections
+    # in KPs greater than the estimated population susceptible
+    if(sum(df1$incidence_sexpaid12m > 1) > 0) {
+      stop("KP new infections exceeds susceptible population size. Please contact support.")
+    }
+    # adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
+    # from the district
+    df1 <- df1 %>%
+      dplyr::mutate(
+        incidence_sexcohab = (infections - infections_sexpaid12m) / (susceptible_sexcohab + rr_sexnonreg * susceptible_sexnonreg),
+        incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
+        infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
+        infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
+        rr_sexpaid12m = incidence_sexpaid12m / incidence_sexcohab
+      )
+  }
+
   # Calculate risk group incidence for aggregate age groups
 
   summarise_age_cat_female <- function(dat, age_cat) {
@@ -1261,6 +1294,14 @@ agyw_calculate_incidence_female <- function(naomi_output,
     stop("Risk group proportions do not sum correctly. Please contact suppport.")
   }
 
+  # Check that new infections are never negative in any behavioural risk group
+  sexcohab_inf_check <- sum(df3$infections_sexcohab < 0)
+  sexnonreg_inf_check <- sum(df3$infections_sexnonreg < 0)
+  sexpaid12m_inf_check <- sum(df3$infections_sexpaid12m < 0)
+  if(sum(sexcohab_inf_check,sexnonreg_inf_check,sexpaid12m_inf_check)>0) {
+    stop("Number of new infections below 0. Please contact support.")
+  }
+
   df3 %>%
     dplyr::mutate(concat = paste0(area_id, age_group), iso3 = options$area_scope) %>%
     dplyr::select(area_id, age_group, concat,
@@ -1284,15 +1325,6 @@ agyw_calculate_incidence_female <- function(naomi_output,
     dplyr::mutate_if(is.factor, as.character)
 
 
-
-  # Check for consensus estimate of FSW infections
-  fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$infections
-
-  if(!is.na(fsw_consensus)){
-
-    print("Add code here to scale new infections")
-
-    }
 
 }
 
@@ -1395,6 +1427,64 @@ agyw_calculate_incidence_male <- function(naomi_output,
 
     )
 
+  # Check for consensus estimate of MSM and PWID infections
+  male_consensus <- kp_consensus[kp_consensus$key_population %in% c("MSM","PWID"),]$infections
+
+
+  if(!anyNA(male_consensus)){
+
+    msm_consensus <- kp_consensus[kp_consensus$key_population %in% c("MSM"),]$infections
+    pwid_consensus <- kp_consensus[kp_consensus$key_population %in% c("PWID"),]$infections
+
+    # scale new infections for MSM if there's an MSM KP consensus estimate
+    if(!is.na(msm_consensus)){
+      # sum prior count of new infections
+      msm_sum <- sum(df1$infections_msm)
+      # generate a ratio to scale MSM new infections by
+      msm_ratio <- msm_consensus / msm_sum
+      # adjust district-level new infections and incidence for MSM
+      df1 <- df1 %>%
+        dplyr::mutate(
+          infections_msm = infections_msm * msm_ratio,
+          incidence_msm = infections_msm / susceptible_msm,
+        )
+    }
+
+    # scale new infections for PWID if there's a PWID KP consensus estimate
+    if(!is.na(pwid_consensus)){
+      # scale consensus that we'll use to account for the 1:10 ratio assumption of
+      # male:female PWID
+      pwid_consensus <- pwid_consensus * 0.91
+      # sum prior count of new infections
+      pwid_sum <- sum(df1$infections_pwid)
+      # generate a ratio to scale PWID new infections by
+      pwid_ratio <- pwid_consensus / pwid_sum
+      # adjust district-level new infections and incidence for MSM
+      df1 <- df1 %>%
+        dplyr::mutate(
+          infections_pwid = infections_pwid * pwid_ratio,
+          incidence_pwid = infections_pwid / susceptible_pwid,
+        )
+    }
+    # Error here to catch that the KP adjustment has made the number of new infections
+    # in KPs greater than the estimated population susceptible
+    if(sum(df1$incidence_msm > 1,df1$incidence_pwid > 1) > 0) {
+      stop("KP new infections exceeds susceptible population size. Please contact support.")
+    }
+    # adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
+    # from the district
+    df1 <- df1 %>%
+      dplyr::mutate(
+        incidence_sexcohab = (infections - infections_msm - infections_pwid) / (susceptible_sexcohab +
+                                                                                  rr_sexnonreg * susceptible_sexnonreg),
+        incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
+        infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
+        infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
+        rr_msm = incidence_msm / incidence_sexcohab,
+        rr_pwid = incidence_pwid / incidence_sexcohab
+      )
+  }
+
   # Calculate risk group incidence for aggregate age groups
 
   summarise_age_cat_male <- function(dat, age_cat) {
@@ -1477,6 +1567,15 @@ agyw_calculate_incidence_male <- function(naomi_output,
     stop("Risk group proportions do not sum correctly. Please contact suppport.")
   }
 
+  # Check that new infections are never negative in any behavioural risk group
+  sexcohab_inf_check <- sum(df3$infections_sexcohab < 0)
+  sexnonreg_inf_check <- sum(df3$infections_sexnonreg < 0)
+  msm_inf_check <- sum(df3$infections_msm < 0)
+  pwid_inf_check <- sum(df3$infections_pwid < 0)
+  if(sum(sexcohab_inf_check,sexnonreg_inf_check,msm_inf_check,pwid_inf_check)>0) {
+    stop("Number of new infections below 0. Please contact support.")
+  }
+
 
   df3 %>%
     dplyr::mutate(concat = paste0(area_id, age_group), iso3 = options$area_scope) %>%
@@ -1499,17 +1598,6 @@ agyw_calculate_incidence_male <- function(naomi_output,
                   infections_sexnonreg, infections_msm, infections_pwid) %>%
     dplyr::mutate_if(is.numeric, as.numeric) %>%
     dplyr::mutate_if(is.factor, as.character)
-
-
-  # Check for consensus estimate of MSM and PWID infections
-  male_consensus <- kp_consensus[kp_consensus$key_population %in% c("MSM","PWID"),]$infections
-
-
-  if(!anyNA(male_consensus)){
-
-    print("Add code here to scale new infections")
-
-  }
 
 
 
@@ -1591,13 +1679,15 @@ agyw_generate_risk_populations <- function(naomi_output,
                                                       options,
                                                       female_srb,
                                                       female_logit_prevalence,
-                                                      survey_year)
+                                                      survey_year,
+                                                      kp_consensus)
 
   male_incidence <- agyw_calculate_incidence_male(naomi$naomi_long,
                                                   options,
                                                   male_srb,
                                                   male_logit_prevalence,
-                                                  survey_year)
+                                                  survey_year,
+                                                  kp_consensus)
 
   meta <- data.frame(kp = c("FSW", "MSM", "PWID"),
                      consensus_estimate = c(unique(fsw_est$consensus_estimate),
