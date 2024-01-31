@@ -1,3 +1,8 @@
+# naomi 2.9.21
+
+* Fix a bug in Spectrum file generation when two surveys are selected for ART coverage (naomi troubleshooting issue #2024-122).
+* Fix a bug in comparison report generation when ANC prevalence not set for time 1.
+
 # naomi 2.9.20
 
 * Update ART aggregation code to speed up data generation.
