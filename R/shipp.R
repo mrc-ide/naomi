@@ -1181,49 +1181,52 @@ shipp_calculate_incidence_female <- function(naomi_output,
       susceptible_sexnonreg = population_sexnonreg - plhiv_sexnonreg,
       susceptible_sexpaid12m = population_sexpaid12m - plhiv_sexpaid12m,
       incidence_sexpaid12m = (incidence/100) * rr_sexpaid12m,
-      infections_sexpaid12m = susceptible_sexpaid12m * incidence_sexpaid12m,
+      infections_sexpaid12m = susceptible_sexpaid12m * incidence_sexpaid12m)
+
+  # Scale FSW new infections consensus estimate for KP Workbook or Goals
+  # Check for consensus estimate of FSW new infections
+  fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$infections
+
+  if(is.na(fsw_consensus)){
+    # If no KP workbook present, read in FSW new infections from GOALS
+    goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
+    fsw_consensus <- goals[goals$iso3 == options$area_scope, ]$`fsw-new_inf`
+  }
+
+  # Sum prior count of new infections
+  fsw_sum <- sum(df1$infections_sexpaid12m)
+  # Generate a ratio to scale FSW new infections by
+  fsw_ratio <- fsw_consensus / fsw_sum
+
+  # Adjust new infections
+  df2 <- df1 %>%
+    dplyr::mutate(
+      # Adjust district-level new infections and incidence for FSW
+      infections_sexpaid12m = infections_sexpaid12m * fsw_ratio,
+      incidence_sexpaid12m = infections_sexpaid12m / susceptible_sexpaid12m,
+      # Adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
+      # from the district
+      incidence_sexcohab = (infections - infections_sexpaid12m) / (susceptible_sexcohab + rr_sexnonreg * susceptible_sexnonreg),
+      incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
+      infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
+      infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
+      rr_sexpaid12m = incidence_sexpaid12m / incidence_sexcohab,
+      # Calculate incidence in rest of groups
       incidence_nosex12m = 0,
       incidence_sexcohab = (infections - infections_sexpaid12m) / (susceptible_sexcohab + rr_sexnonreg * susceptible_sexnonreg),
       incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
       infections_nosex12m = 0,
       infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
-      infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg)
+      infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg
+    )
 
-  # Check for consensus estimate of FSW infections
-  fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$infections
-
-  if(!is.na(fsw_consensus)){
-
-    # scale new infections if there's a KP consensus estimate
-    # sum prior count of new infections
-    fsw_sum <- sum(df1$infections_sexpaid12m)
-    # generate a ratio to scale FSW new infections by
-    fsw_ratio <- fsw_consensus / fsw_sum
-    # adjust district-level new infections and incidence for FSW
-    df1 <- df1 %>%
-      dplyr::mutate(
-        infections_sexpaid12m = infections_sexpaid12m * fsw_ratio,
-        incidence_sexpaid12m = infections_sexpaid12m / susceptible_sexpaid12m,
-      )
-    # Error here to catch that the KP adjustment has made the number of new infections
-    # in KPs greater than the estimated population susceptible
+  # Error here to catch that the KP adjustment has made the number of new infections
+  # in KPs greater than the estimated population susceptible
     if(sum(df1$incidence_sexpaid12m > 1) > 0) {
       stop("KP new infections exceeds susceptible population size. Please contact support.")
     }
-    # adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
-    # from the district
-    df1 <- df1 %>%
-      dplyr::mutate(
-        incidence_sexcohab = (infections - infections_sexpaid12m) / (susceptible_sexcohab + rr_sexnonreg * susceptible_sexnonreg),
-        incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
-        infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
-        infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
-        rr_sexpaid12m = incidence_sexpaid12m / incidence_sexcohab
-      )
-  }
 
   # Calculate risk group incidence for aggregate age groups
-
   summarise_age_cat_female <- function(dat, age_cat) {
 
     if (age_cat == "Y015_024") {age_groups <- c("Y015_019", "Y020_024")}
@@ -1276,33 +1279,34 @@ shipp_calculate_incidence_female <- function(naomi_output,
   }
 
   # Aggregate data
-  df2 <- dplyr::bind_rows(summarise_age_cat_female(df1, "Y015_024"),
-                          summarise_age_cat_female(df1, "Y025_049"),
-                          summarise_age_cat_female(df1, "Y015_049"))
+  df3 <- dplyr::bind_rows(summarise_age_cat_female(df2, "Y015_024"),
+                          summarise_age_cat_female(df2, "Y025_049"),
+                          summarise_age_cat_female(df2, "Y015_049"))
 
   # Calculate incidence
-  df3 <- dplyr::bind_rows(df1, df2) %>%
+  df4 <- dplyr::bind_rows(df2, df3) %>%
     dplyr::mutate(incidence_cat = cut(incidence,
                                       c(0, 0.3, 1, 3, 10^6),
                                       labels = c("Low", "Moderate", "High", "Very High"),
                                       include.lowest = TRUE, right = TRUE))
 
   # Check that sum of disaggregated infections is the same as total infections
-  sum_infections <- df3$infections_nosex12m + df3$infections_sexcohab + df3$infections_sexnonreg + df3$infections_sexpaid12m
+  sum_infections <- df4$infections_nosex12m + df4$infections_sexcohab + df4$infections_sexnonreg + df4$infections_sexpaid12m
 
-  if(max(df3$infections - sum_infections) > 10^{-9}){
+  if(max(df4$infections - sum_infections) > 10^{-9}){
     stop("Risk group proportions do not sum correctly. Please contact suppport.")
   }
 
   # Check that new infections are never negative in any behavioural risk group
-  sexcohab_inf_check <- sum(df3$infections_sexcohab < 0)
-  sexnonreg_inf_check <- sum(df3$infections_sexnonreg < 0)
-  sexpaid12m_inf_check <- sum(df3$infections_sexpaid12m < 0)
+  sexcohab_inf_check <- sum(df4$infections_sexcohab < 0)
+  sexnonreg_inf_check <- sum(df4$infections_sexnonreg < 0)
+  sexpaid12m_inf_check <- sum(df4$infections_sexpaid12m < 0)
+
   if(sum(sexcohab_inf_check,sexnonreg_inf_check,sexpaid12m_inf_check)>0) {
     stop("Number of new infections below 0. Please contact support.")
   }
 
-  df3 %>%
+  df4 %>%
     dplyr::mutate(concat = paste0(area_id, age_group), iso3 = options$area_scope) %>%
     dplyr::select(area_id, age_group, concat,
                   nosex12m, sexcohab, sexnonregplus, sexnonreg, sexpaid12m,
@@ -1323,8 +1327,6 @@ shipp_calculate_incidence_female <- function(naomi_output,
                   incidence_cat) %>%
     dplyr::mutate_if(is.numeric, as.numeric) %>%
     dplyr::mutate_if(is.factor, as.character)
-
-
 
 }
 
@@ -1416,74 +1418,60 @@ shipp_calculate_incidence_male <- function(naomi_output,
       incidence_msm = (incidence/100) * rr_msm,
       incidence_pwid = (incidence/100) * rr_pwid,
       infections_msm = susceptible_msm * incidence_msm,
-      infections_pwid = susceptible_pwid * incidence_pwid,
+      infections_pwid = susceptible_pwid * incidence_pwid)
+
+  # Scale MSM and PWID new infections consensus estimate for KP Workbook or Goals
+  # Check for consensus estimate of MSM and PWID new infections
+  msm_consensus <- kp_consensus[kp_consensus$key_population == "MSM", ]$infections
+  pwid_consensus <- kp_consensus[kp_consensus$key_population == "PWID", ]$infections
+
+  if(is.na(msm_consensus)){
+    # If no KP workbook present, read in FSW new infections from GOALS
+    goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
+    msm_consensus <- goals[goals$iso3 == options$area_scope, ]$`msm-new_inf`
+  }
+
+  if(is.na(pwid_consensus)){
+    # If no KP workbook present, read in FSW new infections from GOALS
+    goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
+    pwid_consensus <- goals[goals$iso3 == options$area_scope, ]$`pwid-new_inf`
+  }
+
+  # Sum prior count of new infections
+  msm_sum <- sum(df1$infections_msm)
+  pwid_sum <- sum(df1$pwid)
+
+  # Generate a ratio to scale FSW new infections by
+  msm_ratio <- msm_consensus / msm_sum
+  pwid_ratio <- pwid_consensus / pwid_sum
+
+  # Adjust new infections
+  df2 <- df1 %>%
+    dplyr::mutate(
+      # Adjust district-level new infections and incidence for MSM
+      infections_msm = infections_msm * msm_ratio,
+      incidence_msm = infections_msm / susceptible_msm,
+      # Adjust district-level new infections and incidence for PWID
+      infections_pwid = infections_pwid * pwid_ratio,
+      incidence_pwid = infections_pwid / susceptible_pwid,
+
+      # Adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
+      # from the district
       incidence_nosex12m = 0,
       incidence_sexcohab = (infections - infections_msm - infections_pwid) / (susceptible_sexcohab +
-                                           rr_sexnonreg * susceptible_sexnonreg),
+                                                                                rr_sexnonreg * susceptible_sexnonreg),
       incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
       infections_nosex12m = 0,
       infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
       infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg
-
     )
 
-  # Check for consensus estimate of MSM and PWID infections
-  male_consensus <- kp_consensus[kp_consensus$key_population %in% c("MSM","PWID"),]$infections
-
-
-  if(!anyNA(male_consensus)){
-
-    msm_consensus <- kp_consensus[kp_consensus$key_population %in% c("MSM"),]$infections
-    pwid_consensus <- kp_consensus[kp_consensus$key_population %in% c("PWID"),]$infections
-
-    # scale new infections for MSM if there's an MSM KP consensus estimate
-    if(!is.na(msm_consensus)){
-      # sum prior count of new infections
-      msm_sum <- sum(df1$infections_msm)
-      # generate a ratio to scale MSM new infections by
-      msm_ratio <- msm_consensus / msm_sum
-      # adjust district-level new infections and incidence for MSM
-      df1 <- df1 %>%
-        dplyr::mutate(
-          infections_msm = infections_msm * msm_ratio,
-          incidence_msm = infections_msm / susceptible_msm,
-        )
-    }
-
-    # scale new infections for PWID if there's a PWID KP consensus estimate
-    if(!is.na(pwid_consensus)){
-      # scale consensus that we'll use to account for the 1:10 ratio assumption of
-      # male:female PWID
-      pwid_consensus <- pwid_consensus * 0.91
-      # sum prior count of new infections
-      pwid_sum <- sum(df1$infections_pwid)
-      # generate a ratio to scale PWID new infections by
-      pwid_ratio <- pwid_consensus / pwid_sum
-      # adjust district-level new infections and incidence for MSM
-      df1 <- df1 %>%
-        dplyr::mutate(
-          infections_pwid = infections_pwid * pwid_ratio,
-          incidence_pwid = infections_pwid / susceptible_pwid,
-        )
-    }
     # Error here to catch that the KP adjustment has made the number of new infections
     # in KPs greater than the estimated population susceptible
-    if(sum(df1$incidence_msm > 1,df1$incidence_pwid > 1) > 0) {
+    if(sum(df1$incidence_msm > 1, df1$incidence_pwid > 1) > 0) {
       stop("KP new infections exceeds susceptible population size. Please contact support.")
     }
-    # adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
-    # from the district
-    df1 <- df1 %>%
-      dplyr::mutate(
-        incidence_sexcohab = (infections - infections_msm - infections_pwid) / (susceptible_sexcohab +
-                                                                                  rr_sexnonreg * susceptible_sexnonreg),
-        incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
-        infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
-        infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
-        rr_msm = incidence_msm / incidence_sexcohab,
-        rr_pwid = incidence_pwid / incidence_sexcohab
-      )
-  }
+
 
   # Calculate risk group incidence for aggregate age groups
 
@@ -1546,12 +1534,12 @@ shipp_calculate_incidence_male <- function(naomi_output,
   }
 
   # Aggregate data
-  df2 <- dplyr::bind_rows(summarise_age_cat_male(df1, "Y015_024"),
-                          summarise_age_cat_male(df1, "Y025_049"),
-                          summarise_age_cat_male(df1, "Y015_049"))
+  df3 <- dplyr::bind_rows(summarise_age_cat_male(df2, "Y015_024"),
+                          summarise_age_cat_male(df2, "Y025_049"),
+                          summarise_age_cat_male(df2, "Y015_049"))
 
   # Calculate incidence
-  df3 <- dplyr::bind_rows(df1, df2) %>%
+  df4 <- dplyr::bind_rows(df2, df3) %>%
     dplyr::mutate(incidence_cat = cut(incidence,
                                       c(0, 0.3, 1, 3, 10^6),
                                       labels = c("Low", "Moderate", "High", "Very High"),
@@ -1561,23 +1549,23 @@ shipp_calculate_incidence_male <- function(naomi_output,
 
   # Check that sum of disaggregated infections is the same as total infections
   #  TO DO: add warning for sum not matching - contact admin
-  sum_infections <- df3$infections_nosex12m + df3$infections_sexcohab + df3$infections_sexnonreg + df3$infections_msm + df3$infections_pwid
+  sum_infections <- df4$infections_nosex12m + df4$infections_sexcohab + df4$infections_sexnonreg + df4$infections_msm + df4$infections_pwid
 
-  if(max(df3$infections - sum_infections) > 10^{-9}){
+  if(max(df4$infections - sum_infections) > 10^{-9}){
     stop("Risk group proportions do not sum correctly. Please contact suppport.")
   }
 
   # Check that new infections are never negative in any behavioural risk group
-  sexcohab_inf_check <- sum(df3$infections_sexcohab < 0)
-  sexnonreg_inf_check <- sum(df3$infections_sexnonreg < 0)
-  msm_inf_check <- sum(df3$infections_msm < 0)
-  pwid_inf_check <- sum(df3$infections_pwid < 0)
+  sexcohab_inf_check <- sum(df4$infections_sexcohab < 0)
+  sexnonreg_inf_check <- sum(df4$infections_sexnonreg < 0)
+  msm_inf_check <- sum(df4$infections_msm < 0)
+  pwid_inf_check <- sum(df4$infections_pwid < 0)
   if(sum(sexcohab_inf_check,sexnonreg_inf_check,msm_inf_check,pwid_inf_check)>0) {
     stop("Number of new infections below 0. Please contact support.")
   }
 
 
-  df3 %>%
+  df4 %>%
     dplyr::mutate(concat = paste0(area_id, age_group), iso3 = options$area_scope) %>%
     dplyr::select(area_id, age_group, concat,
                   nosex12m, sexcohab, sexnonregplus, sexnonreg, msm, pwid,
