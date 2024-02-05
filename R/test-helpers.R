@@ -5,9 +5,9 @@
 #' @param naomi_output Calibrated naomi output
 #'
 #' @return Calibrated naomi output matched to MWI test data on
-#'   `naomi.resources` to be used to generate the agyw tool.
+#'   `naomi.resources` to be used to generate the shipp tool.
 #' @keywords internal
-make_agyw_testfiles <- function(naomi_output) {
+make_shipp_testfiles <- function(naomi_output) {
   # Create naomi outputs align with testing data in naomi.resources:
   #   - Change iso3 to "MWI_demo"
   #   - Restrict outputs to admin2
@@ -42,8 +42,8 @@ make_agyw_testfiles <- function(naomi_output) {
   naomi:::hintr_save(demo, out_demo)
 
   # Add to existing hintr_test data
-  agyw_output_demo <- naomi_output
-  agyw_output_demo$model_output_path <- out_demo
+  shipp_output_demo <- naomi_output
+  shipp_output_demo$model_output_path <- out_demo
 
-  agyw_output_demo
+  shipp_output_demo
 }

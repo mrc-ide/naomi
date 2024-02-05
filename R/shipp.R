@@ -4,11 +4,11 @@
 #' @param options Naomi model options.
 #'
 #'
-#' @return Naomi indicators formatted for the AGYW workbook.
+#' @return Naomi indicators formatted for the SHIPP workbook.
 #' @keywords internal
 
 
-agyw_format_naomi <- function(outputs, options){
+shipp_format_naomi <- function(outputs, options){
 
   naomi_ind <- outputs$indicators %>%
     dplyr::filter(indicator %in% c("population", "plhiv", "infections","incidence",
@@ -215,7 +215,7 @@ agyw_format_naomi <- function(outputs, options){
 #' @keywords internal
 
 
-agyw_disaggregate_fsw <- function(outputs,
+shipp_disaggregate_fsw <- function(outputs,
                                   options,
                                   naomi_pop,
                                   kp_consensus){
@@ -223,7 +223,7 @@ agyw_disaggregate_fsw <- function(outputs,
   # Extract country specific national FSW PSEs
   iso3 <- options$area_scope
 
-  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+  pse <- naomi.resources::load_shipp_exdata("kp_estimates", iso3) %>%
     dplyr::filter(kp == "FSW", indicator == "pse_prop")
 
   fsw_pse <- pse %>%
@@ -284,7 +284,7 @@ agyw_disaggregate_fsw <- function(outputs,
 
   # Calculate proportion of sexually active population using Kinh's country specific
   # estimates of age at first sex and naomi population
-  afs <- naomi.resources::load_agyw_exdata("afs", iso3)
+  afs <- naomi.resources::load_shipp_exdata("afs", iso3)
 
   # Select birth cohort from 2000, to turn 15 in 2015
   cohort <- 2000
@@ -330,7 +330,7 @@ agyw_disaggregate_fsw <- function(outputs,
   # Adjusting country specific sexual debut estimates with age distribution of
   # FSW from Thembisa
   #Downloaded from: https://www.thembisa.org/content/downloadPage/Thembisa4_3
-  zaf_propensity <- naomi.resources::load_agyw_exdata("zaf_propensity", iso3 = "ZAF") %>%
+  zaf_propensity <- naomi.resources::load_shipp_exdata("zaf_propensity", iso3 = "ZAF") %>%
     dplyr::filter(kp == "FSW")
 
   fsw_est <- df %>%
@@ -369,7 +369,7 @@ agyw_disaggregate_fsw <- function(outputs,
 #' @return District level PWID estimates by 5-year age bands for ages 15-49.
 #' @keywords internal
 
-agyw_disaggregate_pwid <- function(outputs,
+shipp_disaggregate_pwid <- function(outputs,
                                    options,
                                    naomi_pop,
                                    kp_consensus)
@@ -378,7 +378,7 @@ agyw_disaggregate_pwid <- function(outputs,
   # Extract country specific national PWID PSEs
   iso3 <- options$area_scope
 
-  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+  pse <- naomi.resources::load_shipp_exdata("kp_estimates", iso3) %>%
     dplyr::filter(kp == "PWID", indicator == "pse_prop")
 
   pwid_pse <- pse %>%
@@ -470,7 +470,7 @@ agyw_disaggregate_pwid <- function(outputs,
 #' @return District level MSM estimates by 5-year age bands for ages 15-49.
 #' @keywords internal
 
-agyw_disaggregate_msm <- function(outputs,
+shipp_disaggregate_msm <- function(outputs,
                                   options,
                                   naomi_pop,
                                   kp_consensus)
@@ -478,7 +478,7 @@ agyw_disaggregate_msm <- function(outputs,
 
   # Extract country specific national MSM PSEs
   iso3 <- options$area_scope
-  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+  pse <- naomi.resources::load_shipp_exdata("kp_estimates", iso3) %>%
     dplyr::filter(kp == "MSM", indicator == "pse_prop")
 
   msm_pse <- pse %>%
@@ -542,7 +542,7 @@ agyw_disaggregate_msm <- function(outputs,
 
   # Calculate proportion of sexually active population using Kinh's country specific
   # estimates of age at first sex and naomi population
-  afs <- naomi.resources::load_agyw_exdata("afs", iso3)
+  afs <- naomi.resources::load_shipp_exdata("afs", iso3)
 
   # Select birth cohort from 2000, to turn 15 in 2015
   cohort <- 2000
@@ -587,7 +587,7 @@ agyw_disaggregate_msm <- function(outputs,
 
   # Adjusting country specific sexual debut estimates with age distribution of
   # MSM from Thembisa
-  zaf_propensity <- naomi.resources::load_agyw_exdata("zaf_propensity", iso3 = "ZAF") %>%
+  zaf_propensity <- naomi.resources::load_shipp_exdata("zaf_propensity", iso3 = "ZAF") %>%
     dplyr::filter(kp == "MSM")
 
 
@@ -617,7 +617,7 @@ agyw_disaggregate_msm <- function(outputs,
 #'
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
-#' @param fsw_est 5-year estimates of FSW PSEs generated from `agyw_disaggregate_fsw()`.
+#' @param fsw_est 5-year estimates of FSW PSEs generated from `shipp_disaggregate_fsw()`.
 #'
 #'
 #' Estimates are generated for the following groups:
@@ -637,7 +637,7 @@ agyw_disaggregate_msm <- function(outputs,
 #' @keywords internal
 
 
-agyw_adjust_sexbehav_fsw <- function(outputs,
+shipp_adjust_sexbehav_fsw <- function(outputs,
                                      options,
                                      fsw_est)
 {
@@ -656,7 +656,7 @@ agyw_adjust_sexbehav_fsw <- function(outputs,
   fsw_df <- fsw_est %>% dplyr::select(age_group, fsw_match_area = area_id, fsw_prop)
 
   # Load female SRB proportions
-  female_srb <- naomi.resources::load_agyw_exdata("srb_female", options$area_scope)
+  female_srb <- naomi.resources::load_shipp_exdata("srb_female", options$area_scope)
 
   adj_female_srb <- female_srb %>%
     dplyr::filter(iso3 == options$area_scope) %>%
@@ -687,8 +687,8 @@ agyw_adjust_sexbehav_fsw <- function(outputs,
 #'
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
-#' @param msm_est 5-year estimates of MSM PSEs generated from `agyw__disaggregate_msm()`.
-#' @param pwid_est 5-year estimates of MSM PSEs generated from `agyw__disaggregate_pwid()`.
+#' @param msm_est 5-year estimates of MSM PSEs generated from `shipp__disaggregate_msm()`.
+#' @param pwid_est 5-year estimates of MSM PSEs generated from `shipp__disaggregate_pwid()`.
 #'
 #' @return District level estimates of male sexual risk behaviour groups
 #' @keywords internal
@@ -708,7 +708,7 @@ agyw_adjust_sexbehav_fsw <- function(outputs,
 #' 2. Subtracting MSM and PWID proportionally from all SRB groups.
 
 
-agyw_adjust_sexbehav_msm_pwid <- function(outputs,
+shipp_adjust_sexbehav_msm_pwid <- function(outputs,
                                           options,
                                           msm_est,
                                           pwid_est) {
@@ -728,7 +728,7 @@ agyw_adjust_sexbehav_msm_pwid <- function(outputs,
   pwid_df <- pwid_est %>% dplyr::select(age_group, kp_match_area = area_id, pwid_prop)
 
   # Load male SRB proportions
-  male_srb <- naomi.resources::load_agyw_exdata("srb_male", options$area_scope)
+  male_srb <- naomi.resources::load_shipp_exdata("srb_male", options$area_scope)
 
   adj_male_srb <- male_srb %>%
     dplyr::filter(iso3 == options$area_scope) %>%
@@ -765,8 +765,8 @@ agyw_adjust_sexbehav_msm_pwid <- function(outputs,
 #'
 #' @param naomi_output Naomi output.
 #' @param options Naomi model options.
-#' @param fsw_est 5-year estimates of FSW PSEs generated from `agyw_disaggregate_fse()`.
-#' @param female_srb FSW adjusted estimates of female SRB groups generated by `agyw_adjust_sexbehav_fsw()`
+#' @param fsw_est 5-year estimates of FSW PSEs generated from `shipp_disaggregate_fse()`.
+#' @param female_srb FSW adjusted estimates of female SRB groups generated by `shipp_adjust_sexbehav_fsw()`
 #' @param survey_year Year of survey to sample estimates.
 #'
 #' To calculate district-age-sex-sexual behaviour-specific HIV prevalence, we maintain
@@ -781,7 +781,7 @@ agyw_adjust_sexbehav_msm_pwid <- function(outputs,
 #' @return SRB PSEs with logit prevalence estimates.
 #' @keywords internal
 
-agyw_calculate_prevalence_female <- function(naomi_output,
+shipp_calculate_prevalence_female <- function(naomi_output,
                                              options,
                                              fsw_est,
                                              female_srb,
@@ -804,7 +804,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
   # Extract country specific national FSW prevalence
   iso3 <- options$area_scope
   # THIS IS NOW USING SINGLE COUNTRY INSTEAD OF ALL COUNTRIES
-  fsw_prev <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+  fsw_prev <- naomi.resources::load_shipp_exdata("kp_estimates", iso3) %>%
     dplyr::filter(kp == "FSW", indicator == "prevalence")
 
   kp_prev <- fsw_prev %>%
@@ -836,7 +836,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
   calculate_prevalence <- function(x, iso3){
 
     # Log odds ratio from SRB group survey prevalence
-    lor <- naomi.resources:::load_agyw_exdata("srb_survey_lor", iso3) %>%
+    lor <- naomi.resources:::load_shipp_exdata("srb_survey_lor", iso3) %>%
       dplyr::filter(sex == "female")
 
     lor_15to29 <- lor$lor_15to29
@@ -893,8 +893,8 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 #' @param naomi_output Naomi output.
 #' @param areas Naomi boundary file.
 #' @param options Naomi model options.
-#' @param msm_est 5-year estimates of MSM PSEs generated from `agyw__disaggregate_msm()`.
-#' @param male_srb MSM and PWID adjusted estimates of male SRB groups generated by `agyw_adjust_sexbehav_msm_pwid()`.
+#' @param msm_est 5-year estimates of MSM PSEs generated from `shipp__disaggregate_msm()`.
+#' @param male_srb MSM and PWID adjusted estimates of male SRB groups generated by `shipp_adjust_sexbehav_msm_pwid()`.
 #' @param survey_year Year of survey to sample estimates.
 #'
 #'
@@ -912,7 +912,7 @@ agyw_calculate_prevalence_female <- function(naomi_output,
 #' @keywords internal
 
 
-agyw_calculate_prevalence_male <- function(naomi_output,
+shipp_calculate_prevalence_male <- function(naomi_output,
                                            areas,
                                            options,
                                            msm_est,
@@ -940,7 +940,7 @@ agyw_calculate_prevalence_male <- function(naomi_output,
   # Extract country specific national MSM + PWID prevalence
   iso3 <- options$area_scope
 
-  msm_pwid_prev <- naomi.resources::load_agyw_exdata("kp_estimates", iso3) %>%
+  msm_pwid_prev <- naomi.resources::load_shipp_exdata("kp_estimates", iso3) %>%
     dplyr::filter(indicator == "prevalence", kp %in% c("MSM", "PWID"))
 
  # KP population prevalence
@@ -987,7 +987,7 @@ agyw_calculate_prevalence_male <- function(naomi_output,
   calculate_prevalence <- function(x, iso3){
 
     # Log odds ratio from SRB group survey prevalence
-    lor <- naomi.resources:::load_agyw_exdata("srb_survey_lor", iso3) %>%
+    lor <- naomi.resources:::load_shipp_exdata("srb_survey_lor", iso3) %>%
       dplyr::filter(sex == "male")
 
     lor_15to29 <- lor$lor_15to29
@@ -1089,15 +1089,15 @@ logit_scale_prev <- function(lor, N_fine, plhiv) {
 #'
 #' @param naomi_output Naomi output.
 #' @param options Naomi model options.
-#' @param female_srb FSW adjusted estimates of female sexual risk groups generated by `agyw_adjust_sexbehav_fsw()`.
-#' @param female_logit_prevalence Risk adjusted estimates of female prevalence in sexual risk groups generated by `agyw_calculate_prevalence_female()`.
+#' @param female_srb FSW adjusted estimates of female sexual risk groups generated by `shipp_adjust_sexbehav_fsw()`.
+#' @param female_logit_prevalence Risk adjusted estimates of female prevalence in sexual risk groups generated by `shipp_calculate_prevalence_female()`.
 #' @param survey_year Survey year to sample from the SAE model. Default is 2018. Survey year should be updated to most current household survey in the country - for countries without recent household surveys, leave at 2018 - the spatiotemporal
 #' model of sexual behaviour fitted to all countries has the most data for in roughly 2018.
 #'
-#' @return Wide format output required for the AGYW workbook.
+#' @return Wide format output required for the SHIPP workbook.
 #' @keywords internal
 
-agyw_calculate_incidence_female <- function(naomi_output,
+shipp_calculate_incidence_female <- function(naomi_output,
                                             options,
                                             female_srb,
                                             female_logit_prevalence,
@@ -1332,14 +1332,14 @@ agyw_calculate_incidence_female <- function(naomi_output,
 #'
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
-#' @param male_srb MSM and PWID adjusted estimated of male SRB groups generated by `agyw_adjust_sexbehav_msm_pwid()`.
-#' @param male_logit_prevalence Risk adjusted estimates of male HIV prevalence in sexual risk groups generated by `agyw_calculate_prevalence_male()`.
+#' @param male_srb MSM and PWID adjusted estimated of male SRB groups generated by `shipp_adjust_sexbehav_msm_pwid()`.
+#' @param male_logit_prevalence Risk adjusted estimates of male HIV prevalence in sexual risk groups generated by `shipp_calculate_prevalence_male()`.
 #' @param survey_year Survey year to sample from the SAE model. Default is 2018. Survey year should be updated to most current household survey in the country - for countries without recent household surveys, leave at 2018 - the spatiotemporal
 #' model of sexual behaviour fitted to all countries has the most data for in roughly 2018.
 
-#' @return Wide format output required for the AGYW workbook
+#' @return Wide format output required for the SHIPP workbook
 
-agyw_calculate_incidence_male <- function(naomi_output,
+shipp_calculate_incidence_male <- function(naomi_output,
                                           options,
                                           male_srb,
                                           male_logit_prevalence,
@@ -1604,20 +1604,20 @@ agyw_calculate_incidence_male <- function(naomi_output,
 }
 
 
-#' Generate outputs to update AGYW tool.
+#' Generate outputs to update SHIPP tool.
 #'
 #' @param naomi_output Path to naomi output (zip file or hintr object).
 #' @param pjnz Path to spectrum file.
-#' @param male_srb Estimates of male sexual risk groups generated by `agyw_adjust_sexbehav_msm_pwid()`
-#' @param male_logit_prevalence Risk adjusted estimates of male prevalence in sexual risk groups generated by `agyw_calculate_prevalence_male()`
+#' @param male_srb Estimates of male sexual risk groups generated by `shipp_adjust_sexbehav_msm_pwid()`
+#' @param male_logit_prevalence Risk adjusted estimates of male prevalence in sexual risk groups generated by `shipp_calculate_prevalence_male()`
 #' @param survey_year Survey year to sample from the SAE model. Default is 2018. Survey year should be updated to most current household survey in the country - for countries without recent household surveys, leave at 2018 - the spatiotemporal
 #' model of sexual behaviour fitted to all countries has the most data for in roughly 2018.
 #'
-#' @return Output files to update AGYW excel workbook.
+#' @return Output files to update SHIPP excel workbook.
 #' @keywords internal
 
 
-agyw_generate_risk_populations <- function(naomi_output,
+shipp_generate_risk_populations <- function(naomi_output,
                                            pjnz,
                                            survey_year = 2018) {
 
@@ -1635,12 +1635,12 @@ agyw_generate_risk_populations <- function(naomi_output,
     options <- outputs$fit$model_options
   }
 
-  # Check for concordence between area_ids in agyw resources from `naomi.resources`
+  # Check for concordence between area_ids in shipp resources from `naomi.resources`
   #  and Naomi estimates
-  assert_agyw_resource_hierarchy(outputs, options)
+  assert_shipp_resource_hierarchy(outputs, options)
 
   # Format naomi output
-  naomi <- agyw_format_naomi(outputs, options)
+  naomi <- shipp_format_naomi(outputs, options)
 
   # Naomi population
   naomi_pop <- naomi$naomi_long %>%
@@ -1652,22 +1652,22 @@ agyw_generate_risk_populations <- function(naomi_output,
 
   # Disaggregate KP PSEs from Oli's analysis to 5-year bands
   kp_consensus <- extract_kp_workbook(pjnz)
-  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
-  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
-  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
+  fsw_est <- shipp_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
+  pwid_est <- shipp_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
+  msm_est <- shipp_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
 
   # Adjust SAE model output with KP proportions
-  female_srb <- agyw_adjust_sexbehav_fsw(outputs, options, fsw_est)
-  male_srb <- agyw_adjust_sexbehav_msm_pwid(outputs, options, msm_est, pwid_est)
+  female_srb <- shipp_adjust_sexbehav_fsw(outputs, options, fsw_est)
+  male_srb <- shipp_adjust_sexbehav_msm_pwid(outputs, options, msm_est, pwid_est)
 
   # Calculate risk group prevalence
-  female_logit_prevalence <- agyw_calculate_prevalence_female(naomi$naomi_long,
+  female_logit_prevalence <- shipp_calculate_prevalence_female(naomi$naomi_long,
                                                               options,
                                                               fsw_est,
                                                               female_srb,
                                                               survey_year)
 
-  male_logit_prevalence <- agyw_calculate_prevalence_male(naomi$naomi_long,
+  male_logit_prevalence <- shipp_calculate_prevalence_male(naomi$naomi_long,
                                                           outputs$meta_area,
                                                           options,
                                                           msm_est,
@@ -1675,14 +1675,14 @@ agyw_generate_risk_populations <- function(naomi_output,
                                                           survey_year)
 
   # Calculate risk group incidence
-  female_incidence <- agyw_calculate_incidence_female(naomi$naomi_long,
+  female_incidence <- shipp_calculate_incidence_female(naomi$naomi_long,
                                                       options,
                                                       female_srb,
                                                       female_logit_prevalence,
                                                       survey_year,
                                                       kp_consensus)
 
-  male_incidence <- agyw_calculate_incidence_male(naomi$naomi_long,
+  male_incidence <- shipp_calculate_incidence_male(naomi$naomi_long,
                                                   options,
                                                   male_srb,
                                                   male_logit_prevalence,
@@ -1705,8 +1705,8 @@ agyw_generate_risk_populations <- function(naomi_output,
 
 }
 
-#' Throw warning when area hierarchy in external AGYW resources read in from
-#'  `naomi.resources` do not match Naomi outputs used to update AGYW estimates.
+#' Throw warning when area hierarchy in external SHIPP resources read in from
+#'  `naomi.resources` do not match Naomi outputs used to update SHIPP estimates.
 #'
 #'  @param outputs Naomi outputs.
 #'  @param options Naomi options.
@@ -1714,18 +1714,18 @@ agyw_generate_risk_populations <- function(naomi_output,
 #'  @keywords internal
 
 
-assert_agyw_resource_hierarchy <- function(outputs,
+assert_shipp_resource_hierarchy <- function(outputs,
                                            options){
 
   # iso3 from model options
   iso3 <- options$area_scope
 
   # KP PSE's
-  pse <- naomi.resources::load_agyw_exdata("kp_estimates", iso3)
+  pse <- naomi.resources::load_shipp_exdata("kp_estimates", iso3)
 
   # SRB SAE model estimates
-  female_srb <- naomi.resources::load_agyw_exdata("srb_female", options$area_scope)
-  male_srb <- naomi.resources::load_agyw_exdata("srb_male", options$area_scope)
+  female_srb <- naomi.resources::load_shipp_exdata("srb_female", options$area_scope)
+  male_srb <- naomi.resources::load_shipp_exdata("srb_male", options$area_scope)
 
   # Naomi area_ids at lowest admin-level
   naomi_hierarchy <- outputs$meta_area %>% dplyr::filter(area_level == options$area_level)
@@ -1737,39 +1737,39 @@ assert_agyw_resource_hierarchy <- function(outputs,
 
   if(length(pse_diff) != 0 ){
 
-    stop(paste0(t_("AGYW_ERROR_KP_PREFIX"),
+    stop(paste0(t_("SHIPP_ERROR_KP_PREFIX"),
              paste0(unique(pse$area_id), collapse = "; "),
-             t_("AGYW_ERROR_NAOMI_MISMATCH"),
+             t_("SHIPP_ERROR_NAOMI_MISMATCH"),
              paste0(unique(naomi_ids), collapse = "; "),
-             t_("AGYW_ERROR_CONTACT_SUPPORT")))
+             t_("SHIPP_ERROR_CONTACT_SUPPORT")))
   }
 
   if(length(female_srb_diff) != 0 ){
 
-    stop(paste0(t_("AGYW_ERROR_FSRB_PREFIX"),
+    stop(paste0(t_("SHIPP_ERROR_FSRB_PREFIX"),
                 paste0(unique(pse$area_id), collapse = "; "),
-                t_("AGYW_ERROR_NAOMI_MISMATCH"),
+                t_("SHIPP_ERROR_NAOMI_MISMATCH"),
                 paste0(unique(naomi_ids), collapse = "; "),
-                t_("AGYW_ERROR_CONTACT_SUPPORT")))
+                t_("SHIPP_ERROR_CONTACT_SUPPORT")))
   }
 
   if(length(male_srb_diff) != 0 ){
 
-    stop(paste0(t_("AGYW_ERROR_MSRB_PREFIX"),
+    stop(paste0(t_("SHIPP_ERROR_MSRB_PREFIX"),
                 paste0(unique(pse$area_id), collapse = "; "),
-                t_("AGYW_ERROR_NAOMI_MISMATCH"),
+                t_("SHIPP_ERROR_NAOMI_MISMATCH"),
                 paste0(unique(naomi_ids), collapse = "; "),
-                t_("AGYW_ERROR_CONTACT_SUPPORT")))
+                t_("SHIPP_ERROR_CONTACT_SUPPORT")))
   }
 
 }
 
-write_agyw_workbook <- function(sheets, dest) {
-  template_path <- naomi.resources::get_agyw_workbook_path()
+write_shipp_workbook <- function(sheets, dest) {
+  template_path <- naomi.resources::get_shipp_workbook_path()
   withCallingHandlers(
     write_xlsx_sheets(template_path, sheets, dest),
     error = function(e) {
-      e$message <- t_("AGYW_ERROR_WRITE", list(message = e$message))
+      e$message <- t_("SHIPP_ERROR_WRITE", list(message = e$message))
       stop(e)
     })
 }

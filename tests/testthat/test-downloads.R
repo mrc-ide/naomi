@@ -193,15 +193,15 @@ test_that("comparison report download can be created", {
 })
 
 
-test_that("AGYW download can be created", {
+test_that("SHIPP download can be created", {
 
-  agyw_output_demo <- make_agyw_testfiles(a_hintr_output_calibrated)
+  shipp_output_demo <- make_shipp_testfiles(a_hintr_output_calibrated)
 
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
   with_mocked_bindings(
     messages <- naomi_evaluate_promise(
-      out <- hintr_prepare_agyw_download(agyw_output_demo,
+      out <- hintr_prepare_shipp_download(shipp_output_demo,
                                          a_hintr_data$pjnz)),
     new_simple_progress = mock_new_simple_progress)
 
@@ -220,24 +220,24 @@ test_that("AGYW download can be created", {
 
   ## Progress messages printed
   expect_length(messages$progress, 1)
-  expect_equal(messages$progress[[1]]$message, "Generating AGYW tool")
+  expect_equal(messages$progress[[1]]$message, "Generating SHIPP tool")
 
-  # Test agyw workbook with no kp workbook saved into spectrum
-  risk_prop <- agyw_generate_risk_populations(agyw_output_demo$model_output_path,
+  # Test shipp workbook with no kp workbook saved into spectrum
+  risk_prop <- shipp_generate_risk_populations(shipp_output_demo$model_output_path,
                                               a_hintr_data$pjnz)
 
   expect_equal(risk_prop$meta_consensus,
                data.frame(kp = c("FSW", "MSM", "PWID"),
                           consensus_estimate = NA))
 
-  # Test agyw workbook with mock workbook saved into spectrum
+  # Test shipp workbook with mock workbook saved into spectrum
   kp_consensus <- readRDS(file.path("testdata/kp_workbook_spectrum.rds"))
   mock_extract_kp_workbook <- mockery::mock(kp_consensus)
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
   with_mocked_bindings(
-    risk_prop_scaled <- agyw_generate_risk_populations(
-      agyw_output_demo$model_output_path, a_hintr_data$pjnz),
+    risk_prop_scaled <- shipp_generate_risk_populations(
+      shipp_output_demo$model_output_path, a_hintr_data$pjnz),
     new_simple_progress = mock_new_simple_progress,
     extract_kp_workbook = mock_extract_kp_workbook
   )
@@ -248,10 +248,10 @@ test_that("AGYW download can be created", {
                           consensus_estimate = c(40000, 35500, 5000)))
 
   # Test that PSE tool adjusted to KP consensus estimates correctly
-  model_object <- read_hintr_output(agyw_output_demo$model_output_path)
+  model_object <- read_hintr_output(shipp_output_demo$model_output_path)
   outputs <- model_object$output_package
   options <- outputs$fit$model_options
-  naomi <- agyw_format_naomi(outputs, options)
+  naomi <- shipp_format_naomi(outputs, options)
 
   # Naomi population
   naomi_pop <- naomi$naomi_long %>%
@@ -263,9 +263,9 @@ test_that("AGYW download can be created", {
 
   # KP PSEs adjusted to consensus estimates when consensus estimates are
   #  < 5% of age matched population  denominator
-  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
-  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
-  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
+  fsw_est <- shipp_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus)
+  pwid_est <- shipp_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus)
+  msm_est <- shipp_disaggregate_msm(outputs, options, naomi_pop, kp_consensus)
 
   fsw <- sum(fsw_est$fsw)
   pwid <- sum(pwid_est$pwid)
@@ -283,8 +283,8 @@ test_that("AGYW download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
 
   with_mocked_bindings(
-    risk_prop_scaled <- agyw_generate_risk_populations(
-      agyw_output_demo$model_output_path, a_hintr_data$pjnz),
+    risk_prop_scaled <- shipp_generate_risk_populations(
+      shipp_output_demo$model_output_path, a_hintr_data$pjnz),
     new_simple_progress = mock_new_simple_progress,
     extract_kp_workbook = mock_extract_kp_workbook
   )
@@ -298,9 +298,9 @@ test_that("AGYW download can be created", {
   # KP PSEs use default proportions from Oli's mode when consensus estimates are
   #  >= 5% of age matched population  denominator
 
-  fsw_est <- agyw_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus_bad)
-  pwid_est <- agyw_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus_bad)
-  msm_est <- agyw_disaggregate_msm(outputs, options, naomi_pop, kp_consensus_bad)
+  fsw_est <- shipp_disaggregate_fsw(outputs, options, naomi_pop, kp_consensus_bad)
+  pwid_est <- shipp_disaggregate_pwid(outputs, options, naomi_pop, kp_consensus_bad)
+  msm_est <- shipp_disaggregate_msm(outputs, options, naomi_pop, kp_consensus_bad)
 
   fsw <- sum(fsw_est$fsw)
   pwid <- sum(pwid_est$pwid)
@@ -311,7 +311,7 @@ test_that("AGYW download can be created", {
 })
 
 
-test_that("Error thrown when AGYW resources are out of date", {
+test_that("Error thrown when SHIPP resources are out of date", {
 
   kp_error <- paste0("Available KP PSE estimates for: \n",
                      "MWI_1_1; MWI_1_2; MWI_1_3",
@@ -319,7 +319,7 @@ test_that("Error thrown when AGYW resources are out of date", {
                      "MWI_2_1_demo; MWI_2_2_demo; MWI_2_3_demo; MWI_2_4_demo; MWI_2_5_demo",
                      "\n\nTo update estimates, please contact Naomi support.")
 
- expect_error(hintr_prepare_agyw_download(a_hintr_output_calibrated,
+ expect_error(hintr_prepare_shipp_download(a_hintr_output_calibrated,
                                           a_hintr_data$pjnz), kp_error)
 
 })
@@ -341,6 +341,6 @@ test_that("output description is translated", {
 test_that("failing to write data into xlsx sheet gives a useful error", {
   sheets_to_write <- list(x = data.frame(x = c(1, 2, 3)))
   dest <- tempfile()
-  expect_error(write_agyw_workbook(sheets_to_write, dest),
+  expect_error(write_shipp_workbook(sheets_to_write, dest),
                "Failed to build workbook, please contact support: Sheet 'x' does not exist")
 })

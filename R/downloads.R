@@ -101,7 +101,7 @@ hintr_prepare_comparison_report_download <- function(output,
   )
 }
 
-#' Prepare AGYW tool download
+#' Prepare SHIPP tool download
 #'
 #' @param hintr_output object
 #' @param path Path to save output file
@@ -109,14 +109,14 @@ hintr_prepare_comparison_report_download <- function(output,
 #'
 #' @return Path to output file and metadata for file
 #' @export
-hintr_prepare_agyw_download <- function(output, pjnz,
+hintr_prepare_shipp_download <- function(output, pjnz,
                                         path = tempfile(fileext = ".xlsx")) {
   ## TODO: Do we need a version restriction on this?
   assert_model_output_version(output, "2.7.16")
   progress <- new_simple_progress()
-  progress$update_progress("PROGRESS_DOWNLOAD_AGYW")
+  progress$update_progress("PROGRESS_DOWNLOAD_SHIPP")
 
-  risk_populations <- agyw_generate_risk_populations(output$model_output_path,
+  risk_populations <- shipp_generate_risk_populations(output$model_output_path,
                                                      pjnz)
 
   sheets <- list(
@@ -124,16 +124,16 @@ hintr_prepare_agyw_download <- function(output, pjnz,
     "All outputs - M" = risk_populations$male_incidence,
     "NAOMI outputs" = risk_populations$naomi_output
   )
-  write_agyw_workbook(sheets, dest = path)
+  write_shipp_workbook(sheets, dest = path)
 
   model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
   list(
     path = path,
     metadata = list(
-      description = build_agyw_tool_description(options),
+      description = build_shipp_tool_description(options),
       areas = options$area_scope,
-      type = "agyw"
+      type = "shipp"
     )
   )
 }
@@ -150,8 +150,8 @@ build_comparison_report_description <- function(options) {
   build_description(t_("DOWNLOAD_COMPARISON_DESCRIPTION"), options)
 }
 
-build_agyw_tool_description <- function(options) {
-  build_description(t_("DOWNLOAD_AGYW_DESCRIPTION"), options)
+build_shipp_tool_description <- function(options) {
+  build_description(t_("DOWNLOAD_SHIPP_DESCRIPTION"), options)
 }
 
 build_description <- function(type_text, options) {
