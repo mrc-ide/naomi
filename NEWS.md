@@ -1,3 +1,8 @@
+# naomi 2.9.22
+
+* Add missing Datim UIDs for Uganda corresponding to 146 districts.
+
+
 # naomi 2.9.21
 
 * Fix a bug in Spectrum file generation when two surveys are selected for ART coverage (naomi troubleshooting issue #2024-122).
