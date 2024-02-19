@@ -58,11 +58,11 @@ write_datapack_csv <- function(naomi_output,
   ## code. However, some hint validation needs to be relaxed to enable this.
   is_demo_data <- "MWI_2_5_demo" %in% naomi_output$meta_area$area_id &&
     setequal(0:2, naomi_output$meta_area$area_level)
-  if(is_demo_data) {
+  if (is_demo_data) {
     psnu_level <- 2L
   }
 
-  
+
   if (is.null(psnu_level) || !psnu_level %in% naomi_output$meta_area$area_level) {
     warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
@@ -98,7 +98,7 @@ write_datapack_csv <- function(naomi_output,
   indicators <- datapack_aggregate_1to9(naomi_output$indicators)
 
   ## Append VMMC indicators from DMPPT2 output to Naomi indicators
-  if(!is.null(dmppt2_output)) {
+  if (!is.null(dmppt2_output)) {
 
     dmppt2_output <- dmppt2_output %>%
       dplyr::left_join(
@@ -107,10 +107,10 @@ write_datapack_csv <- function(naomi_output,
       ) %>%
       dplyr::rename(mean = value) %>%
       dplyr::mutate(se = 0.0)
-    
+
     indicators <- dplyr::bind_rows(indicators, dmppt2_output)
   }
-  
+
   dat <- indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
     dplyr::semi_join(
@@ -132,7 +132,7 @@ write_datapack_csv <- function(naomi_output,
        age_group %in% datapack_age_group_map$age_group |
        sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
        sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
-    )%>%
+    ) %>%
     dplyr::transmute(
       area_id,
       indicator,
@@ -162,7 +162,7 @@ write_datapack_csv <- function(naomi_output,
 
 
   dat$district_rse[is.na(dat$district_rse) & dat$indicator %in% c("circ_new", "circ_ever")] <- 0.0
-    
+
 
   ## Merge data pack Ids
   dat <- dplyr::left_join(dat, strat,
@@ -265,7 +265,7 @@ datapack_aggregate_1to9 <- function(indicators) {
 
 transform_dmppt2 <- function(x) {
 
-  if(any(names(x)[3:11] != c("area_id", "15-24", "25-34", "35-49", "50+",
+  if (any(names(x)[c(1, 4:11)] != c("area_id", "15-24", "25-34", "35-49", "50+",
                              "15-24", "25-34", "35-49", "50+"))) {
     stop("DMMPT2 output file does not have expected column names.")
   }
