@@ -38,7 +38,7 @@ a_output_calib <- calibrate_outputs(a_output, a_naomi_data,
                                     "national", "sex_age_coarse",
                                     calibrate_method = "logistic")
 
-a_output_full  <- disaggregate_0to4_outputs(a_output_calib, a_naomi_data)
+a_output_full <- disaggregate_0to4_outputs(a_output_calib, a_naomi_data)
 
 a_output_indicators <- add_output_labels(a_output_full) %>%
   dplyr::left_join(

@@ -569,7 +569,7 @@ anc_t2 <- outputs$fit$data_options$anc_prev_year_t2
 # TO DO: Refactor align_inputs_outputs script to align based on data inclusion 
 # vs. matching on years
 
-if(anc_t1 != naomi:::calendar_quarter_to_year(calendar_quarter1)){
+if (!is.null(anc_t1) && anc_t1 != naomi:::calendar_quarter_to_year(calendar_quarter1)){
   anc_t1 <- NULL
 }
 

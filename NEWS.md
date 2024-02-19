@@ -1,7 +1,22 @@
-# naomi 2.9.20
+
+# naomi 2.9.23
 
 * Generate PSE workbook from naomi outputs.
 * Add function `extract_kp_workbook()` to extract key population totals from the Spectrum PJNZ file. Data are extracted from summary table saved in AIM Programme Statistics input for key populations.
+
+# naomi 2.9.22
+
+* Add missing Datim UIDs for Uganda corresponding to 146 districts.
+
+
+# naomi 2.9.21
+
+* Fix a bug in Spectrum file generation when two surveys are selected for ART coverage (naomi troubleshooting issue #2024-122).
+* Fix a bug in comparison report generation when ANC prevalence not set for time 1.
+
+# naomi 2.9.20
+
+* Update ART aggregation code to speed up data generation.
 
 # naomi 2.9.19
 

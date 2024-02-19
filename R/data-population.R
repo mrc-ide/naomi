@@ -36,6 +36,7 @@ get_age_groups <- function() {
 #' quarter_year_labels(quarter_ids)
 #' calendar_quarter_labels("CY2015Q2")
 #' calendar_quarter_to_year("CY2015Q2")
+#' calendar_quarter_to_quarter("CY2015Q2")
 #'
 #' @export
 quarter_year_labels <- function(quarter_id) {
@@ -114,6 +115,12 @@ quarter_id_to_calendar_quarter <- function(quarter_id) {
 #' @export
 calendar_quarter_to_year <- function(calendar_quarter) {
   year_labels(calendar_quarter_to_quarter_id(calendar_quarter))
+}
+
+#' @rdname quarter_year_labels
+#' @export
+calendar_quarter_to_quarter <- function(calendar_quarter) {
+  stringr::str_sub(calendar_quarter,-2,-1)
 }
 
 #' Log-linear interpolation of age/sex stratified population
