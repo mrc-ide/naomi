@@ -1436,7 +1436,7 @@ shipp_calculate_incidence_male <- function(naomi_output,
 
   # Sum prior count of new infections
   msm_sum <- sum(df1$infections_msm)
-  pwid_sum <- sum(df1$pwid)
+  pwid_sum <- sum(df1$infections_pwid)
 
   # Generate a ratio to scale FSW new infections by
   msm_ratio <- msm_consensus / msm_sum
