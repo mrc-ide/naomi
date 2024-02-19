@@ -1204,25 +1204,19 @@ shipp_calculate_incidence_female <- function(naomi_output,
       # Adjust district-level new infections and incidence for FSW
       infections_sexpaid12m = infections_sexpaid12m * fsw_ratio,
       incidence_sexpaid12m = infections_sexpaid12m / susceptible_sexpaid12m,
-      # Adjust sexcohab and sexnonreg new infections and incidence to scale rest of infections
-      # from the district
+      # Calculate incidence in rest of groups
       incidence_sexcohab = (infections - infections_sexpaid12m) / (susceptible_sexcohab + rr_sexnonreg * susceptible_sexnonreg),
       incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
       infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
       infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
-      rr_sexpaid12m = incidence_sexpaid12m / incidence_sexcohab,
-      # Calculate incidence in rest of groups
       incidence_nosex12m = 0,
-      incidence_sexcohab = (infections - infections_sexpaid12m) / (susceptible_sexcohab + rr_sexnonreg * susceptible_sexnonreg),
-      incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
       infections_nosex12m = 0,
-      infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
-      infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg
+      rr_sexpaid12m = incidence_sexpaid12m / incidence_sexcohab
     )
 
   # Error here to catch that the KP adjustment has made the number of new infections
   # in KPs greater than the estimated population susceptible
-    if(sum(df1$incidence_sexpaid12m > 1) > 0) {
+    if(sum(df2$incidence_sexpaid12m > 1) > 0) {
       stop("KP new infections exceeds susceptible population size. Please contact support.")
     }
 
@@ -1330,7 +1324,7 @@ shipp_calculate_incidence_female <- function(naomi_output,
 
 }
 
-#' Calculate incidence in high risk male key populations
+#' Calculate incidence in all behavioural groups
 #'
 #' @param outputs Naomi output.
 #' @param options Naomi model options.
@@ -1436,6 +1430,9 @@ shipp_calculate_incidence_male <- function(naomi_output,
     goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
     pwid_consensus <- goals[goals$iso3 == options$area_scope, ]$`pwid-new_inf`
   }
+  # scale consensus that we'll use to account for the 1:10 ratio assumption of
+  # male:female PWID
+  pwid_consensus <- pwid_consensus * 0.91
 
   # Sum prior count of new infections
   msm_sum <- sum(df1$infections_msm)
@@ -1463,12 +1460,14 @@ shipp_calculate_incidence_male <- function(naomi_output,
       incidence_sexnonreg = incidence_sexcohab * rr_sexnonreg,
       infections_nosex12m = 0,
       infections_sexcohab = susceptible_sexcohab * incidence_sexcohab,
-      infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg
+      infections_sexnonreg = susceptible_sexnonreg * incidence_sexnonreg,
+      rr_msm = incidence_msm / incidence_sexcohab,
+      rr_pwid = incidence_pwid / incidence_sexcohab
     )
 
     # Error here to catch that the KP adjustment has made the number of new infections
     # in KPs greater than the estimated population susceptible
-    if(sum(df1$incidence_msm > 1, df1$incidence_pwid > 1) > 0) {
+    if(sum(df2$incidence_msm > 1, df2$incidence_pwid > 1) > 0) {
       stop("KP new infections exceeds susceptible population size. Please contact support.")
     }
 
