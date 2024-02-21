@@ -1,13 +1,15 @@
-
-# naomi 2.9.23
+# naomi 2.9.24
 
 * Generate PSE workbook from naomi outputs.
 * Add function `extract_kp_workbook()` to extract key population totals from the Spectrum PJNZ file. Data are extracted from summary table saved in AIM Programme Statistics input for key populations.
 
+# naomi 2.9.23
+
+* Update Datim UIDs for Ethiopia 2024 boundary division.
+
 # naomi 2.9.22
 
 * Add missing Datim UIDs for Uganda corresponding to 146 districts.
-
 
 # naomi 2.9.21
 
