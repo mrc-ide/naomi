@@ -1044,6 +1044,160 @@ COD,COD_3_516,2,Lingomo,lCO6nKlHKgA,Datim
 COD,COD_3_517,2,Ikela,UTgcUslA3yi,Datim
 COD,COD_3_518,2,Mondombe,Qvght7Lr5u8,Datim
 COD,COD_3_519,2,Monkoto,zzc3T548sAL,Datim
+ETH,ETH,0,Ethiopia,IH1kchw86uA,Datim
+ETH,ETH_01_10,1,Addis Ababa,KokO4spc5GQ,Datim
+ETH,ETH_01_11,1,Afar,qgDA8IKI21g,Datim
+ETH,ETH_01_12,1,Amhara,LHy7xJAXLWw,Datim
+ETH,ETH_01_13,1,Benishangul-Gumuz,gxiDMS3EAsc,Datim
+ETH,ETH_01_14,1,Dire Dawa,zLhxMpx7wJn,Datim
+ETH,ETH_01_15,1,Gambella,uKcglkRySaR,Datim
+ETH,ETH_01_16,1,Harari,IkyPZgm9R4T,Datim
+ETH,ETH_01_17,1,Oromia,DOVKIHWS3dw,Datim
+ETH,ETH_01_19,1,Somali,wuoE2SduIfV,Datim
+ETH,ETH_01_20,1,Tigray,soLrT2pgsfR,Datim
+ETH,ETH_01_21xz,1,Sidama,HdA88OrFYU6,Datim
+ETH,ETH_01_23dl,1,South West Ethiopia,Fxt8HwVLcTE,Datim
+ETH,ETH_01_24gf,1,Central Ethiopia,TKzAS3aEDPE,Datim
+ETH,ETH_01_25lm,1,South Ethiopia,BbpvRHlU1Na,Datim
+ETH,ETH_02_001qo,2,Addis Ketema,IrPyq8lcDEX,Datim
+ETH,ETH_02_002ef,2,Akaki Kality,vWbpmt8WBY4,Datim
+ETH,ETH_02_003ax,2,Arada,cs4tFtYk5xN,Datim
+ETH,ETH_02_004yo,2,Bole,TNNdsbJravD,Datim
+ETH,ETH_02_005jk,2,Gulele,LHO0q6IL1jy,Datim
+ETH,ETH_02_006de,2,Kirkos,s8PbMJU4MQ0,Datim
+ETH,ETH_02_007rp,2,Kolfe Keraniyo,ZNjY2cHBPKG,Datim
+ETH,ETH_02_008zq,2,Lemi Kura,tudl8JRJf2D,Datim
+ETH,ETH_02_009qv,2,Lideta,wm33j9cSswI,Datim
+ETH,ETH_02_010oq,2,Nefas Silk-Lafto,elfhvJK0aTM,Datim
+ETH,ETH_02_011xr,2,Yeka,HC9gzPNLgEp,Datim
+ETH,ETH_02_012gb,2,Awsi (Zone 1),AJdwBoWSe0W,Datim
+ETH,ETH_02_013df,2,Fanti (Zone 4),dhEJ3Fcjx8D,Datim
+ETH,ETH_02_014yv,2,Gabi (Zone 3),PfLmWBth5y9,Datim
+ETH,ETH_02_015ef,2,Harri (Zone 5),qaYDXPx3WuW,Datim
+ETH,ETH_02_016nf,2,Kilbati (Zone 2),gXtidC5DUlC,Datim
+ETH,ETH_02_017tt,2,Awi,ocAzUvFKBj0,Datim
+ETH,ETH_02_018zo,2,Bahir Dar Sp. Zone,ORTSIo2wpKu,Datim
+ETH,ETH_02_019rb,2,Central Gondar,nCASYr3b5MF,Datim
+ETH,ETH_02_020oj,2,Debre Birhan Town,QWeibSkJybw,Datim
+ETH,ETH_02_021cw,2,Debre Markos Town,kCpLmPvaYKl,Datim
+ETH,ETH_02_022il,2,Debre Tabor Town,mRC5wkalD5C,Datim
+ETH,ETH_02_023yz,2,Dese Town,WC4dngFLmOd,Datim
+ETH,ETH_02_024di,2,East Gojam,Y9DpmjuMwfm,Datim
+ETH,ETH_02_025ea,2,Gondar Town,lqLKNDExnbq,Datim
+ETH,ETH_02_026mb,2,Kombolcha Town,czbTdNInpFw,Datim
+ETH,ETH_02_027ex,2,North Gondar,rxYFVl3VFkU,Datim
+ETH,ETH_02_028tx,2,North Shewa (Amhara),NZVY1yBTyp6,Datim
+ETH,ETH_02_029bb,2,North Wolo,ovcYzPVUUWI,Datim
+ETH,ETH_02_030hy,2,Oromiya Zone,KGmy6CUXTRq,Datim
+ETH,ETH_02_031ck,2,South Gondar,B7ruxHMJB6M,Datim
+ETH,ETH_02_032zn,2,South Wolo,Yvdm19ny7Um,Datim
+ETH,ETH_02_033ab,2,Wag Himra,gfwHD9a1NO6,Datim
+ETH,ETH_02_034jb,2,West Gojam,UksOD1lsa0u,Datim
+ETH,ETH_02_035xj,2,West Gondar,Pcnhcaxuif1,Datim
+ETH,ETH_02_036ky,2,Woldiya Town,a49C7kGwf9u,Datim
+ETH,ETH_02_037ov,2,Assosa,sCoLRakQgke,Datim
+ETH,ETH_02_038ve,2,Assosa Town,aM09E3nkMU5,Datim
+ETH,ETH_02_039zj,2,Gilgel Beles Town,I0yIs5CdhrN,Datim
+ETH,ETH_02_040hq,2,Kamashi Town,pE7yNYwEgtu,Datim
+ETH,ETH_02_041dq,2,Kemashi,RkYatsMnapn,Datim
+ETH,ETH_02_042de,2,Mao Komo Sp. Woreda,uYxO8gaDGil,Datim
+ETH,ETH_02_043vc,2,Metekel,X1XlInZZBe4,Datim
+ETH,ETH_02_044rn,2,Dire Dawa Town,CB9pIEeai3U,Datim
+ETH,ETH_02_045mn,2,Angewak,RVmIVRhx8Y4,Datim
+ETH,ETH_02_046ez,2,Etang Spe. Woreda,trum80c8biO,Datim
+ETH,ETH_02_047da,2,Gambella Town,c5nJPMOo3bO,Datim
+ETH,ETH_02_048be,2,Mejenger,EfGhuuc1dC0,Datim
+ETH,ETH_02_049xc,2,Nuwer,TnEfGrZsKVV,Datim
+ETH,ETH_02_050rv,2,Harari,msP4OAAYawm,Datim
+ETH,ETH_02_051cz,2,Adama Town,Hq7l26QbHAU,Datim
+ETH,ETH_02_052xm,2,Agaro Town,eOTucMlDtux,Datim
+ETH,ETH_02_053wk,2,Ambo Town,AzCQnXGgts6,Datim
+ETH,ETH_02_054qt,2,Arsi,afGvs0dpHt2,Datim
+ETH,ETH_02_055uz,2,Asela Town,ZHOZlqLKuIe,Datim
+ETH,ETH_02_056zq,2,Bale,pjaW8X1Ko20,Datim
+ETH,ETH_02_057rt,2,Batu Town,tE95XAEi8qq,Datim
+ETH,ETH_02_058fd,2,Bishoftu Town,FSYr4OvAnWJ,Datim
+ETH,ETH_02_059ft,2,Borena,YMA2KzJPMSY,Datim
+ETH,ETH_02_060bk,2,Bule Hora Town,QKr5lUUdW3l,Datim
+ETH,ETH_02_061tq,2,Buno Bedele,SmOB12V60lg,Datim
+ETH,ETH_02_062ci,2,Dodola Town,sss5NyuuRog,Datim
+ETH,ETH_02_063vq,2,East Bale,vQKmOA6jjqq,Datim
+ETH,ETH_02_064um,2,East Borena,eOtXSMWE6a8,Datim
+ETH,ETH_02_065bq,2,East Hararge,tj3Ar6OlXkc,Datim
+ETH,ETH_02_066wt,2,East Shewa,ZbvD0jFwVKp,Datim
+ETH,ETH_02_067fa,2,East Welega,SGVs4MLm9wV,Datim
+ETH,ETH_02_068zq,2,Guji,p2hVtS276PB,Datim
+ETH,ETH_02_069ja,2,Holota Town,lvQxBKnwX90,Datim
+ETH,ETH_02_070hb,2,Horo Gudru Welega,M8iULGgSqhb,Datim
+ETH,ETH_02_071eh,2,Ilu Aba Bora,cPO0XR01hKZ,Datim
+ETH,ETH_02_072ap,2,Jimma,NCJMcvy0nHt,Datim
+ETH,ETH_02_073qc,2,Jimma Town,x1MDzPVDvmK,Datim
+ETH,ETH_02_074ge,2,Kelem Welega,xm9S4Vvy8xf,Datim
+ETH,ETH_02_075dm,2,Maya Town,LQtpzAcc9QF,Datim
+ETH,ETH_02_076ml,2,Metu Town,wRMeE2Jk2kr,Datim
+ETH,ETH_02_077ja,2,Mojo Town,dYUpc7PRZUk,Datim
+ETH,ETH_02_078is,2,Moyale Town,DaY0mU3V8a7,Datim
+ETH,ETH_02_079le,2,Nejo Town,jz2IXUlHHMW,Datim
+ETH,ETH_02_080to,2,Nekemte Town,SWVGCwgrvMX,Datim
+ETH,ETH_02_081ix,2,North Shewa (Oromia),ceOnGaH5r0n,Datim
+ETH,ETH_02_082kf,2,Robe Town,aXHG80olVqr,Datim
+ETH,ETH_02_083cw,2,Sendafa Bake Town,oNaIIDAXmhR,Datim
+ETH,ETH_02_084pp,2,Shashemene Town,N3JudAnE2BV,Datim
+ETH,ETH_02_085ej,2,Sheger City,s6vyRre6Yt4,Datim
+ETH,ETH_02_086xg,2,South West Shewa,tVBvqbPqjH6,Datim
+ETH,ETH_02_087ni,2,West Arsi,SwUrg0CePwx,Datim
+ETH,ETH_02_088ei,2,West Guji,Ur0XOQY2HtG,Datim
+ETH,ETH_02_089vy,2,West Hararge,GIov8P3P62G,Datim
+ETH,ETH_02_090bc,2,West Shewa,hu1aXuBmkJ2,Datim
+ETH,ETH_02_091rr,2,West Welega,ou15MoWGZ3k,Datim
+ETH,ETH_02_092xu,2,Woliso Town,bxyNgtdqhPe,Datim
+ETH,ETH_02_095ey,2,Dollo (Warder),mW8CJ7BLipn,Datim
+ETH,ETH_02_097hy,2,Fafen (Jijiga),p1gYaXxpyk8,Datim
+ETH,ETH_02_098wp,2,Jerer (Degahabur),Ao7WsTe6wvO,Datim
+ETH,ETH_02_099hv,2,Korahe (Keberidehar),ONiP8h437BC,Datim
+ETH,ETH_02_100ux,2,Liben,I5UvxMgcnNR,Datim
+ETH,ETH_02_102yf,2,Shebele (Gode),LO2XhiLb4hI,Datim
+ETH,ETH_02_103dk,2,Siti (Shinile),UZ8m2bymRJT,Datim
+ETH,ETH_02_104gi,2,Central Tigray,SCocKNlviny,Datim
+ETH,ETH_02_105jv,2,Eastern Tigray,pDg8djCo0c1,Datim
+ETH,ETH_02_106rz,2,Mekele Special Zone,tOt6RC8sphA,Datim
+ETH,ETH_02_107mv,2,North Western Tigray,XiyYWGTxuSg,Datim
+ETH,ETH_02_108uv,2,South Eastern Tigray,glAvMvEwXql,Datim
+ETH,ETH_02_109vt,2,South Tigray,R5jIPn9DRti,Datim
+ETH,ETH_02_110sw,2,Western Tigray,YQGDBOiAsny,Datim
+ETH,ETH_02_111pv,2,Central Sidama,M7kclECuomB,Datim
+ETH,ETH_02_112vz,2,Eastern Sidama,fsIf6Dh3R7C,Datim
+ETH,ETH_02_113qm,2,Hawassa Town,SSDVixBnw0n,Datim
+ETH,ETH_02_114le,2,Northern Sidama,HU0olgZslpP,Datim
+ETH,ETH_02_115ik,2,Southern Sidama,orAI3YwxWou,Datim
+ETH,ETH_02_116yo,2,Bench Sheko,OpsVFL97XKY,Datim
+ETH,ETH_02_117uu,2,Dawuro,yHpPnb5CQ7r,Datim
+ETH,ETH_02_118kb,2,Kefa,AJayqqGyQgl,Datim
+ETH,ETH_02_119yy,2,Konta Sp. Woreda,JEQrKyALZms,Datim
+ETH,ETH_02_120zf,2,Sheka,mhp8hJq7zhX,Datim
+ETH,ETH_02_121pa,2,West Omo,KQOiiwmG4P7,Datim
+ETH,ETH_02_122hn,2,Alaba Sp. Woreda,WsCJPA73Pfy,Datim
+ETH,ETH_02_123wp,2,East Gurage,cV7VYPgsAH9,Datim
+ETH,ETH_02_124fq,2,Gurage,zcW83095pxX,Datim
+ETH,ETH_02_125ak,2,Hadiya,IDXkfYS25Kt,Datim
+ETH,ETH_02_126mr,2,Kebena Special Woreda,j70VJIwPOxY,Datim
+ETH,ETH_02_127nw,2,Kembata,gqsvUCJdCgC,Datim
+ETH,ETH_02_128eb,2,Mareko Special Woreda,PFrngHei0S1,Datim
+ETH,ETH_02_129iz,2,Silti,Y21M3gfnCZ8,Datim
+ETH,ETH_02_130wj,2,Tembaro Special Woreda,Y8tOboornd1,Datim
+ETH,ETH_02_131pd,2,Yem,RkOmuCyrvsT,Datim
+ETH,ETH_02_132zt,2,Ale (South Ethiopia) Sp. Zone,bMu3IqXWrFR,Datim
+ETH,ETH_02_133ko,2,Amaro Sp. Zone,fecMcTJQLGc,Datim
+ETH,ETH_02_134jg,2,Ari,QMahblY1xEd,Datim
+ETH,ETH_02_135jq,2,Basketo Sp. Woreda,DUhEMcPxHIH,Datim
+ETH,ETH_02_136xe,2,Burji Sp. Zone,abtO5wcQbsH,Datim
+ETH,ETH_02_137av,2,Dereashe Sp. Zone,E2ErYu25PCJ,Datim
+ETH,ETH_02_138yt,2,Gamo,w5nkyToNJd4,Datim
+ETH,ETH_02_139yr,2,Gedeo,MbbwrPZERvl,Datim
+ETH,ETH_02_140sz,2,Goffa,MJ5Ep2e4eqs,Datim
+ETH,ETH_02_141qi,2,Konso,Efj5yiDDlmT,Datim
+ETH,ETH_02_142nk,2,South Omo,O5fSSbjRZDh,Datim
+ETH,ETH_02_143nf,2,Wolayita,jeHPQ7NcxKO,Datim
 GHA,GHA,3,Ghana,y3zhsvdXlhN,Datim
 GHA,GHA_1_1bd,4,Ahafo Region,sI8H8XIESqg,Datim
 GHA,GHA_1_2sq,4,Ashanti Region,EZWRBKRQxEO,Datim
@@ -3730,181 +3884,3 @@ ZWE,ZWE_2_60,2,Kwekwe,KrzWTSmFARO,Datim
 ZWE,ZWE_2_61,2,Mberengwa,vs33LF3cnHy,Datim
 ZWE,ZWE_2_62,2,Shurugwi,XQwyooJ2rFg,Datim
 ZWE,ZWE_2_63,2,Zvishavane,W4O6XMG1LlA,Datim
-ETH,ETH,3,Ethiopia,IH1kchw86uA,Datim
-ETH,ETH_1_10,4,Addis Ababa,KokO4spc5GQ,Datim
-ETH,ETH_1_11,4,Afar,qgDA8IKI21g,Datim
-ETH,ETH_1_12,4,Amhara,LHy7xJAXLWw,Datim
-ETH,ETH_1_13,4,Benishangul-Gumuz,gxiDMS3EAsc,Datim
-ETH,ETH_1_14,4,Dire Dawa,zLhxMpx7wJn,Datim
-ETH,ETH_1_15,4,Gambella,uKcglkRySaR,Datim
-ETH,ETH_1_16,4,Harari,IkyPZgm9R4T,Datim
-ETH,ETH_1_17,4,Oromia,DOVKIHWS3dw,Datim
-ETH,ETH_1_21xz,4,Sidama,HdA88OrFYU6,Datim
-ETH,ETH_1_22pj,4,SNNPR,TKzAS3aEDPE,Datim
-ETH,ETH_1_19,4,Somali,wuoE2SduIfV,Datim
-ETH,ETH_1_23dl,4,South West Ethiopia,Fxt8HwVLcTE,Datim
-ETH,ETH_1_20,4,Tigray,soLrT2pgsfR,Datim
-ETH,ETH_2_001kj,5,Addis Ketema,IrPyq8lcDEX,Datim
-ETH,ETH_2_002,5,Akaki Kality,vWbpmt8WBY4,Datim
-ETH,ETH_2_003,5,Arada,cs4tFtYk5xN,Datim
-ETH,ETH_2_004ej,5,Bole,TNNdsbJravD,Datim
-ETH,ETH_2_005sb,5,Gulele,LHO0q6IL1jy,Datim
-ETH,ETH_2_006,5,Kirkos,s8PbMJU4MQ0,Datim
-ETH,ETH_2_007bi,5,Kolfe Keraniyo,ZNjY2cHBPKG,Datim
-ETH,ETH_2_167hu,5,Lemi Kura,tudl8JRJf2D,Datim
-ETH,ETH_2_008bx,5,Lideta,wm33j9cSswI,Datim
-ETH,ETH_2_009xf,5,Nefas Silk-Lafto,elfhvJK0aTM,Datim
-ETH,ETH_2_010yu,5,Yeka,HC9gzPNLgEp,Datim
-ETH,ETH_2_011,5,Awsi (Zone 1),AJdwBoWSe0W,Datim
-ETH,ETH_2_012,5,Fanti (Zone 4),dhEJ3Fcjx8D,Datim
-ETH,ETH_2_013,5,Gabi (Zone 3),PfLmWBth5y9,Datim
-ETH,ETH_2_014,5,Harri (Zone 5),qaYDXPx3WuW,Datim
-ETH,ETH_2_015,5,Kilbati (Zone 2),gXtidC5DUlC,Datim
-ETH,ETH_2_016,5,Awi,ocAzUvFKBj0,Datim
-ETH,ETH_2_017,5,Bahir Dar Sp. Zone,ORTSIo2wpKu,Datim
-ETH,ETH_2_018,5,Central Gondar,nCASYr3b5MF,Datim
-ETH,ETH_2_168wv,5,Debre Birhan Town,QWeibSkJybw,Datim
-ETH,ETH_2_169xy,5,Debre Markos Town,kCpLmPvaYKl,Datim
-ETH,ETH_2_019,5,Dese Town,WC4dngFLmOd,Datim
-ETH,ETH_2_020so,5,East Gojam,Y9DpmjuMwfm,Datim
-ETH,ETH_2_021,5,Gondar Town,lqLKNDExnbq,Datim
-ETH,ETH_2_170lk,5,Kombolcha Town,czbTdNInpFw,Datim
-ETH,ETH_2_022,5,North Gondar,rxYFVl3VFkU,Datim
-ETH,ETH_2_023rx,5,North Shewa (Amhara),NZVY1yBTyp6,Datim
-ETH,ETH_2_024,5,North Wolo,ovcYzPVUUWI,Datim
-ETH,ETH_2_025,5,Oromiya Zone,KGmy6CUXTRq,Datim
-ETH,ETH_2_026,5,South Gondar,B7ruxHMJB6M,Datim
-ETH,ETH_2_027tt,5,South Wolo,Yvdm19ny7Um,Datim
-ETH,ETH_2_028,5,Wag Himra,gfwHD9a1NO6,Datim
-ETH,ETH_2_029,5,West Gojam,UksOD1lsa0u,Datim
-ETH,ETH_2_030,5,West Gondar,Pcnhcaxuif1,Datim
-ETH,ETH_2_031,5,Assosa,sCoLRakQgke,Datim
-ETH,ETH_2_032,5,Assosa Town,aM09E3nkMU5,Datim
-ETH,ETH_2_033,5,Kemashi,RkYatsMnapn,Datim
-ETH,ETH_2_034,5,Mao Komo Sp. Woreda,uYxO8gaDGil,Datim
-ETH,ETH_2_035,5,Metekel,X1XlInZZBe4,Datim
-ETH,ETH_2_036,5,Dire Dawa Town,CB9pIEeai3U,Datim
-ETH,ETH_2_037,5,Angewak,RVmIVRhx8Y4,Datim
-ETH,ETH_2_038,5,Etang Spe. Woreda,trum80c8biO,Datim
-ETH,ETH_2_039,5,Gambella Town,c5nJPMOo3bO,Datim
-ETH,ETH_2_040,5,Mejenger,EfGhuuc1dC0,Datim
-ETH,ETH_2_041,5,Nuwer,TnEfGrZsKVV,Datim
-ETH,ETH_2_042,5,Harari,msP4OAAYawm,Datim
-ETH,ETH_2_043,5,Adama Town,Hq7l26QbHAU,Datim
-ETH,ETH_2_044,5,Ambo Town,AzCQnXGgts6,Datim
-ETH,ETH_2_045,5,Arsi,afGvs0dpHt2,Datim
-ETH,ETH_2_046,5,Asela Town,ZHOZlqLKuIe,Datim
-ETH,ETH_2_126om,5,Bale,pjaW8X1Ko20,Datim
-ETH,ETH_2_048,5,Batu Town,tE95XAEi8qq,Datim
-ETH,ETH_2_049,5,Bishan Guracha Town,QqwsdoP7fCj,Datim
-ETH,ETH_2_050,5,Bishoftu Town,FSYr4OvAnWJ,Datim
-ETH,ETH_2_051,5,Borena,YMA2KzJPMSY,Datim
-ETH,ETH_2_052,5,Buno Bedele,SmOB12V60lg,Datim
-ETH,ETH_2_053,5,Burayu Town,c5vciSlu23e,Datim
-ETH,ETH_2_054,5,Dukem Town,dych0G4cSKX,Datim
-ETH,ETH_2_125hs,5,East Bale,vQKmOA6jjqq,Datim
-ETH,ETH_2_055,5,East Hararge,tj3Ar6OlXkc,Datim
-ETH,ETH_2_056,5,East Shewa,ZbvD0jFwVKp,Datim
-ETH,ETH_2_057,5,East Welega,SGVs4MLm9wV,Datim
-ETH,ETH_2_058,5,Finfinne Special Zone,s6vyRre6Yt4,Datim
-ETH,ETH_2_059,5,Gelan Town,ssnTVZrwRTw,Datim
-ETH,ETH_2_060,5,Guji,p2hVtS276PB,Datim
-ETH,ETH_2_061,5,Holota Town,lvQxBKnwX90,Datim
-ETH,ETH_2_062,5,Horo Gudru Welega,M8iULGgSqhb,Datim
-ETH,ETH_2_063,5,Ilu Aba Bora,cPO0XR01hKZ,Datim
-ETH,ETH_2_064,5,Jimma,NCJMcvy0nHt,Datim
-ETH,ETH_2_065,5,Jimma Town,x1MDzPVDvmK,Datim
-ETH,ETH_2_066,5,Kelem Welega,xm9S4Vvy8xf,Datim
-ETH,ETH_2_067,5,Lega Tafo Town,uKySbK9FbCs,Datim
-ETH,ETH_2_068,5,Mojo Town,dYUpc7PRZUk,Datim
-ETH,ETH_2_069,5,Nekemte Town,SWVGCwgrvMX,Datim
-ETH,ETH_2_070,5,North Shewa (Oromia),ceOnGaH5r0n,Datim
-ETH,ETH_2_071,5,Robe Town,aXHG80olVqr,Datim
-ETH,ETH_2_072,5,Sebeta Town,cvUxg9nGhyT,Datim
-ETH,ETH_2_073,5,Shashemene Town,N3JudAnE2BV,Datim
-ETH,ETH_2_074,5,South West Shewa,tVBvqbPqjH6,Datim
-ETH,ETH_2_075,5,Sululta Town,P4Jy185ZPvd,Datim
-ETH,ETH_2_076,5,West Arsi,SwUrg0CePwx,Datim
-ETH,ETH_2_077,5,West Guji,Ur0XOQY2HtG,Datim
-ETH,ETH_2_078,5,West Hararge,GIov8P3P62G,Datim
-ETH,ETH_2_079,5,West Shewa,hu1aXuBmkJ2,Datim
-ETH,ETH_2_080,5,West Welega,ou15MoWGZ3k,Datim
-ETH,ETH_2_081,5,Woliso Town,bxyNgtdqhPe,Datim
-ETH,ETH_2_107,5,Afder,JeCVfWOofYF,Datim
-ETH,ETH_2_108,5,Dawo,iytQoFkQjqV,Datim
-ETH,ETH_2_109,5,Dollo (Warder),mW8CJ7BLipn,Datim
-ETH,ETH_2_110,5,Erer,tcOLqU6ieM6,Datim
-ETH,ETH_2_111,5,Fafen (Jijiga),p1gYaXxpyk8,Datim
-ETH,ETH_2_112,5,Jerer (Degahabur),Ao7WsTe6wvO,Datim
-ETH,ETH_2_113,5,Korahe (Keberidehar),ONiP8h437BC,Datim
-ETH,ETH_2_114,5,Liben,I5UvxMgcnNR,Datim
-ETH,ETH_2_115,5,Nogob,OvQquPxd57H,Datim
-ETH,ETH_2_116,5,Shebele (Gode),LO2XhiLb4hI,Datim
-ETH,ETH_2_117,5,Siti (Shinile),UZ8m2bymRJT,Datim
-ETH,ETH_2_118,5,Central Tigray,SCocKNlviny,Datim
-ETH,ETH_2_119,5,Eastern Tigray,pDg8djCo0c1,Datim
-ETH,ETH_2_120,5,Mekele Special Zone,tOt6RC8sphA,Datim
-ETH,ETH_2_121,5,North Western Tigray,XiyYWGTxuSg,Datim
-ETH,ETH_2_165yp,5,South Eastern Tigray,glAvMvEwXql,Datim
-ETH,ETH_2_166vx,5,South Tigray,R5jIPn9DRti,Datim
-ETH,ETH_2_124,5,Western Tigray,YQGDBOiAsny,Datim
-ETH,ETH_2_148ji,5,Aleta Chuko,orAI3YwxWou,Datim
-ETH,ETH_2_147wb,5,Aleta Chuko Town,VBuhjzBhFbO,Datim
-ETH,ETH_2_138ro,5,Aleta Wondo,OzeDEb1NGx8,Datim
-ETH,ETH_2_136ui,5,Aleta Wondo Town,fLUGXJpcbBG,Datim
-ETH,ETH_2_157vn,5,Arbegona,MvS2br5FWRN,Datim
-ETH,ETH_2_158hr,5,Aroresa,fsIf6Dh3R7C,Datim
-ETH,ETH_2_132xl,5,Awasa Zuria,R3kINuTnXKu,Datim
-ETH,ETH_2_162ld,5,Bensa,rO9Ezo9ZBQ2,Datim
-ETH,ETH_2_145zj,5,Bilate Zuria,b6YghAVB7z3,Datim
-ETH,ETH_2_156ug,5,Bona Zuria,MaAYvJxPzx8,Datim
-ETH,ETH_2_146ci,5,Boricha,S2OIBRCLpKW,Datim
-ETH,ETH_2_144xp,5,Bura,tsUYbG4USw7,Datim
-ETH,ETH_2_159jk,5,Bursa,a1pbWIff3gO,Datim
-ETH,ETH_2_143jt,5,Chabe Gambeltu,uTLfZeYvEy7,Datim
-ETH,ETH_2_149hs,5,Chere,TRSvGymYp6f,Datim
-ETH,ETH_2_130nc,5,Chirone,y3BAMl7ya5g,Datim
-ETH,ETH_2_163tl,5,Daela,JizHkcQs67Z,Datim
-ETH,ETH_2_139cx,5,Dale,M7kclECuomB,Datim
-ETH,ETH_2_164gt,5,Dara,SY4mkHZ9v6Q,Datim
-ETH,ETH_2_150tc,5,Dara Otilcho,jnRxemaD4Ho,Datim
-ETH,ETH_2_137qn,5,Darara,NTHFO92QWFd,Datim
-ETH,ETH_2_142pc,5,Daya Town,OnS7zv4sovx,Datim
-ETH,ETH_2_134cg,5,Goreche,kqENDKBOnAR,Datim
-ETH,ETH_2_095,5,Hawassa Town,SSDVixBnw0n,Datim
-ETH,ETH_2_152me,5,Hawella,axeGa2g5J8K,Datim
-ETH,ETH_2_131be,5,Hoko,WitpKwqvSx5,Datim
-ETH,ETH_2_153lg,5,Hula,mNVEj1DdEMV,Datim
-ETH,ETH_2_141mn,5,Leku Town,lWlJCv6bQAA,Datim
-ETH,ETH_2_129ng,5,Loko Abeya,VB2yM4524e2,Datim
-ETH,ETH_2_133xl,5,Malga,HU0olgZslpP,Datim
-ETH,ETH_2_160gg,5,Shafamo,liBgJGTTwku,Datim
-ETH,ETH_2_151ho,5,Shebedino,fxRKUvibHKO,Datim
-ETH,ETH_2_161zj,5,Teticha,KLtCjjVJH1l,Datim
-ETH,ETH_2_140mu,5,Wensho,NRqNrURtame,Datim
-ETH,ETH_2_155wq,5,Wondo Genet,gzzURYR2joc,Datim
-ETH,ETH_2_154cz,5,Wondo Genet Town,fS7IEqWT2nt,Datim
-ETH,ETH_2_135bh,5,Yirga Alem Town,cRFfhS2VNIx,Datim
-ETH,ETH_2_082,5,Alaba Sp. Woreda,WsCJPA73Pfy,Datim
-ETH,ETH_2_127sp,5,Ale (SNNPR) Sp. Zone,bMu3IqXWrFR,Datim
-ETH,ETH_2_084,5,Amaro Sp. Zone,fecMcTJQLGc,Datim
-ETH,ETH_2_085,5,Basketo Sp. Woreda,DUhEMcPxHIH,Datim
-ETH,ETH_2_087,5,Burji Sp. Zone,abtO5wcQbsH,Datim
-ETH,ETH_2_089,5,Dereashe Sp. Zone,E2ErYu25PCJ,Datim
-ETH,ETH_2_090,5,Gamo,w5nkyToNJd4,Datim
-ETH,ETH_2_091,5,Gedeo,MbbwrPZERvl,Datim
-ETH,ETH_2_092,5,Goffa,MJ5Ep2e4eqs,Datim
-ETH,ETH_2_093,5,Gurage,zcW83095pxX,Datim
-ETH,ETH_2_094,5,Hadiya,IDXkfYS25Kt,Datim
-ETH,ETH_2_097,5,Kembata Timbaro,gqsvUCJdCgC,Datim
-ETH,ETH_2_128hj,5,Konso,Efj5yiDDlmT,Datim
-ETH,ETH_2_102,5,Silti,Y21M3gfnCZ8,Datim
-ETH,ETH_2_103,5,South Omo,O5fSSbjRZDh,Datim
-ETH,ETH_2_105,5,Wolayita,jeHPQ7NcxKO,Datim
-ETH,ETH_2_106,5,Yem Sp. Woreda,RkOmuCyrvsT,Datim
-ETH,ETH_2_086,5,Bench Sheko,OpsVFL97XKY,Datim
-ETH,ETH_2_088,5,Dawuro,yHpPnb5CQ7r,Datim
-ETH,ETH_2_096,5,Kefa,AJayqqGyQgl,Datim
-ETH,ETH_2_098,5,Konta Sp. Woreda,JEQrKyALZms,Datim
-ETH,ETH_2_100,5,Sheka,mhp8hJq7zhX,Datim
-ETH,ETH_2_104,5,West Omo,KQOiiwmG4P7,Datim
