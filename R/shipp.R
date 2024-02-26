@@ -244,7 +244,7 @@ shipp_disaggregate_fsw <- function(outputs,
   # Check for consensus estimate of FSW
   fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$population_size
 
-  if(!is.na(fsw_consensus)){
+  if(!is.na(fsw_consensus) & fsw_consensus == 0){
 
     # Check if consensus estimate is larger than age matched population denominator
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "female",]$population
@@ -395,10 +395,10 @@ shipp_disaggregate_pwid <- function(outputs,
     dplyr::mutate(total_pwid = population * prop_pwid) %>%
     dplyr::select(iso3, area_id, total_pwid, age_group, area_level)
 
-  # Check for consensus estimate of MSM
+  # Check for consensus estimate of PWID
   pwid_consensus <- kp_consensus[kp_consensus$key_population == "PWID", ]$population_size
 
-  if(!is.na(pwid_consensus)){
+  if(!is.na(pwid_consensus) & pwid_consensus != 0){
     # Check if consensus estimate is larger than age matched population denominator
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
     prop_pop <- pwid_consensus / pop
@@ -498,7 +498,7 @@ shipp_disaggregate_msm <- function(outputs,
   # Check for consensus estimate of MSM
   msm_consensus <- kp_consensus[kp_consensus$key_population == "MSM", ]$population_size
 
-  if(!is.na(msm_consensus)){
+  if(!is.na(msm_consensus) & msm_consensus != 0){
 
     # Check if consensus estimate is larger than age matched population denominator
     pop <- naomi_pop[naomi_pop$area_level == 0 & naomi_pop$age_group == "Y015_049" & naomi_pop$sex == "male",]$population
@@ -1187,7 +1187,7 @@ shipp_calculate_incidence_female <- function(naomi_output,
   # Check for consensus estimate of FSW new infections
   fsw_consensus <- kp_consensus[kp_consensus$key_population == "FSW", ]$infections
 
-  if(is.na(fsw_consensus)){
+  if(is.na(fsw_consensus) || fsw_consensus != 0){
     # If no KP workbook present, read in FSW new infections from GOALS
     goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
     fsw_consensus <- goals[goals$iso3 == options$area_scope, ]$`fsw-new_inf`
@@ -1419,17 +1419,18 @@ shipp_calculate_incidence_male <- function(naomi_output,
   msm_consensus <- kp_consensus[kp_consensus$key_population == "MSM", ]$infections
   pwid_consensus <- kp_consensus[kp_consensus$key_population == "PWID", ]$infections
 
-  if(is.na(msm_consensus)){
+  if(is.na(msm_consensus) || msm_consensus == 0){
     # If no KP workbook present, read in FSW new infections from GOALS
     goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
     msm_consensus <- goals[goals$iso3 == options$area_scope, ]$`msm-new_inf`
   }
 
-  if(is.na(pwid_consensus)){
+  if(is.na(pwid_consensus) || pwid_consensus == 0){
     # If no KP workbook present, read in FSW new infections from GOALS
     goals <- naomi.resources::load_shipp_exdata("goals", "SSA")
     pwid_consensus <- goals[goals$iso3 == options$area_scope, ]$`pwid-new_inf`
   }
+
   # scale consensus that we'll use to account for the 1:10 ratio assumption of
   # male:female PWID
   pwid_consensus <- pwid_consensus * 0.91
