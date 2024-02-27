@@ -21,3 +21,5 @@ tests/testthat/testdata/fit.RDS
 .vscode
 .Rprofile
 .idea
+
+.DS_Store

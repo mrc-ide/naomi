@@ -127,6 +127,8 @@ extract_pjnz_one <- function(pjnz, extract_shiny90) {
 #' @export
 #'
 extract_pjnz_program_data <- function(pjnz_list) {
+
+
   pjnz_list <- unroll_pjnz(pjnz_list)
 
   region_code <- lapply(pjnz_list, read_spectrum_region_code)
@@ -185,7 +187,7 @@ read_dp_art_dec31 <- function(dp) {
 
   ## In Spectrum 2023, "<NeedARTDec31 MV>" was updated to include children in the totals
   ## -> now need to sum over 5-year age groups for age 15+ to get the adult ART need
-  
+
   male_15plus_needart <- dpsub("<NeedARTDec31 MV>", 4:17*3 + 3, timedat.idx)
   male_15plus_needart <- vapply(lapply(male_15plus_needart, as.numeric), sum, numeric(1))
 
@@ -195,14 +197,14 @@ read_dp_art_dec31 <- function(dp) {
   art15plus_need <- rbind(male_15plus_needart, female_15plus_needart)
   dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
 
-  
+
   if (any(art15plus_num[art15plus_isperc == 1] < 0 |
           art15plus_num[art15plus_isperc == 1] > 100)) {
     stop("Invalid percentage on ART entered for adult ART")
   }
 
   ## # Adult on ART adjustment factor
-  ## 
+  ##
   ## * Implemented from around Spectrum 6.2 (a few versions before)
   ## * Allows user to specify scalar to reduce number on ART in each year ("<AdultARTAdjFactor>")
   ## * Enabled / disabled by checkbox flag ("<AdultARTAdjFactorFlag>")
@@ -281,7 +283,7 @@ read_dp_art_dec31 <- function(dp) {
   names(child_art) <- proj.years
 
   ## # Child on ART adjustment factor
-  ## 
+  ##
   ## * Implemented same as adult adjustment factor above
 
   if (exists_dptag("<ChildARTAdjFactorFlag>") &&
@@ -684,7 +686,111 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
   df
 }
 
+
+
 read_dp <- function(pjnz) {
   dpfile <- grep(".DP$", utils::unzip(pjnz, list = TRUE)$Name, value = TRUE)
   utils::read.csv(unz(pjnz, dpfile), as.is = TRUE)
+}
+
+#' Read key population summary data from PJNZ
+#'
+#' Reads key population summary data from Spectrum PJNZ.
+#'
+#' @param pjnz_list path to PJNZ file or zip of multiple PJNZ files
+#'
+#'
+#' @noRd
+#'
+
+extract_kp_workbook <- function(pjnz_list){
+
+  # Extract spectrum files
+  pjnz_list <- unroll_pjnz(pjnz_list)
+
+  # Extract .DP files
+  dp <- lapply(pjnz_list, read_dp)
+
+  # Extract kp workbook summary
+  kp <- lapply(dp, read_dp_keypop_summary)
+
+  # Filter for spectrum file with consensus estimates
+  kp_out <- kp %>%
+    dplyr::bind_rows() %>%
+    dplyr::filter(!is.na(year))
+
+  # If no consensus estimates present, return empty dataframe
+  if(nrow(kp_out) == 0){kp_out <- kp[[1]]}
+
+  # If multiple pjnz files, aggreagte consensus estimates
+  if(nrow(kp_out) > 4){
+
+    kp_out <- kp_out |>
+      dplyr::group_by(key_population, year, workbook_file) |>
+      dplyr::summarise(population_size = sum(population_size),
+                hiv_prevalence = sum(hiv_prevalence),
+                art_coverage = sum(art_coverage),
+                infections = sum(infections))
+
+  }
+
+  kp_out
+
+}
+
+
+#' Read key population summary data from PJNZ
+#'
+#' Reads key population summary data from Spectrum PJNZ.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' dp <- dp <- naomi:::read_dp(pjnz)
+#' read_dp_keypop_summary(dp)
+#'
+#' @noRd
+#'
+read_dp_keypop_summary <- function(dp) {
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+
+  kp_name <- c("FSW", "MSM", "TG", "PWID")
+
+  if (exists_dptag("<KeyPops MV>")) {
+    kp_tab <- dpsub("<KeyPops MV>", 2:5, 4:7)
+    kp_tab <- sapply(kp_tab, as.numeric)
+  } else {
+    kp_tab <- matrix(NA, 4, 4)
+  }
+
+  if (exists_dptag("<KeyPopsYear MV>")) {
+    kp_year <- as.integer(dpsub("<KeyPopsYear MV>", 2, 4))
+  } else {
+    kp_year <- NA_integer_
+  }
+
+    if (exists_dptag("<KeyPopsFName MV>")) {
+    kp_file <- as.character(dpsub("<KeyPopsFName MV>", 2, 4))
+  } else {
+    kp_file <- NA_character_
+  }
+
+  kp_summary <- data.frame(
+    key_population = kp_name,
+    year = kp_year,
+    population_size = kp_tab[1, ],
+    hiv_prevalence = kp_tab[2, ],
+    art_coverage = kp_tab[3, ],
+    infections = kp_tab[4, ],
+    workbook_file = kp_file
+  )
+
+  kp_summary
 }

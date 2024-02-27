@@ -97,6 +97,38 @@ vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, ..., FUN.VALUE = logical(1))
 }
 
+vnapply <- function(X, FUN, ...) {
+  vapply(X, FUN, ..., FUN.VALUE = numeric(1))
+}
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, ..., FUN.VALUE = character(1))
+}
+
 is_empty <- function(x) {
   length(x) == 0 || is.null(x) || is.na(x) || !nzchar(x)
+}
+
+#' Write list of data frames into an xlsx file
+#'
+#' This doesn't write colmn headers into the workbook, it expects
+#' that these already exist.
+#'
+#' @param template Path to xlsx file with sheets
+#' @param sheets Named list of data frames to write into template. The names
+#'   must match the destination sheet in the xlsx
+#' @param path Path to output the filled in xlsx
+#'
+#' @return Path to complete xlsx file
+#' @keywords internal
+write_xlsx_sheets <- function(template, sheets, path) {
+  wb <- openxlsx::loadWorkbook(template)
+  for (sheet in names(sheets)) {
+    openxlsx::writeData(wb, sheet, sheets[[sheet]],
+                        startRow = 2,
+                        colNames = FALSE)
+  }
+
+  openxlsx::saveWorkbook(wb, path)
+  path
 }
