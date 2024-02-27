@@ -722,6 +722,18 @@ extract_kp_workbook <- function(pjnz_list){
   # If no consensus estimates present, return empty dataframe
   if(nrow(kp_out) == 0){kp_out <- kp[[1]]}
 
+  # If multiple pjnz files, aggreagte consensus estimates
+  if(nrow(kp_out) > 4){
+
+    kp_out <- kp_out |>
+      dplyr::group_by(key_population, year, workbook_file) |>
+      dplyr::summarise(population_size = sum(population_size),
+                hiv_prevalence = sum(hiv_prevalence),
+                art_coverage = sum(art_coverage),
+                infections = sum(infections))
+
+  }
+
   kp_out
 
 }
