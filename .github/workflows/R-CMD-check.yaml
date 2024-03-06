@@ -54,6 +54,10 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
