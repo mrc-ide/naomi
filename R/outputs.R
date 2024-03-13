@@ -20,7 +20,7 @@ get_meta_indicator <- function() {
 
 
 
-add_stats <- function(df, mode = NULL, sample = NULL, prefix = "", na.rm = FALSE){
+add_stats <- function(df, mode = NULL, sample = NULL, prefix = "", na.rm = FALSE) {
 
   v <- df
 
@@ -118,7 +118,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "plhiv_t5_out" = "plhiv",
                      "plhiv_attend_t5_out" = "plhiv_attend",
                      "infections_t5_out" = "infections")
-  
+
   if (naomi_mf$output_aware_plhiv) {
 
     indicators_t1 <- c(indicators_t1,
@@ -145,14 +145,14 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
   indicator_est_t4 <- Map(get_est, names(indicators_t4), indicators_t4, naomi_mf$calendar_quarter4)
-  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)  
-  
+  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)
+
 
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
   indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
-  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)  
+  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -210,7 +210,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t3,
                   indicator_anc_est_t3,
                   indicator_est_t4,
-                  indicator_est_t5                  
+                  indicator_est_t5
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -318,12 +318,7 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
 #' @param indicators Naomi indicators created by `extract_indicators()`
 #' @param meta_areas
 #'
-#' @details
-#'
-#'
 #' @export
-
-
 align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 
   stopifnot(inherits(naomi_data, "naomi_data"))
@@ -868,8 +863,10 @@ save_output_coarse_age_groups <- function(path, naomi_output,
 
 
 save_output_spectrum <- function(path, naomi_output, notes = NULL,
+                                 vmmc_path = NULL,
                                  overwrite = FALSE) {
   save_output(basename(path), dirname(path), naomi_output, notes,
+              vmmc_path = vmmc_path,
               overwrite = overwrite, with_labels = TRUE,
               boundary_format = "geojson", single_csv = FALSE,
               export_datapack = TRUE)
@@ -882,6 +879,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 #' @param filename Name of file to create
 #' @param dir Directory to create zip in
 #' @param notes Notes to include in output zip
+#' @param vmmc_path Path to VMMC excel workbook
 #' @param overwrite If TRUE overwrite any existing file
 #' @param with_labels If TRUE save indicator ids with labels
 #' @param boundary_format Either geojson or shp for saving boundary as geojson
@@ -895,6 +893,7 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 save_output <- function(filename, dir,
                         naomi_output,
                         notes = NULL,
+                        vmmc_path = NULL,
                         overwrite = FALSE,
                         with_labels = FALSE,
                         boundary_format = "geojson",
@@ -941,6 +940,10 @@ save_output <- function(filename, dir,
     art_attendance <- naomi_output$art_attendance
   }
 
+  if (!is.null(vmmc_path)) {
+    vmmc_path <- normalizePath(vmmc_path)
+  }
+
   tmpd <- tempfile()
   dir.create(tmpd)
   old <- setwd(tmpd)
@@ -977,9 +980,20 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
+
+    if (!is.null(vmmc_path)) {
+      ## Skip the first row, the file has two rows of headers
+      vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
+                                               startRow = 2)
+      vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
+    } else {
+      vmmc_datapack <- NULL
+    }
+
     write_datapack_csv(naomi_output = naomi_output,
-                       path = "pepfar_datapack_indicators_2023.csv",
-                       psnu_level = naomi_output$fit$model_options$psnu_level)
+                       path = PEPFAR_DATAPACK_FILENAME,   # global defined in R/pepfar-datapack.R
+                       psnu_level = naomi_output$fit$model_options$psnu_level,
+                       dmppt2_output = vmmc_datapack)
   }
 
 
@@ -1216,7 +1230,8 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::inner_join(
              naomi_mf$spectrum_0to4distribution,
              by = c("spectrum_region_code", "calendar_quarter", "indicator"),
-             multiple = "all"
+             multiple = "all",
+             relationship = "many-to-many"
            ) %>%
     dplyr::mutate(mean_strat = mean * distribution) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, indicator, mean_strat)
@@ -1241,7 +1256,8 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::select(area_id, sex, area_id_out, sex_out)
 
   strat_mean_counts_out <- strat_mean_counts_model %>%
-    dplyr::left_join(A_0to4_long, by = c("area_id", "sex"), multiple = "all") %>%
+    dplyr::left_join(A_0to4_long, by = c("area_id", "sex"), multiple = "all",
+                     relationship = "many-to-many") %>%
     dplyr::count(area_id = area_id_out, sex = sex_out, age_group, calendar_quarter, indicator,
                  wt = mean_strat, name = "distribution") %>%
     dplyr::group_by(area_id, sex, calendar_quarter, indicator) %>%
@@ -1250,7 +1266,9 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
 
   out_0to4strat_counts <- out0to4 %>%
     dplyr::inner_join(strat_mean_counts_out,
-                      by = c("area_id", "sex", "calendar_quarter", "indicator"), multiple = "all") %>%
+                      by = c("area_id", "sex", "calendar_quarter", "indicator"),
+                      multiple = "all",
+                      relationship = "many-to-many") %>%
     tidyr::pivot_longer(c(mean, se, median, mode, lower, upper)) %>%
     dplyr::mutate(value = value * distribution,
                   distribution = NULL) %>%
@@ -1322,10 +1340,24 @@ get_period_metadata <- function(calendar_quarters) {
 #' @return The read data
 #' @export
 read_hintr_output <- function(path) {
-  if (tolower(tools::file_ext(path)) == "qs") {
+  type <- tolower(tools::file_ext(path))
+  if (type == "qs") {
     qs::qread(path)
-  } else {
+  } else if (type == "duckdb") {
+    read_duckdb(path)
+  } else if (type == "rds") {
     ## Model & plot data output before v2.8.0 were saved as RDS
     readRDS(path)
+  } else {
+    stop(sprintf(paste("Cannot read hintr data of invalid type, got '%s',",
+                       "must be one of rds, qs or duckdb."), type))
   }
 }
+
+read_duckdb <- function(path) {
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = path, read_only = TRUE)
+  on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
+  DBI::dbGetQuery(con, sprintf("SELECT * from %s", DUCKDB_OUTPUT_TABLE_NAME))
+}
+
+

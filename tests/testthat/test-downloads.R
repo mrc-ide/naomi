@@ -70,6 +70,36 @@ test_that("spectrum download can be created", {
   expect_equal(saved_notes, c("these are my", "multiline notes"))
 })
 
+test_that("spectrum download can include vmmc data", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  notes <- "these are my\nmultiline notes"
+  vmmc_file <- list(path = file.path("testdata", "vmmc.xlsx"),
+                    hash = "123",
+                    filename = "vmmc.xlsx")
+  testthat::with_mocked_bindings(
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
+                                             notes = notes,
+                                             vmmc_file = vmmc_file)
+    ),
+    new_simple_progress = mock_new_simple_progress
+  )
+  expect_true(file.exists(out$path))
+
+  t <- tempfile()
+  unzip(out$path, PEPFAR_DATAPACK_FILENAME, exdir = t)
+  datapack <- utils::read.csv(file.path(t, PEPFAR_DATAPACK_FILENAME))
+
+  expect_true("psnu_uid" %in% colnames(datapack))
+  expect_true(!any(is.na(datapack)))
+  expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
+                    datapack$indicator_code))
+
+  unzip(out$path, "notes.txt", exdir = t)
+  saved_notes <- readLines(file.path(t, "notes.txt"))
+  expect_equal(saved_notes, c("these are my", "multiline notes"))
+})
+
 test_that("coarse age group download can be created", {
   mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
   with_mock(new_simple_progress = mock_new_simple_progress, {
@@ -160,6 +190,29 @@ test_that("comparison report download can be created", {
   expect_length(messages$progress, 1)
   expect_equal(messages$progress[[1]]$message,
                "Generating comparison report")
+})
+
+test_that("AGYW download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock(new_simple_progress = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_agyw_download(a_hintr_output_calibrated,
+                                         a_hintr_data$pjnz))
+  })
+  expect_true(file.exists(out$path))
+
+  expect_type(out$metadata$description, "character")
+  expect_length(out$metadata$description, 1)
+  expect_equal(out$metadata$areas, "MWI")
+
+  read <- readxl::read_xlsx(out$path)
+  expect_equal(read,
+               data.frame(x = c(1, 2, 3), y = c(3, 4, 5)),
+               ignore_attr = TRUE)
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message, "Generating AGYW tool")
 })
 
 test_that("output description is translated", {

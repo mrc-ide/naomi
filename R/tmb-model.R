@@ -96,7 +96,9 @@ prepare_tmb_inputs <- function(naomi_data,
 
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
-    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id", multiple = "all") %>%
+    dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id",
+                     multiple = "all",
+                     relationship = "many-to-many") %>%
     dplyr::mutate(attend_idf = forcats::as_factor(attend_idx),
                   idf = forcats::as_factor(idx))
 
@@ -738,7 +740,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                       artdat_age_start = age_group_start,
                       artdat_age_end = age_group_start + age_group_span
                     ),
-             by = "artdat_age_group"
+             by = "artdat_age_group",
+             relationship = "many-to-many"
            ) %>%
     ## Note: this would be much faster with tree data structure for age rather than crossing...
     tidyr::crossing(
@@ -755,7 +758,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
                         stringsAsFactors = FALSE) %>%
              dplyr::filter(sex %in% sexes),
              by = "artdat_sex",
-             multiple = "all"
+             multiple = "all",
+             relationship = "many-to-many"
     )
 
   ## Map artattend_area_id to model_area_id
@@ -763,7 +767,8 @@ create_artattend_Amat <- function(artnum_df, age_groups, sexes, area_aggregation
     dplyr::left_join(
       area_aggregation,
       by = c("attend_area_id" = "area_id"),
-      multiple = "all"
+      multiple = "all",
+      relationship = "many-to-many"
     ) %>%
     dplyr::mutate(attend_area_id = model_area_id,
                   model_area_id = NULL)

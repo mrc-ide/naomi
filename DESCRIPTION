@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.9.9
+Version: 2.9.23
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -13,10 +13,11 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Additional_repositories:
     https://mrc-ide.r-universe.dev
 Imports:
+    DBI,
     Matrix,
     R6,
     TMB,
@@ -24,6 +25,7 @@ Imports:
     brio,
     data.tree,
     dplyr (>= 1.1.0),
+    duckdb (== 0.9.1),
     eppasm (>= 0.7.1),
     first90 (>= 1.6.1),
     forcats,
@@ -34,7 +36,8 @@ Imports:
     knitr,
     magrittr,
     mvtnorm,
-    naomi.options (>= 0.1.6),
+    naomi.options (>= 1.2.0),
+    openxlsx,
     plotly,
     prettyunits,
     qs,
@@ -48,6 +51,7 @@ Imports:
     traduire,
     utils,
     withr,
+    writexl,
     yaml,
     zip,
     zoo
@@ -58,6 +62,7 @@ Suggests:
     lubridate,
     mockery,
     mockr,
+    readxl,
     rvest,
     scales,
     testthat (>= 2.1.0),
@@ -74,6 +79,7 @@ Remotes:
     reside-ic/traduire,
     mrc-ide/naomi.options,
     mrc-ide/mockr,
-    mrc-ide/testthat.buildkite
+    mrc-ide/testthat.buildkite,
+    duckdb/duckdb-r@v0.9.1
 Config/testthat/edition: 3
 Config/testthat/parallel: true

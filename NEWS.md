@@ -1,3 +1,70 @@
+# naomi 2.9.23
+
+* Update Datim UIDs for Ethiopia 2024 boundary division.
+
+# naomi 2.9.22
+
+* Add missing Datim UIDs for Uganda corresponding to 146 districts.
+
+# naomi 2.9.21
+
+* Fix a bug in Spectrum file generation when two surveys are selected for ART coverage (naomi troubleshooting issue #2024-122).
+* Fix a bug in comparison report generation when ANC prevalence not set for time 1.
+
+# naomi 2.9.20
+
+* Update ART aggregation code to speed up data generation.
+
+# naomi 2.9.19
+
+* Add optional `vmmc_path` to Spectrum download function for path to DMMPT2 output Excel file.
+* Add DMMPT2 outputs to PEPFAR Datapack CSV download, if DMMPT2 output file exists.
+* Silence `spdep v1.2-8` warnings from `mat2listw()` (issue #421).
+
+# naomi 2.9.18
+
+* Change PEPFAR Data Pack file name to `pepfar_datapack_indicators_2024.csv`.
+
+# naomi 2.9.17
+
+* Bump version of naomi.options v1.2.0 to include defaults for 2024 HIV estimates
+  - Extends calendar quarter model options drop downs from `December 2025` to `December 2027`
+  - Updates T2, T3, T4, and T5 defaults all 1-year ahead
+  - Updates default 'current' ANC input year to 2023
+  - Updates TZA defaults to 2022 PHIA survey
+
+# naomi 2.9.16
+
+* Change programme data aggregation scripts to aggregate and tag missing data. Changes in the outputs of the following functions:
+   - `aggregate_art()` and `aggregate_anc()`:  Data aggregated retaining missing values at lowest admin level and summed totals at higher admin levels.
+   - `prepare_input_time_series_art()` and `prepare_input_time_series_anc()`: New column containing a list of area_ids corresponding to missing districts included in aggreagated totals. 
+
+# naomi 2.9.15
+
+* Add placeholder function `hintr_prepare_agyw_download` for creating AGYW tool.
+
+# naomi 2.9.14
+
+* Fix scrambled translation keys in summary report.
+
+# naomi 2.9.13
+
+* Ensure duckdb connection is readonly.
+
+# naomi 2.9.12
+
+* Automatically set T4 and T5 to 24- and 36-months ahead of T3 if not specified in model options.
+
+# naomi 2.9.11
+
+* hintr data frame outputs can now be saved as a duckdb database.
+
+# naomi 2.9.10
+
+* Update PJNZ extraction for adult ART need Dec 31 for 2023 PJNZ files. Previously child ART was
+  note recorded in the .DP file tag `<NeedARTDec31 MV>`, and so it was fine to extract the total
+  value. Now child ART is recorded, and so need to sum the adult age groups only.
+
 # naomi 2.9.9
 
 * Add indicators `aware_plhiv_attend` and `unaware_plhiv_attend` for consistent facility attendance cascades.

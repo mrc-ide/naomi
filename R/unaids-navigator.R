@@ -3,8 +3,6 @@
 #' @param naomi_output a naomi_output object.
 #' @param path path to save Navigator checklist CSV.
 #'
-#' @details
-#'
 #' @export
 write_navigator_checklist <- function(naomi_output,
                                       path) {
@@ -104,7 +102,7 @@ write_navigator_checklist <- function(naomi_output,
 
     # Is survey ART coverage included if available
     is_artcov_notavail <- length(data_options$artcov_survey_available) == 0   ## Not available -> TRUE
-    is_artcov_used <- data_options$artcov_survey_ids %in% data_options$artcov_survey_available
+    is_artcov_used <- any(data_options$artcov_survey_ids %in% data_options$artcov_survey_available)
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ART_coverage"] <- is_artcov_notavail || is_artcov_used
 
     ## ## Check ART inputs
@@ -117,7 +115,7 @@ write_navigator_checklist <- function(naomi_output,
     ## ## Check ANC inputs
     ## Is ANC data included for at least one time point
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_ANC_data"] <-
-      !is.null(naomi_output$fit$data_options$anc_prev_year_t1)||
+      !is.null(naomi_output$fit$data_options$anc_prev_year_t1) ||
       !is.null(naomi_output$fit$data_options$anc_prev_year_t2)
 
     if (!is.null(model_options)) {

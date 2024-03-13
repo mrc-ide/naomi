@@ -197,7 +197,8 @@ create_Lproj <- function(spec, mf_model,
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group1 = age_group, area_id, idx1 = idx),
       by = c("spectrum_region_code", "sex", "age_group1"),
-      multiple = "all"
+      multiple = "all",
+      relationship = "many-to-many"
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group2 = age_group, area_id, idx2 = idx),
@@ -245,14 +246,16 @@ create_Lproj <- function(spec, mf_model,
 
   incidLproj <- infections_age_t2 %>%
     dplyr::left_join(infections_age_1year,
-                     by = c("spectrum_region_code", "sex", "age_group_infection")) %>%
+                     by = c("spectrum_region_code", "sex", "age_group_infection"),
+                     relationship = "many-to-many") %>%
     dplyr::mutate(
       L_incid = dplyr::if_else(infections_age == 0, 0, infections_age_t2 / infections_age)
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group_infection = age_group, area_id, idx1 = idx),
       by = c("spectrum_region_code", "sex", "age_group_infection"),
-      multiple = "all"
+      multiple = "all",
+      relationship = "many-to-many"
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex, age_group2 = age_group, area_id, idx2 = idx),
@@ -290,7 +293,8 @@ create_Lproj <- function(spec, mf_model,
         ) %>%
         dplyr::select(spectrum_region_code, sex1 = sex, age_group1, hivpop1),
       by = "spectrum_region_code",
-      multiple = "all"
+      multiple = "all",
+      relationship = "many-to-many"
     ) %>%
     dplyr::group_by(spectrum_region_code, sex2, age_group2) %>%
     dplyr::mutate(L_paed = hivpop2 / sum(hivpop1)) %>%
@@ -301,7 +305,8 @@ create_Lproj <- function(spec, mf_model,
       dplyr::select(mf_model, spectrum_region_code, sex1 = sex,
                     age_group1 = age_group, area_id, idx1 = idx),
       by = c("spectrum_region_code", "sex1", "age_group1"),
-      multiple = "all"
+      multiple = "all",
+      relationship = "many-to-many"
     ) %>%
     dplyr::inner_join(
       dplyr::select(mf_model, spectrum_region_code, sex2 = sex,

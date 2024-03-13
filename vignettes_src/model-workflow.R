@@ -73,7 +73,7 @@ spec <- extract_pjnz_naomi(pjnz)
 #'    estimates are needed.
 #' * `quarter_id_t3`: The third time point for the model--the future projection for HIV
 #'    estimates.
-#' 
+#'
 
 scope <- "MWI"
 level <- 4
@@ -211,11 +211,11 @@ system.time(outputs <- output_package(fit, naomi_data))
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",
                                    spectrum_plhiv_calibration_strat = "sex_age_coarse",
-                                   spectrum_artnum_calibration_level = "national", 
+                                   spectrum_artnum_calibration_level = "national",
                                    spectrum_artnum_calibration_strat = "sex_age_coarse",
-                                   spectrum_aware_calibration_level = "national", 
+                                   spectrum_aware_calibration_level = "national",
                                    spectrum_aware_calibration_strat = "sex_age_coarse",
-                                   spectrum_infections_calibration_level = "national", 
+                                   spectrum_infections_calibration_level = "national",
                                    spectrum_infections_calibration_strat = "sex_age_coarse")
 
 

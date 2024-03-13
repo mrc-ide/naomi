@@ -32,7 +32,8 @@ naomi_model_frame(
   logit_nu_sd = 0.3,
   spectrum_population_calibration = "national",
   output_aware_plhiv = TRUE,
-  adjust_area_growth = FALSE
+  adjust_area_growth = FALSE,
+  psnu_level = NULL
 )
 }
 \arguments{
@@ -88,6 +89,10 @@ ids.}
 \item{spectrum_population_calibration}{character string values "national", "subnational", "none"}
 
 \item{adjust_area_growth}{TRUE/FALSE: adjust PLHIV population for net change in cohort size}
+
+\item{psnu_level}{Level at which to output PEPFAR Data Pack outputs for planning. This doesn't have anything to do with
+calibration, but this is a convenient place to allow user to edit this in model workflow. Default value \code{NULL} indicates
+to read PSNU level from internal database.}
 }
 \value{
 Naomi model frame

@@ -9,6 +9,7 @@ save_output(
   dir,
   naomi_output,
   notes = NULL,
+  vmmc_path = NULL,
   overwrite = FALSE,
   with_labels = FALSE,
   boundary_format = "geojson",
@@ -24,6 +25,8 @@ save_output(
 \item{naomi_output}{Naomi output object}
 
 \item{notes}{Notes to include in output zip}
+
+\item{vmmc_path}{Path to VMMC excel workbook}
 
 \item{overwrite}{If TRUE overwrite any existing file}
 
