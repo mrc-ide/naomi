@@ -43,6 +43,7 @@ Imports:
     prettyunits,
     qs,
     readr (>= 2.0.1),
+    rlang,
     rmarkdown,
     sf,
     spdep (>= 1.1),
@@ -75,11 +76,9 @@ LinkingTo:
     TMB
 Remotes:
     bergant/datamodelr,
-    mrc-ide/eppasm,
     first90=mrc-ide/first90release,
-    reside-ic/traduire,
     mrc-ide/naomi.options,
-    mrc-ide/mockr,
-    mrc-ide/testthat.buildkite
+    mrc-ide/testthat.buildkite,
+    mrc-ide/eppasm@import-unzip
 Config/testthat/edition: 3
 Config/testthat/parallel: true
