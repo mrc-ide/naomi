@@ -38,7 +38,7 @@ vignettes/model-workflow.Rmd: vignettes_src/model-workflow.Rmd
 
 vignettes/data-model.Rmd: vignettes_src/data-model.Rmd
 	cp $^ $@
-	mkdir vignettes/figure
+	mkdir -p vignettes/figure
 	./vignettes/script/create_data_model.R
 
 vignettes/hintr-example.Rmd: vignettes_src/hintr-example.R

@@ -2,7 +2,6 @@
 title: "Emulate a hintr model run"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{`hintr` example run}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
