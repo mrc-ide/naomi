@@ -51,6 +51,7 @@ vignettes:
 	rm -rf vignettes/figure
 	rm -rf vignettes_src/outputs
 	rm -f vignettes/data-model.Rmd
+	rm -f vignettes/hintr-example.Rmd
 	rm -f vignettes/model-workflow.Rmd
 	rm -f vignettes_src/model-workflow.Rmd
 	make vignettes_install

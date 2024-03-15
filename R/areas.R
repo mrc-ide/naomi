@@ -160,6 +160,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
   v
 }
 
+#' @exportS3Method naomi::print
 print.naomi_areas <- function(areas) {
   print(areas$tree, "area_name")
 }

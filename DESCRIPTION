@@ -13,7 +13,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Additional_repositories:
     https://mrc-ide.r-universe.dev,
     https://https://duckdb.r-universe.dev
@@ -32,10 +32,8 @@ Imports:
     forcats,
     fs,
     ggplot2,
-    gt,
-    here,
-    knitr,
     magrittr,
+    methods,
     mvtnorm,
     naomi.options (>= 1.2.0),
     openxlsx,
@@ -61,6 +59,9 @@ Suggests:
     DiagrammeR,
     covr,
     datamodelr,
+    gt,
+    here,
+    knitr,
     lubridate,
     mockery,
     mockr,
@@ -68,6 +69,7 @@ Suggests:
     rvest,
     scales,
     testthat (>= 2.1.0),
+    tibble,
     tidyverse,
     viridis
 VignetteBuilder: knitr
@@ -76,7 +78,7 @@ LinkingTo:
     TMB
 Remotes:
     bergant/datamodelr,
-    first90=mrc-ide/first90release,
+    first90=mrc-ide/first90release@gh-actions,
     mrc-ide/naomi.options,
     mrc-ide/testthat.buildkite,
     mrc-ide/eppasm@import-unzip

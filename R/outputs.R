@@ -460,8 +460,8 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 #' @export
 output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
-  stopifnot(is(naomi_fit, "naomi_fit"))
-  stopifnot(is(naomi_data, "naomi_data"))
+  stopifnot(methods::is(naomi_fit, "naomi_fit"))
+  stopifnot(methods::is(naomi_data, "naomi_data"))
 
   indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
 
