@@ -34,6 +34,7 @@ jobs:
         uses: docker/build-push-action@v5
         if: github.event_name == 'pull_request'
         with:
+          context: "{{defaultContext}}:docker"
           push: true
           tags: |
             mrcide/naomi:${{steps.extract_branch.outputs.branch}}
