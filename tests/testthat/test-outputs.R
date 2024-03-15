@@ -242,6 +242,7 @@ test_that("summary report can be translated", {
   if (any(grepl('#translate[lang="en"]', content, fixed = TRUE))) {
     style_line <- which(grepl('#translate[lang="en"]', content,
                               fixed = TRUE))
+    expect_equal(length(style_line), 1)
     expect_equal(content[style_line + 1], "display: block;")
   } else {
     en <- "%23translate%5Blang%3D%22en%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
@@ -264,6 +265,7 @@ test_that("summary report can be translated", {
   if (any(grepl('#translate[lang="fr"]', content, fixed = TRUE))) {
     style_line <- which(grepl('#translate[lang="fr"]', content,
                               fixed = TRUE))
+    expect_equal(length(style_line), 1)
     expect_equal(content[style_line + 1], "display: block;")
   } else {
     fr <- "%23translate%5Blang%3D%22fr%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
