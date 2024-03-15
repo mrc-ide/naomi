@@ -19,7 +19,7 @@ Additional_repositories:
     https://https://duckdb.r-universe.dev
 Imports:
     DBI,
-    Matrix,
+    Matrix (>= 1.6.5),
     R6,
     TMB,
     assertthat,
