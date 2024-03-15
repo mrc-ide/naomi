@@ -34,16 +34,17 @@ jobs:
         uses: docker/build-push-action@v5
         if: github.event_name == 'pull_request'
         with:
-          context: "{{defaultContext}}:docker"
+          file: "./docker/Dockerfile"
           push: true
           tags: |
             mrcide/naomi:${{steps.extract_branch.outputs.branch}}
             ghcr.io/${{github.repository}}:${{steps.extract_branch.outputs.branch}}
 
-      - name: Build and push
+      - name: Build and push prod containers
         uses: docker/build-push-action@v5
         if: github.event_name != 'pull_request'
         with:
+          file: "./docker/Dockerfile"
           push: true
           tags: |
             mrcide/naomi:latest
