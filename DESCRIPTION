@@ -79,8 +79,6 @@ LinkingTo:
 Remotes:
     bergant/datamodelr,
     first90=mrc-ide/first90release@gh-actions,
-    mrc-ide/naomi.options,
-    mrc-ide/testthat.buildkite,
-    mrc-ide/eppasm@import-unzip
+    mrc-ide/naomi.options
 Config/testthat/edition: 3
 Config/testthat/parallel: true
