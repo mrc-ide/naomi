@@ -1,6 +1,7 @@
 ## Naomi <img src='images/naomi_hex.png' align="right" height="139" />
 
-![R CMD check](https://github.com/mrc-ide/naomi/actions/workflows/R-CMD-check.yml/badge.svg)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check](https://github.com/mrc-ide/naomi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mrc-ide/naomi/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/mrc-ide/naomi/branch/master/graph/badge.svg)](https://codecov.io/gh/mrc-ide/naomi?branch=master)
 
 Naomi model for subnational HIV estimates
