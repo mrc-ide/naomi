@@ -18,5 +18,5 @@
 ^buildkite$
 ^images$
 ^\.github$
-figure$
-cache$
+^figure$
+^cache$
