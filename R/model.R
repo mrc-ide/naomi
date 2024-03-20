@@ -875,7 +875,7 @@ select_naomi_data <- function(
   use_survey_aggregate = FALSE,
   spec_program_data = NULL) {
 
-  stopifnot(is(naomi_mf, "naomi_mf"))
+  stopifnot(methods::is(naomi_mf, "naomi_mf"))
 
   ## Check anc_testing and art_number against Spectrum inputs.
   ## Return NA if spec_program_data not provided
@@ -883,7 +883,7 @@ select_naomi_data <- function(
   art_number_spectrum_aligned <- NA
 
   if (!is.null(spec_program_data)) {
-    stopifnot(is(spec_program_data, "spec_program_data"))
+    stopifnot(methods::is(spec_program_data, "spec_program_data"))
 
     if (!is.null(anc_testing)) {
 
@@ -1139,7 +1139,7 @@ update_mf_offsets <- function(naomi_mf,
                               artcov_dat = NULL,
                               vls_dat = NULL) {
 
-  stopifnot(is(naomi_mf, "naomi_mf"))
+  stopifnot(methods::is(naomi_mf, "naomi_mf"))
 
   get_idx <- function(mf, df) {
 
@@ -1523,7 +1523,7 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
 artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
   stopifnot(length(calendar_quarter) <= 1)
-  stopifnot(is(naomi_mf, "naomi_mf"))
+  stopifnot(methods::is(naomi_mf, "naomi_mf"))
 
   if(is.null(calendar_quarter) || is.null(art_number)) {
     ## No number on ART data or no year specified

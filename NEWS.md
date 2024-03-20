@@ -1,3 +1,9 @@
+# naomi 2.9.24
+
+* Migrate to github actions
+* Fix R CMD check notes
+* Unpin duckdb version
+
 # naomi 2.9.23
 
 * Update Datim UIDs for Ethiopia 2024 boundary division.

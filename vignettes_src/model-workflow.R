@@ -33,11 +33,11 @@ library(sf)
 #'
 #' Area hierarchy and boundaries
 
-area_merged <- read_sf(system.file("extdata/demo_areas.geojson", package = "naomi"))
+area_merged <- read_sf(system.file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson", package = "naomi"))
 
 #' Population data
 ##+ load_population_data, message = FALSE
-pop_agesex <- read_csv(system.file("extdata/demo_population_agesex.csv", package = "naomi"))
+pop_agesex <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_population_zone.csv", package = "naomi"))
 
 #' Survey data
 ##+ load_survey_data, message = FALSE
@@ -46,8 +46,8 @@ survey_hiv_indicators <- read_csv(system.file("extdata/demo_survey_hiv_indicator
 #' Programme data
 #'
 ##+ message = FALSE
-art_number <- read_csv(system.file("extdata/demo_art_number.csv", package = "naomi"))
-anc_testing <- read_csv(system.file("extdata/demo_anc_testing.csv", package = "naomi"))
+art_number <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_art_number_zone.csv", package = "naomi"))
+anc_testing <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_anc_testing_zone.csv", package = "naomi"))
 
 
 #' Programme data
@@ -55,7 +55,7 @@ anc_testing <- read_csv(system.file("extdata/demo_anc_testing.csv", package = "n
 
 #' Spectrum PJNZ
 
-pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+pjnz <- system.file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip", package = "naomi")
 spec <- extract_pjnz_naomi(pjnz)
 
 
@@ -76,10 +76,10 @@ spec <- extract_pjnz_naomi(pjnz)
 #'
 
 scope <- "MWI"
-level <- 4
+level <- 2
 calendar_quarter_t1 <- "CY2016Q1"
-calendar_quarter_t2 <- "CY2018Q3"
-calendar_quarter_t3 <- "CY2019Q4"
+calendar_quarter_t2 <- "CY2018Q4"
+calendar_quarter_t3 <- "CY2019Q2"
 calendar_quarter_t4 <- "CY2022Q3"
 calendar_quarter_t5 <- "CY2023Q3"
 
@@ -135,6 +135,12 @@ naomi_mf <- naomi_model_frame(area_merged,
                               calendar_quarter3 = calendar_quarter_t3,
                               calendar_quarter4 = calendar_quarter_t4,
                               calendar_quarter5 = calendar_quarter_t5,
+                              spectrum_population_calibration = "national",
+                              output_aware_plhiv = TRUE,
+                              artattend = TRUE,
+                              artattend_t2 = FALSE,
+                              anchor_home_district = TRUE,
+                              artattend_log_gamma_offset = -4L,
                               adjust_area_growth = TRUE)
 
 
@@ -250,7 +256,7 @@ indicators <- add_output_labels(outputs) %>%
 indicators %>%
   filter(age_group == "Y015_049",
          indicator == "prevalence",
-         area_level == 4) %>%
+         area_level == 2) %>%
   ggplot(aes(fill = mode)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
@@ -279,7 +285,7 @@ indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group %in% get_five_year_age_groups(),
-         calendar_quarter == "CY2018Q3",
+         calendar_quarter == "CY2018Q4",
          indicator == "prevalence") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
@@ -298,7 +304,7 @@ indicators %>%
 ##+ art_cov_district, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group == "Y015_064",
-         area_level == 4,
+         area_level == 2,
          indicator == "art_coverage") %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
@@ -314,7 +320,7 @@ indicators %>%
          sex != "both",
          age_group %in% get_five_year_age_groups(),
          indicator == "art_coverage",
-         calendar_quarter == "CY2018Q3") %>%
+         calendar_quarter == "CY2018Q4") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -334,7 +340,7 @@ indicators %>%
          sex != "both",
          age_group %in% get_five_year_age_groups(),
          indicator == "art_coverage",
-         calendar_quarter == "CY2018Q3") %>%
+         calendar_quarter == "CY2018Q4") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -351,9 +357,9 @@ indicators %>%
 ##+ bubble_plot, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group == "Y015_064",
-         area_level == 4,
+         area_level == 2,
          indicator %in% c("prevalence", "plhiv"),
-         calendar_quarter == "CY2018Q3") %>%
+         calendar_quarter == "CY2018Q4") %>%
   select(sex, center_x, center_y, indicator_label, mean) %>%
   spread(indicator_label, mean) %>%
   ggplot() +
