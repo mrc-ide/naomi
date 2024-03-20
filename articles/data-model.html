@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.9.24</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -55,9 +51,6 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/data-model.html">Naomi data model</a>
-    </li>
-    <li>
-      <a href="../articles/hintr-example.html">Emulate a hintr model run</a>
     </li>
     <li>
       <a href="../articles/model-workflow.html">Naomi Model Workflow Example</a>
@@ -78,7 +71,7 @@
 
       
 
-      </header><script src="data-model_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Naomi data model</h1>
@@ -91,153 +84,207 @@
 
     
     
-<div id="data-model-diagramme" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-model-diagramme" class="anchor"></a>Data model diagramme</h2>
+<div class="section level2">
+<h2 id="data-model-diagramme">Data model diagramme<a class="anchor" aria-label="anchor" href="#data-model-diagramme"></a>
+</h2>
 <ul>
 <li>Coloured tables are required inputs to Naomi model.</li>
 <li>White backgrond tables are in the ADR only.</li>
 </ul>
-<div class="figure">
-<img src="figure/data_model.png" alt=""><p class="caption">data model</p>
+<div class="float">
+<img src="figure/data_model.png" alt="data model"><div class="figcaption">data model</div>
 </div>
 </div>
-<div id="areas-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#areas-data" class="anchor"></a>Areas data</h2>
+<div class="section level2">
+<h2 id="areas-data">Areas data<a class="anchor" aria-label="anchor" href="#areas-data"></a>
+</h2>
 <ul>
 <li>
-<code>area_levels</code> contains metadata describing the levels in the area hierarchy for the country.</li>
+<code>area_levels</code> contains metadata describing the levels in
+the area hierarchy for the country.</li>
 <li>
-<code>area_hierarchy</code> contains the nested hierarchy of area IDs at each level described in <code>area_levels</code>.</li>
+<code>area_hierarchy</code> contains the nested hierarchy of area
+IDs at each level described in <code>area_levels</code>.</li>
 <li>
-<code>area_boundaries</code> defines the spatial boundaries for each area in <code>area_hierarchy</code>.</li>
+<code>area_boundaries</code> defines the spatial boundaries for each
+area in <code>area_hierarchy</code>.</li>
 </ul>
-<p>The fields <code>center_x</code> and <code>center_y</code> define in <code>area_hierarchy</code> defines longitude/latitude coordinates within the area. This field is currently optional. The R package will construct these centers from the boundaries if they are not provided. They might wish to be provided for two reasons:</p>
+<p>The fields <code>center_x</code> and <code>center_y</code> define in
+<code>area_hierarchy</code> defines longitude/latitude coordinates
+within the area. This field is currently optional. The R package will
+construct these centers from the boundaries if they are not provided.
+They might wish to be provided for two reasons:</p>
 <ol style="list-style-type: decimal">
-<li>Offset centers might be provided to avoid overlapping centroids when creating bubble plots (e.g. Zomba and Zomba City).</li>
-<li>In future modelling we might rely on population-weighted centroids to estimate average distances between areas.</li>
+<li>Offset centers might be provided to avoid overlapping centroids when
+creating bubble plots (e.g. Zomba and Zomba City).</li>
+<li>In future modelling we might rely on population-weighted centroids
+to estimate average distances between areas.</li>
 </ol>
-<p>From a conceptual perspective, <code>area_hierarchy</code> and <code>area_boundaries</code> each have one record per <code>area_id</code> and it would make sense for them to be in a single table schema. They are separate schemas for convenience so that <code>area_hierarchy</code> can be saved as human-readable CSV file while <code>area_boundaries</code> is saved as <code>.geojson</code> format by default.</p>
-<p>The figures below show example code for generating a typical plot from the Areas schemas:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw">area_hierarchy</span> <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="kw">area_levels</span> <span class="op">%&gt;%</span> <span class="fu">select</span>(<span class="kw">area_level</span>, <span class="kw">area_level_label</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(area_level_label = <span class="kw">area_level_label</span> <span class="op">%&gt;%</span> <span class="fu">fct_reorder</span>(<span class="kw">area_level</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>() <span class="op">+</span>
-  <span class="fu">geom_sf</span>(data = <span class="kw">.</span> <span class="op">%&gt;%</span> <span class="fu">left_join</span>(<span class="kw">area_boundaries</span>) <span class="op">%&gt;%</span> <span class="fu">st_as_sf</span>()) <span class="op">+</span>
-  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="kw">center_x</span>, <span class="kw">center_y</span>, label = <span class="kw">area_sort_order</span>), alpha = <span class="fl">0.5</span>) <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">area_level_label</span>, nrow = <span class="fl">1</span>) <span class="op">+</span>
-  <span class="kw">naomi</span>:::<span class="fu"><a href="../reference/th_map.html">th_map</a></span>()
-<span class="co">#&gt; Joining, by = "area_level"</span>
-<span class="co">#&gt; Joining, by = "area_id"</span>
-</pre></div>
+<p>From a conceptual perspective, <code>area_hierarchy</code> and
+<code>area_boundaries</code> each have one record per
+<code>area_id</code> and it would make sense for them to be in a single
+table schema. They are separate schemas for convenience so that
+<code>area_hierarchy</code> can be saved as human-readable CSV file
+while <code>area_boundaries</code> is saved as <code>.geojson</code>
+format by default.</p>
+<p>The figures below show example code for generating a typical plot
+from the Areas schemas:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">area_hierarchy</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">area_levels</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">select</span><span class="op">(</span><span class="va">area_level</span>, <span class="va">area_level_label</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>area_level_label <span class="op">=</span> <span class="va">area_level_label</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">area_level</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">left_join</span><span class="op">(</span><span class="va">area_boundaries</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">st_as_sf</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">center_x</span>, <span class="va">center_y</span>, label <span class="op">=</span> <span class="va">area_sort_order</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">area_level_label</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">naomi</span><span class="fu">:::</span><span class="fu"><a href="../reference/th_map.html">th_map</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(area_level)`</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(area_id)`</span></span></code></pre></div>
 <p><img src="data-model_files/figure-html/unnamed-chunk-2-1.png" width="672"></p>
 </div>
-<div id="population-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#population-data" class="anchor"></a>Population data</h2>
+<div class="section level2">
+<h2 id="population-data">Population data<a class="anchor" aria-label="anchor" href="#population-data"></a>
+</h2>
 <ul>
 <li>
-<code>age_group_meta</code> contains metadata definining a standardised set of age groups. This is containted in <code><a href="../reference/get_age_groups.html">naomi::get_age_groups()</a></code>.</li>
+<code>age_group_meta</code> contains metadata definining a
+standardised set of age groups. This is containted in
+<code><a href="../reference/get_age_groups.html">naomi::get_age_groups()</a></code>.</li>
 <li>
-<code>population_agesex</code> contains population estimates by area, sex, and five-year age group. Estimates are required at the highest level of the area hierarchy for all age groups from 0-4 through 80+.</li>
+<code>population_agesex</code> contains population estimates by
+area, sex, and five-year age group. Estimates are required at the
+highest level of the area hierarchy for all age groups from 0-4 through
+80+.</li>
 <li>
-<code>fertility</code> contains age-specific fertility rate (ASFR) estimates by area.</li>
+<code>fertility</code> contains age-specific fertility rate (ASFR)
+estimates by area.</li>
 </ul>
-<p>Time is identified as <code>quarter_id</code> defined as the number of calendar quarters since the year 1900 (inspired by DHS Century Month Code [CMC]): <span class="math display">\[ \mathrm{quarter\_id} = (\mathrm{year} - 1900) * 4 + \mathrm{quarter}.\]</span> The function <code><a href="../reference/interpolate_population_agesex.html">interpolate_population_agesex()</a></code> interpolates population estimates to specified <code>quarter_ids</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">naomi</span>::<span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span>()
-<span class="co">#&gt;    age_group age_group_label age_group_start age_group_span</span>
-<span class="co">#&gt; 1   Y000_004             0-4               0              5</span>
-<span class="co">#&gt; 2   Y005_009             5-9               5              5</span>
-<span class="co">#&gt; 3   Y010_014           10-14              10              5</span>
-<span class="co">#&gt; 4   Y015_019           15-19              15              5</span>
-<span class="co">#&gt; 5   Y020_024           20-24              20              5</span>
-<span class="co">#&gt; 6   Y025_029           25-29              25              5</span>
-<span class="co">#&gt; 7   Y030_034           30-34              30              5</span>
-<span class="co">#&gt; 8   Y035_039           35-39              35              5</span>
-<span class="co">#&gt; 9   Y040_044           40-44              40              5</span>
-<span class="co">#&gt; 10  Y045_049           45-49              45              5</span>
-<span class="co">#&gt; 11  Y050_054           50-54              50              5</span>
-<span class="co">#&gt; 12  Y055_059           55-59              55              5</span>
-<span class="co">#&gt; 13  Y060_064           60-64              60              5</span>
-<span class="co">#&gt; 14  Y065_069           65-69              65              5</span>
-<span class="co">#&gt; 15  Y070_074           70-74              70              5</span>
-<span class="co">#&gt; 16  Y075_079           75-79              75              5</span>
-<span class="co">#&gt; 17  Y080_999             80+              80            Inf</span>
-<span class="co">#&gt; 18  Y015_049           15-49              15             35</span>
-<span class="co">#&gt; 19  Y015_064           15-64              15             50</span>
-<span class="co">#&gt; 20  Y015_999             15+              15            Inf</span>
-<span class="co">#&gt; 21  Y050_999             50+              50            Inf</span>
-<span class="co">#&gt; 22  Y000_999        all ages               0            Inf</span>
-<span class="co">#&gt; 23  Y000_064            0-64               0             65</span>
-<span class="co">#&gt; 24  Y000_014            0-14               0             15</span>
-<span class="co">#&gt; 25  Y015_024           15-24              15             10</span>
-<span class="co">#&gt; 26  Y025_034           25-34              25             10</span>
-<span class="co">#&gt; 27  Y035_049           35-49              35             15</span>
-<span class="co">#&gt; 28  Y050_064           50-64              50             15</span>
-<span class="co">#&gt; 29  Y065_999             65+              65            Inf</span>
-<span class="co">#&gt; 30  Y000_000              &lt;1               0              1</span>
-<span class="co">#&gt; 31  Y001_004             1-4               1              4</span>
-<span class="co">#&gt;    age_group_sort_order</span>
-<span class="co">#&gt; 1                    13</span>
-<span class="co">#&gt; 2                    14</span>
-<span class="co">#&gt; 3                    15</span>
-<span class="co">#&gt; 4                    16</span>
-<span class="co">#&gt; 5                    17</span>
-<span class="co">#&gt; 6                    18</span>
-<span class="co">#&gt; 7                    19</span>
-<span class="co">#&gt; 8                    20</span>
-<span class="co">#&gt; 9                    21</span>
-<span class="co">#&gt; 10                   22</span>
-<span class="co">#&gt; 11                   23</span>
-<span class="co">#&gt; 12                   24</span>
-<span class="co">#&gt; 13                   25</span>
-<span class="co">#&gt; 14                   26</span>
-<span class="co">#&gt; 15                   27</span>
-<span class="co">#&gt; 16                   28</span>
-<span class="co">#&gt; 17                   29</span>
-<span class="co">#&gt; 18                    1</span>
-<span class="co">#&gt; 19                    2</span>
-<span class="co">#&gt; 20                    3</span>
-<span class="co">#&gt; 21                    4</span>
-<span class="co">#&gt; 22                    5</span>
-<span class="co">#&gt; 23                    6</span>
-<span class="co">#&gt; 24                    7</span>
-<span class="co">#&gt; 25                    8</span>
-<span class="co">#&gt; 26                    9</span>
-<span class="co">#&gt; 27                   10</span>
-<span class="co">#&gt; 28                   11</span>
-<span class="co">#&gt; 29                   12</span>
-<span class="co">#&gt; 30                   30</span>
-<span class="co">#&gt; 31                   31</span>
-</pre></div>
+<p>Time is identified as <code>quarter_id</code> defined as the number
+of calendar quarters since the year 1900 (inspired by DHS Century Month
+Code [CMC]): <span class="math display">\[ \mathrm{quarter\_id} =
+(\mathrm{year} - 1900) * 4 + \mathrm{quarter}.\]</span> The function
+<code><a href="../reference/interpolate_population_agesex.html">interpolate_population_agesex()</a></code> interpolates population
+estimates to specified <code>quarter_ids</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">naomi</span><span class="fu">::</span><span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    age_group age_group_label age_group_start age_group_span</span></span>
+<span><span class="co">#&gt; 1   Y000_004             0-4               0              5</span></span>
+<span><span class="co">#&gt; 2   Y005_009             5-9               5              5</span></span>
+<span><span class="co">#&gt; 3   Y010_014           10-14              10              5</span></span>
+<span><span class="co">#&gt; 4   Y015_019           15-19              15              5</span></span>
+<span><span class="co">#&gt; 5   Y020_024           20-24              20              5</span></span>
+<span><span class="co">#&gt; 6   Y025_029           25-29              25              5</span></span>
+<span><span class="co">#&gt; 7   Y030_034           30-34              30              5</span></span>
+<span><span class="co">#&gt; 8   Y035_039           35-39              35              5</span></span>
+<span><span class="co">#&gt; 9   Y040_044           40-44              40              5</span></span>
+<span><span class="co">#&gt; 10  Y045_049           45-49              45              5</span></span>
+<span><span class="co">#&gt; 11  Y050_054           50-54              50              5</span></span>
+<span><span class="co">#&gt; 12  Y055_059           55-59              55              5</span></span>
+<span><span class="co">#&gt; 13  Y060_064           60-64              60              5</span></span>
+<span><span class="co">#&gt; 14  Y065_069           65-69              65              5</span></span>
+<span><span class="co">#&gt; 15  Y070_074           70-74              70              5</span></span>
+<span><span class="co">#&gt; 16  Y075_079           75-79              75              5</span></span>
+<span><span class="co">#&gt; 17  Y080_999             80+              80            Inf</span></span>
+<span><span class="co">#&gt; 18  Y015_049           15-49              15             35</span></span>
+<span><span class="co">#&gt; 19  Y015_064           15-64              15             50</span></span>
+<span><span class="co">#&gt; 20  Y015_999             15+              15            Inf</span></span>
+<span><span class="co">#&gt; 21  Y050_999             50+              50            Inf</span></span>
+<span><span class="co">#&gt; 22  Y000_999        all ages               0            Inf</span></span>
+<span><span class="co">#&gt; 23  Y000_064            0-64               0             65</span></span>
+<span><span class="co">#&gt; 24  Y000_014            0-14               0             15</span></span>
+<span><span class="co">#&gt; 25  Y015_024           15-24              15             10</span></span>
+<span><span class="co">#&gt; 26  Y025_034           25-34              25             10</span></span>
+<span><span class="co">#&gt; 27  Y035_049           35-49              35             15</span></span>
+<span><span class="co">#&gt; 28  Y050_064           50-64              50             15</span></span>
+<span><span class="co">#&gt; 29  Y065_999             65+              65            Inf</span></span>
+<span><span class="co">#&gt; 30  Y000_000              &lt;1               0              1</span></span>
+<span><span class="co">#&gt; 31  Y001_004             1-4               1              4</span></span>
+<span><span class="co">#&gt; 32  Y010_019           10-19              10             10</span></span>
+<span><span class="co">#&gt; 33  Y025_049           25-49              25             25</span></span>
+<span><span class="co">#&gt;    age_group_sort_order</span></span>
+<span><span class="co">#&gt; 1                    15</span></span>
+<span><span class="co">#&gt; 2                    16</span></span>
+<span><span class="co">#&gt; 3                    17</span></span>
+<span><span class="co">#&gt; 4                    18</span></span>
+<span><span class="co">#&gt; 5                    19</span></span>
+<span><span class="co">#&gt; 6                    20</span></span>
+<span><span class="co">#&gt; 7                    21</span></span>
+<span><span class="co">#&gt; 8                    22</span></span>
+<span><span class="co">#&gt; 9                    23</span></span>
+<span><span class="co">#&gt; 10                   24</span></span>
+<span><span class="co">#&gt; 11                   25</span></span>
+<span><span class="co">#&gt; 12                   26</span></span>
+<span><span class="co">#&gt; 13                   27</span></span>
+<span><span class="co">#&gt; 14                   28</span></span>
+<span><span class="co">#&gt; 15                   29</span></span>
+<span><span class="co">#&gt; 16                   30</span></span>
+<span><span class="co">#&gt; 17                   31</span></span>
+<span><span class="co">#&gt; 18                    1</span></span>
+<span><span class="co">#&gt; 19                    2</span></span>
+<span><span class="co">#&gt; 20                    3</span></span>
+<span><span class="co">#&gt; 21                    4</span></span>
+<span><span class="co">#&gt; 22                    5</span></span>
+<span><span class="co">#&gt; 23                    6</span></span>
+<span><span class="co">#&gt; 24                    7</span></span>
+<span><span class="co">#&gt; 25                    8</span></span>
+<span><span class="co">#&gt; 26                    9</span></span>
+<span><span class="co">#&gt; 27                   10</span></span>
+<span><span class="co">#&gt; 28                   11</span></span>
+<span><span class="co">#&gt; 29                   12</span></span>
+<span><span class="co">#&gt; 30                   32</span></span>
+<span><span class="co">#&gt; 31                   33</span></span>
+<span><span class="co">#&gt; 32                   13</span></span>
+<span><span class="co">#&gt; 33                   14</span></span></code></pre></div>
 </div>
-<div id="survey-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#survey-data" class="anchor"></a>Survey data</h2>
+<div class="section level2">
+<h2 id="survey-data">Survey data<a class="anchor" aria-label="anchor" href="#survey-data"></a>
+</h2>
 <ul>
 <li>
-<code>survey_meta</code> contains meta data about each household survey.</li>
+<code>survey_meta</code> contains meta data about each household
+survey.</li>
 <li>
-<code>survey_hiv_indicators</code> is analytical table with area-level indicators. This is the table used as inputs to Naomi. Indicators are calculated for all stratifications of area/age/sex. Typically the most granular stratification would be selected for model input.</li>
+<code>survey_hiv_indicators</code> is analytical table with
+area-level indicators. This is the table used as inputs to Naomi.
+Indicators are calculated for all stratifications of area/age/sex.
+Typically the most granular stratification would be selected for model
+input.</li>
 </ul>
-<p>The remaining tables are harmonized survey microdatasets used for calculating the indicators dataset.</p>
-<p>The table <code>survey_hiv_indicators</code> should also contain all survey HIV prevalence inputs required for Spectrum and EPP. It should be further extended to also calculate other indicators required by Spectrum, e.g. HIV testing outcomes for shiny90, proportion ever had sex, breastfeeding duration, and fertlity by HIV status.</p>
+<p>The remaining tables are harmonized survey microdatasets used for
+calculating the indicators dataset.</p>
+<p>The table <code>survey_hiv_indicators</code> should also contain all
+survey HIV prevalence inputs required for Spectrum and EPP. It should be
+further extended to also calculate other indicators required by
+Spectrum, e.g. HIV testing outcomes for shiny90, proportion ever had
+sex, breastfeeding duration, and fertlity by HIV status.</p>
 </div>
-<div id="programme-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#programme-data" class="anchor"></a>Programme data</h2>
+<div class="section level2">
+<h2 id="programme-data">Programme data<a class="anchor" aria-label="anchor" href="#programme-data"></a>
+</h2>
 <ul>
 <li>
-<code>art_number</code> reports the number currently receiving ART at the end of each quarter by area.</li>
+<code>art_number</code> reports the number currently receiving ART
+at the end of each quarter by area.</li>
 <li>
-<code>anc_testing</code> reports antenatal clinic (ANC) attendees and outcomes during the quarter.</li>
+<code>anc_testing</code> reports antenatal clinic (ANC) attendees
+and outcomes during the quarter.</li>
 </ul>
-<p>The model is currently specified to accept ART numbers by age 0-14 (<code>age_group  = Y000_014, 0-14, 0, 15, 7</code>) and age 15+ (<code>age_group = Y015_999</code>) either both sexes together (<code>sex = "both"</code>) or by sex (<code>sex = "female"</code>/<code>sex = "male"</code>). Possible extension may allow ART inputs by finer stratification.</p>
-<p>For <code>art_number</code> it is important to distinguish between zero persons receiving ART (e.g. no ART available in the area) versus missing data about the number on ART in an area. Current specification requires a value <code>art_current = 0</code> for an area with no ART whereas no entry for a given area will be interpreted as missing data. This could be revised, for example to require explicit input for all areas with a code for missing data.</p>
-<p>The <code>anc_testing</code> data is currently input for all ages of pregnant women aggregated, that is <code>age_group = Y015_049</code> for age 15-49.</p>
+<p>The model is currently specified to accept ART numbers by age 0-14
+(<code>age_group  = Y000_014, 0-14, 0, 15, 7</code>) and age 15+
+(<code>age_group = Y015_999</code>) either both sexes together
+(<code>sex = "both"</code>) or by sex
+(<code>sex = "female"</code>/<code>sex = "male"</code>). Possible
+extension may allow ART inputs by finer stratification.</p>
+<p>For <code>art_number</code> it is important to distinguish between
+zero persons receiving ART (e.g. no ART available in the area) versus
+missing data about the number on ART in an area. Current specification
+requires a value <code>art_current = 0</code> for an area with no ART
+whereas no entry for a given area will be interpreted as missing data.
+This could be revised, for example to require explicit input for all
+areas with a code for missing data.</p>
+<p>The <code>anc_testing</code> data is currently input for all ages of
+pregnant women aggregated, that is <code>age_group = Y015_049</code> for
+age 15-49.</p>
 </div>
   </div>
 
@@ -252,11 +299,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Jeff Eaton.</p>
+  <p></p>
+<p>Developed by Jeff Eaton.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -264,6 +313,8 @@
 
   
 
+
+  
 
   </body>
 </html>

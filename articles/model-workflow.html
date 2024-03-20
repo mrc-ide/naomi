@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.9.24</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -55,9 +51,6 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/data-model.html">Naomi data model</a>
-    </li>
-    <li>
-      <a href="../articles/hintr-example.html">Emulate a hintr model run</a>
     </li>
     <li>
       <a href="../articles/model-workflow.html">Naomi Model Workflow Example</a>
@@ -78,7 +71,7 @@
 
       
 
-      </header><script src="model-workflow_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Naomi Model Workflow Example</h1>
@@ -91,427 +84,443 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">naomi</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://r-spatial.github.io/sf">sf</a></span>)
-</pre></div>
-<div id="prepare-webtool-geojson-input" class="section level1">
-<h1 class="hasAnchor">
-<a href="#prepare-webtool-geojson-input" class="anchor"></a>0. Prepare webtool GeoJSON input</h1>
-<p>The MVP version of Naomi web tool allows upload of a single GeoJSON file for specifying the area hierarchy. This preprocessing step joins the area tables into a single long format dataset and saves as a GeoJSON for upload to the web tool.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">naomi</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="prepare-webtool-geojson-input">0. Prepare webtool GeoJSON input<a class="anchor" aria-label="anchor" href="#prepare-webtool-geojson-input"></a>
+</h2>
+<p>The MVP version of Naomi web tool allows upload of a single GeoJSON
+file for specifying the area hierarchy. This preprocessing step joins
+the area tables into a single long format dataset and saves as a GeoJSON
+for upload to the web tool.</p>
 </div>
-<div id="upload-data-inputs" class="section level1">
-<h1 class="hasAnchor">
-<a href="#upload-data-inputs" class="anchor"></a>1. (Up)Load data inputs</h1>
+<div class="section level2">
+<h2 id="upload-data-inputs">1. (Up)Load data inputs<a class="anchor" aria-label="anchor" href="#upload-data-inputs"></a>
+</h2>
 <p>Area hierarchy and boundaries</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">area_merged</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sf/man/st_read.html">read_sf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/demo_areas.geojson"</span>, package = <span class="st">"naomi"</span>))
-</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">area_merged</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson"</span>, package <span class="op">=</span> <span class="st">"naomi"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Population data</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">pop_agesex</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/demo_population_agesex.csv"</span>, package = <span class="st">"naomi"</span>))
-</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pop_agesex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo-subnational-pjnz/demo_population_zone.csv"</span>, package <span class="op">=</span> <span class="st">"naomi"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Survey data</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">survey_hiv_indicators</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/demo_survey_hiv_indicators.csv"</span>, package = <span class="st">"naomi"</span>))
-</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">survey_hiv_indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_survey_hiv_indicators.csv"</span>, package <span class="op">=</span> <span class="st">"naomi"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Programme data</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">art_number</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/demo_art_number.csv"</span>, package = <span class="st">"naomi"</span>))
-<span class="kw">anc_testing</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/demo_anc_testing.csv"</span>, package = <span class="st">"naomi"</span>))
-</pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">art_number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo-subnational-pjnz/demo_art_number_zone.csv"</span>, package <span class="op">=</span> <span class="st">"naomi"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">anc_testing</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo-subnational-pjnz/demo_anc_testing_zone.csv"</span>, package <span class="op">=</span> <span class="st">"naomi"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Programme data</p>
 <p>Spectrum PJNZ</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw">pjnz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/demo_mwi2019.PJNZ"</span>, package = <span class="st">"naomi"</span>)
-<span class="kw">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_pjnz_naomi.html">extract_pjnz_naomi</a></span>(<span class="kw">pjnz</span>)
-</pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pjnz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip"</span>, package <span class="op">=</span> <span class="st">"naomi"</span><span class="op">)</span></span>
+<span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_pjnz_naomi.html">extract_pjnz_naomi</a></span><span class="op">(</span><span class="va">pjnz</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="choose-model-areas-and-time-points" class="section level1">
-<h1 class="hasAnchor">
-<a href="#choose-model-areas-and-time-points" class="anchor"></a>2. Choose model areas and time points</h1>
-<p>The following are required to be provided to define the model state space:</p>
+<div class="section level2">
+<h2 id="choose-model-areas-and-time-points">2. Choose model areas and time points<a class="anchor" aria-label="anchor" href="#choose-model-areas-and-time-points"></a>
+</h2>
+<p>The following are required to be provided to define the model state
+space:</p>
 <ul>
 <li>
-<code>scope</code>: A collection of <code>area_id</code>s defining the set of areas to be modelled. Usually this is simply national level, so the level 0 <code>area_id</code>.</li>
+<code>scope</code>: A collection of <code>area_id</code>s defining
+the set of areas to be modelled. Usually this is simply national level,
+so the level 0 <code>area_id</code>.</li>
 <li>
 <code>level</code>: Area level at which to fit model.</li>
 <li>
-<code>quarter_id_t1</code>: The first time point for the model–approximately the midpoint of the household survey data used.</li>
+<code>quarter_id_t1</code>: The first time point for the
+model–approximately the midpoint of the household survey data used.</li>
 <li>
-<code>quarter_id_t2</code>: The second time point for the model–the current time for which estimates are needed.</li>
+<code>quarter_id_t2</code>: The second time point for the model–the
+current time for which estimates are needed.</li>
 <li>
-<code>quarter_id_t3</code>: The third time point for the model–the future projection for HIV estimates.</li>
+<code>quarter_id_t3</code>: The third time point for the model–the
+future projection for HIV estimates.</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="kw">scope</span> <span class="op">&lt;-</span> <span class="st">"MWI"</span>
-<span class="kw">level</span> <span class="op">&lt;-</span> <span class="fl">4</span>
-<span class="kw">calendar_quarter_t1</span> <span class="op">&lt;-</span> <span class="st">"CY2016Q1"</span>
-<span class="kw">calendar_quarter_t2</span> <span class="op">&lt;-</span> <span class="st">"CY2018Q3"</span>
-<span class="kw">calendar_quarter_t3</span> <span class="op">&lt;-</span> <span class="st">"CY2019Q4"</span>
-</pre></div>
-<p>The following select data inputs to model fitting from the uploaded datasets. Providing <code>NULL</code> for any will exclude that data source from model fitting.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scope</span> <span class="op">&lt;-</span> <span class="st">"MWI"</span></span>
+<span><span class="va">level</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">calendar_quarter_t1</span> <span class="op">&lt;-</span> <span class="st">"CY2016Q1"</span></span>
+<span><span class="va">calendar_quarter_t2</span> <span class="op">&lt;-</span> <span class="st">"CY2018Q4"</span></span>
+<span><span class="va">calendar_quarter_t3</span> <span class="op">&lt;-</span> <span class="st">"CY2019Q2"</span></span>
+<span><span class="va">calendar_quarter_t4</span> <span class="op">&lt;-</span> <span class="st">"CY2022Q3"</span></span>
+<span><span class="va">calendar_quarter_t5</span> <span class="op">&lt;-</span> <span class="st">"CY2023Q3"</span></span></code></pre></div>
+<p>The following select data inputs to model fitting from the uploaded
+datasets. Providing <code>NULL</code> for any will exclude that data
+source from model fitting.</p>
 <ul>
-<li>Multiple household survey may be used in fitting, but they must be rougly contemporaneous around <code>quarter_id_t1</code>.</li>
-<li>Only survey ART coverage or survey VLS should be included from a given survey, not both. ART coverage is preferred if both are available.</li>
+<li>Multiple household survey may be used in fitting, but they must be
+rougly contemporaneous around <code>quarter_id_t1</code>.</li>
+<li>Only survey ART coverage or survey VLS should be included from a
+given survey, not both. ART coverage is preferred if both are
+available.</li>
 <li>
-<code>artnum_quarter_id_t1</code> and <code>artnum_quarter_id_t1</code> are the time point at which current on ART programme data will be used to estimte ART coverage. They are typically the same <code>quarter_id_t1</code> and <code>quarter_id_t2</code> if ART programme data are used.</li>
+<code>artnum_quarter_id_t1</code> and
+<code>artnum_quarter_id_t1</code> are the time point at which current on
+ART programme data will be used to estimte ART coverage. They are
+typically the same <code>quarter_id_t1</code> and
+<code>quarter_id_t2</code> if ART programme data are used.</li>
 <li>
-<code>anc_quarter_id_t1</code> and <code>anc_quarter_id_t2</code> are typically a range of 3-4 quarters. Data will be aggregated over these quarters for a larger sample size. They will typically be consecutive quarters, though a quarter could be dropped for example if there were reporting problems known to affect a given quarter. Survey IDs to include in fitting</li>
+<code>anc_quarter_id_t1</code> and <code>anc_quarter_id_t2</code>
+are typically a range of 3-4 quarters. Data will be aggregated over
+these quarters for a larger sample size. They will typically be
+consecutive quarters, though a quarter could be dropped for example if
+there were reporting problems known to affect a given quarter. Survey
+IDs to include in fitting</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="kw">prev_survey_ids</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DEMO2016PHIA"</span>, <span class="st">"DEMO2015DHS"</span>)
-<span class="kw">artcov_survey_ids</span>  <span class="op">&lt;-</span> <span class="st">"DEMO2016PHIA"</span>
-<span class="kw">vls_survey_ids</span> <span class="op">&lt;-</span> <span class="kw">NULL</span>
-<span class="kw">recent_survey_ids</span> <span class="op">&lt;-</span> <span class="st">"DEMO2016PHIA"</span>
-
-<span class="kw">artnum_calendar_quarter_t1</span> <span class="op">&lt;-</span> <span class="st">"CY2016Q1"</span>
-<span class="kw">artnum_calendar_quarter_t2</span> <span class="op">&lt;-</span> <span class="st">"CY2018Q3"</span>
-
-<span class="kw">anc_clients_year2</span> <span class="op">&lt;-</span> <span class="fl">2018</span>
-<span class="kw">anc_clients_year2_num_months</span> <span class="op">&lt;-</span> <span class="fl">9</span>
-
-<span class="kw">anc_prevalence_year1</span> <span class="op">&lt;-</span> <span class="fl">2016</span>
-<span class="kw">anc_prevalence_year2</span> <span class="op">&lt;-</span> <span class="fl">2018</span>
-
-<span class="kw">anc_art_coverage_year1</span> <span class="op">&lt;-</span> <span class="fl">2016</span>
-<span class="kw">anc_art_coverage_year2</span> <span class="op">&lt;-</span> <span class="fl">2018</span>
-</pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">prev_survey_ids</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DEMO2016PHIA"</span>, <span class="st">"DEMO2015DHS"</span><span class="op">)</span></span>
+<span><span class="va">artcov_survey_ids</span>  <span class="op">&lt;-</span> <span class="st">"DEMO2016PHIA"</span></span>
+<span><span class="va">vls_survey_ids</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span><span class="va">recent_survey_ids</span> <span class="op">&lt;-</span> <span class="st">"DEMO2016PHIA"</span></span>
+<span></span>
+<span><span class="va">artnum_calendar_quarter_t1</span> <span class="op">&lt;-</span> <span class="st">"CY2016Q1"</span></span>
+<span><span class="va">artnum_calendar_quarter_t2</span> <span class="op">&lt;-</span> <span class="st">"CY2018Q3"</span></span>
+<span></span>
+<span><span class="va">anc_clients_year2</span> <span class="op">&lt;-</span> <span class="fl">2018</span></span>
+<span><span class="va">anc_clients_year2_num_months</span> <span class="op">&lt;-</span> <span class="fl">9</span></span>
+<span></span>
+<span><span class="va">anc_prevalence_year1</span> <span class="op">&lt;-</span> <span class="fl">2016</span></span>
+<span><span class="va">anc_prevalence_year2</span> <span class="op">&lt;-</span> <span class="fl">2018</span></span>
+<span></span>
+<span><span class="va">anc_art_coverage_year1</span> <span class="op">&lt;-</span> <span class="fl">2016</span></span>
+<span><span class="va">anc_art_coverage_year2</span> <span class="op">&lt;-</span> <span class="fl">2018</span></span></code></pre></div>
 </div>
-<div id="review-input-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#review-input-data" class="anchor"></a>3. Review input data</h1>
+<div class="section level2">
+<h2 id="review-input-data">3. Review input data<a class="anchor" aria-label="anchor" href="#review-input-data"></a>
+</h2>
 </div>
-<div id="prepare-model-inputs" class="section level1">
-<h1 class="hasAnchor">
-<a href="#prepare-model-inputs" class="anchor"></a>4. Prepare model inputs</h1>
+<div class="section level2">
+<h2 id="prepare-model-inputs">4. Prepare model inputs<a class="anchor" aria-label="anchor" href="#prepare-model-inputs"></a>
+</h2>
 <p>Setup the model</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="kw">naomi_mf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/naomi_model_frame.html">naomi_model_frame</a></span>(<span class="kw">area_merged</span>,
-                              <span class="kw">pop_agesex</span>,
-                              <span class="kw">spec</span>,
-                              scope = <span class="kw">scope</span>,
-                              level = <span class="kw">level</span>,
-                              <span class="kw">calendar_quarter_t1</span>,
-                              <span class="kw">calendar_quarter_t2</span>,
-                              <span class="kw">calendar_quarter_t3</span>)
-</pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">naomi_mf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/naomi_model_frame.html">naomi_model_frame</a></span><span class="op">(</span><span class="va">area_merged</span>,</span>
+<span>                              <span class="va">pop_agesex</span>,</span>
+<span>                              <span class="va">spec</span>,</span>
+<span>                              scope <span class="op">=</span> <span class="va">scope</span>,</span>
+<span>                              level <span class="op">=</span> <span class="va">level</span>,</span>
+<span>                              calendar_quarter1 <span class="op">=</span> <span class="va">calendar_quarter_t1</span>,</span>
+<span>                              calendar_quarter2 <span class="op">=</span> <span class="va">calendar_quarter_t2</span>,</span>
+<span>                              calendar_quarter3 <span class="op">=</span> <span class="va">calendar_quarter_t3</span>,</span>
+<span>                              calendar_quarter4 <span class="op">=</span> <span class="va">calendar_quarter_t4</span>,</span>
+<span>                              calendar_quarter5 <span class="op">=</span> <span class="va">calendar_quarter_t5</span>,</span>
+<span>                              spectrum_population_calibration <span class="op">=</span> <span class="st">"national"</span>,</span>
+<span>                              output_aware_plhiv <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                              artattend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                              artattend_t2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                              anchor_home_district <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                              artattend_log_gamma_offset <span class="op">=</span> <span class="op">-</span><span class="fl">4L</span>,</span>
+<span>                              adjust_area_growth <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; although coordinates are longitude/latitude, st_intersects assumes that they</span></span>
+<span><span class="co">#&gt; are planar</span></span></code></pre></div>
 <p>Prepare data inputs</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw">naomi_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_naomi_data.html">select_naomi_data</a></span>(<span class="kw">naomi_mf</span>,
-                                <span class="kw">survey_hiv_indicators</span>,
-                                <span class="kw">anc_testing</span>,
-                                <span class="kw">art_number</span>,
-                                <span class="kw">prev_survey_ids</span>,
-                                <span class="kw">artcov_survey_ids</span>,
-                                <span class="kw">recent_survey_ids</span>,
-                                <span class="kw">vls_survey_ids</span>,
-                                <span class="kw">artnum_calendar_quarter_t1</span>,
-                                <span class="kw">artnum_calendar_quarter_t2</span>,
-                                <span class="kw">anc_prevalence_year1</span>,
-                                <span class="kw">anc_prevalence_year2</span>,
-                                <span class="kw">anc_art_coverage_year1</span>,
-                                <span class="kw">anc_art_coverage_year2</span>)
-</pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">naomi_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_naomi_data.html">select_naomi_data</a></span><span class="op">(</span><span class="va">naomi_mf</span>,</span>
+<span>                                <span class="va">survey_hiv_indicators</span>,</span>
+<span>                                <span class="va">anc_testing</span>,</span>
+<span>                                <span class="va">art_number</span>,</span>
+<span>                                <span class="va">prev_survey_ids</span>,</span>
+<span>                                <span class="va">artcov_survey_ids</span>,</span>
+<span>                                <span class="va">recent_survey_ids</span>,</span>
+<span>                                <span class="va">vls_survey_ids</span>,</span>
+<span>                                <span class="va">artnum_calendar_quarter_t1</span>,</span>
+<span>                                <span class="va">artnum_calendar_quarter_t2</span>,</span>
+<span>                                <span class="va">anc_prevalence_year1</span>,</span>
+<span>                                <span class="va">anc_prevalence_year2</span>,</span>
+<span>                                <span class="va">anc_art_coverage_year1</span>,</span>
+<span>                                <span class="va">anc_art_coverage_year2</span><span class="op">)</span></span></code></pre></div>
 <ol start="5" style="list-style-type: decimal">
 <li>Fit model Prepare model inputs and initial parameters</li>
 </ol>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="kw">tmb_inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_tmb_inputs.html">prepare_tmb_inputs</a></span>(<span class="kw">naomi_data</span>)
-</pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tmb_inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_tmb_inputs.html">prepare_tmb_inputs</a></span><span class="op">(</span><span class="va">naomi_data</span><span class="op">)</span></span></code></pre></div>
 <p>Fit the TMB model</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_tmb.html">fit_tmb</a></span>(<span class="kw">tmb_inputs</span>)
-<span class="co">#&gt;   0:     5044.6435:  0.00000 0.916291  0.00000 0.916291  0.00000 0.916291  2.58200 0.916291 -0.693147  0.00000 0.916291  0.00000 0.916291  0.00000 0.916291  2.58200 0.916291 0.916291 0.916291 0.916291  0.00000  0.00000  0.00000 -0.693147 0.916291 0.916291 0.916291 0.916291 0.916291 0.916291</span>
-<span class="co">#&gt;   1:     4718.2401: 0.102104 -0.277378 0.106313 -0.346451 0.0959817 0.605789  2.71841 0.570737 -0.693147 0.0869975 -0.139898 0.0757006 -0.0439938 0.0383274 0.469446  2.66560 0.681799 -0.108708 -0.217260 -0.147586 0.0152858 0.000608564 -0.297008 -1.75598 -0.359159 -0.234783 -0.377829 -0.0607581 0.549393 0.916291</span>
-<span class="co">#&gt;   2:     4536.5945: 0.171715 -0.908226 0.222864 -1.73034 0.309508 0.371577  2.88605 0.176383 -0.693147 0.176493 -1.25119 0.149605 -0.965573 0.122804 -0.0458188  2.75526 0.440047 -1.14582 -1.25450 -1.34306 0.0290446 0.00106901 -0.806478 -1.22408 -1.75536 -1.34741 -2.02764 -0.973678 0.263750 0.916291</span>
-<span class="co">#&gt;   3:     4516.5973: 0.150766 -0.451559 0.233584 -1.88128 0.423093 0.327143  2.93374 0.0696739 -0.693147 0.190409 -1.44460 0.170925 -1.21684 0.185843 -0.177630  2.78228 0.369285 -1.27483 -1.46360 -1.65162 0.0265142 0.00107495 -0.934666 -1.61733 -1.70318 -1.51764 -2.17708 -1.06033 0.311859 0.916291</span>
-<span class="co">#&gt;   4:     4505.3198: 0.198961 -0.820169 0.246244 -2.06583 0.626263 0.244886  3.00218 -0.0817229 -0.693147 0.205657 -1.69493 0.196287 -1.49304 0.316633 -0.357516  2.82438 0.259138 -1.37776 -1.72848 -2.03305 0.0180307 0.00102736 -1.08664 -1.62993 -1.63599 -1.75304 -2.27554 -1.14966 0.284142 0.916291</span>
-<span class="co">#&gt;   5:     4499.7002: 0.203603 -0.403248 0.250498 -2.06347  1.00437 0.0867395  3.07277 -0.235538 -0.693147 0.213589 -1.88266 0.207662 -1.55168 0.616741 -0.516800  2.88331 0.102089 -1.30180 -1.89843 -2.35695 -0.0108732 0.000797404 -1.11781 -1.51885 -1.69945 -1.96813 -2.13550 -1.10801 0.314535 0.916291</span>
-<span class="co">#&gt;   6:     4493.1434: 0.264578 -0.582854 0.246978 -1.94966  1.54074 -0.0156313  3.10593 -0.297971 -0.693147 0.209057 -1.97423 0.201211 -1.33340  1.05354 -0.611314  2.92789 -0.0254008 -1.39386 -1.92865 -2.55196 -0.0505299 0.000457919 -1.15077 -1.72466 -1.66248 -2.02225 -2.36747 -1.05821 0.310786 0.916291</span>
-<span class="co">#&gt;   7:     4491.4840: 0.284688 -0.667076 0.249776 -1.99542  1.68265 -0.0171180  3.10690 -0.295961 -0.693147 0.209382 -2.02866 0.211587 -1.43018  1.17120 -0.634781  2.92921 -0.0367056 -1.31269 -1.99463 -2.60384 -0.0609994 0.000379707 -1.20382 -1.50325 -1.65234 -2.04958 -2.30678 -1.13271 0.301414 0.916291</span>
-<span class="co">#&gt;   8:     4489.8892: 0.298566 -0.599664 0.248760 -1.99548  1.88021 -0.0107554  3.10239 -0.279585 -0.693147 0.207269 -2.07235 0.217086 -1.45118  1.34087 -0.644462  2.92790 -0.0458389 -1.33464 -2.04963 -2.64592 -0.0778757 0.000251062 -1.24797 -1.72034 -1.65164 -2.05426 -2.30312 -1.08497 0.308454 0.916291</span>
-<span class="co">#&gt;   9:     4488.2963: 0.325878 -0.631608 0.243486 -1.96815  2.09944 0.0105858  3.09756 -0.261508 -0.693147 0.202949 -2.11622 0.220029 -1.43154  1.53732 -0.637137  2.92255 -0.0504335 -1.31754 -2.11790 -2.69121 -0.101127 8.44504e-05 -1.28238 -1.54944 -1.64772 -2.05141 -2.34616 -1.07110 0.305600 0.916291</span>
-<span class="co">#&gt;  10:     4487.7576: 0.388664 -0.660392 0.221642 -1.87564  2.50872 0.103606  3.11924 -0.291701 -0.693147 0.190559 -2.21829 0.221699 -1.34201  1.91488 -0.572812  2.91205 -0.0693696 -1.00761 -2.24506 -2.80416 -0.159424 -0.000335364 -1.40434 -1.65183 -1.69000 -2.05015 -2.44418 -1.15823 0.305188 0.916291</span>
-<span class="co">#&gt;  11:     4484.8522: 0.444013 -0.607132 0.198628 -1.84251  2.87287 0.211211  3.13478 -0.307175 -0.693147 0.178256 -2.33561 0.233464 -1.38482  2.24711 -0.468643  2.89291 -0.0722049 -1.13104 -2.42167 -2.89370 -0.214745 -0.000724519 -1.58731 -1.67648 -1.66649 -2.05149 -2.43767 -0.773575 0.304663 0.916291</span>
-<span class="co">#&gt;  12:     4483.9667: 0.504995 -0.600580 0.164077 -1.92779  3.17891 0.337337  3.12779 -0.262012 -0.693147 0.151022 -2.36313 0.235519 -1.34085  2.48073 -0.217720  2.86167 -0.0625952 -1.12980 -2.60417 -2.87489 -0.259481 -0.00105147 -2.02468 -1.66518 -1.48426 -1.97982 -2.35812 -0.869087 0.359606 0.916291</span>
-<span class="co">#&gt;  13:     4483.4183: 0.513418 -0.626590 0.151477 -1.87182  3.20524 0.339830  3.13470 -0.273743 -0.693147 0.148989 -2.38158 0.242588 -1.43341  2.52619 -0.281641  2.85679 -0.0599624 -0.929314 -2.61686 -2.88132 -0.266965 -0.00109051 -2.02721 -1.55025 -1.63259 -1.99806 -2.41498 -0.844167 0.306716 0.916291</span>
-<span class="co">#&gt;  14:     4482.9121: 0.543760 -0.624738 0.121214 -1.87244  3.34682 0.405307  3.14088 -0.270701 -0.693147 0.132215 -2.39037 0.243235 -1.43256  2.66283 -0.245828  2.83694 -0.0519441 -0.959624 -2.69989 -2.86961 -0.288228 -0.00117892 -2.20846 -1.64993 -1.63617 -1.96345 -2.41158 -0.787367 0.316451 0.916291</span>
-<span class="co">#&gt;  15:     4482.8706: 0.544560 -0.605083 0.116422 -1.88395  3.36020 0.405912  3.14340 -0.273748 -0.693147 0.129484 -2.39123 0.242255 -1.42970  2.67145 -0.241858  2.83636 -0.0562512 -0.995419 -2.70150 -2.86639 -0.289132 -0.00115205 -2.21397 -1.59698 -1.61900 -1.96426 -2.41130 -0.792455 0.314787 0.916291</span>
-<span class="co">#&gt;  16:     4482.8175: 0.554968 -0.610744 0.0989007 -1.88582  3.40091 0.419310  3.15023 -0.280751 -0.693147 0.121068 -2.39735 0.240910 -1.43655  2.70344 -0.224542  2.83270 -0.0659365 -0.985920 -2.70689 -2.85476 -0.295940 -0.00111565 -2.22797 -1.62218 -1.61025 -1.96801 -2.41418 -0.800554 0.307725 0.916291</span>
-<span class="co">#&gt;  17:     4482.8043: 0.558910 -0.613157 0.0904494 -1.88509  3.41597 0.427702  3.15138 -0.279337 -0.693147 0.116849 -2.39663 0.238979 -1.42498  2.71767 -0.224133  2.83042 -0.0692326 -0.992721 -2.70697 -2.85151 -0.298173 -0.00109220 -2.22938 -1.62281 -1.61796 -1.96615 -2.40937 -0.794497 0.326248 0.916291</span>
-<span class="co">#&gt;  18:     4482.7914: 0.562743 -0.609689 0.0814267 -1.88724  3.43336 0.435616  3.15274 -0.277883 -0.693147 0.112337 -2.39887 0.238070 -1.42720  2.73190 -0.218959  2.82722 -0.0715631 -0.983481 -2.70790 -2.84891 -0.300852 -0.00107166 -2.23201 -1.62136 -1.61427 -1.96813 -2.41120 -0.803982 0.308346 0.916291</span>
-<span class="co">#&gt;  19:     4482.7449: 0.584323 -0.607264 0.0376978 -1.89387  3.52246 0.481783  3.15694 -0.264366 -0.693147 0.0897129 -2.41311 0.234242 -1.43381  2.80038 -0.162728  2.80747 -0.0756501 -0.975901 -2.72083 -2.84240 -0.315975 -0.00102182 -2.26359 -1.61235 -1.60578 -1.97093 -2.41500 -0.789379 0.316201 0.916291</span>
-<span class="co">#&gt;  20:     4482.6990: 0.605690 -0.607273 -0.0150217 -1.88827  3.61473 0.508271  3.16790 -0.261710 -0.693147 0.0619146 -2.42157 0.227704 -1.42232  2.88533 -0.152971  2.78263 -0.0778999 -1.00192 -2.72713 -2.83054 -0.329554 -0.000933748 -2.27775 -1.62383 -1.62794 -1.96603 -2.40249 -0.795877 0.311480 0.916291</span>
-<span class="co">#&gt;  21:     4482.6836: 0.612618 -0.604684 -0.0364352 -1.90582  3.64497 0.522530  3.17841 -0.272272 -0.693147 0.0482498 -2.42152 0.225473 -1.42544  2.92182 -0.154333  2.77434 -0.0872720 -0.977445 -2.72610 -2.82382 -0.334834 -0.000912914 -2.26900 -1.62479 -1.61526 -1.96379 -2.41842 -0.802802 0.324809 0.916291</span>
-<span class="co">#&gt;  22:     4482.6650: 0.619068 -0.603839 -0.0653363 -1.89105  3.67110 0.546931  3.18911 -0.278762 -0.693147 0.0300379 -2.42230 0.222379 -1.42601  2.94941 -0.131971  2.76703 -0.108463 -0.987231 -2.72394 -2.82574 -0.338664 -0.000892025 -2.25417 -1.61766 -1.60703 -1.96949 -2.41526 -0.797123 0.315931 0.916291</span>
-<span class="co">#&gt;  23:     4482.6599: 0.624952 -0.609792 -0.0886035 -1.91408  3.70779 0.539211  3.19052 -0.264693 -0.693147 0.0123600 -2.42142 0.219795 -1.42621  2.97321 -0.105276  2.75486 -0.117261 -0.992048 -2.71865 -2.82807 -0.341768 -0.000884121 -2.24339 -1.62722 -1.62205 -1.97053 -2.40350 -0.792206 0.312240 0.916291</span>
-<span class="co">#&gt;  24:     4482.6473: 0.628894 -0.602340 -0.115566 -1.89628  3.73679 0.553058  3.19046 -0.245354 -0.693147 -0.00714382 -2.42354 0.218173 -1.43352  3.00790 -0.0931177  2.73310 -0.109196 -0.990992 -2.71701 -2.83383 -0.344558 -0.000890389 -2.24356 -1.62565 -1.62147 -1.97420 -2.41323 -0.804641 0.321497 0.916291</span>
-<span class="co">#&gt;  25:     4482.6439: 0.629861 -0.609793 -0.117562 -1.90625  3.73316 0.568585  3.19557 -0.254217 -0.693147 -0.0100779 -2.42049 0.217123 -1.42192  3.01382 -0.0958510  2.73206 -0.112417 -0.989785 -2.71611 -2.83315 -0.344803 -0.000892616 -2.24287 -1.61562 -1.61344 -1.96994 -2.41058 -0.791157 0.309703 0.916291</span>
-<span class="co">#&gt;  26:     4482.6370: 0.630604 -0.600429 -0.129128 -1.90344  3.74513 0.576686  3.20140 -0.257653 -0.693147 -0.0198974 -2.42131 0.216436 -1.42278  3.03100 -0.0910315  2.72348 -0.113692 -0.986381 -2.71622 -2.83422 -0.345777 -0.000896594 -2.24563 -1.62547 -1.61716 -1.96926 -2.41052 -0.799129 0.317973 0.916291</span>
-<span class="co">#&gt;  27:     4482.6324: 0.632948 -0.603923 -0.141533 -1.90156  3.76180 0.571294  3.20772 -0.260548 -0.693147 -0.0314726 -2.42170 0.216146 -1.42845  3.04869 -0.0828323  2.71535 -0.119518 -0.988533 -2.71618 -2.83023 -0.346605 -0.000898534 -2.24825 -1.62053 -1.61385 -1.96865 -2.41061 -0.798570 0.317938 0.916291</span>
-<span class="co">#&gt;  28:     4482.6288: 0.634675 -0.605468 -0.154357 -1.90576  3.77187 0.583014  3.20961 -0.252126 -0.693147 -0.0444698 -2.42154 0.215261 -1.42731  3.06741 -0.0751582  2.70626 -0.126055 -0.990724 -2.71530 -2.82989 -0.347247 -0.000898544 -2.24766 -1.62254 -1.61686 -1.96931 -2.41314 -0.797582 0.315278 0.916291</span>
-<span class="co">#&gt;  29:     4482.6263: 0.635367 -0.602097 -0.167306 -1.90484  3.78439 0.587742  3.21429 -0.248721 -0.693147 -0.0585831 -2.42335 0.214355 -1.42280  3.08497 -0.0646399  2.69473 -0.129791 -0.985239 -2.71724 -2.83288 -0.347880 -0.000900816 -2.24963 -1.62125 -1.61606 -1.97046 -2.41040 -0.797250 0.315631 0.916291</span>
-<span class="co">#&gt;  30:     4482.6237: 0.636038 -0.603394 -0.179316 -1.90639  3.79379 0.593172  3.22211 -0.250970 -0.693147 -0.0741270 -2.42485 0.214490 -1.42735  3.10375 -0.0561003  2.68146 -0.132502 -0.987494 -2.71451 -2.83064 -0.348068 -0.000897782 -2.24684 -1.62189 -1.61584 -1.97062 -2.40837 -0.798688 0.317032 0.916291</span>
-<span class="co">#&gt;  31:     4482.6232: 0.636069 -0.604490 -0.179934 -1.90662  3.79499 0.591137  3.22224 -0.250033 -0.693147 -0.0753944 -2.42452 0.214450 -1.42627  3.10485 -0.0553879  2.68105 -0.134188 -0.988958 -2.71432 -2.83017 -0.347993 -0.000897396 -2.24671 -1.62293 -1.61553 -1.97019 -2.41111 -0.796935 0.316057 0.916291</span>
-<span class="co">#&gt;  32:     4482.6230: 0.635842 -0.602950 -0.181160 -1.90661  3.79573 0.591114  3.22284 -0.249215 -0.693147 -0.0776090 -2.42436 0.214515 -1.42638  3.10703 -0.0544345  2.67985 -0.136094 -0.987269 -2.71409 -2.82957 -0.347905 -0.000896997 -2.24659 -1.62149 -1.61591 -1.97004 -2.41122 -0.798895 0.316720 0.916291</span>
-<span class="co">#&gt;  33:     4482.6226: 0.635947 -0.604136 -0.182706 -1.90671  3.79669 0.591538  3.22370 -0.248707 -0.693147 -0.0801113 -2.42436 0.214562 -1.42649  3.10972 -0.0534947  2.67808 -0.137340 -0.988750 -2.71402 -2.82919 -0.347853 -0.000896452 -2.24652 -1.62276 -1.61563 -1.96990 -2.41125 -0.797517 0.316439 0.916291</span>
-<span class="co">#&gt;  34:     4482.6200: 0.636409 -0.600470 -0.209853 -1.90806  3.81605 0.599118  3.23927 -0.243996 -0.693147 -0.120621 -2.42593 0.214908 -1.42756  3.15534 -0.0380131  2.64537 -0.148654 -0.991562 -2.71415 -2.82649 -0.347820 -0.000888406 -2.24581 -1.62247 -1.61347 -1.96806 -2.41343 -0.797888 0.318757 0.916291</span>
-<span class="co">#&gt;  35:     4482.6181: 0.636170 -0.606961 -0.232343 -1.90872  3.82633 0.604787  3.25633 -0.238877 -0.693147 -0.164844 -2.42846 0.216534 -1.42751  3.19329 -0.0130140  2.61500 -0.173429 -0.987510 -2.71778 -2.82745 -0.346364 -0.000891500 -2.25053 -1.62264 -1.61749 -1.96879 -2.41179 -0.799771 0.317780 0.916291</span>
-<span class="co">#&gt;  36:     4482.6171: 0.634939 -0.604382 -0.233472 -1.91047  3.82420 0.603537  3.25762 -0.231306 -0.693147 -0.175428 -2.42951 0.217602 -1.42752  3.19914 -0.0124518  2.60497 -0.173002 -0.987023 -2.71375 -2.82748 -0.345921 -0.000893032 -2.24927 -1.62258 -1.61492 -1.97225 -2.40928 -0.797331 0.316002 0.916291</span>
-<span class="co">#&gt;  37:     4482.6170: 0.634815 -0.603380 -0.233122 -1.91019  3.82361 0.603563  3.25809 -0.231948 -0.693147 -0.175841 -2.42931 0.217650 -1.42635  3.19907 -0.0127262  2.60445 -0.172650 -0.988417 -2.71370 -2.82724 -0.345910 -0.000892963 -2.24913 -1.62218 -1.61578 -1.97129 -2.41124 -0.797124 0.316578 0.916291</span>
-<span class="co">#&gt;  38:     4482.6169: 0.634806 -0.604142 -0.232359 -1.91020  3.82242 0.603029  3.25899 -0.232166 -0.693147 -0.177645 -2.42946 0.218062 -1.42638  3.19904 -0.0125859  2.60267 -0.172397 -0.987838 -2.71369 -2.82709 -0.345896 -0.000893293 -2.24872 -1.62263 -1.61582 -1.97043 -2.41128 -0.797663 0.316165 0.916291</span>
-<span class="co">#&gt;  39:     4482.6165: 0.633526 -0.603609 -0.222702 -1.90957  3.80957 0.597235  3.26668 -0.230317 -0.693147 -0.196841 -2.42961 0.222701 -1.42817  3.19822 -0.0126027  2.58909 -0.181488 -0.987896 -2.71228 -2.82369 -0.345677 -0.000896589 -2.24675 -1.62306 -1.61552 -1.96708 -2.41092 -0.797818 0.315407 0.916291</span>
-<span class="co">#&gt;  40:     4482.6163: 0.633530 -0.604720 -0.213679 -1.90806  3.79907 0.592692  3.27389 -0.226435 -0.693147 -0.217192 -2.42892 0.226953 -1.42640  3.19966 -0.0144470  2.57197 -0.184646 -0.987931 -2.71321 -2.82173 -0.345647 -0.000898563 -2.24880 -1.62223 -1.61590 -1.97015 -2.41095 -0.797688 0.316271 0.916291</span>
-<span class="co">#&gt;  41:     4482.6162: 0.633562 -0.603758 -0.213528 -1.90880  3.79990 0.593009  3.27444 -0.226301 -0.693147 -0.218552 -2.42992 0.227155 -1.42623  3.19798 -0.0130174  2.57045 -0.183972 -0.988203 -2.71195 -2.82312 -0.345605 -0.000895562 -2.24843 -1.62241 -1.61622 -1.97000 -2.41124 -0.797353 0.316103 0.916291</span>
-<span class="co">#&gt;  42:     4482.6162: 0.633837 -0.603733 -0.213589 -1.90882  3.80138 0.593714  3.27369 -0.225426 -0.693147 -0.217700 -2.43090 0.227097 -1.42640  3.19613 -0.0141690  2.57172 -0.185023 -0.988323 -2.71139 -2.82429 -0.345656 -0.000893661 -2.24824 -1.62238 -1.61603 -1.96857 -2.41130 -0.797603 0.316458 0.916291</span>
-<span class="co">#&gt;  43:     4482.6162: 0.633968 -0.603868 -0.213438 -1.90897  3.80299 0.594558  3.27371 -0.225984 -0.693147 -0.217205 -2.43052 0.226995 -1.42616  3.19332 -0.0153345  2.57277 -0.185989 -0.988231 -2.71122 -2.82459 -0.345699 -0.000894051 -2.24787 -1.62240 -1.61596 -1.96982 -2.41122 -0.797697 0.316377 0.916291</span>
-<span class="co">#&gt;  44:     4482.6162: 0.634136 -0.604026 -0.213394 -1.90877  3.80484 0.595459  3.27399 -0.226003 -0.693147 -0.217852 -2.43030 0.227132 -1.42623  3.19050 -0.0165530  2.57228 -0.185755 -0.988062 -2.71247 -2.82519 -0.345806 -0.000896652 -2.24808 -1.62226 -1.61600 -1.96911 -2.41098 -0.797493 0.316208 0.916291</span>
-<span class="co">#&gt;  45:     4482.6162: 0.634167 -0.604053 -0.213398 -1.90859  3.80575 0.595519  3.27462 -0.225504 -0.693147 -0.219760 -2.43086 0.227386 -1.42624  3.18780 -0.0178339  2.57076 -0.185909 -0.988020 -2.71278 -2.82504 -0.345746 -0.000895788 -2.24805 -1.62251 -1.61597 -1.96951 -2.41131 -0.797615 0.316375 0.916291</span>
-<span class="co">#&gt;  46:     4482.6162: 0.634093 -0.604024 -0.213632 -1.90884  3.80551 0.595576  3.27530 -0.225446 -0.693147 -0.221276 -2.43148 0.227555 -1.42616  3.18739 -0.0182911  2.56960 -0.186423 -0.988040 -2.71181 -2.82522 -0.345711 -0.000894160 -2.24877 -1.62236 -1.61602 -1.96941 -2.41134 -0.797489 0.316239 0.916291</span>
-<span class="co">#&gt;  47:     4482.6162: 0.634085 -0.603891 -0.214031 -1.90890  3.80526 0.595506  3.27527 -0.225365 -0.693147 -0.221306 -2.43092 0.227477 -1.42616  3.18751 -0.0181343  2.56964 -0.186553 -0.988164 -2.71259 -2.82535 -0.345779 -0.000894580 -2.24795 -1.62239 -1.61595 -1.96944 -2.41124 -0.797572 0.316307 0.916291</span>
-<span class="co">#&gt;  48:     4482.6162: 0.634100 -0.603999 -0.214139 -1.90879  3.80521 0.595413  3.27515 -0.225299 -0.693147 -0.221069 -2.43099 0.227431 -1.42628  3.18744 -0.0180182  2.56980 -0.186474 -0.988159 -2.71244 -2.82534 -0.345763 -0.000895688 -2.24813 -1.62236 -1.61606 -1.96951 -2.41126 -0.797607 0.316257 0.916291</span>
-<span class="co">#&gt;  49:     4482.6162: 0.634098 -0.603968 -0.214240 -1.90878  3.80522 0.595397  3.27517 -0.225458 -0.693147 -0.220938 -2.43121 0.227387 -1.42615  3.18731 -0.0182007  2.56988 -0.186405 -0.988065 -2.71237 -2.82533 -0.345742 -0.000895345 -2.24838 -1.62244 -1.61602 -1.96945 -2.41121 -0.797548 0.316326 0.916291</span>
-<span class="co">#&gt;  50:     4482.6162: 0.634107 -0.603959 -0.214279 -1.90887  3.80520 0.595449  3.27521 -0.225385 -0.693147 -0.221090 -2.43110 0.227401 -1.42618  3.18727 -0.0182459  2.56976 -0.186443 -0.988109 -2.71245 -2.82529 -0.345758 -0.000894523 -2.24814 -1.62238 -1.61596 -1.96946 -2.41131 -0.797553 0.316284 0.916291</span>
-<span class="co">#&gt;  51:     4482.6162: 0.634101 -0.603960 -0.214283 -1.90885  3.80517 0.595404  3.27521 -0.225360 -0.693147 -0.221109 -2.43102 0.227406 -1.42622  3.18734 -0.0181687  2.56975 -0.186487 -0.988127 -2.71245 -2.82534 -0.345762 -0.000895172 -2.24821 -1.62239 -1.61603 -1.96947 -2.41125 -0.797574 0.316286 0.916291</span>
-<span class="co">#&gt; converged: relative convergence (4)</span>
-</pre></div>
-<p>Calculate model outputs. We can calculate outputs based on posterior mode estimates before running <code><a href="../reference/report_tmb.html">report_tmb()</a></code> to calculate posterior intervals.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="kw">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/output_package.html">output_package</a></span>(<span class="kw">fit</span>, <span class="kw">naomi_mf</span>)
-</pre></div>
-<p>The output package consists of a data frame of indicators and metadata defining the labels for each indicator.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">outputs</span>)
-<span class="co">#&gt; [1] "indicators"     "art_attendance" "meta_area"      "meta_age_group"</span>
-<span class="co">#&gt; [5] "meta_period"    "meta_indicator" "fit"</span>
-</pre></div>
-<p>If uncertainty has not been calcualted yet, the output object retures values for <code>mode</code>, but not <code>mean</code> or <code>lower</code> and <code>upper</code> 95% uncertainty ranges.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw">outputs</span><span class="op">$</span><span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(
-    <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,  <span class="co"># HIV prevalence</span>
-    <span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>   <span class="co"># Age group 15-49</span>
-  ) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-<span class="co">#&gt; # A tibble: 6 x 11</span>
-<span class="co">#&gt;   area_id   sex   age_group calendar_quarter indicator  mean    se median   mode</span>
-<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 MWI       both  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0886</span>
-<span class="co">#&gt; 2 MWI       fema… Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.111 </span>
-<span class="co">#&gt; 3 MWI       male  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0659</span>
-<span class="co">#&gt; 4 MWI_1_1_… both  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0668</span>
-<span class="co">#&gt; 5 MWI_1_1_… fema… Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0826</span>
-<span class="co">#&gt; 6 MWI_1_1_… male  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0507</span>
-<span class="co">#&gt; # … with 2 more variables: lower &lt;dbl&gt;, upper &lt;dbl&gt;</span>
-</pre></div>
-<p>The function <code><a href="../reference/add_output_labels.html">add_output_labels()</a></code> returns the indicators table with labels added as additional columns.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="fu"><a href="../reference/add_output_labels.html">add_output_labels</a></span>(<span class="kw">outputs</span>) <span class="op">%&gt;%</span>
-  <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(
-    <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,  <span class="co"># HIV prevalence</span>
-    <span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>   <span class="co"># Age group 15-49</span>
-  ) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-<span class="co">#&gt; # A tibble: 6 x 17</span>
-<span class="co">#&gt;   area_level area_level_label area_id area_name  sex   age_group age_group_label</span>
-<span class="co">#&gt;        &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;          </span>
-<span class="co">#&gt; 1          0 Country          MWI     Malawi - … both  Y015_049  15-49          </span>
-<span class="co">#&gt; 2          0 Country          MWI     Malawi - … fema… Y015_049  15-49          </span>
-<span class="co">#&gt; 3          0 Country          MWI     Malawi - … male  Y015_049  15-49          </span>
-<span class="co">#&gt; 4          0 Country          MWI     Malawi - … both  Y015_049  15-49          </span>
-<span class="co">#&gt; 5          0 Country          MWI     Malawi - … fema… Y015_049  15-49          </span>
-<span class="co">#&gt; 6          0 Country          MWI     Malawi - … male  Y015_049  15-49          </span>
-<span class="co">#&gt; # … with 10 more variables: calendar_quarter &lt;chr&gt;, quarter_label &lt;chr&gt;,</span>
-<span class="co">#&gt; #   indicator &lt;chr&gt;, indicator_label &lt;chr&gt;, mean &lt;dbl&gt;, se &lt;dbl&gt;, median &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   mode &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</span>
-</pre></div>
-<p>Calculate uncertainty ranges and add to the output object (This is time consuming and memory intensive.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span>(<span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_tmb.html">sample_tmb</a></span>(<span class="kw">fit</span>))
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;  92.423   1.124  93.547</span>
-</pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_tmb.html">fit_tmb</a></span><span class="op">(</span><span class="va">tmb_inputs</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   0:     1380.6390:  0.00000 0.916291  0.00000 0.916291  0.00000 0.916291  2.58200 0.916291 -0.693147  0.00000 0.916291  0.00000 0.916291  0.00000 0.916291  2.58200 0.916291 0.916291 0.916291 0.916291 0.916291  0.00000  0.00000  0.00000 -0.693147 0.916291 0.916291 0.916291 0.916291 0.916291 0.916291</span></span>
+<span><span class="co">#&gt;   1:     1331.9747: 0.00818397 0.218066 0.00738945 0.189619 0.188062 -0.386303  3.18417 -0.602639 -0.693147 0.00744052 0.204830 0.00738710 0.203025 0.180784 -0.973774  3.02408 -0.273646 0.201502 0.151762 0.203005 0.916291 0.0145286 0.00252213 -0.424892 -1.22489 0.181189 0.185890 0.180115 0.203696 0.516691 0.916291</span></span>
+<span><span class="co">#&gt;   2:     1307.1816: 0.0198748 -0.481496 0.0151198 -0.632083  1.54531  1.63345  3.07287 -0.348534 -0.693147 0.0158220 -0.563314 0.0156317 -0.565852  1.45657 -0.0515251  3.10066 -0.538439 -0.582937 -0.564689 -0.569737 0.916291 0.0310709 0.00473084 -0.736398 -1.90608 -0.660672 -0.639829 -0.667689 -0.571274 0.193790 0.916291</span></span>
+<span><span class="co">#&gt;   3:     1276.2215: 0.0411579 -0.809578 0.0173382 -1.54962  2.99348 0.127701  2.84549 0.269513 -0.693147 0.0233166 -1.30753 0.0219478 -1.31636  2.97341 -0.635197  2.91875 -0.174870 -1.44813 -1.34487 -1.36327 0.916291 0.0440155 0.00625260 -0.957969 -2.58146 -1.67492 -1.57681 -1.72262 -1.39635 -0.174034 0.916291</span></span>
+<span><span class="co">#&gt;   4:     1271.0504: 0.0494530 -0.605687 0.0106097 -1.67555  2.83789 0.597103  3.11268 -0.328498 -0.693147 0.0225929 -1.40252 0.0214433 -1.43130  2.77630 0.0292228  2.97798 -0.324681 -1.64545 -1.46826 -1.48034 0.916291 0.0433322 0.00625535 -1.01129 -2.33442 -1.88107 -1.70563 -2.01073 -1.54469 -0.239375 0.916291</span></span>
+<span><span class="co">#&gt;   5:     1267.0055: 0.0632330 -0.465641 -0.00336078 -1.90465  3.15995 0.115722  3.19679 -0.466351 -0.693147 0.0200103 -1.58204 0.0199011 -1.65142  3.09778 -0.290000  2.97135 -0.339297 -2.01881 -1.67027 -1.70317 0.916291 0.0410851 0.00624768 -1.09789 -2.19525 -2.24691 -1.92996 -2.56609 -1.81852 -0.362704 0.916291</span></span>
+<span><span class="co">#&gt;   6:     1266.3599: 0.0811571 -0.476775 -0.0258217 -2.13361  2.80818 0.518268  3.09986 -0.160944 -0.693147 0.0114035 -1.76085 0.0150240 -1.89336  3.18322 -0.561155  2.96615 -0.380010 -2.46209 -1.86198 -1.93730 0.916291 0.0358569 0.00599621 -1.20998 -2.20748 -2.56380 -2.09529 -3.19617 -2.10898 -0.549324 0.916291</span></span>
+<span><span class="co">#&gt;   7:     1264.5503: 0.0841275 -0.522877 -0.0288066 -2.16152  2.93448 0.269109  3.15136 -0.263850 -0.693147 0.00770164 -1.77049 0.0133507 -1.92514  3.03652 -0.134051  2.97108 -0.402740 -2.48316 -1.87225 -1.94768 0.916291 0.0363724 0.00600179 -1.24046 -2.24447 -2.54602 -2.06511 -3.15990 -2.12209 -0.588675 0.916291</span></span>
+<span><span class="co">#&gt;   8:     1264.4820: 0.102259 -0.682285 -0.0464734 -2.29478  3.00067 0.322207  3.27858 -0.466590 -0.693147 -0.0146901 -1.80692 0.00288343 -2.08666  3.16772 -0.152633  2.92421 -0.359047 -2.59116 -1.90379 -1.99131 0.916291 0.0361555 0.00585725 -1.34284 -2.37003 -2.46777 -1.88992 -2.98376 -2.17096 -0.783546 0.916291</span></span>
+<span><span class="co">#&gt;   9:     1264.2078: 0.129678 -0.682212 -0.0696473 -2.46250  3.04199 0.353220  3.20067 -0.174653 -0.693147 -0.0444603 -1.89356 -0.0120199 -2.29740  3.26123 -0.133291  2.91223 -0.424831 -2.79977 -1.98124 -2.08655 0.916291 0.0324520 0.00572810 -1.36955 -2.35049 -2.50495 -1.78334 -2.99342 -2.26596 -0.971825 0.916291</span></span>
+<span><span class="co">#&gt;  10:     1264.1605: 0.162082 -0.437380 -0.0825133 -2.42907  3.22220 0.412207  3.27068 -0.211655 -0.693147 -0.0853870 -1.88089 -0.0323819 -2.35243  3.40951 -0.0874096  2.86757 -0.435407 -2.84150 -1.93059 -2.05112 0.916291 0.0266746 0.00588151 -1.05162 -2.19986 -2.59987 -1.83374 -3.04522 -2.20316 -0.818560 0.916291</span></span>
+<span><span class="co">#&gt;  11:     1264.0426: 0.189483 -0.643488 -0.0977686 -2.35930  3.25770 0.445353  3.33458 -0.245164 -0.693147 -0.117130 -1.97725 -0.0507129 -2.28784  3.46939 -0.0405772  2.83142 -0.462716 -2.82912 -1.95566 -2.07826 0.916291 0.0361752 0.00633659 -1.20477 -2.28648 -2.63994 -2.01200 -3.08595 -2.37231 -0.725943 0.916291</span></span>
+<span><span class="co">#&gt;  12:     1263.9652: 0.193512 -0.592356 -0.0998790 -2.38257  3.30117 0.398601  3.32038 -0.198604 -0.693147 -0.124432 -1.93605 -0.0530729 -2.29273  3.49227 -0.0400163  2.81822 -0.452430 -2.80962 -1.94270 -2.06941 0.916291 0.0351440 0.00616804 -1.20689 -2.30185 -2.57465 -1.93870 -2.98228 -2.30972 -0.778341 0.916291</span></span>
+<span><span class="co">#&gt;  13:     1263.9315: 0.212943 -0.611536 -0.111374 -2.43075  3.32336 0.472469  3.36429 -0.218245 -0.693147 -0.151624 -1.92268 -0.0654407 -2.29806  3.55240 0.00388415  2.78868 -0.479782 -2.82686 -1.95687 -2.09919 0.916291 0.0312282 0.00584823 -1.21230 -2.28675 -2.53242 -1.86250 -2.96008 -2.25933 -0.868424 0.916291</span></span>
+<span><span class="co">#&gt;  14:     1263.9216: 0.230328 -0.590775 -0.117056 -2.41581  3.35935 0.487213  3.38536 -0.204215 -0.693147 -0.176554 -1.90118 -0.0777052 -2.29478  3.60159 0.0212397  2.73816 -0.459899 -2.81819 -1.93567 -2.04733 0.916291 0.0303545 0.00595693 -1.20695 -2.33954 -2.58099 -1.87663 -2.99203 -2.27869 -0.815618 0.916291</span></span>
+<span><span class="co">#&gt;  15:     1263.9172: 0.247159 -0.620090 -0.124082 -2.37829  3.41484 0.487386  3.40679 -0.194130 -0.693147 -0.200954 -1.90557 -0.0901201 -2.27223  3.66039 0.0314631  2.70976 -0.494936 -2.78093 -1.93008 -2.03719 0.916291 0.0312494 0.00611400 -1.20343 -2.26708 -2.57200 -1.90671 -3.00001 -2.29323 -0.774754 0.916291</span></span>
+<span><span class="co">#&gt;  16:     1263.9164: 0.255212 -0.580529 -0.130502 -2.38402  3.42740 0.494147  3.41811 -0.191672 -0.693147 -0.212013 -1.94075 -0.0958588 -2.26773  3.68087 0.0446804  2.69815 -0.528419 -2.79044 -1.96348 -2.10595 0.916291 0.0322883 0.00603793 -1.20689 -2.31214 -2.53618 -1.92083 -3.00936 -2.27344 -0.820996 0.916291</span></span>
+<span><span class="co">#&gt;  17:     1263.9061: 0.255539 -0.602529 -0.130306 -2.39916  3.41759 0.510366  3.41656 -0.185890 -0.693147 -0.213951 -1.92553 -0.0966041 -2.28024  3.67581 0.0563681  2.68394 -0.509047 -2.80411 -1.95336 -2.08497 0.916291 0.0323766 0.00599061 -1.21295 -2.30117 -2.55550 -1.90069 -2.98996 -2.26622 -0.824239 0.916291</span></span>
+<span><span class="co">#&gt;  18:     1263.9050: 0.260515 -0.611669 -0.132198 -2.40748  3.43137 0.504674  3.42546 -0.186267 -0.693147 -0.223466 -1.91386 -0.101346 -2.28532  3.69628 0.0574651  2.67120 -0.532730 -2.80273 -1.93753 -2.05669 0.916291 0.0311486 0.00596325 -1.20214 -2.30414 -2.56298 -1.88058 -2.99456 -2.28674 -0.819303 0.916291</span></span>
+<span><span class="co">#&gt;  19:     1263.9049: 0.265037 -0.601959 -0.134766 -2.40421  3.43887 0.500415  3.43143 -0.184473 -0.693147 -0.231432 -1.91560 -0.105242 -2.28603  3.70746 0.0613440  2.63689 -0.507919 -2.80351 -1.95056 -2.06721 0.916291 0.0319212 0.00601708 -1.21573 -2.29160 -2.56137 -1.89497 -2.99344 -2.28377 -0.818461 0.916291</span></span>
+<span><span class="co">#&gt;  20:     1263.9032: 0.264336 -0.604245 -0.134419 -2.40111  3.43332 0.503129  3.42897 -0.182432 -0.693147 -0.231021 -1.91682 -0.105039 -2.28462  3.70355 0.0617232  2.64150 -0.524216 -2.80498 -1.94928 -2.07320 0.916291 0.0323746 0.00601735 -1.21416 -2.29819 -2.56439 -1.89806 -2.98840 -2.26734 -0.815909 0.916291</span></span>
+<span><span class="co">#&gt;  21:     1263.9029: 0.264187 -0.603938 -0.134305 -2.40254  3.43030 0.506494  3.42860 -0.182391 -0.693147 -0.231303 -1.91925 -0.105229 -2.28361  3.70173 0.0629533  2.63984 -0.527873 -2.80177 -1.94567 -2.07071 0.916291 0.0321072 0.00600130 -1.21038 -2.29949 -2.56012 -1.89389 -2.98975 -2.27441 -0.818518 0.916291</span></span>
+<span><span class="co">#&gt;  22:     1263.9027: 0.265100 -0.606328 -0.134848 -2.40343  3.43078 0.504221  3.42971 -0.181902 -0.693147 -0.233971 -1.91715 -0.106471 -2.28440  3.70368 0.0628145  2.62972 -0.532730 -2.80280 -1.94836 -2.06872 0.916291 0.0318294 0.00598360 -1.20757 -2.30026 -2.56033 -1.89149 -2.99148 -2.27526 -0.820046 0.916291</span></span>
+<span><span class="co">#&gt;  23:     1263.9027: 0.265968 -0.604664 -0.135251 -2.40339  3.43117 0.502978  3.43102 -0.182100 -0.693147 -0.236614 -1.91737 -0.107822 -2.28403  3.70537 0.0627748  2.61937 -0.538814 -2.80288 -1.94613 -2.06795 0.916291 0.0319671 0.00599200 -1.21138 -2.29964 -2.56180 -1.89143 -2.99026 -2.27682 -0.819137 0.916291</span></span>
+<span><span class="co">#&gt;  24:     1263.9026: 0.266400 -0.604934 -0.135531 -2.40331  3.42945 0.502585  3.43114 -0.181484 -0.693147 -0.238798 -1.91740 -0.108918 -2.28416  3.70461 0.0626840  2.60705 -0.542662 -2.80257 -1.94436 -2.06952 0.916291 0.0320039 0.00600200 -1.21049 -2.29940 -2.56047 -1.89297 -2.99126 -2.27542 -0.818803 0.916291</span></span>
+<span><span class="co">#&gt;  25:     1263.9025: 0.266623 -0.604423 -0.135739 -2.40256  3.42744 0.502672  3.43115 -0.181343 -0.693147 -0.240550 -1.91810 -0.109762 -2.28373  3.70314 0.0624166  2.59503 -0.547478 -2.80181 -1.94740 -2.06934 0.916291 0.0320195 0.00600318 -1.21003 -2.29926 -2.56048 -1.89295 -2.99052 -2.27529 -0.818069 0.916291</span></span>
+<span><span class="co">#&gt;  26:     1263.9025: 0.266291 -0.604731 -0.135628 -2.40307  3.42629 0.502360  3.43074 -0.181796 -0.693147 -0.240931 -1.91806 -0.109969 -2.28390  3.70083 0.0614462  2.58737 -0.551113 -2.80279 -1.94664 -2.06928 0.916291 0.0319842 0.00598705 -1.21024 -2.29956 -2.56085 -1.89257 -2.99079 -2.27526 -0.819884 0.916291</span></span>
+<span><span class="co">#&gt;  27:     1263.9025: 0.265914 -0.604751 -0.135465 -2.40301  3.42630 0.502297  3.43021 -0.181972 -0.693147 -0.240295 -1.91761 -0.109658 -2.28402  3.69959 0.0607843  2.58651 -0.551604 -2.80226 -1.94652 -2.06973 0.916291 0.0319924 0.00599998 -1.21020 -2.29949 -2.56077 -1.89226 -2.99075 -2.27566 -0.818761 0.916291</span></span>
+<span><span class="co">#&gt;  28:     1263.9025: 0.265528 -0.604621 -0.135266 -2.40301  3.42661 0.502342  3.42971 -0.182135 -0.693147 -0.239381 -1.91808 -0.109224 -2.28378  3.69868 0.0602708  2.58711 -0.551396 -2.80239 -1.94660 -2.06880 0.916291 0.0320039 0.00600365 -1.21022 -2.29936 -2.56030 -1.89273 -2.99076 -2.27543 -0.818386 0.916291</span></span>
+<span><span class="co">#&gt;  29:     1263.9025: 0.265497 -0.604628 -0.135240 -2.40288  3.42674 0.502426  3.42972 -0.182172 -0.693147 -0.239169 -1.91803 -0.109119 -2.28386  3.69879 0.0603724  2.58758 -0.551068 -2.80238 -1.94663 -2.06925 0.916291 0.0319918 0.00599216 -1.21010 -2.29942 -2.56085 -1.89258 -2.99063 -2.27547 -0.819156 0.916291</span></span>
+<span><span class="co">#&gt;  30:     1263.9025: 0.265471 -0.604671 -0.135234 -2.40303  3.42679 0.502494  3.42972 -0.182219 -0.693147 -0.239040 -1.91772 -0.109052 -2.28400  3.69883 0.0604045  2.58727 -0.551265 -2.80248 -1.94666 -2.06933 0.916291 0.0319913 0.00599661 -1.21025 -2.29948 -2.56065 -1.89259 -2.99070 -2.27553 -0.819043 0.916291</span></span>
+<span><span class="co">#&gt;  31:     1263.9025: 0.265422 -0.604708 -0.135208 -2.40304  3.42686 0.502505  3.42966 -0.182234 -0.693147 -0.238857 -1.91794 -0.108968 -2.28390  3.69882 0.0603888  2.58702 -0.551327 -2.80251 -1.94660 -2.06936 0.916291 0.0319898 0.00599855 -1.21023 -2.29947 -2.56065 -1.89238 -2.99076 -2.27543 -0.818883 0.916291</span></span>
+<span><span class="co">#&gt;  32:     1263.9025: 0.265387 -0.604661 -0.135179 -2.40293  3.42691 0.502512  3.42961 -0.182225 -0.693147 -0.238720 -1.91794 -0.108902 -2.28388  3.69882 0.0603814  2.58711 -0.551302 -2.80239 -1.94660 -2.06925 0.916291 0.0319923 0.00599497 -1.21013 -2.29943 -2.56074 -1.89258 -2.99067 -2.27548 -0.819004 0.916291</span></span>
+<span><span class="co">#&gt; converged: relative convergence (4)</span></span></code></pre></div>
+<p>Calculate model outputs. We can calculate outputs based on posterior
+mode estimates before running <code><a href="../reference/report_tmb.html">report_tmb()</a></code> to calculate
+posterior intervals.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/output_package.html">output_package</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">naomi_data</span><span class="op">)</span></span></code></pre></div>
+<p>The output package consists of a data frame of indicators and
+metadata defining the labels for each indicator.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">outputs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "indicators"     "art_attendance" "meta_area"      "meta_age_group"</span></span>
+<span><span class="co">#&gt; [5] "meta_period"    "meta_indicator" "fit"            "inputs_outputs"</span></span></code></pre></div>
+<p>If uncertainty has not been calcualted yet, the output object retures
+values for <code>mode</code>, but not <code>mean</code> or
+<code>lower</code> and <code>upper</code> 95% uncertainty ranges.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outputs</span><span class="op">$</span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>    <span class="va">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,  <span class="co"># HIV prevalence</span></span>
+<span>    <span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>   <span class="co"># Age group 15-49</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 11</span></span>
+<span><span class="co">#&gt;   area_id   sex   age_group calendar_quarter indicator  mean    se median   mode</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 MWI       both  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0892</span></span>
+<span><span class="co">#&gt; 2 MWI       fema… Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.110 </span></span>
+<span><span class="co">#&gt; 3 MWI       male  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0682</span></span>
+<span><span class="co">#&gt; 4 MWI_1_1_… both  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0657</span></span>
+<span><span class="co">#&gt; 5 MWI_1_1_… fema… Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0791</span></span>
+<span><span class="co">#&gt; 6 MWI_1_1_… male  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0521</span></span>
+<span><span class="co">#&gt; # ℹ 2 more variables: lower &lt;dbl&gt;, upper &lt;dbl&gt;</span></span></code></pre></div>
+<p>The function <code><a href="../reference/add_output_labels.html">add_output_labels()</a></code> returns the indicators
+table with labels added as additional columns.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/add_output_labels.html">add_output_labels</a></span><span class="op">(</span><span class="va">outputs</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>    <span class="va">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,  <span class="co"># HIV prevalence</span></span>
+<span>    <span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>   <span class="co"># Age group 15-49</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 17</span></span>
+<span><span class="co">#&gt;   area_level area_level_label area_id area_name  sex   age_group age_group_label</span></span>
+<span><span class="co">#&gt;        &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;          </span></span>
+<span><span class="co">#&gt; 1          0 Country          MWI     Malawi - … both  Y015_049  15-49          </span></span>
+<span><span class="co">#&gt; 2          0 Country          MWI     Malawi - … fema… Y015_049  15-49          </span></span>
+<span><span class="co">#&gt; 3          0 Country          MWI     Malawi - … male  Y015_049  15-49          </span></span>
+<span><span class="co">#&gt; 4          0 Country          MWI     Malawi - … both  Y015_049  15-49          </span></span>
+<span><span class="co">#&gt; 5          0 Country          MWI     Malawi - … fema… Y015_049  15-49          </span></span>
+<span><span class="co">#&gt; 6          0 Country          MWI     Malawi - … male  Y015_049  15-49          </span></span>
+<span><span class="co">#&gt; # ℹ 10 more variables: calendar_quarter &lt;chr&gt;, quarter_label &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   indicator &lt;chr&gt;, indicator_label &lt;chr&gt;, mean &lt;dbl&gt;, se &lt;dbl&gt;, median &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   mode &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</span></span></code></pre></div>
+<p>Calculate uncertainty ranges and add to the output object (This is
+time consuming and memory intensive.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_tmb.html">sample_tmb</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   2.394   0.201   2.596</span></span></code></pre></div>
 <p>Regenerate outputs with uncertainty ranges.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span>(<span class="kw">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/output_package.html">output_package</a></span>(<span class="kw">fit</span>, <span class="kw">naomi_mf</span>))
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;  15.774   0.004  15.778</span>
-
-<span class="kw">outputs_calib</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_outputs.html">calibrate_outputs</a></span>(<span class="kw">outputs</span>, <span class="kw">naomi_mf</span>,
-                                   spectrum_plhiv_calibration_level = <span class="st">"national"</span>,
-                                   spectrum_plhiv_calibration_strat = <span class="st">"sex_age_coarse"</span>,
-                                   spectrum_artnum_calibration_level = <span class="st">"national"</span>, 
-                                   spectrum_artnum_calibration_strat = <span class="st">"sex_age_coarse"</span>,
-                                   spectrum_aware_calibration_level = <span class="st">"national"</span>, 
-                                   spectrum_aware_calibration_strat = <span class="st">"sex_age_coarse"</span>,
-                                   spectrum_infections_calibration_level = <span class="st">"national"</span>, 
-                                   spectrum_infections_calibration_strat = <span class="st">"sex_age_coarse"</span>)
-
-
-<span class="kw">outputs</span><span class="op">$</span><span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(
-    <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,  <span class="co"># HIV prevalence</span>
-    <span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>   <span class="co"># Age group 15-49</span>
-  ) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-<span class="co">#&gt; # A tibble: 6 x 11</span>
-<span class="co">#&gt;   area_id      sex    age_group calendar_quarter indicator   mean      se median</span>
-<span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 MWI          both   Y015_049  CY2016Q1         prevalen… 0.0889 0.00127 0.0888</span>
-<span class="co">#&gt; 2 MWI          female Y015_049  CY2016Q1         prevalen… 0.111  0.00208 0.111 </span>
-<span class="co">#&gt; 3 MWI          male   Y015_049  CY2016Q1         prevalen… 0.0662 0.00195 0.0663</span>
-<span class="co">#&gt; 4 MWI_1_1_demo both   Y015_049  CY2016Q1         prevalen… 0.0672 0.00149 0.0672</span>
-<span class="co">#&gt; 5 MWI_1_1_demo female Y015_049  CY2016Q1         prevalen… 0.0830 0.00233 0.0830</span>
-<span class="co">#&gt; 6 MWI_1_1_demo male   Y015_049  CY2016Q1         prevalen… 0.0512 0.00192 0.0512</span>
-<span class="co">#&gt; # … with 3 more variables: mode &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</span>
-</pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/output_package.html">output_package</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">naomi_data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   3.086   0.014   3.101</span></span>
+<span></span>
+<span><span class="va">outputs_calib</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_outputs.html">calibrate_outputs</a></span><span class="op">(</span><span class="va">outputs</span>, <span class="va">naomi_mf</span>,</span>
+<span>                                   spectrum_plhiv_calibration_level <span class="op">=</span> <span class="st">"national"</span>,</span>
+<span>                                   spectrum_plhiv_calibration_strat <span class="op">=</span> <span class="st">"sex_age_coarse"</span>,</span>
+<span>                                   spectrum_artnum_calibration_level <span class="op">=</span> <span class="st">"national"</span>,</span>
+<span>                                   spectrum_artnum_calibration_strat <span class="op">=</span> <span class="st">"sex_age_coarse"</span>,</span>
+<span>                                   spectrum_aware_calibration_level <span class="op">=</span> <span class="st">"national"</span>,</span>
+<span>                                   spectrum_aware_calibration_strat <span class="op">=</span> <span class="st">"sex_age_coarse"</span>,</span>
+<span>                                   spectrum_infections_calibration_level <span class="op">=</span> <span class="st">"national"</span>,</span>
+<span>                                   spectrum_infections_calibration_strat <span class="op">=</span> <span class="st">"sex_age_coarse"</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">outputs</span><span class="op">$</span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>    <span class="va">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,  <span class="co"># HIV prevalence</span></span>
+<span>    <span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>   <span class="co"># Age group 15-49</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 11</span></span>
+<span><span class="co">#&gt;   area_id      sex    age_group calendar_quarter indicator   mean      se median</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 MWI          both   Y015_049  CY2016Q1         prevalen… 0.0894 0.00150 0.0893</span></span>
+<span><span class="co">#&gt; 2 MWI          female Y015_049  CY2016Q1         prevalen… 0.110  0.00226 0.110 </span></span>
+<span><span class="co">#&gt; 3 MWI          male   Y015_049  CY2016Q1         prevalen… 0.0684 0.00235 0.0685</span></span>
+<span><span class="co">#&gt; 4 MWI_1_1_demo both   Y015_049  CY2016Q1         prevalen… 0.0660 0.00195 0.0660</span></span>
+<span><span class="co">#&gt; 5 MWI_1_1_demo female Y015_049  CY2016Q1         prevalen… 0.0795 0.00320 0.0795</span></span>
+<span><span class="co">#&gt; 6 MWI_1_1_demo male   Y015_049  CY2016Q1         prevalen… 0.0522 0.00315 0.0521</span></span>
+<span><span class="co">#&gt; # ℹ 3 more variables: mode &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</span></span></code></pre></div>
 <p>Save model outputs to ZIP</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="st">"outputs"</span>, showWarnings = <span class="fl">FALSE</span>)
-<span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span>(<span class="kw">outputs</span>, <span class="st">"demo_outputs"</span>, <span class="st">"outputs"</span>, with_labels = <span class="fl">FALSE</span>)
-<span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span>(<span class="kw">outputs</span>, <span class="st">"demo_outputs_with_labels"</span>, <span class="st">"outputs"</span>, with_labels = <span class="fl">TRUE</span>)
-<span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span>(<span class="kw">outputs</span>, <span class="st">"demo_outputs_single_csv"</span>, <span class="st">"outputs"</span>, with_labels = <span class="fl">TRUE</span>, single_csv = <span class="fl">TRUE</span>)
-<span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span>(<span class="kw">outputs</span>, <span class="st">"demo_outputs_single_csv_unlabelled"</span>, <span class="st">"outputs"</span>, with_labels = <span class="fl">FALSE</span>, single_csv = <span class="fl">TRUE</span>)
-
-
-<span class="co">## #' 6. Plot some model outputs</span>
-
-<span class="kw">indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_output_labels.html">add_output_labels</a></span>(<span class="kw">outputs</span>) <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="kw">outputs</span><span class="op">$</span><span class="kw">meta_area</span> <span class="op">%&gt;%</span> <span class="fu">select</span>(<span class="kw">area_level</span>, <span class="kw">area_id</span>, <span class="kw">center_x</span>, <span class="kw">center_y</span>)) <span class="op">%&gt;%</span>
-  <span class="kw">sf</span>::<span class="fu"><a href="https://rdrr.io/pkg/sf/man/st_as_sf.html">st_as_sf</a></span>()
-</pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"outputs"</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span><span class="op">(</span><span class="va">outputs</span>, <span class="st">"demo_outputs"</span>, <span class="st">"outputs"</span>, with_labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span><span class="op">(</span><span class="va">outputs</span>, <span class="st">"demo_outputs_with_labels"</span>, <span class="st">"outputs"</span>, with_labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'unnamed-chunk-1', which has been used for the chunk:</span></span>
+<span><span class="co">#&gt; knitr::opts_chunk$set(</span></span>
+<span><span class="co">#&gt;                     collapse = TRUE,</span></span>
+<span><span class="co">#&gt;                     comment = "#&gt;"</span></span>
+<span><span class="co">#&gt;                   )</span></span>
+<span><span class="co">#&gt; unlink("outputs", recursive = TRUE)</span></span>
+<span><span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span><span class="op">(</span><span class="va">outputs</span>, <span class="st">"demo_outputs_single_csv"</span>, <span class="st">"outputs"</span>, with_labels <span class="op">=</span> <span class="cn">TRUE</span>, single_csv <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'unnamed-chunk-1', which has been used for the chunk:</span></span>
+<span><span class="co">#&gt; knitr::opts_chunk$set(</span></span>
+<span><span class="co">#&gt;                     collapse = TRUE,</span></span>
+<span><span class="co">#&gt;                     comment = "#&gt;"</span></span>
+<span><span class="co">#&gt;                   )</span></span>
+<span><span class="co">#&gt; unlink("outputs", recursive = TRUE)</span></span>
+<span><span class="fu"><a href="../reference/save_output_package.html">save_output_package</a></span><span class="op">(</span><span class="va">outputs</span>, <span class="st">"demo_outputs_single_csv_unlabelled"</span>, <span class="st">"outputs"</span>, with_labels <span class="op">=</span> <span class="cn">FALSE</span>, single_csv <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'unnamed-chunk-1', which has been used for the chunk:</span></span>
+<span><span class="co">#&gt; knitr::opts_chunk$set(</span></span>
+<span><span class="co">#&gt;                     collapse = TRUE,</span></span>
+<span><span class="co">#&gt;                     comment = "#&gt;"</span></span>
+<span><span class="co">#&gt;                   )</span></span>
+<span><span class="co">#&gt; unlink("outputs", recursive = TRUE)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">## #' 6. Plot some model outputs</span></span>
+<span></span>
+<span><span class="va">indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_output_labels.html">add_output_labels</a></span><span class="op">(</span><span class="va">outputs</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">outputs</span><span class="op">$</span><span class="va">meta_area</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">area_level</span>, <span class="va">area_id</span>, <span class="va">center_x</span>, <span class="va">center_y</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>15-49 prevalence by district</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>,
-         <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,
-         <span class="kw">area_level</span> <span class="op">==</span> <span class="fl">4</span>) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fill = <span class="kw">mode</span>)) <span class="op">+</span>
-  <span class="fu">geom_sf</span>() <span class="op">+</span>
-  <span class="kw">viridis</span>::<span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_fill_viridis</a></span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>()) <span class="op">+</span>
-  <span class="fu"><a href="../reference/th_map.html">th_map</a></span>() <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">sex</span>)
-</pre></div>
-<div class="figure">
-<img src="figure/prev_by_district_15-1.png" alt=""><p class="caption">plot of chunk prev_by_district_15</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>,</span>
+<span>         <span class="va">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,</span>
+<span>         <span class="va">area_level</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">mode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/th_map.html">th_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="figure/prev_by_district_15-1.png" alt="plot of chunk prev_by_district_15"><div class="figcaption">plot of chunk prev_by_district_15</div>
 </div>
 <p>15-49 prevalence by Zone</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>,
-         <span class="co">## sex == "both",</span>
-         <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,
-         <span class="kw">area_level</span> <span class="op">==</span> <span class="fl">2</span>) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fill = <span class="kw">mean</span>)) <span class="op">+</span>
-  <span class="fu">geom_sf</span>() <span class="op">+</span>
-  <span class="kw">viridis</span>::<span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_fill_viridis</a></span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>()) <span class="op">+</span>
-  <span class="fu"><a href="../reference/th_map.html">th_map</a></span>() <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">sex</span>)
-</pre></div>
-<div class="figure">
-<img src="figure/prev_by_zone_15-1.png" alt=""><p class="caption">plot of chunk prev_by_zone_15</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_049"</span>,</span>
+<span>         <span class="co">## sex == "both",</span></span>
+<span>         <span class="va">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>,</span>
+<span>         <span class="va">area_level</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/th_map.html">th_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="figure/prev_by_zone_15-1.png" alt="plot of chunk prev_by_zone_15"><div class="figcaption">plot of chunk prev_by_zone_15</div>
 </div>
 <p>Age-specific prevalence, national</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw">area_level</span> <span class="op">==</span> <span class="fl">0</span>,
-         <span class="kw">sex</span> != <span class="st">"both"</span>,
-         <span class="kw">age_group</span> <span class="op">%in%</span> <span class="fu"><a href="../reference/get_five_year_age_groups.html">get_five_year_age_groups</a></span>(),
-         <span class="kw">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q3"</span>,
-         <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span>) <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span>()) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(age_group = <span class="fu">fct_reorder</span>(<span class="kw">age_group_label</span>, <span class="kw">age_group_sort_order</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">age_group</span>, <span class="kw">mean</span>, ymin = <span class="kw">lower</span>, ymax = <span class="kw">upper</span>, fill = <span class="kw">sex</span>)) <span class="op">+</span>
-  <span class="fu">geom_col</span>(position = <span class="st">"dodge"</span>) <span class="op">+</span>
-  <span class="fu">geom_linerange</span>(position = <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="op">+</span>
-  <span class="fu">scale_fill_brewer</span>(palette = <span class="st">"Set1"</span>) <span class="op">+</span>
-  <span class="fu">scale_y_continuous</span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>(<span class="fl">1</span>)) <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">area_name</span>) <span class="op">+</span>
-  <span class="fu">theme</span>(axis.text.x = <span class="fu">element_text</span>(angle = <span class="fl">90</span>, hjust = <span class="fl">1.0</span>, vjust = <span class="fl">0.5</span>))
-<span class="co">#&gt; Joining, by = c("age_group", "age_group_label")</span>
-</pre></div>
-<div class="figure">
-<img src="figure/age_specific_prev-1.png" alt=""><p class="caption">plot of chunk age_specific_prev</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">area_level</span> <span class="op">==</span> <span class="fl">0</span>,</span>
+<span>         <span class="va">sex</span> <span class="op">!=</span> <span class="st">"both"</span>,</span>
+<span>         <span class="va">age_group</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="../reference/get_five_year_age_groups.html">get_five_year_age_groups</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>         <span class="va">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q4"</span>,</span>
+<span>         <span class="va">indicator</span> <span class="op">==</span> <span class="st">"prevalence"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>age_group <span class="op">=</span> <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_reorder.html" class="external-link">fct_reorder</a></span><span class="op">(</span><span class="va">age_group_label</span>, <span class="va">age_group_sort_order</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">age_group</span>, <span class="va">mean</span>, ymin <span class="op">=</span> <span class="va">lower</span>, ymax <span class="op">=</span> <span class="va">upper</span>, fill <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_linerange</a></span><span class="op">(</span>position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_dodge.html" class="external-link">position_dodge</a></span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">area_name</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1.0</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(age_group, age_group_label)`</span></span></code></pre></div>
+<div class="float">
+<img src="figure/age_specific_prev-1.png" alt="plot of chunk age_specific_prev"><div class="figcaption">plot of chunk age_specific_prev</div>
 </div>
 <p>15-64 ART coverage by district</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_064"</span>,
-         <span class="kw">area_level</span> <span class="op">==</span> <span class="fl">4</span>,
-         <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"art_coverage"</span>) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fill = <span class="kw">mean</span>)) <span class="op">+</span>
-  <span class="fu">geom_sf</span>() <span class="op">+</span>
-  <span class="kw">viridis</span>::<span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_fill_viridis</a></span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>()) <span class="op">+</span>
-  <span class="fu"><a href="../reference/th_map.html">th_map</a></span>() <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">sex</span>)
-</pre></div>
-<div class="figure">
-<img src="figure/art_cov_district-1.png" alt=""><p class="caption">plot of chunk art_cov_district</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_064"</span>,</span>
+<span>         <span class="va">area_level</span> <span class="op">==</span> <span class="fl">2</span>,</span>
+<span>         <span class="va">indicator</span> <span class="op">==</span> <span class="st">"art_coverage"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/th_map.html">th_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="figure/art_cov_district-1.png" alt="plot of chunk art_cov_district"><div class="figcaption">plot of chunk art_cov_district</div>
 </div>
 <p>Age-specific ART coverage, national</p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw">area_level</span> <span class="op">==</span> <span class="fl">0</span>,
-         <span class="kw">sex</span> != <span class="st">"both"</span>,
-         <span class="kw">age_group</span> <span class="op">%in%</span> <span class="fu"><a href="../reference/get_five_year_age_groups.html">get_five_year_age_groups</a></span>(),
-         <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"art_coverage"</span>,
-         <span class="kw">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q3"</span>) <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span>()) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(age_group = <span class="fu">fct_reorder</span>(<span class="kw">age_group_label</span>, <span class="kw">age_group_sort_order</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">age_group</span>, <span class="kw">mean</span>, ymin = <span class="kw">lower</span>, ymax = <span class="kw">upper</span>, fill = <span class="kw">sex</span>)) <span class="op">+</span>
-  <span class="fu">geom_col</span>(position = <span class="st">"dodge"</span>) <span class="op">+</span>
-  <span class="fu">geom_linerange</span>(position = <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="op">+</span>
-  <span class="fu">scale_fill_brewer</span>(palette = <span class="st">"Set1"</span>) <span class="op">+</span>
-  <span class="fu">scale_y_continuous</span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>(<span class="fl">1</span>)) <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">calendar_quarter</span>) <span class="op">+</span>
-  <span class="fu">theme</span>(axis.text.x = <span class="fu">element_text</span>(angle = <span class="fl">90</span>, hjust = <span class="fl">1.0</span>, vjust = <span class="fl">0.5</span>))
-<span class="co">#&gt; Joining, by = c("age_group", "age_group_label")</span>
-</pre></div>
-<div class="figure">
-<img src="figure/age_specific_art_cov-1.png" alt=""><p class="caption">plot of chunk age_specific_art_cov</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">area_level</span> <span class="op">==</span> <span class="fl">0</span>,</span>
+<span>         <span class="va">sex</span> <span class="op">!=</span> <span class="st">"both"</span>,</span>
+<span>         <span class="va">age_group</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="../reference/get_five_year_age_groups.html">get_five_year_age_groups</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>         <span class="va">indicator</span> <span class="op">==</span> <span class="st">"art_coverage"</span>,</span>
+<span>         <span class="va">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q4"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>age_group <span class="op">=</span> <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_reorder.html" class="external-link">fct_reorder</a></span><span class="op">(</span><span class="va">age_group_label</span>, <span class="va">age_group_sort_order</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">age_group</span>, <span class="va">mean</span>, ymin <span class="op">=</span> <span class="va">lower</span>, ymax <span class="op">=</span> <span class="va">upper</span>, fill <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_linerange</a></span><span class="op">(</span>position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_dodge.html" class="external-link">position_dodge</a></span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">calendar_quarter</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1.0</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(age_group, age_group_label)`</span></span></code></pre></div>
+<div class="float">
+<img src="figure/age_specific_art_cov-1.png" alt="plot of chunk age_specific_art_cov"><div class="figcaption">plot of chunk age_specific_art_cov</div>
 </div>
 <p>ART coverage by age/sex and region</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">area_level</span> <span class="op">==</span> <span class="fl">1</span>,
-         <span class="kw">sex</span> != <span class="st">"both"</span>,
-         <span class="kw">age_group</span> <span class="op">%in%</span> <span class="fu"><a href="../reference/get_five_year_age_groups.html">get_five_year_age_groups</a></span>(),
-         <span class="kw">indicator</span> <span class="op">==</span> <span class="st">"art_coverage"</span>,
-         <span class="kw">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q3"</span>) <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span>()) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(age_group = <span class="fu">fct_reorder</span>(<span class="kw">age_group_label</span>, <span class="kw">age_group_sort_order</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">age_group</span>, <span class="kw">mean</span>, ymin = <span class="kw">lower</span>, ymax = <span class="kw">upper</span>, fill = <span class="kw">sex</span>)) <span class="op">+</span>
-  <span class="fu">geom_col</span>(position = <span class="st">"dodge"</span>) <span class="op">+</span>
-  <span class="fu">geom_linerange</span>(position = <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="op">+</span>
-  <span class="fu">scale_fill_brewer</span>(palette = <span class="st">"Set1"</span>) <span class="op">+</span>
-  <span class="fu">scale_y_continuous</span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>(<span class="fl">1</span>)) <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">area_name</span>) <span class="op">+</span>
-  <span class="fu">theme</span>(axis.text.x = <span class="fu">element_text</span>(angle = <span class="fl">90</span>, hjust = <span class="fl">1.0</span>, vjust = <span class="fl">0.5</span>))
-<span class="co">#&gt; Joining, by = c("age_group", "age_group_label")</span>
-</pre></div>
-<div class="figure">
-<img src="figure/art_cov_age_sex-1.png" alt=""><p class="caption">plot of chunk art_cov_age_sex</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">area_level</span> <span class="op">==</span> <span class="fl">1</span>,</span>
+<span>         <span class="va">sex</span> <span class="op">!=</span> <span class="st">"both"</span>,</span>
+<span>         <span class="va">age_group</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="../reference/get_five_year_age_groups.html">get_five_year_age_groups</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>         <span class="va">indicator</span> <span class="op">==</span> <span class="st">"art_coverage"</span>,</span>
+<span>         <span class="va">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q4"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_age_groups.html">get_age_groups</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>age_group <span class="op">=</span> <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_reorder.html" class="external-link">fct_reorder</a></span><span class="op">(</span><span class="va">age_group_label</span>, <span class="va">age_group_sort_order</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">age_group</span>, <span class="va">mean</span>, ymin <span class="op">=</span> <span class="va">lower</span>, ymax <span class="op">=</span> <span class="va">upper</span>, fill <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_linerange</a></span><span class="op">(</span>position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_dodge.html" class="external-link">position_dodge</a></span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">area_name</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1.0</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(age_group, age_group_label)`</span></span></code></pre></div>
+<div class="float">
+<img src="figure/art_cov_age_sex-1.png" alt="plot of chunk art_cov_age_sex"><div class="figcaption">plot of chunk art_cov_age_sex</div>
 </div>
 <p>Bubble plot prevalence and PLHIV</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="kw">indicators</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">age_group</span> <span class="op">==</span> <span class="st">"Y015_064"</span>,
-         <span class="kw">area_level</span> <span class="op">==</span> <span class="fl">4</span>,
-         <span class="kw">indicator</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"prevalence"</span>, <span class="st">"plhiv"</span>),
-         <span class="kw">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q3"</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">sex</span>, <span class="kw">center_x</span>, <span class="kw">center_y</span>, <span class="kw">indicator_label</span>, <span class="kw">mean</span>) <span class="op">%&gt;%</span>
-  <span class="fu">spread</span>(<span class="kw">indicator_label</span>, <span class="kw">mean</span>) <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>() <span class="op">+</span>
-  <span class="fu">geom_sf</span>() <span class="op">+</span>
-  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="kw">center_x</span>, <span class="kw">center_y</span>, colour = <span class="kw">`HIV prevalence`</span>, size = <span class="kw">PLHIV</span>)) <span class="op">+</span>
-  <span class="kw">viridis</span>::<span class="fu"><a href="https://rdrr.io/pkg/viridis/man/scale_viridis.html">scale_color_viridis</a></span>(labels = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent_format</a></span>()) <span class="op">+</span>
-  <span class="fu"><a href="../reference/th_map.html">th_map</a></span>() <span class="op">+</span>
-  <span class="fu">facet_wrap</span>(<span class="op">~</span><span class="kw">sex</span>)
-</pre></div>
-<div class="figure">
-<img src="figure/bubble_plot-1.png" alt=""><p class="caption">plot of chunk bubble_plot</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">indicators</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_group</span> <span class="op">==</span> <span class="st">"Y015_064"</span>,</span>
+<span>         <span class="va">area_level</span> <span class="op">==</span> <span class="fl">2</span>,</span>
+<span>         <span class="va">indicator</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prevalence"</span>, <span class="st">"plhiv"</span><span class="op">)</span>,</span>
+<span>         <span class="va">calendar_quarter</span> <span class="op">==</span> <span class="st">"CY2018Q4"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">center_x</span>, <span class="va">center_y</span>, <span class="va">indicator_label</span>, <span class="va">mean</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/spread.html" class="external-link">spread</a></span><span class="op">(</span><span class="va">indicator_label</span>, <span class="va">mean</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">center_x</span>, <span class="va">center_y</span>, colour <span class="op">=</span> <span class="va">`HIV prevalence`</span>, size <span class="op">=</span> <span class="va">PLHIV</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_color_viridis</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/th_map.html">th_map</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="figure/bubble_plot-1.png" alt="plot of chunk bubble_plot"><div class="figcaption">plot of chunk bubble_plot</div>
 </div>
 </div>
   </div>
@@ -527,11 +536,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Jeff Eaton.</p>
+  <p></p>
+<p>Developed by Jeff Eaton.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -539,6 +550,8 @@
 
   
 
+
+  
 
   </body>
 </html>

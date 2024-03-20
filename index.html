@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.9.24</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -55,9 +51,6 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="articles/data-model.html">Naomi data model</a>
-    </li>
-    <li>
-      <a href="articles/hintr-example.html">Emulate a hintr model run</a>
     </li>
     <li>
       <a href="articles/model-workflow.html">Naomi Model Workflow Example</a>
@@ -80,46 +73,47 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="naomi-" class="section level2">
-<h2 class="hasAnchor">
-<a href="#naomi-" class="anchor"></a>Naomi <img src="images/naomi_hex.png" align="right" height="139">
+<div class="section level2">
+<h2 id="naomi-">Naomi <img src="images/naomi_hex.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#naomi-"></a>
 </h2>
-
+<p><img src="https://github.com/mrc-ide/naomi/actions/workflows/R-CMD-check.yml/badge.svg" alt="R CMD check"><a href="https://codecov.io/gh/mrc-ide/naomi?branch=master" class="external-link"><img src="https://codecov.io/gh/mrc-ide/naomi/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></p>
 <p>Naomi model for subnational HIV estimates</p>
-<div id="installation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h3>
-<p>The package is not available from <a href="https://cran.r-project.org/">CRAN</a>. Instead, the latest version (of this Github repo) may be installed by running the following code from R.</p>
-<pre><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html"># install.packages("devtools") # Uncomment this line if devtools is not yet installed
-devtools::install_github("mrc-ide/naomi")</a></code></pre>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<p>The package is not available from <a href="https://cran.r-project.org/" class="external-link">CRAN</a>. Instead, install the compiled version from the mrc-ide universe.</p>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"naomi"</span>, repos <span class="op">=</span> <span class="st">"https://mrc-ide.r-universe.dev"</span><span class="op">)</span></span></code></pre>
+<p>Install from GitHub to install from source.</p>
+<pre><code><span><span class="co"># install.packages("devtools") # Uncomment this line if devtools is not yet installed</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mrc-ide/naomi"</span><span class="op">)</span></span></code></pre>
 </div>
-<div id="development-steps" class="section level3">
-<h3 class="hasAnchor">
-<a href="#development-steps" class="anchor"></a>Development steps</h3>
+<div class="section level3">
+<h3 id="development-steps">Development steps<a class="anchor" aria-label="anchor" href="#development-steps"></a>
+</h3>
 <ul>
 <li>Make changes in a new branch</li>
-<li>Run tests from the command line using <code>make test</code> or via R using <code><a href="https://devtools.r-lib.org//reference/test.html">devtools::test()</a></code> to ensure changes don’t cause regressions to existing functionality</li>
-<li>Run build and check before pushing to remote using <code>make build</code> and <code>make check</code> from command line or <code><a href="https://devtools.r-lib.org//reference/check.html">devtools::check()</a></code> from R</li>
+<li>Run tests from the command line using <code>make test</code> or via R using <code>devtools::test()</code> to ensure changes don’t cause regressions to existing functionality</li>
+<li>Run build and check before pushing to remote using <code>make build</code> and <code>make check</code> from command line or <code>devtools::check()</code> from R</li>
 <li>When branch is ready for merging create a PR and add a reviewer</li>
-<li>Ensure that the version number has been updated according to <a href="https://semver.org/">semantic versioning</a> and add a news item describing the change</li>
-<li>Reviewer should check code and ensure the build passes on <a href="https://buildkite.com/mrc-ide/naomi">Buildkite</a> before merging</li>
+<li>Ensure that the version number has been updated according to <a href="https://semver.org/" class="external-link">semantic versioning</a> and add a news item describing the change</li>
+<li>Reviewer should check code and ensure the build passes on <a href="https://buildkite.com/mrc-ide/naomi" class="external-link">Buildkite</a> before merging</li>
 </ul>
 </div>
-<div id="code-coverage" class="section level3">
-<h3 class="hasAnchor">
-<a href="#code-coverage" class="anchor"></a>Code coverage</h3>
+<div class="section level3">
+<h3 id="code-coverage">Code coverage<a class="anchor" aria-label="anchor" href="#code-coverage"></a>
+</h3>
 <p>To check code coverage from R.</p>
-<pre><code>cov &lt;- covr::package_coverage()
-covr::report(cov)</code></pre>
+<pre><code><span><span class="va">cov</span> <span class="op">&lt;-</span> <span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html" class="external-link">report</a></span><span class="op">(</span><span class="va">cov</span><span class="op">)</span></span></code></pre>
 </div>
-<div id="website" class="section level3">
-<h3 class="hasAnchor">
-<a href="#website" class="anchor"></a>Website</h3>
-<p>A <a href="https://mrc-ide.github.io/naomi">pkgdown website</a> is available for the package. To update the website using most recent docs and vignettes type <code>make website</code> on the command line from the root directory. Note that to see the effects in place immediately you may need to refresh the browser cache by opening developer console and right click refresh button -&gt; Empty Cache and Hard Reload.</p>
+<div class="section level3">
+<h3 id="website">Website<a class="anchor" aria-label="anchor" href="#website"></a>
+</h3>
+<p>A <a href="https://mrc-ide.github.io/naomi" class="external-link">pkgdown website</a> is available for the package. To update the website using most recent docs and vignettes type <code>make website</code> on the command line from the root directory. Note that to see the effects in place immediately you may need to refresh the browser cache by opening developer console and right click refresh button -&gt; Empty Cache and Hard Reload.</p>
 </div>
-<div id="generating-test-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#generating-test-data" class="anchor"></a>Generating test data</h3>
+<div class="section level3">
+<h3 id="generating-test-data">Generating test data<a class="anchor" aria-label="anchor" href="#generating-test-data"></a>
+</h3>
 <p>Run <code>./scripts/build_test_data</code> to run the model and output the fit data. This will speed up some tests and stop the model fitting and uncertainty calculations being done every time. This data is not on Github as it is quite large ~ 220MB for Malawi.</p>
 </div>
 </div>
@@ -127,36 +121,42 @@ covr::report(cov)</code></pre>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Jeff Eaton <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-7728-728X" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/mrc-ide/naomi"><img src="https://travis-ci.org/mrc-ide/naomi.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://codecov.io/gh/mrc-ide/naomi?branch=master"><img src="https://codecov.io/gh/mrc-ide/naomi/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="authors.html#citation">Citing naomi</a></li>
 </ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Jeff Eaton <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-7728-728X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
 </div>
+
+
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Jeff Eaton.</p>
+  <p></p>
+<p>Developed by Jeff Eaton.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -164,6 +164,8 @@ covr::report(cov)</code></pre>
 
   
 
+
+  
 
   </body>
 </html>
