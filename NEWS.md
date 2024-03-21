@@ -1,3 +1,7 @@
+# naomi 2.9.25
+
+* Suppress warning raised from duckdb shutdown
+
 # naomi 2.9.24
 
 * Migrate to github actions

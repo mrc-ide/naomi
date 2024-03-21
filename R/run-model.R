@@ -149,9 +149,9 @@ hintr_save <- function(obj, file) {
       stop(paste("Trying to save invalid object as duckdb database.",
               "Only data frames can be saved as database."))
     }
-    con <- DBI::dbConnect(duckdb::duckdb(), dbdir = file)
+    con <- DBI::dbConnect(duckdb::duckdb(dbdir = file))
+    on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
     DBI::dbWriteTable(con, DUCKDB_OUTPUT_TABLE_NAME, obj)
-    DBI::dbDisconnect(con, shutdown = TRUE)
   } else {
     stop(sprintf("Cannot save as type '%s', must be 'qs' or 'duckdb'.", type))
   }
