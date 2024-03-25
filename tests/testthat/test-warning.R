@@ -66,7 +66,7 @@ test_that("warning raised after false convergence", {
   expect_match(out$warnings[[3]]$text,
                "Naomi ANC tested positive not equal to Spectrum")
   expect_equal(out$warnings[[4]]$text,
-               "Model fit to input data is not optimised. Please review model estimates.")
+               "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
 })
 
 

@@ -222,7 +222,7 @@
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "La prévalence du VIH est supérieure à 50% pour: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "La couverture du traitement antirétroviral est supérieure à 100 % pour: {{rows}}",
     "WARNING_CONVERGENCE": "Erreur de convergence: {{msg}}",
-    "WARNING_CONVERGENCE": "Model fit to input data is not optimised. Please review model estimates",
+    "WARNING_FALSE_CONVERGENCE": "L'ajustement du modèle aux données d'entrée n'a pas complètement convergé. Veuillez revoir les estimations de la prévalence du VIH et de la couverture des traitements antirétroviraux dans les districts, ainsi que la distribution nationale des indicateurs clés par âge et par sexe.",
     "POPULATION_RATIO": "La population proportion",
     "PLHIV_RATIO": "PVVIH proportion",
     "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi nombre de clients CPN 2015 à aujourd'hui est Spectrum cascade de test CPN",
