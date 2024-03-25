@@ -221,6 +221,7 @@
     "WARNING_OPTIONS_MISSING_ARTATTEND": "Optou por se adaptar ao modelo sem estimar a assistência TARV vizinha. Poderá querer rever a sua selecção para incluir esta opção.",
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "A prevalência do VIH é superior a 50% para: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "A cobertura TARV é superior a 100% para: {{rows}}",
+    "WARNING_CONVERGENCE": "Erro de convergência: {{msg}}",
     "WARNING_CONVERGENCE": "Model fit to input data is not optimised. Please review model estimates",
     "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi número de clientes de ANC 2015 a apresentar é Spectrum cascata de testes de ANC",
     "NAVIGATOR_ART_IS_SPECTRUM_DESC": "O total em TARV em Naomi corresponde ao Spectrum TARV",

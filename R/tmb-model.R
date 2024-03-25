@@ -600,9 +600,11 @@ fit_tmb <- function(tmb_input,
     }
   )
 
-  if (outer_verbose) {
-    message(paste("Model convergence:", f$message))
-  }
+  if(f$convergence != 0)
+    warning(paste("convergence error:", f$message))
+
+  if(outer_verbose)
+    message(paste("converged:", f$message))
 
   f$par.fixed <- f$par
   f$par.full <- obj$env$last.par

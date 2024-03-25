@@ -45,6 +45,7 @@ test_that("naomi warning handler returns empty list when no warnings", {
 })
 
 test_that("warning raised after false convergence", {
+
   a_fit_bad <- a_fit
   a_fit_bad$convergence <- 1
   a_fit_bad$message <- "false convergence (8)"
@@ -65,8 +66,7 @@ test_that("warning raised after false convergence", {
   expect_match(out$warnings[[3]]$text,
                "Naomi ANC tested positive not equal to Spectrum")
   expect_equal(out$warnings[[4]]$text,
-               paste0("Model fit to input data is not optimised. ",
-                      "Please review model estimates"))
+               "Model fit to input data is not optimised. Please review model estimates.")
 })
 
 
