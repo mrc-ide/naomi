@@ -1,3 +1,7 @@
+# naomi 2.9.24
+
+* Chaneg wording of false convergence error to more informative warning.
+
 # naomi 2.9.23
 
 * Update Datim UIDs for Ethiopia 2024 boundary division.
