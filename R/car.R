@@ -42,7 +42,7 @@ create_edge_list <- function(adj_matrix) {
   w <- adj_matrix
 
   ## convert W to a sparse matrix if not already sparse.
-  if(!is(w, "sparseMatrix"))
+  if(!methods::is(w, "sparseMatrix"))
     w <- Matrix(w, sparse = TRUE)
 
   w[upper.tri(w)] <- 0

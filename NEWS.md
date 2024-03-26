@@ -1,6 +1,18 @@
+
+# naomi 2.9.26
+
+* Change wording of false convergence error to more informative warning.
+
+# naomi 2.9.25
+
+* Suppress warning raised from duckdb shutdown
+
 # naomi 2.9.24
 
-* Chaneg wording of false convergence error to more informative warning.
+* Migrate to github actions
+* Fix R CMD check notes
+* Unpin duckdb version
+
 
 # naomi 2.9.23
 

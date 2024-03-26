@@ -460,8 +460,8 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 #' @export
 output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
-  stopifnot(is(naomi_fit, "naomi_fit"))
-  stopifnot(is(naomi_data, "naomi_data"))
+  stopifnot(methods::is(naomi_fit, "naomi_fit"))
+  stopifnot(methods::is(naomi_data, "naomi_data"))
 
   indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
 
@@ -1355,7 +1355,7 @@ read_hintr_output <- function(path) {
 }
 
 read_duckdb <- function(path) {
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = path, read_only = TRUE)
+  con <- DBI::dbConnect(duckdb::duckdb(dbdir = path, read_only = TRUE))
   on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
   DBI::dbGetQuery(con, sprintf("SELECT * from %s", DUCKDB_OUTPUT_TABLE_NAME))
 }

@@ -234,7 +234,7 @@ district_barplot <- function(naomi_output,
                     threshold = as.factor(threshold))
 
     #Plot figure
-    plot <- ggplot2::ggplot(fig_data, ggplot2::aes(reorder(area_name, mean),
+    plot <- ggplot2::ggplot(fig_data, ggplot2::aes(stats::reorder(area_name, mean),
                                                    mean,
                                                    ymin = lower,
                                                    ymax = upper,
@@ -273,7 +273,7 @@ district_barplot <- function(naomi_output,
       dplyr::filter(area_level == level)
 
     #Plot figure
-    plot <- ggplot2::ggplot(district_data, ggplot2::aes(reorder(area_name, mean),
+    plot <- ggplot2::ggplot(district_data, ggplot2::aes(stats::reorder(area_name, mean),
                                                         mean,
                                                         ymin = lower,
                                                         ymax = upper)) +
