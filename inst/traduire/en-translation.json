@@ -225,6 +225,7 @@
     "WARNING_OUTPUTS_PREV_EXCEEDS_THRESHOLD": "HIV prevalence is higher than 50% for: {{rows}}",
     "WARNING_OUTPUTS_ARTCOV_EXCEEDS_THRESHOLD": "ART coverage is higher than 100% for: {{rows}}",
     "WARNING_CONVERGENCE": "Convergence error: {{msg}}",
+    "WARNING_FALSE_CONVERGENCE": "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.",
     "NAVIGATOR_ART_IS_SPECTRUM_DESC": "Total on ART in Naomi matches Spectrum ART",
     "NAVIGATOR_ANC_IS_SPECTRUM_DESC": "Naomi num ANC clients 2015 to present is Spectrum ANC testing cascade",
     "NAVIGATOR_PACKAGE_CREATED_DESC": "Naomi package created",

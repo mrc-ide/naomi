@@ -44,22 +44,19 @@ test_that("naomi warning handler returns empty list when no warnings", {
   expect_length(out$warnings, 0)
 })
 
-
 test_that("warning raised after false convergence", {
+
   a_fit_bad <- a_fit
   a_fit_bad$convergence <- 1
   a_fit_bad$message <- "false convergence (8)"
 
-  mock_fit_tmb <- mockery::mock(a_fit_bad)
-  mock_sample_tmb <- mockery::mock(a_fit_sample)
-  mock_output_package <- mockery::mock(a_output)
-
   with_mock(
-    fit_tmb = mock_fit_tmb,
-    sample_tmb = mock_sample_tmb,
-    output_package = mock_output_package, {
+    fit_tmb = mockery::mock(a_fit_bad),
+    sample_tmb = mockery::mock(a_fit_sample),
+    output_package = mockery::mock(a_output), {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
-    })
+    }
+  )
 
   expect_length(out$warnings, 4)
   expect_match(out$warnings[[1]]$text,
@@ -69,7 +66,7 @@ test_that("warning raised after false convergence", {
   expect_match(out$warnings[[3]]$text,
                "Naomi ANC tested positive not equal to Spectrum")
   expect_equal(out$warnings[[4]]$text,
-               "Convergence error: false convergence (8)")
+               "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
 })
 
 
