@@ -88,6 +88,7 @@ naomi_output_frame <- function(mf_model,
 #' @param calendar_quarter3 Calendar quarter at time 3 ("CYyyyyQq")
 #' @param calendar_quarter4 Calendar quarter at time 4 ("CYyyyyQq")
 #' @param calendar_quarter5 Calendar quarter at time 5 ("CYyyyyQq")
+#' @param calendar_quarter6 Calendar quarter at time 5 ("CYyyyyQq")
 #' @param age_groups Age groups to include in model frame
 #' @param sexes Sexes
 #' @param omega Omega
@@ -128,6 +129,7 @@ naomi_model_frame <- function(area_merged,
                               calendar_quarter3,
                               calendar_quarter4 = "CY2024Q3",
                               calendar_quarter5 = "CY2025Q3",
+                              calendar_quarter6 = "CY2026Q3",
                               age_groups = get_five_year_age_groups(),
                               sexes = c("male", "female"),
                               omega = 0.7,
@@ -159,6 +161,7 @@ naomi_model_frame <- function(area_merged,
                         calendar_quarter_t3 = calendar_quarter3,
                         calendar_quarter_t4 = calendar_quarter4,
                         calendar_quarter_t5 = calendar_quarter5,
+                        calendar_quarter_t6 = calendar_quarter6,
                         artattend = artattend,
                         artattend_t2 = artattend_t2,
                         anchor_home_district = anchor_home_district,
@@ -228,14 +231,16 @@ naomi_model_frame <- function(area_merged,
   quarter_id3 <- calendar_quarter_to_quarter_id(calendar_quarter3)
   quarter_id4 <- calendar_quarter_to_quarter_id(calendar_quarter4)
   quarter_id5 <- calendar_quarter_to_quarter_id(calendar_quarter5)
+  quarter_id6 <- calendar_quarter_to_quarter_id(calendar_quarter6)
 
   stopifnot(quarter_id2 > quarter_id1)
   stopifnot(quarter_id3 > quarter_id2)
   stopifnot(quarter_id4 > quarter_id3)
   stopifnot(quarter_id5 > quarter_id4)
+  stopifnot(quarter_id6 > quarter_id5)
 
   spec_aggr <- spec %>%
-    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id5) + 2)) %>%
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id6) + 2)) %>%
     dplyr::mutate(
              age_group = cut_naomi_age_group(age),
              births = dplyr::if_else(is.na(asfr), 0, asfr * totpop),
@@ -263,13 +268,15 @@ naomi_model_frame <- function(area_merged,
                                    get_spec_aggr_interpolation(spec_aggr, calendar_quarter4) %>%
                                      dplyr::mutate(time_step = "quarter4"),
                                    get_spec_aggr_interpolation(spec_aggr, calendar_quarter5) %>%
-                                     dplyr::mutate(time_step = "quarter5")
+                                     dplyr::mutate(time_step = "quarter5"),
+                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter6) %>%
+                                     dplyr::mutate(time_step = "quarter6")
                                  )
 
   ## Spectrum age <1 / 1-4 distribution
 
   spec_0to4strat <- spec %>%
-    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id5) + 2),
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id6) + 2),
                   age %in% 0:4) %>%
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
@@ -290,7 +297,8 @@ naomi_model_frame <- function(area_merged,
                                         get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter2),
                                         get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter3),
                                         get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter4),
-                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter5)
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter5),
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter6)
                                       ) %>%
     dplyr::group_by(spectrum_region_code, calendar_quarter) %>%
     dplyr::transmute(age_group,
@@ -335,12 +343,14 @@ naomi_model_frame <- function(area_merged,
   pop_t3 <- interpolate_population_agesex(pop_subset, calendar_quarter3)
   pop_t4 <- interpolate_population_agesex(pop_subset, calendar_quarter4)
   pop_t5 <- interpolate_population_agesex(pop_subset, calendar_quarter5)
+  pop_t6 <- interpolate_population_agesex(pop_subset, calendar_quarter6)
   population_est <- dplyr::bind_rows(
                              dplyr::mutate(pop_t1, time_step = "quarter1"),
                              dplyr::mutate(pop_t2, time_step = "quarter2"),
                              dplyr::mutate(pop_t3, time_step = "quarter3"),
                              dplyr::mutate(pop_t4, time_step = "quarter4"),
-                             dplyr::mutate(pop_t5, time_step = "quarter5")
+                             dplyr::mutate(pop_t5, time_step = "quarter5"),
+                             dplyr::mutate(pop_t6, time_step = "quarter6")
                            )
 
   population_est <- population_est %>%
@@ -425,6 +435,12 @@ naomi_model_frame <- function(area_merged,
              dplyr::filter(time_step == "quarter5") %>%
              dplyr::select(area_id, sex, age_group, population_t5 = population),
              by = c("area_id", "sex", "age_group")
+          ) %>%
+    dplyr::left_join(
+             population_est %>%
+             dplyr::filter(time_step == "quarter6") %>%
+             dplyr::select(area_id, sex, age_group, population_t6 = population),
+             by = c("area_id", "sex", "age_group")
           )
 
   stopifnot(!is.na(mf_model[["population_t1"]]))
@@ -432,16 +448,18 @@ naomi_model_frame <- function(area_merged,
   stopifnot(!is.na(mf_model[["population_t3"]]))
   stopifnot(!is.na(mf_model[["population_t4"]]))
   stopifnot(!is.na(mf_model[["population_t5"]]))
+  stopifnot(!is.na(mf_model[["population_t6"]]))
 
   zeropop1 <- mf_model[["population_t1"]] == 0
   zeropop2 <- mf_model[["population_t2"]] == 0
   zeropop3 <- mf_model[["population_t3"]] == 0
   zeropop4 <- mf_model[["population_t4"]] == 0
   zeropop5 <- mf_model[["population_t5"]] == 0
+  zeropop6 <- mf_model[["population_t6"]] == 0
 
   if(any(zeropop1) || any(zeropop2) || any(zeropop3) || any(zeropop4) || any(zeropop5)) {
     warning(paste("Zero population input for",
-                  sum(zeropop1) + sum(zeropop2) + sum(zeropop3) + sum(zeropop4) + sum(zeropop5),
+                  sum(zeropop1) + sum(zeropop2) + sum(zeropop3) + sum(zeropop4) + sum(zeropop5) + sum(zeropop6),
                   "area/age/sex groups.",
                   "Replaced with population 0.1."))
     mf_model[["population_t1"]][zeropop1] <- 0.1
@@ -449,6 +467,7 @@ naomi_model_frame <- function(area_merged,
     mf_model[["population_t3"]][zeropop3] <- 0.1
     mf_model[["population_t4"]][zeropop4] <- 0.1
     mf_model[["population_t5"]][zeropop5] <- 0.1
+    mf_model[["population_t6"]][zeropop6] <- 0.1
   }
 
 
@@ -567,6 +586,10 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t4 = prevalence,
                       spec_incid_t4 = incidence,
                       spec_artcov_t4 = art_coverage,
+                      spec_unaware_untreated_prop_t4 = unaware_untreated_prop,
+                      asfr_t4 = asfr,
+                      frr_plhiv_t4 = frr_plhiv,
+                      frr_already_art_t4 = frr_already_art
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
            ) %>%
@@ -580,6 +603,27 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t5 = prevalence,
                       spec_incid_t5 = incidence,
                       spec_artcov_t5 = art_coverage,
+                      spec_unaware_untreated_prop_t5 = unaware_untreated_prop,
+                      asfr_t5 = asfr,
+                      frr_plhiv_t5 = frr_plhiv,
+                      frr_already_art_t5 = frr_already_art
+                    ),
+             by = c("spectrum_region_code", "sex", "age_group")
+           ) %>%
+    dplyr::left_join(
+             spec_indicators %>%
+             dplyr::filter(time_step == "quarter6") %>%
+             dplyr::select(
+                      spectrum_region_code,
+                      sex,
+                      age_group,
+                      spec_prev_t6 = prevalence,
+                      spec_incid_t6 = incidence,
+                      spec_artcov_t6 = art_coverage,
+                      spec_unaware_untreated_prop_t6 = unaware_untreated_prop,
+                      asfr_t6 = asfr,
+                      frr_plhiv_t6 = frr_plhiv,
+                      frr_already_art_t6 = frr_already_art                      
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
            )
@@ -616,6 +660,14 @@ naomi_model_frame <- function(area_merged,
                              quarter_id2 = quarter_id5,
                              population_colname1 = "population_t4",
                              population_colname2 = "population_t5",
+                             adjust_area_growth = adjust_area_growth)
+
+  Lproj_t5t6 <- create_Lproj(spec = spec,
+                             mf_model = mf_model,
+                             quarter_id1 = quarter_id5,
+                             quarter_id2 = quarter_id6,
+                             population_colname1 = "population_t5",
+                             population_colname2 = "population_t6",
                              adjust_area_growth = adjust_area_growth)
 
 
@@ -707,22 +759,29 @@ naomi_model_frame <- function(area_merged,
              spec_artcov15to49_t5 =
                sum(population_t5 * spec_prev_t5 * spec_artcov_t5 * age15to49) /
                sum(population_t5 * spec_prev_t5 * age15to49),
+             spec_prev15to49_t6 = sum(population_t6 * spec_prev_t6 * age15to49) / sum(population_t6 * age15to49),             
+             spec_artcov15to49_t6 =
+               sum(population_t6 * spec_prev_t6 * spec_artcov_t6 * age15to49) /
+               sum(population_t6 * spec_prev_t6 * age15to49),             
              logit_rho_offset = 0,
              logit_alpha_offset = 0,
              logit_alpha_t1t2_offset = qlogis(spec_artcov_t2) - qlogis(spec_artcov_t1),
              logit_alpha_t2t3_offset = qlogis(spec_artcov_t3) - qlogis(spec_artcov_t2),
              logit_alpha_t3t4_offset = qlogis(spec_artcov_t4) - qlogis(spec_artcov_t3),
              logit_alpha_t4t5_offset = qlogis(spec_artcov_t5) - qlogis(spec_artcov_t4),
+             logit_alpha_t5t6_offset = qlogis(spec_artcov_t6) - qlogis(spec_artcov_t5),
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
              log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
              log_lambda_t3_offset = log(spec_incid_t3) - log(spec_prev15to49_t3) - log(1 - omega * spec_artcov15to49_t3),
              log_lambda_t4_offset = log(spec_incid_t4) - log(spec_prev15to49_t4) - log(1 - omega * spec_artcov15to49_t4),
              log_lambda_t5_offset = log(spec_incid_t5) - log(spec_prev15to49_t5) - log(1 - omega * spec_artcov15to49_t5),
+             log_lambda_t6_offset = log(spec_incid_t6) - log(spec_prev15to49_t6) - log(1 - omega * spec_artcov15to49_t6),
              log_lambda_t1_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t1_offset),
              log_lambda_t2_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t2_offset),
              log_lambda_t3_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t3_offset),
              log_lambda_t4_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t4_offset),
-             log_lambda_t5_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t5_offset)
+             log_lambda_t5_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t5_offset),
+             log_lambda_t6_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t6_offset)             
            ) %>%
     dplyr::ungroup()
 
@@ -736,6 +795,7 @@ naomi_model_frame <- function(area_merged,
              spec_prev15to49f_t3 = sum(population_t3 * spec_prev_t3 * age15to49 * female_15plus) / sum(population_t3 * age15to49 * female_15plus),
              spec_prev15to49f_t4 = sum(population_t4 * spec_prev_t4 * age15to49 * female_15plus) / sum(population_t4 * age15to49 * female_15plus),
              spec_prev15to49f_t5 = sum(population_t5 * spec_prev_t5 * age15to49 * female_15plus) / sum(population_t5 * age15to49 * female_15plus),
+             spec_prev15to49f_t6 = sum(population_t6 * spec_prev_t6 * age15to49 * female_15plus) / sum(population_t6 * age15to49 * female_15plus),             
              paed_rho_ratio = is_paed * spec_prev_t1 / spec_prev15to49f_t1,
              bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
              ##
@@ -745,6 +805,7 @@ naomi_model_frame <- function(area_merged,
              paed_lambda_ratio_t3 = is_paed * spec_incid_t3 / spec_prev15to49f_t3,
              paed_lambda_ratio_t4 = is_paed * spec_incid_t4 / spec_prev15to49f_t4,
              paed_lambda_ratio_t5 = is_paed * spec_incid_t5 / spec_prev15to49f_t5,
+             paed_lambda_ratio_t6 = is_paed * spec_incid_t6 / spec_prev15to49f_t6,             
              ##
              ## Remove interim calculations
              is_paed = NULL,
@@ -752,7 +813,8 @@ naomi_model_frame <- function(area_merged,
              spec_prev15to49f_t2 = NULL,
              spec_prev15to49f_t3 = NULL,
              spec_prev15to49f_t4 = NULL,
-             spec_prev15to49f_t5 = NULL
+             spec_prev15to49f_t5 = NULL,
+             spec_prev15to49f_t6 = NULL
            ) %>%
     dplyr::ungroup()
 
@@ -775,6 +837,7 @@ naomi_model_frame <- function(area_merged,
             Lproj_t2t3 = Lproj_t2t3,
             Lproj_t3t4 = Lproj_t3t4,
             Lproj_t4t5 = Lproj_t4t5,
+            Lproj_t5t6 = Lproj_t5t6,            
             areas = area_merged,
             age_groups = age_groups,
             sexes = sexes,
@@ -783,6 +846,7 @@ naomi_model_frame <- function(area_merged,
             calendar_quarter3 = calendar_quarter3,
             calendar_quarter4 = calendar_quarter4,
             calendar_quarter5 = calendar_quarter5,
+            calendar_quarter6 = calendar_quarter6,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
             model_options = model_options,
@@ -863,6 +927,7 @@ select_naomi_data <- function(
   vls_survey_ids_t2 = NULL,  
   artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
   artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
+  artnum_calendar_quarter_t3 = NULL,
   anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(
     naomi_mf[["calendar_quarter2"]])),
   anc_clients_year_t2_num_months = 12,
@@ -961,11 +1026,11 @@ select_naomi_data <- function(
   
   
   ## !!! Commented for model development   
-  if (nrow(survey_prev_tagged_t1$model_input) == 0) {
-    stop("No prevalence survey data found for survey: ",
-         paste0(prev_survey_ids_t1, collapse = ", "),
-         ". Prevalence data are required for Naomi. Check your selections.")
-  }
+  ## !!! if (nrow(survey_prev_tagged_t1$model_input) == 0) {
+  ## !!!  stop("No prevalence survey data found for survey: ",
+  ## !!!       paste0(prev_survey_ids_t1, collapse = ", "),
+  ## !!!       ". Prevalence data are required for Naomi. Check your selections.")
+  ## !!! }
   
   survey_artcov_tagged_t1 <- survey_mf(survey_ids = artcov_survey_ids_t1,
                                    indicator = "art_coverage",
@@ -1106,9 +1171,11 @@ select_naomi_data <- function(
 
   artnum_t1_tagged <- artnum_mf(artnum_calendar_quarter_t1, art_number, naomi_mf)
   artnum_t2_tagged <- artnum_mf(artnum_calendar_quarter_t2, art_number, naomi_mf)
+  artnum_t3_tagged <- artnum_mf(artnum_calendar_quarter_t3, art_number, naomi_mf)
 
   artnum_t1_dat <- artnum_t1_tagged$model_input
   artnum_t2_dat <- artnum_t2_tagged$model_input
+  artnum_t3_dat <- artnum_t3_tagged$model_input
 
 
   # Add data into naomi_mf
@@ -1130,6 +1197,7 @@ select_naomi_data <- function(
 
   naomi_mf$artnum_t1_dat <- artnum_t1_dat
   naomi_mf$artnum_t2_dat <- artnum_t2_dat
+  naomi_mf$artnum_t3_dat <- artnum_t3_dat
 
 
   naomi_mf <- update_mf_offsets(naomi_mf,
@@ -1142,25 +1210,26 @@ select_naomi_data <- function(
                        prev_survey_available_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$indicator == "prevalence"]),
                        artcov_survey_available = unique(surv_df$survey_id[surv_df$indicator == "art_coverage"]),
                        prev_survey_ids_t1 = prev_survey_ids_t1,
-                       prev_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids_t1]),
-                       artcov_survey_ids_t1= artcov_survey_ids_t1,
-                       artcov_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% artcov_survey_ids_t1]),
-                       recent_survey_ids_t1= recent_survey_ids_t1,
-                       recent_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% recent_survey_ids_t1]),
-                       vls_survey_ids_t1= vls_survey_ids_t1,
-                       vls_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% vls_survey_ids_t1]),
+                       prev_survey_quarters_t1 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids_t1]),
+                       artcov_survey_ids_t1 = artcov_survey_ids_t1,
+                       artcov_survey_quarters_t1 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% artcov_survey_ids_t1]),
+                       recent_survey_ids_t1 = recent_survey_ids_t1,
+                       recent_survey_quarters_t1 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% recent_survey_ids_t1]),
+                       vls_survey_ids_t1 = vls_survey_ids_t1,
+                       vls_survey_quarters_t1 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% vls_survey_ids_t1]),
                        ##
                        prev_survey_ids_t2 = prev_survey_ids_t2,
-                       prev_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids_t2]),
-                       artcov_survey_ids_t2= artcov_survey_ids_t2,
+                       prev_survey_quarters_t2 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% prev_survey_ids_t2]),
+                       artcov_survey_ids_t2 = artcov_survey_ids_t2,
                        artcov_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% artcov_survey_ids_t2]),
-                       recent_survey_ids_t2= recent_survey_ids_t2,
-                       recent_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% recent_survey_ids_t2]),
-                       vls_survey_ids_t2= vls_survey_ids_t2,
-                       vls_survey_quarters = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% vls_survey_ids_t2]),
+                       recent_survey_ids_t2 = recent_survey_ids_t2,
+                       recent_survey_quarters_t2 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% recent_survey_ids_t2]),
+                       vls_survey_ids_t2 = vls_survey_ids_t2,
+                       vls_survey_quarters_t2 = unique(surv_df$survey_mid_calendar_quarter[surv_df$survey_id %in% vls_survey_ids_t2]),
                        ## 
                        artnum_calendar_quarter_t1 = artnum_calendar_quarter_t1,
                        artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
+                       artnum_calendar_quarter_t3 = artnum_calendar_quarter_t3,
                        anc_prev_year_t1 = anc_artcov_year_t1,
                        anc_prev_year_t2 = anc_artcov_year_t2,
                        art_number_spectrum_aligned = art_number_spectrum_aligned,
@@ -1183,7 +1252,8 @@ select_naomi_data <- function(
 
 
   artnum_full_mf <- rbind(artnum_t1_tagged$raw_input,
-                          artnum_t2_tagged$raw_input) %>%
+                          artnum_t2_tagged$raw_input,
+                          artnum_t3_tagged$raw_input) %>%
     dplyr::distinct() %>%
     dplyr::left_join(meta_areas, by = "area_id") %>%
     dplyr::arrange(area_level, area_id, calendar_quarter) %>%

@@ -109,15 +109,40 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "infections_t3_out" = "infections")
 
   indicators_t4 <- c("population_t4_out" = "population",
+                     "rho_t4_out" = "prevalence",
                      "plhiv_t4_out" = "plhiv",
+                     "alpha_t4_out" = "art_coverage",
+                     "artnum_t4_out" = "art_current_residents",
+                     "artattend_t4_out" = "art_current",
+                     "untreated_plhiv_num_t4_out" = "untreated_plhiv_num",
                      "plhiv_attend_t4_out" = "plhiv_attend",
-                     "infections_t4_out" = "infections",
-                     "lambda_t4_out" = "incidence")
+                     "untreated_plhiv_attend_t4_out" = "untreated_plhiv_attend",
+                     "lambda_t4_out" = "incidence",
+                     "infections_t4_out" = "infections")
 
   indicators_t5 <- c("population_t5_out" = "population",
+                     "rho_t5_out" = "prevalence",
                      "plhiv_t5_out" = "plhiv",
+                     "alpha_t5_out" = "art_coverage",
+                     "artnum_t5_out" = "art_current_residents",
+                     "artattend_t5_out" = "art_current",
+                     "untreated_plhiv_num_t5_out" = "untreated_plhiv_num",
                      "plhiv_attend_t5_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t5_out" = "untreated_plhiv_attend",
+                     "lambda_t5_out" = "incidence",
                      "infections_t5_out" = "infections")
+
+  indicators_t6 <- c("population_t6_out" = "population",
+                     "rho_t6_out" = "prevalence",
+                     "plhiv_t6_out" = "plhiv",
+                     "alpha_t6_out" = "art_coverage",
+                     "artnum_t6_out" = "art_current_residents",
+                     "artattend_t6_out" = "art_current",
+                     "untreated_plhiv_num_t6_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t6_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t6_out" = "untreated_plhiv_attend",
+                     "lambda_t6_out" = "incidence",
+                     "infections_t6_out" = "infections")
 
   if (naomi_mf$output_aware_plhiv) {
 
@@ -139,6 +164,24 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                        "unaware_plhiv_num_t3_out" = "unaware_plhiv_num",
                        "aware_plhiv_attend_t3_out" = "aware_plhiv_attend",
                        "unaware_plhiv_attend_t3_out" = "unaware_plhiv_attend")
+    indicators_t4 <- c(indicators_t4,
+                       "aware_plhiv_prop_t4_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t4_out" = "aware_plhiv_num",
+                       "unaware_plhiv_num_t4_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t4_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t4_out" = "unaware_plhiv_attend")
+    indicators_t5 <- c(indicators_t5,
+                       "aware_plhiv_prop_t5_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t5_out" = "aware_plhiv_num",
+                       "unaware_plhiv_num_t5_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t5_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t5_out" = "unaware_plhiv_attend")
+    indicators_t6 <- c(indicators_t6,
+                       "aware_plhiv_prop_t6_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t6_out" = "aware_plhiv_num",
+                       "unaware_plhiv_num_t6_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t6_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t6_out" = "unaware_plhiv_attend")    
   }
 
   indicator_est_t1 <- Map(get_est, names(indicators_t1), indicators_t1, naomi_mf$calendar_quarter1)
@@ -146,13 +189,14 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
   indicator_est_t4 <- Map(get_est, names(indicators_t4), indicators_t4, naomi_mf$calendar_quarter4)
   indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)
-
+  indicator_est_t6 <- Map(get_est, names(indicators_t6), indicators_t6, naomi_mf$calendar_quarter6)
 
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
   indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
   indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)
+  indicator_est_t6 <- dplyr::bind_rows(indicator_est_t6)  
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -184,6 +228,36 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                          "anc_rho_t3_out" = "anc_prevalence",
                          "anc_alpha_t3_out" = "anc_art_coverage")
 
+  indicators_anc_t4 <- c("anc_clients_t4_out" = "anc_clients",
+                         "anc_plhiv_t4_out" = "anc_plhiv",
+                         "anc_already_art_t4_out" = "anc_already_art",
+                         "anc_art_new_t4_out" = "anc_art_new",
+                         "anc_known_pos_t4_out" = "anc_known_pos",
+                         "anc_tested_pos_t4_out" = "anc_tested_pos",
+                         "anc_tested_neg_t4_out" = "anc_tested_neg",
+                         "anc_rho_t4_out" = "anc_prevalence",
+                         "anc_alpha_t4_out" = "anc_art_coverage")
+
+  indicators_anc_t5 <- c("anc_clients_t5_out" = "anc_clients",
+                         "anc_plhiv_t5_out" = "anc_plhiv",
+                         "anc_already_art_t5_out" = "anc_already_art",
+                         "anc_art_new_t5_out" = "anc_art_new",
+                         "anc_known_pos_t5_out" = "anc_known_pos",
+                         "anc_tested_pos_t5_out" = "anc_tested_pos",
+                         "anc_tested_neg_t5_out" = "anc_tested_neg",
+                         "anc_rho_t5_out" = "anc_prevalence",
+                         "anc_alpha_t5_out" = "anc_art_coverage")
+
+  indicators_anc_t6 <- c("anc_clients_t6_out" = "anc_clients",
+                         "anc_plhiv_t6_out" = "anc_plhiv",
+                         "anc_already_art_t6_out" = "anc_already_art",
+                         "anc_art_new_t6_out" = "anc_art_new",
+                         "anc_known_pos_t6_out" = "anc_known_pos",
+                         "anc_tested_pos_t6_out" = "anc_tested_pos",
+                         "anc_tested_neg_t6_out" = "anc_tested_neg",
+                         "anc_rho_t6_out" = "anc_prevalence",
+                         "anc_alpha_t6_out" = "anc_art_coverage")
+
 
   indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
                               naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
@@ -191,11 +265,20 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                               naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out))
   indicator_anc_est_t3 <- Map(get_est, names(indicators_anc_t3), indicators_anc_t3,
                               naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t4 <- Map(get_est, names(indicators_anc_t4), indicators_anc_t4,
+                              naomi_mf$calendar_quarter4, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t5 <- Map(get_est, names(indicators_anc_t5), indicators_anc_t5,
+                              naomi_mf$calendar_quarter5, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t6 <- Map(get_est, names(indicators_anc_t6), indicators_anc_t6,
+                              naomi_mf$calendar_quarter6, list(naomi_mf$mf_anc_out))
 
 
   indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
   indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
   indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
+  indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
+  indicator_anc_est_t5 <- dplyr::bind_rows(indicator_anc_est_t5)
+  indicator_anc_est_t6 <- dplyr::bind_rows(indicator_anc_est_t6)  
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
@@ -210,7 +293,11 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t3,
                   indicator_anc_est_t3,
                   indicator_est_t4,
-                  indicator_est_t5
+                  indicator_anc_est_t4,
+                  indicator_est_t5,
+                  indicator_anc_est_t5,
+                  indicator_est_t6,
+                  indicator_anc_est_t6                  
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -478,7 +565,8 @@ output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
                                        naomi_data$calendar_quarter2,
                                        naomi_data$calendar_quarter3,
                                        naomi_data$calendar_quarter4,
-                                       naomi_data$calendar_quarter5))
+                                       naomi_data$calendar_quarter5,
+                                       naomi_data$calendar_quarter6))
   meta_age_group <- get_age_groups()
 
   ## # Fitting outputs
@@ -929,7 +1017,8 @@ save_output <- function(filename, dir,
       naomi_output$fit$model_options$calendar_quarter_t2,
       naomi_output$fit$model_options$calendar_quarter_t3,
       naomi_output$fit$model_options$calendar_quarter_t4,
-      naomi_output$fit$model_options$calendar_quarter_t5))
+      naomi_output$fit$model_options$calendar_quarter_t5,
+      naomi_output$fit$model_options$calendar_quarter_t6))
   naomi_output$meta_period <- meta_period
 
   if (with_labels) {

@@ -67,7 +67,8 @@ write_datapack_csv <- function(naomi_output,
     warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
 
-  datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
+  ## NOTE: For 'both surveys' version incrementing time + 1
+  datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time + 1]
 
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(

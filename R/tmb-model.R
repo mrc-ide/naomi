@@ -99,6 +99,13 @@ prepare_tmb_inputs <- function(naomi_data,
     Xgamma_t2 <- sparse_model_matrix(~0, naomi_data$mf_artattend)
   }
 
+  if(naomi_data$artattend_t2 && nrow(naomi_data$artnum_t3_dat)) {
+    Xgamma_t3 <- Xgamma
+  } else {
+    Xgamma_t3 <- sparse_model_matrix(~0, naomi_data$mf_artattend)
+  }
+
+  
   df_art_attend <- naomi_data$mf_model %>%
     dplyr::rename(reside_area_id = area_id) %>%
     dplyr::left_join(naomi_data$mf_artattend, by = "reside_area_id",
@@ -124,6 +131,15 @@ prepare_tmb_inputs <- function(naomi_data,
                                           df_art_attend = df_art_attend,
                                           by_residence = FALSE)
 
+  A_artattend_t3 <- create_artattend_Amat(artnum_df = naomi_data$artnum_t3_dat %>%
+                                            dplyr::rename(attend_area_id = area_id),
+                                          age_groups = naomi_data$age_groups,
+                                          sexes = naomi_data$sexes,
+                                          area_aggregation = naomi_data$area_aggregation,
+                                          df_art_attend = df_art_attend,
+                                          by_residence = FALSE)
+
+ 
   A_artattend_mf <- create_artattend_Amat(artnum_df = dplyr::select(naomi_data$mf_model, attend_area_id = area_id, sex, age_group, artnum_idx = idx),
                                           age_groups = naomi_data$age_groups,
                                           sexes = naomi_data$sexes,
@@ -164,6 +180,7 @@ prepare_tmb_inputs <- function(naomi_data,
   X_paed_lambda_ratio_t3 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t3, df)
   X_paed_lambda_ratio_t4 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t4, df)
   X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)
+  X_paed_lambda_ratio_t6 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t6, df)  
 
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
@@ -190,7 +207,8 @@ prepare_tmb_inputs <- function(naomi_data,
   if ( ! all(c("male", "female") %in% naomi_data$artcov_t1_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artcov_t2_dat$sex) &&
        ! all(c("male", "female") %in% naomi_data$artnum_t1_dat$sex) &&
-       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
+       ! all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) &&
+       ! all(c("male", "female") %in% naomi_data$artnum_t3_dat$sex)) {
     f_alpha_xs <- ~0
   } else {
     f_alpha_xs <- ~0 + area_idf
@@ -211,6 +229,12 @@ prepare_tmb_inputs <- function(naomi_data,
     f_alpha_xst <- ~0
   }
 
+  if ( naomi_data$alpha_xst_term &&
+         all(c("male", "female") %in% naomi_data$artnum_t2_dat$sex) ) {
+    f_alpha_xst_t2t3 <- ~0 + area_idf
+  } else {
+    f_alpha_xst_t2t3 <- ~0
+  }
 
   ## If no ART data at both time points, do not fit a change in ART coverage. Use
   ## logit difference in ART coverage from Spectrum.
@@ -219,8 +243,9 @@ prepare_tmb_inputs <- function(naomi_data,
 
   has_t1_art <- nrow(naomi_data$artcov_t1_dat) > 0 | nrow(naomi_data$artnum_t1_dat) > 0
   has_t2_art <- nrow(naomi_data$artcov_t2_dat) > 0 | nrow(naomi_data$artnum_t2_dat) > 0
+  has_t3_art <- nrow(naomi_data$artnum_t3_dat) > 0
 
-  if( !has_t1_art | !has_t2_art ) {
+  if ( !has_t1_art | !has_t2_art ) {
     f_alpha_t2 <- ~0
     f_alpha_xt <- ~0
     logit_alpha_t1t2_offset <- naomi_data$mf_model$logit_alpha_t1t2_offset
@@ -228,6 +253,16 @@ prepare_tmb_inputs <- function(naomi_data,
     f_alpha_t2 <- ~1
     f_alpha_xt <- ~0 + area_idf
     logit_alpha_t1t2_offset <- numeric(nrow(naomi_data$mf_model))
+  }
+
+  if ( has_t2_art && has_t3_art ) {
+    f_alpha_t2t3 <- ~1
+    f_alpha_xt_t2t3 <- ~0 + area_idf
+    logit_alpha_t2t3_offset <- naomi_data$mf_model$logit_alpha_t2t3_offset
+  } else {
+    f_alpha_t2t3 <- ~0
+    f_alpha_xt_t2t3 <- ~0
+    logit_alpha_t2t3_offset <- naomi_data$mf_model$logit_alpha_t2t3_offset
   }
 
   ## Paediatric ART coverage random effects
@@ -239,8 +274,13 @@ prepare_tmb_inputs <- function(naomi_data,
     dplyr::left_join(get_age_groups(), by = "age_group") %>%
     dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
 
+  artnum_t3_dat <- naomi_data$artnum_t3_dat %>%
+    dplyr::left_join(get_age_groups(), by = "age_group") %>%
+    dplyr::mutate(age_group_end = age_group_start + age_group_span - 1)
+
   has_t1_paed_art <- any(artnum_t1_dat$age_group_end < 15)
   has_t2_paed_art <- any(artnum_t2_dat$age_group_end < 15)
+  has_t3_paed_art <- any(artnum_t3_dat$age_group_end < 15)
 
   if(has_t1_paed_art | has_t2_paed_art) {
     f_alpha_xa <- ~0 + area_idf
@@ -253,6 +293,13 @@ prepare_tmb_inputs <- function(naomi_data,
     f_alpha_xat <- ~0 + area_idf
   } else {
     f_alpha_xat <- ~0
+  }
+
+  if(has_t2_paed_art & has_t3_paed_art) {
+    f_alpha_t2t3 <- ~1 + age_below15
+    f_alpha_xat_t2t3 <- ~0 + area_idf
+  } else {
+    f_alpha_xat_t2t3 <- ~0
   }
 
   ## If no recent infection data, do not estimate incidence sex ratio or
@@ -302,12 +349,27 @@ prepare_tmb_inputs <- function(naomi_data,
     log_asfr_t1_offset = log(df$asfr_t1),
     log_asfr_t2_offset = log(df$asfr_t2),
     log_asfr_t3_offset = log(df$asfr_t3),
+    log_asfr_t4_offset = log(df$asfr_t4),
+    log_asfr_t5_offset = log(df$asfr_t5),
+    log_asfr_t6_offset = log(df$asfr_t6),
     logit_anc_rho_t1_offset = log(df$frr_plhiv_t1),
     logit_anc_rho_t2_offset = log(df$frr_plhiv_t2),
     logit_anc_rho_t3_offset = log(df$frr_plhiv_t3),
+    logit_anc_rho_t4_offset = log(df$frr_plhiv_t4),
+    logit_anc_rho_t5_offset = log(df$frr_plhiv_t5),
+    logit_anc_rho_t6_offset = log(df$frr_plhiv_t6),
     logit_anc_alpha_t1_offset = log(df$frr_already_art_t1),
     logit_anc_alpha_t2_offset = log(df$frr_already_art_t2),
     logit_anc_alpha_t3_offset = log(df$frr_already_art_t3),
+    logit_anc_alpha_t4_offset = log(df$frr_already_art_t4),
+    logit_anc_alpha_t5_offset = log(df$frr_already_art_t5),
+    logit_anc_alpha_t6_offset = log(df$frr_already_art_t6),
+    ##
+    ## T2 to T3 ART terms
+    X_alpha_t2t3 = stats::model.matrix(f_alpha_t2t3, df),
+    Z_alpha_xt_t2t3 = sparse_model_matrix(f_alpha_xt_t2t3, df),
+    Z_alpha_xat_t2t3 = sparse_model_matrix(f_alpha_xat_t2t3, df, "age_below15"),
+    Z_alpha_xst_t2t3 = sparse_model_matrix(f_alpha_xst_t2t3, df, "female_15plus", TRUE),
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset * naomi_data$mf_model$bin_rho_model,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
@@ -316,6 +378,9 @@ prepare_tmb_inputs <- function(naomi_data,
     unaware_untreated_prop_t1 = df$spec_unaware_untreated_prop_t1,
     unaware_untreated_prop_t2 = df$spec_unaware_untreated_prop_t2,
     unaware_untreated_prop_t3 = df$spec_unaware_untreated_prop_t3,
+    unaware_untreated_prop_t4 = df$spec_unaware_untreated_prop_t4,
+    unaware_untreated_prop_t5 = df$spec_unaware_untreated_prop_t5,
+    unaware_untreated_prop_t6 = df$spec_unaware_untreated_prop_t6,
     ##
     Q_x = methods::as(naomi_data$Q, "dgCMatrix"),
     Q_x_rankdef = ncol(naomi_data$Q) - as.integer(Matrix::rankMatrix(naomi_data$Q)),
@@ -324,6 +389,7 @@ prepare_tmb_inputs <- function(naomi_data,
     adj_j = naomi_data$mf_artattend$attend_area_idx - 1L,
     Xgamma = Xgamma,
     Xgamma_t2 = Xgamma_t2,
+    Xgamma_t3 = Xgamma_t3,
     log_gamma_offset = naomi_data$mf_artattend$log_gamma_offset,
     Xart_idx = Xart_idx,
     Xart_gamma = Xart_gamma,
@@ -351,6 +417,7 @@ prepare_tmb_inputs <- function(naomi_data,
     X_paed_lambda_ratio_t3 = X_paed_lambda_ratio_t3,
     X_paed_lambda_ratio_t4 = X_paed_lambda_ratio_t4,
     X_paed_lambda_ratio_t5 = X_paed_lambda_ratio_t5,
+    X_paed_lambda_ratio_t6 = X_paed_lambda_ratio_t6,    
     ##
     ## Household survey input data
     x_prev_t1 = naomi_data$prev_t1_dat$x_eff,
@@ -401,6 +468,8 @@ prepare_tmb_inputs <- function(naomi_data,
     x_artnum_t1 = naomi_data$artnum_t1_dat$art_current,
     A_artattend_t2 = A_artattend_t2,
     x_artnum_t2 = naomi_data$artnum_t2_dat$art_current,
+    A_artattend_t3 = A_artattend_t3,
+    x_artnum_t3 = naomi_data$artnum_t3_dat$art_current,    
     A_artattend_mf = A_artattend_mf,
     A_art_reside_attend = A_art_reside_attend,
     ##
@@ -409,7 +478,7 @@ prepare_tmb_inputs <- function(naomi_data,
     Lproj_hivpop_t2t3 = naomi_data$Lproj_t2t3$Lproj_hivpop,
     Lproj_incid_t2t3 = naomi_data$Lproj_t2t3$Lproj_incid,
     Lproj_paed_t2t3 = naomi_data$Lproj_t2t3$Lproj_paed,
-    logit_alpha_t2t3_offset = df$logit_alpha_t2t3_offset,
+    logit_alpha_t2t3_offset = logit_alpha_t2t3_offset,  ## replaced with custom version if data
     log_lambda_t3_offset = df$log_lambda_t3_offset,
     ##
     ## Time 4 projection inputs
@@ -427,6 +496,14 @@ prepare_tmb_inputs <- function(naomi_data,
     Lproj_paed_t4t5 = naomi_data$Lproj_t4t5$Lproj_paed,
     logit_alpha_t4t5_offset = df$logit_alpha_t4t5_offset,
     log_lambda_t5_offset = df$log_lambda_t5_offset,
+    ##
+    ## Time 6 projection inputs
+    population_t6 = df$population_t6,
+    Lproj_hivpop_t5t6 = naomi_data$Lproj_t5t6$Lproj_hivpop,
+    Lproj_incid_t5t6 = naomi_data$Lproj_t5t6$Lproj_incid,
+    Lproj_paed_t5t6 = naomi_data$Lproj_t5t6$Lproj_paed,
+    logit_alpha_t5t6_offset = df$logit_alpha_t5t6_offset,
+    log_lambda_t6_offset = df$log_lambda_t6_offset,
     ##
     A_out = naomi_data$A_out,
     A_anc_out = naomi_data$A_anc_out,
@@ -495,6 +572,14 @@ prepare_tmb_inputs <- function(naomi_data,
     log_sigma_alpha_xat = log(2.5),
     log_sigma_alpha_xst = log(2.5),
     ##
+    beta_alpha_t2t3 = numeric(ncol(dtmb$X_alpha_t2t3)),
+    u_alpha_xt_t2t3 = numeric(ncol(dtmb$Z_alpha_xt_t2t3)),
+    u_alpha_xat_t2t3 = numeric(ncol(dtmb$Z_alpha_xat_t2t3)),
+    u_alpha_xst_t2t3 = numeric(ncol(dtmb$Z_alpha_xst_t2t3)),
+    log_sigma_alpha_xt_t2t3 = log(2.5),
+    log_sigma_alpha_xat_t2t3 = log(2.5),
+    log_sigma_alpha_xst_t2t3 = log(2.5),
+    ##
     OmegaT_raw = 0,
     log_betaT = 0,
     logit_nu_raw = 0,
@@ -508,7 +593,9 @@ prepare_tmb_inputs <- function(naomi_data,
     log_or_gamma = numeric(ncol(dtmb$Xgamma)),
     log_sigma_or_gamma = log(2.5),
     log_or_gamma_t1t2 = numeric(ncol(dtmb$Xgamma_t2)),
-    log_sigma_or_gamma_t1t2 = log(2.5)
+    log_sigma_or_gamma_t1t2 = log(2.5),
+    log_or_gamma_t2t3 = numeric(ncol(dtmb$Xgamma_t3)),
+    log_sigma_or_gamma_t2t3 = log(2.5)    
   )
 
   v <- list(data = dtmb,
@@ -546,7 +633,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                         DLL = "naomi",
                         silent = !inner_verbose,
                         random = c("beta_rho",
-                                   "beta_alpha", "beta_alpha_t2",
+                                   "beta_alpha", "beta_alpha_t2", "beta_alpha_t2t3",
                                    "beta_lambda",
                                    "beta_asfr",
                                    "beta_anc_rho", "beta_anc_alpha",
@@ -561,6 +648,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "u_alpha_a", "u_alpha_as",
                                    "u_alpha_xt",
                                    "u_alpha_xa", "u_alpha_xat", "u_alpha_xst",
+                                   "u_alpha_xt_t2t3", "u_alpha_xat_t2t3", "u_alpha_xst_t2t3",
                                    ##
                                    "ui_lambda_x",
                                    "logit_nu_raw",
@@ -569,7 +657,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    "ui_anc_rho_xt", "ui_anc_alpha_xt",
                                    ##
-                                   "log_or_gamma", "log_or_gamma_t1t2"))
+                                   "log_or_gamma", "log_or_gamma_t1t2", "log_or_gamma_t2t3"))
 
   if (!is.null(progress)) {
     obj$fn <- report_progress(obj$fn, progress)
