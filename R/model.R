@@ -917,6 +917,7 @@ select_naomi_data <- function(
   survey_hiv_indicators,
   anc_testing,
   art_number,
+  sti_clients = NULL,
   prev_survey_ids_t1,
   artcov_survey_ids_t1,
   recent_survey_ids_t1,
@@ -928,15 +929,21 @@ select_naomi_data <- function(
   artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
   artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
   artnum_calendar_quarter_t3 = NULL,
-  anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(
-    naomi_mf[["calendar_quarter2"]])),
-  anc_clients_year_t2_num_months = 12,
+  anc_clients_year_t3 = year_labels(calendar_quarter_to_quarter_id(
+    naomi_mf[["calendar_quarter3"]])),
+  anc_clients_year_t3_num_months = 12,
   anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(
     naomi_mf[["calendar_quarter1"]])),
   anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(
     naomi_mf[["calendar_quarter2"]])),
+  anc_prev_year_t3 = year_labels(calendar_quarter_to_quarter_id(
+    naomi_mf[["calendar_quarter3"]])),  
   anc_artcov_year_t1 = anc_prev_year_t1,
   anc_artcov_year_t2 = anc_prev_year_t2,
+  anc_artcov_year_t3 = anc_prev_year_t3,
+  sti_artcov_year_t1 = anc_prev_year_t1,
+  sti_artcov_year_t2 = anc_prev_year_t2,
+  sti_artcov_year_t3 = anc_prev_year_t3,  
   use_kish_prev = TRUE,
   deff_prev = 1.0,
   use_kish_artcov = TRUE,
@@ -1127,16 +1134,16 @@ select_naomi_data <- function(
         anc_artcov_x = anc_already_art,
         anc_artcov_n = anc_total_pos,
         anc_clients_x = anc_clients,
-        anc_clients_pys_offset = log(anc_clients_year_t2_num_months/ 12),
+        anc_clients_pys_offset = log(anc_clients_year_t3_num_months/ 12),
         anc_prevalence = anc_prev_x/anc_prev_n,
         anc_art_coverage = anc_artcov_x/ anc_artcov_n) %>%
       dplyr::select(area_id, age_group, year, sex, dplyr::everything()) %>%
       tidyr::pivot_longer(cols = anc_known_pos:anc_art_coverage,
                           names_to = "indicator", values_to = "value")
 
-    anc_years <- c(anc_prev_year_t1, anc_prev_year_t2,
-                   anc_artcov_year_t1, anc_artcov_year_t2,
-                   anc_clients_year_t2)
+    anc_years <- c(anc_prev_year_t1, anc_prev_year_t2, anc_prev_year_t3,
+                   anc_artcov_year_t1, anc_artcov_year_t2, anc_artcov_year_t3,
+                   anc_clients_year_t3)
 
     # Drop  NAs and filter for years contained in model options scope
     anc_model_mf <- anc_full_mf %>%
@@ -1158,14 +1165,22 @@ select_naomi_data <- function(
 
     }
 
-
   anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_tagged$model_input)
   anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_tagged$model_input)
 
-  anc_clients_t2_dat <- anc_testing_clients_mf(anc_clients_year_t2, anc_tagged$model_input)
-
   anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_tagged$model_input)
   anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_tagged$model_input)
+
+  anc_clients_t3_dat <- anc_testing_clients_mf(anc_clients_year_t3, anc_tagged$model_input)
+
+  anc_prev_t3_dat <- anc_testing_prev_mf(anc_prev_year_t3, anc_tagged$model_input)
+  anc_artcov_t3_dat <- anc_testing_artcov_mf(anc_artcov_year_t3, anc_tagged$model_input)
+
+
+  ## !!! Note: doesn't follow data tagging conventions
+  sti_artcov_t1_dat <- sti_artcov_mf(sti_artcov_year_t1, sti_clients)
+  sti_artcov_t2_dat <- sti_artcov_mf(sti_artcov_year_t2, sti_clients)
+  sti_artcov_t3_dat <- sti_artcov_mf(sti_artcov_year_t3, sti_clients)
 
   # Aggregate, interpolate, tag and subset ART inputs according to model option specifications
 
@@ -1191,9 +1206,17 @@ select_naomi_data <- function(
 
   naomi_mf$anc_prev_t1_dat <- anc_prev_t1_dat
   naomi_mf$anc_artcov_t1_dat <- anc_artcov_t1_dat
-  naomi_mf$anc_clients_t2_dat <- anc_clients_t2_dat
+
   naomi_mf$anc_prev_t2_dat <- anc_prev_t2_dat
   naomi_mf$anc_artcov_t2_dat <- anc_artcov_t2_dat
+
+  naomi_mf$anc_clients_t3_dat <- anc_clients_t3_dat
+  naomi_mf$anc_prev_t3_dat <- anc_prev_t3_dat
+  naomi_mf$anc_artcov_t3_dat <- anc_artcov_t3_dat
+
+  naomi_mf$sti_artcov_t1_dat <- sti_artcov_t1_dat
+  naomi_mf$sti_artcov_t2_dat <- sti_artcov_t2_dat
+  naomi_mf$sti_artcov_t3_dat <- sti_artcov_t3_dat
 
   naomi_mf$artnum_t1_dat <- artnum_t1_dat
   naomi_mf$artnum_t2_dat <- artnum_t2_dat
@@ -1230,8 +1253,16 @@ select_naomi_data <- function(
                        artnum_calendar_quarter_t1 = artnum_calendar_quarter_t1,
                        artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
                        artnum_calendar_quarter_t3 = artnum_calendar_quarter_t3,
-                       anc_prev_year_t1 = anc_artcov_year_t1,
-                       anc_prev_year_t2 = anc_artcov_year_t2,
+                       anc_clients_year_t3 = anc_clients_year_t3,
+                       anc_prev_year_t1 = anc_prev_year_t1,
+                       anc_prev_year_t2 = anc_prev_year_t2,
+                       anc_prev_year_t3 = anc_prev_year_t3,
+                       anc_artcov_year_t1 = anc_artcov_year_t1,
+                       anc_artcov_year_t2 = anc_artcov_year_t2,
+                       anc_artcov_year_t3 = anc_artcov_year_t3,
+                       sti_artcov_year_t1 = sti_artcov_year_t1,
+                       sti_artcov_year_t2 = sti_artcov_year_t2,
+                       sti_artcov_year_t3 = sti_artcov_year_t3,
                        art_number_spectrum_aligned = art_number_spectrum_aligned,
                        anc_testing_spectrum_aligned = anc_testing_spectrum_aligned)
 
@@ -1643,6 +1674,49 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
 
   }
 
+}
+
+#' @rdname anc_testing_prev_mf
+#' @export
+sti_artcov_mf <- function(year, sti_model_mf) {
+
+  if(is.null(sti_model_mf) || is.null(year)) {
+    ## No STI ART coverage data used
+    sti_artcov_dat <- data.frame(
+      area_id = character(0),
+      sex = character(0),
+      age_group = character(0),
+      obs_idx = integer(0),
+      sti_artcov_x = integer(0),
+      sti_artcov_n = integer(0),
+      stringsAsFactors = FALSE
+    )
+
+  } else {
+
+    if (!all(year %in% sti_model_mf$year)) {
+      missing_years <- setdiff(year, sti_model_mf$year)
+      stop(t_("STI_DATA_MISSING_FOR_YEAR",
+              list(missing_year = paste(missing_years, collapse = ", ")),
+              count = length(missing_years)))
+    }
+
+    ## Filter observations contained in model scope
+    sti_artcov_dat <- sti_model_mf %>%
+      dplyr::filter(
+        year %in% !!year
+      ) %>%
+      dplyr::filter(!is.na(sti_artcov_x), !is.na(sti_artcov_n)) %>%      
+      dplyr::mutate(obs_idx = dplyr::row_number()) %>%
+      dplyr::select("area_id", "sex", "age_group", "obs_idx", "sti_artcov_x", "sti_artcov_n")
+
+    if(any(sti_artcov_dat$sti_artcov_x > sti_artcov_dat$sti_artcov_n)) {
+      stop(t_("STI_ON_ART_GREATER_THAN_TOTAL_POSITIVE"))
+    }
+
+  }
+
+  sti_artcov_dat
 }
 
 

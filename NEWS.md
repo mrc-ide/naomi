@@ -1,3 +1,32 @@
+# naomi 2.10.1
+
+This version implements a custom Naomi version for Malawi 2024 HIV estimates allowing
+for `art_current` reporting bias between 2020 and 2023 and incorporating ART coverage
+among STI clinic clients.
+
+* Add likelihood for ART coverage among STI clients at T1, T2, and T3 to inform district
+  population ART coverage trend.
+  - STI ART coverage relative to population ART coverage modelled similar to ANC with 
+    time-varying fixed effect and district random effect.
+  - Aggregated ART coverage among STI clients calculated as a weighted average of 
+    age specific STI rate and age specific HIV prevalence
+
+* Remove time-varying fixed effect for ANC ART coverage between T2 and T3 (corresponding
+  to 2020 household survey and 2023 current data). Want to use ANC ART coverage 
+  trend to estimate trend in ART coverage.
+  
+* Add district-specific ART reporting bias parameter for T3, corresponding to log-relative
+  bias in reported number on ART in 2023.
+  - This assumes that reported number on ART are accurate at T1 and T2, but biased at T3.
+    This assumption is imperfect, but consistent with results of PHIA surveys suggesting
+	relatively consistent trend in number on ART.
+
+* Implement new output indicators:
+  - `art_report`: Number of reported ART clients, including potential reporting bias. 
+     This is differentiated from `art_current` which is the number _true_ on ART.
+  - `art_report_rel_bias`: Relative reporting bias in number on ART, defined as
+    `art_report` / `art_current`.
+     
 # naomi 2.10.0
 
 * Implement survey data at T1 and T2.

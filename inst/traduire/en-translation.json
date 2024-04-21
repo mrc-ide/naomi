@@ -275,5 +275,9 @@
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Naomi output uploaded from Naomi web app",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Naomi summary report uploaded from Naomi web app",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app",
-    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app"
+    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app",
+    "ART_REPORT": "Reported ART number",
+    "INDICATOR_LABEL_ART_REPORT": "Reported number of ART clients attending facility",
+    "ART_REPORT_REL_BIAS": "ART reporting bias (relative)",
+    "INDICATOR_LABEL_ART_REPORT_REL_BIAS": "Ratio between reported and modelled number attending"
 }

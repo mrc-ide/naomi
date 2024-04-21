@@ -67,11 +67,17 @@ prepare_tmb_inputs <- function(naomi_data,
     Amat
   }
 
-  A_anc_clients_t2 <- create_anc_Amat(naomi_data$anc_clients_t2_dat)
+  A_anc_clients_t3 <- create_anc_Amat(naomi_data$anc_clients_t3_dat)
   A_anc_prev_t1 <- create_anc_Amat(naomi_data$anc_prev_t1_dat)
   A_anc_prev_t2 <- create_anc_Amat(naomi_data$anc_prev_t2_dat)
+  A_anc_prev_t3 <- create_anc_Amat(naomi_data$anc_prev_t3_dat)
   A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat)
   A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat)
+  A_anc_artcov_t3 <- create_anc_Amat(naomi_data$anc_artcov_t3_dat)  
+
+  A_sti_artcov_t1 <- create_anc_Amat(naomi_data$sti_artcov_t1_dat)
+  A_sti_artcov_t2 <- create_anc_Amat(naomi_data$sti_artcov_t2_dat)
+  A_sti_artcov_t3 <- create_anc_Amat(naomi_data$sti_artcov_t3_dat)  
 
   A_prev_t1 <- create_survey_Amat(naomi_data$prev_t1_dat)
   A_artcov_t1 <- create_survey_Amat(naomi_data$artcov_t1_dat)
@@ -255,15 +261,24 @@ prepare_tmb_inputs <- function(naomi_data,
     logit_alpha_t1t2_offset <- numeric(nrow(naomi_data$mf_model))
   }
 
-  if ( has_t2_art && has_t3_art ) {
-    f_alpha_t2t3 <- ~1
-    f_alpha_xt_t2t3 <- ~0 + area_idf
-    logit_alpha_t2t3_offset <- naomi_data$mf_model$logit_alpha_t2t3_offset
-  } else {
-    f_alpha_t2t3 <- ~0
-    f_alpha_xt_t2t3 <- ~0
-    logit_alpha_t2t3_offset <- naomi_data$mf_model$logit_alpha_t2t3_offset
-  }
+  ## if ( has_t2_art && has_t3_art ) {
+  ##   f_alpha_t2t3 <- ~1
+  ##   f_alpha_xt_t2t3 <- ~0 + area_idf
+  ##   logit_alpha_t2t3_offset <- numeric(nrow(naomi_data$mf_model))
+  ## } else {
+  ##   f_alpha_t2t3 <- ~0
+  ##   f_alpha_xt_t2t3 <- ~0
+  ##   logit_alpha_t2t3_offset <- naomi_data$mf_model$logit_alpha_t2t3_offset
+  ## }
+
+  ## Fixing this to estimate district change in ART coverage despite
+  ## no survey ART coverage.
+  message("Malawi dev: fixing logit_alpha_t2t3_offset to 0;\n
+estimate this from ANC and STI ART coverage change")
+  f_alpha_t2t3 <- ~1
+  f_alpha_xt_t2t3 <- ~0 + area_idf
+  logit_alpha_t2t3_offset <- numeric(nrow(naomi_data$mf_model))
+  
 
   ## Paediatric ART coverage random effects
   artnum_t1_dat <- naomi_data$artnum_t1_dat %>%
@@ -313,7 +328,9 @@ prepare_tmb_inputs <- function(naomi_data,
     f_lambda_x <- ~0 + area_idf
   }
 
-
+  ## !!! TEMP FOR MALAWI ART BIAS
+  naomi_data$artnum_t3_dat$area_id <- factor(naomi_data$artnum_t3_dat$area_id, levels(df$area_idf))
+  
   dtmb <- list(
     population_t1 = df$population_t1,
     population_t2 = df$population_t2,
@@ -447,9 +464,9 @@ prepare_tmb_inputs <- function(naomi_data,
     A_recent_t2 = A_recent_t2,
     ##
     ## ANC testing input data
-    x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,
-    offset_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_pys_offset,
-    A_anc_clients_t2 = A_anc_clients_t2,
+    x_anc_clients_t3 = naomi_data$anc_clients_t3_dat$anc_clients_x,
+    offset_anc_clients_t3 = naomi_data$anc_clients_t3_dat$anc_clients_pys_offset,
+    A_anc_clients_t3 = A_anc_clients_t3,
     x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_x,
     n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_n,
     A_anc_prev_t1 = A_anc_prev_t1,
@@ -462,8 +479,26 @@ prepare_tmb_inputs <- function(naomi_data,
     x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_x,
     n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
     A_anc_artcov_t2 = A_anc_artcov_t2,
+    x_anc_prev_t3 = naomi_data$anc_prev_t3_dat$anc_prev_x,
+    n_anc_prev_t3 = naomi_data$anc_prev_t3_dat$anc_prev_n,
+    A_anc_prev_t3 = A_anc_prev_t3,
+    x_anc_artcov_t3 = naomi_data$anc_artcov_t3_dat$anc_artcov_x,
+    n_anc_artcov_t3 = naomi_data$anc_artcov_t3_dat$anc_artcov_n,
+    A_anc_artcov_t3 = A_anc_artcov_t3,
+    ##
+    ## STI ART coverage input
+    x_sti_artcov_t1 = naomi_data$sti_artcov_t1_dat$sti_artcov_x,
+    n_sti_artcov_t1 = naomi_data$sti_artcov_t1_dat$sti_artcov_n,
+    A_sti_artcov_t1 = A_sti_artcov_t1,
+    x_sti_artcov_t2 = naomi_data$sti_artcov_t2_dat$sti_artcov_x,
+    n_sti_artcov_t2 = naomi_data$sti_artcov_t2_dat$sti_artcov_n,
+    A_sti_artcov_t2 = A_sti_artcov_t2,
+    x_sti_artcov_t3 = naomi_data$sti_artcov_t3_dat$sti_artcov_x,
+    n_sti_artcov_t3 = naomi_data$sti_artcov_t3_dat$sti_artcov_n,
+    A_sti_artcov_t3 = A_sti_artcov_t3,    
     ##
     ## Number on ART input data
+    sti_client_rate = df$sti_client_rate,
     A_artattend_t1 = A_artattend_t1,
     x_artnum_t1 = naomi_data$artnum_t1_dat$art_current,
     A_artattend_t2 = A_artattend_t2,
@@ -472,6 +507,14 @@ prepare_tmb_inputs <- function(naomi_data,
     x_artnum_t3 = naomi_data$artnum_t3_dat$art_current,    
     A_artattend_mf = A_artattend_mf,
     A_art_reside_attend = A_art_reside_attend,
+    ##
+    ## ART reporting bias inputs
+    ## !!! NOTE: A bit concerned if ordering of area_id here is handled
+    ##           consistently with elsewhere
+    X_artbias_t3 = stats::model.matrix(~1, naomi_data$artnum_t3_dat),
+    Z_artbias_t3 = sparse_model_matrix(~0 + area_id, naomi_data$artnum_t3_dat),
+    X_artbias_mf = stats::model.matrix(~1, df),
+    Z_artbias_mf = sparse_model_matrix(~0 + area_id, df),
     ##
     ## Time 3 projection inputs
     population_t3 = df$population_t3,
@@ -522,6 +565,10 @@ prepare_tmb_inputs <- function(naomi_data,
     beta_anc_alpha = numeric(1),
     beta_anc_rho_t2 = numeric(1),
     beta_anc_alpha_t2 = numeric(1),
+    beta_anc_rho_t3 = numeric(1),
+    ## beta_anc_alpha_t3 = numeric(1), ## !!! TEMPORARY MALAWI DEV
+    beta_sti_alpha = numeric(1),
+    beta_sti_alpha_t2 = numeric(1),
     u_rho_x = numeric(ncol(dtmb$Z_rho_x)),
     us_rho_x = numeric(ncol(dtmb$Z_rho_x)),
     u_rho_xs = numeric(ncol(dtmb$Z_rho_xs)),
@@ -534,6 +581,8 @@ prepare_tmb_inputs <- function(naomi_data,
     ui_anc_alpha_x = numeric(ncol(dtmb$Z_ancalpha_x)),
     ui_anc_rho_xt = numeric(ncol(dtmb$Z_ancrho_x)),
     ui_anc_alpha_xt = numeric(ncol(dtmb$Z_ancalpha_x)),
+    ui_anc_rho_xt2t3 = numeric(ncol(dtmb$Z_ancrho_x)),
+    ui_anc_alpha_xt2t3 = numeric(ncol(dtmb$Z_ancalpha_x)),    
     ##
     u_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),
     us_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),
@@ -590,12 +639,22 @@ prepare_tmb_inputs <- function(naomi_data,
     log_sigma_ancrho_xt = log(2.5),
     log_sigma_ancalpha_xt = log(2.5),
     ##
+    log_sigma_stialpha_x = log(2.5),
+    log_sigma_stialpha_xt = log(2.5),
+    ui_sti_alpha_x = numeric(ncol(dtmb$Z_ancalpha_x)),
+    ui_sti_alpha_xt = numeric(ncol(dtmb$Z_ancalpha_x)),
+    ui_sti_alpha_xt2t3 = numeric(ncol(dtmb$Z_ancalpha_x)),    
+    ##
     log_or_gamma = numeric(ncol(dtmb$Xgamma)),
     log_sigma_or_gamma = log(2.5),
     log_or_gamma_t1t2 = numeric(ncol(dtmb$Xgamma_t2)),
     log_sigma_or_gamma_t1t2 = log(2.5),
     log_or_gamma_t2t3 = numeric(ncol(dtmb$Xgamma_t3)),
-    log_sigma_or_gamma_t2t3 = log(2.5)    
+    log_sigma_or_gamma_t2t3 = log(2.5),
+    ##
+    beta_artbias_t3 = 0.0,
+    log_sigma_artbias_t3_x = log(2.5),
+    ui_artbias_t3_x = numeric(ncol(dtmb$Z_artbias_t3))
   )
 
   v <- list(data = dtmb,
@@ -628,6 +687,10 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
 
   data$calc_outputs <- as.integer(calc_outputs)
 
+  if(!is.null(par$beta_anc_alpha_t3)) {
+    stop("You forgot to add beta_anc_alpha_t3 back to random pars")
+  }
+  
   obj <- TMB::MakeADFun(data = data,
                         parameters = par,
                         DLL = "naomi",
@@ -638,10 +701,14 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "beta_asfr",
                                    "beta_anc_rho", "beta_anc_alpha",
                                    "beta_anc_rho_t2", "beta_anc_alpha_t2",
+                                   "beta_anc_rho_t3", ## "beta_anc_alpha_t3",
                                    "u_rho_x", "us_rho_x",
                                    "u_rho_xs", "us_rho_xs",
                                    "u_rho_a", "u_rho_as",
                                    "u_rho_xa",
+                                   ##
+                                   "beta_sti_alpha", "beta_sti_alpha_t2",
+                                   "ui_sti_alpha_x", "ui_sti_alpha_xt", "ui_sti_alpha_xt2t3",
                                    ##
                                    "u_alpha_x", "us_alpha_x",
                                    "u_alpha_xs", "us_alpha_xs",
@@ -656,8 +723,12 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "ui_asfr_x",
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    "ui_anc_rho_xt", "ui_anc_alpha_xt",
+                                   "ui_anc_rho_xt2t3", "ui_anc_alpha_xt2t3",
                                    ##
-                                   "log_or_gamma", "log_or_gamma_t1t2", "log_or_gamma_t2t3"))
+                                   "log_or_gamma", "log_or_gamma_t1t2", "log_or_gamma_t2t3",
+                                   ##
+                                   "beta_artbias_t3",
+                                   "ui_artbias_t3_x"))
 
   if (!is.null(progress)) {
     obj$fn <- report_progress(obj$fn, progress)
