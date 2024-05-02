@@ -1,3 +1,6 @@
+# naomi 2.9.27
+
+* Show calibration plot ratio values to nearest 0.1. 
 
 # naomi 2.9.26
 
