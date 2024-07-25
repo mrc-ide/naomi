@@ -100,3 +100,15 @@ vlapply <- function(X, FUN, ...) {
 is_empty <- function(x) {
   length(x) == 0 || is.null(x) || is.na(x) || !nzchar(x)
 }
+
+
+assert_package_installed <- function(package_name) {
+  if (!requireNamespace(package_name, quietly = TRUE)) {
+    stop(
+      sprintf("Package '%s' must be installed to use this function.",
+              package_name),
+      call. = FALSE
+    )
+  }
+  invisible(TRUE)
+}

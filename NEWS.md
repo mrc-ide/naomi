@@ -1,3 +1,7 @@
+# naomi 2.9.28
+
+* Make duckdb an optional dependency
+
 # naomi 2.9.27
 
 * Show calibration plot ratio values to nearest 0.1. 

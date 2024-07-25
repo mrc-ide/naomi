@@ -157,6 +157,7 @@ hintr_save <- function(obj, file) {
       stop(paste("Trying to save invalid object as duckdb database.",
               "Only data frames can be saved as database."))
     }
+    assert_package_installed("duckdb")
     con <- DBI::dbConnect(duckdb::duckdb(dbdir = file))
     on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
     DBI::dbWriteTable(con, DUCKDB_OUTPUT_TABLE_NAME, obj)

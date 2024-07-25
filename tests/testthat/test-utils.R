@@ -26,3 +26,12 @@ test_that("is_empty", {
   expect_true(is_empty(c()))
   expect_false(is_empty(c("things")))
 })
+
+test_that("can assert optional package is installed", {
+  expect_true(assert_package_installed("testthat"))
+
+  expect_error(
+    assert_package_installed("my.fake.pkg"),
+    "Package 'my.fake.pkg' must be installed to use this function.",
+    fixed = TRUE)
+})
