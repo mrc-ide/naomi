@@ -1355,6 +1355,7 @@ read_hintr_output <- function(path) {
 }
 
 read_duckdb <- function(path) {
+  assert_package_installed("duckdb")
   con <- DBI::dbConnect(duckdb::duckdb(dbdir = path, read_only = TRUE))
   on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
   DBI::dbGetQuery(con, sprintf("SELECT * from %s", DUCKDB_OUTPUT_TABLE_NAME))

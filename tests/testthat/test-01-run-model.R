@@ -689,6 +689,7 @@ test_that("trying to calibrate incompatible model output returns error", {
 })
 
 test_that("calibration plot data can be saved as duckdb database", {
+  testthat::skip_if_not_installed("duckdb")
 
   ## Calibration makes no modification of existing files.
   output_hash <- tools::md5sum(a_hintr_output$model_output_path)
