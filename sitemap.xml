@@ -1,342 +1,116 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/articles/data-model.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/model-workflow.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Imports.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_output_labels.html</loc>
-  </url>
-  <url>
-    <loc>/reference/age_bar_plotly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/aggregate_anc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/aggregate_art.html</loc>
-  </url>
-  <url>
-    <loc>/reference/align_inputs_outputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/anc_spectrum_warning.html</loc>
-  </url>
-  <url>
-    <loc>/reference/anc_testing_prev_mf.html</loc>
-  </url>
-  <url>
-    <loc>/reference/art_spectrum_warning.html</loc>
-  </url>
-  <url>
-    <loc>/reference/artnum_mf.html</loc>
-  </url>
-  <url>
-    <loc>/reference/assert_pjnz_shiny90.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bar_plotly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/build_hierarchy_label.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cache_invariant.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculate_prevalence_art_coverage.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calibrate_outputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cmc_date.html</loc>
-  </url>
-  <url>
-    <loc>/reference/create_adj_matrix.html</loc>
-  </url>
-  <url>
-    <loc>/reference/create_area_aggregation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/create_areas.html</loc>
-  </url>
-  <url>
-    <loc>/reference/create_edge_list.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cut_naomi_age_group.html</loc>
-  </url>
-  <url>
-    <loc>/reference/data_type_labels.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_anc_testing.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_area_boundaries.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_area_hierarchy.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_area_levels.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_population_agesex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_survey_biomarker.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_survey_clusters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_survey_hiv_indicators.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_survey_individuals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_survey_meta.html</loc>
-  </url>
-  <url>
-    <loc>/reference/demo_survey_regions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/disaggregate_0to4_outputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/district_barplot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dropdown_buttons.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extract_pjnz_naomi.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extract_pjnz_program_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extract_shiny90_age_sex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fit_tmb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/format_spectrum_total_warning.html</loc>
-  </url>
-  <url>
-    <loc>/reference/generate_comparison_report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/generate_output_summary_report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_age_group_out.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_age_groups.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_area_collection.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_colour_scale.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_five_year_age_groups.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_meta_indicator.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_metadata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_plot_type_column_metadata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_plotting_metadata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_spec_aggr_interpolation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_calibrate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_calibrate_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_comparison_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_prepare_agyw_download.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_prepare_coarse_age_group_download.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_prepare_comparison_report_download.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_prepare_spectrum_download.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_prepare_summary_report_download.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_run_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_validate_anc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hintr_validate_art.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/interpolate_population_agesex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/log_linear_interp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/map_outputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/naomi_model_frame.html</loc>
-  </url>
-  <url>
-    <loc>/reference/naomi_objective_function_r.html</loc>
-  </url>
-  <url>
-    <loc>/reference/naomi_output_frame.html</loc>
-  </url>
-  <url>
-    <loc>/reference/output_naomi_warning.html</loc>
-  </url>
-  <url>
-    <loc>/reference/output_package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pop_pyramid_outputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/prepare_input_time_series_anc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/prepare_input_time_series_art.html</loc>
-  </url>
-  <url>
-    <loc>/reference/prepare_tmb_inputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/quarter_year_labels.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_csv_partial_cols.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_hintr_output.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_metadata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_population.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_spectrum_projection_name.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_spectrum_region_code.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_spectrum_region_name.html</loc>
-  </url>
-  <url>
-    <loc>/reference/report_tmb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sample_tmb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/save_output.html</loc>
-  </url>
-  <url>
-    <loc>/reference/save_output_package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/scale_gmrf_precision.html</loc>
-  </url>
-  <url>
-    <loc>/reference/scatter_plotly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sdreport_joint_precision.html</loc>
-  </url>
-  <url>
-    <loc>/reference/select_naomi_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/spread_areas.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subset_naomi_output.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subset_output_package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/survey_mf.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tag_data_inputs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/th_map.html</loc>
-  </url>
-  <url>
-    <loc>/reference/validate_model_options.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_datapack_csv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_navigator_checklist.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/data-model.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/model-workflow.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/Imports.html</loc></url>
+<url><loc>/reference/add_output_labels.html</loc></url>
+<url><loc>/reference/age_bar_plotly.html</loc></url>
+<url><loc>/reference/aggregate_anc.html</loc></url>
+<url><loc>/reference/aggregate_art.html</loc></url>
+<url><loc>/reference/align_inputs_outputs.html</loc></url>
+<url><loc>/reference/anc_spectrum_warning.html</loc></url>
+<url><loc>/reference/anc_testing_prev_mf.html</loc></url>
+<url><loc>/reference/art_spectrum_warning.html</loc></url>
+<url><loc>/reference/artnum_mf.html</loc></url>
+<url><loc>/reference/assert_pjnz_shiny90.html</loc></url>
+<url><loc>/reference/bar_plotly.html</loc></url>
+<url><loc>/reference/build_hierarchy_label.html</loc></url>
+<url><loc>/reference/cache_invariant.html</loc></url>
+<url><loc>/reference/calculate_prevalence_art_coverage.html</loc></url>
+<url><loc>/reference/calibrate_outputs.html</loc></url>
+<url><loc>/reference/cmc_date.html</loc></url>
+<url><loc>/reference/create_adj_matrix.html</loc></url>
+<url><loc>/reference/create_area_aggregation.html</loc></url>
+<url><loc>/reference/create_areas.html</loc></url>
+<url><loc>/reference/create_edge_list.html</loc></url>
+<url><loc>/reference/cut_naomi_age_group.html</loc></url>
+<url><loc>/reference/data_type_labels.html</loc></url>
+<url><loc>/reference/demo_anc_testing.html</loc></url>
+<url><loc>/reference/demo_area_boundaries.html</loc></url>
+<url><loc>/reference/demo_area_hierarchy.html</loc></url>
+<url><loc>/reference/demo_area_levels.html</loc></url>
+<url><loc>/reference/demo_population_agesex.html</loc></url>
+<url><loc>/reference/demo_survey_biomarker.html</loc></url>
+<url><loc>/reference/demo_survey_clusters.html</loc></url>
+<url><loc>/reference/demo_survey_hiv_indicators.html</loc></url>
+<url><loc>/reference/demo_survey_individuals.html</loc></url>
+<url><loc>/reference/demo_survey_meta.html</loc></url>
+<url><loc>/reference/demo_survey_regions.html</loc></url>
+<url><loc>/reference/disaggregate_0to4_outputs.html</loc></url>
+<url><loc>/reference/district_barplot.html</loc></url>
+<url><loc>/reference/dropdown_buttons.html</loc></url>
+<url><loc>/reference/extract_pjnz_naomi.html</loc></url>
+<url><loc>/reference/extract_pjnz_program_data.html</loc></url>
+<url><loc>/reference/extract_shiny90_age_sex.html</loc></url>
+<url><loc>/reference/fit_tmb.html</loc></url>
+<url><loc>/reference/format_spectrum_total_warning.html</loc></url>
+<url><loc>/reference/generate_comparison_report.html</loc></url>
+<url><loc>/reference/generate_output_summary_report.html</loc></url>
+<url><loc>/reference/get_age_group_out.html</loc></url>
+<url><loc>/reference/get_age_groups.html</loc></url>
+<url><loc>/reference/get_area_collection.html</loc></url>
+<url><loc>/reference/get_colour_scale.html</loc></url>
+<url><loc>/reference/get_five_year_age_groups.html</loc></url>
+<url><loc>/reference/get_meta_indicator.html</loc></url>
+<url><loc>/reference/get_metadata.html</loc></url>
+<url><loc>/reference/get_plot_type_column_metadata.html</loc></url>
+<url><loc>/reference/get_plotting_metadata.html</loc></url>
+<url><loc>/reference/get_spec_aggr_interpolation.html</loc></url>
+<url><loc>/reference/hintr_calibrate.html</loc></url>
+<url><loc>/reference/hintr_calibrate_plot.html</loc></url>
+<url><loc>/reference/hintr_comparison_plot.html</loc></url>
+<url><loc>/reference/hintr_prepare_agyw_download.html</loc></url>
+<url><loc>/reference/hintr_prepare_coarse_age_group_download.html</loc></url>
+<url><loc>/reference/hintr_prepare_comparison_report_download.html</loc></url>
+<url><loc>/reference/hintr_prepare_spectrum_download.html</loc></url>
+<url><loc>/reference/hintr_prepare_summary_report_download.html</loc></url>
+<url><loc>/reference/hintr_run_model.html</loc></url>
+<url><loc>/reference/hintr_validate_anc.html</loc></url>
+<url><loc>/reference/hintr_validate_art.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/interpolate_population_agesex.html</loc></url>
+<url><loc>/reference/log_linear_interp.html</loc></url>
+<url><loc>/reference/map_outputs.html</loc></url>
+<url><loc>/reference/naomi_model_frame.html</loc></url>
+<url><loc>/reference/naomi_objective_function_r.html</loc></url>
+<url><loc>/reference/naomi_output_frame.html</loc></url>
+<url><loc>/reference/output_naomi_warning.html</loc></url>
+<url><loc>/reference/output_package.html</loc></url>
+<url><loc>/reference/pipe.html</loc></url>
+<url><loc>/reference/pop_pyramid_outputs.html</loc></url>
+<url><loc>/reference/prepare_input_time_series_anc.html</loc></url>
+<url><loc>/reference/prepare_input_time_series_art.html</loc></url>
+<url><loc>/reference/prepare_tmb_inputs.html</loc></url>
+<url><loc>/reference/quarter_year_labels.html</loc></url>
+<url><loc>/reference/read_csv_partial_cols.html</loc></url>
+<url><loc>/reference/read_hintr_output.html</loc></url>
+<url><loc>/reference/read_metadata.html</loc></url>
+<url><loc>/reference/read_population.html</loc></url>
+<url><loc>/reference/read_spectrum_projection_name.html</loc></url>
+<url><loc>/reference/read_spectrum_region_code.html</loc></url>
+<url><loc>/reference/read_spectrum_region_name.html</loc></url>
+<url><loc>/reference/report_tmb.html</loc></url>
+<url><loc>/reference/sample_tmb.html</loc></url>
+<url><loc>/reference/save_output.html</loc></url>
+<url><loc>/reference/save_output_package.html</loc></url>
+<url><loc>/reference/scale_gmrf_precision.html</loc></url>
+<url><loc>/reference/scatter_plotly.html</loc></url>
+<url><loc>/reference/sdreport_joint_precision.html</loc></url>
+<url><loc>/reference/select_naomi_data.html</loc></url>
+<url><loc>/reference/spread_areas.html</loc></url>
+<url><loc>/reference/subset_naomi_output.html</loc></url>
+<url><loc>/reference/subset_output_package.html</loc></url>
+<url><loc>/reference/survey_mf.html</loc></url>
+<url><loc>/reference/tag_data_inputs.html</loc></url>
+<url><loc>/reference/th_map.html</loc></url>
+<url><loc>/reference/validate_model_options.html</loc></url>
+<url><loc>/reference/write_datapack_csv.html</loc></url>
+<url><loc>/reference/write_navigator_checklist.html</loc></url>
 </urlset>
+

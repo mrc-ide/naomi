@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -28,7 +28,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -45,13 +45,13 @@
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Select data for model fitting</h1>
-    
+
     <div class="hidden name"><code>select_naomi_data.Rd</code></div>
     </div>
 
@@ -95,87 +95,89 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>naomi_mf</dt>
+
+
+<dl><dt id="arg-naomi-mf">naomi_mf<a class="anchor" aria-label="anchor" href="#arg-naomi-mf"></a></dt>
 <dd><p>A Naomi model frame object.</p></dd>
 
 
-<dt>survey_hiv_indicators</dt>
+<dt id="arg-survey-hiv-indicators">survey_hiv_indicators<a class="anchor" aria-label="anchor" href="#arg-survey-hiv-indicators"></a></dt>
 <dd><p>Data frame of survey estimates, or NULL to exclude any survey data.</p></dd>
 
 
-<dt>anc_testing</dt>
+<dt id="arg-anc-testing">anc_testing<a class="anchor" aria-label="anchor" href="#arg-anc-testing"></a></dt>
 <dd><p>Data frame of ANC routine testing outcomes, or NULL to exclude any ANC data.</p></dd>
 
 
-<dt>art_number</dt>
+<dt id="arg-art-number">art_number<a class="anchor" aria-label="anchor" href="#arg-art-number"></a></dt>
 <dd><p>Data frame of number currently receiving ART, or NULL to exclude any ART data.</p></dd>
 
 
-<dt>prev_survey_ids</dt>
+<dt id="arg-prev-survey-ids">prev_survey_ids<a class="anchor" aria-label="anchor" href="#arg-prev-survey-ids"></a></dt>
 <dd><p>A character vector of <code>survey_id</code>s for prevalence data.</p></dd>
 
 
-<dt>artcov_survey_ids</dt>
+<dt id="arg-artcov-survey-ids">artcov_survey_ids<a class="anchor" aria-label="anchor" href="#arg-artcov-survey-ids"></a></dt>
 <dd><p>A character vector of <code>survey_id</code>s for ART coverage data.</p></dd>
 
 
-<dt>recent_survey_ids</dt>
+<dt id="arg-recent-survey-ids">recent_survey_ids<a class="anchor" aria-label="anchor" href="#arg-recent-survey-ids"></a></dt>
 <dd><p>A character vector of <code>survey_id</code>s for recent HIV infection status.</p></dd>
 
 
-<dt>vls_survey_ids</dt>
+<dt id="arg-vls-survey-ids">vls_survey_ids<a class="anchor" aria-label="anchor" href="#arg-vls-survey-ids"></a></dt>
 <dd><p>A character vector of <code>survey_id</code>s for survey VLS among all HIV+ persons.</p></dd>
 
 
-<dt>artnum_calendar_quarter_t1</dt>
+<dt id="arg-artnum-calendar-quarter-t-">artnum_calendar_quarter_t1<a class="anchor" aria-label="anchor" href="#arg-artnum-calendar-quarter-t-"></a></dt>
 <dd><p>Calendar quarter for first time point for number on ART.</p></dd>
 
 
-<dt>artnum_calendar_quarter_t2</dt>
+<dt id="arg-artnum-calendar-quarter-t-">artnum_calendar_quarter_t2<a class="anchor" aria-label="anchor" href="#arg-artnum-calendar-quarter-t-"></a></dt>
 <dd><p>Calendar quarter for second time point for number on ART.</p></dd>
 
 
-<dt>anc_clients_year_t2</dt>
+<dt id="arg-anc-clients-year-t-">anc_clients_year_t2<a class="anchor" aria-label="anchor" href="#arg-anc-clients-year-t-"></a></dt>
 <dd><p>Calendar year (possibly multiple) for number of ANC clients at year 2.</p></dd>
 
 
-<dt>anc_prev_year_t1</dt>
+<dt id="arg-anc-prev-year-t-">anc_prev_year_t1<a class="anchor" aria-label="anchor" href="#arg-anc-prev-year-t-"></a></dt>
 <dd><p>Calendar year (possibly multiple) for first time point for ANC prevalence.</p></dd>
 
 
-<dt>anc_prev_year_t2</dt>
+<dt id="arg-anc-prev-year-t-">anc_prev_year_t2<a class="anchor" aria-label="anchor" href="#arg-anc-prev-year-t-"></a></dt>
 <dd><p>Calendar year (possibly multiple) for second time point for ANC prevalence.</p></dd>
 
 
-<dt>anc_artcov_year_t1</dt>
+<dt id="arg-anc-artcov-year-t-">anc_artcov_year_t1<a class="anchor" aria-label="anchor" href="#arg-anc-artcov-year-t-"></a></dt>
 <dd><p>Calendar year (possibly multiple) for first time point for ANC ART coverage.</p></dd>
 
 
-<dt>anc_artcov_year_t2</dt>
+<dt id="arg-anc-artcov-year-t-">anc_artcov_year_t2<a class="anchor" aria-label="anchor" href="#arg-anc-artcov-year-t-"></a></dt>
 <dd><p>Calendar year (possibly multiple) for second time point for ANC ART coverage.</p></dd>
 
 
-<dt>deff_prev</dt>
+<dt id="arg-deff-prev">deff_prev<a class="anchor" aria-label="anchor" href="#arg-deff-prev"></a></dt>
 <dd><p>Approximate design effect for survey prevalence.</p></dd>
 
 
-<dt>deff_artcov</dt>
+<dt id="arg-deff-artcov">deff_artcov<a class="anchor" aria-label="anchor" href="#arg-deff-artcov"></a></dt>
 <dd><p>Approximate design effect for survey ART coverage.</p></dd>
 
 
-<dt>deff_recent</dt>
+<dt id="arg-deff-recent">deff_recent<a class="anchor" aria-label="anchor" href="#arg-deff-recent"></a></dt>
 <dd><p>Approximate design effect for survey proportion recently infected.</p></dd>
 
 
-<dt>deff_vls</dt>
+<dt id="arg-deff-vls">deff_vls<a class="anchor" aria-label="anchor" href="#arg-deff-vls"></a></dt>
 <dd><p>Approximate design effect for survey viral load suppression.</p></dd>
 
 
-<dt>spec_program_data</dt>
+<dt id="arg-spec-program-data">spec_program_data<a class="anchor" aria-label="anchor" href="#arg-spec-program-data"></a></dt>
 <dd><p>Object of class <code>"spec_program_data"</code> consisting of aggregated program data inputs to Spectrum. Provided for checking against Naomi inputs. If <code>NULL</code> then checks are not conducted.</p></dd>
 
 
-<dt>anc_clients_year_t2_num_monhts</dt>
+<dt id="arg-anc-clients-year-t-num-monhts">anc_clients_year_t2_num_monhts<a class="anchor" aria-label="anchor" href="#arg-anc-clients-year-t-num-monhts"></a></dt>
 <dd><p>Number of months of reporting reflected in the year(s) recorded in <code>anc_clients_year_t2</code>.</p></dd>
 
 </dl></div>
@@ -211,15 +213,15 @@ the data to be used. All stratifications must also appear in the <code>naomi_dat
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
