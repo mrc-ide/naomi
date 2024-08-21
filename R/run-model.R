@@ -107,9 +107,10 @@ run_model <- function(data, options, validate) {
   progress$start("uncertainty")
   progress$print()
 
-  fit <- sample_tmb(fit,
-                    nsample = options$no_of_samples,
-                    rng_seed = options$rng_seed)
+  ## !!! TEMPORARY -- DO NOT MERGE
+  ## fit <- sample_tmb(fit,
+  ##                   nsample = options$no_of_samples,
+  ##                   rng_seed = options$rng_seed)
 
   progress$complete("uncertainty")
   progress$start("prepare_outputs")
@@ -121,9 +122,10 @@ run_model <- function(data, options, validate) {
   progress$complete("prepare_outputs")
   progress$print()
 
-  # Warnings for simulated outputs
-  output_naomi_warning(outputs, "prevalence", 0.5, "model_fit")
-  output_naomi_warning(outputs, "art_coverage", 1, "model_fit")
+  ## !!! TEMPORARY -- DO NOT MERGE
+  ## # Warnings for simulated outputs
+  ## output_naomi_warning(outputs, "prevalence", 0.5, "model_fit")
+  ## output_naomi_warning(outputs, "art_coverage", 1, "model_fit")
 
   list(
     output_package = outputs,
