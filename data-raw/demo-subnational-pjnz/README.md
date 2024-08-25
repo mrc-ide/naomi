@@ -1,4 +1,8 @@
-These files are alternative testing and demonstration files representing subnational Spectrum files. Three Spectrum PJNZ files werecreated based on the Malawi 2019 PJNZ file.
+These files are alternative testing and demonstration files representing subnational 
+Spectrum files. Three Spectrum PJNZ files werecreated based on the Malawi 2019 PJNZ file.
+
+_Update 22 August 2024:_ Updated files were created with the Malawi 2024 PJNZ file
+using Sepctrum 6.36.
 
 Region codes in .PJN files manually changed as follows:
 
@@ -53,5 +57,7 @@ PMTCT and ANC clients were scaled
 ### EPP fitting
 
 EPP was refit single region in each file.
+
+_For the 2024 Spectrum file:_ EPP by region was re-imported from the 2022 PJNZ files
 
 Analysis was done using the Spectrum v5.87 and based from the 2019 Malawi Spectrum file.
