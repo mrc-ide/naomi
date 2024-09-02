@@ -4,12 +4,15 @@
 \alias{aggregate_art}
 \title{Aggregate ART data according to area hierarchy}
 \usage{
-aggregate_art(art, shape)
+aggregate_art(art, shape, drop_geometry = TRUE)
 }
 \arguments{
 \item{art}{Path to file containing ART data or ART data object}
 
 \item{shape}{Path to file containing geojson areas data or areas data object}
+
+\item{drop_geometry}{Setting this to FALSE will skip dropping geometry on
+the shape file (default TRUE)}
 }
 \value{
 Aggregated ART data containing columns area_id, area_name,
