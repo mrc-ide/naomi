@@ -343,72 +343,46 @@ aggregate_anc <- function(anc, shape) {
     dplyr::left_join( dplyr::select(areas, area_id, area_level), by = "area_id")
 
   # Split data by year and aggregate from lowest level available
-  anc_dat <- split(anc_testing , f = anc_testing$year)
-
   aggregate_anc_by_level <- function(anc_testing){
-
     ## Recursively aggregate ANC data up from lowest level of programme data provided
     # Level to aggregate from
     anc_level <- max(anc_testing$area_level)
-    max_dat <- dplyr::filter(anc_testing, area_level == anc_level)
-    max_shape <- dplyr::filter(areas, area_level == anc_level)
 
+    higher_areas <- areas %>%
+      dplyr::filter(area_level <= anc_level) %>%
+      dplyr::select(area_id, area_level, parent_area_id)
 
-    # Ensure entries exist for all programme data age/sex/quarter combinations X
-    # shape file area_ids at finest stratification
-    anc_full <- tidyr::crossing(area_id = unique(max_shape$area_id),
-                                age_group = unique(max_dat$age_group),
-                                year = unique(max_dat$year)) |>
-      dplyr::left_join(max_dat, by = c("area_id", "age_group", "year"))
+    agg_anc <- anc_testing %>%
+      dplyr::left_join(higher_areas, by = c("area_id", "area_level"))
 
-    # Join ANC data to hierarchy
-    anc_testing_wide <- areas |>
-      dplyr::filter(area_level <= anc_level) |>
-      spread_areas() |>
-      dplyr::right_join(anc_full, by = "area_id", multiple = "all")
-
-
-    # Function to aggregate based on area_id[0-9]$ columns in hierarchy
-    aggregate_data_anc <- function(col_name) {
-
-      max_admin <- paste0("area_id", anc_level)
-
-      if(col_name == max_admin) {
-        # Don't aggregate lowest level of data to retain missing values
-        df <- anc_testing_wide |> dplyr::select(area_id, age_group, year,
-                                                 all_of(cols_keep))
-      } else {
-
-        df <- anc_testing_wide |>
-          dplyr::group_by(!!col_name := .data[[col_name]], age_group, year) |>
-          dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)), ~sum(., na.rm = TRUE),
-                              .groups = "drop") |>
-          dplyr::rename_with(~gsub("[0-9]$", "", .))
-      }
+    for (level in anc_level:1) {
+      agg_anc <- agg_anc %>%
+        dplyr::filter(area_level == level) %>%
+        dplyr::group_by(parent_area_id) %>%
+        dplyr::summarise_at(dplyr::vars(dplyr::all_of(cols_keep)),
+                            ~sum(., na.rm = TRUE),
+                            .groups = "drop") %>%
+        dplyr::rename(area_id = parent_area_id) %>%
+        dplyr::left_join(higher_areas, by = "area_id") %>%
+        dplyr::bind_rows(agg_anc)
     }
 
-    # Aggregated data frame for area levels
-    aggregate_cols <- grep("^area_id*\\s*[0-9]$", colnames(anc_testing_wide), value = TRUE)
+    year <- dplyr::cur_group() %>% dplyr::pull(year)
 
-    aggregated_anc <- aggregate_cols |>
-      lapply(aggregate_data_anc) |>
-      dplyr::bind_rows() |>
-      dplyr::ungroup() |>
-      dplyr::bind_rows()
+    agg_anc %>%
+      dplyr::mutate(year = year) %>%
+      tidyr::fill(age_group, year, .direction = "up")
   }
 
-  anc_long <- lapply(anc_dat, aggregate_anc_by_level) |>
-    dplyr::bind_rows() |>
+  anc_long <- anc_testing %>%
+    dplyr::group_by(year) %>%
+    dplyr::reframe(aggregate_anc_by_level(dplyr::cur_data())) %>%
+    dplyr::left_join(
+      areas %>% dplyr::select(area_id, area_name, area_level_label, area_sort_order),
+      by = "area_id"
+    ) %>%
     dplyr::mutate(time_period = as.character(year), quarter = "Q4", sex = "female",
-                  calendar_quarter = paste0("CY", time_period, quarter)) |>
-    dplyr::left_join(areas |>
-                       dplyr::select(area_id, area_name, area_level,area_level_label,
-                                     parent_area_id, area_sort_order),
-                     by = "area_id") |>
-    dplyr::select(area_id, area_name, area_level, area_level_label,parent_area_id,
-                  area_sort_order, sex, age_group, time_period, year, quarter,
-                  calendar_quarter, dplyr::all_of(cols_keep)) |>
-    dplyr::ungroup() |>
+                  calendar_quarter = paste0("CY", time_period, quarter)) %>%
     dplyr::arrange(year, area_sort_order)
 
   anc_long$area_hierarchy <- build_hierarchy_label(anc_long)
