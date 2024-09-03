@@ -385,7 +385,6 @@ aggregate_anc <- function(anc, shape, drop_geometry = TRUE) {
     agg_anc <- agg_anc |>
       dplyr::filter(area_level == level) |>
       dplyr::left_join(area_with_parent_ids, by = "area_id") |>
-      # TODO test age group in group_by vs summarise
       dplyr::group_by(parent_area_id, year) |>
       # > year and age_group assumed to be the same as we aggregate up so
       #   just take the first value
