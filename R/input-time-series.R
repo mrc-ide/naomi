@@ -33,24 +33,33 @@ aggregate_art <- function(art, shape, drop_geometry = TRUE) {
   cols_list <- c("art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos")
   cols_keep <- intersect(cols_list, colnames(art))
 
+  # make sure the ART data is the correct shape
   clean_art <- art |>
     dplyr::select(area_id, sex, age_group, calendar_quarter, dplyr::any_of(cols_list))
 
+  # get all combinations of all stratifications:
+  # > every calendar_quarter will have all age_groups present within that
+  #   year in the data. If only one row is missing age_group "Y000_014" within
+  #   a given calendar_quarter then we fill it in with NAs. If all rows within
+  #   a calendar_quarter are missing "Y000_014" then we omit it
+  # > within a calendar_quarter and age_group we have consistent sex values which
+  #   are either "both" or one of "male" and "female". Validation of sex values is
+  #   done elsewhere
   all_strat_art <- clean_art |>
     dplyr::group_by(calendar_quarter, age_group) |>
-    dplyr::reframe(
-      tidyr::expand_grid(
-        age_group = dplyr::first(age_group),
-        sex = unique(dplyr::cur_data()$sex)
-      )
-    ) |>
+    dplyr::reframe(sex = unique(dplyr::cur_data()$sex)) |>
     dplyr::ungroup()
 
+  # this gets the max area_level per quarter so we can get a complete list of
+  # area_ids within that area level and left join later
   quarter_by_area_level <- clean_art |>
     dplyr::left_join(dplyr::select(areas, area_id, area_level), by = "area_id") |>
     dplyr::group_by(calendar_quarter) |>
     dplyr::summarise(area_level = max(area_level), .groups = "drop")
 
+  # combine all_strat_art with quarter_by_area_level and clean_art to get a
+  # complete data with all stratification combinations and area_ids for level
+  # with NAs where data was omitted in the CSV
   agg_art <- all_strat_art |>
     dplyr::left_join(quarter_by_area_level, by = "calendar_quarter") |>
     dplyr::left_join(dplyr::select(areas, area_id, area_level), by = "area_level") |>
@@ -61,15 +70,16 @@ aggregate_art <- function(art, shape, drop_geometry = TRUE) {
 
   max_area_level <- max(agg_art$area_level)
 
+  # every iteration of the loop aggregates the area up one area_level and
+  # adds all those rows to agg_art
   for (level in max_area_level:1) {
     agg_art <- agg_art |>
       dplyr::filter(area_level == level) |>
       dplyr::left_join(area_with_parent_ids, by = "area_id") |>
       dplyr::group_by(parent_area_id, calendar_quarter, sex, age_group) |>
+      # > area_level is one less since we are aggregating to the parent
+      # > sum across all the other numeric values ignoring NAs
       dplyr::summarise(
-        calendar_quarter = dplyr::first(calendar_quarter),
-        age_group = dplyr::first(age_group),
-        sex = dplyr::first(sex),
         area_level = dplyr::first(area_level) - 1,
         dplyr::across(dplyr::any_of(cols_list), ~sum(.x, na.rm = TRUE)),
         .groups = "drop"
@@ -78,6 +88,7 @@ aggregate_art <- function(art, shape, drop_geometry = TRUE) {
       dplyr::bind_rows(agg_art)
   }  
 
+  # add in extra columns and sort
   art_long <- agg_art |>
     dplyr::left_join(
       areas |> dplyr::select(
@@ -365,14 +376,10 @@ aggregate_anc <- function(anc, shape, drop_geometry = TRUE) {
     agg_anc <- agg_anc |>
       dplyr::filter(area_level == level) |>
       dplyr::left_join(area_with_parent_ids, by = "area_id") |>
-      dplyr::group_by(parent_area_id, year) |>
-      # > year and age_group assumed to be the same as we aggregate up so
-      #   just take the first value
+      dplyr::group_by(parent_area_id, year, age_group) |>
       # > area_level is one less since we are aggregating to the parent
       # > sum across all the other numeric values ignoring NAs
       dplyr::summarise(
-        year = dplyr::first(year),
-        age_group = dplyr::first(age_group),
         area_level = dplyr::first(area_level) - 1,
         dplyr::across(dplyr::any_of(cols_list), ~sum(.x, na.rm = TRUE)),
         .groups = "drop"
