@@ -80,7 +80,7 @@ aggregate_art <- function(art, shape, drop_geometry = TRUE) {
       # > area_level is one less since we are aggregating to the parent
       # > sum across all the other numeric values ignoring NAs
       dplyr::summarise(
-        area_level = dplyr::first(area_level) - 1,
+        area_level = level - 1,
         dplyr::across(dplyr::any_of(cols_list), ~sum(.x, na.rm = TRUE)),
         .groups = "drop"
       ) |>
@@ -280,7 +280,7 @@ prepare_input_time_series_art <- function(art, shape) {
       #   up to the parent
       dplyr::summarise(
         missing_ids = list(unlist(missing_ids, FALSE, FALSE)),
-        area_level = dplyr::first(area_level) - 1,
+        area_level = level - 1,
         .groups = "drop"
       ) |>
       dplyr::rename(area_id = parent_area_id) |>
@@ -380,7 +380,7 @@ aggregate_anc <- function(anc, shape, drop_geometry = TRUE) {
       # > area_level is one less since we are aggregating to the parent
       # > sum across all the other numeric values ignoring NAs
       dplyr::summarise(
-        area_level = dplyr::first(area_level) - 1,
+        area_level = level - 1,
         dplyr::across(dplyr::any_of(cols_list), ~sum(.x, na.rm = TRUE)),
         .groups = "drop"
       ) |>
@@ -478,7 +478,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
       #   up to the parent
       dplyr::summarise(
         missing_ids = list(unlist(missing_ids, FALSE, FALSE)),
-        area_level = dplyr::first(area_level) - 1,
+        area_level = level - 1,
         .groups = "drop"
       ) |>
       dplyr::rename(area_id = parent_area_id) |>
