@@ -5,8 +5,6 @@
 ##'
 ##' @param art Path to file containing ART data or ART data object
 ##' @param shape Path to file containing geojson areas data or areas data object
-##' @param drop_geometry Setting this to FALSE will skip dropping geometry on
-##'   the shape file (default TRUE)
 ##'
 ##' @return Aggregated ART data containing columns area_id, area_name,
 ##' area_level, area_level_label, parent_area_id, sex, age_group, time_period,
@@ -16,7 +14,7 @@
 aggregate_art <- function(art, shape) {
 
   ## Check if shape is object or file path
-  if(!inherits(shape, "sf")) {
+  if(!any(inherits(shape, c("sf", "tbl")))) {
     areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
   } else {
     areas <- shape |> sf::st_drop_geometry()
@@ -300,8 +298,6 @@ prepare_input_time_series_art <- function(art, shape) {
 ##'
 ##' @param anc Path to file containing ANC data or ANC data object
 ##' @param shape Path to file containing geojson areas data or areas data object
-##' @param drop_geometry Setting this to FALSE will skip dropping geometry on
-##'   the shape file (default TRUE)
 ##'
 ##' @return Aggregated ANC data containing columns area_id, area_name, area_level,
 ##' area_level_label, sex,age_group, time_period, year, quarter, calendar_quarter,
@@ -315,7 +311,7 @@ aggregate_anc <- function(anc, shape) {
   # Level to aggregate from
 
   ## Check if shape is object or file path
-  if(!inherits(shape, "sf")) {
+  if(!any(inherits(shape, c("sf", "tbl")))) {
     areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
   } else {
     areas <- shape |> sf::st_drop_geometry()

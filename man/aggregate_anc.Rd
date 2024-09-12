@@ -4,15 +4,12 @@
 \alias{aggregate_anc}
 \title{Aggregate ANC data according to area hierarchy}
 \usage{
-aggregate_anc(anc, shape, drop_geometry = TRUE)
+aggregate_anc(anc, shape)
 }
 \arguments{
 \item{anc}{Path to file containing ANC data or ANC data object}
 
 \item{shape}{Path to file containing geojson areas data or areas data object}
-
-\item{drop_geometry}{Setting this to FALSE will skip dropping geometry on
-the shape file (default TRUE)}
 }
 \value{
 Aggregated ANC data containing columns area_id, area_name, area_level,
