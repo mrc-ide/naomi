@@ -13,17 +13,13 @@
 ##'  year, quarter,calendar_quarter and art_current
 ##'
 ##' @export
-aggregate_art <- function(art, shape, drop_geometry = TRUE) {
+aggregate_art <- function(art, shape) {
 
   ## Check if shape is object or file path
-  if (drop_geometry) {
-    if(!inherits(shape, "sf")) {
-      areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
-    } else {
-      areas <- shape |> sf::st_drop_geometry()
-    }
+  if(!inherits(shape, "sf")) {
+    areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
   } else {
-    areas <- shape
+    areas <- shape |> sf::st_drop_geometry()
   }
 
   ## Check if art is object or file path
@@ -135,7 +131,7 @@ prepare_input_time_series_art <- function(art, shape) {
 
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
-  art_long <- aggregate_art(art, areas, drop_geometry = FALSE)
+  art_long <- aggregate_art(art, areas)
   sex_level <- unique(art_long$sex)
   age_level <- unique(art_long$age_group)
   admin_level <- max(art_long$area_level)
@@ -313,20 +309,16 @@ prepare_input_time_series_art <- function(art, shape) {
 ##' births_clients_ratio
 
 ##' @export
-aggregate_anc <- function(anc, shape, drop_geometry = TRUE) {
+aggregate_anc <- function(anc, shape) {
 
   ## Recursively aggregate ANC data up from lowest level of programm data provided
   # Level to aggregate from
 
   ## Check if shape is object or file path
-  if (drop_geometry) {
-    if(!inherits(shape, "sf")) {
-      areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
-    } else {
-      areas <- shape |> sf::st_drop_geometry()
-    }
+  if(!inherits(shape, "sf")) {
+    areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
   } else {
-    areas <- shape
+    areas <- shape |> sf::st_drop_geometry()
   }
 
   ## Check if anc is object or file path
@@ -430,7 +422,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
   }
 
   ## Shape data for plot
-  anc_long <- aggregate_anc(anc, areas, drop_geometry = FALSE)
+  anc_long <- aggregate_anc(anc, areas)
 
   anc_plot_data_long <- anc_long |>
     dplyr::mutate(
