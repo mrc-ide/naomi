@@ -1,10 +1,11 @@
 # naomi 2.9.28
 
-* Make duckdb an optional dependency
+* Suppress "some observations have no neighbours" and "neighbour object has 2 sub-graphs" warnings from `spdep` v1.3.6. We expect this warning for some countries and it will make tests and output noisy to leave on.
 
 # naomi 2.9.27
 
 * Show calibration plot ratio values to nearest 0.1. 
+* Make duckdb an optional dependency
 
 # naomi 2.9.26
 

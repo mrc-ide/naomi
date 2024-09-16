@@ -31,20 +31,27 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
   paste0(brio::readLines(tmp), collapse = "\n")
 }
 
-suppress_one_warning <- function(expr, regexp) {
-  withCallingHandlers(expr,
-    warning = function(w) {
-        if(grepl(regexp, w$message))
-          invokeRestart("muffleWarning")
-    })
-}
-
-suppress_one_message <- function(expr, regexp) {
-  withCallingHandlers(expr,
-    message = function(w) {
-        if(grepl(regexp, w$message))
-          invokeRestart("muffleMessage")
-    })
+suppress_conditions <- function(expr, message_regexp = NULL,
+                                warning_regexp = NULL) {
+  handlers <- list()
+  if (!is.null(message_regexp)) {
+    handlers$message <- function(w) {
+      if(grepl(paste(message_regexp, collapse = "|"), w$message)) {
+        invokeRestart("muffleMessage")
+      }
+    }
+  }
+  if (!is.null(warning_regexp)) {
+    handlers$warning <- function(w) {
+      if(grepl(paste(warning_regexp, collapse = "|"), w$message)) {
+        invokeRestart("muffleWarning")
+      }
+    }
+  }
+  with_handlers <- function(...) {
+    withCallingHandlers(expr, ...)
+  }
+  do.call(with_handlers, handlers)
 }
 
 `%||%` <- function(a, b) {
