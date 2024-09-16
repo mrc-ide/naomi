@@ -1,6 +1,6 @@
 # naomi 2.9.28
 
-* Suppress "some observations have no neighbours" and "neighbour object has 2 sub-graphs" warnings from `spdep` v1.3.6. We expect this warning for some countries and it will make tests and output noisy to leave on.
+* Suppress "some observations have no neighbours" and "neighbour object has 2 sub-graphs" warnings from `spdep` v1.3.6 see https://r-spatial.github.io/spdep/news/index.html#version-13-6-development. We expect this warning for some countries and it will make tests and output noisy to leave on.
 
 # naomi 2.9.27
 
