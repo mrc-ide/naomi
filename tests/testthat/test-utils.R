@@ -31,9 +31,9 @@ test_that("suppress_conditions works as expected", {
   expect_silent(suppress_conditions(f_both(1),
                                     message_regexp = "msg 1",
                                     warning_regexp = "Raising 1"))
-  expect_warning(suppress_conditions(f(1), message_regexp = "msg 1"),
+  expect_warning(suppress_conditions(f_both(1), message_regexp = "msg 1"),
                  "^Raising 1$")
-  expect_message(suppress_conditions(f(1), warning_regexp = "Raising 1"),
+  expect_message(suppress_conditions(f_both(1), warning_regexp = "Raising 1"),
                  "^msg 1\n$")
 })
 

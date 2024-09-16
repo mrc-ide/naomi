@@ -27,7 +27,7 @@ create_adj_matrix <- function(sh) {
       message_regexp = "although coordinates are longitude/latitude, st_intersects assumes that they are planar",
       warning_regexp = c(
         "some observations have no neighbours",
-        "neighbour object has 2 sub-graphs")
+        "neighbour object has \\d+ sub-graphs")
       )
     adj <- spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
     colnames(adj) <- rownames(adj)
@@ -83,7 +83,7 @@ scale_gmrf_precision <- function(Q,
   ## but the neighbours list does not depend on it.
   nb <- suppress_conditions(
     spdep::mat2listw(abs(Q), style = "B", zero.policy = TRUE)$neighbours,
-    warning_regexp = "neighbour object has 2 sub-graphs"
+    warning_regexp = "neighbour object has \\d+ sub-graphs"
   )
   comp <- spdep::n.comp.nb(nb)
 
