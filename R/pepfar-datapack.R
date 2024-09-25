@@ -210,7 +210,7 @@ datapack_aggregate_1to9 <- function(indicators) {
 
 
   indicators_keep <- c("plhiv", "plhiv_attend", "untreated_plhiv_attend", "infections",
-                       "population", "art_current", "art_current_residents", "aware_plhiv_num")
+                       "population", "art_current", "art_current_residents", "aware_plhiv_num", "aware_plhiv_attend")
 
   indicators1to9 <- indicators %>%
     dplyr::filter(
