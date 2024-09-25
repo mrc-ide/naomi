@@ -332,9 +332,14 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
     m_artattend_ij_t2 <- mode$artattend_ij_t2_out
     m_artnum_reside_t2 <- mode$artnum_t2_out[v$reside_out_idx]
     m_artnum_attend_t2 <- mode$artattend_t2_out[v$attend_out_idx]
+
+    m_artattend_ij_t3 <- mode$artattend_ij_t3_out
+    m_artnum_reside_t3 <- mode$artnum_t3_out[v$reside_out_idx]
+    m_artnum_attend_t3 <- mode$artattend_t3_out[v$attend_out_idx]    
   } else {
     m_artattend_ij_t1 <- NULL
     m_artattend_ij_t2 <- NULL
+    m_artattend_ij_t3 <- NULL
   }
 
   if(!is.null(m_artattend_ij_t1)) {
@@ -353,8 +358,16 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
     m_prop_attendees_t2 <- NULL
   }
 
+  if(!is.null(m_artattend_ij_t3)) {
+    m_prop_residents_t3 <- m_artattend_ij_t3 / m_artnum_reside_t3
+    m_prop_attendees_t3 <- m_artattend_ij_t3 / m_artnum_attend_t3
+  } else {
+    m_prop_residents_t3 <- NULL
+    m_prop_attendees_t3 <- NULL
+  }
+  
   if(!is.null(naomi_fit$sample)) {
-
+    
     s_artattend_ij_t1 <- naomi_fit$sample$artattend_ij_t1_out
     s_artnum_reside_t1 <- naomi_fit$sample$artnum_t1_out[v$reside_out_idx, ]
     s_artnum_attend_t1 <- naomi_fit$sample$artattend_t1_out[v$attend_out_idx, ]
@@ -362,9 +375,14 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
     s_artattend_ij_t2 <- naomi_fit$sample$artattend_ij_t2_out
     s_artnum_reside_t2 <- naomi_fit$sample$artnum_t2_out[v$reside_out_idx, ]
     s_artnum_attend_t2 <- naomi_fit$sample$artattend_t2_out[v$attend_out_idx, ]
+
+    s_artattend_ij_t3 <- naomi_fit$sample$artattend_ij_t3_out
+    s_artnum_reside_t3 <- naomi_fit$sample$artnum_t3_out[v$reside_out_idx, ]
+    s_artnum_attend_t3 <- naomi_fit$sample$artattend_t3_out[v$attend_out_idx, ]    
   } else {
     s_artattend_ij_t1 <- NULL
     s_artattend_ij_t2 <- NULL
+    s_artattend_ij_t3 <- NULL
   }
 
   if(!is.null(s_artattend_ij_t1)) {
@@ -383,6 +401,14 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
     s_prop_attendees_t2 <- NULL
   }
 
+  if(!is.null(s_artattend_ij_t3)) {
+    s_prop_residents_t3 <- s_artattend_ij_t3 / s_artnum_reside_t3
+    s_prop_attendees_t3 <- s_artattend_ij_t3 / s_artnum_attend_t3
+  } else {
+    s_prop_residents_t3 <- NULL
+    s_prop_attendees_t3 <- NULL
+  }
+  
   v$reside_out_idx <- NULL
   v$attend_out_idx <- NULL
 
@@ -396,7 +422,12 @@ extract_art_attendance <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   v_t2 <- add_stats(v_t2, m_prop_residents_t2, s_prop_residents_t2, "prop_residents_", na.rm = na.rm)
   v_t2 <- add_stats(v_t2, m_prop_attendees_t2, s_prop_attendees_t2, "prop_attendees_", na.rm = na.rm)
 
-  dplyr::bind_rows(v_t1, v_t2)
+  v_t3 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter3)
+  v_t3 <- add_stats(v_t3, m_artattend_ij_t3, s_artattend_ij_t3, "artnum_", na.rm = na.rm)
+  v_t3 <- add_stats(v_t3, m_prop_residents_t3, s_prop_residents_t3, "prop_residents_", na.rm = na.rm)
+  v_t3 <- add_stats(v_t3, m_prop_attendees_t3, s_prop_attendees_t3, "prop_attendees_", na.rm = na.rm)  
+
+  dplyr::bind_rows(v_t1, v_t2, v_t3)
 }
 
 #' Align model data inputs and model estimates

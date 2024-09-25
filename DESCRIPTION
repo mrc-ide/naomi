@@ -25,7 +25,7 @@ Imports:
     brio,
     data.tree,
     dplyr (>= 1.1.0),
-    duckdb (== 0.9.1),
+    duckdb (>= 1.0.0),
     eppasm (>= 0.7.1),
     first90 (>= 1.6.1),
     forcats,
