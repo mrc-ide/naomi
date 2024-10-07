@@ -185,7 +185,7 @@ read_dp_art_dec31 <- function(dp) {
 
   ## In Spectrum 2023, "<NeedARTDec31 MV>" was updated to include children in the totals
   ## -> now need to sum over 5-year age groups for age 15+ to get the adult ART need
-  
+
   male_15plus_needart <- dpsub("<NeedARTDec31 MV>", 4:17*3 + 3, timedat.idx)
   male_15plus_needart <- vapply(lapply(male_15plus_needart, as.numeric), sum, numeric(1))
 
@@ -195,14 +195,14 @@ read_dp_art_dec31 <- function(dp) {
   art15plus_need <- rbind(male_15plus_needart, female_15plus_needart)
   dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
 
-  
+
   if (any(art15plus_num[art15plus_isperc == 1] < 0 |
           art15plus_num[art15plus_isperc == 1] > 100)) {
     stop("Invalid percentage on ART entered for adult ART")
   }
 
   ## # Adult on ART adjustment factor
-  ## 
+  ##
   ## * Implemented from around Spectrum 6.2 (a few versions before)
   ## * Allows user to specify scalar to reduce number on ART in each year ("<AdultARTAdjFactor>")
   ## * Enabled / disabled by checkbox flag ("<AdultARTAdjFactorFlag>")
@@ -281,7 +281,7 @@ read_dp_art_dec31 <- function(dp) {
   names(child_art) <- proj.years
 
   ## # Child on ART adjustment factor
-  ## 
+  ##
   ## * Implemented same as adult adjustment factor above
 
   if (exists_dptag("<ChildARTAdjFactorFlag>") &&
@@ -686,5 +686,8 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
 
 read_dp <- function(pjnz) {
   dpfile <- grep(".DP$", utils::unzip(pjnz, list = TRUE)$Name, value = TRUE)
-  utils::read.csv(unz(pjnz, dpfile), as.is = TRUE)
+  as.data.frame(
+    readr::read_csv(unz(pjnz, dpfile),
+                    name_repair = "minimal",
+                    col_types = readr::cols(.default = "c")))
 }
