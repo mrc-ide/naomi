@@ -43,7 +43,7 @@ aggregate_art <- function(art, shape) {
   #   done elsewhere
   all_strat_art <- clean_art |>
     dplyr::group_by(calendar_quarter, age_group) |>
-    dplyr::reframe(sex = unique(dplyr::cur_data()$sex)) |>
+    dplyr::reframe(unique(dplyr::pick(sex))) |>
     dplyr::ungroup()
 
   # this gets the max area_level per quarter so we can get a complete list of
@@ -53,12 +53,13 @@ aggregate_art <- function(art, shape) {
     dplyr::group_by(calendar_quarter) |>
     dplyr::summarise(area_level = max(area_level), .groups = "drop")
 
+
   # combine all_strat_art with quarter_by_area_level and clean_art to get a
   # complete data with all stratification combinations and area_ids for level
   # with NAs where data was omitted in the CSV
   agg_art <- all_strat_art |>
-    dplyr::left_join(quarter_by_area_level, by = "calendar_quarter") |>
-    dplyr::left_join(dplyr::select(areas, area_id, area_level), by = "area_level") |>
+    dplyr::left_join(quarter_by_area_level, by = "calendar_quarter", relationship = "many-to-many") |>
+    dplyr::left_join(dplyr::select(areas, area_id, area_level), by = "area_level", relationship = "many-to-many") |>
     dplyr::left_join(clean_art, by = c("area_id", "calendar_quarter", "age_group", "sex"))
 
   area_with_parent_ids <- areas |>
@@ -82,7 +83,8 @@ aggregate_art <- function(art, shape) {
       ) |>
       dplyr::rename(area_id = parent_area_id) |>
       dplyr::bind_rows(agg_art)
-  }  
+  }
+
 
   # add in extra columns and sort
   art_long <- agg_art |>
@@ -260,7 +262,7 @@ prepare_input_time_series_art <- function(art, shape) {
     dplyr::filter(is.na(value) & !is.nan(value)) |>
     dplyr::select(-value) |>
     dplyr::mutate(missing_ids = as.list(area_id))
-  
+
   area_with_parent_ids <- areas |>
     dplyr::select(area_id, parent_area_id)
 
@@ -348,7 +350,7 @@ aggregate_anc <- function(anc, shape) {
     # expand each year row to multiple rows with all area_ids for that admin level
     # this is the complete list of area_ids that we need
     dplyr::left_join(
-      areas |> dplyr::select(area_id, area_level), by = "area_level"
+      areas |> dplyr::select(area_id, area_level), by = "area_level", relationship = "many-to-many"
     ) |>
     # left join complete list of area_ids with our potentially missing area_ids in
     # clean_anc to get rows of NAs if an area_id is missing
@@ -452,7 +454,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
     dplyr::filter(is.na(value) & !is.nan(value)) |>
     dplyr::select(-value) |>
     dplyr::mutate(missing_ids = as.list(area_id))
-  
+
   area_with_parent_ids <- areas |>
     dplyr::select(area_id, parent_area_id)
 
@@ -565,3 +567,132 @@ build_hierarchy_label <- function(meta_areas) {
   labels[is.na(labels)] <- root_name
   labels
 }
+
+##' Compare aggregated district ART inputs + spectrum totals
+
+##' Compare aggregated subnational ART inputs + spectrum totals for comparison table
+##'
+##' @param art Path to file containing ART data or ART data object
+##' @param shape Path to file containing geojson areas data or areas data object
+##' @param pjnz Path to zip file containing spectrum pjnz file/s
+##' @keywords internal
+prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
+
+
+  ## Check if shape is object or file path
+  if(!inherits(shape, "sf")) {
+    shape <- read_area_merged(shape) }
+
+  ## Check if art is object or file path
+  if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    art <- read_art_number(art, all_columns = TRUE)}
+
+  ## PJNZ either object or file path
+  if (!inherits(pjnz, "spec_program_data")) {
+    pjnz <- extract_pjnz_program_data(pjnz) }
+
+  ## Aggregate ART data
+  art_agreggated <- art |>
+    dplyr::left_join(shape,  by = "area_id") |>
+    dplyr::count(spectrum_region_code, calendar_quarter, sex, age_group,
+                 wt = art_current, name = "value_naomi")
+
+  if(identical(unique(art$sex), c("both"))) {
+  # If no sex aggregated data present in ART data, aggregate Spectrum by age
+    spec_aggreagted <- pjnz$art_dec31 |>
+      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
+      dplyr::count(spectrum_region_code, calendar_quarter, age_group,
+                   wt = art_dec31, name = "value_spectrum") |>
+      dplyr::mutate(sex = "both")
+
+  } else {
+  # If sex aggregated data present in ART data, aggregate Spectrum by age and sex
+    spec_aggreagted <- pjnz$art_dec31 |>
+      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
+      dplyr::count(spectrum_region_code, calendar_quarter, sex, age_group,
+                   wt = art_dec31, name = "value_spectrum")
+  }
+
+  # Get spectrum level to select correct area names
+  spectrum_region_code <- unique(shape$spectrum_region_code)
+
+  if(length(spectrum_region_code) > 1){spectrum_level <- 1}else{spectrum_level <- 0}
+
+  dat  <- dplyr::left_join(art_agreggated, spec_aggreagted,
+                           by = c("spectrum_region_code", "calendar_quarter",
+                                  "sex", "age_group")) |>
+    dplyr::left_join(shape |>
+                       dplyr::filter(area_level == spectrum_level) |>
+                       dplyr::select(area_name, spectrum_region_code),
+                     by = "spectrum_region_code")
+
+  #  Return data formatted for comparison table
+  dat |>
+    dplyr::mutate(
+      indicator = "number_on_art",
+      year = naomi::calendar_quarter_to_year(calendar_quarter),
+      group = dplyr::if_else(age_group == "Y000_014",
+                             "art_children", paste0("art_adult_", sex)),
+        difference = value_spectrum - value_naomi) |>
+    dplyr::select(indicator, area_name, year, group,
+                  value_spectrum, value_naomi, difference)
+}
+
+##' Compare aggregated subnational ART inputs + spectrum totals for comparison table
+##'
+##' @param art Path to file containing ART data or ART data object
+##' @param shape Path to file containing geojson areas data or areas data object
+##' @param pjnz Path to zip file containing spectrum pjnz file/s
+##' @keywords internal
+prepare_anc_spectrum_comparison <- function(anc, shape, pjnz) {
+
+  ## Check if shape is object or file path
+  if(!inherits(shape, "sf")) {
+    shape <- read_area_merged(shape) }
+
+  ## Check if anc is object or file path
+  if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    anc <- read_anc_testing(anc)
+  }
+
+  ## PJNZ either object or file path
+  if (!inherits(pjnz, "spec_program_data")) {
+    pjnz <- extract_pjnz_program_data(pjnz) }
+
+  ## Aggregate ART data
+  anc_agreggated <- anc |>
+    dplyr::left_join(shape,  by = "area_id") |>
+    tidyr::pivot_longer(dplyr::starts_with("anc"),
+                        names_to = "indicator",
+                        values_to = "value_naomi") |>
+    dplyr::count(spectrum_region_code, age_group, year, indicator,
+                 wt = value_naomi, name = "value_naomi")
+
+  ## Aggregate Spectrum data
+  spec_aggregated <- pjnz$anc_testing |>
+        dplyr::rename("value_spectrum" = "value")
+
+  # Get spectrum level to select correct area names
+  spectrum_region_code <- unique(shape$spectrum_region_code)
+
+  if(length(spectrum_region_code) > 1){spectrum_level <- 1}else{spectrum_level <- 0}
+
+  dat  <- dplyr::left_join(anc_agreggated, spec_aggregated,
+                           by = c("spectrum_region_code", "year", "indicator")) |>
+    dplyr::left_join(shape |>
+                       dplyr::filter(area_level == spectrum_level) |>
+                       dplyr::select(area_name, spectrum_region_code),
+                     by = "spectrum_region_code") |>
+    dplyr::filter(indicator %in% unique(pjnz$anc_testing$indicator))
+
+  #  Return data formatted for comparison table
+  dat |>
+    dplyr::mutate(
+      sex = "female", age_group = "Y015_049",
+      group = indicator,
+      difference = value_spectrum - value_naomi) |>
+    dplyr::select(indicator, area_name, year, group,
+                  value_spectrum, value_naomi, difference)
+
+}
+
