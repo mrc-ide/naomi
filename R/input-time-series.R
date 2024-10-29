@@ -689,10 +689,45 @@ prepare_anc_spectrum_comparison <- function(anc, shape, pjnz) {
   dat |>
     dplyr::mutate(
       sex = "female", age_group = "Y015_049",
-      group = indicator,
+      group = "anc_adult_female",
       difference = value_spectrum - value_naomi) |>
     dplyr::select(indicator, area_name, year, group,
                   value_spectrum, value_naomi, difference)
+
+}
+
+##' Compare aggregated subnational Naomi + spectrum totals for comparison table
+##'
+##' @param art Path to file containing ART data or ART data object
+##' @param anc Path to file containing ART data or ART data object
+##' @param shape Path to file containing geojson areas data or areas data object
+##' @param pjnz Path to zip file containing spectrum pjnz file/s
+##' @keywords internal
+
+prepare_spectrum_naomi_comparison <- function(art, anc, shape, pjnz){
+
+
+  ## Check if shape is object or file path
+  if(!inherits(shape, "sf")) {
+    shape <- read_area_merged(shape) }
+
+  ## Check if anc is object or file path
+  if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    anc <- read_anc_testing(anc)
+  }
+
+  ## Check if art is object or file path
+  if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    art <- read_art_number(art, all_columns = TRUE)}
+
+  ## PJNZ either object or file path
+  if (!inherits(pjnz, "spec_program_data")) {
+    pjnz <- extract_pjnz_program_data(pjnz) }
+
+  art_comparison <- prepare_art_spectrum_comparison(art, shape, pjnz)
+  anc_comparison <- prepare_anc_spectrum_comparison(anc, shape, pjnz)
+
+  rbind(art_comparison, anc_comparison)
 
 }
 

@@ -813,8 +813,9 @@ test_that("ANC data is properly aggreagted for Spectrum comparison table", {
 
   x <- prepare_anc_spectrum_comparison(anc, shape, pjnz)
 
-  expect_equal(unique(x$group), c("anc_already_art", "anc_clients",
-                                  "anc_known_pos", "anc_tested" , "anc_tested_pos"))
+  expect_equal(unique(x$indicator), c("anc_already_art", "anc_clients",
+                                      "anc_known_pos", "anc_tested" , "anc_tested_pos"))
+  expect_equal(unique(x$group), c("anc_adult_female"))
   expect_equal(unique(x$area_name), c("Northern", "Central", "Southern"))
 
   # Test that aggregation works with national pjnz
@@ -824,8 +825,9 @@ test_that("ANC data is properly aggreagted for Spectrum comparison table", {
   x <- prepare_anc_spectrum_comparison(anc, shape, pjnz)
 
 
-  expect_equal(unique(x$group), c("anc_already_art", "anc_clients",
+  expect_equal(unique(x$indicator), c("anc_already_art", "anc_clients",
                                   "anc_known_pos", "anc_tested" , "anc_tested_pos"))
+  expect_equal(unique(x$group), c("anc_adult_female"))
   expect_equal(unique(x$area_name), c("Malawi - Demo"))
 
 })
