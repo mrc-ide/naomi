@@ -2,6 +2,7 @@
 
 * Add function to format data for Naomi-Spectrum comparison table.
 * Refactor warnings that are superseded by Naomi-Spectrum comparison table.
+* Replace deprecated dplyr functions in `aggregate_art()` and `aggregate_anc()`.
 
 # naomi 2.9.28
 
