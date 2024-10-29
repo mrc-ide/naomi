@@ -794,8 +794,8 @@ test_that("ART data is properly aggreagted for Spectrum comparison table", {
   expect_equal(unique(x$area_name), c("Northern", "Central", "Southern"))
 
   # Test that aggregation works with national pjnz and sex aggregated adults on ART
-  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
-  pjnz <- system.file("extdata/demo_mwi2019.pjnz", package = "naomi")
+  shape <- system_file("extdata/demo_areas.geojson")
+  pjnz <- system_file("extdata/demo_mwi2019.PJNZ")
 
   x <- prepare_art_spectrum_comparison(art, shape, pjnz)
 
@@ -819,8 +819,8 @@ test_that("ANC data is properly aggreagted for Spectrum comparison table", {
   expect_equal(unique(x$area_name), c("Northern", "Central", "Southern"))
 
   # Test that aggregation works with national pjnz
-  shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
-  pjnz <- system.file("extdata/demo_mwi2019.pjnz", package = "naomi")
+  shape <- system_file("extdata/demo_areas.geojson")
+  pjnz <- system_file("extdata/demo_mwi2019.PJNZ")
 
   x <- prepare_anc_spectrum_comparison(anc, shape, pjnz)
 
