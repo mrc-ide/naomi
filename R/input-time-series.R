@@ -567,4 +567,3 @@ build_hierarchy_label <- function(meta_areas) {
   labels[is.na(labels)] <- root_name
   labels
 }
-
