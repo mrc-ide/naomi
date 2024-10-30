@@ -581,15 +581,18 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
-    shape <- read_area_merged(shape) }
+    shape <- read_area_merged(shape)
+  }
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_columns = TRUE)}
+    art <- read_art_number(art, all_columns = TRUE)
+  }
 
   ## PJNZ either object or file path
   if (!inherits(pjnz, "spec_program_data")) {
-    pjnz <- extract_pjnz_program_data(pjnz) }
+    pjnz <- extract_pjnz_program_data(pjnz)
+  }
 
   ## Aggregate ART data
   art_agreggated <- art |>
