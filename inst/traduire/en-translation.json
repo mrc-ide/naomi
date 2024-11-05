@@ -273,5 +273,7 @@
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Naomi output uploaded from Naomi web app",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Naomi summary report uploaded from Naomi web app",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app",
-    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app"
+    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app",
+    "NUMBER_ON_ART": "Number on ART",
+    "NUMBER_ON_ART_DESC": "Number on ART description"
 }

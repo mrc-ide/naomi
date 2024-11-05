@@ -8,7 +8,6 @@
 ##' @keywords internal
 prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
 
-
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
     shape <- read_area_merged(shape) }
@@ -132,8 +131,7 @@ prepare_anc_spectrum_comparison <- function(anc, shape, pjnz) {
 ##' @param anc Path to file containing ART data or ART data object
 ##' @param shape Path to file containing geojson areas data or areas data object
 ##' @param pjnz Path to zip file containing spectrum pjnz file/s
-##' @keywords internal
-
+##' @export
 prepare_spectrum_naomi_comparison <- function(art, anc, shape, pjnz){
 
   null_df <- setNames(data.frame(matrix(ncol = 7, nrow = 0)),
@@ -171,7 +169,12 @@ prepare_spectrum_naomi_comparison <- function(art, anc, shape, pjnz){
     comparison_df <- rbind(art_comparison, anc_comparison)
   }
 
-  comparison_df
-
+  comparison_df |>
+    dplyr::select(indicator, area_name, year, group,
+                  spectrum = value_spectrum, naomi = value_naomi, difference) |>
+    tidyr::pivot_longer(
+      c(spectrum, naomi, difference),
+      names_to = "data_source"
+    ) |>
+    tidyr::drop_na(value)
 }
-

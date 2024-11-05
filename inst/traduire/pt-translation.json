@@ -272,5 +272,7 @@
     "BIRTHS_FACILITY_DESC": "Número de nascimentos em estabelecimentos de saúde",
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Pacote Naomi descarregado a partir da aplicação web Naomi",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Relatório de síntese da Naomi carregado da aplicação web Naomi",
-    "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi"
+    "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi",
+    "NUMBER_ON_ART": "Nombre de personnes sous TARV",
+    "NUMBER_ON_ART_DESC": "Number on ART description"
 }
