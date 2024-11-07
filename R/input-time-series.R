@@ -1,3 +1,153 @@
+get_strats_for_plot_type <- function(
+  plot_types,
+  strats = c("total", "adult", "adult_f", "adult_m", "child")
+) {
+  grid <- expand.grid(plot_types, strats)
+  sprintf("%s_%s", grid[,1], grid[,2])
+}
+
+##' Metadata for ANC plot types used in the input time series
+##' plots. Mainly for internal use.
+##'
+##' @param anc Path to file containing ANC data or ANC data object
+##'
+##' @return List of `plot_types` and `cols_keep` (columns that are
+##'   present in the actual data out of the known list of columns)
+##'
+##' @export
+get_anc_metadata <- function(anc) {
+  ## Check if anc is object or file path
+  if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    anc <- read_anc_testing(anc)
+  }
+
+  cols_list <- c("anc_clients", "anc_known_pos", "anc_already_art",
+                 "anc_tested", "anc_tested_pos", "anc_known_neg", "births_facility")
+  cols_keep <- intersect(cols_list, colnames(anc))
+  plot_types <- c(cols_keep, "anc_total_pos", "anc_status", "anc_prevalence",
+                  "anc_art_among_known", "anc_art_coverage", "births_clients_ratio")
+
+  list(
+    plot_types = plot_types,
+    cols_keep = cols_keep,
+    calendar_quarters = paste0("CY", unique(anc$year), "Q4"),
+    age_groups = unique(anc$age_group)
+  )
+}
+
+##' Metadata for ART plot types used in the input time series
+##' plots. Mainly for internal use.
+##'
+##' @param anc Path to file containing ART data or ART data object
+##'
+##' @return List of `plot_types` and `cols_keep` (columns that are
+##'   present in the actual data out of the known list of columns)
+##'   and `calendar_quarters`
+##'
+##' @export
+get_art_metadata <- function(art) {
+  ## Check if art is object or file path
+  if (!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    art <- read_art_number(art, all_columns = TRUE)
+  }
+
+  cols_list <- c("art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos")
+  cols_keep <- intersect(cols_list, colnames(art))
+  # need to add art because art_current is abbreviated to art in plot types
+  all_strat_plot_types <- c(cols_list, "vl_coverage", "vl_prop_suppressed", "art")
+
+  # plot types below are derived from art_current which is always assumed
+  # to be present
+  plot_types <- c(get_strats_for_plot_type("art"), "art_adult_sex_ratio", "art_child_adult_ratio")
+
+  if("art_new" %in% cols_keep) {
+    plot_types <- c(plot_types, get_strats_for_plot_type("art_new"))
+  }
+
+  if(any(grep("vl", cols_keep))) {
+    plot_types <- c(plot_types,
+                    get_strats_for_plot_type("vl_tested_12mos"),
+                    get_strats_for_plot_type("vl_suppressed_12mos"),
+                    get_strats_for_plot_type("vl_coverage"),
+                    get_strats_for_plot_type("vl_prop_suppressed"))
+  }
+
+  if(all(!c("male", "female") %in% unique(art$sex))) {
+    plot_types_to_remove <- get_strats_for_plot_type(all_strat_plot_types,
+                                                     c("adult_f", "adult_m"))
+    plot_types_to_remove <- c(plot_types_to_remove, "art_adult_sex_ratio")
+    plot_types <- plot_types[!plot_types %in% plot_types_to_remove]
+  }
+
+  if(!"Y000_014" %in% art$age_group) {
+    plot_types_to_remove <- get_strats_for_plot_type(all_strat_plot_types,
+                                                     "child")
+    plot_types_to_remove <- c(plot_types_to_remove, "art_child_adult_ratio")
+    plot_types <- plot_types[!plot_types %in% plot_types_to_remove]
+  }
+
+  list(
+    plot_types = plot_types,
+    calendar_quarters = unique(art$calendar_quarter),
+    cols_keep = cols_keep
+  )
+}
+
+get_aggregate_exprs <- function() {
+  summary_exprs <- rlang::exprs(
+    # ART
+    art_total = sum(art_current,  na.rm = na_rm),
+    art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm),
+    art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm),
+    art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm),
+    art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm),
+
+    art_new_total = sum(art_new, na.rm = na_rm),
+    art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm),
+    art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
+    art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
+    art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm),
+
+    vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm),
+    vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
+    vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
+    vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
+    vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
+    vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm),
+    vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
+    vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
+    vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
+    vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm)
+  )
+
+  mutate_exprs <- rlang::exprs(
+    # ART
+    art_adult_sex_ratio = art_adult_f / art_adult_m,
+    art_child_adult_ratio = art_child / art_adult,
+
+    vl_coverage_total = vl_tested_12mos_total / art_total,
+    vl_coverage_adult = vl_tested_12mos_adult / art_adult,
+    vl_coverage_adult_f = vl_tested_12mos_adult_f / art_adult_f,
+    vl_coverage_adult_m = vl_tested_12mos_adult_m / art_adult_m,
+    vl_coverage_child = vl_tested_12mos_child / art_child,
+    vl_prop_suppressed_total = vl_suppressed_12mos_total / vl_tested_12mos_total,
+    vl_prop_suppressed_adult = vl_suppressed_12mos_adult / vl_tested_12mos_adult,
+    vl_prop_suppressed_adult_f = vl_suppressed_12mos_adult_f / vl_tested_12mos_adult_f,
+    vl_prop_suppressed_adult_m = vl_suppressed_12mos_adult_m / vl_tested_12mos_adult_m,
+    vl_prop_suppressed_child = vl_suppressed_12mos_child / vl_tested_12mos_child,
+
+    # ANC
+    anc_total_pos = anc_known_pos + anc_tested_pos,
+    anc_status = anc_known_pos + anc_tested + anc_known_neg,
+    anc_prevalence = anc_total_pos / anc_status,
+    anc_art_among_known = anc_already_art / anc_known_pos,
+    anc_art_coverage = anc_already_art / anc_total_pos,
+    births_clients_ratio = births_facility / anc_clients
+  )
+
+  list(summary_exprs = summary_exprs, mutate_exprs = mutate_exprs)
+}
+
 ##' Aggregate ART data according to area hierarchy
 ##'
 ##' Take ART and shape file paths or files and aggregate
@@ -25,13 +175,12 @@ aggregate_art <- function(art, shape) {
     art <- read_art_number(art, all_columns = TRUE)
   }
 
-  # Aggregate based on what columns exist in dataset
-  cols_list <- c("art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos")
-  cols_keep <- intersect(cols_list, colnames(art))
+  # Get metadata about shape of art data and what plot types are present
+  metadata <- get_art_metadata(art)
 
   # make sure the ART data is the correct shape
   clean_art <- art |>
-    dplyr::select(area_id, sex, age_group, calendar_quarter, dplyr::any_of(cols_list))
+    dplyr::select(area_id, sex, age_group, calendar_quarter, dplyr::any_of(metadata$cols_keep))
 
   # get all combinations of all stratifications:
   # > every calendar_quarter will have all age_groups present within that
@@ -78,7 +227,7 @@ aggregate_art <- function(art, shape) {
       # > sum across all the other numeric values ignoring NAs
       dplyr::summarise(
         area_level = level - 1,
-        dplyr::across(dplyr::any_of(cols_list), ~sum(.x, na.rm = TRUE)),
+        dplyr::across(dplyr::any_of(metadata$cols_keep), ~sum(.x, na.rm = TRUE)),
         .groups = "drop"
       ) |>
       dplyr::rename(area_id = parent_area_id) |>
@@ -129,125 +278,42 @@ prepare_input_time_series_art <- function(art, shape) {
     areas <- shape |> sf::st_drop_geometry()
   }
 
+  ## Check if art is object or file path
+  if (!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    art <- read_art_number(art, all_columns = TRUE)
+  }
+
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
   art_long <- aggregate_art(art, areas)
-  sex_level <- unique(art_long$sex)
-  age_level <- unique(art_long$age_group)
   admin_level <- max(art_long$area_level)
 
-  ## Shape data for plot
-  art_plot_data <- art_long |>
+  # Get metadata about the shape of the output data this will produce, e.g.
+  # whether the output contains plot types derived from "art_new" or whether
+  # we have adult_f and adult_m stratification plot types in the output
+  metadata <- get_art_metadata(art)
+
+  # We have a list of expressions that define how each plot type should be
+  # calculated, see `get_aggregate_exprs` and then we filter these by those
+  # present in the metadata so we only compute the plot types that are necessary
+  exprs <- get_aggregate_exprs()
+  summary_exprs <- exprs$summary_exprs[names(exprs$summary_exprs) %in% metadata$plot_types]
+  mutate_exprs <- exprs$mutate_exprs[names(exprs$mutate_exprs) %in% metadata$plot_types]
+
+  art_plot_data_long <- art_long |>
     dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
                     area_sort_order,time_period, year, quarter, calendar_quarter,area_hierarchy) |>
     dplyr::mutate(na_rm = area_level != admin_level) |>
-    dplyr::summarise(
-      art_total = sum(art_current,  na.rm = na_rm),
-      art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm),
-      art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm),
-      art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm),
-      art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm),
-      .groups = "drop"
-    ) |>
-    dplyr::mutate(
-      art_adult_sex_ratio = art_adult_f / art_adult_m,
-      art_child_adult_ratio = art_child / art_adult
-    )
-
-  # if art_new column exists in art data, calculate variables
-  if(any(grep("art_new", colnames(art_long)))) {
-
-    art_new_data <- art_long |>
-      dplyr::mutate(na_rm = area_level != admin_level) |>
-      dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
-                      area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) |>
-      dplyr::summarise(
-        art_new_total = sum(art_new, na.rm = na_rm),
-        art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-        art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-        art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-        art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm),
-        .groups = "drop"
-      )
-
-    art_plot_data <- dplyr::left_join(art_plot_data, art_new_data,
-                                      by = c("area_id", "area_name", "area_level",
-                                             "area_level_label", "parent_area_id",
-                                             "area_sort_order", "time_period",
-                                             "year", "quarter", "calendar_quarter",
-                                             "area_hierarchy"))
-  }
-
-  # if VL columns exist in art data, calculate variables
-  if(any(grep("vl", colnames(art_long)))) {
-
-    vl_data <- art_long |>
-      dplyr::mutate(na_rm = area_level != admin_level) |>
-      dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
-                      area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) |>
-      dplyr::summarise(
-        vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm),
-        vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-        vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-        vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-        vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
-        vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm),
-        vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-        vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-        vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-        vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
-        .groups = "drop")
-
-    art_plot_data <- dplyr::left_join(art_plot_data, vl_data,
-                                      by = c("area_id", "area_name", "area_level",
-                                             "area_level_label", "parent_area_id",
-                                             "area_sort_order", "time_period",
-                                             "year", "quarter", "calendar_quarter",
-                                             "area_hierarchy")) |>
-      dplyr::mutate(
-        vl_coverage_total = vl_tested_12mos_total/ art_total,
-        vl_coverage_adult = vl_tested_12mos_adult / art_adult,
-        vl_coverage_adult_f = vl_tested_12mos_adult_f/ art_adult_f,
-        vl_coverage_adult_m = vl_tested_12mos_adult_m/ art_adult_m,
-        vl_coverage_child = vl_tested_12mos_child/ art_child,
-
-        vl_prop_suppressed_total = vl_suppressed_12mos_total/ vl_tested_12mos_total,
-        vl_prop_suppressed_adult = vl_suppressed_12mos_adult/ vl_tested_12mos_adult,
-        vl_prop_suppressed_adult_f = vl_suppressed_12mos_adult_f/ vl_tested_12mos_adult_f,
-        vl_prop_suppressed_adult_m = vl_suppressed_12mos_adult_m/ vl_tested_12mos_adult_m,
-        vl_prop_suppressed_child = vl_suppressed_12mos_child/ vl_tested_12mos_child)
-
-  }
-
-  art_plot_data_long <- art_plot_data |>
+    # the splice operator, !!!, basically just puts the elements of the list
+    # in as function args
+    dplyr::summarise(!!!summary_exprs, .groups = "drop") |>
+    dplyr::mutate(!!!mutate_exprs) |>
     tidyr::pivot_longer(cols = !c(area_id, area_name, area_level, area_level_label,
                                   parent_area_id, area_sort_order, time_period,
                                   year, quarter, calendar_quarter, area_hierarchy),
                         names_to = "plot",
                         values_to = "value") |>
-    dplyr::mutate_at(dplyr::vars(value), ~replace(., is.nan(.), 0))
-
-  # Remove sex disaggregated variables if only sex aggregated data is present
-  if(all(!c("male", "female") %in% sex_level)) {
-    art_plot_data_long <-  dplyr::filter(art_plot_data_long,
-                                         !(plot %in% c("art_adult_f","art_adult_m", "art_adult_sex_ratio",
-                                                       "art_new_adult_f", "art_new_adult_m",
-                                                       "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m",
-                                                       "vl_suppressed_12mos_adult_f", "vl_suppressed_12mos_adult_m",
-                                                       "vl_coverage_adult_f", "vl_coverage_adult_m",
-                                                       "vl_prop_suppressed_adult_f", "vl_prop_suppressed_adult_m")))
-  }
-
-  # Remove age disaggregated variables if paeds data is not present
-  if(!("Y000_014" %in% age_level)) {
-    art_plot_data_long <-  dplyr::filter(art_plot_data_long,
-                                         !(plot %in% c("art_child","art_child_adult_ratio",
-                                                       "art_new_child","vl_tested_12mos_child",
-                                                       "vl_suppressed_12mos_child","vl_coverage_child",
-                                                       "vl_prop_suppressed_child")))
-  }
-
-  art_plot_data_long <- art_plot_data_long |>
+    dplyr::mutate_at(dplyr::vars(value), ~replace(., is.nan(.), 0)) |>
     dplyr::arrange(area_sort_order, calendar_quarter)
 
   # Tag data with NAs at the lowest admin level
@@ -324,15 +390,13 @@ aggregate_anc <- function(anc, shape) {
     anc <- read_anc_testing(anc)
   }
 
-  # Aggregate based on what columns exist in dataset
-  cols_list <- c("anc_clients", "anc_known_pos", "anc_already_art",
-                 "anc_tested", "anc_tested_pos", "anc_known_neg", "births_facility")
-  cols_keep <- intersect(cols_list, colnames(anc))
+  # Metadata about the shape of the anc data
+  metadata <- get_anc_metadata(anc)
 
   # make sure the ANC data is the correct shape, note that all the
-  # variables in cols_list are requried expect births_facility
+  # variables in cols_keep are requried expect births_facility
   clean_anc <- anc |>
-    dplyr::select(area_id, age_group, year, dplyr::any_of(cols_list))
+    dplyr::select(area_id, age_group, year, dplyr::any_of(metadata$cols_keep))
 
   # initialise aggregated anc with the max admin level (most fine grained)
   # and fill in and missing rows - if a year has max admin level n (these can be
@@ -355,7 +419,7 @@ aggregate_anc <- function(anc, shape) {
     # left join complete list of area_ids with our potentially missing area_ids in
     # clean_anc to get rows of NAs if an area_id is missing
     dplyr::left_join(clean_anc, by = c("year", "area_id", "age_group")) |>
-    dplyr::select(area_id, age_group, year, area_level, dplyr::any_of(cols_list))
+    dplyr::select(area_id, age_group, year, area_level, dplyr::any_of(metadata$cols_keep))
 
   area_with_parent_ids <- areas |>
     dplyr::select(area_id, parent_area_id)
@@ -373,7 +437,7 @@ aggregate_anc <- function(anc, shape) {
       # > sum across all the other numeric values ignoring NAs
       dplyr::summarise(
         area_level = level - 1,
-        dplyr::across(dplyr::any_of(cols_list), ~sum(.x, na.rm = TRUE)),
+        dplyr::across(dplyr::any_of(metadata$cols_keep), ~sum(.x, na.rm = TRUE)),
         .groups = "drop"
       ) |>
       dplyr::rename(area_id = parent_area_id) |>
@@ -419,18 +483,26 @@ prepare_input_time_series_anc <- function(anc, shape) {
     areas <- shape |> sf::st_drop_geometry()
   }
 
+  ## Check if anc is object or file path
+  if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
+    anc <- read_anc_testing(anc)
+  }
+
   ## Shape data for plot
   anc_long <- aggregate_anc(anc, areas)
 
+  metadata <- get_anc_metadata(anc)
+
+  # We have a list of expressions that define how each plot type should be
+  # calculated, see `get_aggregate_exprs` and then we filter these by those
+  # present in the metadata so we only compute the plot types that are necessary
+
+  # note ANC only needs mutate exprs for now
+  exprs <- get_aggregate_exprs()
+  mutate_exprs <- exprs$mutate_exprs[names(exprs$mutate_exprs) %in% metadata$plot_types]
+
   anc_plot_data_long <- anc_long |>
-    dplyr::mutate(
-      anc_total_pos = anc_known_pos + anc_tested_pos,
-      anc_status = anc_known_pos + anc_tested + anc_known_neg,
-      anc_prevalence = anc_total_pos / anc_status,
-      anc_art_among_known = anc_already_art / anc_known_pos,
-      anc_art_coverage = anc_already_art / anc_total_pos,
-      births_clients_ratio = births_facility / anc_clients
-    ) |>
+    dplyr::mutate(!!!mutate_exprs) |>
     dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id,
                   area_sort_order, age_group,  time_period, year, quarter,
                   calendar_quarter, anc_clients, anc_tested, anc_tested_pos,
