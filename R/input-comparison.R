@@ -169,12 +169,5 @@ prepare_spectrum_naomi_comparison <- function(art, anc, shape, pjnz){
     comparison_df <- rbind(art_comparison, anc_comparison)
   }
 
-  comparison_df |>
-    dplyr::select(indicator, area_name, year, group,
-                  spectrum = value_spectrum, naomi = value_naomi, difference) |>
-    tidyr::pivot_longer(
-      c(spectrum, naomi, difference),
-      names_to = "data_source"
-    ) |>
-    tidyr::drop_na(value)
+  comparison_df
 }
