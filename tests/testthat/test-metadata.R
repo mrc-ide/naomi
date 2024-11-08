@@ -145,10 +145,10 @@ test_that("metadata is well formed", {
     "anc_art_coverage_age_matched", "number_on_art", "anc_tested"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
-  expect_true(all(meta$plot_type %in% c("choropleth", "barchart")))
+  expect_true(all(meta$plot_type %in% c("choropleth", "barchart", "pyramid")))
   expect_true(all(meta$data_type %in%
                     c("survey", "anc", "programme", "output", "calibrate",
-                      "comparison", "input_comparison")))
+                      "comparison", "input_comparison", "population")))
   expect_setequal(meta$name,
                   c("HIV prevalence", "ART coverage", "Viral load suppression",
                     "Proportion recently infected", "PLHIV", "Population",
