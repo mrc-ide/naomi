@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.9.28</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.9.29</span>
       </span>
     </div>
 
@@ -82,90 +82,98 @@ scheme to use for that country and indicator.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_plotting_metadata</span><span class="op">(</span><span class="st">"MWI"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       indicator  data_type  plot_type        value_column</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    prevalence     survey choropleth            estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    prevalence     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    prevalence     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    prevalence  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    prevalence comparison   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                  art_coverage     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                  art_coverage     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                  art_coverage     survey choropleth            estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                  art_coverage  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                 art_coverage comparison   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11                  art_current     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12                  art_current  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13                  art_current  programme choropleth         art_current</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                  art_current comparison   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15                  art_current     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16                      art_new  programme choropleth             art_new</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17              vl_tested_12mos  programme choropleth     vl_tested_12mos</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18          vl_suppressed_12mos  programme choropleth vl_suppressed_12mos</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19              recent_infected     survey choropleth            estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20      viral_suppression_plhiv     survey choropleth            estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21               anc_prevalence        anc choropleth      anc_prevalence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22               anc_prevalence     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23               anc_prevalence     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24             anc_art_coverage     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25             anc_art_coverage        anc choropleth    anc_art_coverage</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26             anc_art_coverage     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27        art_current_residents     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28        art_current_residents     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29                   population  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30                   population     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31                   population     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32                        plhiv     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33                        plhiv  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34                        plhiv     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35                    incidence     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36                    incidence  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37                    incidence     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38                   infections  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39                   infections     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40                   infections     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41             aware_plhiv_prop     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42             aware_plhiv_prop     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43             aware_plhiv_prop  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44            unaware_plhiv_num     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45            unaware_plhiv_num     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46            unaware_plhiv_num  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47              aware_plhiv_num     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48              aware_plhiv_num     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49          untreated_plhiv_num     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50          untreated_plhiv_num     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51                 plhiv_attend     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52                 plhiv_attend     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53       untreated_plhiv_attend     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54       untreated_plhiv_attend     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55           aware_plhiv_attend     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56           aware_plhiv_attend     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57         unaware_plhiv_attend     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58         unaware_plhiv_attend     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59                  anc_clients     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60                  anc_clients     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61                    anc_plhiv     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62                    anc_plhiv     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63              anc_already_art     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64              anc_already_art     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65                  anc_art_new     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66                  anc_art_new     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67                anc_known_pos     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68                anc_known_pos     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69               anc_tested_pos     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70               anc_tested_pos     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71               anc_tested_neg     output   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72               anc_tested_neg     output choropleth                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73             population_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74                  plhiv_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75             infections_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76            art_current_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77      unaware_plhiv_num_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78             prevalence_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79           art_coverage_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80       aware_plhiv_prop_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81              incidence_ratio  calibrate   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82   anc_prevalence_age_matched comparison   barchart                mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83 anc_art_coverage_age_matched comparison   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       indicator        data_type  plot_type        value_column</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    prevalence           survey choropleth            estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    prevalence           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    prevalence           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    prevalence        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    prevalence       comparison   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                  art_coverage           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                  art_coverage           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                  art_coverage           survey choropleth            estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                  art_coverage        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                 art_coverage       comparison   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                  art_current           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                  art_current        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                  art_current        programme choropleth         art_current</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                  art_current       comparison   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                  art_current           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                      art_new        programme choropleth             art_new</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17              vl_tested_12mos        programme choropleth     vl_tested_12mos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18          vl_suppressed_12mos        programme choropleth vl_suppressed_12mos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19              recent_infected           survey choropleth            estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20      viral_suppression_plhiv           survey choropleth            estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21               anc_prevalence              anc choropleth      anc_prevalence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22               anc_prevalence           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23               anc_prevalence           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24             anc_art_coverage           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25             anc_art_coverage              anc choropleth    anc_art_coverage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26             anc_art_coverage           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27        art_current_residents           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28        art_current_residents           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                   population        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                   population       population    pyramid          population</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31                   population           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                   population           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                        plhiv           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                        plhiv        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                        plhiv           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                    incidence           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37                    incidence        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                    incidence           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39                   infections        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                   infections           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                   infections           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42             aware_plhiv_prop           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43             aware_plhiv_prop           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44             aware_plhiv_prop        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45            unaware_plhiv_num           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46            unaware_plhiv_num           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47            unaware_plhiv_num        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48              aware_plhiv_num           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49              aware_plhiv_num           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50          untreated_plhiv_num           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51          untreated_plhiv_num           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52                 plhiv_attend           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53                 plhiv_attend           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54       untreated_plhiv_attend           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55       untreated_plhiv_attend           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56           aware_plhiv_attend           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57           aware_plhiv_attend           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58         unaware_plhiv_attend           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59         unaware_plhiv_attend           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60                  anc_clients           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61                  anc_clients           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62                  anc_clients input_comparison   barchart               value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63                    anc_plhiv           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64                    anc_plhiv           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65              anc_already_art input_comparison   barchart               value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66              anc_already_art           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67              anc_already_art           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68                  anc_art_new           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69                  anc_art_new           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70                anc_known_pos           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71                anc_known_pos           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72                anc_known_pos input_comparison   barchart               value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73               anc_tested_pos           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74               anc_tested_pos           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75               anc_tested_pos input_comparison   barchart               value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76               anc_tested_neg           output choropleth                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77               anc_tested_neg           output   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78             population_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79             population_ratio       population    pyramid          population</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80                  plhiv_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81             infections_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82            art_current_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83      unaware_plhiv_num_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84             prevalence_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85           art_coverage_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86       aware_plhiv_prop_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87              incidence_ratio        calibrate   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88   anc_prevalence_age_matched       comparison   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89 anc_art_coverage_age_matched       comparison   barchart                mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                number_on_art input_comparison   barchart               value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                   anc_tested input_comparison   barchart               value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    error_low_column error_high_column indicator_column</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                            indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2             lower             upper        indicator</span>
@@ -196,7 +204,7 @@ scheme to use for that country and indicator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29            lower             upper        indicator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 32            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33            lower             upper        indicator</span>
@@ -228,28 +236,36 @@ scheme to use for that country and indicator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 60            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 61            lower             upper        indicator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64            lower             upper        indicator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 66            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 67            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 68            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 69            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 70            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 71            lower             upper        indicator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 73            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 74            lower             upper        indicator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 76            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 77            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 78            lower             upper        indicator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 80            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 81            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 82            lower             upper        indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 83            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89            lower             upper        indicator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 indicator_value                                 name scale</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                    prevalence                       HIV prevalence     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                    prevalence                       HIV prevalence     1</span>
@@ -282,58 +298,66 @@ scheme to use for that country and indicator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29                   population                           Population     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30                   population                           Population     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31                   population                           Population     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32                        plhiv                                PLHIV     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                   population                           Population     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33                        plhiv                                PLHIV     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34                        plhiv                                PLHIV     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35                    incidence                        HIV incidence  1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                        plhiv                                PLHIV     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 36                    incidence                        HIV incidence  1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37                    incidence                        HIV incidence  1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38                   infections                       New infections     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                    incidence                        HIV incidence  1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39                   infections                       New infections     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 40                   infections                       New infections     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41             aware_plhiv_prop               Proportion PLHIV aware     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                   infections                       New infections     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 42             aware_plhiv_prop               Proportion PLHIV aware     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 43             aware_plhiv_prop               Proportion PLHIV aware     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44            unaware_plhiv_num                 Number PLHIV unaware     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44             aware_plhiv_prop               Proportion PLHIV aware     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45            unaware_plhiv_num                 Number PLHIV unaware     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46            unaware_plhiv_num                 Number PLHIV unaware     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47              aware_plhiv_num                   Number PLHIV aware     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47            unaware_plhiv_num                 Number PLHIV unaware     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 48              aware_plhiv_num                   Number PLHIV aware     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49          untreated_plhiv_num                     PLHIV not on ART     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49              aware_plhiv_num                   Number PLHIV aware     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50          untreated_plhiv_num                     PLHIV not on ART     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51                 plhiv_attend                PLHIV (ART catchment)     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51          untreated_plhiv_num                     PLHIV not on ART     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 52                 plhiv_attend                PLHIV (ART catchment)     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53       untreated_plhiv_attend      Untreated PLHIV (ART catchment)     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53                 plhiv_attend                PLHIV (ART catchment)     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 54       untreated_plhiv_attend      Untreated PLHIV (ART catchment)     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55           aware_plhiv_attend   Number Aware PLHIV (ART catchment)     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55       untreated_plhiv_attend      Untreated PLHIV (ART catchment)     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 56           aware_plhiv_attend   Number Aware PLHIV (ART catchment)     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57         unaware_plhiv_attend Number unaware PLHIV (ART catchment)     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57           aware_plhiv_attend   Number Aware PLHIV (ART catchment)     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 58         unaware_plhiv_attend Number unaware PLHIV (ART catchment)     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59                  anc_clients                          ANC clients     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59         unaware_plhiv_attend Number unaware PLHIV (ART catchment)     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 60                  anc_clients                          ANC clients     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61                    anc_plhiv           HIV positive ANC attendees     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62                    anc_plhiv           HIV positive ANC attendees     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63              anc_already_art         ANC attendees already on ART     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64              anc_already_art         ANC attendees already on ART     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65                  anc_art_new               ART initiations at ANC     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66                  anc_art_new               ART initiations at ANC     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67                anc_known_pos                   ANC known positive     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68                anc_known_pos                   ANC known positive     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69               anc_tested_pos                  ANC tested positive     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70               anc_tested_pos                  ANC tested positive     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71               anc_tested_neg                  ANC tested negative     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72               anc_tested_neg                  ANC tested negative     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73             population_ratio                     Population ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74                  plhiv_ratio                          PLHIV ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75             infections_ratio                 New infections ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76            art_current_ratio         ART number (attending) ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77      unaware_plhiv_num_ratio           Number PLHIV unaware ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78             prevalence_ratio                 HIV prevalence ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79           art_coverage_ratio                   ART coverage ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80       aware_plhiv_prop_ratio         Proportion PLHIV aware ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81              incidence_ratio                      Incidence ratio     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82   anc_prevalence_age_matched           ANC prevalence age matched     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83 anc_art_coverage_age_matched         ANC ART coverage age matched     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61                  anc_clients                          ANC clients     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62                  anc_clients                          ANC clients     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63                    anc_plhiv           HIV positive ANC attendees     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64                    anc_plhiv           HIV positive ANC attendees     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65              anc_already_art         ANC attendees already on ART     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66              anc_already_art         ANC attendees already on ART     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67              anc_already_art         ANC attendees already on ART     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68                  anc_art_new               ART initiations at ANC     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69                  anc_art_new               ART initiations at ANC     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70                anc_known_pos                   ANC known positive     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71                anc_known_pos                   ANC known positive     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72                anc_known_pos                   ANC known positive     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73               anc_tested_pos                  ANC tested positive     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74               anc_tested_pos                  ANC tested positive     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75               anc_tested_pos                  ANC tested positive     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76               anc_tested_neg                  ANC tested negative     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77               anc_tested_neg                  ANC tested negative     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78             population_ratio                     Population ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79             population_ratio                     Population ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80                  plhiv_ratio                          PLHIV ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81             infections_ratio                 New infections ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82            art_current_ratio         ART number (attending) ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83      unaware_plhiv_num_ratio           Number PLHIV unaware ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84             prevalence_ratio                 HIV prevalence ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85           art_coverage_ratio                   ART coverage ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86       aware_plhiv_prop_ratio         Proportion PLHIV aware ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87              incidence_ratio                      Incidence ratio     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88   anc_prevalence_age_matched           ANC prevalence age matched     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89 anc_art_coverage_age_matched         ANC ART coverage age matched     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                number_on_art                        Number on ART     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                   anc_tested                           ANC tested     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    accuracy format indicator_sort_order    iso3             colour min     max</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1        NA   0.0%                    2     MWI    interpolateReds   0 5.0e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        NA   0.0%                    2     MWI    interpolateReds   0 5.0e-01</span>
@@ -364,60 +388,68 @@ scheme to use for that country and indicator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27      100    0,0                    5     MWI  interpolateGreens   0 7.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28      100    0,0                    5     MWI  interpolateGreens   0 7.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29     1000    0,0                    1     MWI   interpolateGreys   0 2.0e+07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30     1000    0,0                    1     MWI   interpolateGreys   0 2.0e+07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30        1    0,0                    1     MWI   interpolateGreys   0 2.0e+07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31     1000    0,0                    1     MWI   interpolateGreys   0 2.0e+07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32      100    0,0                    3     MWI    interpolateReds   0 1.0e+07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32     1000    0,0                    1     MWI   interpolateGreys   0 2.0e+07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33      100    0,0                    3     MWI    interpolateReds   0 1.0e+07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34      100    0,0                    3     MWI    interpolateReds   0 1.0e+07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35       NA    0.0                   15     MWI   interpolateBlues   0 1.0e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35      100    0,0                    3     MWI    interpolateReds   0 1.0e+07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 36       NA    0.0                   15     MWI   interpolateBlues   0 1.0e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37       NA    0.0                   15     MWI   interpolateBlues   0 1.0e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38      100    0,0                   16     MWI   interpolateBlues   0 4.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38       NA    0.0                   15     MWI   interpolateBlues   0 1.0e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39      100    0,0                   16     MWI   interpolateBlues   0 4.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 40      100    0,0                   16     MWI   interpolateBlues   0 4.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41       NA   0.0%                    8 default   interpolateBlues   0 1.0e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41      100    0,0                   16     MWI   interpolateBlues   0 4.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 42       NA   0.0%                    8 default   interpolateBlues   0 1.0e+00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 43       NA   0.0%                    8 default   interpolateBlues   0 1.0e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44       10      0                    9 default   interpolateBlues   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45       10    0,0                    9 default   interpolateBlues   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44       NA   0.0%                    8 default   interpolateBlues   0 1.0e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45       10      0                    9 default   interpolateBlues   0 8.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46       10    0,0                    9 default   interpolateBlues   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47       10      0                   10 default   interpolateBlues   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48       10    0,0                   10 default   interpolateBlues   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49       10    0,0                    7 default  interpolateGreens   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47       10    0,0                    9 default   interpolateBlues   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48       10      0                   10 default   interpolateBlues   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49       10    0,0                   10 default   interpolateBlues   0 8.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50       10    0,0                    7 default  interpolateGreens   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51      100    0,0                   11 default    interpolateReds   0 1.0e+07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51       10    0,0                    7 default  interpolateGreens   0 8.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 52      100    0,0                   11 default    interpolateReds   0 1.0e+07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53       10    0,0                   12 default  interpolateGreens   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53      100    0,0                   11 default    interpolateReds   0 1.0e+07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 54       10    0,0                   12 default  interpolateGreens   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55       10    0,0                   13 default   interpolateBlues   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55       10    0,0                   12 default  interpolateGreens   0 8.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 56       10    0,0                   13 default   interpolateBlues   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57       10    0,0                   14 default   interpolateBlues   0 8.0e+04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57       10    0,0                   13 default   interpolateBlues   0 8.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 58       10    0,0                   14 default   interpolateBlues   0 8.0e+04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59      100    0,0                   19 default interpolateOranges   0 7.0e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59       10    0,0                   14 default   interpolateBlues   0 8.0e+04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 60      100    0,0                   19 default interpolateOranges   0 7.0e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61       10    0,0                   20 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62       10    0,0                   20 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63       10    0,0                   21 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64       10    0,0                   21 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65       10    0,0                   22 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66       10    0,0                   22 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67       10    0,0                   23 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68       10    0,0                   23 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69       10    0,0                   24 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70       10    0,0                   24 default interpolateOranges   0 3.5e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71       10    0,0                   25 default interpolateOranges   0 7.0e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72       10    0,0                   25 default interpolateOranges   0 7.0e+05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73       NA    0.0                   26 default   interpolateGreys   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74       NA    0.0                   27 default    interpolateReds   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75       NA    0.0                   28 default   interpolateBlues   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76       NA    0.0                   29 default  interpolateGreens   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77       NA    0.0                   30 default   interpolateBlues   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78       NA    0.0                   31 default    interpolateReds   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79       NA    0.0                   32 default  interpolateGreens   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80       NA    0.0                   33 default   interpolateBlues   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81       NA    0.0                   34 default   interpolateBlues   0 1.2e+00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82       NA   0.0%                   35 default interpolateOranges   0 5.0e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83       NA   0.0%                   36 default interpolateOranges   0 1.0e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61      100    0,0                   19 default interpolateOranges   0 7.0e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62        1    0,0                   19 default interpolateOranges   0 7.0e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63       10    0,0                   20 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64       10    0,0                   20 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65        1    0,0                   21 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66       10    0,0                   21 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67       10    0,0                   21 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68       10    0,0                   22 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69       10    0,0                   22 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70       10    0,0                   23 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71       10    0,0                   23 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72        1    0,0                   23 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73       10    0,0                   24 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74       10    0,0                   24 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75        1    0,0                   24 default interpolateOranges   0 3.5e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76       10    0,0                   25 default interpolateOranges   0 7.0e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77       10    0,0                   25 default interpolateOranges   0 7.0e+05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78       NA    0.0                   26 default   interpolateGreys   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79        1   0.0%                   26 default   interpolateGreys   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80       NA    0.0                   27 default    interpolateReds   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81       NA    0.0                   28 default   interpolateBlues   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82       NA    0.0                   29 default  interpolateGreens   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83       NA    0.0                   30 default   interpolateBlues   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84       NA    0.0                   31 default    interpolateReds   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85       NA    0.0                   32 default  interpolateGreens   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86       NA    0.0                   33 default   interpolateBlues   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87       NA    0.0                   34 default   interpolateBlues   0 1.2e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88       NA   0.0%                   35 default interpolateOranges   0 5.0e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89       NA   0.0%                   36 default interpolateOranges   0 1.0e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90       NA    0,0                   37 default interpolateOranges   0 1.0e+06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91        1    0,0                   38 default interpolateOranges   0 1.0e+06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    invert_scale</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         FALSE</span>
@@ -502,6 +534,14 @@ scheme to use for that country and indicator.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 81        FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 82        FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 83        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90        FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91        FALSE</span>
 </code></pre></div>
     </div>
   </div>
