@@ -192,7 +192,7 @@ aggregate_art <- function(art, shape) {
   #   done elsewhere
   all_strat_art <- clean_art |>
     dplyr::group_by(calendar_quarter, age_group) |>
-    dplyr::reframe(sex = unique(dplyr::cur_data()$sex)) |>
+    dplyr::reframe(unique(dplyr::pick(sex))) |>
     dplyr::ungroup()
 
   # this gets the max area_level per quarter so we can get a complete list of
@@ -202,12 +202,13 @@ aggregate_art <- function(art, shape) {
     dplyr::group_by(calendar_quarter) |>
     dplyr::summarise(area_level = max(area_level), .groups = "drop")
 
+
   # combine all_strat_art with quarter_by_area_level and clean_art to get a
   # complete data with all stratification combinations and area_ids for level
   # with NAs where data was omitted in the CSV
   agg_art <- all_strat_art |>
-    dplyr::left_join(quarter_by_area_level, by = "calendar_quarter") |>
-    dplyr::left_join(dplyr::select(areas, area_id, area_level), by = "area_level") |>
+    dplyr::left_join(quarter_by_area_level, by = "calendar_quarter", relationship = "many-to-many") |>
+    dplyr::left_join(dplyr::select(areas, area_id, area_level), by = "area_level", relationship = "many-to-many") |>
     dplyr::left_join(clean_art, by = c("area_id", "calendar_quarter", "age_group", "sex"))
 
   area_with_parent_ids <- areas |>
@@ -231,7 +232,8 @@ aggregate_art <- function(art, shape) {
       ) |>
       dplyr::rename(area_id = parent_area_id) |>
       dplyr::bind_rows(agg_art)
-  }  
+  }
+
 
   # add in extra columns and sort
   art_long <- agg_art |>
@@ -326,7 +328,7 @@ prepare_input_time_series_art <- function(art, shape) {
     dplyr::filter(is.na(value) & !is.nan(value)) |>
     dplyr::select(-value) |>
     dplyr::mutate(missing_ids = as.list(area_id))
-  
+
   area_with_parent_ids <- areas |>
     dplyr::select(area_id, parent_area_id)
 
@@ -412,7 +414,7 @@ aggregate_anc <- function(anc, shape) {
     # expand each year row to multiple rows with all area_ids for that admin level
     # this is the complete list of area_ids that we need
     dplyr::left_join(
-      areas |> dplyr::select(area_id, area_level), by = "area_level"
+      areas |> dplyr::select(area_id, area_level), by = "area_level", relationship = "many-to-many"
     ) |>
     # left join complete list of area_ids with our potentially missing area_ids in
     # clean_anc to get rows of NAs if an area_id is missing
@@ -524,7 +526,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
     dplyr::filter(is.na(value) & !is.nan(value)) |>
     dplyr::select(-value) |>
     dplyr::mutate(missing_ids = as.list(area_id))
-  
+
   area_with_parent_ids <- areas |>
     dplyr::select(area_id, parent_area_id)
 
