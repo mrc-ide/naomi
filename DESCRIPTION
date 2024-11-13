@@ -78,6 +78,6 @@ LinkingTo:
     TMB
 Remotes:
     bergant/datamodelr,
-    mrc-ide/first90release@revert-42-2025-update
+    first90=github::mrc-ide/first90release@revert-42-2025-update
 Config/testthat/edition: 3
 Config/testthat/parallel: true
