@@ -1,3 +1,8 @@
+# naomi 2.10.0
+
+* Update Naomi example and test datasets to current example data for Malawi
+  - Population dataset extended to 2030 from 2025
+  
 # naomi 2.9.29
 
 * Add function to format data for Naomi-Spectrum comparison table.
