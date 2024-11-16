@@ -256,10 +256,7 @@
     "UNAWARE_PLHIV_PROP_RATIO": "Proportion PLHIV unaware ratio",
     "AWARE_PLHIV_PROP_RATIO": "Proportion PLHIV aware ratio",
     "INCIDENCE_RATIO": "Incidence ratio",
-    "WARNING_ART_NOT_EQUAL_TO_SPECTRUM": "Naomi ART current not equal to Spectrum: {{warnings}}",
-    "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC testing not equal to Spectrum: {{warnings}}",
-    "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM": "Naomi ANC tested positive not equal to Spectrum: {{warnings}}",
-    "WARNING_ADDITIONAL": "and {{count}} more",
+    "WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM": "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \n{{years}}",
     "PJNZ_INVALID_ZIP": "Zip contains no PJNZ files",
     "ANC_PREVALENCE_AGE_MATCHED": "ANC prevalence age matched",
     "ANC_ART_COVERAGE_AGE_MATCHED": "ANC ART coverage age matched",
@@ -276,5 +273,7 @@
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Naomi output uploaded from Naomi web app",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Naomi summary report uploaded from Naomi web app",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app",
-    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app"
+    "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app",
+    "NUMBER_ON_ART": "Number on ART",
+    "NUMBER_ON_ART_DESC": "Number on ART description"
 }

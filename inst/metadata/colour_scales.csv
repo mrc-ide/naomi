@@ -40,6 +40,8 @@ default,prevalence_ratio,interpolateReds,0,1.2,FALSE
 default,art_coverage_ratio,interpolateGreens,0,1.2,FALSE
 default,aware_plhiv_prop_ratio,interpolateBlues,0,1.2,FALSE
 default,incidence_ratio,interpolateBlues,0,1.2,FALSE
+default,anc_tested,interpolateOranges,0,1000000,FALSE
+default,number_on_art,interpolateOranges,0,1000000,FALSE
 MWI,art_current,interpolateGreens,0,80000,FALSE
 MWI,prevalence,interpolateReds,0,0.5,FALSE
 MWI,art_coverage,interpolateGreens,0,1,FALSE

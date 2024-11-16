@@ -18,13 +18,10 @@ test_that("model can be run", {
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
   expect_equal(output$warnings$model_fit, model_run$warnings)
-
-  expect_length(model_run$warnings, 3)
+  expect_length(model_run$warnings, 2)
   msgs <- lapply(model_run$warnings, function(x) x$text)
-  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
-  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
-  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
-                        msgs)))
+  expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
+  expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
 })
 
 test_that("model can be run without programme data", {
@@ -205,19 +202,17 @@ test_that("exceeding max_iterations raises convergence warning", {
     "convergence error: iteration limit reached without convergence (10)",
     fixed = TRUE)
 
-  expect_length(out$warnings, 4)
+  expect_length(out$warnings, 3)
 
   expect_equal(out$warnings[[1]]$text,
-               paste0("Naomi ART current not equal to Spectrum: 2018 Y000_999 Northern naomi: 78974 spectrum: 57913; 2018 Y000_999 Central naomi: 226728 spectrum: 236140; 2018 Y000_999 Southern naomi: 493159 spectrum: 496708 and 21 more"))
+               paste0("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018"))
 
-  expect_equal(out$warnings[[4]]$text,
+  expect_equal(out$warnings[[3]]$text,
                paste0("Convergence error: iteration limit reached without convergence (10)"))
 
   msgs <- lapply(out$warnings, function(x) x$text)
-  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
-  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
-  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
-                        msgs)))
+  expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
+  expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
 })
 
 test_that("invalid time sequencing returns an error", {

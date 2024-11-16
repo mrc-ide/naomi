@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.9.27
+Version: 2.9.29
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -28,7 +28,7 @@ Imports:
     dplyr (>= 1.1.0),
     eppasm (>= 0.7.1),
     gt,
-    first90 (>= 1.6.1),
+    first90 (== 1.6.11),
     forcats,
     fs,
     ggplot2,
@@ -77,6 +77,7 @@ LinkingTo:
     RcppEigen,
     TMB
 Remotes:
-    bergant/datamodelr
+    bergant/datamodelr,
+    first90=github::mrc-ide/first90release@revert-42-2025-update
 Config/testthat/edition: 3
 Config/testthat/parallel: true

@@ -152,7 +152,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
     dplyr::group_by(area_level_label) %>%
     dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
-  expect_equal(check1$n, c(10, 10, 6))
+  expect_equal(check3$n, c(10, 10, 6))
 
 
   # (4) Test that ART data can be aggregated with missing records
@@ -768,4 +768,5 @@ test_that("missing data is tagged correctly in aggregated plot data", {
 
 
 })
+
 

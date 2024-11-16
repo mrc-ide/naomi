@@ -1,10 +1,17 @@
+# naomi 2.9.29
+
+* Add function to format data for Naomi-Spectrum comparison table.
+* Refactor warnings that are superseded by Naomi-Spectrum comparison table.
+* Replace deprecated dplyr functions in `aggregate_art()` and `aggregate_anc()`.
+
 # naomi 2.9.28
 
-* Make duckdb an optional dependency
+* Suppress "some observations have no neighbours" and "neighbour object has 2 sub-graphs" warnings from `spdep` v1.3.6 see https://r-spatial.github.io/spdep/news/index.html#version-13-6-development. We expect this warning for some countries and it will make tests and output noisy to leave on.
 
 # naomi 2.9.27
 
 * Show calibration plot ratio values to nearest 0.1. 
+* Make duckdb an optional dependency
 
 # naomi 2.9.26
 
