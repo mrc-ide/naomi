@@ -10,7 +10,10 @@
     and demonstration of subnational Spectrum PJNZ files.
 	- In each of these files, updated the surveillance data, refit EPP, and refit Shiny90.
 	  See the `data-raw/demo-subnational-pjnz/README.md` for more details
-  
+	  
+  - Update vignettes with new datasets and default options.
+
+
 # naomi 2.9.29
 
 * Add function to format data for Naomi-Spectrum comparison table.

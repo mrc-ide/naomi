@@ -13,7 +13,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(naomi)
 library(tidyverse)
 library(sf)
@@ -33,21 +33,21 @@ web tool.
 Area hierarchy and boundaries
 
 
-```r
-area_merged <- read_sf(system.file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson", package = "naomi"))
+``` r
+area_merged <- read_sf(system.file("extdata/demo_areas.geojson", package = "naomi"))
 ```
 
 Population data
 
 
-```r
-pop_agesex <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_population_zone.csv", package = "naomi"))
+``` r
+pop_agesex <- read_csv(system.file("extdata/demo_population_agesex.csv", package = "naomi"))
 ```
 
 Survey data
 
 
-```r
+``` r
 survey_hiv_indicators <- read_csv(system.file("extdata/demo_survey_hiv_indicators.csv", package = "naomi"))
 ```
 
@@ -55,9 +55,9 @@ Programme data
 
 
 
-```r
-art_number <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_art_number_zone.csv", package = "naomi"))
-anc_testing <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_anc_testing_zone.csv", package = "naomi"))
+``` r
+art_number <- read_csv(system.file("extdata/demo_art_number.csv", package = "naomi"))
+anc_testing <- read_csv(system.file("extdata/demo_anc_testing.csv", package = "naomi"))
 ```
 
 Programme data
@@ -65,9 +65,12 @@ Programme data
 Spectrum PJNZ
 
 
-```r
-pjnz <- system.file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip", package = "naomi")
+``` r
+pjnz <- system.file("extdata/demo_mwi2024_v6.36.pjnz", package = "naomi")
 spec <- extract_pjnz_naomi(pjnz)
+#> Warning in normalizePath(zipfile): path[1]="": No such file or directory
+#> Warning in normalizePath(zipfile): path[1]="": No such file or directory
+#> Error in zip::unzip(path, exdir = unzip_dir): zip error: Cannot open zip file `` for reading in file zip.c:137
 ```
 
 # 2. Choose model areas and time points
@@ -86,14 +89,14 @@ The following are required to be provided to define the model state space:
 
 
 
-```r
+``` r
 scope <- "MWI"
-level <- 2
-calendar_quarter_t1 <- "CY2016Q1"
-calendar_quarter_t2 <- "CY2018Q4"
-calendar_quarter_t3 <- "CY2019Q2"
-calendar_quarter_t4 <- "CY2022Q3"
-calendar_quarter_t5 <- "CY2023Q3"
+level <- 4
+calendar_quarter_t1 <- "CY2020Q3"
+calendar_quarter_t2 <- "CY2023Q4"
+calendar_quarter_t3 <- "CY2024Q3"
+calendar_quarter_t4 <- "CY2025Q3"
+calendar_quarter_t5 <- "CY2026Q3"
 ```
 
 The following select data inputs to model fitting from the uploaded datasets.
@@ -113,23 +116,23 @@ Providing `NULL` for any will exclude that data source from model fitting.
 Survey IDs to include in fitting
 
 
-```r
-prev_survey_ids  <- c("DEMO2016PHIA", "DEMO2015DHS")
-artcov_survey_ids  <- "DEMO2016PHIA"
+``` r
+prev_survey_ids  <- "DEMO2020PHIA"
+artcov_survey_ids  <- "DEMO2020PHIA"
 vls_survey_ids <- NULL
-recent_survey_ids <- "DEMO2016PHIA"
+recent_survey_ids <- "DEMO2020PHIA"
 
-artnum_calendar_quarter_t1 <- "CY2016Q1"
-artnum_calendar_quarter_t2 <- "CY2018Q3"
+artnum_calendar_quarter_t1 <- "CY2020Q3"
+artnum_calendar_quarter_t2 <- "CY2023Q4"
 
-anc_clients_year2 <- 2018
-anc_clients_year2_num_months <- 9
+anc_clients_year2 <- 2023
+anc_clients_year2_num_months <- 12
 
-anc_prevalence_year1 <- 2016
-anc_prevalence_year2 <- 2018
+anc_prevalence_year1 <- 2020
+anc_prevalence_year2 <- 2023
 
-anc_art_coverage_year1 <- 2016
-anc_art_coverage_year2 <- 2018
+anc_art_coverage_year1 <- 2020
+anc_art_coverage_year2 <- 2023
 ```
 
 # 3. Review input data
@@ -138,7 +141,7 @@ anc_art_coverage_year2 <- 2018
 Setup the model
 
 
-```r
+``` r
 naomi_mf <- naomi_model_frame(area_merged,
                               pop_agesex,
                               spec,
@@ -156,172 +159,125 @@ naomi_mf <- naomi_model_frame(area_merged,
                               anchor_home_district = TRUE,
                               artattend_log_gamma_offset = -4L,
                               adjust_area_growth = TRUE)
-#> although coordinates are longitude/latitude, st_intersects assumes that they
-#> are planar
+#> Error in UseMethod("filter"): no applicable method for 'filter' applied to an object of class "function"
 ```
 
 Prepare data inputs
 
 
-```r
-naomi_data <- select_naomi_data(naomi_mf,
-                                survey_hiv_indicators,
-                                anc_testing,
-                                art_number,
-                                prev_survey_ids,
-                                artcov_survey_ids,
-                                recent_survey_ids,
-                                vls_survey_ids,
-                                artnum_calendar_quarter_t1,
-                                artnum_calendar_quarter_t2,
-                                anc_prevalence_year1,
-                                anc_prevalence_year2,
-                                anc_art_coverage_year1,
-                                anc_art_coverage_year2)
+``` r
+naomi_data <- select_naomi_data(
+  naomi_mf = naomi_mf,
+  survey_hiv_indicators = survey_hiv_indicators,
+  anc_testing = anc_testing,
+  art_number = art_number,
+  prev_survey_ids = prev_survey_ids,
+  artcov_survey_ids = artcov_survey_ids,
+  recent_survey_ids = recent_survey_ids,
+  vls_survey_ids = vls_survey_ids,
+  artnum_calendar_quarter_t1 = artnum_calendar_quarter_t1,
+  artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
+  anc_clients_year_t2 = anc_clients_year2,
+  anc_clients_year_t2_num_months = anc_clients_year2_num_months,
+  anc_prev_year_t1 = anc_prevalence_year1,
+  anc_prev_year_t2 = anc_prevalence_year2,
+  anc_artcov_year_t1 = anc_art_coverage_year1,
+  anc_artcov_year_t2 = anc_art_coverage_year2
+)
+#> Error in eval(expr, envir, enclos): object 'naomi_mf' not found
 ```
 
 5. Fit model
 Prepare model inputs and initial parameters
 
 
-```r
+``` r
 tmb_inputs <- prepare_tmb_inputs(naomi_data)
+#> Error in eval(expr, envir, enclos): object 'naomi_data' not found
 ```
 
 Fit the TMB model
 
 
-```r
+``` r
 fit <- fit_tmb(tmb_inputs)
-#>   0:     1380.6390:  0.00000 0.916291  0.00000 0.916291  0.00000 0.916291  2.58200 0.916291 -0.693147  0.00000 0.916291  0.00000 0.916291  0.00000 0.916291  2.58200 0.916291 0.916291 0.916291 0.916291 0.916291  0.00000  0.00000  0.00000 -0.693147 0.916291 0.916291 0.916291 0.916291 0.916291 0.916291
-#>   1:     1331.9747: 0.00818397 0.218066 0.00738945 0.189619 0.188062 -0.386303  3.18417 -0.602639 -0.693147 0.00744052 0.204830 0.00738710 0.203025 0.180784 -0.973774  3.02408 -0.273646 0.201502 0.151762 0.203005 0.916291 0.0145286 0.00252213 -0.424892 -1.22489 0.181189 0.185890 0.180115 0.203696 0.516691 0.916291
-#>   2:     1307.1816: 0.0198748 -0.481496 0.0151198 -0.632083  1.54531  1.63345  3.07287 -0.348534 -0.693147 0.0158220 -0.563314 0.0156317 -0.565852  1.45657 -0.0515251  3.10066 -0.538439 -0.582937 -0.564689 -0.569737 0.916291 0.0310709 0.00473084 -0.736398 -1.90608 -0.660672 -0.639829 -0.667689 -0.571274 0.193790 0.916291
-#>   3:     1276.2215: 0.0411579 -0.809578 0.0173382 -1.54962  2.99348 0.127701  2.84549 0.269513 -0.693147 0.0233166 -1.30753 0.0219478 -1.31636  2.97341 -0.635197  2.91875 -0.174870 -1.44813 -1.34487 -1.36327 0.916291 0.0440155 0.00625260 -0.957969 -2.58146 -1.67492 -1.57681 -1.72262 -1.39635 -0.174034 0.916291
-#>   4:     1271.0504: 0.0494530 -0.605687 0.0106097 -1.67555  2.83789 0.597103  3.11268 -0.328498 -0.693147 0.0225929 -1.40252 0.0214433 -1.43130  2.77630 0.0292228  2.97798 -0.324681 -1.64545 -1.46826 -1.48034 0.916291 0.0433322 0.00625535 -1.01129 -2.33442 -1.88107 -1.70563 -2.01073 -1.54469 -0.239375 0.916291
-#>   5:     1267.0055: 0.0632330 -0.465641 -0.00336078 -1.90465  3.15995 0.115722  3.19679 -0.466351 -0.693147 0.0200103 -1.58204 0.0199011 -1.65142  3.09778 -0.290000  2.97135 -0.339297 -2.01881 -1.67027 -1.70317 0.916291 0.0410851 0.00624768 -1.09789 -2.19525 -2.24691 -1.92996 -2.56609 -1.81852 -0.362704 0.916291
-#>   6:     1266.3599: 0.0811571 -0.476775 -0.0258217 -2.13361  2.80818 0.518268  3.09986 -0.160944 -0.693147 0.0114035 -1.76085 0.0150240 -1.89336  3.18322 -0.561155  2.96615 -0.380010 -2.46209 -1.86198 -1.93730 0.916291 0.0358569 0.00599621 -1.20998 -2.20748 -2.56380 -2.09529 -3.19617 -2.10898 -0.549324 0.916291
-#>   7:     1264.5503: 0.0841275 -0.522877 -0.0288066 -2.16152  2.93448 0.269109  3.15136 -0.263850 -0.693147 0.00770164 -1.77049 0.0133507 -1.92514  3.03652 -0.134051  2.97108 -0.402740 -2.48316 -1.87225 -1.94768 0.916291 0.0363724 0.00600179 -1.24046 -2.24447 -2.54602 -2.06511 -3.15990 -2.12209 -0.588675 0.916291
-#>   8:     1264.4820: 0.102259 -0.682285 -0.0464734 -2.29478  3.00067 0.322207  3.27858 -0.466590 -0.693147 -0.0146901 -1.80692 0.00288343 -2.08666  3.16772 -0.152633  2.92421 -0.359047 -2.59116 -1.90379 -1.99131 0.916291 0.0361555 0.00585725 -1.34284 -2.37003 -2.46777 -1.88992 -2.98376 -2.17096 -0.783546 0.916291
-#>   9:     1264.2078: 0.129678 -0.682212 -0.0696473 -2.46250  3.04199 0.353220  3.20067 -0.174653 -0.693147 -0.0444603 -1.89356 -0.0120199 -2.29740  3.26123 -0.133291  2.91223 -0.424831 -2.79977 -1.98124 -2.08655 0.916291 0.0324520 0.00572810 -1.36955 -2.35049 -2.50495 -1.78334 -2.99342 -2.26596 -0.971825 0.916291
-#>  10:     1264.1605: 0.162082 -0.437380 -0.0825133 -2.42907  3.22220 0.412207  3.27068 -0.211655 -0.693147 -0.0853870 -1.88089 -0.0323819 -2.35243  3.40951 -0.0874096  2.86757 -0.435407 -2.84150 -1.93059 -2.05112 0.916291 0.0266746 0.00588151 -1.05162 -2.19986 -2.59987 -1.83374 -3.04522 -2.20316 -0.818560 0.916291
-#>  11:     1264.0426: 0.189483 -0.643488 -0.0977686 -2.35930  3.25770 0.445353  3.33458 -0.245164 -0.693147 -0.117130 -1.97725 -0.0507129 -2.28784  3.46939 -0.0405772  2.83142 -0.462716 -2.82912 -1.95566 -2.07826 0.916291 0.0361752 0.00633659 -1.20477 -2.28648 -2.63994 -2.01200 -3.08595 -2.37231 -0.725943 0.916291
-#>  12:     1263.9652: 0.193512 -0.592356 -0.0998790 -2.38257  3.30117 0.398601  3.32038 -0.198604 -0.693147 -0.124432 -1.93605 -0.0530729 -2.29273  3.49227 -0.0400163  2.81822 -0.452430 -2.80962 -1.94270 -2.06941 0.916291 0.0351440 0.00616804 -1.20689 -2.30185 -2.57465 -1.93870 -2.98228 -2.30972 -0.778341 0.916291
-#>  13:     1263.9315: 0.212943 -0.611536 -0.111374 -2.43075  3.32336 0.472469  3.36429 -0.218245 -0.693147 -0.151624 -1.92268 -0.0654407 -2.29806  3.55240 0.00388415  2.78868 -0.479782 -2.82686 -1.95687 -2.09919 0.916291 0.0312282 0.00584823 -1.21230 -2.28675 -2.53242 -1.86250 -2.96008 -2.25933 -0.868424 0.916291
-#>  14:     1263.9216: 0.230328 -0.590775 -0.117056 -2.41581  3.35935 0.487213  3.38536 -0.204215 -0.693147 -0.176554 -1.90118 -0.0777052 -2.29478  3.60159 0.0212397  2.73816 -0.459899 -2.81819 -1.93567 -2.04733 0.916291 0.0303545 0.00595693 -1.20695 -2.33954 -2.58099 -1.87663 -2.99203 -2.27869 -0.815618 0.916291
-#>  15:     1263.9172: 0.247159 -0.620090 -0.124082 -2.37829  3.41484 0.487386  3.40679 -0.194130 -0.693147 -0.200954 -1.90557 -0.0901201 -2.27223  3.66039 0.0314631  2.70976 -0.494936 -2.78093 -1.93008 -2.03719 0.916291 0.0312494 0.00611400 -1.20343 -2.26708 -2.57200 -1.90671 -3.00001 -2.29323 -0.774754 0.916291
-#>  16:     1263.9164: 0.255212 -0.580529 -0.130502 -2.38402  3.42740 0.494147  3.41811 -0.191672 -0.693147 -0.212013 -1.94075 -0.0958588 -2.26773  3.68087 0.0446804  2.69815 -0.528419 -2.79044 -1.96348 -2.10595 0.916291 0.0322883 0.00603793 -1.20689 -2.31214 -2.53618 -1.92083 -3.00936 -2.27344 -0.820996 0.916291
-#>  17:     1263.9061: 0.255539 -0.602529 -0.130306 -2.39916  3.41759 0.510366  3.41656 -0.185890 -0.693147 -0.213951 -1.92553 -0.0966041 -2.28024  3.67581 0.0563681  2.68394 -0.509047 -2.80411 -1.95336 -2.08497 0.916291 0.0323766 0.00599061 -1.21295 -2.30117 -2.55550 -1.90069 -2.98996 -2.26622 -0.824239 0.916291
-#>  18:     1263.9050: 0.260515 -0.611669 -0.132198 -2.40748  3.43137 0.504674  3.42546 -0.186267 -0.693147 -0.223466 -1.91386 -0.101346 -2.28532  3.69628 0.0574651  2.67120 -0.532730 -2.80273 -1.93753 -2.05669 0.916291 0.0311486 0.00596325 -1.20214 -2.30414 -2.56298 -1.88058 -2.99456 -2.28674 -0.819303 0.916291
-#>  19:     1263.9049: 0.265037 -0.601959 -0.134766 -2.40421  3.43887 0.500415  3.43143 -0.184473 -0.693147 -0.231432 -1.91560 -0.105242 -2.28603  3.70746 0.0613440  2.63689 -0.507919 -2.80351 -1.95056 -2.06721 0.916291 0.0319212 0.00601708 -1.21573 -2.29160 -2.56137 -1.89497 -2.99344 -2.28377 -0.818461 0.916291
-#>  20:     1263.9032: 0.264336 -0.604245 -0.134419 -2.40111  3.43332 0.503129  3.42897 -0.182432 -0.693147 -0.231021 -1.91682 -0.105039 -2.28462  3.70355 0.0617232  2.64150 -0.524216 -2.80498 -1.94928 -2.07320 0.916291 0.0323746 0.00601735 -1.21416 -2.29819 -2.56439 -1.89806 -2.98840 -2.26734 -0.815909 0.916291
-#>  21:     1263.9029: 0.264187 -0.603938 -0.134305 -2.40254  3.43030 0.506494  3.42860 -0.182391 -0.693147 -0.231303 -1.91925 -0.105229 -2.28361  3.70173 0.0629533  2.63984 -0.527873 -2.80177 -1.94567 -2.07071 0.916291 0.0321072 0.00600130 -1.21038 -2.29949 -2.56012 -1.89389 -2.98975 -2.27441 -0.818518 0.916291
-#>  22:     1263.9027: 0.265100 -0.606328 -0.134848 -2.40343  3.43078 0.504221  3.42971 -0.181902 -0.693147 -0.233971 -1.91715 -0.106471 -2.28440  3.70368 0.0628145  2.62972 -0.532730 -2.80280 -1.94836 -2.06872 0.916291 0.0318294 0.00598360 -1.20757 -2.30026 -2.56033 -1.89149 -2.99148 -2.27526 -0.820046 0.916291
-#>  23:     1263.9027: 0.265968 -0.604664 -0.135251 -2.40339  3.43117 0.502978  3.43102 -0.182100 -0.693147 -0.236614 -1.91737 -0.107822 -2.28403  3.70537 0.0627748  2.61937 -0.538814 -2.80288 -1.94613 -2.06795 0.916291 0.0319671 0.00599200 -1.21138 -2.29964 -2.56180 -1.89143 -2.99026 -2.27682 -0.819137 0.916291
-#>  24:     1263.9026: 0.266400 -0.604934 -0.135531 -2.40331  3.42945 0.502585  3.43114 -0.181484 -0.693147 -0.238798 -1.91740 -0.108918 -2.28416  3.70461 0.0626840  2.60705 -0.542662 -2.80257 -1.94436 -2.06952 0.916291 0.0320039 0.00600200 -1.21049 -2.29940 -2.56047 -1.89297 -2.99126 -2.27542 -0.818803 0.916291
-#>  25:     1263.9025: 0.266623 -0.604423 -0.135739 -2.40256  3.42744 0.502672  3.43115 -0.181343 -0.693147 -0.240550 -1.91810 -0.109762 -2.28373  3.70314 0.0624166  2.59503 -0.547478 -2.80181 -1.94740 -2.06934 0.916291 0.0320195 0.00600318 -1.21003 -2.29926 -2.56048 -1.89295 -2.99052 -2.27529 -0.818069 0.916291
-#>  26:     1263.9025: 0.266291 -0.604731 -0.135628 -2.40307  3.42629 0.502360  3.43074 -0.181796 -0.693147 -0.240931 -1.91806 -0.109969 -2.28390  3.70083 0.0614462  2.58737 -0.551113 -2.80279 -1.94664 -2.06928 0.916291 0.0319842 0.00598705 -1.21024 -2.29956 -2.56085 -1.89257 -2.99079 -2.27526 -0.819884 0.916291
-#>  27:     1263.9025: 0.265914 -0.604751 -0.135465 -2.40301  3.42630 0.502297  3.43021 -0.181972 -0.693147 -0.240295 -1.91761 -0.109658 -2.28402  3.69959 0.0607843  2.58651 -0.551604 -2.80226 -1.94652 -2.06973 0.916291 0.0319924 0.00599998 -1.21020 -2.29949 -2.56077 -1.89226 -2.99075 -2.27566 -0.818761 0.916291
-#>  28:     1263.9025: 0.265528 -0.604621 -0.135266 -2.40301  3.42661 0.502342  3.42971 -0.182135 -0.693147 -0.239381 -1.91808 -0.109224 -2.28378  3.69868 0.0602708  2.58711 -0.551396 -2.80239 -1.94660 -2.06880 0.916291 0.0320039 0.00600365 -1.21022 -2.29936 -2.56030 -1.89273 -2.99076 -2.27543 -0.818386 0.916291
-#>  29:     1263.9025: 0.265497 -0.604628 -0.135240 -2.40288  3.42674 0.502426  3.42972 -0.182172 -0.693147 -0.239169 -1.91803 -0.109119 -2.28386  3.69879 0.0603724  2.58758 -0.551068 -2.80238 -1.94663 -2.06925 0.916291 0.0319918 0.00599216 -1.21010 -2.29942 -2.56085 -1.89258 -2.99063 -2.27547 -0.819156 0.916291
-#>  30:     1263.9025: 0.265471 -0.604671 -0.135234 -2.40303  3.42679 0.502494  3.42972 -0.182219 -0.693147 -0.239040 -1.91772 -0.109052 -2.28400  3.69883 0.0604045  2.58727 -0.551265 -2.80248 -1.94666 -2.06933 0.916291 0.0319913 0.00599661 -1.21025 -2.29948 -2.56065 -1.89259 -2.99070 -2.27553 -0.819043 0.916291
-#>  31:     1263.9025: 0.265422 -0.604708 -0.135208 -2.40304  3.42686 0.502505  3.42966 -0.182234 -0.693147 -0.238857 -1.91794 -0.108968 -2.28390  3.69882 0.0603888  2.58702 -0.551327 -2.80251 -1.94660 -2.06936 0.916291 0.0319898 0.00599855 -1.21023 -2.29947 -2.56065 -1.89238 -2.99076 -2.27543 -0.818883 0.916291
-#>  32:     1263.9025: 0.265387 -0.604661 -0.135179 -2.40293  3.42691 0.502512  3.42961 -0.182225 -0.693147 -0.238720 -1.91794 -0.108902 -2.28388  3.69882 0.0603814  2.58711 -0.551302 -2.80239 -1.94660 -2.06925 0.916291 0.0319923 0.00599497 -1.21013 -2.29943 -2.56074 -1.89258 -2.99067 -2.27548 -0.819004 0.916291
-#> converged: relative convergence (4)
+#> Error in eval(expr, envir, enclos): object 'tmb_inputs' not found
 ```
 
 Calculate model outputs. We can calculate outputs based on posterior mode
 estimates before running `report_tmb()` to calculate posterior intervals.
 
 
-```r
+``` r
 outputs <- output_package(fit, naomi_data)
+#> Error in eval(expr, envir, enclos): object 'fit' not found
 ```
 
 The output package consists of a data frame of indicators and metadata
 defining the labels for each indicator.
 
 
-```r
+``` r
 names(outputs)
-#> [1] "indicators"     "art_attendance" "meta_area"      "meta_age_group"
-#> [5] "meta_period"    "meta_indicator" "fit"            "inputs_outputs"
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 ```
 
 If uncertainty has not been calcualted yet, the output object retures values
 for `mode`, but not `mean` or `lower` and `upper` 95% uncertainty ranges.
 
 
-```r
+``` r
 outputs$indicators %>%
   dplyr::filter(
     indicator == "prevalence",  # HIV prevalence
     age_group == "Y015_049"   # Age group 15-49
   ) %>%
   head()
-#> # A tibble: 6 × 11
-#>   area_id   sex   age_group calendar_quarter indicator  mean    se median   mode
-#>   <chr>     <chr> <chr>     <chr>            <chr>     <dbl> <dbl>  <dbl>  <dbl>
-#> 1 MWI       both  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0892
-#> 2 MWI       fema… Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.110 
-#> 3 MWI       male  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0682
-#> 4 MWI_1_1_… both  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0657
-#> 5 MWI_1_1_… fema… Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0791
-#> 6 MWI_1_1_… male  Y015_049  CY2016Q1         prevalen…    NA    NA     NA 0.0521
-#> # ℹ 2 more variables: lower <dbl>, upper <dbl>
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 ```
 
 The function `add_output_labels()` returns the indicators table
 with labels added as additional columns.
 
 
-```r
+``` r
 add_output_labels(outputs) %>%
   dplyr::filter(
     indicator == "prevalence",  # HIV prevalence
     age_group == "Y015_049"   # Age group 15-49
   ) %>%
   head()
-#> # A tibble: 6 × 17
-#>   area_level area_level_label area_id area_name  sex   age_group age_group_label
-#>        <int> <chr>            <chr>   <chr>      <chr> <chr>     <chr>          
-#> 1          0 Country          MWI     Malawi - … both  Y015_049  15-49          
-#> 2          0 Country          MWI     Malawi - … fema… Y015_049  15-49          
-#> 3          0 Country          MWI     Malawi - … male  Y015_049  15-49          
-#> 4          0 Country          MWI     Malawi - … both  Y015_049  15-49          
-#> 5          0 Country          MWI     Malawi - … fema… Y015_049  15-49          
-#> 6          0 Country          MWI     Malawi - … male  Y015_049  15-49          
-#> # ℹ 10 more variables: calendar_quarter <chr>, quarter_label <chr>,
-#> #   indicator <chr>, indicator_label <chr>, mean <dbl>, se <dbl>, median <dbl>,
-#> #   mode <dbl>, lower <dbl>, upper <dbl>
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 ```
 
 Calculate uncertainty ranges and add to the output object
 (This is time consuming and memory intensive.
 
 
-```r
+``` r
 system.time(fit <- sample_tmb(fit))
-#>    user  system elapsed 
-#>   2.394   0.201   2.596
+#> Error in eval(expr, envir, enclos): object 'fit' not found
+#> Timing stopped at: 0 0 0
 ```
 
 Regenerate outputs with uncertainty ranges.
 
 
-```r
+``` r
 system.time(outputs <- output_package(fit, naomi_data))
-#>    user  system elapsed 
-#>   3.086   0.014   3.101
+#> Error in eval(expr, envir, enclos): object 'fit' not found
+#> Timing stopped at: 0.001 0 0
 
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",
-                                   spectrum_plhiv_calibration_strat = "sex_age_coarse",
+                                   spectrum_plhiv_calibration_strat = "sex_age_group",
                                    spectrum_artnum_calibration_level = "national",
-                                   spectrum_artnum_calibration_strat = "sex_age_coarse",
+                                   spectrum_artnum_calibration_strat = "sex_age_group",
                                    spectrum_aware_calibration_level = "national",
-                                   spectrum_aware_calibration_strat = "sex_age_coarse",
+                                   spectrum_aware_calibration_strat = "sex_age_group",
                                    spectrum_infections_calibration_level = "national",
-                                   spectrum_infections_calibration_strat = "sex_age_coarse")
+                                   spectrum_infections_calibration_strat = "sex_age_group")
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 
 
 outputs$indicators %>%
@@ -330,45 +286,22 @@ outputs$indicators %>%
     age_group == "Y015_049"   # Age group 15-49
   ) %>%
   head()
-#> # A tibble: 6 × 11
-#>   area_id      sex    age_group calendar_quarter indicator   mean      se median
-#>   <chr>        <chr>  <chr>     <chr>            <chr>      <dbl>   <dbl>  <dbl>
-#> 1 MWI          both   Y015_049  CY2016Q1         prevalen… 0.0894 0.00150 0.0893
-#> 2 MWI          female Y015_049  CY2016Q1         prevalen… 0.110  0.00226 0.110 
-#> 3 MWI          male   Y015_049  CY2016Q1         prevalen… 0.0684 0.00235 0.0685
-#> 4 MWI_1_1_demo both   Y015_049  CY2016Q1         prevalen… 0.0660 0.00195 0.0660
-#> 5 MWI_1_1_demo female Y015_049  CY2016Q1         prevalen… 0.0795 0.00320 0.0795
-#> 6 MWI_1_1_demo male   Y015_049  CY2016Q1         prevalen… 0.0522 0.00315 0.0521
-#> # ℹ 3 more variables: mode <dbl>, lower <dbl>, upper <dbl>
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 ```
 
 Save model outputs to ZIP
 
 
-```r
+``` r
 dir.create("outputs", showWarnings = FALSE)
 save_output_package(outputs, "demo_outputs", "outputs", with_labels = FALSE)
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 save_output_package(outputs, "demo_outputs_with_labels", "outputs", with_labels = TRUE)
-#> Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'unnamed-chunk-1', which has been used for the chunk:
-#> knitr::opts_chunk$set(
-#>                     collapse = TRUE,
-#>                     comment = "#>"
-#>                   )
-#> unlink("outputs", recursive = TRUE)
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 save_output_package(outputs, "demo_outputs_single_csv", "outputs", with_labels = TRUE, single_csv = TRUE)
-#> Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'unnamed-chunk-1', which has been used for the chunk:
-#> knitr::opts_chunk$set(
-#>                     collapse = TRUE,
-#>                     comment = "#>"
-#>                   )
-#> unlink("outputs", recursive = TRUE)
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 save_output_package(outputs, "demo_outputs_single_csv_unlabelled", "outputs", with_labels = FALSE, single_csv = TRUE)
-#> Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'unnamed-chunk-1', which has been used for the chunk:
-#> knitr::opts_chunk$set(
-#>                     collapse = TRUE,
-#>                     comment = "#>"
-#>                   )
-#> unlink("outputs", recursive = TRUE)
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 
 
 ## #' 6. Plot some model outputs
@@ -376,30 +309,30 @@ save_output_package(outputs, "demo_outputs_single_csv_unlabelled", "outputs", wi
 indicators <- add_output_labels(outputs) %>%
   left_join(outputs$meta_area %>% select(area_level, area_id, center_x, center_y)) %>%
   sf::st_as_sf()
+#> Error in eval(expr, envir, enclos): object 'outputs' not found
 ```
 
 15-49 prevalence by district
 
 
-```r
+``` r
 indicators %>%
   filter(age_group == "Y015_049",
          indicator == "prevalence",
-         area_level == 2) %>%
+         area_level == 4) %>%
   ggplot(aes(fill = mode)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk prev_by_district_15](figure/prev_by_district_15-1.png)
 
 15-49 prevalence by Zone
 
 
 
-```r
+``` r
 indicators %>%
   filter(age_group == "Y015_049",
          ## sex == "both",
@@ -410,19 +343,18 @@ indicators %>%
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk prev_by_zone_15](figure/prev_by_zone_15-1.png)
 
 Age-specific prevalence, national
 
 
-```r
+``` r
 indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group %in% get_five_year_age_groups(),
-         calendar_quarter == "CY2018Q4",
+         calendar_quarter == "CY2023Q4",
          indicator == "prevalence") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
@@ -433,38 +365,35 @@ indicators %>%
   scale_y_continuous(labels = scales::percent_format(1)) +
   facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
-#> Joining with `by = join_by(age_group, age_group_label)`
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk age_specific_prev](figure/age_specific_prev-1.png)
 
 15-64 ART coverage by district
 
 
-```r
+``` r
 indicators %>%
   filter(age_group == "Y015_064",
-         area_level == 2,
+         area_level == 4,
          indicator == "art_coverage") %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk art_cov_district](figure/art_cov_district-1.png)
 
 Age-specific ART coverage, national
 
 
-```r
+``` r
 indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group %in% get_five_year_age_groups(),
          indicator == "art_coverage",
-         calendar_quarter == "CY2018Q4") %>%
+         calendar_quarter == "CY2023Q4") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -474,22 +403,20 @@ indicators %>%
   scale_y_continuous(labels = scales::percent_format(1)) +
   facet_wrap(~calendar_quarter) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
-#> Joining with `by = join_by(age_group, age_group_label)`
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk age_specific_art_cov](figure/age_specific_art_cov-1.png)
 
 ART coverage by age/sex and region
 
 
 
-```r
+``` r
 indicators %>%
   filter(area_level == 1,
          sex != "both",
          age_group %in% get_five_year_age_groups(),
          indicator == "art_coverage",
-         calendar_quarter == "CY2018Q4") %>%
+         calendar_quarter == "CY2023Q4") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -499,21 +426,19 @@ indicators %>%
   scale_y_continuous(labels = scales::percent_format(1)) +
   facet_wrap(~area_name) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1.0, vjust = 0.5))
-#> Joining with `by = join_by(age_group, age_group_label)`
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk art_cov_age_sex](figure/art_cov_age_sex-1.png)
 
 Bubble plot prevalence and PLHIV
 
 
 
-```r
+``` r
 indicators %>%
   filter(age_group == "Y015_064",
          area_level == 2,
          indicator %in% c("prevalence", "plhiv"),
-         calendar_quarter == "CY2018Q4") %>%
+         calendar_quarter == "CY2023Q4") %>%
   select(sex, center_x, center_y, indicator_label, mean) %>%
   spread(indicator_label, mean) %>%
   ggplot() +
@@ -522,7 +447,6 @@ indicators %>%
   viridis::scale_color_viridis(labels = scales::percent_format()) +
   th_map() +
   facet_wrap(~sex)
+#> Error in eval(expr, envir, enclos): object 'indicators' not found
 ```
-
-![plot of chunk bubble_plot](figure/bubble_plot-1.png)
 
