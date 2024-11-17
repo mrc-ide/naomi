@@ -60,9 +60,9 @@ test_that("warning raised after false convergence", {
 
   expect_length(out$warnings, 3)
   expect_match(out$warnings[[1]]$text,
-               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018")
+               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023")
   expect_match(out$warnings[[2]]$text,
-               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art: 2011;2012;2013;2014;2015;2016;2017;2018\nanc_clients: 2012;2013;2014;2015;2016;2017;2018\nanc_known_pos: 2012;2013;2014;2015;2016;2017;2018\nanc_tested: 2012;2013;2014;2015;2016;2017;2018\nanc_tested_pos: 2012;2013;2014;2015;2016;2017;2018")
+               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art: 2011;2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_clients: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_known_pos: 2012;2013;2014;2015;2016;2017;2018\nanc_tested: 2012;2013;2014;2015;2016;2017;2018\nanc_tested_pos: 2012;2013;2014;2015;2016;2017;2018")
   expect_equal(out$warnings[[3]]$text,
                "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
 })
