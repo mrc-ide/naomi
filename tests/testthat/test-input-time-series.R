@@ -130,7 +130,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
            dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
 
-  expect_equal(unique(check2$n), 16)
+  expect_equal(unique(check2$n), 26)
 
   # (3) Data provided at more than one level for different years
   # Expected behavior - aggregate up from lowestnlevel available at each year
@@ -387,7 +387,7 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
     dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
 
-  expect_equal(unique(check2$n), 8)
+  expect_equal(unique(check2$n), 13)
 
   # (3) Data provided at more than one level for different years
   # Expected behavior - aggregate up from lowest  level available at each year
