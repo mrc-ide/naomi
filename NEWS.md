@@ -2,8 +2,14 @@
 
 * Update Naomi example and test datasets to current example data for Malawi
   - Population dataset extended from 2025 to 2030
+  - Imported final Malawi Spectrum file for 2024 UNAIDS estimates `extdata/demo_mwi2024_v6.36.PJNZ`.
+    File created with Spectrum v6.36.  
   - Example ART and ANC programme data by district from Malawi updated through 2023 Q4
   - Added MPHIA 2020-21 survey to example survey data.
+  - Created new example Northern / Central / Southern region Spectrum files for testing
+    and demonstration of subnational Spectrum PJNZ files.
+	- In each of these files, updated the surveillance data, refit EPP, and refit Shiny90.
+	  See the `data-raw/demo-subnational-pjnz/README.md` for more details
   
 # naomi 2.9.29
 

@@ -2,7 +2,7 @@ These files are alternative testing and demonstration files representing subnati
 Spectrum files. Three Spectrum PJNZ files werecreated based on the Malawi 2019 PJNZ file.
 
 _Update 22 August 2024:_ Updated files were created with the Malawi 2024 PJNZ file
-using Sepctrum 6.36.
+using Sepctrum 6.36. Saved in folder `mwi2024_v6.36/`.
 
 Region codes in .PJN files manually changed as follows:
 
@@ -30,6 +30,7 @@ The base population and net migration were scaled in each file based on the prop
 
 No other changes were made to demographic inputs. Fertility and non-HIV mortality rates were retained at national values.
 
+_Update 22 August 2024:_ Same proportion applied for HIV tests conducted in Shiny90.
 
 ### Number on ART
 
@@ -41,7 +42,9 @@ The number on ART was scaled by the proportions:
 | Central  | 29%        |
 | Southern | 61%        |
 
-The same proportions were used for adults on ART, children on ART, and children receiving cotrimoxazole
+The same proportions were used for adults on ART, children on ART, and children receiving cotrimoxazole.
+
+_Update 22 August 2024:_ Same proportion applied for ART initiations and HIV diagnoses in Shiny90.
 
 ### PMTCT and ANC clients
 
@@ -61,3 +64,4 @@ EPP was refit single region in each file.
 _For the 2024 Spectrum file:_ EPP by region was re-imported from the 2022 PJNZ files
 
 Analysis was done using the Spectrum v5.87 and based from the 2019 Malawi Spectrum file.
+
