@@ -1,7 +1,8 @@
 # naomi 2.10.0
 
 * Update Naomi example and test datasets to current example data for Malawi
-  - Population dataset extended to 2030 from 2025
+  - Population dataset extended from 2025 to 2030
+  - Example ART and ANC programme data by district from Malawi updated through 2023 Q4
   
 # naomi 2.9.29
 
