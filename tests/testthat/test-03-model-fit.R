@@ -86,7 +86,7 @@ test_that("model fits with different combination of ANC prevalence and ANC ART d
                                   demo_survey_hiv_indicators,
                                   anc_testing = ancdat1,
                                   demo_art_number,
-                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+                                  prev_survey_ids = "DEMO2016PHIA",
                                   artcov_survey_ids = "DEMO2016PHIA",
                                   recent_survey_ids = "DEMO2016PHIA",
                                   anc_prev_year_t1 = 2016,

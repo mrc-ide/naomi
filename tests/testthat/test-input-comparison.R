@@ -41,7 +41,7 @@ test_that("ANC data is properly aggreagted for Spectrum comparison table", {
 
   x <- prepare_anc_spectrum_comparison(anc, shape, pjnz)
 
-  expect_equal(unique(x$indicator), c("anc_already_art", "anc_clients",
+  expect_equal(unique(x$indicator), c("anc_already_art", "anc_clients", "anc_known_neg",
                                       "anc_known_pos", "anc_tested" , "anc_tested_pos"))
   expect_equal(unique(x$group), c("anc_adult_female"))
   expect_equal(unique(x$area_name), c("Northern", "Central", "Southern"))
@@ -70,8 +70,8 @@ test_that("Comparisoon wrapper function works with missing programme data", {
 
   x <- prepare_spectrum_naomi_comparison(art, anc, shape, pjnz)
 
-  expect_equal(unique(x$indicator), c("number_on_art","anc_already_art", "anc_clients",
-                                      "anc_known_pos", "anc_tested" , "anc_tested_pos"))
+  expect_equal(unique(x$indicator), c("number_on_art", "anc_already_art", "anc_clients",
+                                      "anc_known_neg", "anc_known_pos", "anc_tested" , "anc_tested_pos"))
   expect_equal(unique(x$group), c("art_children", "art_adult_both", "anc_adult_female"))
 
   # Test wrapper function with no ART
@@ -79,7 +79,7 @@ test_that("Comparisoon wrapper function works with missing programme data", {
 
   x <- prepare_spectrum_naomi_comparison(art, anc, shape, pjnz)
 
-  expect_equal(unique(x$indicator), c("anc_already_art", "anc_clients",
+  expect_equal(unique(x$indicator), c("anc_already_art", "anc_clients", "anc_known_neg",
                                       "anc_known_pos", "anc_tested" , "anc_tested_pos"))
   expect_equal(unique(x$group), c("anc_adult_female"))
 
