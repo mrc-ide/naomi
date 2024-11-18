@@ -104,14 +104,17 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(log_asfr_t1_offset);
   DATA_VECTOR(log_asfr_t2_offset);
   DATA_VECTOR(log_asfr_t3_offset);
+  DATA_VECTOR(log_asfr_t4_offset);
 
   DATA_VECTOR(logit_anc_rho_t1_offset);
   DATA_VECTOR(logit_anc_rho_t2_offset);
   DATA_VECTOR(logit_anc_rho_t3_offset);
+  DATA_VECTOR(logit_anc_rho_t4_offset);
 
   DATA_VECTOR(logit_anc_alpha_t1_offset);
   DATA_VECTOR(logit_anc_alpha_t2_offset);
   DATA_VECTOR(logit_anc_alpha_t3_offset);
+  DATA_VECTOR(logit_anc_alpha_t4_offset);
 
   DATA_SPARSE_MATRIX(Z_asfr_x);
   DATA_SPARSE_MATRIX(Z_ancrho_x);
@@ -1019,6 +1022,24 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> infections_t4(lambda_t4 * (population_t4 - plhiv_t4));
 
+    // Note: currently assuming same district effects parameters from t2 for t4
+    vector<Type> mu_anc_rho_t4(logit(rho_t4) +
+			       logit_anc_rho_t2_offset +
+			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
+    vector<Type> anc_rho_t4(invlogit(mu_anc_rho_t4));
+
+    vector<Type> mu_anc_alpha_t4(mu_alpha_t4 +
+				 logit_anc_alpha_t4_offset +
+				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
+    vector<Type> anc_alpha_t4(invlogit(mu_anc_alpha_t4));
+
+    vector<Type> anc_clients_t4(population_t4 * exp(log_asfr_t4_offset + mu_asfr));
+    vector<Type> anc_plhiv_t4(anc_clients_t4 * anc_rho_t4);
+    vector<Type> anc_already_art_t4(anc_plhiv_t4 * anc_alpha_t4);
+    
+
     vector<Type> prop_art_ij_t4((Xart_idx * prop_art_t4) * (Xart_gamma * gamma_art_t2));  // Note: using same ART attendance as T2
     vector<Type> population_ij_t4(Xart_idx * population_t4);
     vector<Type> artnum_ij_t4(population_ij_t4 * prop_art_ij_t4);
@@ -1040,6 +1061,18 @@ Type objective_function<Type>::operator() ()
     vector<Type> infections_t4_out(A_out * infections_t4);
     vector<Type> lambda_t4_out(infections_t4_out / (population_t4_out - plhiv_t4_out));
 
+    vector<Type> anc_clients_t4_out(A_anc_out * anc_clients_t4);
+    vector<Type> anc_plhiv_t4_out(A_anc_out * anc_plhiv_t4);
+    vector<Type> anc_already_art_t4_out(A_anc_out * anc_already_art_t4);
+    vector<Type> anc_art_new_t4_out(anc_plhiv_t4_out - anc_already_art_t4_out);
+    vector<Type> anc_known_pos_t4_out(anc_already_art_t4_out);
+    vector<Type> anc_tested_pos_t4_out(anc_plhiv_t4_out - anc_known_pos_t4_out);
+    vector<Type> anc_tested_neg_t4_out(anc_clients_t4_out - anc_plhiv_t4_out);
+
+    vector<Type> anc_rho_t4_out(anc_plhiv_t4_out / anc_clients_t4_out);
+    vector<Type> anc_alpha_t4_out(anc_already_art_t4_out / anc_plhiv_t4_out);
+
+
     REPORT(population_t4_out);
     // REPORT(rho_t4_out);
     REPORT(plhiv_t4_out);
@@ -1052,6 +1085,17 @@ Type objective_function<Type>::operator() ()
     // REPORT(untreated_plhiv_attend_t4_out);
     REPORT(lambda_t4_out);
     REPORT(infections_t4_out);
+
+    REPORT(anc_clients_t4_out);
+    REPORT(anc_plhiv_t4_out);
+    REPORT(anc_already_art_t4_out);
+    REPORT(anc_art_new_t4_out);
+    REPORT(anc_known_pos_t4_out);
+    REPORT(anc_tested_pos_t4_out);
+    REPORT(anc_tested_neg_t4_out);
+    REPORT(anc_rho_t4_out);
+    REPORT(anc_alpha_t4_out);
+
 
     // Projection to time 5
     // Only PLHIV, ART and infections calculated. No ANC or awareness indicators

@@ -567,6 +567,10 @@ naomi_model_frame <- function(area_merged,
                       spec_prev_t4 = prevalence,
                       spec_incid_t4 = incidence,
                       spec_artcov_t4 = art_coverage,
+                      spec_unaware_untreated_prop_t4 = unaware_untreated_prop,
+                      asfr_t4 = asfr,
+                      frr_plhiv_t4 = frr_plhiv,
+                      frr_already_art_t4 = frr_already_art                      
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
            ) %>%

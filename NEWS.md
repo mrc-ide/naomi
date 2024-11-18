@@ -1,3 +1,7 @@
+# naomi 2.10.2
+
+* Add ANC testing outputs to T4 projection period for including in PEPFAR datapack output.
+
 # naomi 2.10.1
 
 * Patch error in reading `anc_already_art` from Spectrum PJNZ file (was errantly
