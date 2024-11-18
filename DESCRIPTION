@@ -78,7 +78,7 @@ LinkingTo:
     TMB
 Remotes:
     bergant/datamodelr,
-    mrc-ide/naomi.options@2024-model-options,
+    mrc-ide/naomi.options,
     first90=github::mrc-ide/first90release@revert-42-2025-update
 Config/testthat/edition: 3
 Config/testthat/parallel: true
