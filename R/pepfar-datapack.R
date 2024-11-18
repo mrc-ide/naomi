@@ -1,4 +1,4 @@
-PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2024.csv"
+PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2025.csv"
 
 #' Export naomi outputs to PEPFAR Data Pack format
 #'

@@ -11,6 +11,13 @@ anc_clients,RM8gRoxtsNw,PMTCT_STAT_SUBNAT.D.T_1,# Pregnant Women who present at 
 anc_known_pos,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.Known.Pos.T_1,# Pregnant Women who are known HIV-positive at ANC1,TRUE,3
 anc_tested_neg,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.New.Neg.T_1,# Pregnant Women who are newly tested and found HIV-negative at ANC1,TRUE,3
 anc_tested_pos,tAE7ZD7p9zu,PMTCT_STAT_SUBNAT.N.New.Pos.T_1,# Pregnant Women who are newly tested and found HIV-positive at ANC1,TRUE,3
+anc_plhiv,PMTCT_ART_SUBNAT.D.T,PMTCT_ART_SUBNAT.D.T,# HIV-positIve Pregnant Women identified at ANC1,TRUE,4
+anc_already_art,PMTCT_ART_SUBNAT.N.Already.T,PMTCT_ART_SUBNAT.N.Already.T,# HIV-positive Pregnant Women already on ART at ANC1,TRUE,4
+anc_art_new,PMTCT_ART_SUBNAT.N.New.T,PMTCT_ART_SUBNAT.N.New.T,# HIV-positive Pregnant Women newly diagnosed at ANC1 and placed on ART,TRUE,4
+anc_clients,PMTCT_STAT_SUBNAT.D.T,PMTCT_STAT_SUBNAT.D.T,# Pregnant Women who present at ANC1,TRUE,4
+anc_known_pos,PMTCT_STAT_SUBNAT.N.Known.Pos.T,PMTCT_STAT_SUBNAT.N.Known.Pos.T,# Pregnant Women who are known HIV-positive at ANC1,TRUE,4
+anc_tested_neg,PMTCT_STAT_SUBNAT.N.New.Neg.T,PMTCT_STAT_SUBNAT.N.New.Neg.T,# Pregnant Women who are newly tested and found HIV-negative at ANC1,TRUE,4
+anc_tested_pos,PMTCT_STAT_SUBNAT.N.New.Pos.T,PMTCT_STAT_SUBNAT.N.New.Pos.T,# Pregnant Women who are newly tested and found HIV-positive at ANC1,TRUE,4
 art_current,xghQXueYJxu,TX_CURR_SUBNAT.T_1,Total # of PLHIV on ART,TRUE,3
 art_coverage,PopART.Rt.T_1,PopART.Rt.T_1,ART coverage,FALSE,3
 aware_plhiv_num,nF19GOjcnoD,DIAGNOSED_SUBNAT.T_1,Number of PLHIV aware of HIV positive status,TRUE,3
