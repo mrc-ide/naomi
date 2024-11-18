@@ -387,9 +387,9 @@ read_dp_anc_testing <- function(dp) {
   ## Note: these values start 1 column later than other arrays in the .DP file
   ## If value is 0, interpret as not entered (NA)
   if (exists_dptag("<ARVRegimen MV2>")) {
-    anc_already_art <- dpsub("<ARVRegimen MV2>", 13, timedat.idx+1)
+    anc_already_art <- dpsub("<ARVRegimen MV2>", 11, timedat.idx+1)
   } else if (exists_dptag("<ARVRegimen MV3>")) {
-    anc_already_art <- dpsub("<ARVRegimen MV3>", 13, timedat.idx+1)
+    anc_already_art <- dpsub("<ARVRegimen MV3>", 11, timedat.idx+1)
   }
   anc_already_art <- sapply(anc_already_art, as.integer)
   anc_already_art[anc_already_art == 0] <- NA
