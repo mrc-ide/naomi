@@ -153,7 +153,7 @@ test_that("summary report download can be created", {
   expect_equal(out$metadata$areas, "MWI")
 
   expect_true(file.size(out$path) > 2000)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS",
+  expect_true(any(grepl("DEMO2020PHIA",
                         brio::readLines(out$path))))
   expect_true(any(grepl(basename(a_hintr_data$pjnz),
                         brio::readLines(out$path))))
@@ -181,8 +181,8 @@ test_that("comparison report download can be created", {
 
   expect_true(file.size(out$path) > 2000)
   content <- brio::readLines(out$path)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("DEMO2020PHIA", content)))
+  expect_true(any(grepl("Naomi estimate CY2020Q3", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
   expect_true(any(grepl("Central", content)))
 

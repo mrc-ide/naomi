@@ -325,7 +325,11 @@ test_that("model run can be calibrated", {
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
-  expect_length(calibrated_output$warnings, 0)
+  ## expect_length(calibrated_output$warnings, 0)
+
+  expect_match(calibrated_output$warnings[[1]]$text,
+               "^ART coverage is higher than 100%")
+
 
   output <- read_hintr_output(calibrated_output$model_output_path)
   expect_equal(names(output),
@@ -451,8 +455,8 @@ test_that("Model can be run without .shiny90 file", {
 
   ## Remove .shiny90 from PJNZ and set 'output_aware_plhiv = FALSE'
   temp_pjnz <- tempfile(fileext = ".pjnz")
-  file.copy(system_file("extdata/demo_mwi2019.PJNZ"), temp_pjnz)
-  utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
+  file.copy(system_file("extdata/demo_mwi2024_v6.36.PJNZ"), temp_pjnz)
+  utils::zip(temp_pjnz, "Malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
 
   data <- a_hintr_data

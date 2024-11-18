@@ -13,6 +13,8 @@
 	  
   - Update vignettes with new datasets and default options.
 
+* Update Navigator checklist calendar quarter for 2025 estimates to
+  2024Q4 and 2025Q3 for current period and projection.
 
 # naomi 2.9.29
 
