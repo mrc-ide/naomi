@@ -758,6 +758,26 @@ naomi_objective_function_r <- function(d, p) {
 
   infections_t4 <- lambda_t4 * (d$population_t4 - plhiv_t4)
 
+  ## Note: currently assuming same district effects parameters from t2 for t4
+  mu_anc_rho_t4 <- qlogis(rho_t4) +
+    d$logit_anc_rho_t2_offset +
+    d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2) +
+    d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt)
+  mu_anc_rho_t4 <- as.vector(mu_anc_rho_t4)
+  anc_rho_t4 <- stats::plogis(mu_anc_rho_t4)
+
+  mu_anc_alpha_t4 <- mu_alpha_t4 +
+    d$logit_anc_alpha_t4_offset +
+    d$X_ancalpha %*% (p$beta_anc_alpha + p$beta_anc_alpha_t2) +
+    d$Z_ancalpha_x %*% (p$ui_anc_alpha_x + p$ui_anc_alpha_xt)
+  mu_anc_alpha_t4 <- as.vector(mu_anc_alpha_t4)
+  anc_alpha_t4 <- plogis(mu_anc_alpha_t4)
+
+  anc_clients_t4 <- d$population_t4 * exp(d$log_asfr_t4_offset + mu_asfr)
+  anc_plhiv_t4 <- anc_clients_t4 * anc_rho_t4
+  anc_already_art_t4 <- anc_plhiv_t4 * anc_alpha_t4
+  
+
   prop_art_ij_t4 <- as.vector(d$Xart_idx %*% prop_art_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
   population_ij_t4 <- as.vector(d$Xart_idx %*% d$population_t4)
   artnum_ij_t4 <- population_ij_t4 * prop_art_ij_t4
@@ -774,11 +794,31 @@ naomi_objective_function_r <- function(d, p) {
   infections_t4_out <- as.vector(d$A_out %*% infections_t4)
   lambda_t4_out <- infections_t4_out / (population_t4_out - plhiv_t4_out)
 
+  anc_clients_t4_out <- as.vector(d$A_anc_out %*% anc_clients_t4)
+  anc_plhiv_t4_out <- as.vector(d$A_anc_out %*% anc_plhiv_t4)
+  anc_already_art_t4_out <- as.vector(d$A_anc_out %*% anc_already_art_t4)
+  anc_art_new_t4_out <- anc_plhiv_t4_out - anc_already_art_t4_out
+  anc_known_pos_t4_out <- anc_already_art_t4_out
+  anc_tested_pos_t4_out <- anc_plhiv_t4_out - anc_known_pos_t4_out
+  anc_tested_neg_t4_out <- anc_clients_t4_out - anc_plhiv_t4_out
+
+  anc_rho_t4_out <- anc_plhiv_t4_out / anc_clients_t4_out
+  anc_alpha_t4_out <- anc_already_art_t4_out / anc_plhiv_t4_out
+
   report_t4 <- list(population_t4_out              = population_t4_out,
                     plhiv_t4_out                   = plhiv_t4_out,
                     plhiv_attend_t4_out            = plhiv_attend_t4_out,
                     lambda_t4_out                  = lambda_t4_out,
-                    infections_t4_out              = infections_t4_out)
+                    infections_t4_out              = infections_t4_out,
+                    anc_clients_t4_out             = anc_clients_t4_out,
+                    anc_plhiv_t4_out               = anc_plhiv_t4_out,
+                    anc_already_art_t4_out         = anc_already_art_t4_out,
+                    anc_art_new_t4_out             = anc_art_new_t4_out,
+                    anc_known_pos_t4_out           = anc_known_pos_t4_out,
+                    anc_tested_pos_t4_out          = anc_tested_pos_t4_out,
+                    anc_tested_neg_t4_out          = anc_tested_neg_t4_out,
+                    anc_rho_t4_out                 = anc_rho_t4_out,
+                    anc_alpha_t4_out               = anc_alpha_t4_out)
 
 
   ## Projection to time 5
