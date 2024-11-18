@@ -35,7 +35,7 @@ Imports:
     magrittr,
     methods,
     mvtnorm,
-    naomi.options (>= 1.2.0),
+    naomi.options (>= 1.3.0),
     openxlsx,
     plotly,
     prettyunits,
@@ -78,6 +78,7 @@ LinkingTo:
     TMB
 Remotes:
     bergant/datamodelr,
+    mrc-ide/naomi.options,
     first90=github::mrc-ide/first90release@revert-42-2025-update
 Config/testthat/edition: 3
 Config/testthat/parallel: true
