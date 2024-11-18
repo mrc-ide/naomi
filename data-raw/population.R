@@ -57,7 +57,7 @@ a5 <- Map(readxl::read_excel,
 
 a5aggr <- a5 %>%
   filter(age != "Total") %>%
-  mutate(age = sub("\\+", "", age) %>% utils::type.convert,
+  mutate(age = sub("\\+", "", age) %>% utils::type.convert(as.is = TRUE),
          age_group = cut(age, c(0, 1, 1:18*5, Inf),
                          c("Less than 1 Year", "1-4", paste0(1:17*5, "-", 2:18*5 - 1), "90+"),
                          TRUE, FALSE)) %>%
@@ -93,7 +93,8 @@ cens18 <- spread_areas(demo_area_hierarchy) %>%
     filter(area_level == 4) %>%
     select(area_id, sex, pop_a3)
    ,
-    by = c("area_id4" = "area_id")
+    by = c("area_id4" = "area_id"),
+    relationship = "many-to-many"
   ) %>%
   left_join(
     a5aggr %>%
@@ -209,7 +210,7 @@ cens18adj %>%
 
 
 population_agesex <- nso %>%
-  filter(year %in% 2008:2025) %>%
+  filter(year %in% 2008:2030) %>%
   left_join(cens18adj) %>%
   mutate(
     source = "Census 2018",

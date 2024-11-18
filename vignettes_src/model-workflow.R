@@ -33,11 +33,11 @@ library(sf)
 #'
 #' Area hierarchy and boundaries
 
-area_merged <- read_sf(system.file("extdata/demo-subnational-pjnz/demo_areas_region-pjnz.geojson", package = "naomi"))
+area_merged <- read_sf(system.file("extdata/demo_areas.geojson", package = "naomi"))
 
 #' Population data
 ##+ load_population_data, message = FALSE
-pop_agesex <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_population_zone.csv", package = "naomi"))
+pop_agesex <- read_csv(system.file("extdata/demo_population_agesex.csv", package = "naomi"))
 
 #' Survey data
 ##+ load_survey_data, message = FALSE
@@ -46,8 +46,8 @@ survey_hiv_indicators <- read_csv(system.file("extdata/demo_survey_hiv_indicator
 #' Programme data
 #'
 ##+ message = FALSE
-art_number <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_art_number_zone.csv", package = "naomi"))
-anc_testing <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_anc_testing_zone.csv", package = "naomi"))
+art_number <- read_csv(system.file("extdata/demo_art_number.csv", package = "naomi"))
+anc_testing <- read_csv(system.file("extdata/demo_anc_testing.csv", package = "naomi"))
 
 
 #' Programme data
@@ -55,7 +55,7 @@ anc_testing <- read_csv(system.file("extdata/demo-subnational-pjnz/demo_anc_test
 
 #' Spectrum PJNZ
 
-pjnz <- system.file("extdata/demo-subnational-pjnz/demo_mwi2019_region-pjnz.zip", package = "naomi")
+pjnz <- system.file("extdata/demo_mwi2024_v6.36.pjnz", package = "naomi")
 spec <- extract_pjnz_naomi(pjnz)
 
 
@@ -76,12 +76,12 @@ spec <- extract_pjnz_naomi(pjnz)
 #'
 
 scope <- "MWI"
-level <- 2
-calendar_quarter_t1 <- "CY2016Q1"
-calendar_quarter_t2 <- "CY2018Q4"
-calendar_quarter_t3 <- "CY2019Q2"
-calendar_quarter_t4 <- "CY2022Q3"
-calendar_quarter_t5 <- "CY2023Q3"
+level <- 4
+calendar_quarter_t1 <- "CY2020Q3"
+calendar_quarter_t2 <- "CY2023Q4"
+calendar_quarter_t3 <- "CY2024Q3"
+calendar_quarter_t4 <- "CY2025Q3"
+calendar_quarter_t5 <- "CY2026Q3"
 
 #' The following select data inputs to model fitting from the uploaded datasets.
 #' Providing `NULL` for any will exclude that data source from model fitting.
@@ -99,22 +99,22 @@ calendar_quarter_t5 <- "CY2023Q3"
 #'   example if there were reporting problems known to affect a given quarter.
 
 #' Survey IDs to include in fitting
-prev_survey_ids  <- c("DEMO2016PHIA", "DEMO2015DHS")
-artcov_survey_ids  <- "DEMO2016PHIA"
+prev_survey_ids  <- "DEMO2020PHIA"
+artcov_survey_ids  <- "DEMO2020PHIA"
 vls_survey_ids <- NULL
-recent_survey_ids <- "DEMO2016PHIA"
+recent_survey_ids <- "DEMO2020PHIA"
 
-artnum_calendar_quarter_t1 <- "CY2016Q1"
-artnum_calendar_quarter_t2 <- "CY2018Q3"
+artnum_calendar_quarter_t1 <- "CY2020Q3"
+artnum_calendar_quarter_t2 <- "CY2023Q4"
 
-anc_clients_year2 <- 2018
-anc_clients_year2_num_months <- 9
+anc_clients_year2 <- 2023
+anc_clients_year2_num_months <- 12
 
-anc_prevalence_year1 <- 2016
-anc_prevalence_year2 <- 2018
+anc_prevalence_year1 <- 2020
+anc_prevalence_year2 <- 2023
 
-anc_art_coverage_year1 <- 2016
-anc_art_coverage_year2 <- 2018
+anc_art_coverage_year1 <- 2020
+anc_art_coverage_year2 <- 2023
 
 
 #' # 3. Review input data
@@ -146,20 +146,25 @@ naomi_mf <- naomi_model_frame(area_merged,
 
 #' Prepare data inputs
 
-naomi_data <- select_naomi_data(naomi_mf,
-                                survey_hiv_indicators,
-                                anc_testing,
-                                art_number,
-                                prev_survey_ids,
-                                artcov_survey_ids,
-                                recent_survey_ids,
-                                vls_survey_ids,
-                                artnum_calendar_quarter_t1,
-                                artnum_calendar_quarter_t2,
-                                anc_prevalence_year1,
-                                anc_prevalence_year2,
-                                anc_art_coverage_year1,
-                                anc_art_coverage_year2)
+naomi_data <- select_naomi_data(
+  naomi_mf = naomi_mf,
+  survey_hiv_indicators = survey_hiv_indicators,
+  anc_testing = anc_testing,
+  art_number = art_number,
+  prev_survey_ids = prev_survey_ids,
+  artcov_survey_ids = artcov_survey_ids,
+  recent_survey_ids = recent_survey_ids,
+  vls_survey_ids = vls_survey_ids,
+  artnum_calendar_quarter_t1 = artnum_calendar_quarter_t1,
+  artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
+  anc_clients_year_t2 = anc_clients_year2,
+  anc_clients_year_t2_num_months = anc_clients_year2_num_months,
+  anc_prev_year_t1 = anc_prevalence_year1,
+  anc_prev_year_t2 = anc_prevalence_year2,
+  anc_artcov_year_t1 = anc_art_coverage_year1,
+  anc_artcov_year_t2 = anc_art_coverage_year2
+)
+ 
 
 
 #' 5. Fit model
@@ -216,13 +221,13 @@ system.time(outputs <- output_package(fit, naomi_data))
 
 outputs_calib <- calibrate_outputs(outputs, naomi_mf,
                                    spectrum_plhiv_calibration_level = "national",
-                                   spectrum_plhiv_calibration_strat = "sex_age_coarse",
+                                   spectrum_plhiv_calibration_strat = "sex_age_group",
                                    spectrum_artnum_calibration_level = "national",
-                                   spectrum_artnum_calibration_strat = "sex_age_coarse",
+                                   spectrum_artnum_calibration_strat = "sex_age_group",
                                    spectrum_aware_calibration_level = "national",
-                                   spectrum_aware_calibration_strat = "sex_age_coarse",
+                                   spectrum_aware_calibration_strat = "sex_age_group",
                                    spectrum_infections_calibration_level = "national",
-                                   spectrum_infections_calibration_strat = "sex_age_coarse")
+                                   spectrum_infections_calibration_strat = "sex_age_group")
 
 
 outputs$indicators %>%
@@ -256,7 +261,7 @@ indicators <- add_output_labels(outputs) %>%
 indicators %>%
   filter(age_group == "Y015_049",
          indicator == "prevalence",
-         area_level == 2) %>%
+         area_level == 4) %>%
   ggplot(aes(fill = mode)) +
   geom_sf() +
   viridis::scale_fill_viridis(labels = scales::percent_format()) +
@@ -285,7 +290,7 @@ indicators %>%
   dplyr::filter(area_level == 0,
          sex != "both",
          age_group %in% get_five_year_age_groups(),
-         calendar_quarter == "CY2018Q4",
+         calendar_quarter == "CY2023Q4",
          indicator == "prevalence") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
@@ -304,7 +309,7 @@ indicators %>%
 ##+ art_cov_district, fig.height = 4, fig.width = 7
 indicators %>%
   filter(age_group == "Y015_064",
-         area_level == 2,
+         area_level == 4,
          indicator == "art_coverage") %>%
   ggplot(aes(fill = mean)) +
   geom_sf() +
@@ -320,7 +325,7 @@ indicators %>%
          sex != "both",
          age_group %in% get_five_year_age_groups(),
          indicator == "art_coverage",
-         calendar_quarter == "CY2018Q4") %>%
+         calendar_quarter == "CY2023Q4") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -340,7 +345,7 @@ indicators %>%
          sex != "both",
          age_group %in% get_five_year_age_groups(),
          indicator == "art_coverage",
-         calendar_quarter == "CY2018Q4") %>%
+         calendar_quarter == "CY2023Q4") %>%
   left_join(get_age_groups()) %>%
   mutate(age_group = fct_reorder(age_group_label, age_group_sort_order)) %>%
   ggplot(aes(age_group, mean, ymin = lower, ymax = upper, fill = sex)) +
@@ -359,7 +364,7 @@ indicators %>%
   filter(age_group == "Y015_064",
          area_level == 2,
          indicator %in% c("prevalence", "plhiv"),
-         calendar_quarter == "CY2018Q4") %>%
+         calendar_quarter == "CY2023Q4") %>%
   select(sex, center_x, center_y, indicator_label, mean) %>%
   spread(indicator_label, mean) %>%
   ggplot() +
