@@ -28,7 +28,7 @@ Imports:
     dplyr (>= 1.1.0),
     eppasm (>= 0.7.1),
     gt,
-    first90 (== 1.6.11),
+    first90 (>= 1.7.1),
     forcats,
     fs,
     ggplot2,
@@ -79,6 +79,6 @@ LinkingTo:
 Remotes:
     bergant/datamodelr,
     mrc-ide/naomi.options,
-    first90=github::mrc-ide/first90release@revert-42-2025-update
+    first90=github::mrc-ide/first90release
 Config/testthat/edition: 3
 Config/testthat/parallel: true
