@@ -44,24 +44,21 @@ test_that("naomi warning handler returns empty list when no warnings", {
   expect_length(out$warnings, 0)
 })
 
+gc()
+
 test_that("warning raised after false convergence", {
 
   a_fit_bad <- a_fit
   a_fit_bad$convergence <- 1
   a_fit_bad$message <- "false convergence (8)"
 
-  a_fit_sample_bad <- a_fit_sample
-  a_fit_sample_bad$convergence <- 1
-  a_fit_sample_bad$message <- "false convergence (8)"
-
-  with_mocked_bindings(
-  {
+  with_mocked_bindings({
     out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
   },
-  fit_tmb = mockery::mock(a_fit_bad),
-  output_package = mockery::mock(a_output)
+    fit_tmb = mockery::mock(a_fit_bad),
+    output_package = mockery::mock(a_output)
   )
-  
+
   expect_length(out$warnings, 3)
   expect_match(out$warnings[[1]]$text,
                "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023")
