@@ -1,3 +1,8 @@
+# naomi 2.10.1
+
+* Patch error in reading `anc_already_art` from Spectrum PJNZ file (was errantly
+  reading number of women initiated ART <4 weeks before delivery).
+
 # naomi 2.10.0
 
 * Update Naomi example and test datasets to current example data for Malawi
