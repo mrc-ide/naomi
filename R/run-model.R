@@ -100,7 +100,6 @@ run_model <- function(data, options, validate) {
     }
 
     naomi_warning(msg, "model_fit")
-
   }
 
   progress$finalise_fit()
