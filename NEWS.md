@@ -1,3 +1,7 @@
+# naomi 2.9.30
+
+* Improve warning generated when user fits model at admin level where no population data exists.
+
 # naomi 2.9.29
 
 * Add function to format data for Naomi-Spectrum comparison table.

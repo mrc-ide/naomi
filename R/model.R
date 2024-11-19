@@ -329,6 +329,12 @@ naomi_model_frame <- function(area_merged,
   ##           of a Spectrum file and then calibrated. Currently no way to know if areas
   ##           comparise only part of a Spectrum file, so can't address.
 
+  if(any( mf_areas[["area_id"]] %in% unique(population_agesex$area_id) == FALSE)){
+    stop(
+     "Population data not available for admin level selected for model projections.
+      Please review model options selection to ensure that area level selection is correct.")
+  }
+
   pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas[["area_id"]])
   pop_t1 <- interpolate_population_agesex(pop_subset, calendar_quarter1)
   pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
