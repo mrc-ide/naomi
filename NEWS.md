@@ -1,6 +1,25 @@
-# naomi 2.9.30
+# naomi 2.10.1
 
 * Improve warning generated when user fits model at admin level where no population data exists.
+
+# naomi 2.10.0
+
+* Update Naomi example and test datasets to current example data for Malawi
+  - Population dataset extended from 2025 to 2030
+  - Imported final Malawi Spectrum file for 2024 UNAIDS estimates `extdata/demo_mwi2024_v6.36.PJNZ`.
+    File created with Spectrum v6.36.  
+  - Example ART and ANC programme data by district from Malawi updated through 2023 Q4
+  - Added MPHIA 2020-21 survey to example survey data.
+  - Created new example Northern / Central / Southern region Spectrum files for testing
+    and demonstration of subnational Spectrum PJNZ files.
+	- In each of these files, updated the surveillance data, refit EPP, and refit Shiny90.
+	  See the `data-raw/demo-subnational-pjnz/README.md` for more details
+	  
+  - Update vignettes with new datasets and default options.
+
+* Update Navigator checklist calendar quarter for 2025 estimates to
+  2024Q4 and 2025Q3 for current period and projection.
+
 
 # naomi 2.9.29
 
