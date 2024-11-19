@@ -896,6 +896,8 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_biomarker,
   demo_area_hierarchy)
 
+filter(survey_hiv_indicators, is.na(std_error))
+survey_hiv_indicators$std_error[is.na(survey_hiv_indicators$std_error)] <- 0.0
 
 #' ## Save datasets
 #'

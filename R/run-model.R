@@ -91,16 +91,15 @@ run_model <- function(data, options, validate) {
                  progress = progress)
 
 
-  if (fit$convergence !=0) {
+  if (fit$convergence != 0) {
 
-    if(fit$message == "false convergence (8)"){
+    if (fit$message == "false convergence (8)"){
       msg <- t_("WARNING_FALSE_CONVERGENCE")
     } else {
       msg <- t_("WARNING_CONVERGENCE", list(msg = fit$message))
     }
 
     naomi_warning(msg, "model_fit")
-
   }
 
   progress$finalise_fit()
@@ -131,7 +130,6 @@ run_model <- function(data, options, validate) {
     naomi_data = naomi_data,
     info = info
   )
-
 }
 
 build_hintr_output <- function(plot_data_path, model_output_path, warnings) {

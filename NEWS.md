@@ -1,6 +1,11 @@
-# naomi 2.10.1
+# naomi 2.10.2
 
 * Improve warning generated when user fits model at admin level where no population data exists.
+
+# naomi 2.10.1
+
+* Patch error in reading `anc_already_art` from Spectrum PJNZ file (was errantly
+  reading number of women initiated ART <4 weeks before delivery).
 
 # naomi 2.10.0
 
@@ -19,7 +24,6 @@
 
 * Update Navigator checklist calendar quarter for 2025 estimates to
   2024Q4 and 2025Q3 for current period and projection.
-
 
 # naomi 2.9.29
 

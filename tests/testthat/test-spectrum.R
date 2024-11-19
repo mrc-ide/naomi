@@ -128,7 +128,7 @@ test_that("extract_pjnz_program_data() returns complete data", {
   expect_setequal(dat_old$anc_testing$spectrum_region_code, 0)
   expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2018],
                   c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"))
-  expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2010],
+  expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2019],
                   c("anc_already_art"))
   expect_true(all(!is.na(dat_old$anc_testing$value)))
 
@@ -146,7 +146,7 @@ test_that("extract_pjnz_program_data() returns complete data", {
   expect_setequal(dat_new$anc_testing$spectrum_region_code, 0)
   expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2018],
                   c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_known_neg", "anc_already_art"))
-  expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2010],
+  expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2019],
                   c("anc_already_art"))
   expect_true(all(!is.na(dat_new$anc_testing$value)))
 

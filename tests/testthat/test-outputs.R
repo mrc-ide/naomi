@@ -164,16 +164,21 @@ test_that("subset_output_package() saves expected output package", {
   expect_setequal(indicator_sub, sub_keep_out$indicators$indicator)
 
 
+  ## Test that can **drop** selected indicators (rather than keep)
+  
   sub_drop_file <- tempfile(fileext = ".zip")
 
-  sub_drop_return <- subset_output_package(out$path,
-                                           sub_drop_file,
-                                           area_id = area_id_sub,
-                                           sex = sex_sub,
-                                           age_group = age_group_sub,
-                                           calendar_quarter = calendar_quarter_sub,
-                                           indicator = indicator_sub,
-                                           drop = TRUE)
+  expect_warning(
+    sub_drop_return <- subset_output_package(out$path,
+                                             sub_drop_file,
+                                             area_id = area_id_sub,
+                                             sex = sex_sub,
+                                             age_group = age_group_sub,
+                                             calendar_quarter = calendar_quarter_sub,
+                                             indicator = indicator_sub,
+                                             drop = TRUE),
+    "Required indicators not in output: plhiv"
+  )
 
   sub_drop_out <- read_output_package(sub_drop_file)
 
