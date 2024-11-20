@@ -41,7 +41,7 @@ test_that("artnum_mf() returns expected number of records", {
 
 test_that("artnum_mf() throws errors for invalid inputs", {
   expect_error(artnum_mf("CY1924Q4", demo_art_number, a_naomi_mf),
-               "No ART data found for quarter CY1924Q4.\nSet 'Include ART data' to 'No' if you intend to include no ART data.")
+               "No ART data found for quarter CY1924Q4.\nIf you do not intend to include ART data set 'Include ART data' to 'No'.")
   expect_error(artnum_mf("CY2016Q1", demo_art_number, "jibberish"))
   expect_error(artnum_mf(c("CY2016Q1", "CY2016Q2"), demo_art_number, "jibberish"))
 })
