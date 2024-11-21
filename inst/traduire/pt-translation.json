@@ -274,5 +274,6 @@
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Relatório de síntese da Naomi carregado da aplicação web Naomi",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
-    "NUMBER_ON_ART_DESC": "Number on ART description"
+    "NUMBER_ON_ART_DESC": "Number on ART description",
+    "MISSING_POPULATION_LEVEL": "Os dados da população não estão disponíveis para o nível administrativo selecionado para as projecções do modelo. Rever a seleção das opções do modelo para garantir que a seleção do nível de área está correta."
 }

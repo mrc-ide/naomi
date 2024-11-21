@@ -54,7 +54,6 @@ test_that("artnum_mf() works with single quarter ART data", {
 
 
 test_that("Informative error displayed when model run to admin level higher/lower than population data supplied", {
-
   x <- expect_error(
     naomi_model_frame(a_area_merged,
                       demo_population_agesex,
@@ -67,11 +66,12 @@ test_that("Informative error displayed when model run to admin level higher/lowe
                       calendar_quarter4 = "CY2022Q3",
                       calendar_quarter5 = "CY2023Q3"))
 
-
-  expect_equal(x$message,
-               "Population data not available for admin level selected for model projections.\n      Please review model options selection to ensure that area level selection is correct."
+  expect_equal(
+    x$message,
+    paste("Population data not available for admin level selected",
+          "for model projections. Please review model options",
+          "selection to ensure that area level selection is correct.")
   )
-
 })
 
 test_that("population calibration options", {

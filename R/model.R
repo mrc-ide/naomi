@@ -329,10 +329,8 @@ naomi_model_frame <- function(area_merged,
   ##           of a Spectrum file and then calibrated. Currently no way to know if areas
   ##           comparise only part of a Spectrum file, so can't address.
 
-  if(any( mf_areas[["area_id"]] %in% unique(population_agesex$area_id) == FALSE)){
-    stop(
-     "Population data not available for admin level selected for model projections.
-      Please review model options selection to ensure that area level selection is correct.")
+  if (!all(mf_areas[["area_id"]] %in% unique(population_agesex$area_id))) {
+    stop(t_("MISSING_POPULATION_LEVEL"))
   }
 
   pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas[["area_id"]])

@@ -1,6 +1,6 @@
 # naomi 2.10.2
 
-* Improve warning generated when user fits model at admin level where no population data exists.
+* Improve error generated when user fits model at admin level where no population data exists.
 
 # naomi 2.10.1
 
