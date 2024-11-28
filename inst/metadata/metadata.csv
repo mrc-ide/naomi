@@ -89,4 +89,4 @@ input_comparison,barchart,anc_known_pos,value,,,,anc_known_pos,t_(ANC_KNOWN_POS)
 input_comparison,barchart,anc_tested,value,,,,anc_tested,t_(ANC_TESTED),1,1,"""0,0"""
 input_comparison,barchart,anc_tested_pos,value,,,,anc_tested_pos,t_(ANC_TESTED_POS),1,1,"""0,0"""
 population,pyramid,population,population,,,,population,t_(POPULATION),1,1,"""0,0"""
-population,pyramid,population_ratio,population,,,,population_ratio,t_(POPULATION_RATIO),1,1,"""0.0%"""
+population,pyramid,population_proportion,population,,,,population_proportion,t_(POPULATION_PROPORTION),1,1,"""0.0%"""
