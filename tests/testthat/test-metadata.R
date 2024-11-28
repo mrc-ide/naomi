@@ -89,7 +89,7 @@ test_that("can get plot metadata for missing country with defaults", {
                     "art_coverage_ratio", "aware_plhiv_prop_ratio",
                     "incidence_ratio", "anc_prevalence_age_matched",
                     "anc_art_coverage_age_matched", "number_on_art",
-                    "anc_tested"))
+                    "anc_tested", "population_proportion"))
 })
 
 test_that("colour scales metadata is well formed", {
@@ -108,7 +108,7 @@ test_that("colour scales metadata is well formed", {
       "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
       "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio",
       "anc_prevalence_age_matched", "anc_art_coverage_age_matched",
-      "number_on_art", "anc_tested"))
+      "number_on_art", "anc_tested", "population_proportion"))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -142,7 +142,8 @@ test_that("metadata is well formed", {
     "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
     "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
     "incidence_ratio", "anc_prevalence_age_matched",
-    "anc_art_coverage_age_matched", "number_on_art", "anc_tested"))
+    "anc_art_coverage_age_matched", "number_on_art", "anc_tested",
+    "population_proportion"))
   expect_equal(nrow(unique(meta[, c("data_type", "plot_type", "indicator")])),
                nrow(meta))
   expect_true(all(meta$plot_type %in% c("choropleth", "barchart", "pyramid")))
@@ -169,7 +170,7 @@ test_that("metadata is well formed", {
                     "ART coverage ratio", "Proportion PLHIV aware ratio",
                     "Incidence ratio", "ANC prevalence age matched",
                     "ANC ART coverage age matched", "Number on ART",
-                    "ANC tested"))
+                    "ANC tested", "Population proportion"))
   expect_equal(
     colnames(meta),
     c("data_type", "plot_type", "indicator", "value_column", "error_low_column",
