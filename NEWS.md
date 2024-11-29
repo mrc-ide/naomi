@@ -1,5 +1,8 @@
-# naomi 2.10.2
+naomi 2.10.3
 
+* Improve error generated when user fits model at admin level where no population data exists.
+
+naomi 2.10.2
 * Add ANC testing outputs to T4 projection period for including in PEPFAR datapack output.
 * Rename Datapack input CSV in the output ZIP folder for 2025 to `"pepfar_datapack_indicators_2025.csv"`.
 * Add ANC testing indicators to T4 projection reprsenting the end of one year COP planning

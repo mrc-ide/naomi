@@ -273,5 +273,7 @@
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
     "NUMBER_ON_ART_DESC": "Number on ART description",
+    "MISSING_POP_LEVEL": "Impossible de générer des estimations de modèle au niveau {{model_level}} car les données de population ne sont disponibles qu'au niveau {{pop_level}}. Veuillez revoir les options du modèle ou les données démographiques.",
     "POPULATION_PROPORTION": "Proportion de la population"
+
 }

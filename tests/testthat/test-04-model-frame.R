@@ -41,7 +41,7 @@ test_that("artnum_mf() returns expected number of records", {
 
 test_that("artnum_mf() throws errors for invalid inputs", {
   expect_error(artnum_mf("CY1924Q4", demo_art_number, a_naomi_mf),
-               "No ART data found for quarter CY1924Q4.\nSet 'Include ART data' to 'No' if you intend to include no ART data.")
+               "No ART data found for quarter CY1924Q4.\nIf you do not intend to include ART data set 'Include ART data' to 'No'.")
   expect_error(artnum_mf("CY2016Q1", demo_art_number, "jibberish"))
   expect_error(artnum_mf(c("CY2016Q1", "CY2016Q2"), demo_art_number, "jibberish"))
 })
@@ -53,7 +53,26 @@ test_that("artnum_mf() works with single quarter ART data", {
 })
 
 
+test_that("Informative error displayed when model run to admin level higher/lower than population data supplied", {
+  x <- expect_error(
+    naomi_model_frame(a_area_merged,
+                      demo_population_agesex,
+                      a_spec,
+                      scope = "MWI",
+                      level = 3,
+                      calendar_quarter1 = "CY2016Q1",
+                      calendar_quarter2 = "CY2018Q4",
+                      calendar_quarter3 = "CY2019Q2",
+                      calendar_quarter4 = "CY2022Q3",
+                      calendar_quarter5 = "CY2023Q3"))
 
+  expect_equal(
+    x$message,
+    paste("Population data not available for admin level selected",
+          "for model projections. Please review model options",
+          "selection to ensure that area level selection is correct.")
+  )
+})
 
 test_that("population calibration options", {
 
@@ -85,7 +104,7 @@ test_that("population calibration options", {
                      mf_none$mf_model$population_t2 +
                      mf_none$mf_model$population_t3 +
                      mf_none$mf_model$population_t4 +
-                     mf_none$mf_model$population_t5 
+                     mf_none$mf_model$population_t5
                    ),
                sum(mf_none$spectrum_calibration$population_raw))
 
@@ -102,7 +121,7 @@ test_that("population calibration options", {
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",                              
+                              calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "national")
 
   expect_false(sum(mf_nat$spectrum_calibration$population_raw) ==
@@ -132,7 +151,7 @@ test_that("population calibration options", {
                                  calendar_quarter2 = "CY2018Q4",
                                  calendar_quarter3 = "CY2019Q2",
                                  calendar_quarter4 = "CY2022Q3",
-                                 calendar_quarter5 = "CY2023Q3",                              
+                                 calendar_quarter5 = "CY2023Q3",
                                  spectrum_population_calibration = "subnational")
 
   expect_false(sum(mf_subnat$spectrum_calibration$population_raw) ==
@@ -162,7 +181,7 @@ test_that("population calibration options", {
                       calendar_quarter2 = "CY2018Q4",
                       calendar_quarter3 = "CY2019Q2",
                       calendar_quarter4 = "CY2022Q3",
-                      calendar_quarter5 = "CY2023Q3",                              
+                      calendar_quarter5 = "CY2023Q3",
                       spectrum_population_calibration = "jibberish"),
     "spectrum_calibration_option \"jibberish\" not found."
   )
@@ -319,7 +338,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",                              
+                              calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "subnational")
 
 

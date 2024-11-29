@@ -43,7 +43,7 @@
     "PROGRESS_CALIBRATE": "Calibrating outputs - {{elapsed}} elapsed",
     "PROGRESS_CALIBRATE_SAVE_OUTPUT": "Saving outputs - {{elapsed}} elapsed",
     "PROGRESS_CALIBRATE_GENERATE_REPORT": "Generating report - {{elapsed}} elapsed",
-    "NO_ART_DATA_FOR_QUARTER": "No ART data found for quarter {{calendar_quarter}}.\nSet 'Include ART data' to 'No' if you intend to include no ART data.",
+    "NO_ART_DATA_FOR_QUARTER": "No ART data found for quarter {{calendar_quarter}}.\nIf you do not intend to include ART data set 'Include ART data' to 'No'.",
     "ANC_ON_ART_GREATER_THAN_TOTAL_POSITIVE": "ANC testing on ART greater than ANC testing total positive.",
     "ANC_DATA_MISSING_FOR_YEAR": "ANC testing data not found for year {{missing_year}}.",
     "ANC_DATA_MISSING_FOR_YEAR_PLURAL": "ANC testing data not found for years {{missing_year}}.",
@@ -276,5 +276,6 @@
     "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app",
     "NUMBER_ON_ART": "Number on ART",
     "NUMBER_ON_ART_DESC": "Number on ART description",
+    "MISSING_POP_LEVEL": "Unable to generate model estimates at the {{model_level}} level because population data only available at the {{pop_level}} level/s. Please review model options or population data inputs.",
     "POPULATION_PROPORTION": "Population proportion"
 }
