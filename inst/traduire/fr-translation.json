@@ -148,7 +148,6 @@
     "ART_CHILD": "Enfants sous TARV",
     "ART_ADULT_SEX_RATIO": "Rapport de masculinité des adultes TARV",
     "ART_CHILD_ADULT_RATIO": "Rapport enfant-adulte ART sous TARV",
-    "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence CPN",
     "ANC_ART_COVERAGE": "Couverture de TARV au CPN",
     "ART_NEW_TOTAL": "TARV (Nouveau)",
@@ -254,7 +253,6 @@
     "AWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH conscients rapport",
     "INCIDENCE_RATIO": "Rapport d'incidence du VIH",
     "WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM": "Les données infranationales de Naomi ne correspondent pas aux données nationales de Spectrum. Vérifier le tableau de révision des intrants pour: \n{{years}}",
-    "WARNING_ADDITIONAL": "et {{count}} de plus",
     "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
     "ANC_PREVALENCE_AGE_MATCHED": "Prévalence CPN appariés par âge",
     "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge",
@@ -275,6 +273,7 @@
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
     "NUMBER_ON_ART_DESC": "Number on ART description",
-    "MISSING_POPULATION_LEVEL": "Les données de population ne sont pas disponibles pour le niveau admin sélectionné pour les projections du modèle. Veuillez revoir la sélection des options du modèle pour vous assurer que la sélection du niveau de la zone est correcte.",
-    "MISSING_POP_LEVEL": "Unable to generate model estimates at the {{model_level}} level because population data only available at the {{pop_level}} level/s. Please review model options or population data inputs."
+    "MISSING_POP_LEVEL": "Impossible de générer des estimations de modèle au niveau {{model_level}} car les données de population ne sont disponibles qu'au niveau {{pop_level}}. Veuillez revoir les options du modèle ou les données démographiques.",
+    "POPULATION_PROPORTION": "Proportion de la population"
+
 }
