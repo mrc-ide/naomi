@@ -184,6 +184,16 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                          "anc_rho_t3_out" = "anc_prevalence",
                          "anc_alpha_t3_out" = "anc_art_coverage")
 
+  indicators_anc_t4 <- c("anc_clients_t4_out" = "anc_clients",
+                         "anc_plhiv_t4_out" = "anc_plhiv",
+                         "anc_already_art_t4_out" = "anc_already_art",
+                         "anc_art_new_t4_out" = "anc_art_new",
+                         "anc_known_pos_t4_out" = "anc_known_pos",
+                         "anc_tested_pos_t4_out" = "anc_tested_pos",
+                         "anc_tested_neg_t4_out" = "anc_tested_neg",
+                         "anc_rho_t4_out" = "anc_prevalence",
+                         "anc_alpha_t4_out" = "anc_art_coverage")
+  
 
   indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
                               naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
@@ -191,11 +201,14 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                               naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out))
   indicator_anc_est_t3 <- Map(get_est, names(indicators_anc_t3), indicators_anc_t3,
                               naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t4 <- Map(get_est, names(indicators_anc_t4), indicators_anc_t4,
+                              naomi_mf$calendar_quarter4, list(naomi_mf$mf_anc_out))
 
 
   indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
   indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
   indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
+  indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
@@ -210,6 +223,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t3,
                   indicator_anc_est_t3,
                   indicator_est_t4,
+                  indicator_anc_est_t4,
                   indicator_est_t5
                 )
 

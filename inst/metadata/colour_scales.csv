@@ -32,6 +32,7 @@ default,art_new,interpolateGreens,0,80000,FALSE
 default,vl_tested_12mos,interpolatePurples,0,60000,FALSE
 default,vl_suppressed_12mos,interpolatePurples,0,60000,FALSE
 default,population_ratio,interpolateGreys,0,1.2,FALSE
+default,population_proportion,interpolateGreys,0,1.2,FALSE
 default,plhiv_ratio,interpolateReds,0,1.2,FALSE
 default,infections_ratio,interpolateBlues,0,1.2,FALSE
 default,art_current_ratio,interpolateGreens,0,1.2,FALSE
