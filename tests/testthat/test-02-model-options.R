@@ -316,7 +316,8 @@ test_that("Population data available for area level set in model options", {
                              psnu_level = NULL),
                paste("Unable to generate model estimates at the District level because",
                      "population data only available at the District + Metro level/s.",
-                     "Please review model options or population data inputs."))
+                     "Please review model options or population data inputs."),
+               fixed = TRUE)
 
 
 })
