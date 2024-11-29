@@ -298,3 +298,25 @@ test_that("Handle backwards regression when T4 and T5 options are missing", {
   expect_equal(t5 - t3, 9)
 
 })
+
+test_that("Population data available for area level set in model options", {
+
+  expect_error(naomi_model_frame(a_area_merged,
+                             demo_population_agesex,
+                             a_spec,
+                             scope = "MWI_1_1_demo",
+                             level = 3,
+                             calendar_quarter1 = "CY2016Q1",
+                             calendar_quarter2 = "CY2018Q4",
+                             calendar_quarter3 = "CY2019Q2",
+                             calendar_quarter4 = "CY2022Q3",
+                             calendar_quarter5 = "CY2023Q3",
+                             artattend = FALSE,
+                             spectrum_population_calibration = "none",
+                             psnu_level = NULL),
+               paste("Unable to generate model estimates at the District level because",
+                     "population data only available at the District + Metro level/s.",
+                     "Please review model options or population data inputs."))
+
+
+})

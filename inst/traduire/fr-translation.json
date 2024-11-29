@@ -275,5 +275,6 @@
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
     "NUMBER_ON_ART_DESC": "Number on ART description",
-    "MISSING_POPULATION_LEVEL": "Les données de population ne sont pas disponibles pour le niveau admin sélectionné pour les projections du modèle. Veuillez revoir la sélection des options du modèle pour vous assurer que la sélection du niveau de la zone est correcte."
+    "MISSING_POPULATION_LEVEL": "Les données de population ne sont pas disponibles pour le niveau admin sélectionné pour les projections du modèle. Veuillez revoir la sélection des options du modèle pour vous assurer que la sélection du niveau de la zone est correcte.",
+    "MISSING_POP_LEVEL": "Unable to generate model estimates at the {{model_level}} level because population data only available at the {{pop_level}} level/s. Please review model options or population data inputs."
 }

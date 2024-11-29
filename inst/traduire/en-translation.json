@@ -276,5 +276,5 @@
     "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app",
     "NUMBER_ON_ART": "Number on ART",
     "NUMBER_ON_ART_DESC": "Number on ART description",
-    "MISSING_POPULATION_LEVEL": "Population data not available for admin level selected for model projections. Please review model options selection to ensure that area level selection is correct."
+    "MISSING_POP_LEVEL": "Unable to generate model estimates at the {{model_level}} level because population data only available at the {{pop_level}} level/s. Please review model options or population data inputs."
 }

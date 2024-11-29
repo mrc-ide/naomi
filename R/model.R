@@ -330,7 +330,21 @@ naomi_model_frame <- function(area_merged,
   ##           comparise only part of a Spectrum file, so can't address.
 
   if (!all(mf_areas[["area_id"]] %in% unique(population_agesex$area_id))) {
-    stop(t_("MISSING_POPULATION_LEVEL"))
+
+    area_label <- area_merged |> sf::st_drop_geometry() |>
+      dplyr::select(area_level_label, area_level, area_id)
+
+    # Get level label for pop data
+    pop_label <- population_agesex |>
+      dplyr::left_join(area_label, by = dplyr::join_by(area_id))
+    pop_level <- unique(pop_label$area_level_label)
+
+    # Get area level label for model estimates
+    model_level <- unique(area_label[area_label$area_level== level,]$area_level_label)
+
+    stop(t_("MISSING_POP_LEVEL",
+            list(pop_level = paste(pop_level, collapse = ", "),
+                 model_level = model_level)))
   }
 
   pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas[["area_id"]])
