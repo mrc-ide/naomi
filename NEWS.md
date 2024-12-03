@@ -1,3 +1,7 @@
+# naomi 2.10.3
+
+* Return `anc_already_art`, `anc_status`, `anc_art_among_known` and `anc_total_pos` indicators from ANC input time series data.
+
 # naomi 2.10.2
 
 * Add ANC testing outputs to T4 projection period for including in PEPFAR datapack output.

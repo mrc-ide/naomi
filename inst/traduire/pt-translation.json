@@ -273,5 +273,12 @@
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
     "NUMBER_ON_ART_DESC": "Number on ART description",
-    "POPULATION_PROPORTION": "Proporção da população"
+    "POPULATION_PROPORTION": "Proporção da população",
+    "ANC_TOTAL_POS": "Anc total pos",
+    "ANC_TOTAL_POS_DESC": "Anc total pos desc",
+    "ANC_ALREADY_ART_DESC": "ANC already ART desc",
+    "ANC_STATUS": "ANC status",
+    "ANC_STATUS_DESC": "ANC status desc",
+    "ANC_ART_AMONG_KNOWN": "ANC ART among known",
+    "ANC_ART_AMONG_KNOWN_DESC": "ANC ART among known desc"
 }
