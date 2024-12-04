@@ -273,5 +273,12 @@
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
     "NUMBER_ON_ART_DESC": "Number on ART description",
-    "POPULATION_PROPORTION": "Proportion de la population"
+    "POPULATION_PROPORTION": "Proportion de la population",
+    "ANC_TOTAL_POS": "CPN total VIH positif",
+    "ANC_TOTAL_POS_DESC": "Total des femmes séropositives lors de la CPN (séropositives connues et testées positives)",
+    "ANC_ALREADY_ART_DESC": "Femmes déjà sous traitement antirétroviral à vie avant la première consultation de soins prénatals au cours de cette grossesse",
+    "ANC_STATUS": "Statut VIH de la CPN vérifié",
+    "ANC_STATUS_DESC": "Nombre de femmes dont le statut VIH a été vérifié lors de la CPN (soit connu, soit testé au moins une fois)",
+    "ANC_ART_AMONG_KNOWN": "Couverture ART de la CPN parmi les séropositifs connus",
+    "ANC_ART_AMONG_KNOWN_DESC": "Proportion de femmes dont la séropositivité est connue lors de la première visite de CPN et qui sont déjà sous traitement antirétroviral"
 }
