@@ -274,11 +274,11 @@
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
     "NUMBER_ON_ART_DESC": "Number on ART description",
     "POPULATION_PROPORTION": "Proporção da população",
-    "ANC_TOTAL_POS": "Anc total pos",
-    "ANC_TOTAL_POS_DESC": "Anc total pos desc",
-    "ANC_ALREADY_ART_DESC": "ANC already ART desc",
-    "ANC_STATUS": "ANC status",
-    "ANC_STATUS_DESC": "ANC status desc",
-    "ANC_ART_AMONG_KNOWN": "ANC ART among known",
-    "ANC_ART_AMONG_KNOWN_DESC": "ANC ART among known desc"
+    "ANC_TOTAL_POS": "ANC total VIH positivo",
+    "ANC_TOTAL_POS_DESC": "Total de mulheres seropositivas nos CPN (seropositivas conhecidas e seropositivas testadas)",
+    "ANC_ALREADY_ART_DESC": "Mulheres que já estão a receber TAR ao longo da vida antes da primeira consulta de ANC durante esta gravidez",
+    "ANC_STATUS": "ANC VIH verificado",
+    "ANC_STATUS_DESC": "Número de mulheres com o estatuto de VIH verificado durante os CPN (conhecido ou testado pelo menos uma vez)",
+    "ANC_ART_AMONG_KNOWN": "Cobertura de TARV nos CPN entre os seropositivos conhecidos",
+    "ANC_ART_AMONG_KNOWN_DESC": "Proporção de mulheres seropositivas conhecidas na primeira consulta de ANC que já estavam a receber TARV"
 }
