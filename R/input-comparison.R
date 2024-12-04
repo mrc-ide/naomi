@@ -22,23 +22,22 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
 
   ## Aggregate ART data
   art_agreggated <- art |>
-    dplyr::left_join(shape,  by = "area_id") |>
-    dplyr::count(spectrum_region_code, calendar_quarter, sex, age_group,
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter)) |>
+    dplyr::left_join(shape, by = "area_id") |>
+    dplyr::count(spectrum_region_code, year, sex, age_group,
                  wt = art_current, name = "value_naomi")
 
   if(identical(unique(art$sex), c("both"))) {
     # If no sex aggregated data present in ART data, aggregate Spectrum by age
     spec_aggreagted <- pjnz$art_dec31 |>
-      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
-      dplyr::count(spectrum_region_code, calendar_quarter, age_group,
+      dplyr::count(spectrum_region_code, year, age_group,
                    wt = art_dec31, name = "value_spectrum") |>
       dplyr::mutate(sex = "both")
 
   } else {
     # If sex aggregated data present in ART data, aggregate Spectrum by age and sex
     spec_aggreagted <- pjnz$art_dec31 |>
-      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
-      dplyr::count(spectrum_region_code, calendar_quarter, sex, age_group,
+      dplyr::count(spectrum_region_code, year, sex, age_group,
                    wt = art_dec31, name = "value_spectrum")
   }
 
@@ -48,7 +47,7 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   spectrum_level <- as.integer(length(spectrum_region_code) > 1)
 
   dat  <- dplyr::left_join(art_agreggated, spec_aggreagted,
-                           by = c("spectrum_region_code", "calendar_quarter",
+                           by = c("spectrum_region_code", "year",
                                   "sex", "age_group")) |>
     dplyr::left_join(shape |>
                        dplyr::filter(area_level == spectrum_level) |>
@@ -59,7 +58,6 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   dat |>
     dplyr::mutate(
       indicator = "number_on_art",
-      year = naomi::calendar_quarter_to_year(calendar_quarter),
       group = dplyr::if_else(age_group == "Y000_014",
                              "art_children", paste0("art_adult_", sex)),
       difference = value_spectrum - value_naomi) |>
