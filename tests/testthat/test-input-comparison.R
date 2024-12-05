@@ -99,3 +99,35 @@ test_that("Comparisoon wrapper function works with missing programme data", {
   expect_equal(nrow(x), 0)
 
 })
+
+test_that("art data comparison returns value for only last CQ within each year", {
+  # Create test data with a 2 rows for the same area, sex, and age group
+  # but with a different calendar quarter. We should be returning the latest
+  # quarter of these
+  art <- a_hintr_data$art_number
+  art_dat <- naomi::read_art_number(art)
+  art_dat_row <- art_dat[art_dat$area_id == "MWI_2_1_demo" &
+                                art_dat$sex == "both" &
+                                art_dat$age_group == "Y000_014" &
+                                art_dat$calendar_quarter == "CY2011Q4", ]
+  expected_value <- art_dat_row$art_current
+  art_dat_row$calendar_quarter <- quarter_id_to_calendar_quarter(
+    calendar_quarter_to_quarter_id(art_dat_row$calendar_quarter) - 1)
+  ## We're expecting we don't see this in the aggregated data
+  art_dat_row$art_current <- 10000
+
+  art_test <- dplyr::bind_rows(art_dat, art_dat_row)
+
+  # Test that aggregation works with subnational pjnz and sex disaggreagted adults on ART
+  shape <- a_hintr_data$shape
+  pjnz <- a_hintr_data$pjnz
+
+  x <- prepare_art_spectrum_comparison(art_test, shape, pjnz)
+
+  modified_row <- x[x$indicator == "number_on_art" &
+                      x$year == "2011" &
+                      x$group == "art_children" &
+                      x$area_name == "Northern", ]
+
+  expect_equal(modified_row$value_naomi, expected_value)
+})

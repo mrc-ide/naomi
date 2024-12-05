@@ -1,3 +1,8 @@
+# naomi 2.10.4
+
+* If users upload multiple quarters in ART programme data, return only the last quarter per year for input comparison data.
+  This fixes a bug where previously they were being aggregated. issue-3 24/25
+
 # naomi 2.10.3
 
 * Return `anc_already_art`, `anc_status`, `anc_art_among_known` and `anc_total_pos` indicators from ANC input time series data.
