@@ -20,14 +20,23 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   if (!inherits(pjnz, "spec_program_data")) {
     pjnz <- extract_pjnz_program_data(pjnz) }
 
+  ## If user has uploaded multiple calendar quarters within a year, we
+  ## only want to return 1 value. The last one within the year.
+  art_single_cq <- art |>
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter)) |>
+    dplyr::group_by(area_id, sex, age_group, year) |>
+    dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)) |>
+    dplyr::filter(quarter_id == max(quarter_id)) |>
+    dplyr::ungroup()
+
   ## Aggregate ART data
-  art_agreggated <- art |>
+  art_agreggated <- art_single_cq |>
     dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter)) |>
     dplyr::left_join(shape, by = "area_id") |>
     dplyr::count(spectrum_region_code, year, sex, age_group,
                  wt = art_current, name = "value_naomi")
 
-  if(identical(unique(art$sex), c("both"))) {
+  if(identical(unique(art_single_cq$sex), c("both"))) {
     # If no sex aggregated data present in ART data, aggregate Spectrum by age
     spec_aggreagted <- pjnz$art_dec31 |>
       dplyr::count(spectrum_region_code, year, age_group,
