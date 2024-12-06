@@ -193,7 +193,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                          "anc_tested_neg_t4_out" = "anc_tested_neg",
                          "anc_rho_t4_out" = "anc_prevalence",
                          "anc_alpha_t4_out" = "anc_art_coverage")
-  
+
 
   indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
                               naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
@@ -886,6 +886,23 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
               export_datapack = TRUE)
 }
 
+save_output_datapack <- function(path, naomi_output, vmmc_path = NULL) {
+  if (!is.null(vmmc_path)) {
+    ## Skip the first row, the file has two rows of headers
+    vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
+                                             startRow = 2)
+    vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
+  } else {
+    vmmc_datapack <- NULL
+  }
+
+  write_datapack_csv(naomi_output = naomi_output,
+                     path = path,
+                     psnu_level = naomi_output$fit$model_options$psnu_level,
+                     dmppt2_output = vmmc_datapack)
+}
+
+
 #' Save outputs to zip file
 #'
 #' @param naomi_output Naomi output object
@@ -994,20 +1011,8 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
-
-    if (!is.null(vmmc_path)) {
-      ## Skip the first row, the file has two rows of headers
-      vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
-                                               startRow = 2)
-      vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
-    } else {
-      vmmc_datapack <- NULL
-    }
-
-    write_datapack_csv(naomi_output = naomi_output,
-                       path = PEPFAR_DATAPACK_FILENAME,   # global defined in R/pepfar-datapack.R
-                       psnu_level = naomi_output$fit$model_options$psnu_level,
-                       dmppt2_output = vmmc_datapack)
+    # PEPFAR_DATAPACK_FILENAME global defined in R/pepfar-datapack.R
+    save_output_datapack(PEPFAR_DATAPACK_FILENAME, naomi_output, vmmc_path)
   }
 
 
