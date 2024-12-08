@@ -130,6 +130,34 @@ hintr_prepare_agyw_download <- function(output, pjnz,
   )
 }
 
+#' Prepare Datapack download
+#'
+#' @param output hintr output object
+#' @param path Path to save output file
+#' @param vmmc_file Optional file object, with path, filename and hash for
+#'   VMMC input
+#'
+#' @return Path to output file and metadata for file
+#' @export
+hintr_prepare_datapack_download <- function(output,
+                                            path = tempfile(fileext = ".csv"),
+                                            vmmc_file = NULL) {
+  assert_model_output_version(output)
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")
+  model_output <- read_hintr_output(output$model_output_path)
+  options <- yaml::read_yaml(text = model_output$info$options.yml)
+  list(
+    path = save_output_datapack(path, model_output$output_package,
+                                vmmc_file$path),
+    metadata = list(
+      description = build_datapack_description(options),
+      areas = options$area_scope,
+      type = "datapack"
+    )
+  )
+}
+
 build_output_description <- function(options) {
   build_description(t_("DOWNLOAD_OUTPUT_DESCRIPTION"), options)
 }
@@ -144,6 +172,10 @@ build_comparison_report_description <- function(options) {
 
 build_agyw_tool_description <- function(options) {
   build_description(t_("DOWNLOAD_AGYW_DESCRIPTION"), options)
+}
+
+build_datapack_description <- function(options) {
+  build_description(t_("DOWNLOAD_DATAPACK_DESCRIPTION"), options)
 }
 
 build_description <- function(type_text, options) {

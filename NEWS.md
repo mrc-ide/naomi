@@ -1,3 +1,7 @@
+# naomi 2.10.5
+
+* Add standalone datapack download so that users do not have to download zip and extract this manually.
+
 # naomi 2.10.4
 
 * If users upload multiple quarters in ART programme data, return only the last quarter per year for input comparison data.
