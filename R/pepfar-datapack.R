@@ -31,11 +31,18 @@ write_datapack_csv <- function(naomi_output,
                                psnu_level = NULL,
                                dmppt2_output = NULL) {
 
-  stopifnot(inherits(naomi_output, "naomi_output"))
-
   if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
     path <- paste0(path, ".csv")
   }
+
+  datapack <- build_datapack_output(naomi_output, psnu_level, dmppt2_output)
+  naomi_write_csv(datapack, path)
+
+  path
+}
+
+build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
+  stopifnot(inherits(naomi_output, "naomi_output"))
 
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
   datapack_age_group_map <- naomi_read_csv(system_file("datapack", "datapack_age_group_mapping.csv"))
@@ -73,7 +80,7 @@ write_datapack_csv <- function(naomi_output,
     dplyr::rename(
       indicator_code = datapack_indicator_code,
       dataelement_uid = datapack_indicator_id,
-      ) %>%
+    ) %>%
     dplyr::select(indicator, indicator_code, dataelement_uid, is_integer, calendar_quarter)
 
 
@@ -128,10 +135,10 @@ write_datapack_csv <- function(naomi_output,
       by = c("indicator", "calendar_quarter")
     ) %>%
     dplyr::filter(
-    (sex_naomi %in% datapack_sex_map$sex_naomi &
-       age_group %in% datapack_age_group_map$age_group |
-       sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
-       sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
+      (sex_naomi %in% datapack_sex_map$sex_naomi &
+         age_group %in% datapack_age_group_map$age_group |
+         sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
+         sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
     ) %>%
     dplyr::transmute(
       area_id,
@@ -176,7 +183,7 @@ write_datapack_csv <- function(naomi_output,
   dat <- dplyr::left_join(dat, psnu_map, by = "area_id")
   dat$psnu <- ifelse(is.na(dat$map_name), dat$area_name, dat$map_name)
 
-  datapack <- dat %>%
+  dat %>%
     dplyr::select(
       psnu,
       psnu_uid,
@@ -192,10 +199,35 @@ write_datapack_csv <- function(naomi_output,
       age_sex_rse,
       district_rse
     )
+}
 
-  naomi_write_csv(datapack, path)
+build_datapack_metadata <- function(naomi_output) {
+  meta_period <- get_period_metadata(
+    c(naomi_output$fit$model_options$calendar_quarter_t1,
+      naomi_output$fit$model_options$calendar_quarter_t2,
+      naomi_output$fit$model_options$calendar_quarter_t3,
+      naomi_output$fit$model_options$calendar_quarter_t4,
+      naomi_output$fit$model_options$calendar_quarter_t5))
+  info <- attr(naomi_output, "info")
+  inputs <- read.csv(text = info$inputs.csv, header = FALSE)
 
-  path
+  version <- data.frame("version", utils::packageVersion("naomi"))
+  all_data <- list(version, inputs)
+
+  max_cols <- max(vapply(all_data, ncol, numeric(1)))
+  col_names <- vapply(seq_len(max_cols), function(i) paste0("V", i), character(1))
+  empty_row <- data.frame(matrix("", ncol = max_cols, nrow = 1))
+  colnames(empty_row) <- col_names
+  all_data <- lapply(all_data, function(df) {
+    colnames(df) <- col_names[seq(1, ncol(df))]
+    if (ncol(df) < max_cols) {
+      df[, col_names[seq(ncol(df) + 1, max_cols)]] <- ""
+    }
+    df[] <- lapply(df, as.character)
+    rbind.data.frame(df, empty_row)
+  })
+
+  do.call(rbind.data.frame, all_data)
 }
 
 

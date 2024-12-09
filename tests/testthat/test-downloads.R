@@ -312,12 +312,17 @@ test_that("datapack download can be created", {
   expect_length(out$metadata$description, 1)
   expect_equal(out$metadata$areas, "MWI")
 
-  datapack <- utils::read.csv(out$path)
+  datapack <- readxl::read_xlsx(out$path, "data")
 
   expect_true("psnu_uid" %in% colnames(datapack))
   expect_true(!any(is.na(datapack)))
   ## Simple smoke test that we have some indicator code
   expect_true("HIV_PREV.T_1" %in% datapack$indicator_code)
+
+  metadata <- readxl::read_xlsx(out$path, "metadata")
+
+  expect_true(nrow(metadata) > 0)
+  expect_equal(as.character(metadata[1, 1]), "version")
 })
 
 test_that("datapack download can include vmmc data", {
@@ -334,10 +339,15 @@ test_that("datapack download can include vmmc data", {
   )
   expect_true(file.exists(out$path))
 
-  datapack <- utils::read.csv(out$path)
+  datapack <- readxl::read_xlsx(out$path, "data")
 
   expect_true("psnu_uid" %in% colnames(datapack))
   expect_true(!any(is.na(datapack)))
   expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
                     datapack$indicator_code))
+
+  metadata <- readxl::read_xlsx(out$path, "metadata")
+
+  expect_true(nrow(metadata) > 0)
+  expect_equal(as.character(metadata[1, 1]), "version")
 })

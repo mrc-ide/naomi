@@ -887,6 +887,15 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
 }
 
 save_output_datapack <- function(path, naomi_output, vmmc_path = NULL) {
+  vmmc_datapack <- datapack_read_vmmc(vmmc_path)
+
+  write_datapack_csv(naomi_output = naomi_output,
+                     path = path,
+                     psnu_level = naomi_output$fit$model_options$psnu_level,
+                     dmppt2_output = vmmc_datapack)
+}
+
+datapack_read_vmmc <- function(vmmc_path) {
   if (!is.null(vmmc_path)) {
     ## Skip the first row, the file has two rows of headers
     vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
@@ -895,11 +904,7 @@ save_output_datapack <- function(path, naomi_output, vmmc_path = NULL) {
   } else {
     vmmc_datapack <- NULL
   }
-
-  write_datapack_csv(naomi_output = naomi_output,
-                     path = path,
-                     psnu_level = naomi_output$fit$model_options$psnu_level,
-                     dmppt2_output = vmmc_datapack)
+  vmmc_datapack
 }
 
 

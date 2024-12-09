@@ -140,16 +140,28 @@ hintr_prepare_agyw_download <- function(output, pjnz,
 #' @return Path to output file and metadata for file
 #' @export
 hintr_prepare_datapack_download <- function(output,
-                                            path = tempfile(fileext = ".csv"),
+                                            path = tempfile(fileext = ".xlsx"),
                                             vmmc_file = NULL) {
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")
+
+  if (!grepl("\\.xlsx$", path, ignore.case = TRUE)) {
+    path <- paste0(path, ".xlsx")
+  }
+
   model_output <- read_hintr_output(output$model_output_path)
   options <- yaml::read_yaml(text = model_output$info$options.yml)
+  vmmc_datapack <- datapack_read_vmmc(vmmc_file$path)
+  datapack_output <- build_datapack_output(
+    model_output$output_package,
+    model_output$output_package$fit$model_options$psnu_level,
+    vmmc_datapack)
+  datapack_metadata <- build_datapack_metadata(model_output$output_package)
+  writexl::write_xlsx(list(data = datapack_output, metadata = datapack_metadata),
+                      path = path)
   list(
-    path = save_output_datapack(path, model_output$output_package,
-                                vmmc_file$path),
+    path = path,
     metadata = list(
       description = build_datapack_description(options),
       areas = options$area_scope,
