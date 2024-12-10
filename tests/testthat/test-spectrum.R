@@ -191,3 +191,25 @@ Using file: Malawi.zip.shiny90")
 
   expect_equal(w$shiny90new, "Malawi.zip.shiny90")
 })
+
+test_that("ART adjustments properly extracted from Spectrum", {
+
+  dp_path <- file.path("refdata/ART_adjustment_test.DP")
+  dp <- as.data.frame(
+    readr::read_csv(dp_path,
+                    name_repair = "minimal",
+                    col_types = readr::cols(.default = "c")))
+
+  spec_art <- read_dp_art_dec31(dp)
+  rownames(spec_art) <- seq_len(nrow(spec_art))
+
+  # Test ART adjustments correctly read from test file with
+  expect_equal(colnames(spec_art), c("sex", "age_group", "year",
+                                     "art_dec31", "artadj_factor","artadj_absolute"))
+  # Adults
+  expect_setequal(spec_art[166,], c("male", "Y015_999", "2022", "450799", "0.88", "10000"))
+  expect_setequal(spec_art[167,], c("female", "Y015_999", "2022", "857994", "0.85", "12000"))
+  # Children
+  expect_setequal(spec_art[52,], c("both", "Y000_014", "2021", "58367.7", "0.9", "5000"))
+
+})

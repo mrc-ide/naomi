@@ -195,7 +195,6 @@ read_dp_art_dec31 <- function(dp) {
   art15plus_need <- rbind(male_15plus_needart, female_15plus_needart)
   dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
 
-
   if (any(art15plus_num[art15plus_isperc == 1] < 0 |
           art15plus_num[art15plus_isperc == 1] > 100)) {
     stop("Invalid percentage on ART entered for adult ART")
@@ -208,26 +207,72 @@ read_dp_art_dec31 <- function(dp) {
   ## * Enabled / disabled by checkbox flag ("<AdultARTAdjFactorFlag>")
   ## * Scaling factor only applies to number inputs, not percentages (John Stover email, 20 Feb 2023)
   ##   -> Even if scaling factor specified in a year with percentage input, ignore it.
+  ## ** UPDATE Spectrum 6.37 beta 18 **
+  ##
+  ## Two changes to the adult ART adjustment were implemented in Spectrum 6.37 beta 18:
+  ##
+  ## * ART adjustments were moved the main Spectrum editor and the flag variable
+  ##   "<AdultARTAdjFactorFlag>" was removed from the .DP file.
+  ## * New tag "<AdultPatsAllocToFromOtherRegion>" was added allowing for input
+  ##   of absolute count adjustment
+  ##
+  ## New logic to account for these changes:
+  ## * Initialise values to defaults 1.0 for relative adjustment and 0.0
+  ##   for absolute adjustment.
+  ## * Only check flag variable if it exists. If adjustment variable exists
+  ##   but flag variable does not exist, use the adjustment.
 
-  if (exists_dptag("<AdultARTAdjFactorFlag>") &&
-        dpsub("<AdultARTAdjFactorFlag>", 2, 4) == 1) {
+  ## Initialise
+  adult_artadj_factor <- array(1.0, dim(art15plus_num))
+  dimnames(adult_artadj_factor) <- list(sex = c("male", "female"), year = proj.years)
+
+  adult_artadj_absolute <- array(0.0, dim(art15plus_num))
+  dimnames(adult_artadj_absolute) <- list(sex = c("male", "female"), year = proj.years)
+
+  ## Flag to use adjustment
+  use_artadj <- exists_dptag("<AdultARTAdjFactor>") &&
+    (!exists_dptag("<AdultARTAdjFactorFlag>") ||
+       (exists_dptag("<AdultARTAdjFactorFlag>") &&
+          dpsub("<AdultARTAdjFactorFlag>", 2, 4) == 1))
+
+  if (use_artadj) {
 
     adult_artadj_factor <- sapply(dpsub("<AdultARTAdjFactor>", 3:4, timedat.idx), as.numeric)
 
+    if(exists_dptag("<AdultPatsAllocToFromOtherRegion>")) {
+      adult_artadj_absolute <- sapply(dpsub("<AdultPatsAllocToFromOtherRegion>", 3:4, timedat.idx), as.numeric)
+    }
+
     ## Only apply if is number (! is percentage)
     adult_artadj_factor <- adult_artadj_factor ^ as.numeric(!art15plus_isperc)
+    adult_artadj_absolute <- adult_artadj_absolute * as.numeric(!art15plus_isperc)
 
-    art15plus_num <- art15plus_num * adult_artadj_factor
+    ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
+    art15plus_num_adj <- art15plus_num + adult_artadj_absolute
+    art15plus_num_adj <- art15plus_num * adult_artadj_factor
+
   }
 
+  # Covert percentage coverage to absolute numbers on ART
   art15plus_num[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_num[art15plus_isperc == 1] / 100
 
+  # Adjusted number on ART
   art15plus <- as.data.frame.table(art15plus_num,
                                    responseName = "art_dec31",
                                    stringsAsFactors = FALSE)
+  # ART adjustment factor
+  art15plus_adjfactor <- as.data.frame.table(adult_artadj_factor,
+                                   responseName = "artadj_factor",
+                                   stringsAsFactors = FALSE)
+  # ART reallocation
+  art15plus_adjabsolute <- as.data.frame.table(adult_artadj_absolute,
+                                             responseName = "artadj_absolute",
+                                             stringsAsFactors = FALSE)
+
+  art15plus$artadj_factor <- art15plus_adjfactor$artadj_factor
+  art15plus$artadj_absolute <- art15plus_adjabsolute$artadj_absolute
   art15plus$age_group <- "Y015_999"
   art15plus$year <- utils::type.convert(art15plus$year, as.is = TRUE)
-
 
   ## # Child number on ART
   ##
@@ -284,17 +329,32 @@ read_dp_art_dec31 <- function(dp) {
   ##
   ## * Implemented same as adult adjustment factor above
 
-  if (exists_dptag("<ChildARTAdjFactorFlag>") &&
-        dpsub("<ChildARTAdjFactorFlag>", 2, 4) == 1) {
+  ## Initialise
+  child_artadj_factor <- rep(1.0, length(child_art))
+  child_artadj_absolute <- rep(0.0, length(child_art))
+
+  ## Flag to use adjustment
+  use_child_artadj <- exists_dptag("<ChildARTAdjFactor MV>") &&
+    (!exists_dptag("<ChildARTAdjFactorFlag>") ||
+       (exists_dptag("<ChildARTAdjFactorFlag>") &&
+          dpsub("<ChildARTAdjFactorFlag>", 2, 4) == 1))
+
+  if (use_child_artadj) {
 
     child_artadj_factor <- as.numeric(dpsub("<ChildARTAdjFactor MV>", 2, timedat.idx))
 
+    if(exists_dptag("<ChildPatsAllocToFromOtherRegion MV>")) {
+      child_artadj_absolute <- as.numeric(dpsub("<ChildPatsAllocToFromOtherRegion MV>", 2, timedat.idx))
+    }
+
     ## Only apply if is number (! is percentage)
     child_artadj_factor <- child_artadj_factor ^ !child_art_isperc
+    child_artadj_absolute <- child_artadj_absolute ^ !child_art_isperc
 
+    ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
+    child_art <- child_art + child_artadj_absolute
     child_art <- child_art * child_artadj_factor
   }
-
 
   if (any(is.na(child_art))) {
     stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
@@ -303,7 +363,9 @@ read_dp_art_dec31 <- function(dp) {
   child_art <- data.frame(sex = "both",
                           age_group = "Y000_014",
                           year = proj.years,
-                          art_dec31 = child_art)
+                          art_dec31 = child_art,
+                          artadj_factor = child_artadj_factor,
+                          artadj_absolute = child_artadj_absolute)
 
   art_dec31 <- rbind(child_art, art15plus)
 

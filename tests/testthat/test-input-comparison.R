@@ -30,6 +30,9 @@ test_that("ART data is properly aggreagted for Spectrum comparison table", {
   expect_equal(unique(x$group), c("art_children", "art_adult_both"))
   expect_equal(unique(x$area_name), c("Malawi - Demo"))
 
+  # TO DO: Ensure ART adjustments in Spectrum are applied
+  # Make a test "pjnz" file
+
 })
 
 test_that("ANC data is properly aggreagted for Spectrum comparison table", {

@@ -39,15 +39,26 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   if(identical(unique(art_single_cq$sex), c("both"))) {
     # If no sex aggregated data present in ART data, aggregate Spectrum by age
     spec_aggreagted <- pjnz$art_dec31 |>
-      dplyr::count(spectrum_region_code, year, age_group,
-                   wt = art_dec31, name = "value_spectrum") |>
-      dplyr::mutate(sex = "both")
-
+      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) |>
+      dplyr::group_by(spectrum_region_code, calendar_quarter, year, age_group) |>
+      dplyr::summarise(
+        value_spectrum = sum(art_dec31),
+        artadj_factor = sum(artadj_factor),
+        artadj_absolute = sum(artadj_absolute),
+        .groups = "drop") |>
+      dplyr::mutate(
+        value_spectrum_adjusted = (value_spectrum + artadj_absolute) * artadj_factor,
+        artadj_factor = dplyr::if_else(age_group == "Y000_014",artadj_factor, artadj_factor/2),
+        sex = "both") |>
+      dplyr::select(spectrum_region_code, calendar_quarter, year, age_group, sex, value_spectrum,
+                    value_spectrum_adjusted, artadj_absolute, artadj_factor)
   } else {
     # If sex aggregated data present in ART data, aggregate Spectrum by age and sex
     spec_aggreagted <- pjnz$art_dec31 |>
-      dplyr::count(spectrum_region_code, year, sex, age_group,
-                   wt = art_dec31, name = "value_spectrum")
+      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4"),
+                    value_spectrum_adjusted = (art_dec31 + artadj_absolute) * artadj_factor) |>
+      dplyr::select(spectrum_region_code, calendar_quarter,year, age_group, sex,
+                    value_spectrum = art_dec31, value_spectrum_adjusted, artadj_absolute, artadj_factor)
   }
 
   # Get spectrum level to select correct area names
@@ -69,9 +80,11 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
       indicator = "number_on_art",
       group = dplyr::if_else(age_group == "Y000_014",
                              "art_children", paste0("art_adult_", sex)),
-      difference = value_spectrum - value_naomi) |>
+      difference = value_naomi - value_spectrum_adjusted,
+      prop_difference = 1 - abs((value_naomi - value_spectrum_adjusted) / value_spectrum_adjusted))  |>
     dplyr::select(indicator, area_name, year, group,
-                  value_spectrum, value_naomi, difference)
+                  value_spectrum = value_spectrum_adjusted, artadj_factor,
+                  artadj_absolute, value_naomi, difference, prop_difference)
 }
 
 ##' Compare aggregated subnational ART inputs + spectrum totals for comparison table
