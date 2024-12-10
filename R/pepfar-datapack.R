@@ -214,7 +214,7 @@ build_datapack_metadata <- function(naomi_output, ids) {
   info <- attr(naomi_output, "info")
   inputs <- read.csv(text = info$inputs.csv, header = FALSE)
 
-  version <- data.frame("Version", utils::packageVersion("naomi"))
+  version <- data.frame("Naomi Version", utils::packageVersion("naomi"))
 
   if (!is.null(ids)) {
     all_data <- list(version, ids, inputs, meta_period)

@@ -322,7 +322,7 @@ test_that("datapack download can be created", {
   metadata <- readxl::read_xlsx(out$path, "metadata")
 
   expect_true(nrow(metadata) > 0)
-  expect_equal(as.character(metadata[1, 1]), "version")
+  expect_equal(as.character(metadata[1, 1]), "Naomi Version")
 })
 
 test_that("datapack download can include vmmc data", {
@@ -349,5 +349,5 @@ test_that("datapack download can include vmmc data", {
   metadata <- readxl::read_xlsx(out$path, "metadata")
 
   expect_true(nrow(metadata) > 0)
-  expect_equal(as.character(metadata[1, 1]), "Version")
+  expect_equal(as.character(metadata[1, 1]), "Naomi Version")
 })
