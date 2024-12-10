@@ -6,8 +6,9 @@
 \usage{
 hintr_prepare_datapack_download(
   output,
-  path = tempfile(fileext = ".csv"),
-  vmmc_file = NULL
+  path = tempfile(fileext = ".xlsx"),
+  vmmc_file = NULL,
+  ids = NULL
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ hintr_prepare_datapack_download(
 
 \item{vmmc_file}{Optional file object, with path, filename and hash for
 VMMC input}
+
+\item{ids}{List of naomi web app queue ids for putting into metadata}
 }
 \value{
 Path to output file and metadata for file
