@@ -136,12 +136,14 @@ hintr_prepare_agyw_download <- function(output, pjnz,
 #' @param path Path to save output file
 #' @param vmmc_file Optional file object, with path, filename and hash for
 #'   VMMC input
+#' @param ids List of naomi web app queue ids for putting into metadata
 #'
 #' @return Path to output file and metadata for file
 #' @export
 hintr_prepare_datapack_download <- function(output,
                                             path = tempfile(fileext = ".xlsx"),
-                                            vmmc_file = NULL) {
+                                            vmmc_file = NULL,
+                                            ids = NULL) {
   assert_model_output_version(output)
   progress <- new_simple_progress()
   progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")
@@ -157,7 +159,7 @@ hintr_prepare_datapack_download <- function(output,
     model_output$output_package,
     model_output$output_package$fit$model_options$psnu_level,
     vmmc_datapack)
-  datapack_metadata <- build_datapack_metadata(model_output$output_package)
+  datapack_metadata <- build_datapack_metadata(model_output$output_package, ids)
   writexl::write_xlsx(list(data = datapack_output, metadata = datapack_metadata),
                       path = path)
   list(

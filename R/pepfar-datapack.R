@@ -201,18 +201,24 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
     )
 }
 
-build_datapack_metadata <- function(naomi_output) {
+build_datapack_metadata <- function(naomi_output, ids) {
   meta_period <- get_period_metadata(
     c(naomi_output$fit$model_options$calendar_quarter_t1,
       naomi_output$fit$model_options$calendar_quarter_t2,
       naomi_output$fit$model_options$calendar_quarter_t3,
       naomi_output$fit$model_options$calendar_quarter_t4,
       naomi_output$fit$model_options$calendar_quarter_t5))
+
   info <- attr(naomi_output, "info")
   inputs <- read.csv(text = info$inputs.csv, header = FALSE)
 
   version <- data.frame("version", utils::packageVersion("naomi"))
-  all_data <- list(version, inputs)
+
+  if (!is.null(ids)) {
+    all_data <- list(version, ids, inputs, meta_period)
+  } else {
+    all_data <- list(version, inputs, meta_period)
+  }
 
   max_cols <- max(vapply(all_data, ncol, numeric(1)))
   col_names <- vapply(seq_len(max_cols), function(i) paste0("V", i), character(1))
