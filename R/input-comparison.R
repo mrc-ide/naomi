@@ -134,7 +134,7 @@ prepare_anc_spectrum_comparison <- function(anc, shape, pjnz) {
   dat |>
     dplyr::mutate(
       sex = "female", age_group = "Y015_049",
-      group = "anc_adult_female")
+      group = "anc_adult_female") |>
     dplyr::select(indicator, area_name, year, group,
                   value_spectrum, value_naomi)
 
