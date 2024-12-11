@@ -61,7 +61,7 @@ test_that("warning raised after false convergence", {
 
   expect_length(out$warnings, 3)
   expect_match(out$warnings[[1]]$text,
-               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2019;2021;2022;2023")
+               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023")
   expect_match(out$warnings[[2]]$text,
                "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_clients: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_known_neg: 2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_known_pos: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_tested: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023")
   expect_equal(out$warnings[[3]]$text,
@@ -130,8 +130,8 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
   )
 
   # National warnings for national pjnz file
-  spec_comparison <- prepare_art_spectrum_comparison(data$art_number, data$shape, data$pjnz)
-  art <- hintr_validate_programme_data(spec_comparison)
+  art_spec_comparison <- prepare_art_spectrum_comparison(data$art_number, data$shape, data$pjnz)
+  art <- hintr_validate_art_programme_data(art_spec_comparison)
 
   expect_length(art$warnings, 1)
   expect_equal(art$warnings[[1]]$locations,
@@ -151,8 +151,8 @@ test_that("ANC warning raised if spectrum totals do not match naomi data", {
   )
 
   # National warnings for national pjnz file
-  spec_comparison <- prepare_anc_spectrum_comparison(data$anc_testing, data$shape, data$pjnz)
-  anc <- hintr_validate_programme_data(spec_comparison)
+  anc_spec_comparison <- prepare_anc_spectrum_comparison(data$anc_testing, data$shape, data$pjnz)
+  anc <- hintr_validate_anc_programme_data(anc_spec_comparison)
 
   expect_length(anc$warnings, 1)
   expect_equal(anc$warnings[[1]]$locations,
