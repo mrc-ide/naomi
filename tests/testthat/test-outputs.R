@@ -165,7 +165,7 @@ test_that("subset_output_package() saves expected output package", {
 
 
   ## Test that can **drop** selected indicators (rather than keep)
-  
+
   sub_drop_file <- tempfile(fileext = ".zip")
 
   expect_warning(
@@ -328,8 +328,6 @@ test_that("navigator checklist returns expected results", {
 
   adj_output$fit$data_options$prev_survey_ids <- "DEMO2020PHIA"
   adj_output$fit$data_options$prev_survey_quarters <- "CY2020Q3"
-  adj_output$fit$data_options$art_number_spectrum_aligned <- TRUE
-  adj_output$fit$data_options$anc_testing_spectrum_aligned <- TRUE
 
   adj_output$fit$calibration_options$spectrum_population_calibration <- "subnational"
   adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"

@@ -91,10 +91,6 @@ write_navigator_checklist <- function(naomi_output,
 
   if (!is.null(data_options)) {
 
-    ## Compare aggregated naomi inputs to national Spectrum totals
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- data_options$art_number_spectrum_aligned
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- data_options$anc_testing_spectrum_aligned
-
     ## Check that all surveys used are from most recent quarter available
     most_recent_survey_available  <- max(data_options$prev_survey_available_quarters)
     v$TrueFalse[v$NaomiCheckPermPrimKey == "Opt_recent_survey_only"] <-
