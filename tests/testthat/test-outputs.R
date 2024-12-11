@@ -290,8 +290,8 @@ test_that("navigator checklist returns expected results", {
 
   model_output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
 
-  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
-                          "ANC_is_Spectrum"            = FALSE,
+  expected_checklist <- c("ART_is_Spectrum"            = NA,
+                          "ANC_is_Spectrum"            = NA,
                           "Package_created"            = TRUE,
                           "Package_has_all_data"       = TRUE,
                           "Opt_recent_qtr"             = FALSE,
