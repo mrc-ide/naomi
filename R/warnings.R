@@ -113,6 +113,7 @@ anc_programme_data_warning <- function(anc_naomi_spectrum_comparison) {
 
   df <- anc_naomi_spectrum_comparison |>
     dplyr::group_by(year, indicator) |>
+    dplyr::mutate(difference = value_naomi - value_spectrum) |>
     dplyr::summarise(
       total_diff = sum(abs(difference)), .groups = "drop") |>
     dplyr::filter(total_diff > 0) |>
