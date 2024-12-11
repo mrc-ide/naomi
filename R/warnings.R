@@ -76,14 +76,46 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 ##'
 ##' @param naomi_spectrum_comparison Comparison table of aggregated subnational
 ##' Naomi and national Spectrum programme data created by
-##' prepare_art_spectrum_comparison() or prepare_anc_spectrum_comparison()
+##' prepare_art_spectrum_comparison()
 ##'
 ##' @keywords internal
-programme_data_warning <- function(naomi_spectrum_comparison) {
+art_programme_data_warning <- function(art_naomi_spectrum_comparison) {
 
-  df <- naomi_spectrum_comparison |>
+  df <- art_naomi_spectrum_comparison |>
     dplyr::group_by(year, indicator) |>
-    dplyr::summarise(total_diff = sum(abs(difference)), .groups = "drop") |>
+    dplyr::summarise(
+      value_naomi = sum(value_naomi),
+      value_spectrum_adjusted = sum(value_spectrum_adjusted), .groups = "drop") |>
+    dplyr::mutate(total_diff = value_naomi - value_spectrum_adjusted) |>
+    dplyr::filter(abs(total_diff) > 0) |>
+    dplyr::group_by(indicator) |>
+    dplyr::summarise(years = paste0(year, collapse = ";"), .groups = "drop") |>
+    dplyr::mutate(text = paste(indicator, years, sep = ": "))
+
+
+  if(nrow(df) > 0) {
+    msg <- t_("WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM", list(years = paste(df$text, collapse = "\n")))
+    naomi_warning(msg, c("model_calibrate", "review_output"))
+  }
+
+}
+
+##' Warning for aggregated subnational data input snot equal to spectrum totals
+##'
+##' Generate warning if aggregated subnational totals do not match spectrum totals
+##'
+##' @param naomi_spectrum_comparison Comparison table of aggregated subnational
+##' Naomi and national Spectrum programme data created by
+##' prepare_art_spectrum_comparison()
+##'
+##' @keywords internal
+anc_programme_data_warning <- function(anc_naomi_spectrum_comparison) {
+
+  df <- anc_naomi_spectrum_comparison |>
+    dplyr::group_by(year, indicator) |>
+    dplyr::mutate(difference = value_naomi - value_spectrum) |>
+    dplyr::summarise(
+      total_diff = sum(abs(difference)), .groups = "drop") |>
     dplyr::filter(total_diff > 0) |>
     dplyr::group_by(indicator) |>
     dplyr::summarise(years = paste0(year, collapse = ";"), .groups = "drop") |>
@@ -102,13 +134,27 @@ programme_data_warning <- function(naomi_spectrum_comparison) {
 ##' This can throw validation errors or warnings which will be shown to user
 ##' in naomi web app
 ##'
-##' @param naomi_spectrum_comparison Comparison table of aggregated subnational
+##' @param art_naomi_spectrum_comparison Comparison table of aggregated subnational
 ##' Naomi and national Spectrum programme data created by
 ##' prepare_art_spectrum_comparison() or prepare_anc_spectrum_comparison()
 ##'
 ##' @export
-hintr_validate_programme_data <- function(naomi_spectrum_comparison) {
-  handle_naomi_warnings(programme_data_warning(naomi_spectrum_comparison))
+hintr_validate_art_programme_data <- function(art_naomi_spectrum_comparison) {
+  handle_naomi_warnings(art_programme_data_warning(art_naomi_spectrum_comparison))
+}
+
+##' Run validation for subnational programme data input
+##'
+##' This can throw validation errors or warnings which will be shown to user
+##' in naomi web app
+##'
+##' @param anc_naomi_spectrum_comparison Comparison table of aggregated subnational
+##' Naomi and national Spectrum programme data created by
+##' prepare_art_spectrum_comparison() or prepare_anc_spectrum_comparison()
+##'
+##' @export
+hintr_validate_anc_programme_data <- function(anc_naomi_spectrum_comparison) {
+  handle_naomi_warnings(anc_programme_data_warning(anc_naomi_spectrum_comparison))
 }
 
 
