@@ -353,9 +353,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_data_opts_output$fit$data_options <- NULL
 
-  expect_chklst_no_data_opts<- c("ART_is_Spectrum"            = NA,
-                                 "ANC_is_Spectrum"            = NA,
-                                 "Package_created"            = TRUE,
+  expect_chklst_no_data_opts<- c("Package_created"            = TRUE,
                                  "Package_has_all_data"       = TRUE,
                                  "Opt_recent_qtr"             = FALSE,
                                  "Opt_future_proj_qtr"        = FALSE,
@@ -387,9 +385,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_model_opts_output$fit$model_options <- NULL
 
-  expect_chklst_no_model_opts <- c("ART_is_Spectrum"            = FALSE,
-                                   "ANC_is_Spectrum"            = FALSE,
-                                   "Package_created"            = TRUE,
+  expect_chklst_no_model_opts <- c("Package_created"            = TRUE,
                                    "Package_has_all_data"       = TRUE,
                                    "Opt_recent_qtr"             = NA,
                                    "Opt_future_proj_qtr"        = NA,
@@ -421,9 +417,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_calib_opts_output$fit$calibration_options <- NULL
 
-  expect_chklst_no_calib_opts <- c("ART_is_Spectrum"            = FALSE,
-                                   "ANC_is_Spectrum"            = FALSE,
-                                   "Package_created"            = TRUE,
+  expect_chklst_no_calib_opts <- c( "Package_created"            = TRUE,
                                    "Package_has_all_data"       = TRUE,
                                    "Opt_recent_qtr"             = FALSE,
                                    "Opt_future_proj_qtr"        = FALSE,
@@ -567,7 +561,7 @@ test_that("one input and output for each area_id/age/sex/indicator/period combin
 
   dups <- inputs_outputs %>%
     dplyr::group_by(area_id, sex, age_group, calendar_quarter, indicator) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::filter(indicator != "prevalence", n != 2)
 
   expect_equal(nrow(dups), 0)
