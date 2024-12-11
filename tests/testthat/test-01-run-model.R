@@ -205,7 +205,7 @@ test_that("exceeding max_iterations raises convergence warning", {
   expect_length(out$warnings, 3)
 
   expect_equal(out$warnings[[1]]$text,
-               paste0("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2019;2021;2022;2023"))
+               paste0("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023"))
 
   expect_equal(out$warnings[[3]]$text,
                paste0("Convergence error: iteration limit reached without convergence (10)"))
