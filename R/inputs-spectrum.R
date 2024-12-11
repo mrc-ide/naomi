@@ -377,7 +377,8 @@ read_dp_art_dec31 <- function(dp) {
                           art_dec31_reside = child_art_reside)
 
   art_dec31 <- rbind(child_art, art15plus) |>
-    dplyr::mutate(dplyr::across(where(is.numeric), ~ round(., 0)))
+    dplyr::mutate(dplyr::across(where(is.numeric), ~ round(., 0)),
+                  art_dec31 = art_dec31_attend)
 
   art_dec31
 }
