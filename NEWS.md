@@ -1,3 +1,9 @@
+# naomi 2.10.6
+
+* Update `read_dp_art_dec31()` with new .DP file flags to ensure ART adjustment factor and ART patient reallocation counts are applied to number on ART extracted from Spectrum.
+* Ensure adjusted Spectrum number on ART is used in Spectrum-Naomi comparison table.
+* Add ART adjustment factor and ART patient reallocation counts to Spectrum-Naomi comparison table.
+
 # naomi 2.10.5
 
 * Add standalone datapack download so that users do not have to download zip and extract this manually.
