@@ -208,9 +208,9 @@ test_that("ART adjustments properly extracted from Spectrum", {
   expect_equal(colnames(spec_art), c("sex", "age_group", "year",
                                      "art_dec31_reported", "art_dec31_attend","art_dec31_reside"))
   # Adults
-  expect_setequal(spec_art[166,], c("male", "Y015_999", "2022", "450799", "387903.12", "377903.12"))
-  expect_setequal(spec_art[167,], c("female", "Y015_999", "2022", "857994", "719094.9", "707094.9"))
+  expect_setequal(spec_art[166,], c("male", "Y015_999", "2022", "450799", "387903", "377903"))
+  expect_setequal(spec_art[167,], c("female", "Y015_999", "2022", "857994", "719095", "707095"))
   # Children
-  expect_setequal(spec_art[52,], c("both", "Y000_014", "2021", "59853", "49367.7", "44367.7"))
+  expect_setequal(spec_art[52,], c("both", "Y000_014", "2021", "59853", "49368", "44368"))
 
 })
