@@ -246,31 +246,38 @@ read_dp_art_dec31 <- function(dp) {
     ## Only apply if is number (! is percentage)
     adult_artadj_factor <- adult_artadj_factor ^ as.numeric(!art15plus_isperc)
     adult_artadj_absolute <- adult_artadj_absolute * as.numeric(!art15plus_isperc)
-
-    ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
-    art15plus_num_adj <- art15plus_num + adult_artadj_absolute
-    art15plus_num_adj <- art15plus_num * adult_artadj_factor
-
   }
+
+  ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
+  art15plus_attend <- art15plus_num + adult_artadj_absolute
+  art15plus_attend <- art15plus_attend * adult_artadj_factor
+  art15plus_reside <- art15plus_attend + adult_artadj_absolute
 
   # Covert percentage coverage to absolute numbers on ART
   art15plus_num[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_num[art15plus_isperc == 1] / 100
+  art15plus_attend[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_attend[art15plus_isperc == 1] / 100
+  art15plus_reside[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_reside[art15plus_isperc == 1] / 100
 
-  # Adjusted number on ART
-  art15plus <- as.data.frame.table(art15plus_num,
-                                   responseName = "art_dec31",
+  # Reported number on ART
+  art_dec31_reported <- as.data.frame.table(art15plus_num,
+                                   responseName = "art_dec31_reported",
                                    stringsAsFactors = FALSE)
-  # ART adjustment factor
-  art15plus_adjfactor <- as.data.frame.table(adult_artadj_factor,
-                                   responseName = "artadj_factor",
+
+  # Adjusted number on ART (attending)
+  art_dec31_attend <- as.data.frame.table(art15plus_attend,
+                                   responseName = "art_dec31_attend",
                                    stringsAsFactors = FALSE)
-  # ART reallocation
-  art15plus_adjabsolute <- as.data.frame.table(adult_artadj_absolute,
-                                             responseName = "artadj_absolute",
+
+  # Adjusted number on ART (residing)
+  art_dec31_reside <- as.data.frame.table(art15plus_reside,
+                                             responseName = "art_dec31_reside",
                                              stringsAsFactors = FALSE)
 
-  art15plus$artadj_factor <- art15plus_adjfactor$artadj_factor
-  art15plus$artadj_absolute <- art15plus_adjabsolute$artadj_absolute
+  art15plus <- purrr::reduce(list(art_dec31_reported,
+                                  art_dec31_attend,
+                                  art_dec31_reside), dplyr::left_join,
+                             by = dplyr::join_by(sex, year))
+
   art15plus$age_group <- "Y015_999"
   art15plus$year <- utils::type.convert(art15plus$year, as.is = TRUE)
 
@@ -325,6 +332,11 @@ read_dp_art_dec31 <- function(dp) {
                                 child_art_isperc == 1 ~ child_art_need * child_art_0to14 / 100)
   names(child_art) <- proj.years
 
+  if (any(is.na(child_art))) {
+    stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
+  }
+
+
   ## # Child on ART adjustment factor
   ##
   ## * Implemented same as adult adjustment factor above
@@ -350,24 +362,22 @@ read_dp_art_dec31 <- function(dp) {
     ## Only apply if is number (! is percentage)
     child_artadj_factor <- child_artadj_factor ^ !child_art_isperc
     child_artadj_absolute <- child_artadj_absolute ^ !child_art_isperc
-
-    ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
-    child_art <- child_art + child_artadj_absolute
-    child_art <- child_art * child_artadj_factor
   }
 
-  if (any(is.na(child_art))) {
-    stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
-  }
+  ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
+  child_art_attend <- child_art + child_artadj_absolute
+  child_art_attend <- child_art_attend * child_artadj_factor
+  child_art_reside <- child_art_attend + child_artadj_absolute
 
   child_art <- data.frame(sex = "both",
                           age_group = "Y000_014",
                           year = proj.years,
-                          art_dec31 = child_art,
-                          artadj_factor = child_artadj_factor,
-                          artadj_absolute = child_artadj_absolute)
+                          art_dec31_reported = child_art,
+                          art_dec31_attend = child_art_attend,
+                          art_dec31_reside = child_art_reside)
 
-  art_dec31 <- rbind(child_art, art15plus)
+  art_dec31 <- rbind(child_art, art15plus) |>
+    dplyr::mutate(dplyr::across(where(is.numeric), ~ round(., 0)))
 
   art_dec31
 }
