@@ -63,7 +63,7 @@ test_that("ANC data is properly aggreagted for Spectrum comparison table", {
 
 })
 
-test_that("Comparisoon wrapper function works with missing programme data", {
+test_that("Comparison wrapper function works with missing programme data", {
 
   # Test wrapper function with all programme data supplied
   shape <- a_hintr_data$shape
