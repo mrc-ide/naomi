@@ -77,9 +77,6 @@ LinkingTo:
     RcppEigen,
     TMB
 Remotes:
-    bergant/datamodelr,
-    mrc-ide/naomi.options,
-    eppasm=github::mrc-ide/eppasm,
-    first90=github::mrc-ide/first90release
+    bergant/datamodelr
 Config/testthat/edition: 3
 Config/testthat/parallel: true
