@@ -1,3 +1,7 @@
+# naomi 2.10.14
+
+* Remove `calendar_quarter_t5` two-year ahead projection.
+
 # naomi 2.10.13
 
 * Adjust paediatric and adult first90 to match Spectrum input by age groups <15 years, female 15+ years, and male 15+ years.

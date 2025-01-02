@@ -158,7 +158,7 @@ prepare_tmb_inputs <- function(naomi_data,
   X_paed_lambda_ratio_t2 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t2, df)
   X_paed_lambda_ratio_t3 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t3, df)
   X_paed_lambda_ratio_t4 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t4, df)
-  X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)
+  ## X_paed_lambda_ratio_t5 <- sparse_model_matrix(~-1 + area_idf:paed_lambda_ratio_t5, df)
 
   f_rho_a <- if(all(is.na(df$rho_a_fct))) ~0 else ~0 + rho_a_fct
   f_alpha_a <- if(all(is.na(df$alpha_a_fct))) ~0 else ~0 + alpha_a_fct
@@ -345,7 +345,7 @@ prepare_tmb_inputs <- function(naomi_data,
     X_paed_lambda_ratio_t2 = X_paed_lambda_ratio_t2,
     X_paed_lambda_ratio_t3 = X_paed_lambda_ratio_t3,
     X_paed_lambda_ratio_t4 = X_paed_lambda_ratio_t4,
-    X_paed_lambda_ratio_t5 = X_paed_lambda_ratio_t5,
+    ## X_paed_lambda_ratio_t5 = X_paed_lambda_ratio_t5,
     ##
     ## Household survey input data
     x_prev = naomi_data$prev_dat$x_eff,
@@ -401,14 +401,14 @@ prepare_tmb_inputs <- function(naomi_data,
     Lproj_paed_t3t4 = naomi_data$Lproj_t3t4$Lproj_paed,
     logit_alpha_t3t4_offset = df$logit_alpha_t3t4_offset,
     log_lambda_t4_offset = df$log_lambda_t4_offset,
-    ##
-    ## Time 5 projection inputs
-    population_t5 = df$population_t5,
-    Lproj_hivpop_t4t5 = naomi_data$Lproj_t4t5$Lproj_hivpop,
-    Lproj_incid_t4t5 = naomi_data$Lproj_t4t5$Lproj_incid,
-    Lproj_paed_t4t5 = naomi_data$Lproj_t4t5$Lproj_paed,
-    logit_alpha_t4t5_offset = df$logit_alpha_t4t5_offset,
-    log_lambda_t5_offset = df$log_lambda_t5_offset,
+    ## ##
+    ## ## Time 5 projection inputs
+    ## population_t5 = df$population_t5,
+    ## Lproj_hivpop_t4t5 = naomi_data$Lproj_t4t5$Lproj_hivpop,
+    ## Lproj_incid_t4t5 = naomi_data$Lproj_t4t5$Lproj_incid,
+    ## Lproj_paed_t4t5 = naomi_data$Lproj_t4t5$Lproj_paed,
+    ## logit_alpha_t4t5_offset = df$logit_alpha_t4t5_offset,
+    ## log_lambda_t5_offset = df$log_lambda_t5_offset,
     ##
     A_out = naomi_data$A_out,
     A_anc_out = naomi_data$A_anc_out,

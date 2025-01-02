@@ -1096,7 +1096,7 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_rho_t4_out);
     REPORT(anc_alpha_t4_out);
 
-
+    /*
     // Projection to time 5
     // Only PLHIV, ART and infections calculated. No ANC or awareness indicators
 
@@ -1169,6 +1169,7 @@ Type objective_function<Type>::operator() ()
     // REPORT(untreated_plhiv_attend_t5_out);
     // REPORT(lambda_t5_out);
     REPORT(infections_t5_out);
+    */
   }
 
   if(report_likelihood){
