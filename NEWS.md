@@ -1,3 +1,7 @@
+# naomi 2.10.8
+
+* Remove `calendar_quarter_t5` two-year ahead projection.
+
 # naomi 2.10.7
 
 * Add national level aggregate to PEPFAR Target Setting Tool CSV. 
