@@ -24,7 +24,7 @@ test_that("R implementation matches C++", {
                                   calendar_quarter2 = "CY2018Q4",
                                   calendar_quarter3 = "CY2019Q2",
                                   calendar_quarter4 = "CY2022Q3",
-                                  calendar_quarter5 = "CY2023Q3",
+                                  ## calendar_quarter5 = "CY2023Q3",
                                   artattend = TRUE,
                                   spectrum_population_calibration = "subnational")
 

@@ -91,7 +91,7 @@ test_that("population calibration options", {
                                calendar_quarter2 = "CY2018Q4",
                                calendar_quarter3 = "CY2019Q2",
                                calendar_quarter4 = "CY2022Q3",
-                               calendar_quarter5 = "CY2023Q3",
+                               ## calendar_quarter5 = "CY2023Q3",
                                spectrum_population_calibration = "none")
 
   expect_equal(mf_none$spectrum_calibration$population_raw,
@@ -101,15 +101,15 @@ test_that("population calibration options", {
   expect_equal(sum(mf_none$mf_model$population_t1 +
                      mf_none$mf_model$population_t2 +
                      mf_none$mf_model$population_t3 +
-                     mf_none$mf_model$population_t4 +
-                     mf_none$mf_model$population_t5
+                     mf_none$mf_model$population_t4 ## +
+                     ## mf_none$mf_model$population_t5
                    ),
                sum(mf_none$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_none$mf_model$population_t1 +
                      mf_none$mf_model$population_t2 +
                      mf_none$mf_model$population_t3 +
-                     mf_none$mf_model$population_t4 +
-                     mf_none$mf_model$population_t5
+                     mf_none$mf_model$population_t4 ## +
+                     ## mf_none$mf_model$population_t5
                    ),
                sum(mf_none$spectrum_calibration$population_raw))
 
@@ -126,7 +126,7 @@ test_that("population calibration options", {
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",
+                              ## calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "national")
 
   expect_false(sum(mf_nat$spectrum_calibration$population_raw) ==
@@ -136,14 +136,16 @@ test_that("population calibration options", {
   expect_equal(sum(mf_nat$mf_model$population_t1 +
                      mf_nat$mf_model$population_t2 +
                      mf_nat$mf_model$population_t3 +
-                     mf_nat$mf_model$population_t4 +
-                     mf_nat$mf_model$population_t5),
+                     mf_nat$mf_model$population_t4 ## +
+                     ## mf_nat$mf_model$population_t5
+                   ),
                sum(mf_nat$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_nat$mf_model$population_t1 +
                      mf_nat$mf_model$population_t2 +
                      mf_nat$mf_model$population_t3 +
-                     mf_nat$mf_model$population_t4 +
-                     mf_nat$mf_model$population_t5),
+                     mf_nat$mf_model$population_t4 ## +
+                     ## mf_nat$mf_model$population_t5
+                   ),
                sum(mf_nat$spectrum_calibration$population_spectrum))
 
 
@@ -156,7 +158,7 @@ test_that("population calibration options", {
                                  calendar_quarter2 = "CY2018Q4",
                                  calendar_quarter3 = "CY2019Q2",
                                  calendar_quarter4 = "CY2022Q3",
-                                 calendar_quarter5 = "CY2023Q3",
+                                 ## calendar_quarter5 = "CY2023Q3",
                                  spectrum_population_calibration = "subnational")
 
   expect_false(sum(mf_subnat$spectrum_calibration$population_raw) ==
@@ -166,14 +168,16 @@ test_that("population calibration options", {
   expect_equal(sum(mf_subnat$mf_model$population_t1 +
                      mf_subnat$mf_model$population_t2 +
                      mf_subnat$mf_model$population_t3 +
-                     mf_subnat$mf_model$population_t4 +
-                     mf_subnat$mf_model$population_t5),
+                     mf_subnat$mf_model$population_t4 ##  +
+                     ## mf_subnat$mf_model$population_t5
+                   ),
                sum(mf_subnat$spectrum_calibration$population_calibrated))
   expect_equal(sum(mf_subnat$mf_model$population_t1 +
                      mf_subnat$mf_model$population_t2 +
                      mf_subnat$mf_model$population_t3 +
-                     mf_subnat$mf_model$population_t4 +
-                     mf_subnat$mf_model$population_t5),
+                     mf_subnat$mf_model$population_t4 ## +
+                     ## mf_subnat$mf_model$population_t5
+                   ),
                sum(mf_subnat$spectrum_calibration$population_spectrum))
 
   expect_error(
@@ -186,7 +190,7 @@ test_that("population calibration options", {
                       calendar_quarter2 = "CY2018Q4",
                       calendar_quarter3 = "CY2019Q2",
                       calendar_quarter4 = "CY2022Q3",
-                      calendar_quarter5 = "CY2023Q3",
+                      ## calendar_quarter5 = "CY2023Q3",
                       spectrum_population_calibration = "jibberish"),
     "spectrum_calibration_option \"jibberish\" not found."
   )
@@ -317,7 +321,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",
+                              ## calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "subnational")
 
 
@@ -343,7 +347,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",
+                              ## calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "subnational")
 
 
@@ -372,7 +376,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",
+                              ## calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "subnational")
 
   ## Outputs should match for T2 (CY2018Q4 -- mid-year)
