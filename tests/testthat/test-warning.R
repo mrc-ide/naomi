@@ -130,8 +130,8 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
   )
 
   # National warnings for national pjnz file
-  spec_comparison <- prepare_art_spectrum_comparison(data$art_number, data$shape, data$pjnz)
-  art <- hintr_validate_programme_data(spec_comparison)
+  art_spec_comparison <- prepare_art_spectrum_comparison(data$art_number, data$shape, data$pjnz)
+  art <- hintr_validate_art_programme_data(art_spec_comparison)
 
   expect_length(art$warnings, 1)
   expect_equal(art$warnings[[1]]$locations,
@@ -151,8 +151,8 @@ test_that("ANC warning raised if spectrum totals do not match naomi data", {
   )
 
   # National warnings for national pjnz file
-  spec_comparison <- prepare_anc_spectrum_comparison(data$anc_testing, data$shape, data$pjnz)
-  anc <- hintr_validate_programme_data(spec_comparison)
+  anc_spec_comparison <- prepare_anc_spectrum_comparison(data$anc_testing, data$shape, data$pjnz)
+  anc <- hintr_validate_anc_programme_data(anc_spec_comparison)
 
   expect_length(anc$warnings, 1)
   expect_equal(anc$warnings[[1]]$locations,

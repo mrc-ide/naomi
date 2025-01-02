@@ -165,7 +165,7 @@ test_that("subset_output_package() saves expected output package", {
 
 
   ## Test that can **drop** selected indicators (rather than keep)
-  
+
   sub_drop_file <- tempfile(fileext = ".zip")
 
   expect_warning(
@@ -290,8 +290,8 @@ test_that("navigator checklist returns expected results", {
 
   model_output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
 
-  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
-                          "ANC_is_Spectrum"            = FALSE,
+  expected_checklist <- c("ART_is_Spectrum"            = NA,
+                          "ANC_is_Spectrum"            = NA,
                           "Package_created"            = TRUE,
                           "Package_has_all_data"       = TRUE,
                           "Opt_recent_qtr"             = FALSE,
@@ -328,8 +328,6 @@ test_that("navigator checklist returns expected results", {
 
   adj_output$fit$data_options$prev_survey_ids <- "DEMO2020PHIA"
   adj_output$fit$data_options$prev_survey_quarters <- "CY2020Q3"
-  adj_output$fit$data_options$art_number_spectrum_aligned <- TRUE
-  adj_output$fit$data_options$anc_testing_spectrum_aligned <- TRUE
 
   adj_output$fit$calibration_options$spectrum_population_calibration <- "subnational"
   adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
@@ -355,9 +353,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_data_opts_output$fit$data_options <- NULL
 
-  expect_chklst_no_data_opts<- c("ART_is_Spectrum"            = NA,
-                                 "ANC_is_Spectrum"            = NA,
-                                 "Package_created"            = TRUE,
+  expect_chklst_no_data_opts<- c("Package_created"            = TRUE,
                                  "Package_has_all_data"       = TRUE,
                                  "Opt_recent_qtr"             = FALSE,
                                  "Opt_future_proj_qtr"        = FALSE,
@@ -389,9 +385,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_model_opts_output$fit$model_options <- NULL
 
-  expect_chklst_no_model_opts <- c("ART_is_Spectrum"            = FALSE,
-                                   "ANC_is_Spectrum"            = FALSE,
-                                   "Package_created"            = TRUE,
+  expect_chklst_no_model_opts <- c("Package_created"            = TRUE,
                                    "Package_has_all_data"       = TRUE,
                                    "Opt_recent_qtr"             = NA,
                                    "Opt_future_proj_qtr"        = NA,
@@ -423,9 +417,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_calib_opts_output$fit$calibration_options <- NULL
 
-  expect_chklst_no_calib_opts <- c("ART_is_Spectrum"            = FALSE,
-                                   "ANC_is_Spectrum"            = FALSE,
-                                   "Package_created"            = TRUE,
+  expect_chklst_no_calib_opts <- c( "Package_created"            = TRUE,
                                    "Package_has_all_data"       = TRUE,
                                    "Opt_recent_qtr"             = FALSE,
                                    "Opt_future_proj_qtr"        = FALSE,
@@ -569,7 +561,7 @@ test_that("one input and output for each area_id/age/sex/indicator/period combin
 
   dups <- inputs_outputs %>%
     dplyr::group_by(area_id, sex, age_group, calendar_quarter, indicator) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::filter(indicator != "prevalence", n != 2)
 
   expect_equal(nrow(dups), 0)

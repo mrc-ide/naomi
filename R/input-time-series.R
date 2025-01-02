@@ -503,12 +503,7 @@ prepare_input_time_series_anc <- function(anc, shape) {
 
   anc_plot_data_long <- anc_long |>
     dplyr::mutate(!!!mutate_exprs) |>
-    dplyr::select(area_id, area_name, area_level, area_level_label, parent_area_id,
-                  area_sort_order, age_group,  time_period, year, quarter,
-                  calendar_quarter, anc_clients, anc_tested, anc_tested_pos,
-                  anc_prevalence, anc_known_pos, anc_known_neg,
-                  anc_art_coverage, births_facility, births_clients_ratio,
-                  area_hierarchy) |>
+    dplyr::select(-sex) |>
     tidyr::pivot_longer(cols = c(dplyr::starts_with("anc"), "births_facility", "births_clients_ratio"),
                         names_to = "plot",
                         values_to = "value") |>

@@ -14,9 +14,7 @@ write_navigator_checklist <- function(naomi_output,
     path <- paste0(path, ".csv")
   }
 
-  key <- c("ART_is_Spectrum",
-           "ANC_is_Spectrum",
-           "Package_created",
+  key <- c("Package_created",
            "Package_has_all_data",
            "Opt_recent_qtr",
            "Opt_future_proj_qtr",
@@ -35,9 +33,7 @@ write_navigator_checklist <- function(naomi_output,
            "Cal_new_infections",
            "Cal_method")
 
-  label <- c(t_("NAVIGATOR_ART_IS_SPECTRUM_DESC"),
-             t_("NAVIGATOR_ANC_IS_SPECTRUM_DESC"),
-             t_("NAVIGATOR_PACKAGE_CREATED_DESC"),
+  label <- c(t_("NAVIGATOR_PACKAGE_CREATED_DESC"),
              t_("NAVIGATOR_PACKAGE_HAS_ALL_DATA_DESC"),
              t_("NAVIGATOR_OPT_RECENT_QTR_DESC"),
              t_("NAVIGATOR_OPT_FUTURE_PROJ_QTR_DESC"),
@@ -90,10 +86,6 @@ write_navigator_checklist <- function(naomi_output,
   }
 
   if (!is.null(data_options)) {
-
-    ## Compare aggregated naomi inputs to national Spectrum totals
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "ART_is_Spectrum"] <- data_options$art_number_spectrum_aligned
-    v$TrueFalse[v$NaomiCheckPermPrimKey == "ANC_is_Spectrum"] <- data_options$anc_testing_spectrum_aligned
 
     ## Check that all surveys used are from most recent quarter available
     most_recent_survey_available  <- max(data_options$prev_survey_available_quarters)

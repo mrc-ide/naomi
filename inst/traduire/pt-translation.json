@@ -148,7 +148,6 @@
     "ART_CHILD": "crianças (<15) em TARV",
     "ART_ADULT_SEX_RATIO": "Relação homem com mulher em adultos no TARV",
     "ART_CHILD_ADULT_RATIO": "Relação criança-adulto da TARV",
-    "ANC_STATUS": "Estatuto conhecido do CPN",
     "ANC_PREVALENCE": "Prevalência do CPN",
     "ANC_ART_COVERAGE": "Cobertura TARV arte em CPN",
     "ART_NEW_TOTAL": "TARV (novo)",
@@ -254,7 +253,6 @@
     "AWARE_PLHIV_PROP_RATIO": "Proporção de PVVIH com conhecimento relação",
     "INCIDENCE_RATIO": "Incidência de VIH relação",
     "WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM": "Os dados subnacionais da Naomi não são iguais aos dados nacionais da Spectrum. Verificar a tabela de revisão de entradas para: \n{{years}}",
-    "WARNING_ADDITIONAL": "e {{count}} mais",
     "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ",
     "ANC_PREVALENCE_AGE_MATCHED": "Prevalência do CPN idade compatível",
     "ANC_ART_COVERAGE_AGE_MATCHED": "Cobertura TARV em CPN idade compatível",
@@ -273,6 +271,15 @@
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Pacote Naomi descarregado a partir da aplicação web Naomi",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Relatório de síntese da Naomi carregado da aplicação web Naomi",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Relatório de comparação Naomi carregado a partir da aplicação web Naomi",
+    "DOWNLOAD_DATAPACK_DESCRIPTION": "Saída do Naomi datapack carregada a partir da aplicação web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
-    "NUMBER_ON_ART_DESC": "Number on ART description"
+    "NUMBER_ON_ART_DESC": "Number on ART description",
+    "POPULATION_PROPORTION": "Proporção da população",
+    "ANC_TOTAL_POS": "ANC total VIH positivo",
+    "ANC_TOTAL_POS_DESC": "Total de mulheres seropositivas nos CPN (seropositivas conhecidas e seropositivas testadas)",
+    "ANC_ALREADY_ART_DESC": "Mulheres que já estão a receber TAR ao longo da vida antes da primeira consulta de ANC durante esta gravidez",
+    "ANC_STATUS": "ANC VIH verificado",
+    "ANC_STATUS_DESC": "Número de mulheres com o estatuto de VIH verificado durante os CPN (conhecido ou testado pelo menos uma vez)",
+    "ANC_ART_AMONG_KNOWN": "Cobertura de TARV nos CPN entre os seropositivos conhecidos",
+    "ANC_ART_AMONG_KNOWN_DESC": "Proporção de mulheres seropositivas conhecidas na primeira consulta de ANC que já estavam a receber TARV"
 }

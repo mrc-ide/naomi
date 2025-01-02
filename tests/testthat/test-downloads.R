@@ -27,8 +27,7 @@ test_that("spectrum download can be created", {
   expect_equal(names(navigator_checklist),
                c("NaomiCheckPermPrimKey", "NaomiCheckDes", "TrueFalse"))
 
-  checklist_primkeys <- c( "ART_is_Spectrum","ANC_is_Spectrum","Package_created",
-                           "Package_has_all_data","Opt_recent_qtr","Opt_future_proj_qtr",
+  checklist_primkeys <- c( "Package_created", "Package_has_all_data","Opt_recent_qtr","Opt_future_proj_qtr",
                            "Opt_area_ID_selected","Opt_calendar_survey_match","Opt_recent_survey_only",
                            "Opt_ART_coverage","Opt_ANC_data","Opt_ART_data",
                            "Opt_ART_attendance_yes","Model_fit","Cal_Population",
@@ -226,4 +225,107 @@ test_that("output description is translated", {
   text <- build_output_description(a_hintr_options)
   expect_match(text, paste0("Paquet Naomi téléchargée depuis l'application ",
                             "web Naomi\\n\\nPérimètre de zone - MWI\\n.+"))
+})
+
+test_that("spectrum download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  notes <- "these are my\nmultiline notes"
+  with_mock(new_simple_progress = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_spectrum_download(a_hintr_output_calibrated,
+                                             notes = notes))
+  })
+  expect_true(file.exists(out$path))
+
+  expect_type(out$metadata$description, "character")
+  expect_length(out$metadata$description, 1)
+  expect_equal(out$metadata$areas, "MWI")
+
+  tmp <- tempfile()
+  info <- naomi_info(format_data_input(a_hintr_data), a_hintr_options)
+  info_names <- paste0("info/", names(info))
+  unzip(out$path, exdir = tmp, files = info_names)
+  expect_equal(dir(tmp), "info")
+  expect_equal(dir(file.path(tmp, "info")), names(info))
+
+  outputs <- read_output_package(out$path)
+  expect_true(
+    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
+          "spectrum_region_code", "area_sort_order", "geometry") %in%
+          names(outputs$meta_area))
+  )
+
+  tmpf <- tempfile()
+  unzip(out$path, "boundaries.geojson", exdir = tmpf)
+  output_boundaries <- sf::read_sf(file.path(tmpf, "boundaries.geojson"))
+
+  ## Column 'name' added in boundaries.geojson during save_output() for Spectrum
+  expect_true(
+    all(c("area_level", "area_level_label", "area_id", "area_name", "parent_area_id",
+          "spectrum_region_code", "area_sort_order", "name", "geometry") %in%
+          names(output_boundaries))
+  )
+
+  ## Progress messages printed
+  expect_length(messages$progress, 1)
+  expect_equal(messages$progress[[1]]$message,
+               "Generating output zip download")
+
+  ## Notes are saved
+  t <- tempfile()
+  unzip(out$path, "notes.txt", exdir = t)
+  saved_notes <- readLines(file.path(t, "notes.txt"))
+  expect_equal(saved_notes, c("these are my", "multiline notes"))
+})
+
+test_that("datapack download can be created", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  with_mock(new_simple_progress = mock_new_simple_progress, {
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_datapack_download(a_hintr_output_calibrated))
+  })
+  expect_true(file.exists(out$path))
+
+  expect_type(out$metadata$description, "character")
+  expect_length(out$metadata$description, 1)
+  expect_equal(out$metadata$areas, "MWI")
+
+  datapack <- readxl::read_xlsx(out$path, "data")
+
+  expect_true("psnu_uid" %in% colnames(datapack))
+  expect_true(!any(is.na(datapack)))
+  ## Simple smoke test that we have some indicator code
+  expect_true("HIV_PREV.T_1" %in% datapack$indicator_code)
+
+  metadata <- readxl::read_xlsx(out$path, "metadata")
+
+  expect_true(nrow(metadata) > 0)
+  expect_equal(as.character(metadata[1, 1]), "Naomi Version")
+})
+
+test_that("datapack download can include vmmc data", {
+  mock_new_simple_progress <- mockery::mock(MockSimpleProgress$new())
+  vmmc_file <- list(path = file.path("testdata", "vmmc.xlsx"),
+                    hash = "123",
+                    filename = "vmmc.xlsx")
+  testthat::with_mocked_bindings(
+    messages <- naomi_evaluate_promise(
+      out <- hintr_prepare_datapack_download(a_hintr_output_calibrated,
+                                             vmmc_file = vmmc_file)
+    ),
+    new_simple_progress = mock_new_simple_progress
+  )
+  expect_true(file.exists(out$path))
+
+  datapack <- readxl::read_xlsx(out$path, "data")
+
+  expect_true("psnu_uid" %in% colnames(datapack))
+  expect_true(!any(is.na(datapack)))
+  expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
+                    datapack$indicator_code))
+
+  metadata <- readxl::read_xlsx(out$path, "metadata")
+
+  expect_true(nrow(metadata) > 0)
+  expect_equal(as.character(metadata[1, 1]), "Naomi Version")
 })

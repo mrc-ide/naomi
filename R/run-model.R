@@ -324,14 +324,14 @@ naomi_prepare_data <- function(data, options) {
   if (!is.null(data$art_number)) {
     art_number <- read_art_number(data$art_number$path)
     art_spectrum_comparison <- prepare_art_spectrum_comparison(art_number, area_merged, spec_program_data)
-    programme_data_warning(art_spectrum_comparison)
+    art_programme_data_warning(art_spectrum_comparison)
   } else {
     art_number <- NULL
   }
   if (!is.null(data$anc_testing)) {
     anc_testing <- read_anc_testing(data$anc_testing$path)
     anc_spectrum_comparison <- prepare_anc_spectrum_comparison(anc_testing, area_merged, spec_program_data)
-    programme_data_warning(anc_spectrum_comparison)
+    anc_programme_data_warning(anc_spectrum_comparison)
   } else {
     anc_testing <- NULL
   }

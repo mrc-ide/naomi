@@ -148,7 +148,6 @@
     "ART_CHILD": "Enfants sous TARV",
     "ART_ADULT_SEX_RATIO": "Rapport de masculinité des adultes TARV",
     "ART_CHILD_ADULT_RATIO": "Rapport enfant-adulte ART sous TARV",
-    "ANC_STATUS": "Statut connu de la CPN",
     "ANC_PREVALENCE": "Prévalence CPN",
     "ANC_ART_COVERAGE": "Couverture de TARV au CPN",
     "ART_NEW_TOTAL": "TARV (Nouveau)",
@@ -254,7 +253,6 @@
     "AWARE_PLHIV_PROP_RATIO": "Proportion de PVVIH conscients rapport",
     "INCIDENCE_RATIO": "Rapport d'incidence du VIH",
     "WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM": "Les données infranationales de Naomi ne correspondent pas aux données nationales de Spectrum. Vérifier le tableau de révision des intrants pour: \n{{years}}",
-    "WARNING_ADDITIONAL": "et {{count}} de plus",
     "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
     "ANC_PREVALENCE_AGE_MATCHED": "Prévalence CPN appariés par âge",
     "ANC_ART_COVERAGE_AGE_MATCHED": "Couverture de TARV au CPN appariés par âge",
@@ -273,6 +271,15 @@
     "DOWNLOAD_OUTPUT_DESCRIPTION": "Paquet Naomi téléchargée depuis l'application web Naomi",
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Rapport de synthèse Naomi téléchargé depuis l'application web Naomi",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Rapport de comparaison Naomi téléchargé à partir de l'application web Naomi",
+    "DOWNLOAD_DATAPACK_DESCRIPTION": "Sortie du datapack Naomi téléchargée depuis l'application web Naomi",
     "NUMBER_ON_ART": "Nombre de personnes sous TARV",
-    "NUMBER_ON_ART_DESC": "Number on ART description"
+    "NUMBER_ON_ART_DESC": "Number on ART description",
+    "POPULATION_PROPORTION": "Proportion de la population",
+    "ANC_TOTAL_POS": "CPN total VIH positif",
+    "ANC_TOTAL_POS_DESC": "Total des femmes séropositives lors de la CPN (séropositives connues et testées positives)",
+    "ANC_ALREADY_ART_DESC": "Femmes déjà sous traitement antirétroviral à vie avant la première consultation de soins prénatals au cours de cette grossesse",
+    "ANC_STATUS": "Statut VIH de la CPN vérifié",
+    "ANC_STATUS_DESC": "Nombre de femmes dont le statut VIH a été vérifié lors de la CPN (soit connu, soit testé au moins une fois)",
+    "ANC_ART_AMONG_KNOWN": "Couverture ART de la CPN parmi les séropositifs connus",
+    "ANC_ART_AMONG_KNOWN_DESC": "Proportion de femmes dont la séropositivité est connue lors de la première visite de CPN et qui sont déjà sous traitement antirétroviral"
 }

@@ -454,7 +454,9 @@ test_that("data can be formatted for ANC input time series", {
   expect_setequal(unique(data$plot),
                   c("anc_clients", "anc_tested", "anc_tested_pos",
                     "anc_prevalence", "anc_known_pos", "anc_known_neg",
-                    "anc_art_coverage", "births_clients_ratio", "births_facility"))
+                    "anc_art_coverage", "births_clients_ratio",
+                    "births_facility", "anc_already_art", "anc_status",
+                    "anc_art_among_known", "anc_total_pos"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")

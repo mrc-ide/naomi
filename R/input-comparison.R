@@ -20,27 +20,44 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   if (!inherits(pjnz, "spec_program_data")) {
     pjnz <- extract_pjnz_program_data(pjnz) }
 
+  ## If user has uploaded multiple calendar quarters within a year, we
+  ## only want to return 1 value. The last one within the year.
+  art_single_cq <- art |>
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter)) |>
+    dplyr::group_by(area_id, sex, age_group, year) |>
+    dplyr::mutate(quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)) |>
+    dplyr::filter(quarter_id == max(quarter_id)) |>
+    dplyr::ungroup()
+
   ## Aggregate ART data
-  art_agreggated <- art |>
-    dplyr::left_join(shape,  by = "area_id") |>
-    dplyr::count(spectrum_region_code, calendar_quarter, sex, age_group,
+  art_agreggated <- art_single_cq |>
+    dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter)) |>
+    dplyr::left_join(shape, by = "area_id") |>
+    dplyr::count(spectrum_region_code, year, sex, age_group,
                  wt = art_current, name = "value_naomi")
 
-  if(identical(unique(art$sex), c("both"))) {
+  if(identical(unique(art_single_cq$sex), c("both"))) {
     # If no sex aggregated data present in ART data, aggregate Spectrum by age
-    spec_aggreagted <- pjnz$art_dec31 |>
-      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
-      dplyr::count(spectrum_region_code, calendar_quarter, age_group,
-                   wt = art_dec31, name = "value_spectrum") |>
+    spec <- pjnz$art_dec31 |>
+      dplyr::group_by(spectrum_region_code, year, age_group) |>
+      dplyr::summarise(
+        value_spectrum_reported = round(sum(art_dec31_reported)),
+        art_dec31_attend = round(sum(art_dec31_attend)),
+        art_dec31_reside = round(sum(art_dec31_reside)),
+        .groups = "drop") |>
       dplyr::mutate(sex = "both")
-
   } else {
     # If sex aggregated data present in ART data, aggregate Spectrum by age and sex
-    spec_aggreagted <- pjnz$art_dec31 |>
-      dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
-      dplyr::count(spectrum_region_code, calendar_quarter, sex, age_group,
-                   wt = art_dec31, name = "value_spectrum")
+    spec <- pjnz$art_dec31 |>
+      dplyr::select(value_spectrum_reported = art_dec31_reported, dplyr::everything())
   }
+
+  spec_aggreagted <- spec |>
+    dplyr::mutate(
+      value_spectrum_adjusted = art_dec31_attend,
+      value_spectrum_reallocated = art_dec31_reside - art_dec31_attend ) |>
+    dplyr::select(spectrum_region_code, year, age_group, sex, value_spectrum_reported,
+                  value_spectrum_adjusted, value_spectrum_reallocated)
 
   # Get spectrum level to select correct area names
   spectrum_region_code <- unique(shape$spectrum_region_code)
@@ -48,7 +65,7 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   spectrum_level <- as.integer(length(spectrum_region_code) > 1)
 
   dat  <- dplyr::left_join(art_agreggated, spec_aggreagted,
-                           by = c("spectrum_region_code", "calendar_quarter",
+                           by = c("spectrum_region_code", "year",
                                   "sex", "age_group")) |>
     dplyr::left_join(shape |>
                        dplyr::filter(area_level == spectrum_level) |>
@@ -59,12 +76,11 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   dat |>
     dplyr::mutate(
       indicator = "number_on_art",
-      year = naomi::calendar_quarter_to_year(calendar_quarter),
       group = dplyr::if_else(age_group == "Y000_014",
-                             "art_children", paste0("art_adult_", sex)),
-      difference = value_spectrum - value_naomi) |>
+                             "art_children", paste0("art_adult_", sex))) |>
     dplyr::select(indicator, area_name, year, group,
-                  value_spectrum, value_naomi, difference)
+                  value_spectrum_reported, value_spectrum_adjusted,
+                  value_naomi, value_spectrum_reallocated)
 }
 
 ##' Compare aggregated subnational ART inputs + spectrum totals for comparison table
@@ -118,10 +134,9 @@ prepare_anc_spectrum_comparison <- function(anc, shape, pjnz) {
   dat |>
     dplyr::mutate(
       sex = "female", age_group = "Y015_049",
-      group = "anc_adult_female",
-      difference = value_spectrum - value_naomi) |>
+      group = "anc_adult_female") |>
     dplyr::select(indicator, area_name, year, group,
-                  value_spectrum, value_naomi, difference)
+                  value_spectrum, value_naomi)
 
 }
 
@@ -134,13 +149,10 @@ prepare_anc_spectrum_comparison <- function(anc, shape, pjnz) {
 ##' @export
 prepare_spectrum_naomi_comparison <- function(art, anc, shape, pjnz){
 
-  null_df <- setNames(data.frame(matrix(ncol = 7, nrow = 0)),
-    c("indicator", "area_name", "year", "group","value_spectrum", "value_naomi", "difference"))
-
   if(is.null(art) & is.null(anc) ){
 
     # Empty data frame if no programme data
-    comparison_df <- null_df
+    comparison_table <- list(art = NULL, anc = NULL)
 
   } else {
 
@@ -156,18 +168,19 @@ prepare_spectrum_naomi_comparison <- function(art, anc, shape, pjnz){
     if (!is.null(art)) {
       art_comparison <- prepare_art_spectrum_comparison(art, shape, pjnz)
     } else {
-      art_comparison <- null_df
+      art_comparison <- NULL
     }
 
     # Create ANC comparison or empty data frame if no ART supplied
     if (!is.null(anc)) {
       anc_comparison <- prepare_anc_spectrum_comparison(anc, shape, pjnz)
     } else {
-      anc_comparison <- null_df
+      anc_comparison <- NULL
     }
 
-    comparison_df <- rbind(art_comparison, anc_comparison)
+    comparison_table <- list(art = art_comparison,
+                             anc = anc_comparison)
   }
 
-  comparison_df
+  comparison_table
 }

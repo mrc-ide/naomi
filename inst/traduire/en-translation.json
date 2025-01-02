@@ -274,6 +274,15 @@
     "DOWNLOAD_SUMMARY_DESCRIPTION": "Naomi summary report uploaded from Naomi web app",
     "DOWNLOAD_COMPARISON_DESCRIPTION": "Naomi comparison report uploaded from Naomi web app",
     "DOWNLOAD_AGYW_DESCRIPTION": "Naomi AGYW tool uploaded from Naomi web app",
+    "DOWNLOAD_DATAPACK_DESCRIPTION": "Naomi datapack output uploaded from Naomi web app",
     "NUMBER_ON_ART": "Number on ART",
-    "NUMBER_ON_ART_DESC": "Number on ART description"
+    "NUMBER_ON_ART_DESC": "Number on ART description",
+    "POPULATION_PROPORTION": "Population proportion",
+    "ANC_TOTAL_POS": "ANC total HIV positive",
+    "ANC_TOTAL_POS_DESC": "Total HIV positive women at ANC (known positive and tested positive)",
+    "ANC_ALREADY_ART_DESC": "Women already on lifelong ART before first ANC visit during this pregnancy",
+    "ANC_STATUS": "ANC HIV status ascertained",
+    "ANC_STATUS_DESC": "Number of women with HIV status ascertained during ANC (either known or tested at least once)",
+    "ANC_ART_AMONG_KNOWN": "ANC ART coverage among known positive",
+    "ANC_ART_AMONG_KNOWN_DESC": "Proportion of women known HIV positive at first ANC visit who were already on ART"
 }

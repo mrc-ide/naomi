@@ -1,9 +1,28 @@
-# naomi 2.10.3
+# naomi 2.10.7
 
 * Add national level aggregate to PEPFAR Target Setting Tool CSV. 
   - This also adds a new column `country_or_psnu` that codes values `"Country"` or `"PSNU"`
     accordingly. If the PSNU level is national, the value `"Country"` will be coded.
 * Remove two-year ahead projection (`*.T2`) indicators from PEPFAR Target Setting Tool output.
+
+# naomi 2.10.6
+
+* Update `read_dp_art_dec31()` with new .DP file flags to ensure ART adjustment factor and ART patient reallocation counts are applied to number on ART extracted from Spectrum.
+* Ensure adjusted Spectrum number on ART is used in Spectrum-Naomi comparison table.
+* Add ART adjustment factor and ART patient reallocation counts to Spectrum-Naomi comparison table.
+
+# naomi 2.10.5
+
+* Add standalone datapack download so that users do not have to download zip and extract this manually.
+
+# naomi 2.10.4
+
+* If users upload multiple quarters in ART programme data, return only the last quarter per year for input comparison data.
+  This fixes a bug where previously they were being aggregated. issue-3 24/25
+
+# naomi 2.10.3
+
+* Return `anc_already_art`, `anc_status`, `anc_art_among_known` and `anc_total_pos` indicators from ANC input time series data.
 
 # naomi 2.10.2
 
