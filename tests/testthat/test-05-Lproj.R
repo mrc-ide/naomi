@@ -39,7 +39,7 @@ test_that("Lproj returns", {
                                  calendar_quarter2 = "CY2019Q2",
                                  calendar_quarter3 = "CY2022Q4",
                                  calendar_quarter4 = "CY2023Q4",
-                                 calendar_quarter5 = "CY2024Q4",
+                                 ## calendar_quarter5 = "CY2024Q4",
                                  spectrum_population_calibration = "subnational")
   
   mfA <- naomi_mfA$mf_model
@@ -71,7 +71,7 @@ test_that("Lproj returns", {
                                  calendar_quarter2 = "CY2023Q2",
                                  calendar_quarter3 = "CY2023Q4",
                                  calendar_quarter4 = "CY2024Q2",
-                                 calendar_quarter5 = "CY2024Q4",
+                                 ## calendar_quarter5 = "CY2024Q4",
                                  spectrum_population_calibration = "subnational")
   
   mfB <- naomi_mfB$mf_model
@@ -105,7 +105,7 @@ test_that("Lproj returns", {
                                  calendar_quarter2 = "CY2019Q2",
                                  calendar_quarter3 = "CY2023Q4",
                                  calendar_quarter4 = "CY2024Q2",
-                                 calendar_quarter5 = "CY2024Q4",
+                                 ## calendar_quarter5 = "CY2024Q4",
                                  spectrum_population_calibration = "subnational")
   
   mfC <- naomi_mfC$mf_model
@@ -145,7 +145,7 @@ test_that("Lproj returns", {
                                  calendar_quarter2 = "CY2019Q4",
                                  calendar_quarter3 = "CY2023Q4",
                                  calendar_quarter4 = "CY2024Q2",
-                                 calendar_quarter5 = "CY2024Q4",
+                                 ## calendar_quarter5 = "CY2024Q4",
                                  spectrum_population_calibration = "subnational")
   
   mfD <- naomi_mfD$mf_model
