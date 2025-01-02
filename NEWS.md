@@ -1,3 +1,9 @@
+# naomi 2.10.3
+
+* Add national level aggregate to PEPFAR Target Setting Tool CSV. 
+  - This also adds a new column `country_or_psnu` that codes values `"Country"` or `"PSNU"`
+    accordingly. If the PSNU level is national, the value `"Country"` will be coded.
+
 # naomi 2.10.2
 
 * Add ANC testing outputs to T4 projection period for including in PEPFAR datapack output.

@@ -67,6 +67,10 @@ write_datapack_csv <- function(naomi_output,
     warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
 
+  ## PEPFAR Target Setting Tool 2025: select both PSNU level and national aggregates
+  ## Assume that national aggregate is level 0
+  datapack_output_levels <- c(0L, psnu_level)
+
   datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
 
   datapack_indicator_map <- datapack_indicator_map %>%
@@ -113,9 +117,10 @@ write_datapack_csv <- function(naomi_output,
 
   dat <- indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
-    dplyr::semi_join(
+    dplyr::inner_join(
       naomi_output$meta_area %>%
-        dplyr::filter(area_level == psnu_level),
+        dplyr::filter(area_level %in% datapack_output_levels) %>%
+        dplyr::select(area_id, area_level),
       by = "area_id"
     ) %>%
     dplyr::left_join(
@@ -135,6 +140,7 @@ write_datapack_csv <- function(naomi_output,
     ) %>%
     dplyr::transmute(
       area_id,
+      area_level,
       indicator,
       indicator_sort_order,
       sex_naomi,
@@ -149,7 +155,7 @@ write_datapack_csv <- function(naomi_output,
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
       dplyr::filter(dat, age_group %in% c("Y000_999", "Y015_049")) %>%
-        dplyr::select(-indicator_sort_order, -age_group, -sex_naomi, -value) %>%
+        dplyr::select(-area_level, -indicator_sort_order, -age_group, -sex_naomi, -value) %>%
         dplyr::rename(district_rse = rse),
       by = c("area_id", "indicator", "calendar_quarter")
     ) %>%
@@ -158,7 +164,7 @@ write_datapack_csv <- function(naomi_output,
         dplyr::select(area_name, area_id),
       by = "area_id"
     ) %>%
-    dplyr::arrange(calendar_quarter, indicator_sort_order, area_id, sex_naomi, age_group)
+    dplyr::arrange(calendar_quarter, indicator_sort_order, area_level, area_id, sex_naomi, age_group)
 
 
   dat$district_rse[is.na(dat$district_rse) & dat$indicator %in% c("circ_new", "circ_ever")] <- 0.0
@@ -176,6 +182,9 @@ write_datapack_csv <- function(naomi_output,
   dat <- dplyr::left_join(dat, psnu_map, by = "area_id")
   dat$psnu <- ifelse(is.na(dat$map_name), dat$area_name, dat$map_name)
 
+  ## Recode area_level as "Country" or "PSNU"
+  dat$country_or_psnu <- ifelse(dat$area_level == 0, "Country", "PSNU")
+
   datapack <- dat %>%
     dplyr::select(
       psnu,
@@ -190,7 +199,9 @@ write_datapack_csv <- function(naomi_output,
       calendar_quarter,
       value,
       age_sex_rse,
-      district_rse
+      district_rse,
+      country_or_psnu
+     
     )
 
   naomi_write_csv(datapack, path)
