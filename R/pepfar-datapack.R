@@ -208,7 +208,6 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
       age_sex_rse,
       district_rse,
       country_or_psnu
-     
     )
 }
 
