@@ -1,3 +1,7 @@
+# naomi 2.10.10
+
+* Remove `calendar_quarter_t5` two-year ahead projection.
+
 # naomi 2.10.9
 
 * Add two new columns to subnational ART data: 

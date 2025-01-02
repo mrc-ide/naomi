@@ -81,7 +81,6 @@ calendar_quarter_t1 <- "CY2020Q3"
 calendar_quarter_t2 <- "CY2023Q4"
 calendar_quarter_t3 <- "CY2024Q3"
 calendar_quarter_t4 <- "CY2025Q3"
-calendar_quarter_t5 <- "CY2026Q3"
 
 #' The following select data inputs to model fitting from the uploaded datasets.
 #' Providing `NULL` for any will exclude that data source from model fitting.
@@ -134,7 +133,6 @@ naomi_mf <- naomi_model_frame(area_merged,
                               calendar_quarter2 = calendar_quarter_t2,
                               calendar_quarter3 = calendar_quarter_t3,
                               calendar_quarter4 = calendar_quarter_t4,
-                              calendar_quarter5 = calendar_quarter_t5,
                               spectrum_population_calibration = "national",
                               output_aware_plhiv = TRUE,
                               artattend = TRUE,
