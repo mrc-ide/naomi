@@ -1,4 +1,4 @@
-# naomi 2.10.9
+# naomi 2.10.7
 
 * Add example datasets for 28 district, dropping the `District + Metro` level.
   Datasets are saved in `extdata/demo-district28`.
