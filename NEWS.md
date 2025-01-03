@@ -1,13 +1,17 @@
-# naomi 2.10.8
+# naomi 2.10.9
 
 * Remove `calendar_quarter_t5` two-year ahead projection.
 
-# naomi 2.10.7
+# naomi 2.10.8
 
 * Add national level aggregate to PEPFAR Target Setting Tool CSV. 
   - This also adds a new column `country_or_psnu` that codes values `"Country"` or `"PSNU"`
     accordingly. If the PSNU level is national, the value `"Country"` will be coded.
 * Remove two-year ahead projection (`*.T2`) indicators from PEPFAR Target Setting Tool output.
+
+# naomi 2.10.7
+* Add example datasets for 28 district, dropping the `District + Metro` level.
+  Datasets are saved in `extdata/demo-district28`.
 
 # naomi 2.10.6
 
