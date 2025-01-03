@@ -189,9 +189,6 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
   dat <- dplyr::left_join(dat, psnu_map, by = "area_id")
   dat$psnu <- ifelse(is.na(dat$map_name), dat$area_name, dat$map_name)
 
-  ## Recode area_level as "Country" or "PSNU"
-  dat$country_or_psnu <- ifelse(dat$area_level == 0, "Country", "PSNU")
-
   dat %>%
     dplyr::select(
       psnu,
@@ -206,8 +203,7 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
       calendar_quarter,
       value,
       age_sex_rse,
-      district_rse,
-      country_or_psnu
+      district_rse
     )
 }
 
