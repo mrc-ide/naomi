@@ -1,3 +1,8 @@
+# naomi 2.10.7
+
+* Add example datasets for 28 district, dropping the `District + Metro` level.
+  Datasets are saved in `extdata/demo-district28`.
+
 # naomi 2.10.6
 
 * Update `read_dp_art_dec31()` with new .DP file flags to ensure ART adjustment factor and ART patient reallocation counts are applied to number on ART extracted from Spectrum.
