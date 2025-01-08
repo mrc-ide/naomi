@@ -87,7 +87,6 @@ naomi_output_frame <- function(mf_model,
 #' @param calendar_quarter2 Calendar quarter at time 2 ("CYyyyyQq")
 #' @param calendar_quarter3 Calendar quarter at time 3 ("CYyyyyQq")
 #' @param calendar_quarter4 Calendar quarter at time 4 ("CYyyyyQq")
-#' @param calendar_quarter5 Calendar quarter at time 5 ("CYyyyyQq")
 #' @param age_groups Age groups to include in model frame
 #' @param sexes Sexes
 #' @param omega Omega
@@ -127,7 +126,7 @@ naomi_model_frame <- function(area_merged,
                               calendar_quarter2,
                               calendar_quarter3,
                               calendar_quarter4 = "CY2024Q3",
-                              calendar_quarter5 = "CY2025Q3",
+                              ## calendar_quarter5 = "CY2025Q3",
                               age_groups = get_five_year_age_groups(),
                               sexes = c("male", "female"),
                               omega = 0.7,
@@ -158,7 +157,7 @@ naomi_model_frame <- function(area_merged,
                         calendar_quarter_t2 = calendar_quarter2,
                         calendar_quarter_t3 = calendar_quarter3,
                         calendar_quarter_t4 = calendar_quarter4,
-                        calendar_quarter_t5 = calendar_quarter5,
+                        ## calendar_quarter_t5 = calendar_quarter5,
                         artattend = artattend,
                         artattend_t2 = artattend_t2,
                         anchor_home_district = anchor_home_district,
@@ -227,15 +226,16 @@ naomi_model_frame <- function(area_merged,
   quarter_id2 <- calendar_quarter_to_quarter_id(calendar_quarter2)
   quarter_id3 <- calendar_quarter_to_quarter_id(calendar_quarter3)
   quarter_id4 <- calendar_quarter_to_quarter_id(calendar_quarter4)
-  quarter_id5 <- calendar_quarter_to_quarter_id(calendar_quarter5)
+  ## quarter_id5 <- calendar_quarter_to_quarter_id(calendar_quarter5)
 
   stopifnot(quarter_id2 > quarter_id1)
   stopifnot(quarter_id3 > quarter_id2)
   stopifnot(quarter_id4 > quarter_id3)
-  stopifnot(quarter_id5 > quarter_id4)
+  ## stopifnot(quarter_id5 > quarter_id4)
 
   spec_aggr <- spec %>%
-    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id5) + 2)) %>%
+    ## dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id5) + 2)) %>%
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id4) + 2)) %>%
     dplyr::mutate(
              age_group = cut_naomi_age_group(age),
              births = dplyr::if_else(is.na(asfr), 0, asfr * totpop),
@@ -261,15 +261,16 @@ naomi_model_frame <- function(area_merged,
                                    get_spec_aggr_interpolation(spec_aggr, calendar_quarter3) %>%
                                      dplyr::mutate(time_step = "quarter3"),
                                    get_spec_aggr_interpolation(spec_aggr, calendar_quarter4) %>%
-                                     dplyr::mutate(time_step = "quarter4"),
-                                   get_spec_aggr_interpolation(spec_aggr, calendar_quarter5) %>%
-                                     dplyr::mutate(time_step = "quarter5")
+                                     dplyr::mutate(time_step = "quarter4") ## ,
+                                   ## get_spec_aggr_interpolation(spec_aggr, calendar_quarter5) %>%
+                                   ## e  dplyr::mutate(time_step = "quarter5")
                                  )
 
   ## Spectrum age <1 / 1-4 distribution
 
   spec_0to4strat <- spec %>%
-    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id5) + 2),
+    ## dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id5) + 2),
+    dplyr::filter(dplyr::between(year, year_labels(quarter_id1) - 2, year_labels(quarter_id4) + 2),
                   age %in% 0:4) %>%
     dplyr::mutate(age_group = dplyr::if_else(age == 0, "Y000_000", "Y001_004"),
                   sex = "both") %>%
@@ -289,8 +290,8 @@ naomi_model_frame <- function(area_merged,
                                         get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter1),
                                         get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter2),
                                         get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter3),
-                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter4),
-                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter5)
+                                        get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter4) ## ,
+                                        ## get_spec_aggr_interpolation(spec_0to4strat, calendar_quarter5)
                                       ) %>%
     dplyr::group_by(spectrum_region_code, calendar_quarter) %>%
     dplyr::transmute(age_group,
@@ -334,13 +335,14 @@ naomi_model_frame <- function(area_merged,
   pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
   pop_t3 <- interpolate_population_agesex(pop_subset, calendar_quarter3)
   pop_t4 <- interpolate_population_agesex(pop_subset, calendar_quarter4)
-  pop_t5 <- interpolate_population_agesex(pop_subset, calendar_quarter5)
+  ## pop_t5 <- interpolate_population_agesex(pop_subset, calendar_quarter5)
+  
   population_est <- dplyr::bind_rows(
                              dplyr::mutate(pop_t1, time_step = "quarter1"),
                              dplyr::mutate(pop_t2, time_step = "quarter2"),
                              dplyr::mutate(pop_t3, time_step = "quarter3"),
-                             dplyr::mutate(pop_t4, time_step = "quarter4"),
-                             dplyr::mutate(pop_t5, time_step = "quarter5")
+                             dplyr::mutate(pop_t4, time_step = "quarter4") ##,
+                             ## dplyr::mutate(pop_t5, time_step = "quarter5")
                            )
 
   population_est <- population_est %>%
@@ -419,36 +421,38 @@ naomi_model_frame <- function(area_merged,
              dplyr::filter(time_step == "quarter4") %>%
              dplyr::select(area_id, sex, age_group, population_t4 = population),
              by = c("area_id", "sex", "age_group")
-           ) %>%
-    dplyr::left_join(
-             population_est %>%
-             dplyr::filter(time_step == "quarter5") %>%
-             dplyr::select(area_id, sex, age_group, population_t5 = population),
-             by = c("area_id", "sex", "age_group")
-          )
+           ) ## %>%
+    ## dplyr::left_join(
+    ##          population_est %>%
+    ##          dplyr::filter(time_step == "quarter5") %>%
+    ##          dplyr::select(area_id, sex, age_group, population_t5 = population),
+    ##          by = c("area_id", "sex", "age_group")
+    ##       )
 
   stopifnot(!is.na(mf_model[["population_t1"]]))
   stopifnot(!is.na(mf_model[["population_t2"]]))
   stopifnot(!is.na(mf_model[["population_t3"]]))
   stopifnot(!is.na(mf_model[["population_t4"]]))
-  stopifnot(!is.na(mf_model[["population_t5"]]))
+  ## stopifnot(!is.na(mf_model[["population_t5"]]))
 
-  zeropop1 <- mf_model[["population_t1"]] == 0
-  zeropop2 <- mf_model[["population_t2"]] == 0
-  zeropop3 <- mf_model[["population_t3"]] == 0
-  zeropop4 <- mf_model[["population_t4"]] == 0
-  zeropop5 <- mf_model[["population_t5"]] == 0
+  zeropop_t1 <- mf_model[["population_t1"]] == 0
+  zeropop_t2 <- mf_model[["population_t2"]] == 0
+  zeropop_t3 <- mf_model[["population_t3"]] == 0
+  zeropop_t4 <- mf_model[["population_t4"]] == 0
+  ## zeropop_t5 <- mf_model[["population_t5"]] == 0
 
-  if(any(zeropop1) || any(zeropop2) || any(zeropop3) || any(zeropop4) || any(zeropop5)) {
+  ## if(any(zeropop_t1) || any(zeropop_t2) || any(zeropop_t3) || any(zeropop_t4) || any(zeropop_t5)) {
+  if(any(zeropop_t1) || any(zeropop_t2) || any(zeropop_t3) || any(zeropop_t4)) {
     warning(paste("Zero population input for",
-                  sum(zeropop1) + sum(zeropop2) + sum(zeropop3) + sum(zeropop4) + sum(zeropop5),
+                  ## sum(zeropop_t1) + sum(zeropop_t2) + sum(zeropop_t3) + sum(zeropop_t4) + sum(zeropop_t5),
+                  sum(zeropop_t1) + sum(zeropop_t2) + sum(zeropop_t3) + sum(zeropop_t4),
                   "area/age/sex groups.",
                   "Replaced with population 0.1."))
-    mf_model[["population_t1"]][zeropop1] <- 0.1
-    mf_model[["population_t2"]][zeropop2] <- 0.1
-    mf_model[["population_t3"]][zeropop3] <- 0.1
-    mf_model[["population_t4"]][zeropop4] <- 0.1
-    mf_model[["population_t5"]][zeropop5] <- 0.1
+    mf_model[["population_t1"]][zeropop_t1] <- 0.1
+    mf_model[["population_t2"]][zeropop_t2] <- 0.1
+    mf_model[["population_t3"]][zeropop_t3] <- 0.1
+    mf_model[["population_t4"]][zeropop_t4] <- 0.1
+    ## mf_model[["population_t5"]][zeropop_t5] <- 0.1
   }
 
 
@@ -573,20 +577,20 @@ naomi_model_frame <- function(area_merged,
                       frr_already_art_t4 = frr_already_art
                     ),
              by = c("spectrum_region_code", "sex", "age_group")
-           ) %>%
-    dplyr::left_join(
-             spec_indicators %>%
-             dplyr::filter(time_step == "quarter5") %>%
-             dplyr::select(
-                      spectrum_region_code,
-                      sex,
-                      age_group,
-                      spec_prev_t5 = prevalence,
-                      spec_incid_t5 = incidence,
-                      spec_artcov_t5 = art_coverage,
-                    ),
-             by = c("spectrum_region_code", "sex", "age_group")
-           )
+           ) ## %>%
+    ## dplyr::left_join(
+    ##          spec_indicators %>%
+    ##          dplyr::filter(time_step == "quarter5") %>%
+    ##          dplyr::select(
+    ##                   spectrum_region_code,
+    ##                   sex,
+    ##                   age_group,
+    ##                   spec_prev_t5 = prevalence,
+    ##                   spec_incid_t5 = incidence,
+    ##                   spec_artcov_t5 = art_coverage,
+    ##                 ),
+    ##          by = c("spectrum_region_code", "sex", "age_group")
+    ##        )
 
   ## Projection matrices
 
@@ -614,13 +618,13 @@ naomi_model_frame <- function(area_merged,
                              population_colname2 = "population_t4",
                              adjust_area_growth = adjust_area_growth)
 
-  Lproj_t4t5 <- create_Lproj(spec = spec,
-                             mf_model = mf_model,
-                             quarter_id1 = quarter_id4,
-                             quarter_id2 = quarter_id5,
-                             population_colname1 = "population_t4",
-                             population_colname2 = "population_t5",
-                             adjust_area_growth = adjust_area_growth)
+  ## Lproj_t4t5 <- create_Lproj(spec = spec,
+  ##                            mf_model = mf_model,
+  ##                            quarter_id1 = quarter_id4,
+  ##                            quarter_id2 = quarter_id5,
+  ##                            population_colname1 = "population_t4",
+  ##                            population_colname2 = "population_t5",
+  ##                            adjust_area_growth = adjust_area_growth)
 
 
 
@@ -707,26 +711,26 @@ naomi_model_frame <- function(area_merged,
              spec_artcov15to49_t4 =
                sum(population_t4 * spec_prev_t4 * spec_artcov_t4 * age15to49) /
                sum(population_t4 * spec_prev_t4 * age15to49),
-             spec_prev15to49_t5 = sum(population_t5 * spec_prev_t5 * age15to49) / sum(population_t5 * age15to49),
-             spec_artcov15to49_t5 =
-               sum(population_t5 * spec_prev_t5 * spec_artcov_t5 * age15to49) /
-               sum(population_t5 * spec_prev_t5 * age15to49),
+             ## spec_prev15to49_t5 = sum(population_t5 * spec_prev_t5 * age15to49) / sum(population_t5 * age15to49),
+             ## spec_artcov15to49_t5 =
+             ##   sum(population_t5 * spec_prev_t5 * spec_artcov_t5 * age15to49) /
+             ##   sum(population_t5 * spec_prev_t5 * age15to49),
              logit_rho_offset = 0,
              logit_alpha_offset = 0,
              logit_alpha_t1t2_offset = qlogis(spec_artcov_t2) - qlogis(spec_artcov_t1),
              logit_alpha_t2t3_offset = qlogis(spec_artcov_t3) - qlogis(spec_artcov_t2),
              logit_alpha_t3t4_offset = qlogis(spec_artcov_t4) - qlogis(spec_artcov_t3),
-             logit_alpha_t4t5_offset = qlogis(spec_artcov_t5) - qlogis(spec_artcov_t4),
+             ## logit_alpha_t4t5_offset = qlogis(spec_artcov_t5) - qlogis(spec_artcov_t4),
              log_lambda_t1_offset = log(spec_incid_t1) - log(spec_prev15to49_t1) - log(1 - omega * spec_artcov15to49_t1),
              log_lambda_t2_offset = log(spec_incid_t2) - log(spec_prev15to49_t2) - log(1 - omega * spec_artcov15to49_t2),
              log_lambda_t3_offset = log(spec_incid_t3) - log(spec_prev15to49_t3) - log(1 - omega * spec_artcov15to49_t3),
              log_lambda_t4_offset = log(spec_incid_t4) - log(spec_prev15to49_t4) - log(1 - omega * spec_artcov15to49_t4),
-             log_lambda_t5_offset = log(spec_incid_t5) - log(spec_prev15to49_t5) - log(1 - omega * spec_artcov15to49_t5),
+             ## log_lambda_t5_offset = log(spec_incid_t5) - log(spec_prev15to49_t5) - log(1 - omega * spec_artcov15to49_t5),
              log_lambda_t1_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t1_offset),
              log_lambda_t2_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t2_offset),
              log_lambda_t3_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t3_offset),
-             log_lambda_t4_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t4_offset),
-             log_lambda_t5_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t5_offset)
+             log_lambda_t4_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t4_offset) ## ,
+             ## log_lambda_t5_offset = dplyr::if_else(age_group == "Y000_004", -Inf, log_lambda_t5_offset)
            ) %>%
     dplyr::ungroup()
 
@@ -739,7 +743,7 @@ naomi_model_frame <- function(area_merged,
              spec_prev15to49f_t2 = sum(population_t2 * spec_prev_t2 * age15to49 * female_15plus) / sum(population_t2 * age15to49 * female_15plus),
              spec_prev15to49f_t3 = sum(population_t3 * spec_prev_t3 * age15to49 * female_15plus) / sum(population_t3 * age15to49 * female_15plus),
              spec_prev15to49f_t4 = sum(population_t4 * spec_prev_t4 * age15to49 * female_15plus) / sum(population_t4 * age15to49 * female_15plus),
-             spec_prev15to49f_t5 = sum(population_t5 * spec_prev_t5 * age15to49 * female_15plus) / sum(population_t5 * age15to49 * female_15plus),
+             ## spec_prev15to49f_t5 = sum(population_t5 * spec_prev_t5 * age15to49 * female_15plus) / sum(population_t5 * age15to49 * female_15plus),
              paed_rho_ratio = is_paed * spec_prev_t1 / spec_prev15to49f_t1,
              bin_rho_model = if(rho_paed_15to49f_ratio) as.integer(!age_group %in% c("Y000_004", "Y005_009", "Y010_014")) else 1.0,
              ##
@@ -748,15 +752,15 @@ naomi_model_frame <- function(area_merged,
              paed_lambda_ratio_t2 = is_paed * spec_incid_t2 / spec_prev15to49f_t2,
              paed_lambda_ratio_t3 = is_paed * spec_incid_t3 / spec_prev15to49f_t3,
              paed_lambda_ratio_t4 = is_paed * spec_incid_t4 / spec_prev15to49f_t4,
-             paed_lambda_ratio_t5 = is_paed * spec_incid_t5 / spec_prev15to49f_t5,
+             ## paed_lambda_ratio_t5 = is_paed * spec_incid_t5 / spec_prev15to49f_t5,
              ##
              ## Remove interim calculations
              is_paed = NULL,
              spec_prev15to49f_t1 = NULL,
              spec_prev15to49f_t2 = NULL,
              spec_prev15to49f_t3 = NULL,
-             spec_prev15to49f_t4 = NULL,
-             spec_prev15to49f_t5 = NULL
+             spec_prev15to49f_t4 = NULL ##,
+             ## spec_prev15to49f_t5 = NULL
            ) %>%
     dplyr::ungroup()
 
@@ -778,7 +782,7 @@ naomi_model_frame <- function(area_merged,
             Lproj_t1t2 = Lproj_t1t2,
             Lproj_t2t3 = Lproj_t2t3,
             Lproj_t3t4 = Lproj_t3t4,
-            Lproj_t4t5 = Lproj_t4t5,
+            ## Lproj_t4t5 = Lproj_t4t5,
             areas = area_merged,
             age_groups = age_groups,
             sexes = sexes,
@@ -786,7 +790,7 @@ naomi_model_frame <- function(area_merged,
             calendar_quarter2 = calendar_quarter2,
             calendar_quarter3 = calendar_quarter3,
             calendar_quarter4 = calendar_quarter4,
-            calendar_quarter5 = calendar_quarter5,
+            ## calendar_quarter5 = calendar_quarter5,
             spectrum_calibration = spectrum_calibration,
             calibration_options = list(spectrum_population_calibration = spectrum_population_calibration),
             model_options = model_options,
