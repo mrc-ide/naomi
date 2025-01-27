@@ -1,3 +1,32 @@
+# naomi 2.10.9
+
+* Add two new columns to subnational ART data: 
+  - `art_current_adjusted`: District-level number on ART after ART adjustment.
+  - `art_adjustment_factor`:  Ratio adjusted to reported number on ART (`art_current_adjusted`:`art_current`)
+* `read_art_number()` now adds additional ART adjustment columns if not specified in input data.
+* Updated all subnational ART tests datasets with ART adjustment columns. ART adjustments were applied to adults only with a 5% reduction in 2023, interpolated back to a 0% reduction in 2018.
+* Refactor `prepare_art_spectrum_comparison()` to calculate ratios required for subnational ART adjustments and comparison table.
+* Automatically adjust subnational number on ART in Naomi to match the national adjusted number on ART entered into the Spectrum programme statistics editor:
+  1. If no subnational adjustments -> apply national adjustments in Spectrum
+  2. If subnational adjustments are specified:
+      - If national + subnational adjustments match -> do nothing
+      - If national + subnational adjustments do not match + subnational adjustments
+      have been entered for *all* districts:
+        -> Scale all subnational adjustments to match national
+      - If national + subnational adjustments do not match + subnational adjustments
+      have been entered for *some* districts:
+        -> Retain district level adjustments that have been entered and scale districts with no subnational adjustments so that sum of subnational adjustments matches national adjustments.  
+* Select adjusted number on ART for Naomi subnational ART model input.
+  Sequence of data processing:
+    - Raw data read in and adjusted in `naomi_prepare_data()` using (in sequence):
+      - `read_art_number()`
+      - `prepare_art_spectrum_comparison()`
+      - `art_programme_data_warning()`
+      - `apply_art_adjustment()`
+    - Adjusted ART prepared for model inputs in `naomi_prepare_data()` using (in sequence):
+      - `select_naomi_data()`
+      - `artnum_mf()`: Refactored this function to select adjusted number on ART instead of reported number on ART. 
+
 # naomi 2.10.8
 
 * Add national level aggregate to PEPFAR Target Setting Tool CSV. 

@@ -59,13 +59,18 @@ test_that("warning raised after false convergence", {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
-  expect_length(out$warnings, 3)
-  expect_match(out$warnings[[1]]$text,
-               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art: 2011;2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023")
-  expect_match(out$warnings[[2]]$text,
-               "Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_clients: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_known_neg: 2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_known_pos: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023\nanc_tested: 2012;2013;2014;2015;2016;2017;2018;2019;2020;2021;2022;2023")
-  expect_equal(out$warnings[[3]]$text,
-               "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
+  expect_length(out$warnings, 4)
+
+  expect_equal(
+    out$warnings[[4]]$text,
+    "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
+
+
+  msgs <- lapply(out$warnings, function(x) x$text)
+  expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
+  expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
+  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
+
 })
 
 
@@ -108,16 +113,18 @@ test_that("warning raised if outputs exceed threshold", {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
-  expect_length(out$warnings, 4)
+  expect_length(out$warnings, 5)
   msgs <- lapply(out$warnings, function(x) x$text)
   expect_true(any(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art", msgs)))
   expect_true(any(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art", msgs)))
+  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
 
-  expect_equal(
-    out$warnings[[3]]$text,
-    "HIV prevalence is higher than 50% for: March 2016, Northern, Both, 0-4")
+  print(msgs)
   expect_equal(
     out$warnings[[4]]$text,
+    "HIV prevalence is higher than 50% for: March 2016, Northern, Both, 0-4")
+  expect_equal(
+    out$warnings[[5]]$text,
     "ART coverage is higher than 100% for: March 2016, Northern, Both, 0-4")
 })
 

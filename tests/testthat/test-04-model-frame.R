@@ -53,10 +53,34 @@ test_that("artnum_mf() works with single quarter ART data", {
 })
 
 
+test_that("artnum_mf() selects adjusted number on ART", {
+
+  mf <- artnum_mf("CY2023Q4", demo_art_number, a_naomi_mf)
+
+  art_data_raw <- demo_art_number |>
+    dplyr::filter(calendar_quarter == "CY2023Q4") |>
+    dplyr::select(area_id, sex, age_group,
+                  art_current_input = art_current,
+                  art_current_adjusted_input =  art_current_adjusted)
+
+  dat <- mf$model_input |>
+    dplyr::left_join(art_data_raw, by = dplyr::join_by(area_id, sex, age_group))
+
+  dat_014 <- dat[dat$age_group == "Y000_014",]
+  dat_015plus <- dat[dat$age_group == "Y015_999",]
+
+  # In test data, ARt adjustments only applied to 15+ population
+  # Expect art_current used in model to match adjusted ART in input data
+  expect_identical(dat$art_current, dat$art_current_adjusted_input)
+  # Expect art_current <15 used in model to match reported ART in input data (adjustment factor = 1)
+  expect_identical(dat_014$art_current, dat_014$art_current_input)
+  # Expect art_current 15+ used in model **not** to match reported ART in input data (adjustment factor = 0.95)
+  expect_true(all(unlist(dat_015plus$art_current != dat_015plus$art_current_input)))
+
+})
 
 
 test_that("population calibration options", {
-
 
   mf_none <- naomi_model_frame(a_area_merged,
                                demo_population_agesex,
@@ -85,7 +109,7 @@ test_that("population calibration options", {
                      mf_none$mf_model$population_t2 +
                      mf_none$mf_model$population_t3 +
                      mf_none$mf_model$population_t4 +
-                     mf_none$mf_model$population_t5 
+                     mf_none$mf_model$population_t5
                    ),
                sum(mf_none$spectrum_calibration$population_raw))
 
@@ -102,7 +126,7 @@ test_that("population calibration options", {
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",                              
+                              calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "national")
 
   expect_false(sum(mf_nat$spectrum_calibration$population_raw) ==
@@ -132,7 +156,7 @@ test_that("population calibration options", {
                                  calendar_quarter2 = "CY2018Q4",
                                  calendar_quarter3 = "CY2019Q2",
                                  calendar_quarter4 = "CY2022Q3",
-                                 calendar_quarter5 = "CY2023Q3",                              
+                                 calendar_quarter5 = "CY2023Q3",
                                  spectrum_population_calibration = "subnational")
 
   expect_false(sum(mf_subnat$spectrum_calibration$population_raw) ==
@@ -162,7 +186,7 @@ test_that("population calibration options", {
                       calendar_quarter2 = "CY2018Q4",
                       calendar_quarter3 = "CY2019Q2",
                       calendar_quarter4 = "CY2022Q3",
-                      calendar_quarter5 = "CY2023Q3",                              
+                      calendar_quarter5 = "CY2023Q3",
                       spectrum_population_calibration = "jibberish"),
     "spectrum_calibration_option \"jibberish\" not found."
   )
@@ -319,7 +343,7 @@ test_that("naomi_model_frame() interpolated population depends on quarter specif
                               calendar_quarter2 = "CY2018Q4",
                               calendar_quarter3 = "CY2019Q2",
                               calendar_quarter4 = "CY2022Q3",
-                              calendar_quarter5 = "CY2023Q3",                              
+                              calendar_quarter5 = "CY2023Q3",
                               spectrum_population_calibration = "subnational")
 
 

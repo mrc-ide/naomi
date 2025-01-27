@@ -325,6 +325,7 @@ naomi_prepare_data <- function(data, options) {
     art_number <- read_art_number(data$art_number$path)
     art_spectrum_comparison <- prepare_art_spectrum_comparison(art_number, area_merged, spec_program_data)
     art_programme_data_warning(art_spectrum_comparison)
+    art_number <- apply_art_adjustment(art_number, area_merged, art_spectrum_comparison)
   } else {
     art_number <- NULL
   }
