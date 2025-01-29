@@ -93,10 +93,13 @@ read_art_number <- function(file, all_columns = FALSE) {
                        year = readr::col_integer(),
                        calendar_quarter = readr::col_character(),
                        art_current = readr::col_number(),
+                       art_current_adjusted = readr::col_number(),
+                       art_adjustment_factor = readr::col_number(),
                        art_new = readr::col_number(),
                        vl_tested_12mos = readr::col_number(),
                        vl_suppressed_12mos = readr::col_number()
                      )
+
   val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
@@ -125,13 +128,22 @@ read_art_number <- function(file, all_columns = FALSE) {
              )
   }
 
+  if ( !("art_current_adjusted" %in% names(val)) ) {
+    val$art_current_adjusted <- val$art_current
+  }
+
+  if ( !("art_adjustment_factor" %in% names(val)) ) {
+    val$art_adjustment_factor <- round(val$art_current_adjusted / val$art_current, 2)
+  }
+
   ## !! TODO: check all columns are valid calendar quarters
 
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
   if (all_columns) {
     out <- val
   } else {
-    out <- dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current)
+    out <- dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current,
+                         art_current_adjusted, art_adjustment_factor)
   }
   out
 }

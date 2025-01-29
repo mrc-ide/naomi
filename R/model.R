@@ -1493,9 +1493,10 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     }
 
     if(!is.null(art_number)) {
-      ## No number on ART data and no year specified
+      ## Number on ART data available but no year
       raw_input  <- aggregate_art(art_number, naomi_mf$areas) %>%
         dplyr::mutate(
+          art_current = art_current_adjusted,
           source = "programme",
           naomi_input = FALSE) %>%
         dplyr::select(area_id, sex, age_group, art_current, calendar_quarter,
@@ -1535,7 +1536,8 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     # Aggregate program data
     aggregated_artnum <- aggregate_art(art_number, naomi_mf$areas) %>%
       dplyr::mutate(
-        quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
+        quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+        art_current = art_current_adjusted,
       ) %>%
       dplyr::filter(!is.na(art_current))
 

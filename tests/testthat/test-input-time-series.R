@@ -7,7 +7,8 @@ test_that("ART data can be aggregated", {
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter", "area_hierarchy",
-                    "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
+                    "art_current", "art_current_adjusted","art_new",
+                    "vl_tested_12mos", "vl_suppressed_12mos"))
 
 
   # Time period has correct format
@@ -97,11 +98,13 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   ## Check that aggregated values are equal
   data_long <- data  %>%
-    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    tidyr::pivot_longer(c(art_current, art_current_adjusted,
+                          art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
 
   art_agg_long <- art_agg1  %>%
-    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    tidyr::pivot_longer(c(art_current, art_current_adjusted,
+                          art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
 
   data_check <- art_agg_long %>%
@@ -656,8 +659,8 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
                   c("area_id", "area_name",  "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "area_hierarchy", "art_current", "art_new",
-                    "vl_tested_12mos", "vl_suppressed_12mos"))
+                    "area_hierarchy", "art_current", "art_current_adjusted",
+                    "art_new","vl_tested_12mos", "vl_suppressed_12mos"))
 })
 
 test_that("there is metadata for every indicator", {

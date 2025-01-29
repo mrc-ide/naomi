@@ -284,5 +284,8 @@
     "ANC_STATUS": "ANC HIV status ascertained",
     "ANC_STATUS_DESC": "Number of women with HIV status ascertained during ANC (either known or tested at least once)",
     "ANC_ART_AMONG_KNOWN": "ANC ART coverage among known positive",
-    "ANC_ART_AMONG_KNOWN_DESC": "Proportion of women known HIV positive at first ANC visit who were already on ART"
+    "ANC_ART_AMONG_KNOWN_DESC": "Proportion of women known HIV positive at first ANC visit who were already on ART",
+    "SUBNAT_ADJ_RECALCULATE_RATIO": "Subnational adjustment factors have been recalculated to match reported vs. adjusted numbers on ART.",
+    "SUBNAT_ADJ_SCALE_ALL_DISTRICTS_TO_SPECTRUM": "Subnational ART adjustment factors not equal to national ART adjustment factor. Subnational adjustment factors for all districts will be recalculated to national adjusted number on ART in Spectrum.",
+    "SUBNAT_ADJ_SCALE_SOME_DISTRICTS_TO_SPECTRUM": "Districts with no adjustments factors have been adjusted to match the national adjusted number on ART in Spectrum."
 }

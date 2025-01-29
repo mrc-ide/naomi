@@ -10,7 +10,8 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
-    shape <- read_area_merged(shape) }
+    shape <- read_area_merged(shape) |> sf::st_drop_geometry()
+    }
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
@@ -32,7 +33,7 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   ## Aggregate ART data
   art_agreggated <- art_single_cq |>
     dplyr::mutate(year = calendar_quarter_to_year(calendar_quarter)) |>
-    dplyr::left_join(shape, by = "area_id") |>
+    dplyr::left_join(shape |> sf::st_drop_geometry(), by = "area_id") |>
     dplyr::count(spectrum_region_code, year, sex, age_group,
                  wt = art_current, name = "value_naomi")
 
@@ -76,11 +77,16 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
   dat |>
     dplyr::mutate(
       indicator = "number_on_art",
-      group = dplyr::if_else(age_group == "Y000_014",
-                             "art_children", paste0("art_adult_", sex))) |>
-    dplyr::select(indicator, area_name, year, group,
-                  value_spectrum_reported, value_spectrum_adjusted,
-                  value_naomi, value_spectrum_reallocated)
+      group = dplyr::if_else(age_group == "Y000_014","art_children", paste0("art_adult_", sex)),
+      spec_adjustment_ratio = value_spectrum_adjusted / (value_spectrum_reported + value_spectrum_reallocated),
+      difference = value_naomi - value_spectrum_adjusted,
+      difference_ratio = 1 - (difference/ value_spectrum_adjusted)) |>
+    dplyr::select(indicator, spectrum_region_code, area_name, year, group,
+                  value_spectrum_reported, value_spectrum_adjusted,value_naomi,
+                  value_spectrum_reallocated, spec_adjustment_ratio, difference,
+                  difference_ratio)
+
+
 }
 
 ##' Compare aggregated subnational ART inputs + spectrum totals for comparison table

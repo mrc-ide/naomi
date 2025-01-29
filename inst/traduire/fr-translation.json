@@ -281,5 +281,8 @@
     "ANC_STATUS": "Statut VIH de la CPN vérifié",
     "ANC_STATUS_DESC": "Nombre de femmes dont le statut VIH a été vérifié lors de la CPN (soit connu, soit testé au moins une fois)",
     "ANC_ART_AMONG_KNOWN": "Couverture ART de la CPN parmi les séropositifs connus",
-    "ANC_ART_AMONG_KNOWN_DESC": "Proportion de femmes dont la séropositivité est connue lors de la première visite de CPN et qui sont déjà sous traitement antirétroviral"
+    "ANC_ART_AMONG_KNOWN_DESC": "Proportion de femmes dont la séropositivité est connue lors de la première visite de CPN et qui sont déjà sous traitement antirétroviral",
+    "SUBNAT_ADJ_RECALCULATE_RATIO": "Les facteurs d'ajustement sous-nationaux ont été recalculés pour faire correspondre les nombres déclarés et les nombres ajustés de personnes sous traitement antirétroviral.",
+    "SUBNAT_ADJ_SCALE_ALL_DISTRICTS_TO_SPECTRUM": "Les facteurs d'ajustement ART sous-nationaux ne sont pas égaux au facteur d'ajustement ART national. Les facteurs d'ajustement infranationaux pour tous les districts seront recalculés pour correspondre aux facteurs d'ajustement ART du Spectrum.",
+    "SUBNAT_ADJ_SCALE_SOME_DISTRICTS_TO_SPECTRUM": "Les districts n'ayant pas de facteurs d'ajustement ont été ajustés pour correspondre au nombre national ajusté de personnes sous ART dans Spectrum."
 }

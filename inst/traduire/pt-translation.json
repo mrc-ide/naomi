@@ -1,5 +1,6 @@
 {
     "ANC_ALREADY_ART": "Os participantes da CPN já estão em TARV",
+    "ANC_ALREADY_ART": "Os participantes da CPN já estão em TARV",
     "ANC_ART_NEW": "Iniciações de TARV na CPN",
     "ANC_CLIENTS": "Clientes da CPN",
     "ANC_DATA_MISSING_FOR_YEAR": "Dados de testes da CPN não encontrados para o ano {{ano_falta}}.",
@@ -281,5 +282,9 @@
     "ANC_STATUS": "ANC VIH verificado",
     "ANC_STATUS_DESC": "Número de mulheres com o estatuto de VIH verificado durante os CPN (conhecido ou testado pelo menos uma vez)",
     "ANC_ART_AMONG_KNOWN": "Cobertura de TARV nos CPN entre os seropositivos conhecidos",
-    "ANC_ART_AMONG_KNOWN_DESC": "Proporção de mulheres seropositivas conhecidas na primeira consulta de ANC que já estavam a receber TARV"
+    "ANC_ART_AMONG_KNOWN_DESC": "Proporção de mulheres seropositivas conhecidas na primeira consulta de ANC que já estavam a receber TARV",
+    "SUBNAT_ADJ_RECALCULATE_RATIO": "Os factores de ajustamento subnacionais foram recalculados para fazer corresponder os números reportados aos números ajustados em TARV.",
+    "SUBNAT_ADJ_SCALE_ALL_DISTRICTS_TO_SPECTRUM": "Os factores de ajustamento TARV subnacionais não são iguais ao fator de ajustamento ART nacional. Os factores de ajustamento subnacional para todos os distritos serão recalculados para corresponderem aos factores de ajustamento do Spectrum TARV.",
+    "SUBNAT_ADJ_SCALE_SOME_DISTRICTS_TO_SPECTRUM": "Os distritos sem factores de ajustamento foram ajustados para corresponder ao número nacional ajustado de TARV no Spectrum."
+
 }

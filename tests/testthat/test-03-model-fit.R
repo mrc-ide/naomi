@@ -152,6 +152,7 @@ test_that("model fits with missing ART and ANC data", {
 
   artdat_missing <- demo_art_number
   artdat_missing[artdat_missing$area_id == "MWI_4_1_demo" & artdat_missing$age_group == "Y000_014",]$art_current <- NA_real_
+  artdat_missing[artdat_missing$area_id == "MWI_4_1_demo" & artdat_missing$age_group == "Y000_014",]$art_current_adjusted <- NA_real_
 
   naomi_data <- select_naomi_data(a_naomi_mf,
                                   demo_survey_hiv_indicators,
