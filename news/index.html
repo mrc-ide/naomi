@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.10.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.10.9</span>
       </span>
     </div>
 
@@ -54,6 +54,40 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.10.9" id="naomi-2109">naomi 2.10.9<a class="anchor" aria-label="anchor" href="#naomi-2109"></a></h2>
+<ul><li>Add two new columns to subnational ART data:
+<ul><li>
+<code>art_current_adjusted</code>: District-level number on ART after ART adjustment.</li>
+<li>
+<code>art_adjustment_factor</code>: Ratio adjusted to reported number on ART (<code>art_current_adjusted</code>:<code>art_current</code>)</li>
+</ul></li>
+<li>
+<code><a href="../reference/read_population.html">read_art_number()</a></code> now adds additional ART adjustment columns if not specified in input data.</li>
+<li>Updated all subnational ART tests datasets with ART adjustment columns. ART adjustments were applied to adults only with a 5% reduction in 2023, interpolated back to a 0% reduction in 2018.</li>
+<li>Refactor <code><a href="../reference/prepare_art_spectrum_comparison.html">prepare_art_spectrum_comparison()</a></code> to calculate ratios required for subnational ART adjustments and comparison table.</li>
+<li>Automatically adjust subnational number on ART in Naomi to match the national adjusted number on ART entered into the Spectrum programme statistics editor:
+<ol style="list-style-type: decimal"><li>If no subnational adjustments -&gt; apply national adjustments in Spectrum</li>
+<li>If subnational adjustments are specified:
+<ul><li>If national + subnational adjustments match -&gt; do nothing</li>
+<li>If national + subnational adjustments do not match + subnational adjustments have been entered for <em>all</em> districts: -&gt; Scale all subnational adjustments to match national</li>
+<li>If national + subnational adjustments do not match + subnational adjustments have been entered for <em>some</em> districts: -&gt; Retain district level adjustments that have been entered and scale districts with no subnational adjustments so that sum of subnational adjustments matches national adjustments.<br></li>
+</ul></li>
+</ol></li>
+<li>Select adjusted number on ART for Naomi subnational ART model input. Sequence of data processing:
+<ul><li>Raw data read in and adjusted in <code>naomi_prepare_data()</code> using (in sequence):
+<ul><li><code><a href="../reference/read_population.html">read_art_number()</a></code></li>
+<li><code><a href="../reference/prepare_art_spectrum_comparison.html">prepare_art_spectrum_comparison()</a></code></li>
+<li><code><a href="../reference/art_programme_data_warning.html">art_programme_data_warning()</a></code></li>
+<li><code>apply_art_adjustment()</code></li>
+</ul></li>
+<li>Adjusted ART prepared for model inputs in <code>naomi_prepare_data()</code> using (in sequence):
+<ul><li><code><a href="../reference/select_naomi_data.html">select_naomi_data()</a></code></li>
+<li>
+<code><a href="../reference/artnum_mf.html">artnum_mf()</a></code>: Refactored this function to select adjusted number on ART instead of reported number on ART.</li>
+</ul></li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.10.8" id="naomi-2108">naomi 2.10.8<a class="anchor" aria-label="anchor" href="#naomi-2108"></a></h2>
 <ul><li>Add national level aggregate to PEPFAR Target Setting Tool CSV.</li>
