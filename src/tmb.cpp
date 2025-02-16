@@ -702,7 +702,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> rho_15to49_t3(plhiv_15to49_t3 / (X_15to49 * population_t3));
   vector<Type> alpha_15to49_t3((X_15to49 * artnum_t3) / plhiv_15to49_t3);
 
-  vector<Type> mu_lambda_t3(X_lambda * beta_lambda + log_lambda_t3_offset +
+  vector<Type> mu_lambda_t3(X_lambda * beta_lambda +
+			    log_lambda_t3_offset +
                             Z_x * vector<Type>(log(rho_15to49_t3) + log(1.0 - omega * alpha_15to49_t3)) +
                             Z_lambda_x * ui_lambda_x);
 
@@ -1091,28 +1092,6 @@ Type objective_function<Type>::operator() ()
 
     // Projection to time 3
 
-    // Note: currently assuming same district effects parameters from t2 for t3
-    vector<Type> mu_anc_rho_t3(logit(rho_t3) +
-			       logit_anc_rho_t3_offset +
-			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
-    vector<Type> anc_rho_t3(invlogit(mu_anc_rho_t3));
-
-    vector<Type> mu_anc_alpha_t3(mu_alpha_t3 +
-				 logit_anc_alpha_t3_offset +
-				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
-    vector<Type> anc_alpha_t3(invlogit(mu_anc_alpha_t3));
-
-    vector<Type> anc_clients_t3(population_t3 * exp(log_asfr_t3_offset + mu_asfr));
-    vector<Type> anc_plhiv_t3(anc_clients_t3 * anc_rho_t3);
-    vector<Type> anc_already_art_t3(anc_plhiv_t3 * anc_alpha_t3);
-
-
-    vector<Type> prop_art_ij_t3((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art_t3));
-    vector<Type> population_ij_t3(Xart_idx * population_t3);
-    vector<Type> artnum_ij_t3(population_ij_t3 * prop_art_ij_t3);
-
     vector<Type> population_t3_out(A_out * population_t3);
     vector<Type> plhiv_t3_out(A_out * plhiv_t3);
     vector<Type> rho_t3_out(plhiv_t3_out / population_t3_out);
@@ -1219,17 +1198,17 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> infections_t4(lambda_t4 * (population_t4 - plhiv_t4));
 
-    // Note: currently assuming same district effects parameters from t2 for t4
+    // Note: currently assuming same district effects parameters from t3 for t4
     vector<Type> mu_anc_rho_t4(logit(rho_t4) +
 			       logit_anc_rho_t4_offset +
-			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
+			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2 + beta_anc_rho_t3) +
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt + ui_anc_rho_xt2t3));
     vector<Type> anc_rho_t4(invlogit(mu_anc_rho_t4));
     
     vector<Type> mu_anc_alpha_t4(mu_alpha_t4 +
 				 logit_anc_alpha_t4_offset +
-				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
+				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2 + beta_anc_alpha_t3) +
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt + ui_anc_alpha_xt2t3));
     vector<Type> anc_alpha_t4(invlogit(mu_anc_alpha_t4));
     
     vector<Type> anc_clients_t4(population_t4 * exp(log_asfr_t4_offset + mu_asfr));
@@ -1368,17 +1347,17 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_ij_t5_out(A_art_reside_attend * artnum_ij_t5);
     vector<Type> untreated_plhiv_num_t5_out(plhiv_t5_out - artnum_t5_out);
 
-    // Note: currently assuming same district effects parameters from t2 for t5
+    // Note: currently assuming same district effects parameters from t3 for t5
     vector<Type> mu_anc_rho_t5(logit(rho_t5) +
 			       logit_anc_rho_t5_offset +
-			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
+			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2 + beta_anc_rho_t3) +
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt + ui_anc_rho_xt2t3));
     vector<Type> anc_rho_t5(invlogit(mu_anc_rho_t5));
 
     vector<Type> mu_anc_alpha_t5(mu_alpha_t5 +
 				 logit_anc_alpha_t5_offset +
-				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
+				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2 + beta_anc_alpha_t3) +
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt + ui_anc_alpha_xt2t3));
     vector<Type> anc_alpha_t5(invlogit(mu_anc_alpha_t5));
 
     vector<Type> anc_clients_t5(population_t5 * exp(log_asfr_t5_offset + mu_asfr));
@@ -1494,17 +1473,17 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_ij_t6_out(A_art_reside_attend * artnum_ij_t6);
     vector<Type> untreated_plhiv_num_t6_out(plhiv_t6_out - artnum_t6_out);
 
-    // Note: currently assuming same district effects parameters from t2 for t6
+    // Note: currently assuming same district effects parameters from t3 for t6
     vector<Type> mu_anc_rho_t6(logit(rho_t6) +
 			       logit_anc_rho_t6_offset +
-			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
+			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2 + beta_anc_rho_t3) +
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt + ui_anc_rho_xt2t3));
     vector<Type> anc_rho_t6(invlogit(mu_anc_rho_t6));
 
     vector<Type> mu_anc_alpha_t6(mu_alpha_t6 +
 				 logit_anc_alpha_t6_offset +
-				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
+				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2 + beta_anc_alpha_t3) +
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt + ui_anc_alpha_xt2t3));				 
     vector<Type> anc_alpha_t6(invlogit(mu_anc_alpha_t6));
 
     vector<Type> anc_clients_t6(population_t6 * exp(log_asfr_t6_offset + mu_asfr));
@@ -1581,10 +1560,11 @@ Type objective_function<Type>::operator() ()
     REPORT(artnum_t2_ll);
     REPORT(artnum_t1_ll);
     REPORT(anc_rho_obs_t1_ll);
-    REPORT(anc_rho_obs_t2_ll)
+    REPORT(anc_rho_obs_t2_ll);
+    REPORT(anc_rho_obs_t3_ll);
+    REPORT(anc_alpha_obs_t1_ll);
     REPORT(anc_alpha_obs_t2_ll);
-    REPORT(anc_rho_obs_t3_ll)
-    REPORT(anc_alpha_obs_t3_ll);    
+    REPORT(anc_alpha_obs_t3_ll);
     REPORT(anc_clients_obs_t3_ll);
 
   }

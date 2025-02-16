@@ -291,7 +291,8 @@ naomi_objective_function_r <- function(d, p) {
   mu_alpha_t2 <- mu_alpha + d$logit_alpha_t1t2_offset +
     d$X_alpha_t2 %*% p$beta_alpha_t2 +
     d$Z_alpha_xt %*% p$u_alpha_xt +
-    d$Z_alpha_xat %*% p$u_alpha_xat
+    d$Z_alpha_xat %*% p$u_alpha_xat +
+    d$Z_alpha_xst %*% p$u_alpha_xst
   mu_alpha_t2 <- as.vector(mu_alpha_t2)
 
   alpha_t2 <- plogis(mu_alpha_t2)
@@ -325,6 +326,47 @@ naomi_objective_function_r <- function(d, p) {
 
   infections_t2 <- lambda_t2 * (d$population_t2 - plhiv_t2)
 
+  ## Projection from t2 to t3
+
+  mu_alpha_t3 <- mu_alpha_t2 + d$logit_alpha_t2t3_offset +
+    d$X_alpha_t2t3 %*% p$beta_alpha_t2t3 +
+    d$Z_alpha_xt_t2t3 %*% p$u_alpha_xt_t2t3 +
+    d$Z_alpha_xat_t2t3 %*% p$u_alpha_xat_t2t3 +
+    d$Z_alpha_xst_t2t3 %*% p$u_alpha_xst_t2t3
+  mu_alpha_t3 <- as.vector(mu_alpha_t3)
+
+  alpha_t3 <- plogis(mu_alpha_t3)
+
+  infections_adult_t2t3 <- lambda_adult_t2 * (d$population_t2 - plhiv_t2)
+  plhiv_t3 <- d$Lproj_hivpop_t2t3 %*% plhiv_t2 +
+    d$Lproj_incid_t2t3  %*% infections_adult_t2t3 +
+    d$Lproj_paed_t2t3  %*% plhiv_t2
+  plhiv_t3 <- as.vector(plhiv_t3)
+
+  rho_t3 <- plhiv_t3 / d$population_t3
+  prop_art_t3 <- rho_t3 * alpha_t3
+  artnum_t3 <- d$population_t3 * prop_art_t3
+
+  plhiv_15to49_t3 <- d$X_15to49 %*% plhiv_t3
+  rho_15to49_t3 <- plhiv_15to49_t3 / (d$X_15to49 %*% d$population_t3)
+  alpha_15to49_t3 <- (d$X_15to49 %*% artnum_t3) / plhiv_15to49_t3
+
+  mu_lambda_t3 <- d$X_lambda %*% p$beta_lambda +
+    d$log_lambda_t3_offset +
+    d$Z_x %*% (log(rho_15to49_t3) + log(1.0 - d$omega * alpha_15to49_t3)) +
+    d$Z_lambda_x %*% p$ui_lambda_x
+  mu_lambda_t3 <- as.vector(mu_lambda_t3)
+
+  lambda_adult_t3 <- exp(mu_lambda_t3)
+
+  ## Add paediatric incidence
+  rho_15to49f_t3 <- d$X_15to49f %*% (rho_t3 * d$population_t3) / (d$X_15to49f %*% d$population_t3)
+  lambda_paed_t3 <- as.vector(d$X_paed_lambda_ratio_t3 %*% rho_15to49f_t3)
+  lambda_t3 <- lambda_adult_t3 + lambda_paed_t3
+
+  infections_t3 <- lambda_t3 * (d$population_t3 - plhiv_t3)
+
+  
   ## likelihood for household survey data
 
   rho_obs_t1 <- as.vector(d$A_prev_t1 %*% plhiv_t1) / as.vector(d$A_prev_t1 %*% d$population_t1)
@@ -419,11 +461,30 @@ naomi_objective_function_r <- function(d, p) {
   anc_plhiv_t2 <- anc_clients_t2 * anc_rho_t2
   anc_already_art_t2 <- anc_plhiv_t2 * anc_alpha_t2
 
+  mu_anc_rho_t3 <- qlogis(rho_t3) +
+    d$logit_anc_rho_t3_offset +
+    d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2 + p$beta_anc_rho_t3) +
+    d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt + p$ui_anc_rho_xt2t3)
+  mu_anc_rho_t3 <- as.vector(mu_anc_rho_t3)
+  anc_rho_t3 <- plogis(mu_anc_rho_t3)
+
+  mu_anc_alpha_t3 <- mu_alpha_t3 +
+    d$logit_anc_alpha_t3_offset +
+    d$X_ancalpha %*% (p$beta_anc_alpha + p$beta_anc_alpha_t2 + p$beta_anc_alpha_t3) +
+    d$Z_ancalpha_x %*% (p$ui_anc_alpha_x + p$ui_anc_alpha_xt + p$ui_anc_alpha_xt2t3)
+  mu_anc_alpha_t3 <- as.vector(mu_anc_alpha_t3)
+  anc_alpha_t3 <- plogis(mu_anc_alpha_t3)
+
+  anc_clients_t3 <- d$population_t3 * exp(d$log_asfr_t3_offset + mu_asfr)
+  anc_plhiv_t3 <- anc_clients_t3 * anc_rho_t3
+  anc_already_art_t3 <- anc_plhiv_t3 * anc_alpha_t3
+
+
   ## likelihood for ANC testing observations
 
-  anc_clients_obs_t2 <- as.vector(d$A_anc_clients_t2 %*% anc_clients_t2) * exp(d$offset_anc_clients_t2)
-  anc_clients_obs_t2_ll <- stats::dpois(d$x_anc_clients_t2, anc_clients_obs_t2, TRUE)
-  val <- val - sum(anc_clients_obs_t2_ll)
+  anc_clients_obs_t3 <- as.vector(d$A_anc_clients_t3 %*% anc_clients_t3) * exp(d$offset_anc_clients_t3)
+  anc_clients_obs_t3_ll <- stats::dpois(d$x_anc_clients_t3, anc_clients_obs_t3, TRUE)
+  val <- val - sum(anc_clients_obs_t3_ll)
 
   anc_rho_obs_t1 <- as.vector(d$A_anc_prev_t1 %*% anc_plhiv_t1) / as.vector(d$A_anc_prev_t1 %*% anc_clients_t1)
   anc_rho_obs_t1_ll <- ldbinom(d$x_anc_prev_t1, d$n_anc_prev_t1, anc_rho_obs_t1)
@@ -441,6 +502,14 @@ naomi_objective_function_r <- function(d, p) {
   anc_alpha_obs_t2_ll <- ldbinom(d$x_anc_artcov_t2, d$n_anc_artcov_t2, anc_alpha_obs_t2)
   val <- val - sum(anc_alpha_obs_t2_ll)
 
+  anc_rho_obs_t3 <- as.vector(d$A_anc_prev_t3 %*% anc_plhiv_t3) / as.vector(d$A_anc_prev_t3 %*% anc_clients_t3)
+  anc_rho_obs_t3_ll <- ldbinom(d$x_anc_prev_t3, d$n_anc_prev_t3, anc_rho_obs_t3)
+  val <- val - sum(anc_rho_obs_t3_ll)
+
+  anc_alpha_obs_t3 <- as.vector(d$A_anc_artcov_t3 %*% anc_already_art_t3) / as.vector(d$A_anc_artcov_t3 %*% anc_plhiv_t3)
+  anc_alpha_obs_t3_ll <- ldbinom(d$x_anc_artcov_t3, d$n_anc_artcov_t3, anc_alpha_obs_t3)
+  val <- val - sum(anc_alpha_obs_t3_ll)
+
 
   ## * ART attendance model *
 
@@ -452,7 +521,12 @@ naomi_objective_function_r <- function(d, p) {
     cum_nb <- cum_nb + d$n_nb[i]
   }
 
-  prop_art_ij_t1 <- as.vector(d$Xart_idx %*% prop_art_t1) * as.vector(d$Xart_gamma %*% gamma_art)
+  immigrant_theta_t1 <- d$recent_migrant_hivprev_15to49 / (d$Z_x %*% rho_15to49_t1)  
+  foreign_art_prop_t1 <- d$foreign_art_eta_t1 * immigrant_theta_t1 * d$recent_immigration_prop
+  artnum_foreign_t1 <- artnum_t1 * foreign_art_prop_t1
+  
+  prop_art_domestic_t1 <- prop_art_t1 * (1.0 - foreign_art_prop_t1)
+  prop_art_ij_t1 <- as.vector(d$Xart_idx %*% prop_art_domestic_t1) * as.vector(d$Xart_gamma %*% gamma_art)
   population_ij_t1 <- as.vector(d$Xart_idx %*% d$population_t1)
 
   artnum_ij_t1 <- population_ij_t1 * prop_art_ij_t1
@@ -472,7 +546,12 @@ naomi_objective_function_r <- function(d, p) {
     cum_nb <- cum_nb + d$n_nb[i]
   }
 
-  prop_art_ij_t2 <- as.vector(d$Xart_idx %*% prop_art_t2) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  immigrant_theta_t2 <- d$recent_migrant_hivprev_15to49 / (d$Z_x %*% rho_15to49_t2)  
+  foreign_art_prop_t2 <- d$foreign_art_eta_t2 * immigrant_theta_t2 * d$recent_immigration_prop
+  artnum_foreign_t2 <- artnum_t2 * foreign_art_prop_t2
+  
+  prop_art_domestic_t2 <- prop_art_t2 * (1.0 - foreign_art_prop_t2)
+  prop_art_ij_t2 <- as.vector(d$Xart_idx %*% prop_art_domestic_t2) * as.vector(d$Xart_gamma %*% gamma_art_t2)
   population_ij_t2 <- as.vector(d$Xart_idx %*% d$population_t2)
 
   artnum_ij_t2 <- population_ij_t2 * prop_art_ij_t2
@@ -482,6 +561,34 @@ naomi_objective_function_r <- function(d, p) {
 
   artnum_t2_ll <- stats::dnorm(d$x_artnum_t2, A_j_t2, sd_A_j_t2, TRUE)
   val <- val - sum(artnum_t2_ll)
+
+
+  gamma_art_t3 <- exp(as.vector(d$Xgamma %*% p$log_or_gamma +
+                                  d$Xgamma_t2 %*% p$log_or_gamma_t1t2 +
+                                  d$Xgamma_t3 %*% p$log_or_gamma_t2t3 +
+                                  d$log_gamma_offset))
+  cum_nb <- 0
+  for(i in seq_along(d$n_nb)) {
+    gamma_i_idx <- cum_nb + (i-1) + seq.int(d$n_nb[i]+1)
+    gamma_art_t3[gamma_i_idx] <-  gamma_art_t3[gamma_i_idx] / sum(gamma_art_t3[gamma_i_idx])
+    cum_nb <- cum_nb + d$n_nb[i]
+  }
+
+  immigrant_theta_t3 <- d$recent_migrant_hivprev_15to49 / (d$Z_x %*% rho_15to49_t3)  
+  foreign_art_prop_t3 <- d$foreign_art_eta_t3 * immigrant_theta_t3 * d$recent_immigration_prop
+  artnum_foreign_t3 <- artnum_t3 * foreign_art_prop_t3
+  
+  prop_art_domestic_t3 <- prop_art_t3 * (1.0 - foreign_art_prop_t3)
+  prop_art_ij_t3 <- as.vector(d$Xart_idx %*% prop_art_domestic_t3) * as.vector(d$Xart_gamma %*% gamma_art_t3)
+  population_ij_t3 <- as.vector(d$Xart_idx %*% d$population_t3)
+
+  artnum_ij_t3 <- population_ij_t3 * prop_art_ij_t3
+  A_j_t3 <- as.vector(d$A_artattend_t3 %*% artnum_ij_t3)
+  sd_A_j_t3 <- d$A_artattend_t3 %*% (population_ij_t3 * prop_art_ij_t3 * (1 - prop_art_ij_t3))
+  sd_A_j_t3 <- sqrt(as.vector(sd_A_j_t3))
+
+  artnum_t3_ll <- stats::dnorm(d$x_artnum_t3, A_j_t3, sd_A_j_t3, TRUE)
+  val <- val - sum(artnum_t3_ll)
 
   ## **Calculate model outputs**
 
@@ -495,6 +602,9 @@ naomi_objective_function_r <- function(d, p) {
   artattend_t1_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% artnum_ij_t1))
   artattend_ij_t1_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t1)
   untreated_plhiv_num_t1_out <- plhiv_t1_out - artnum_t1_out
+
+  artnum_foreign_t1_out <- as.vector(d$A_out %*% artnum_foreign_t1)
+  artprop_foreign_t1_out <- artnum_foreign_t1_out / artnum_t1_out
 
   ## Calculate number of PLHIV who would attend facility in district i
   plhiv_attend_ij_t1 <- as.vector(d$Xart_idx %*% plhiv_t1) * as.vector(d$Xart_gamma %*% gamma_art)
@@ -524,6 +634,10 @@ naomi_objective_function_r <- function(d, p) {
   artattend_t2_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% artnum_ij_t2))
   artattend_ij_t2_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t2)
   untreated_plhiv_num_t2_out <- plhiv_t2_out - artnum_t2_out
+
+  artnum_foreign_t2_out <- as.vector(d$A_out %*% artnum_foreign_t2)
+  artprop_foreign_t2_out <- artnum_foreign_t2_out / artnum_t2_out
+
 
   ## Calculate number of PLHIV who would attend facility in district i
   plhiv_attend_ij_t2 <- as.vector(d$Xart_idx %*% plhiv_t2) * as.vector(d$Xart_gamma %*% gamma_art_t2)
@@ -576,6 +690,8 @@ naomi_objective_function_r <- function(d, p) {
                     plhiv_t1_out                   = plhiv_t1_out,
                     alpha_t1_out                   = alpha_t1_out,
                     artnum_t1_out                  = artnum_t1_out,
+                    artnum_foreign_t1_out          = artnum_foreign_t1_out,
+                    artprop_foreign_t1_out          = artprop_foreign_t1_out,
                     artattend_t1_out               = artattend_t1_out,
                     artattend_ij_t1_out            = artattend_ij_t1_out,
                     untreated_plhiv_num_t1_out     = untreated_plhiv_num_t1_out,
@@ -603,6 +719,8 @@ naomi_objective_function_r <- function(d, p) {
                     plhiv_t2_out                   = plhiv_t2_out,
                     alpha_t2_out                   = alpha_t2_out,
                     artnum_t2_out                  = artnum_t2_out,
+                    artnum_foreign_t2_out          = artnum_foreign_t2_out,
+                    artprop_foreign_t2_out          = artprop_foreign_t2_out,                    
                     artattend_t2_out               = artattend_t2_out,
                     artattend_ij_t2_out            = artattend_ij_t2_out,
                     untreated_plhiv_num_t2_out     = untreated_plhiv_num_t2_out,
@@ -626,64 +744,7 @@ naomi_objective_function_r <- function(d, p) {
                     anc_alpha_t2_out               = anc_alpha_t2_out)
 
 
-  ## Projection to time 3
-  ## No data involved, so calculated after likelihood
-
-  mu_alpha_t3 <- mu_alpha_t2 + d$logit_alpha_t2t3_offset
-  alpha_t3 <- plogis(mu_alpha_t3)
-
-  infections_adult_t2t3 <- lambda_adult_t2 * (d$population_t2 - plhiv_t2)
-  plhiv_t3 <- as.vector(d$Lproj_hivpop_t2t3 %*% plhiv_t2 +
-                          d$Lproj_incid_t2t3 %*% infections_adult_t2t3 +
-                          d$Lproj_paed_t2t3 %*% plhiv_t2)
-
-  rho_t3 <- plhiv_t3 / d$population_t3
-  prop_art_t3 <- rho_t3 * alpha_t3
-  artnum_t3 <- d$population_t3 * prop_art_t3
-
-  plhiv_15to49_t3 <- as.vector(d$X_15to49 %*% plhiv_t3)
-  rho_15to49_t3 <- plhiv_15to49_t3 / as.vector(d$X_15to49 %*% d$population_t3)
-  alpha_15to49_t3 <- as.vector(d$X_15to49 %*% artnum_t3) / plhiv_15to49_t3
-
-  mu_lambda_t3 <- d$X_lambda %*% p$beta_lambda +
-    d$log_lambda_t3_offset +
-    d$Z_x %*% (log(rho_15to49_t3) + log(1.0 - d$omega * alpha_15to49_t3)) +
-    d$Z_lambda_x %*% p$ui_lambda_x
-
-  lambda_adult_t3 <- exp(mu_lambda_t3)
-
-  ## Add paediatric incidence
-  rho_15to49f_t3 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t3) / (d$X_15to49f %*% d$population_t3)
-  lambda_paed_t3 <- as.vector(d$X_paed_lambda_ratio_t3 %*% rho_15to49f_t3)
-  lambda_t3 <- lambda_adult_t3 + lambda_paed_t3
-
-
-  infections_t3 <- lambda_t3 * (d$population_t3 - plhiv_t3)
-
-
-  ## Note: currently assuming same district effects parameters from t2 for t3
-  mu_anc_rho_t3 <- qlogis(rho_t3) +
-    d$logit_anc_rho_t2_offset +
-    d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2) +
-    d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt)
-  mu_anc_rho_t3 <- as.vector(mu_anc_rho_t3)
-  anc_rho_t3 <- stats::plogis(mu_anc_rho_t3)
-
-  mu_anc_alpha_t3 <- mu_alpha_t3 +
-    d$logit_anc_alpha_t3_offset +
-    d$X_ancalpha %*% (p$beta_anc_alpha + p$beta_anc_alpha_t2) +
-    d$Z_ancalpha_x %*% (p$ui_anc_alpha_x + p$ui_anc_alpha_xt)
-  mu_anc_alpha_t3 <- as.vector(mu_anc_alpha_t3)
-  anc_alpha_t3 <- plogis(mu_anc_alpha_t3)
-
-  anc_clients_t3 <- d$population_t3 * exp(d$log_asfr_t3_offset + mu_asfr)
-  anc_plhiv_t3 <- anc_clients_t3 * anc_rho_t3
-  anc_already_art_t3 <- anc_plhiv_t3 * anc_alpha_t3
-
-
-  prop_art_ij_t3 <- as.vector(d$Xart_idx %*% prop_art_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
-  population_ij_t3 <- as.vector(d$Xart_idx %*% d$population_t3)
-  artnum_ij_t3 <- population_ij_t3 * prop_art_ij_t3
+  ## Outputs at time 3
 
   population_t3_out <- as.vector(d$A_out %*% d$population_t3)
   plhiv_t3_out <- as.vector(d$A_out %*% plhiv_t3)
@@ -694,8 +755,11 @@ naomi_objective_function_r <- function(d, p) {
   artattend_ij_t3_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t3)
   untreated_plhiv_num_t3_out <- plhiv_t3_out - artnum_t3_out
 
+  artnum_foreign_t3_out <- as.vector(d$A_out %*% artnum_foreign_t3)
+  artprop_foreign_t3_out <- artnum_foreign_t3_out / artnum_t3_out
+
   ## Calculate number of PLHIV who would attend facility in district i
-  plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% plhiv_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% plhiv_t3) * as.vector(d$Xart_gamma %*% gamma_art_t3)
   plhiv_attend_t3_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t3))
   untreated_plhiv_attend_t3_out <- plhiv_attend_t3_out - artattend_t3_out
 
@@ -705,7 +769,7 @@ naomi_objective_function_r <- function(d, p) {
   aware_plhiv_num_t3_out <- plhiv_t3_out - unaware_plhiv_num_t3_out
   aware_plhiv_prop_t3_out <- aware_plhiv_num_t3_out / plhiv_t3_out
 
-  unaware_plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  unaware_plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t3) * as.vector(d$Xart_gamma %*% gamma_art_t3)
   unaware_plhiv_attend_t3_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t3))
   aware_plhiv_attend_t3_out <- plhiv_attend_t3_out - unaware_plhiv_attend_t3_out
 
@@ -729,6 +793,8 @@ naomi_objective_function_r <- function(d, p) {
                     plhiv_t3_out                   = plhiv_t3_out,
                     alpha_t3_out                   = alpha_t3_out,
                     artnum_t3_out                  = artnum_t3_out,
+                    artnum_foreign_t3_out          = artnum_foreign_t3_out,
+                    artprop_foreign_t3_out          = artprop_foreign_t3_out,                    
                     artattend_t3_out               = artattend_t3_out,
                     artattend_ij_t3_out            = artattend_ij_t3_out,
                     untreated_plhiv_num_t3_out     = untreated_plhiv_num_t3_out,
@@ -777,24 +843,24 @@ naomi_objective_function_r <- function(d, p) {
   lambda_adult_t4 <- exp(mu_lambda_t4)
 
   ## Add paediatric incidence
-  rho_15to49f_t4 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t4) / (d$X_15to49f %*% d$population_t4)
+  rho_15to49f_t4 <- d$X_15to49f %*% (rho_t4 * d$population_t4) / (d$X_15to49f %*% d$population_t4)
   lambda_paed_t4 <- as.vector(d$X_paed_lambda_ratio_t4 %*% rho_15to49f_t4)
   lambda_t4 <- lambda_adult_t4 + lambda_paed_t4
 
   infections_t4 <- lambda_t4 * (d$population_t4 - plhiv_t4)
 
-  ## Note: currently assuming same district effects parameters from t2 for t4
+  ## Note: currently assuming same district effects parameters from t3 for t4
   mu_anc_rho_t4 <- qlogis(rho_t4) +
-    d$logit_anc_rho_t2_offset +
-    d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2) +
-    d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt)
+    d$logit_anc_rho_t4_offset +
+    d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2 + p$beta_anc_rho_t3) +
+    d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt + p$ui_anc_rho_xt2t3)
   mu_anc_rho_t4 <- as.vector(mu_anc_rho_t4)
   anc_rho_t4 <- stats::plogis(mu_anc_rho_t4)
 
   mu_anc_alpha_t4 <- mu_alpha_t4 +
     d$logit_anc_alpha_t4_offset +
-    d$X_ancalpha %*% (p$beta_anc_alpha + p$beta_anc_alpha_t2) +
-    d$Z_ancalpha_x %*% (p$ui_anc_alpha_x + p$ui_anc_alpha_xt)
+    d$X_ancalpha %*% (p$beta_anc_alpha + p$beta_anc_alpha_t2 + p$beta_anc_alpha_t3) +
+    d$Z_ancalpha_x %*% (p$ui_anc_alpha_x + p$ui_anc_alpha_xt + p$ui_anc_alpha_xt2t3)
   mu_anc_alpha_t4 <- as.vector(mu_anc_alpha_t4)
   anc_alpha_t4 <- plogis(mu_anc_alpha_t4)
 
@@ -802,8 +868,12 @@ naomi_objective_function_r <- function(d, p) {
   anc_plhiv_t4 <- anc_clients_t4 * anc_rho_t4
   anc_already_art_t4 <- anc_plhiv_t4 * anc_alpha_t4
   
-
-  prop_art_ij_t4 <- as.vector(d$Xart_idx %*% prop_art_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
+  immigrant_theta_t4 <- d$recent_migrant_hivprev_15to49 / (d$Z_x %*% rho_15to49_t4)  
+  foreign_art_prop_t4 <- d$foreign_art_eta_t4 * immigrant_theta_t4 * d$recent_immigration_prop
+  artnum_foreign_t4 <- artnum_t4 * foreign_art_prop_t4
+  
+  prop_art_domestic_t4 <- prop_art_t4 * (1.0 - foreign_art_prop_t4)
+  prop_art_ij_t4 <- as.vector(d$Xart_idx %*% prop_art_domestic_t4) * as.vector(d$Xart_gamma %*% gamma_art_t3)  ## Note: using same ART attendance as T2
   population_ij_t4 <- as.vector(d$Xart_idx %*% d$population_t4)
   artnum_ij_t4 <- population_ij_t4 * prop_art_ij_t4
 
@@ -811,7 +881,7 @@ naomi_objective_function_r <- function(d, p) {
   plhiv_t4_out <- as.vector(d$A_out %*% plhiv_t4)
 
   ## Calculate number of PLHIV who would attend facility in district i
-  plhiv_attend_ij_t4 <- as.vector(d$Xart_idx %*% plhiv_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_ij_t4 <- as.vector(d$Xart_idx %*% plhiv_t4) * as.vector(d$Xart_gamma %*% gamma_art_t3)
   plhiv_attend_t4_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t4))
 
 
@@ -872,13 +942,18 @@ naomi_objective_function_r <- function(d, p) {
   lambda_adult_t5 <- exp(mu_lambda_t5)
 
   ## Add paediatric incidence
-  rho_15to49f_t5 <- d$X_15to49f %*% (plogis(mu_rho) * d$population_t5) / (d$X_15to49f %*% d$population_t5)
+  rho_15to49f_t5 <- d$X_15to49f %*% (rho_t5* d$population_t5) / (d$X_15to49f %*% d$population_t5)
   lambda_paed_t5 <- as.vector(d$X_paed_lambda_ratio_t5 %*% rho_15to49f_t5)
   lambda_t5 <- lambda_adult_t5 + lambda_paed_t5
 
   infections_t5 <- lambda_t5 * (d$population_t5 - plhiv_t5)
 
-  prop_art_ij_t5 <- as.vector(d$Xart_idx %*% prop_art_t5) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
+  immigrant_theta_t5 <- d$recent_migrant_hivprev_15to49 / (d$Z_x %*% rho_15to49_t5)  
+  foreign_art_prop_t5 <- d$foreign_art_eta_t5 * immigrant_theta_t5 * d$recent_immigration_prop
+  artnum_foreign_t5 <- artnum_t5 * foreign_art_prop_t5
+  
+  prop_art_domestic_t5 <- prop_art_t5 * (1.0 - foreign_art_prop_t5)
+  prop_art_ij_t5 <- as.vector(d$Xart_idx %*% prop_art_domestic_t5) * as.vector(d$Xart_gamma %*% gamma_art_t3)  ## Note: using same ART attendance as T2
   population_ij_t5 <- as.vector(d$Xart_idx %*% d$population_t5)
   artnum_ij_t5 <- population_ij_t5 * prop_art_ij_t5
 
@@ -886,7 +961,7 @@ naomi_objective_function_r <- function(d, p) {
   plhiv_t5_out <- as.vector(d$A_out %*% plhiv_t5)
 
   ## Calculate number of PLHIV who would attend facility in district i
-  plhiv_attend_ij_t5 <- as.vector(d$Xart_idx %*% plhiv_t5) * as.vector(d$Xart_gamma %*% gamma_art_t2)
+  plhiv_attend_ij_t5 <- as.vector(d$Xart_idx %*% plhiv_t5) * as.vector(d$Xart_gamma %*% gamma_art_t3)
   plhiv_attend_t5_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t5))
 
   infections_t5_out <- as.vector(d$A_out %*% infections_t5)
@@ -908,8 +983,11 @@ naomi_objective_function_r <- function(d, p) {
                             artnum_t1_ll          = artnum_t1_ll,
                             anc_rho_obs_t1_ll     = anc_rho_obs_t1_ll,
                             anc_rho_obs_t2_ll     = anc_rho_obs_t2_ll,
+                            anc_rho_obs_t3_ll     = anc_rho_obs_t3_ll,
+                            anc_alpha_obs_t1_ll   = anc_alpha_obs_t1_ll,
                             anc_alpha_obs_t2_ll   = anc_alpha_obs_t2_ll,
-                            anc_clients_obs_t2_ll = anc_clients_obs_t2_ll)
+                            anc_alpha_obs_t3_ll   = anc_alpha_obs_t3_ll,
+                            anc_clients_obs_t3_ll = anc_clients_obs_t3_ll)
 
 
   v <- list(val = unname(val),
