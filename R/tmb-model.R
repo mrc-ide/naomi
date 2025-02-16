@@ -67,11 +67,13 @@ prepare_tmb_inputs <- function(naomi_data,
     Amat
   }
 
-  A_anc_clients_t2 <- create_anc_Amat(naomi_data$anc_clients_t2_dat)
+  A_anc_clients_t3 <- create_anc_Amat(naomi_data$anc_clients_t3_dat)
   A_anc_prev_t1 <- create_anc_Amat(naomi_data$anc_prev_t1_dat)
   A_anc_prev_t2 <- create_anc_Amat(naomi_data$anc_prev_t2_dat)
+  A_anc_prev_t3 <- create_anc_Amat(naomi_data$anc_prev_t3_dat)
   A_anc_artcov_t1 <- create_anc_Amat(naomi_data$anc_artcov_t1_dat)
   A_anc_artcov_t2 <- create_anc_Amat(naomi_data$anc_artcov_t2_dat)
+  A_anc_artcov_t3 <- create_anc_Amat(naomi_data$anc_artcov_t3_dat)  
 
   A_prev_t1 <- create_survey_Amat(naomi_data$prev_t1_dat)
   A_artcov_t1 <- create_survey_Amat(naomi_data$artcov_t1_dat)
@@ -447,9 +449,9 @@ prepare_tmb_inputs <- function(naomi_data,
     A_recent_t2 = A_recent_t2,
     ##
     ## ANC testing input data
-    x_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_x,
-    offset_anc_clients_t2 = naomi_data$anc_clients_t2_dat$anc_clients_pys_offset,
-    A_anc_clients_t2 = A_anc_clients_t2,
+    x_anc_clients_t3 = naomi_data$anc_clients_t3_dat$anc_clients_x,
+    offset_anc_clients_t3 = naomi_data$anc_clients_t3_dat$anc_clients_pys_offset,
+    A_anc_clients_t3 = A_anc_clients_t3,
     x_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_x,
     n_anc_prev_t1 = naomi_data$anc_prev_t1_dat$anc_prev_n,
     A_anc_prev_t1 = A_anc_prev_t1,
@@ -462,6 +464,12 @@ prepare_tmb_inputs <- function(naomi_data,
     x_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_x,
     n_anc_artcov_t2 = naomi_data$anc_artcov_t2_dat$anc_artcov_n,
     A_anc_artcov_t2 = A_anc_artcov_t2,
+    x_anc_prev_t3 = naomi_data$anc_prev_t3_dat$anc_prev_x,
+    n_anc_prev_t3 = naomi_data$anc_prev_t3_dat$anc_prev_n,
+    A_anc_prev_t3 = A_anc_prev_t3,
+    x_anc_artcov_t3 = naomi_data$anc_artcov_t3_dat$anc_artcov_x,
+    n_anc_artcov_t3 = naomi_data$anc_artcov_t3_dat$anc_artcov_n,
+    A_anc_artcov_t3 = A_anc_artcov_t3,    
     ##
     ## Number on ART input data
     A_artattend_t1 = A_artattend_t1,
@@ -522,6 +530,8 @@ prepare_tmb_inputs <- function(naomi_data,
     beta_anc_alpha = numeric(1),
     beta_anc_rho_t2 = numeric(1),
     beta_anc_alpha_t2 = numeric(1),
+    beta_anc_rho_t3 = numeric(1),
+    beta_anc_alpha_t3 = numeric(1),    
     u_rho_x = numeric(ncol(dtmb$Z_rho_x)),
     us_rho_x = numeric(ncol(dtmb$Z_rho_x)),
     u_rho_xs = numeric(ncol(dtmb$Z_rho_xs)),
@@ -534,6 +544,8 @@ prepare_tmb_inputs <- function(naomi_data,
     ui_anc_alpha_x = numeric(ncol(dtmb$Z_ancalpha_x)),
     ui_anc_rho_xt = numeric(ncol(dtmb$Z_ancrho_x)),
     ui_anc_alpha_xt = numeric(ncol(dtmb$Z_ancalpha_x)),
+    ui_anc_rho_xt2t3 = numeric(ncol(dtmb$Z_ancrho_x)),
+    ui_anc_alpha_xt2t3 = numeric(ncol(dtmb$Z_ancalpha_x)),      
     ##
     u_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),
     us_alpha_x = numeric(ncol(dtmb$Z_alpha_x)),
@@ -638,6 +650,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "beta_asfr",
                                    "beta_anc_rho", "beta_anc_alpha",
                                    "beta_anc_rho_t2", "beta_anc_alpha_t2",
+                                   "beta_anc_rho_t3", "beta_anc_alpha_t3",
                                    "u_rho_x", "us_rho_x",
                                    "u_rho_xs", "us_rho_xs",
                                    "u_rho_a", "u_rho_as",
@@ -656,6 +669,7 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
                                    "ui_asfr_x",
                                    "ui_anc_rho_x", "ui_anc_alpha_x",
                                    "ui_anc_rho_xt", "ui_anc_alpha_xt",
+                                   "ui_anc_rho_xt2t3", "ui_anc_alpha_xt2t3",
                                    ##
                                    "log_or_gamma", "log_or_gamma_t1t2", "log_or_gamma_t2t3"))
 

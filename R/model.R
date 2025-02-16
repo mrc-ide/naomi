@@ -879,12 +879,14 @@ naomi_model_frame <- function(area_merged,
 #' @param vls_survey_ids_t2 A character vector of `survey_id`s for survey VLS among all HIV+ personsat T2.
 #' @param artnum_calendar_quarter_t1 Calendar quarter for first time point for number on ART.
 #' @param artnum_calendar_quarter_t2 Calendar quarter for second time point for number on ART.
-#' @param anc_clients_year_t2 Calendar year (possibly multiple) for number of ANC clients at year 2.
-#' @param anc_clients_year_t2_num_monhts Number of months of reporting reflected in the year(s) recorded in `anc_clients_year_t2`.
+#' @param anc_clients_year_t3 Calendar year (possibly multiple) for number of ANC clients at year 3.
+#' @param anc_clients_year_t3_num_monhts Number of months of reporting reflected in the year(s) recorded in `anc_clients_year_t3`.
 #' @param anc_prev_year_t1 Calendar year (possibly multiple) for first time point for ANC prevalence.
 #' @param anc_prev_year_t2 Calendar year (possibly multiple) for second time point for ANC prevalence.
+#' @param anc_prev_year_t3 Calendar year (possibly multiple) for third time point for ANC prevalence.#' 
 #' @param anc_artcov_year_t1 Calendar year (possibly multiple) for first time point for ANC ART coverage.
 #' @param anc_artcov_year_t2 Calendar year (possibly multiple) for second time point for ANC ART coverage.
+#' @param anc_artcov_year_t3 Calendar year (possibly multiple) for third time point for ANC ART coverage.#' 
 #' @param deff_prev Approximate design effect for survey prevalence.
 #' @param deff_artcov Approximate design effect for survey ART coverage.
 #' @param deff_recent Approximate design effect for survey proportion recently infected.
@@ -928,15 +930,14 @@ select_naomi_data <- function(
   artnum_calendar_quarter_t1 = naomi_mf[["calendar_quarter1"]],
   artnum_calendar_quarter_t2 = naomi_mf[["calendar_quarter2"]],
   artnum_calendar_quarter_t3 = NULL,
-  anc_clients_year_t2 = year_labels(calendar_quarter_to_quarter_id(
-    naomi_mf[["calendar_quarter2"]])),
-  anc_clients_year_t2_num_months = 12,
-  anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(
-    naomi_mf[["calendar_quarter1"]])),
-  anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(
-    naomi_mf[["calendar_quarter2"]])),
+  anc_clients_year_t3 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter3"]])),
+  anc_clients_year_t3_num_months = 12,
+  anc_prev_year_t1 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter1"]])),
+  anc_prev_year_t2 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter2"]])),
+  anc_prev_year_t3 = year_labels(calendar_quarter_to_quarter_id(naomi_mf[["calendar_quarter3"]])),
   anc_artcov_year_t1 = anc_prev_year_t1,
   anc_artcov_year_t2 = anc_prev_year_t2,
+  anc_artcov_year_t3 = anc_prev_year_t3,  
   use_kish_prev = TRUE,
   deff_prev = 1.0,
   use_kish_artcov = TRUE,
@@ -1068,16 +1069,16 @@ select_naomi_data <- function(
         anc_artcov_x = anc_already_art,
         anc_artcov_n = anc_total_pos,
         anc_clients_x = anc_clients,
-        anc_clients_pys_offset = log(anc_clients_year_t2_num_months/ 12),
+        anc_clients_pys_offset = log(anc_clients_year_t3_num_months/ 12),
         anc_prevalence = anc_prev_x/anc_prev_n,
         anc_art_coverage = anc_artcov_x/ anc_artcov_n) %>%
       dplyr::select(area_id, age_group, year, sex, dplyr::everything()) %>%
       tidyr::pivot_longer(cols = anc_known_pos:anc_art_coverage,
                           names_to = "indicator", values_to = "value")
 
-    anc_years <- c(anc_prev_year_t1, anc_prev_year_t2,
-                   anc_artcov_year_t1, anc_artcov_year_t2,
-                   anc_clients_year_t2)
+    anc_years <- c(anc_prev_year_t1, anc_prev_year_t2, anc_prev_year_t3,
+                   anc_artcov_year_t1, anc_artcov_year_t2, anc_artcov_year_t3,
+                   anc_clients_year_t3)
 
     # Drop  NAs and filter for years contained in model options scope
     anc_model_mf <- anc_full_mf %>%
@@ -1103,10 +1104,13 @@ select_naomi_data <- function(
   anc_prev_t1_dat <- anc_testing_prev_mf(anc_prev_year_t1, anc_tagged$model_input)
   anc_artcov_t1_dat <- anc_testing_artcov_mf(anc_artcov_year_t1, anc_tagged$model_input)
 
-  anc_clients_t2_dat <- anc_testing_clients_mf(anc_clients_year_t2, anc_tagged$model_input)
-
   anc_prev_t2_dat <- anc_testing_prev_mf(anc_prev_year_t2, anc_tagged$model_input)
   anc_artcov_t2_dat <- anc_testing_artcov_mf(anc_artcov_year_t2, anc_tagged$model_input)
+
+  anc_clients_t3_dat <- anc_testing_clients_mf(anc_clients_year_t3, anc_tagged$model_input)
+  anc_prev_t3_dat <- anc_testing_prev_mf(anc_prev_year_t3, anc_tagged$model_input)
+  anc_artcov_t3_dat <- anc_testing_artcov_mf(anc_artcov_year_t3, anc_tagged$model_input)
+  
 
   # Aggregate, interpolate, tag and subset ART inputs according to model option specifications
 
@@ -1132,9 +1136,13 @@ select_naomi_data <- function(
 
   naomi_mf$anc_prev_t1_dat <- anc_prev_t1_dat
   naomi_mf$anc_artcov_t1_dat <- anc_artcov_t1_dat
-  naomi_mf$anc_clients_t2_dat <- anc_clients_t2_dat
   naomi_mf$anc_prev_t2_dat <- anc_prev_t2_dat
   naomi_mf$anc_artcov_t2_dat <- anc_artcov_t2_dat
+
+  naomi_mf$anc_clients_t3_dat <- anc_clients_t3_dat
+  naomi_mf$anc_prev_t3_dat <- anc_prev_t3_dat
+  naomi_mf$anc_artcov_t3_dat <- anc_artcov_t3_dat
+  
 
   naomi_mf$artnum_t1_dat <- artnum_t1_dat
   naomi_mf$artnum_t2_dat <- artnum_t2_dat
@@ -1171,8 +1179,14 @@ select_naomi_data <- function(
                        artnum_calendar_quarter_t1 = artnum_calendar_quarter_t1,
                        artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
                        artnum_calendar_quarter_t3 = artnum_calendar_quarter_t3,
-                       anc_prev_year_t1 = anc_artcov_year_t1,
-                       anc_prev_year_t2 = anc_artcov_year_t2)
+                       ##
+                       anc_clients_year_t3 = anc_clients_year_t3,
+                       anc_prev_year_t1 = anc_prev_year_t1,
+                       anc_prev_year_t2 = anc_prev_year_t2,
+                       anc_prev_year_t3 = anc_prev_year_t3,
+                       anc_artcov_year_t1 = anc_artcov_year_t1,
+                       anc_artcov_year_t2 = anc_artcov_year_t2,
+                       anc_artcov_year_t3 = anc_artcov_year_t3)
 
   naomi_mf$data_options <- data_options
 

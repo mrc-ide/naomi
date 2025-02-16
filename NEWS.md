@@ -2,6 +2,8 @@
 
 * Implement survey data at T1 and T2 (done for South Africa 2024 HIV estimates).
 
+* Add likelihood for ANC prevalence and ANC ART coverage at T3. Change ANC clients
+  reference period from T2 to T3.
 
 # naomi 2.10.9
 
