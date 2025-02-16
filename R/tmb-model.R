@@ -419,7 +419,18 @@ prepare_tmb_inputs <- function(naomi_data,
     X_paed_lambda_ratio_t3 = X_paed_lambda_ratio_t3,
     X_paed_lambda_ratio_t4 = X_paed_lambda_ratio_t4,
     X_paed_lambda_ratio_t5 = X_paed_lambda_ratio_t5,
-    X_paed_lambda_ratio_t6 = X_paed_lambda_ratio_t6,    
+    X_paed_lambda_ratio_t6 = X_paed_lambda_ratio_t6,
+    ##
+    ## Foreign ART access parmaeters
+    ## !! HARD CODED TO THEMBISA 4.8 CHANGE POINTS
+    recent_immigration_prop = naomi_data$mf_model$recent_foreign_immigrant_prop,
+    recent_migrant_hivprev_15to49 = naomi_data$mf_model$recent_migrant_hivprev_15to49,
+    foreign_art_eta_t1 = naomi_data$foreign_art_eta2 * naomi_data$foreign_art_R,
+    foreign_art_eta_t2 = naomi_data$foreign_art_eta2,
+    foreign_art_eta_t3 = naomi_data$foreign_art_eta2,
+    foreign_art_eta_t4 = naomi_data$foreign_art_eta2,
+    foreign_art_eta_t5 = naomi_data$foreign_art_eta2,
+    foreign_art_eta_t6 = naomi_data$foreign_art_eta2,
     ##
     ## Household survey input data
     x_prev_t1 = naomi_data$prev_t1_dat$x_eff,

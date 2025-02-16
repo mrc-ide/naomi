@@ -151,7 +151,12 @@ naomi_model_frame <- function(area_merged,
                               spectrum_population_calibration = "national",
                               output_aware_plhiv = TRUE,
                               adjust_area_growth = FALSE,
-                              psnu_level = NULL) {
+                              psnu_level = NULL,
+                              ##
+                              ## Foreign ART access parameters
+                              recent_immigrant_params = NULL,
+                              foreign_art_eta2 = 16.7,
+                              foreign_art_R = 0.583) {
 
   ## Create a list of options to save out
   model_options <- list(area_scope = scope,
@@ -822,6 +827,21 @@ naomi_model_frame <- function(area_merged,
   spectrum_calibration[["births_spectrum"]] <- NULL
   spectrum_calibration[["art_current_internal_spectrum"]] <- NULL
 
+
+  ## ## Foreign ART access model
+
+  mf_model <- mf_model %>%
+    dplyr::left_join(
+      dplyr::select(recent_immigrant_params,
+                    area_id,
+                    recent_foreign_immigrant_prop,
+                    recent_migrant_hivprev_15to49),
+      by = "area_id"
+    )
+
+  stopifnot(!is.na(mf_model$recent_foreign_immigrant_prop))
+  stopifnot(!is.na(mf_model$recent_migrant_hivprev_15to49))
+
   v <- list(mf_model = mf_model,
             mf_out = outf$mf,
             mf_anc_out = anc_outf$mf,
@@ -856,6 +876,8 @@ naomi_model_frame <- function(area_merged,
             rita_param = rita_param,
             logit_nu_mean = logit_nu_mean,
             logit_nu_sd = logit_nu_sd,
+            foreign_art_eta2 = foreign_art_eta2,
+            foreign_art_R = foreign_art_R,
             M = M,
             Q = Q)
 
