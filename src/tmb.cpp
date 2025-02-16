@@ -1061,7 +1061,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> anc_already_art_t3(anc_plhiv_t3 * anc_alpha_t3);
 
 
-    vector<Type> prop_art_ij_t3((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art_t3));  // Note: using same ART attendance as T3
+    vector<Type> prop_art_ij_t3((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art_t3));
     vector<Type> population_ij_t3(Xart_idx * population_t3);
     vector<Type> artnum_ij_t3(population_ij_t3 * prop_art_ij_t3);
 
@@ -1171,6 +1171,25 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> infections_t4(lambda_t4 * (population_t4 - plhiv_t4));
 
+    // Note: currently assuming same district effects parameters from t2 for t4
+    vector<Type> mu_anc_rho_t4(logit(rho_t4) +
+			       logit_anc_rho_t4_offset +
+			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
+			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
+    vector<Type> anc_rho_t4(invlogit(mu_anc_rho_t4));
+    
+    vector<Type> mu_anc_alpha_t4(mu_alpha_t4 +
+				 logit_anc_alpha_t4_offset +
+				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
+				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
+    vector<Type> anc_alpha_t4(invlogit(mu_anc_alpha_t4));
+    
+    vector<Type> anc_clients_t4(population_t4 * exp(log_asfr_t4_offset + mu_asfr));
+    vector<Type> anc_plhiv_t4(anc_clients_t4 * anc_rho_t4);
+    vector<Type> anc_already_art_t4(anc_plhiv_t4 * anc_alpha_t4);
+
+
+    vector<Type> prop_art_ij_t4((Xart_idx * prop_art_t3) * (Xart_gamma * gamma_art_t3)); // Note: using same ART attendance as T3
     vector<Type> population_ij_t4(Xart_idx * population_t4);
     vector<Type> artnum_ij_t4(population_ij_t4 * prop_art_ij_t4);
 
@@ -1182,24 +1201,6 @@ Type objective_function<Type>::operator() ()
     vector<Type> artattend_t4_out(A_out * (A_artattend_mf * artnum_ij_t4));
     vector<Type> artattend_ij_t4_out(A_art_reside_attend * artnum_ij_t4);
     vector<Type> untreated_plhiv_num_t4_out(plhiv_t4_out - artnum_t4_out);
-
-    // Note: currently assuming same district effects parameters from t2 for t4
-    vector<Type> mu_anc_rho_t4(logit(rho_t4) +
-			       logit_anc_rho_t4_offset +
-			       X_ancrho * vector<Type>(beta_anc_rho + beta_anc_rho_t2) +
-			       Z_ancrho_x * vector<Type>(ui_anc_rho_x + ui_anc_rho_xt));
-    vector<Type> anc_rho_t4(invlogit(mu_anc_rho_t4));
-
-    vector<Type> mu_anc_alpha_t4(mu_alpha_t4 +
-				 logit_anc_alpha_t4_offset +
-				 X_ancalpha * vector<Type>(beta_anc_alpha + beta_anc_alpha_t2) +
-				 Z_ancalpha_x * vector<Type>(ui_anc_alpha_x + ui_anc_alpha_xt));
-    vector<Type> anc_alpha_t4(invlogit(mu_anc_alpha_t4));
-
-    vector<Type> anc_clients_t4(population_t4 * exp(log_asfr_t4_offset + mu_asfr));
-    vector<Type> anc_plhiv_t4(anc_clients_t4 * anc_rho_t4);
-    vector<Type> anc_already_art_t4(anc_plhiv_t4 * anc_alpha_t4);
-
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
     vector<Type> plhiv_attend_ij_t4((Xart_idx * plhiv_t4) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T3
