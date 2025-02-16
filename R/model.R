@@ -948,66 +948,7 @@ select_naomi_data <- function(
   use_survey_aggregate = FALSE,
   spec_program_data = NULL) {
 
-  stopifnot(is(naomi_mf, "naomi_mf"))
-
-  ## Check anc_testing and art_number against Spectrum inputs.
-  ## Return NA if spec_program_data not provided
-  anc_testing_spectrum_aligned <- NA
-  art_number_spectrum_aligned <- NA
-
-  if (!is.null(spec_program_data)) {
-    stopifnot(is(spec_program_data, "spec_program_data"))
-
-    if (!is.null(anc_testing)) {
-
-      anc_merged <- anc_testing %>%
-        dplyr::left_join(
-          dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
-          by = "area_id"
-        ) %>%
-        tidyr::pivot_longer(dplyr::starts_with("anc"),
-                            names_to = "indicator",
-                            values_to = "value_naomi") %>%
-        dplyr::count(spectrum_region_code, year, indicator,
-                     wt = value_naomi, name = "value_naomi") %>%
-        dplyr::inner_join(
-          spec_program_data$anc_testing %>%
-          dplyr::rename("value_spectrum" = "value"),
-          by = c("spectrum_region_code", "indicator", "year")
-        )
-
-      anc_testing_spectrum_aligned <- all(anc_merged$value_naomi == anc_merged$value_spectrum)
-
-    } else {
-      ## If no ANC testing data, return TRUE
-      anc_testing_spectrum_aligned <- TRUE
-    }
-
-    if (!is.null(art_number)) {
-
-      art_merged <- art_number %>%
-        dplyr::left_join(
-          dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
-          by = "area_id"
-        ) %>%
-        dplyr::count(spectrum_region_code, sex, age_group, calendar_quarter,
-                     wt = art_current, name = "art_current_naomi") %>%
-        dplyr::inner_join(
-          spec_program_data$art_dec31 %>%
-          dplyr::mutate(
-            calendar_quarter = paste0("CY", year, "Q4"),
-            year = NULL
-          ),
-          by = c("spectrum_region_code", "sex", "age_group", "calendar_quarter")
-        )
-
-      art_number_spectrum_aligned <- all(art_merged$art_current_naomi == art_merged$art_dec31)
-
-    } else {
-      ## If no ANC testing data, return TRUE
-      art_number_spectrum_aligned <- TRUE
-    }
-  }
+  stopifnot(methods::is(naomi_mf, "naomi_mf"))
 
   common_surveys <- intersect(artcov_survey_ids_t1, vls_survey_ids_t1)
   if (length(common_surveys)) {
@@ -1231,9 +1172,7 @@ select_naomi_data <- function(
                        artnum_calendar_quarter_t2 = artnum_calendar_quarter_t2,
                        artnum_calendar_quarter_t3 = artnum_calendar_quarter_t3,
                        anc_prev_year_t1 = anc_artcov_year_t1,
-                       anc_prev_year_t2 = anc_artcov_year_t2,
-                       art_number_spectrum_aligned = art_number_spectrum_aligned,
-                       anc_testing_spectrum_aligned = anc_testing_spectrum_aligned)
+                       anc_prev_year_t2 = anc_artcov_year_t2)
 
   naomi_mf$data_options <- data_options
 
@@ -1278,7 +1217,7 @@ update_mf_offsets <- function(naomi_mf,
                               artcov_dat = NULL,
                               vls_dat = NULL) {
 
-  stopifnot(is(naomi_mf, "naomi_mf"))
+  stopifnot(methods::is(naomi_mf, "naomi_mf"))
 
   get_idx <- function(mf, df) {
 
@@ -1662,7 +1601,7 @@ anc_testing_clients_mf <- function(year, anc_model_mf) {
 artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
   stopifnot(length(calendar_quarter) <= 1)
-  stopifnot(is(naomi_mf, "naomi_mf"))
+  stopifnot(methods::is(naomi_mf, "naomi_mf"))
 
   if(is.null(calendar_quarter) || is.null(art_number)) {
     ## No number on ART data or no year specified
@@ -1689,9 +1628,10 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     }
 
     if(!is.null(art_number)) {
-      ## No number on ART data and no year specified
+      ## Number on ART data available but no year
       raw_input  <- aggregate_art(art_number, naomi_mf$areas) %>%
         dplyr::mutate(
+          art_current = art_current_adjusted,
           source = "programme",
           naomi_input = FALSE) %>%
         dplyr::select(area_id, sex, age_group, art_current, calendar_quarter,
@@ -1731,7 +1671,8 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
     # Aggregate program data
     aggregated_artnum <- aggregate_art(art_number, naomi_mf$areas) %>%
       dplyr::mutate(
-        quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
+        quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
+        art_current = art_current_adjusted,
       ) %>%
       dplyr::filter(!is.na(art_current))
 

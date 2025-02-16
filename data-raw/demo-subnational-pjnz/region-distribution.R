@@ -17,14 +17,14 @@ pop_reg <- df %>%
   count(calendar_quarter, area_id1, area_name1, wt = population, name = "population") %>%
   group_by(calendar_quarter) %>%
   mutate(prop = population / sum(population)) %>%
-  pivot_wider(calendar_quarter, names_from = area_name1, values_from = prop)
+  pivot_wider(id_cols = calendar_quarter, names_from = area_name1, values_from = prop)
 
 art_number %>%
   left_join(st_drop_geometry(areas_wide)) %>%
   count(calendar_quarter, area_id1, area_name1, wt = art_current, name = "art_current") %>%
   group_by(calendar_quarter) %>%
   mutate(prop = art_current / sum(art_current)) %>%
-  pivot_wider(calendar_quarter, names_from = area_name1, values_from = prop)
+  pivot_wider(id_cols = calendar_quarter, names_from = area_name1, values_from = prop)
 
 anc_testing %>%
   left_join(st_drop_geometry(areas_wide)) %>%
@@ -32,7 +32,7 @@ anc_testing %>%
   summarise(across(starts_with("anc"), sum)) %>%
   group_by(year) %>%
   mutate(prop = anc_clients / sum(anc_clients)) %>%
-  pivot_wider(year, names_from = area_name1, values_from = prop)
+  pivot_wider(id_cols = year, names_from = area_name1, values_from = prop)
 
 anc_testing %>%
   left_join(st_drop_geometry(areas_wide)) %>%
@@ -40,7 +40,7 @@ anc_testing %>%
   summarise(across(starts_with("anc"), sum)) %>%
   group_by(year) %>%
   mutate(prop = anc_known_pos / sum(anc_known_pos)) %>%
-  pivot_wider(year, names_from = area_name1, values_from = prop)
+  pivot_wider(id_cols = year, names_from = area_name1, values_from = prop)
 
 anc_testing %>%
   left_join(st_drop_geometry(areas_wide)) %>%
@@ -91,7 +91,7 @@ anc_testing_zone <- anc_testing %>%
     by = "area_id"
   ) %>%
   group_by(area_id = area_id2, area_name = area_name2, age_group, year) %>%
-  summarise(across(starts_with("anc"), sum), .groups = "drop")
+  summarise(across(c(starts_with("anc"), "births_facility"), sum), .groups = "drop")
 
 
 art_number_zone <- art_number %>%

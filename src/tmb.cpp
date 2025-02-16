@@ -1171,7 +1171,6 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> infections_t4(lambda_t4 * (population_t4 - plhiv_t4));
 
-    vector<Type> prop_art_ij_t4((Xart_idx * prop_art_t4) * (Xart_gamma * gamma_art_t3));  // Note: using same ART attendance as T3
     vector<Type> population_ij_t4(Xart_idx * population_t4);
     vector<Type> artnum_ij_t4(population_ij_t4 * prop_art_ij_t4);
 
@@ -1203,7 +1202,7 @@ Type objective_function<Type>::operator() ()
 
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t4((Xart_idx * plhiv_t4) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T2
+    vector<Type> plhiv_attend_ij_t4((Xart_idx * plhiv_t4) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T3
     vector<Type> plhiv_attend_t4_out(A_out * (A_artattend_mf * plhiv_attend_ij_t4));
     vector<Type> untreated_plhiv_attend_t4_out(plhiv_attend_t4_out - artattend_t4_out);
 
@@ -1257,6 +1256,17 @@ Type objective_function<Type>::operator() ()
     REPORT(anc_tested_neg_t4_out);
     REPORT(anc_rho_t4_out);
     REPORT(anc_alpha_t4_out);
+
+    REPORT(anc_clients_t4_out);
+    REPORT(anc_plhiv_t4_out);
+    REPORT(anc_already_art_t4_out);
+    REPORT(anc_art_new_t4_out);
+    REPORT(anc_known_pos_t4_out);
+    REPORT(anc_tested_pos_t4_out);
+    REPORT(anc_tested_neg_t4_out);
+    REPORT(anc_rho_t4_out);
+    REPORT(anc_alpha_t4_out);
+
 
     // Projection to time 5
     // Only PLHIV, ART and infections calculated. No ANC or awareness indicators

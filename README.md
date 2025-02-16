@@ -1,6 +1,7 @@
 ## Naomi <img src='images/naomi_hex.png' align="right" height="139" />
 
-[![Travis build status](https://travis-ci.org/mrc-ide/naomi.svg?branch=master)](https://travis-ci.org/mrc-ide/naomi)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check](https://github.com/mrc-ide/naomi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mrc-ide/naomi/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/mrc-ide/naomi/branch/master/graph/badge.svg)](https://codecov.io/gh/mrc-ide/naomi?branch=master)
 
 Naomi model for subnational HIV estimates
@@ -8,8 +9,13 @@ Naomi model for subnational HIV estimates
 ### Installation
 
 The package is not available from [CRAN](https://cran.r-project.org/).
-Instead, the latest version (of this Github repo) may be installed by running the following code from R.
+Instead, install the compiled version from the mrc-ide universe.
 
+```
+install.packages("naomi", repos = "https://mrc-ide.r-universe.dev")
+```
+
+Install from GitHub to install from source.
 ```
 # install.packages("devtools") # Uncomment this line if devtools is not yet installed
 devtools::install_github("mrc-ide/naomi")

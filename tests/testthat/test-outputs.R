@@ -132,7 +132,7 @@ test_that("subset_output_package() saves expected output package", {
   area_id_sub <- c("MWI_1_2_demo", "MWI_2_2_demo")
   sex_sub <- "both"
   age_group_sub <- c("Y000_014", "Y015_024", "Y050_999")
-  calendar_quarter_sub <- c("CY2018Q4", "CY2019Q2")
+  calendar_quarter_sub <- c("CY2023Q4", "CY2024Q3")
   indicator_sub <- c("prevalence", "plhiv")
 
   sub_keep_file <- tempfile(fileext = ".zip")
@@ -164,16 +164,21 @@ test_that("subset_output_package() saves expected output package", {
   expect_setequal(indicator_sub, sub_keep_out$indicators$indicator)
 
 
+  ## Test that can **drop** selected indicators (rather than keep)
+
   sub_drop_file <- tempfile(fileext = ".zip")
 
-  sub_drop_return <- subset_output_package(out$path,
-                                           sub_drop_file,
-                                           area_id = area_id_sub,
-                                           sex = sex_sub,
-                                           age_group = age_group_sub,
-                                           calendar_quarter = calendar_quarter_sub,
-                                           indicator = indicator_sub,
-                                           drop = TRUE)
+  expect_warning(
+    sub_drop_return <- subset_output_package(out$path,
+                                             sub_drop_file,
+                                             area_id = area_id_sub,
+                                             sex = sex_sub,
+                                             age_group = age_group_sub,
+                                             calendar_quarter = calendar_quarter_sub,
+                                             indicator = indicator_sub,
+                                             drop = TRUE),
+    "Required indicators not in output: plhiv"
+  )
 
   sub_drop_out <- read_output_package(sub_drop_file)
 
@@ -191,8 +196,8 @@ test_that("can generate summary report from a qs file", {
                                  quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("demo_mwi2019_region-pjnz.zip", content)))
+  expect_true(any(grepl("DEMO2020PHIA", content)))
+  expect_true(any(grepl("demo_mwi2024_region-pjnz.zip", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
@@ -203,8 +208,8 @@ test_that("can generate summary report from zip file", {
   generate_output_summary_report(t, zip$path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("demo_mwi2019_region-pjnz.zip", content)))
+  expect_true(any(grepl("DEMO2020PHIA", content)))
+  expect_true(any(grepl("demo_mwi2024_region-pjnz.zip", content)))
   expect_true(any(grepl("Central", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
@@ -239,10 +244,15 @@ test_that("summary report can be translated", {
   ## Styling correct - all non English sections are hidden
   ## Depending on where this is generated the CSS might be included in plain
   ## text (buildkite) or as encoded JSON (locally). We check for 1 or the other
+  ## On windows the style is generated on a single line, on linux and max with
+  ## newlines
   if (any(grepl('#translate[lang="en"]', content, fixed = TRUE))) {
     style_line <- which(grepl('#translate[lang="en"]', content,
                               fixed = TRUE))
-    expect_equal(content[style_line + 1], "display: block;")
+    expect_equal(length(style_line), 1)
+    has_block_style <- grepl("display: block\\;", content[style_line]) ||
+      content[style_line + 1] == "display: block;"
+    expect_true(has_block_style)
   } else {
     en <- "%23translate%5Blang%3D%22en%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
     expect_true(any(grepl(en, content, fixed = TRUE)))
@@ -261,10 +271,15 @@ test_that("summary report can be translated", {
   ## Styling correct - all non English sections are hidden
   ## Depending on where this is generated the CSS might be included in plain
   ## text (buildkite) or as encoded JSON (locally). We check for 1 or the other
+  ## On windows the style is generated on a single line, on linux and max with
+  ## newlines
   if (any(grepl('#translate[lang="fr"]', content, fixed = TRUE))) {
     style_line <- which(grepl('#translate[lang="fr"]', content,
                               fixed = TRUE))
-    expect_equal(content[style_line + 1], "display: block;")
+    expect_equal(length(style_line), 1)
+    has_block_style <- grepl("display: block\\;", content[style_line]) ||
+      content[style_line + 1] == "display: block;"
+    expect_true(has_block_style)
   } else {
     fr <- "%23translate%5Blang%3D%22fr%22%5D%20%7B%0Adisplay%3A%20block%3B%0A%7D"
     expect_true(any(grepl(fr, content, fixed = TRUE)))
@@ -275,15 +290,15 @@ test_that("navigator checklist returns expected results", {
 
   model_output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
 
-  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
-                          "ANC_is_Spectrum"            = FALSE,
+  expected_checklist <- c("ART_is_Spectrum"            = NA,
+                          "ANC_is_Spectrum"            = NA,
                           "Package_created"            = TRUE,
                           "Package_has_all_data"       = TRUE,
                           "Opt_recent_qtr"             = FALSE,
                           "Opt_future_proj_qtr"        = FALSE,
                           "Opt_area_ID_selected"       = TRUE,
                           "Opt_calendar_survey_match"  = TRUE,
-                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_recent_survey_only"     = TRUE,
                           "Opt_ART_coverage"           = TRUE,
                           "Opt_ANC_data"               = TRUE,
                           "Opt_ART_data"               = TRUE,
@@ -307,14 +322,12 @@ test_that("navigator checklist returns expected results", {
 
   adj_output <- model_output$output_package
 
-  adj_output$fit$model_options$calendar_quarter_t2 <- "CY2021Q4"
-  adj_output$fit$model_options$calendar_quarter_t3 <- "CY2022Q3"
+  adj_output$fit$model_options$calendar_quarter_t2 <- "CY2024Q4"
+  adj_output$fit$model_options$calendar_quarter_t3 <- "CY2025Q3"
   adj_output$fit$model_options$artattend_t2 <- TRUE
 
-  adj_output$fit$data_options$prev_survey_ids <- "DEMO2016PHIA"
-  adj_output$fit$data_options$prev_survey_quarters <- "CY2016Q1"
-  adj_output$fit$data_options$art_number_spectrum_aligned <- TRUE
-  adj_output$fit$data_options$anc_testing_spectrum_aligned <- TRUE
+  adj_output$fit$data_options$prev_survey_ids <- "DEMO2020PHIA"
+  adj_output$fit$data_options$prev_survey_quarters <- "CY2020Q3"
 
   adj_output$fit$calibration_options$spectrum_population_calibration <- "subnational"
   adj_output$fit$calibration_options$spectrum_artnum_calibration_level <- "subnational"
@@ -340,9 +353,7 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_data_opts_output$fit$data_options <- NULL
 
-  expect_chklst_no_data_opts<- c("ART_is_Spectrum"            = NA,
-                                 "ANC_is_Spectrum"            = NA,
-                                 "Package_created"            = TRUE,
+  expect_chklst_no_data_opts<- c("Package_created"            = TRUE,
                                  "Package_has_all_data"       = TRUE,
                                  "Opt_recent_qtr"             = FALSE,
                                  "Opt_future_proj_qtr"        = FALSE,
@@ -374,15 +385,13 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_model_opts_output$fit$model_options <- NULL
 
-  expect_chklst_no_model_opts <- c("ART_is_Spectrum"            = FALSE,
-                                   "ANC_is_Spectrum"            = FALSE,
-                                   "Package_created"            = TRUE,
+  expect_chklst_no_model_opts <- c("Package_created"            = TRUE,
                                    "Package_has_all_data"       = TRUE,
                                    "Opt_recent_qtr"             = NA,
                                    "Opt_future_proj_qtr"        = NA,
                                    "Opt_area_ID_selected"       = NA,
                                    "Opt_calendar_survey_match"  = NA,
-                                   "Opt_recent_survey_only"     = FALSE,
+                                   "Opt_recent_survey_only"     = TRUE,
                                    "Opt_ART_coverage"           = TRUE,
                                    "Opt_ANC_data"               = TRUE,
                                    "Opt_ART_data"               = TRUE,
@@ -408,15 +417,13 @@ test_that("navigator checklist returns results if options lists missing", {
 
   no_calib_opts_output$fit$calibration_options <- NULL
 
-  expect_chklst_no_calib_opts <- c("ART_is_Spectrum"            = FALSE,
-                                   "ANC_is_Spectrum"            = FALSE,
-                                   "Package_created"            = TRUE,
+  expect_chklst_no_calib_opts <- c( "Package_created"            = TRUE,
                                    "Package_has_all_data"       = TRUE,
                                    "Opt_recent_qtr"             = FALSE,
                                    "Opt_future_proj_qtr"        = FALSE,
                                    "Opt_area_ID_selected"       = TRUE,
                                    "Opt_calendar_survey_match"  = TRUE,
-                                   "Opt_recent_survey_only"     = FALSE,
+                                   "Opt_recent_survey_only"     = TRUE,
                                    "Opt_ART_coverage"           = TRUE,
                                    "Opt_ANC_data"               = TRUE,
                                    "Opt_ART_data"               = TRUE,
@@ -481,7 +488,7 @@ test_that("navigator checklist returns results for uncalibrated model output", {
                           "Opt_future_proj_qtr"        = FALSE,
                           "Opt_area_ID_selected"       = TRUE,
                           "Opt_calendar_survey_match"  = TRUE,
-                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_recent_survey_only"     = TRUE,
                           "Opt_ART_coverage"           = TRUE,
                           "Opt_ANC_data"               = TRUE,
                           "Opt_ART_data"               = TRUE,
@@ -509,6 +516,37 @@ test_that("navigator checklist returns results for uncalibrated model output", {
   expect_true(checklist_adj$TrueFalse[checklist_adj$NaomiCheckPermPrimKey == "Cal_Population"])
 })
 
+test_that("navigator checklist runs with multiple artcov surveys", {
+  # This test checks issue-122 has been resolved
+  out <- read_hintr_output(a_hintr_output$model_output_path)
+  out$output_package$fit$data_options$artcov_survey_ids <-
+    c(out$output_package$fit$data_options$artcov_survey_ids, "other")
+  checklist <- tempfile(fileext = ".csv")
+  write_navigator_checklist(out$output_package, checklist)
+  checklist <- utils::read.csv(checklist)
+
+  expected_checklist <- c("ART_is_Spectrum"            = FALSE,
+                          "ANC_is_Spectrum"            = FALSE,
+                          "Package_created"            = TRUE,
+                          "Package_has_all_data"       = TRUE,
+                          "Opt_recent_qtr"             = FALSE,
+                          "Opt_future_proj_qtr"        = FALSE,
+                          "Opt_area_ID_selected"       = TRUE,
+                          "Opt_calendar_survey_match"  = TRUE,
+                          "Opt_recent_survey_only"     = FALSE,
+                          "Opt_ART_coverage"           = TRUE,
+                          "Opt_ANC_data"               = TRUE,
+                          "Opt_ART_data"               = TRUE,
+                          "Opt_ART_attendance_yes"     = FALSE,
+                          "Model_fit"                  = TRUE,
+                          "Cal_Population"             = FALSE,
+                          "Cal_PLHIV"                  = FALSE,
+                          "Cal_ART"                    = FALSE,
+                          "Cal_KOS"                    = FALSE,
+                          "Cal_new_infections"         = FALSE,
+                          "Cal_method"                 = FALSE)
+})
+
 test_that("meta_indicator table contains same indicators as outputs", {
   expect_setequal(a_output_full$meta_indicator$indicator,
                   a_output_full$indicators$indicator)
@@ -523,7 +561,7 @@ test_that("one input and output for each area_id/age/sex/indicator/period combin
 
   dups <- inputs_outputs %>%
     dplyr::group_by(area_id, sex, age_group, calendar_quarter, indicator) %>%
-    dplyr::summarise(n = dplyr::n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::filter(indicator != "prevalence", n != 2)
 
   expect_equal(nrow(dups), 0)
@@ -538,12 +576,12 @@ test_that("writing output package translates labels", {
   ## area_level_label comes from input data (not translated)
   expect_true("Prévalence du VIH" %in% read$indicators$indicator_label)
   expect_setequal(read$indicators$quarter_label,
-                  c("Mars 2016", "Décembre 2018", "Juin 2019", "Septembre 2022", "Septembre 2023"))
+                  c("Septembre 2020", "Décembre 2023", "Septembre 2024", "Septembre 2025", "Septembre 2026"))
   ## age group label currently doesn't have translations
   expect_true("all ages" %in% read$indicators$age_group_label)
 
   expect_setequal(read$art_attendance$quarter_label,
-                  c("Mars 2016", "Décembre 2018"))
+                  c("Septembre 2020", "Décembre 2023"))
   expect_true("all ages" %in% read$art_attendance$age_group_label)
 })
 
@@ -570,8 +608,8 @@ test_that("can generate comparison report from a qs file", {
                              quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("DEMO2020PHIA", content)))
+  expect_true(any(grepl("Naomi estimate CY2020Q3", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
@@ -581,8 +619,8 @@ test_that("can generate summary report from zip file", {
   generate_comparison_report(t, zip$path, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
-  expect_true(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("DEMO2020PHIA", content)))
+  expect_true(any(grepl("Naomi estimate CY2020Q3", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
@@ -600,9 +638,8 @@ test_that("can generate comparison report with only 1 survey chosen", {
   generate_comparison_report(t, out, quiet = TRUE)
   expect_true(file.size(t) > 2000)
   content <- brio::readLines(t)
-  expect_false(any(grepl("DEMO2016PHIA, DEMO2015DHS", content)))
-  expect_true(any(grepl("DEMO2016PHIA", content)))
-  expect_true(any(grepl("Naomi estimate CY2016Q1", content)))
+  expect_true(any(grepl("DEMO2020PHIA", content)))
+  expect_true(any(grepl("Naomi estimate CY2020Q3", content)))
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
@@ -621,7 +658,7 @@ test_that("can generate comparison report without survey ART coverage", {
   html <- rvest::read_html(t, encoding = "UTF-8")
   expect_length(rvest::html_element(html, ".prevalence-barchart"), 2)
   expect_length(rvest::html_element(html, ".prevalence-scatter1"), 2)
-  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 0) ## Only 1 survey now; this plot is not shown
   expect_length(rvest::html_element(html, ".prevalence-plotly"), 2)
   expect_length(rvest::html_element(html, ".art-barchart"), 0)
   expect_length(rvest::html_element(html, ".art-scatter"), 0)
@@ -658,7 +695,7 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
   output$output_package$inputs_outputs <-
     output$output_package$inputs_outputs %>%
     dplyr::mutate(calendar_quarter = dplyr::case_when(
-      indicator == "art_coverage" & calendar_quarter == "CY2016Q1" ~ "CY2015Q1",
+      indicator == "art_coverage" & calendar_quarter == "CY2020Q3" ~ "CY2019Q3",
       TRUE ~ calendar_quarter))
 
   out <- tempfile(fileext = ".qs")
@@ -671,7 +708,7 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
   html <- rvest::read_html(t, encoding = "UTF-8")
   expect_length(rvest::html_element(html, ".prevalence-barchart"), 2)
   expect_length(rvest::html_element(html, ".prevalence-scatter1"), 2)
-  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 2)
+  expect_length(rvest::html_element(html, ".prevalence-scatter1B"), 0)
   expect_length(rvest::html_element(html, ".prevalence-plotly"), 2)
   expect_length(rvest::html_element(html, ".art-barchart"), 0)
   expect_length(rvest::html_element(html, ".art-scatter"), 0)

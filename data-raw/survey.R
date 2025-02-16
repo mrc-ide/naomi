@@ -3,6 +3,8 @@ library(sf)
 library(rdhs)
 library(naomi.utils)
 library(here)
+library(rmapshaper)
+library(haven)
 
 devtools::load_all()
 
@@ -11,9 +13,13 @@ devtools::load_all()
 #'    * Accessed: 30 August 2019
 #'    * Accessed via the package rdhs: https://CRAN.R-project.org/package=rdhs
 #' 2. MPHIA 2015-16
-#'    * Available from: https://phia-data.icap.columbia.edu/files#malawi
+#'    * Available from: https://phia-data.icap.columbia.edu/datasets?country_id=3
 #'    * Accessed: 1 March 2019
 #'    * Note: cluster coordinates not yet available. IMPUTED for demonstration.
+#' 3. MPHIA 2020-21
+#'    * Available from: https://phia-data.icap.columbia.edu/datasets?country_id=3
+#'    * Accessed: 21 Aug 2024
+#'    * Note: cluster coordinates IMPUTED for demonstration.
 #'
 
 
@@ -35,9 +41,6 @@ surveys <- dhs_surveys(countryIds = "MW") %>%
 
 #' DHS survey boundaries dataset
 #' * DHS survey boundary shapefiles: https://spatialdata.dhsprogram.com/boundaries/#view=table&countryId=MW
-
-paths <- paste0("~/Data/shape files/DHS/", surveys$SurveyId, ".zip") %>%
-  setNames(surveys$survey_id)
 
 geom_raw <- Map(download_boundaries, surveyId = surveys$SurveyId, method = "sf") %>%
   unlist(recursive = FALSE)
@@ -77,7 +80,11 @@ geom <- geom %>%
 
 dhs_areas_wide <- surveys %>%
   select(iso3, survey_id) %>%
-  inner_join(areas_wide %>% mutate(iso3 = "MWI")) %>%
+  inner_join(
+    areas_wide %>%
+      mutate(iso3 = "MWI"),
+    relationship = "many-to-many"
+  ) %>%
   left_join(demo_area_boundaries) %>%
   st_as_sf %>%
   rmapshaper::ms_simplify(1.0) %>%
@@ -110,7 +117,8 @@ check  <- areas_survey_region %>%
     filter(iso3 %in% areas_wide$iso3)
   )
 
-check %>% filter(is.na(area_id0))
+check %>%
+  filter(is.na(area_id0))
 
 
 #' MW2015DHS HR dataset has four city REGCODES that do not appear in boundaries:
@@ -206,7 +214,7 @@ extract_clusters <- function(path, survey_id, REGVAR){
     transmute(survey_id,
               cluster_id = hv001,
               survey_region_id = .data[[REGVAR]],
-              res_type = factor(hv025, 1:2, c("urban", "rural"))) %>%
+              res_type = factor(haven::zap_labels(hv025), 1:2, c("urban", "rural"))) %>%
     distinct
 
   val
@@ -269,9 +277,12 @@ clusters <- clusters %>%
   mutate(regcode_match = if_else(is.na(longitude), NA_integer_, survey_region_id)) %>%
   left_join(
     areas_survey_region %>%
-    select(survey_id, regcode_match = REGCODE, area_id) %>%
-    left_join(demo_area_boundaries) %>%
-    rename(geometry_area = geometry)
+      select(survey_id, regcode_match = REGCODE, area_id) %>%
+      left_join(
+        demo_area_boundaries
+      ) %>%
+      rename(geometry_area = geometry),
+    relationship = "many-to-many"
   ) %>%
   mutate(distance = Map(st_distance, geometry, geometry_area) %>% unlist)
 
@@ -445,27 +456,21 @@ dhs_biomarker <- individual %>%
 
 #' ### Load datasets
 
-mphia_path <- "~/Data/household surveys/PHIA/datasets/Malawi/datasets/"
+mphia_path <- "~/Data/household surveys/PHIA/datasets/MWI/datasets/"
+mphia_file <- file.path(mphia_path, "MPHIA 2015-2016 Household Interview and Biomarker Datasets v2.0 (DTA).zip")
 
-bio <- file.path(mphia_path, "02_MPHIA 2015-2016 Adult Biomarker Dataset (DTA).zip") %>%
-  rdhs::read_zipdata(readfn = haven::read_dta)
-
-ind <- file.path(mphia_path, "02_MPHIA 2015-2016 Adult Interview Dataset (DTA).zip") %>%
-  rdhs::read_zipdata(readfn = haven::read_dta)
-
-chbio <- file.path(mphia_path, "05_MPHIA 2015-2016 Child Biomarker Dataset (DTA).zip") %>%
-  rdhs::read_zipdata(readfn = haven::read_dta)
-
-chind <- file.path(mphia_path, "05_MPHIA 2015-2016 Child Interview Dataset (DTA).zip") %>%
-  rdhs::read_zipdata(readfn = haven::read_dta)
+bio <- rdhs::read_zipdata(mphia_file, pattern = "mphia2015adultbio.dta", readfn = haven::read_dta)
+ind <- rdhs::read_zipdata(mphia_file, pattern = "mphia2015adultind.dta", readfn = haven::read_dta)
+chbio <- rdhs::read_zipdata(mphia_file, pattern = "mphia2015childbio.dta", readfn = haven::read_dta)
+chind <- rdhs::read_zipdata(mphia_file, pattern = "mphia2015childind.dta", readfn = haven::read_dta)
 
 phia <- bio %>%
-  left_join(ind %>% select(personid, zone, urban, surveystdt, intwt0)) %>%
+  left_join(ind %>% select(personid, zone, urban, intwt0)) %>%
   mutate(survey_id = "DEMO2016PHIA",
          cluster_id = paste(varstrat, varunit))
 
 chphia <- chbio %>%
-  left_join(chind %>% select(personid, zone, urban, surveystdt, intwt0)) %>%
+  left_join(chind %>% select(personid, zone, urban, intwt0)) %>%
   mutate(survey_id = "DEMO2016PHIA",
          cluster_id = paste(varstrat, varunit))
 
@@ -601,7 +606,7 @@ phia_individuals <-
       individual_id = personid,
       household = householdid,
       line = personid,
-      interview_cmc = cmc_date(surveystdt),
+      interview_cmc = NA,
       sex = factor(gender, 1:2, c("male", "female")),
       age,
       dob_cmc = NA,
@@ -614,7 +619,7 @@ phia_individuals <-
       individual_id = personid,
       household = householdid,
       line = personid,
-      interview_cmc = cmc_date(surveystdt),
+      interview_cmc = NA,
       sex = factor(gender, 1:2, c("male", "female")),
       age,
       dob_cmc = interview_cmc - agem,
@@ -682,20 +687,203 @@ phia_meta <- phia_individuals %>%
     ungroup()
 
 
+#' ## MPHIA 2020-21
+
+#' ### Load datasets
+
+mphia20_path <- "~/Data/household surveys/PHIA/datasets/MWI2020PHIA/datasets"
+mphia20_file <- file.path(mphia20_path, "MPHIA 2020-2021 Household Interview and Biomarker Data (DTA).zip")
+
+bio20 <- rdhs::read_zipdata(mphia20_file, pattern = "mphia2020adultbio.dta", readfn = haven::read_dta)
+ind20 <- rdhs::read_zipdata(mphia20_file, pattern = "mphia2020adultind.dta", readfn = haven::read_dta)
+
+phia20 <- bio %>%
+  left_join(ind %>% select(personid, zone, urban, intwt0)) %>%
+  mutate(survey_id = "DEMO2020PHIA",
+         cluster_id = paste(varstrat, varunit))
+
+#' ### Survey regions dataset
+#'
+#' Note: In MoH classifications, Mulanje is part of the South-East Zone.
+#'       In MPHIA, it is allocated to South-West Zone.
+#'
+
+demo_area_survey_region20 <- areas_wide %>%
+  mutate(
+    survey_id = "DEMO2020PHIA",
+    survey_region_name = case_when(
+      area_name4 %in% c("Lilongwe City", "Blantyre City") ~ area_name4,
+      area_name3 == "Mulanje" ~ "South-West",
+      TRUE ~ area_name2
+    )
+  ) %>%
+  left_join(
+    tibble(survey_region_id = mphia_zone_labels,
+           survey_region_name = names(mphia_zone_labels)),
+    by = "survey_region_name"
+  )
+
+demo_area_survey_region20 %>%
+  filter(is.na(survey_region_id))
+
+#' Lowest area containing each survey region
+
+phia20_regions <- demo_area_survey_region20 %>%
+  group_by(survey_id, survey_region_id, survey_region_name) %>%
+  mutate(
+    survey_region_area_id = case_when(
+      n_distinct(area_id4, na.rm = TRUE) == 1 ~ area_id4,
+      n_distinct(area_id3, na.rm = TRUE) == 1 ~ area_id3,
+      n_distinct(area_id2, na.rm = TRUE) == 1 ~ area_id2,
+      n_distinct(area_id1, na.rm = TRUE) == 1 ~ area_id1,
+      n_distinct(area_id0, na.rm = TRUE) == 1 ~ area_id0
+    )
+  ) %>%
+  distinct(survey_id, survey_region_id, survey_region_name, survey_region_area_id) %>%
+  ungroup()
+
+
+#' ### Survey cluster dataset
+#'
+#' Note: cluster geolocations are not available yet. Allocate clusters to
+#'       districts randomly proportional to district population size.
+#'
+
+
+#' PHIA survey cluster ids
+
+ge20 <- bind_rows(
+  phia20 %>% select(survey_id, cluster_id, urban, zone)
+) %>%
+  distinct(survey_id,
+           cluster_id,
+           res_type = factor(urban, 1:2, c("urban", "rural")),
+           survey_region_id = as.integer(zone))
+
+
+
+#' Aggregate area_ids and population size by survey regions
+
+area_sample20 <- demo_population_agesex %>%
+  filter(source == "Census 2018") %>%
+  interpolate_population_agesex(calendar_quarters = "CY2020Q3") %>%
+  inner_join(
+    get_age_groups() %>%
+    filter(age_group_start >= 15,
+           age_group_start + age_group_span < 65)
+  ) %>%
+  left_join(demo_area_survey_region20 %>%
+            select(area_id, survey_id, survey_region_id)) %>%
+  count(area_id, survey_id, survey_region_id, wt = population, name = "pop15to64") %>%
+  group_by(survey_id, survey_region_id) %>%
+  summarise(area_ids = list(area_id),
+            area_pops = list(pop15to64),
+            .groups = "drop")
+
+set.seed(3261739)
+phia20_clusters <- ge20 %>%
+  left_join(area_sample20) %>%
+  mutate(
+    geoloc_area_id = Map(sample2, area_ids, 1, TRUE, area_pops) %>% unlist,
+    area_ids = NULL,
+    area_pops = NULL
+  ) %>%
+  ungroup()
+
+
+
+#' Check to confirm area_id is in correct zone
+phia20_clusters %>%
+  left_join(
+    areas_wide %>%
+    select(area_name2, area_id),
+    by = c("geoloc_area_id" = "area_id")
+  ) %>%
+  count(survey_region_id, area_name2)
+
+#' Number of clusters by district
+phia20_clusters %>%
+  count(survey_region_id, geoloc_area_id) %>%
+  arrange(n) %>%
+  as.data.frame %>%
+  left_join(demo_area_hierarchy %>% select(area_id, area_name),
+            by = c("geoloc_area_id" = "area_id"))
+
+
+#' ### Individuals dataset
+
+phia20_individuals <-
+  phia20 %>%
+  transmute(
+    survey_id,
+    cluster_id,
+    individual_id = personid,
+    household = householdid,
+    line = personid,
+    interview_cmc = NA,
+    sex = factor(gender, 1:2, c("male", "female")),
+    age,
+    dob_cmc = NA,
+    indweight = intwt0
+  ) %>%
+  mutate(age = as.integer(age),
+         indweight = indweight / mean(indweight, na.rm=TRUE))
+
+phia20_biomarker <-
+  phia20 %>%
+  filter(!is.na(hivstatusfinal)) %>%
+  transmute(
+    survey_id,
+    individual_id = personid,
+    hivweight = btwt0,
+    hivstatus = case_when(hivstatusfinal == 1 ~ 1,
+                          hivstatusfinal == 2 ~ 0),
+    arv = case_when(arvstatus == 1 ~ 1,
+                    arvstatus == 2 ~ 0),
+    artself = case_when(artselfreported == 1 ~ 1,
+                        artselfreported == 2 ~ 0),
+    vls = case_when(vls == 1 ~ 1,
+                    vls == 2 ~ 0),
+    cd4 = cd4count,
+    recent = case_when(recentlagvlarv == 1 ~ 1,
+                       recentlagvlarv == 2 ~ 0)
+  ) %>%
+  mutate(hivweight = hivweight / mean(hivweight, na.rm = TRUE))
+
+
+phia20_meta <- phia20_individuals %>%
+  group_by(survey_id) %>%
+  summarise(female_age_min = min(if_else(sex == "female", age, NA_integer_), na.rm=TRUE),
+            female_age_max = max(if_else(sex == "female", age, NA_integer_), na.rm=TRUE),
+            male_age_min = min(if_else(sex == "male", age, NA_integer_), na.rm=TRUE),
+            male_age_max = max(if_else(sex == "male", age, NA_integer_), na.rm=TRUE)) %>%
+  mutate(iso3 = "MWI",
+         country = "Malawi",
+         survey_type = "PHIA",
+         survey_mid_calendar_quarter = recode(iso3, "MWI" = "CY2020Q3"),
+         fieldwork_start = recode(iso3, "MWI" = "2020-01-01"),
+         fieldwork_end   = recode(iso3, "MWI" = "2021-04-30")) %>%
+    ungroup()
+
+
+
 #' ## Combine DHS and PHIA dataset
 
-survey_meta <- bind_rows(dhs_meta, phia_meta)
+survey_meta <- bind_rows(dhs_meta, phia_meta, phia20_meta)
 survey_regions <- bind_rows(dhs_regions, phia_regions)
 survey_clusters <- bind_rows(
   dhs_clusters %>% mutate(cluster_id = as.character(cluster_id)),
-  phia_clusters
+  phia_clusters,
+  phia20_clusters
 )
 survey_individuals <- bind_rows(
   dhs_individuals %>% mutate_at(vars(cluster_id, individual_id, household, line), as.character),
-  phia_individuals)
+  phia_individuals,
+  phia20_individuals)
 survey_biomarker <- bind_rows(
   dhs_biomarker %>% mutate_at(vars(individual_id), as.character),
-  phia_biomarker)
+  phia_biomarker,
+  phia20_biomarker)
 
 
 #' ## Calculate survey indicators
@@ -708,6 +896,8 @@ survey_hiv_indicators <- calc_survey_hiv_indicators(
   survey_biomarker,
   demo_area_hierarchy)
 
+filter(survey_hiv_indicators, is.na(std_error))
+survey_hiv_indicators$std_error[is.na(survey_hiv_indicators$std_error)] <- 0.0
 
 #' ## Save datasets
 #'
@@ -740,6 +930,5 @@ write_csv(demo_survey_regions, here("inst/extdata/survey/demo_survey_regions.csv
 write_csv(demo_survey_clusters, here("inst/extdata/survey/demo_survey_clusters.csv"))
 write_csv(demo_survey_individuals, here("inst/extdata/survey/demo_survey_individuals.csv"))
 write_csv(demo_survey_biomarker, here("inst/extdata/survey/demo_survey_biomarker.csv"))
-
 
 write_csv(demo_survey_hiv_indicators, here("inst/extdata/demo_survey_hiv_indicators.csv"))

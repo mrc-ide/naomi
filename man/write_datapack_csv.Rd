@@ -4,7 +4,7 @@
 \alias{write_datapack_csv}
 \title{Export naomi outputs to PEPFAR Data Pack format}
 \usage{
-write_datapack_csv(naomi_output, path, psnu_level = NULL)
+write_datapack_csv(naomi_output, path, psnu_level = NULL, dmppt2_output = NULL)
 }
 \arguments{
 \item{naomi_output}{a naomi_output object.}
@@ -14,6 +14,9 @@ write_datapack_csv(naomi_output, path, psnu_level = NULL)
 \item{psnu_level}{area_level for PEPFAR PSNU to export. If NULL,
 first looks in lookup table for the correct area_level, and
 if not defaults to the highest level of the area hierarchy.}
+
+\item{dmppt2_output}{data frame containing the \emph{Datapack inputs}
+sheet of DMPPT2 output file.}
 }
 \description{
 Export naomi outputs to PEPFAR Data Pack format
