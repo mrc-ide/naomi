@@ -81,6 +81,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t1_out" = "untreated_plhiv_num",
                      "plhiv_attend_t1_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t1_out" = "untreated_plhiv_attend",
+                     "artnum_foreign_t1_out" = "art_foreign",
+                     "artprop_foreign_t1_out" = "artprop_foreign",
                      "lambda_t1_out" = "incidence",
                      "infections_t1_out" = "infections")
 
@@ -93,6 +95,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t2_out" = "untreated_plhiv_num",
                      "plhiv_attend_t2_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t2_out" = "untreated_plhiv_attend",
+                     "artnum_foreign_t2_out" = "art_foreign",
+                     "artprop_foreign_t2_out" = "artprop_foreign",                     
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
@@ -105,6 +109,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t3_out" = "untreated_plhiv_num",
                      "plhiv_attend_t3_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t3_out" = "untreated_plhiv_attend",
+                     "artnum_foreign_t3_out" = "art_foreign",
+                     "artprop_foreign_t3_out" = "artprop_foreign",                     
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
@@ -117,6 +123,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t4_out" = "untreated_plhiv_num",
                      "plhiv_attend_t4_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t4_out" = "untreated_plhiv_attend",
+                     "artnum_foreign_t4_out" = "art_foreign",
+                     "artprop_foreign_t4_out" = "artprop_foreign",                     
                      "lambda_t4_out" = "incidence",
                      "infections_t4_out" = "infections")
 
@@ -129,6 +137,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t5_out" = "untreated_plhiv_num",
                      "plhiv_attend_t5_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t5_out" = "untreated_plhiv_attend",
+                     "artnum_foreign_t5_out" = "art_foreign",
+                     "artprop_foreign_t5_out" = "artprop_foreign",                     
                      "lambda_t5_out" = "incidence",
                      "infections_t5_out" = "infections")
 
@@ -141,6 +151,8 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t6_out" = "untreated_plhiv_num",
                      "plhiv_attend_t6_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t6_out" = "untreated_plhiv_attend",
+                     "artnum_foreign_t6_out" = "art_foreign",
+                     "artprop_foreign_t6_out" = "artprop_foreign",                     
                      "lambda_t6_out" = "incidence",
                      "infections_t6_out" = "infections")
 

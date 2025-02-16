@@ -4,6 +4,11 @@
 
 * Add likelihood for ANC prevalence and ANC ART coverage at T3. Change ANC clients
   reference period from T2 to T3.
+  
+* Implement foreign ART attendance proportion. Model is the same as Thembisa 4.8 and
+  uses fixed values for the foreign ART attendance ratios. May in future add uncertainty 
+  about eta foreign ART attendance ratio parameter estimates.
+
 
 # naomi 2.10.9
 
