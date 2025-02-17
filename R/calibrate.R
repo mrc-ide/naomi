@@ -109,8 +109,10 @@ calibrate_outputs <- function(output,
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
     dplyr::filter(indicator %in%
-                    c("population", "plhiv", "art_current_residents", "art_current", "plhiv_attend", "untreated_plhiv_attend",
-                      "aware_plhiv_num", "unaware_plhiv_num", "aware_plhiv_attend", "unaware_plhiv_attend",
+                    c("population", "plhiv", "art_current_residents", "art_current", "art_foreign",
+                      "plhiv_attend", "untreated_plhiv_attend",
+                      "aware_plhiv_num", "unaware_plhiv_num",
+                      "aware_plhiv_attend", "unaware_plhiv_attend",
                       "infections")) %>%
     dplyr::inner_join(mf, by = c("area_id", "sex", "age_group")) %>%
     dplyr::select(area_id, indicator, tidyselect::all_of(group_vars), mean)
@@ -252,13 +254,14 @@ calibrate_outputs <- function(output,
 
     ## Calibrate PLHIV attending
     ## Note: aggregate based on calibrated values for valmean_wide$plhiv
+    ##   minus the number of art_foreign
 
     plhivattend_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                                   "sex_age_group")
 
     plhivattend_target <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
-      dplyr::summarise(plhivattend_target = sum(plhiv),
+      dplyr::summarise(plhivattend_target = sum(plhiv - art_foreign),
                        .groups = "drop")
 
     valmean_wide <- valmean_wide %>%
@@ -302,13 +305,14 @@ calibrate_outputs <- function(output,
 
     ## Calibrate number attending
     ## Note: aggregation based off calibrated values for valmean_wide$art_current_residents
+    ##   minus number of art_foreign
 
     artattend_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                                 "sex_age_group")
 
     artattend_target <- valmean_wide %>%
       dplyr::group_by_at(artattend_aggr_var) %>%
-      dplyr::summarise(artattend_target = sum(art_current_residents),
+      dplyr::summarise(artattend_target = sum(art_current_residents - art_foreign),
                        .groups = "drop")
 
     valmean_wide <- valmean_wide %>%

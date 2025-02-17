@@ -996,7 +996,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> artprop_foreign_t1_out(artnum_foreign_t1_out / artnum_t1_out);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t1((Xart_idx * plhiv_t1) * (Xart_gamma * gamma_art_t1));
+    vector<Type> plhiv_attend_ij_t1((Xart_idx * vector<Type>(plhiv_t1 - artnum_foreign_t1)) * (Xart_gamma * gamma_art_t1));
     vector<Type> plhiv_attend_t1_out(A_out * (A_artattend_mf * plhiv_attend_ij_t1));
     vector<Type> untreated_plhiv_attend_t1_out(plhiv_attend_t1_out - artattend_t1_out);
 
@@ -1027,7 +1027,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> artprop_foreign_t2_out(artnum_foreign_t2_out / artnum_t2_out);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t2((Xart_idx * plhiv_t2) * (Xart_gamma * gamma_art_t2));
+    vector<Type> plhiv_attend_ij_t2((Xart_idx * vector<Type>(plhiv_t2 - artnum_foreign_t2)) * (Xart_gamma * gamma_art_t2));
     vector<Type> plhiv_attend_t2_out(A_out * (A_artattend_mf * plhiv_attend_ij_t2));
     vector<Type> untreated_plhiv_attend_t2_out(plhiv_attend_t2_out - artattend_t2_out);
 
@@ -1145,7 +1145,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> artprop_foreign_t3_out(artnum_foreign_t3_out / artnum_t3_out);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t3((Xart_idx * plhiv_t3) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T
+    vector<Type> plhiv_attend_ij_t3((Xart_idx * vector<Type>(plhiv_t3 - artnum_foreign_t3)) * (Xart_gamma * gamma_art_t3));
     vector<Type> plhiv_attend_t3_out(A_out * (A_artattend_mf * plhiv_attend_ij_t3));
     vector<Type> untreated_plhiv_attend_t3_out(plhiv_attend_t3_out - artattend_t3_out);
 
@@ -1283,7 +1283,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> artprop_foreign_t4_out(artnum_foreign_t4_out / artnum_t4_out);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t4((Xart_idx * plhiv_t4) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T3
+    vector<Type> plhiv_attend_ij_t4((Xart_idx * vector<Type>(plhiv_t4 - artnum_foreign_t4)) * (Xart_gamma * gamma_art_t3)); // Note: using same ART attendance as T3
     vector<Type> plhiv_attend_t4_out(A_out * (A_artattend_mf * plhiv_attend_ij_t4));
     vector<Type> untreated_plhiv_attend_t4_out(plhiv_attend_t4_out - artattend_t4_out);
 
@@ -1428,7 +1428,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> anc_already_art_t5(anc_plhiv_t5 * anc_alpha_t5);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t5((Xart_idx * plhiv_t5) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T2
+    vector<Type> plhiv_attend_ij_t5((Xart_idx * vector<Type>(plhiv_t5 - artnum_foreign_t5)) * (Xart_gamma * gamma_art_t3)); // Note: using same ART attendance as T3
     vector<Type> plhiv_attend_t5_out(A_out * (A_artattend_mf * plhiv_attend_ij_t5));
     vector<Type> untreated_plhiv_attend_t5_out(plhiv_attend_t5_out - artattend_t5_out);
 
@@ -1565,7 +1565,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> anc_already_art_t6(anc_plhiv_t6 * anc_alpha_t6);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
-    vector<Type> plhiv_attend_ij_t6((Xart_idx * plhiv_t6) * (Xart_gamma * gamma_art_t3));    // Note: using same ART attendance as T2
+    vector<Type> plhiv_attend_ij_t6((Xart_idx * vector<Type>(plhiv_t6 - artnum_foreign_t6)) * (Xart_gamma * gamma_art_t3)); // Note: using same ART attendance as T3
     vector<Type> plhiv_attend_t6_out(A_out * (A_artattend_mf * plhiv_attend_ij_t6));
     vector<Type> untreated_plhiv_attend_t6_out(plhiv_attend_t6_out - artattend_t6_out);
 
