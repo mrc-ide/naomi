@@ -802,18 +802,20 @@ shipp_calculate_prevalence_female <- function(naomi_output,
 
   # Extract country specific national FSW prevalence
   iso3 <- options$area_scope
-  # THIS IS NOW USING SINGLE COUNTRY INSTEAD OF ALL COUNTRIES
+
+  # Regional FSW prevalence from consolidated data
   fsw_prev <- naomi.resources::load_shipp_exdata("kp_estimates", iso3) %>%
     dplyr::filter(kp == "FSW", indicator == "prevalence")
 
+  # Calculate logit prevalence of FSW and Naomi matched population at the
+  # regional level
   kp_prev <- fsw_prev %>%
     dplyr::select(iso3,area_id,median) %>%
     dplyr::left_join(genpop_prev, by = dplyr::join_by(area_id)) %>%
     dplyr::mutate(prev_fsw_logodds = log(median / (1 - median)),
                   prev_logodds = log(gen_prev / (1 - gen_prev)))
 
-  # KP regression: FSW prevalence relative to general prevalence
-  # ########## THIS REGRESSION SHOULD BE TAKING DATA FROM ALL ADMIN-1 LEVEL
+  # KP regression: Admin-1 FSW logit prevalence relative to logit general prevalence
   kp_fit <- lm(prev_fsw_logodds ~ prev_logodds, data = kp_prev)
 
   # Modelled estimates of proportion in each risk group
