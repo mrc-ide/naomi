@@ -69,224 +69,95 @@ output_naomi_warning <- function(naomi_output, ind, threshold, locations) {
 
 }
 
-##' Run validation for ART input
-##'
-##' This can throw validation errors or warnings which will be shown to user
-##' in naomi web app
-##'
-##' @param art Path to file containing ART data or ART data object
-##' @param shape Path to file containing geojson areas data or areas data object
-##' @param pjnz Path to zip file containing spectrum pjnz file/s
-##' @export
-hintr_validate_art <- function(art, shape, pjnz) {
-  handle_naomi_warnings(art_spectrum_warning(art, shape, pjnz))
-}
 
-##' Compare aggregated district ART inputs + spectrum totals
+##' Warning for aggregated subnational data input snot equal to spectrum totals
 ##'
-##' Generate warning if aggregated district art totals do not match spectrum totals
+##' Generate warning if aggregated subnational totals do not match spectrum totals
 ##'
-##' @param art Path to file containing ART data or ART data object
-##' @param shape Path to file containing geojson areas data or areas data object
-##' @param pjnz Path to zip file containing spectrum pjnz file/s
+##' @param naomi_spectrum_comparison Comparison table of aggregated subnational
+##' Naomi and national Spectrum programme data created by
+##' prepare_art_spectrum_comparison()
+##'
 ##' @keywords internal
-art_spectrum_warning <- function(art, shape, pjnz) {
+art_programme_data_warning <- function(art_naomi_spectrum_comparison) {
 
-  ## Check if shape is object or file path
-  if(!inherits(shape, "sf")) {
-    areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
-  } else {
-    areas <- shape %>% sf::st_drop_geometry()
-  }
-
-  ## Check if art is object or file path
-  if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    art <- read_art_number(art, all_columns = TRUE)
-  }
-
-  ## PJNZ either object or file path
-  if (!inherits(pjnz, "spec_program_data")) {
-    pjnz <- extract_pjnz_program_data(pjnz)
-  }
+  df <- art_naomi_spectrum_comparison |>
+    dplyr::group_by(year, indicator) |>
+    dplyr::summarise(
+      value_naomi = sum(value_naomi),
+      value_spectrum_adjusted = sum(value_spectrum_adjusted), .groups = "drop") |>
+    dplyr::mutate(total_diff = value_naomi - value_spectrum_adjusted) |>
+    dplyr::filter(abs(total_diff) > 0) |>
+    dplyr::group_by(indicator) |>
+    dplyr::summarise(years = paste0(year, collapse = ";"), .groups = "drop") |>
+    dplyr::mutate(text = paste(indicator, years, sep = ": "))
 
 
-  ## Check if art totals match spectrum totals
-  art_merged <- art %>%
-      dplyr::left_join(
-        dplyr::select(areas, area_id, spectrum_region_code),
-        by = "area_id"
-      ) %>%
-      dplyr::count(spectrum_region_code, calendar_quarter,
-                   wt = art_current, name = "value_naomi") %>%
-      dplyr::left_join(
-        pjnz$art_dec31 %>%
-          dplyr::mutate(calendar_quarter = paste0("CY", year, "Q4")) %>%
-          dplyr::count(spectrum_region_code, calendar_quarter,
-                       wt = art_dec31, name = "value_spectrum"),
-        by = c("spectrum_region_code", "calendar_quarter")
-      ) %>%
-    dplyr::mutate(sex = "both", age_group = "Y000_999",
-                  year = calendar_quarter_to_year(calendar_quarter))
-
-  spectrum_region_code <- unique(areas$spectrum_region_code)
-
-  if(length(unique(spectrum_region_code)) == 1) {
-    # If spectrum file is national - add admin0 level name
-    name <- areas[areas$area_level == spectrum_region_code, ]$area_name
-    art_merged$area_name <- name
-
-  } else {
-    # If multiple spectrum files, add admin1 level names
-    art_merged <- art_merged %>%
-      dplyr::left_join(
-        spectrum_name_map <- areas %>%
-          dplyr::filter(area_level == 1) %>%
-          dplyr::select(area_name, spectrum_region_code),
-        by = "spectrum_region_code")
-  }
-
-  format_spectrum_total_warning(
-    data_merged = art_merged,
-    key = "WARNING_ART_NOT_EQUAL_TO_SPECTRUM",
-    location = c("model_calibrate", "review_output"),
-    age_disag = TRUE)
-
-}
-
-##' Run validation for ANC input
-##'
-##' This can throw validation errors or warnings which will be shown to user
-##' in naomi web app
-##'
-##' @param anc Path to file containing ANC data or ANC data object
-##' @param shape Path to file containing geojson areas data or areas data object
-##' @param pjnz Path to zip file containing spectrum pjnz file/s
-##' @export
-hintr_validate_anc <- function(anc, shape, pjnz) {
-  handle_naomi_warnings(anc_spectrum_warning(anc, shape, pjnz))
-}
-
-##' Compare aggregated district ANC inputs + spectrum totals
-##'
-##' Generate warning if aggregated district art totals do not match spectrum totals
-##'
-##' @param anc Path to file containing ANC data or ANC data object
-##' @param shape Path to file containing geojson areas data or areas data object
-##' @param pjnz Path to zip file containing spectrum pjnz file/s
-##' @keywords internal
-anc_spectrum_warning <- function(anc, shape, pjnz) {
-  ## Check if shape is object or file path
-  if(!inherits(shape, "sf")) {
-    areas <- sf::read_sf(shape) %>% sf::st_drop_geometry()
-  } else {
-    areas <- shape %>% sf::st_drop_geometry()
-  }
-
-  ## Check if anc is object or file path
-  if(!inherits(anc, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
-    anc <- read_anc_testing(anc)
-  }
-
-  ## PJNZ either object or file path
-  if (!inherits(pjnz, "spec_program_data")) {
-    pjnz <- extract_pjnz_program_data(pjnz)
-  }
-
-  ## Check if anc totals match spectrum totals
-  anc_merged <- anc %>%
-    dplyr::left_join(
-      dplyr::select(areas, area_id,area_name, spectrum_region_code),
-      by = "area_id"
-    ) %>%
-    tidyr::pivot_longer(dplyr::starts_with("anc"),
-                        names_to = "indicator",
-                        values_to = "value_naomi") %>%
-    dplyr::count(spectrum_region_code, age_group, year, indicator,
-                 wt = value_naomi, name = "value_naomi") %>%
-    dplyr::inner_join(
-      pjnz$anc_testing %>%
-        dplyr::rename("value_spectrum" = "value"),
-      by = c("spectrum_region_code", "indicator", "year")
-    ) %>%
-    dplyr::mutate( sex = "female")
-
-  spectrum_region_code <- unique(areas$spectrum_region_code)
-
-  if(length(unique(spectrum_region_code)) == 1) {
-    # If spectrum file is national - add admin0 level name
-    name <- areas[areas$area_level == spectrum_region_code, ]$area_name
-    anc_merged$area_name <- name
-
-    } else {
-      # If multiple spectrum files, add admin1 level names
-      anc_merged <- anc_merged %>%
-        dplyr::left_join(
-          spectrum_name_map <- areas %>%
-            dplyr::filter(area_level == 1) %>%
-            dplyr::select(area_name, spectrum_region_code),
-          by = "spectrum_region_code")
-    }
-
-
-  anc_tested <- anc_merged[anc_merged$indicator == "anc_tested",]
-
-  anc_tested_pos <- anc_merged[anc_merged$indicator == "anc_tested_pos",]
-
-  # Generate warning if totals are not aligned
-  format_spectrum_total_warning(
-    data_merged = anc_tested,
-    key = "WARNING_ANC_TEST_NOT_EQUAL_TO_SPECTRUM",
-    location = c("model_calibrate", "review_output"))
-
-  format_spectrum_total_warning(
-    data_merged = anc_tested_pos,
-    key = "WARNING_ANC_TEST_POS_NOT_EQUAL_TO_SPECTRUM",
-    location = c("model_calibrate", "review_output"))
-}
-
-##' Format spectrum total warnings
-##'
-##' Format warnings with translated key to be displayed when spectrum totals
-##' do not match aggregated district level programme data
-##'
-##' @param data_merged Aggregated program data merged with spectrum totals
-##' @param key Translation key for warnings
-##' @param location Location where warning should be displayed
-##' @param age_disag Logical if age should be included in warning labels. Default is FALSE.
-##' @keywords internal
-format_spectrum_total_warning <- function(data_merged, key, location,
-                                          age_disag = FALSE) {
-
-  df <- data_merged %>%
-    dplyr::filter(!(value_naomi == value_spectrum)) %>%
-    dplyr::arrange(dplyr::desc(year))
-  df <- as.data.frame(df)
   if(nrow(df) > 0) {
-    if (age_disag) {
-      df$label <- paste(df$year, df$age_group, df$area_name,
-            "naomi:", df$value_naomi,
-            "spectrum:", df$value_spectrum,
-            sep = " ")
-    } else {
-      df$label <- paste(df$year, df$area_name,
-            "naomi:", df$value_naomi,
-            "spectrum:", df$value_spectrum,
-            sep = " ")
-    }
-
-    n_regions <- nrow(df)
-    if (n_regions > 3) {
-      warning <- paste0(df[1:3, "label"], collapse = "; ")
-      warning <- paste(warning,
-                       t_("WARNING_ADDITIONAL", list(count = n_regions - 3)))
-    } else {
-      warning <- paste0(df$label, collapse = "; ")
-    }
-    msg <- paste0(t_(key), list(warnings = warning))
-
-    naomi_warning(msg, location)
+    msg <- t_("WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM", list(years = paste(df$text, collapse = "\n")))
+    naomi_warning(msg, c("model_calibrate", "review_output"))
   }
+
 }
+
+##' Warning for aggregated subnational data input snot equal to spectrum totals
+##'
+##' Generate warning if aggregated subnational totals do not match spectrum totals
+##'
+##' @param naomi_spectrum_comparison Comparison table of aggregated subnational
+##' Naomi and national Spectrum programme data created by
+##' prepare_art_spectrum_comparison()
+##'
+##' @keywords internal
+anc_programme_data_warning <- function(anc_naomi_spectrum_comparison) {
+
+  df <- anc_naomi_spectrum_comparison |>
+    dplyr::group_by(year, indicator) |>
+    dplyr::mutate(difference = value_naomi - value_spectrum) |>
+    dplyr::summarise(
+      total_diff = sum(abs(difference)), .groups = "drop") |>
+    dplyr::filter(total_diff > 0) |>
+    dplyr::group_by(indicator) |>
+    dplyr::summarise(years = paste0(year, collapse = ";"), .groups = "drop") |>
+    dplyr::mutate(text = paste(indicator, years, sep = ": "))
+
+
+  if(nrow(df) > 0) {
+    msg <- t_("WARNING_PROGRAMME_DATA_NOT_EQUAL_TO_SPECTRUM", list(years = paste(df$text, collapse = "\n")))
+    naomi_warning(msg, c("model_calibrate", "review_output"))
+  }
+
+}
+
+##' Run validation for subnational programme data input
+##'
+##' This can throw validation errors or warnings which will be shown to user
+##' in naomi web app
+##'
+##' @param art_naomi_spectrum_comparison Comparison table of aggregated subnational
+##' Naomi and national Spectrum programme data created by
+##' prepare_art_spectrum_comparison() or prepare_anc_spectrum_comparison()
+##'
+##' @export
+hintr_validate_art_programme_data <- function(art_naomi_spectrum_comparison) {
+  handle_naomi_warnings(art_programme_data_warning(art_naomi_spectrum_comparison))
+}
+
+##' Run validation for subnational programme data input
+##'
+##' This can throw validation errors or warnings which will be shown to user
+##' in naomi web app
+##'
+##' @param anc_naomi_spectrum_comparison Comparison table of aggregated subnational
+##' Naomi and national Spectrum programme data created by
+##' prepare_art_spectrum_comparison() or prepare_anc_spectrum_comparison()
+##'
+##' @export
+hintr_validate_anc_programme_data <- function(anc_naomi_spectrum_comparison) {
+  handle_naomi_warnings(anc_programme_data_warning(anc_naomi_spectrum_comparison))
+}
+
+
 
 
 

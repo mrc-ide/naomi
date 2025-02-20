@@ -31,20 +31,27 @@ write_csv_string <- function(x, ..., row.names = FALSE) {
   paste0(brio::readLines(tmp), collapse = "\n")
 }
 
-suppress_one_warning <- function(expr, regexp) {
-  withCallingHandlers(expr,
-    warning = function(w) {
-        if(grepl(regexp, w$message))
-          invokeRestart("muffleWarning")
-    })
-}
-
-suppress_one_message <- function(expr, regexp) {
-  withCallingHandlers(expr,
-    message = function(w) {
-        if(grepl(regexp, w$message))
-          invokeRestart("muffleMessage")
-    })
+suppress_conditions <- function(expr, message_regexp = NULL,
+                                warning_regexp = NULL) {
+  handlers <- list()
+  if (!is.null(message_regexp)) {
+    handlers$message <- function(w) {
+      if(grepl(paste(message_regexp, collapse = "|"), w$message)) {
+        invokeRestart("muffleMessage")
+      }
+    }
+  }
+  if (!is.null(warning_regexp)) {
+    handlers$warning <- function(w) {
+      if(grepl(paste(warning_regexp, collapse = "|"), w$message)) {
+        invokeRestart("muffleWarning")
+      }
+    }
+  }
+  with_handlers <- function(...) {
+    withCallingHandlers(expr, ...)
+  }
+  do.call(with_handlers, handlers)
 }
 
 `%||%` <- function(a, b) {
@@ -97,38 +104,18 @@ vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, ..., FUN.VALUE = logical(1))
 }
 
-vnapply <- function(X, FUN, ...) {
-  vapply(X, FUN, ..., FUN.VALUE = numeric(1))
-}
-
-vcapply <- function(X, FUN, ...) {
-  vapply(X, FUN, ..., FUN.VALUE = character(1))
-}
-
 is_empty <- function(x) {
   length(x) == 0 || is.null(x) || is.na(x) || !nzchar(x)
 }
 
-#' Write list of data frames into an xlsx file
-#'
-#' This doesn't write colmn headers into the workbook, it expects
-#' that these already exist.
-#'
-#' @param template Path to xlsx file with sheets
-#' @param sheets Named list of data frames to write into template. The names
-#'   must match the destination sheet in the xlsx
-#' @param path Path to output the filled in xlsx
-#'
-#' @return Path to complete xlsx file
-#' @keywords internal
-write_xlsx_sheets <- function(template, sheets, path) {
-  wb <- openxlsx::loadWorkbook(template)
-  for (sheet in names(sheets)) {
-    openxlsx::writeData(wb, sheet, sheets[[sheet]],
-                        startRow = 2,
-                        colNames = FALSE)
-  }
 
-  openxlsx::saveWorkbook(wb, path)
-  path
+assert_package_installed <- function(package_name) {
+  if (!requireNamespace(package_name, quietly = TRUE)) {
+    stop(
+      sprintf("Package '%s' must be installed to use this function.",
+              package_name),
+      call. = FALSE
+    )
+  }
+  invisible(TRUE)
 }

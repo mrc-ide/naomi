@@ -11,8 +11,8 @@
 prepare_tmb_inputs <- function(naomi_data,
                                report_likelihood = 1L) {
 
-  stopifnot(is(naomi_data, "naomi_data"))
-  stopifnot(is(naomi_data, "naomi_mf"))
+  stopifnot(methods::is(naomi_data, "naomi_data"))
+  stopifnot(methods::is(naomi_data, "naomi_mf"))
 
   ## ANC observation aggregation matrices
   ##
@@ -82,7 +82,7 @@ prepare_tmb_inputs <- function(naomi_data,
   # Default model for ART attending: Anchor home district = add random effect for home district
 
   if(naomi_data$model_options$anchor_home_district) {
-    Xgamma <- naomi:::sparse_model_matrix(~0 + attend_area_idf, naomi_data$mf_artattend)
+    Xgamma <- sparse_model_matrix(~0 + attend_area_idf, naomi_data$mf_artattend)
   } else {
     Xgamma <- sparse_model_matrix(~0 + attend_area_idf:as.integer(jstar != 1),
                                   naomi_data$mf_artattend)
@@ -294,12 +294,15 @@ prepare_tmb_inputs <- function(naomi_data,
     log_asfr_t1_offset = log(df$asfr_t1),
     log_asfr_t2_offset = log(df$asfr_t2),
     log_asfr_t3_offset = log(df$asfr_t3),
+    log_asfr_t4_offset = log(df$asfr_t4),
     logit_anc_rho_t1_offset = log(df$frr_plhiv_t1),
     logit_anc_rho_t2_offset = log(df$frr_plhiv_t2),
     logit_anc_rho_t3_offset = log(df$frr_plhiv_t3),
+    logit_anc_rho_t4_offset = log(df$frr_plhiv_t4),
     logit_anc_alpha_t1_offset = log(df$frr_already_art_t1),
     logit_anc_alpha_t2_offset = log(df$frr_already_art_t2),
     logit_anc_alpha_t3_offset = log(df$frr_already_art_t3),
+    logit_anc_alpha_t4_offset = log(df$frr_already_art_t4),
     ##
     logit_rho_offset = naomi_data$mf_model$logit_rho_offset * naomi_data$mf_model$bin_rho_model,
     logit_alpha_offset = naomi_data$mf_model$logit_alpha_offset,
@@ -588,14 +591,15 @@ fit_tmb <- function(tmb_input,
   obj <- make_tmb_obj(tmb_input$data, tmb_input$par_init, calc_outputs = 0L,
                       inner_verbose, progress)
 
-  trace <- if(outer_verbose) 1 else 0
+  trace <- if (outer_verbose) 1 else 0
   f <- withCallingHandlers(
     stats::nlminb(obj$par, obj$fn, obj$gr,
                   control = list(trace = trace,
                                  iter.max = max_iter)),
     warning = function(w) {
-      if(grepl("NA/NaN function evaluation", w$message))
+      if (grepl("NA/NaN function evaluation", w$message)) {
         invokeRestart("muffleWarning")
+      }
     }
   )
 
@@ -704,7 +708,7 @@ rmvnorm_sparseprec <- function(
 
   z = matrix(stats::rnorm(n * length(mean)), ncol = n)
   L_inv = Matrix::Cholesky(prec)
-  v <- mean + Matrix::solve(as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(as(L_inv, "Matrix")), z))
+  v <- mean + Matrix::solve(methods::as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(methods::as(L_inv, "Matrix")), z))
   as.matrix(Matrix::t(v))
 }
 

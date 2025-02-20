@@ -129,3 +129,32 @@ expect_file_different <- function(path_object, path_expected) {
   expect_false(isTRUE(all.equal(object_md5, expected_md5,
                                 check.attributes = FALSE)))
 }
+
+create_mock_art_data <- function(){
+
+  shape <- sf::read_sf(system_file("extdata/demo_areas.geojson"))
+  shape_wide <- spread_areas(shape)
+
+  art_mock <- data.frame(
+    area_id = shape_wide$area_id,
+    sex = rep(c("male", "female", "both"), each = 3, times = 32),
+    age_group = rep(c("Y015_999","Y015_999", "Y000_014"), each = 3, times = 32),
+    calendar_quarter = rep(c("CY2021Q4", "CY2022Q4", "CY2023Q4"), times = 96),
+    art_current = rep(c(500, 750, 300), each = 3, times = 32))
+
+  spec_comparison_mock <- data.frame(
+    year = rep(c(2021, 2022, 2023), times = 3),
+    group = rep(c("art_children", "art_adult_female","art_adult_male"),each = 3),
+    spectrum_region_code = 0L,
+    value_spectrum_reported = rep(c(9600, 24000, 16000), each = 3),
+    spec_adjustment_ratio = c(1, 1, 1,
+                              1, 0.88, 0.86,
+                              1, 0.88, 0.86)) |>
+    dplyr::mutate(value_spectrum_adjusted = value_spectrum_reported * spec_adjustment_ratio)
+
+  list(art = art_mock,
+       spec_comparison = spec_comparison_mock,
+       shape = shape)
+
+}
+

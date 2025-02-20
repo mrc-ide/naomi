@@ -184,6 +184,16 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                          "anc_rho_t3_out" = "anc_prevalence",
                          "anc_alpha_t3_out" = "anc_art_coverage")
 
+  indicators_anc_t4 <- c("anc_clients_t4_out" = "anc_clients",
+                         "anc_plhiv_t4_out" = "anc_plhiv",
+                         "anc_already_art_t4_out" = "anc_already_art",
+                         "anc_art_new_t4_out" = "anc_art_new",
+                         "anc_known_pos_t4_out" = "anc_known_pos",
+                         "anc_tested_pos_t4_out" = "anc_tested_pos",
+                         "anc_tested_neg_t4_out" = "anc_tested_neg",
+                         "anc_rho_t4_out" = "anc_prevalence",
+                         "anc_alpha_t4_out" = "anc_art_coverage")
+
 
   indicator_anc_est_t1 <- Map(get_est, names(indicators_anc_t1), indicators_anc_t1,
                               naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out))
@@ -191,11 +201,14 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                               naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out))
   indicator_anc_est_t3 <- Map(get_est, names(indicators_anc_t3), indicators_anc_t3,
                               naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out))
+  indicator_anc_est_t4 <- Map(get_est, names(indicators_anc_t4), indicators_anc_t4,
+                              naomi_mf$calendar_quarter4, list(naomi_mf$mf_anc_out))
 
 
   indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
   indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
   indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
+  indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
@@ -210,6 +223,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t3,
                   indicator_anc_est_t3,
                   indicator_est_t4,
+                  indicator_anc_est_t4,
                   indicator_est_t5
                 )
 
@@ -460,8 +474,8 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 #' @export
 output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
 
-  stopifnot(is(naomi_fit, "naomi_fit"))
-  stopifnot(is(naomi_data, "naomi_data"))
+  stopifnot(methods::is(naomi_fit, "naomi_fit"))
+  stopifnot(methods::is(naomi_data, "naomi_data"))
 
   indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
 
@@ -872,6 +886,28 @@ save_output_spectrum <- function(path, naomi_output, notes = NULL,
               export_datapack = TRUE)
 }
 
+save_output_datapack <- function(path, naomi_output, vmmc_path = NULL) {
+  vmmc_datapack <- datapack_read_vmmc(vmmc_path)
+
+  write_datapack_csv(naomi_output = naomi_output,
+                     path = path,
+                     psnu_level = naomi_output$fit$model_options$psnu_level,
+                     dmppt2_output = vmmc_datapack)
+}
+
+datapack_read_vmmc <- function(vmmc_path) {
+  if (!is.null(vmmc_path)) {
+    ## Skip the first row, the file has two rows of headers
+    vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
+                                             startRow = 2)
+    vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
+  } else {
+    vmmc_datapack <- NULL
+  }
+  vmmc_datapack
+}
+
+
 #' Save outputs to zip file
 #'
 #' @param naomi_output Naomi output object
@@ -980,20 +1016,8 @@ save_output <- function(filename, dir,
   }
 
   if (export_datapack) {
-
-    if (!is.null(vmmc_path)) {
-      ## Skip the first row, the file has two rows of headers
-      vmmc_datapack_raw <- openxlsx::read.xlsx(vmmc_path, sheet = "Datapack inputs",
-                                               startRow = 2)
-      vmmc_datapack <- transform_dmppt2(vmmc_datapack_raw)
-    } else {
-      vmmc_datapack <- NULL
-    }
-
-    write_datapack_csv(naomi_output = naomi_output,
-                       path = PEPFAR_DATAPACK_FILENAME,   # global defined in R/pepfar-datapack.R
-                       psnu_level = naomi_output$fit$model_options$psnu_level,
-                       dmppt2_output = vmmc_datapack)
+    # PEPFAR_DATAPACK_FILENAME global defined in R/pepfar-datapack.R
+    save_output_datapack(PEPFAR_DATAPACK_FILENAME, naomi_output, vmmc_path)
   }
 
 
@@ -1355,7 +1379,8 @@ read_hintr_output <- function(path) {
 }
 
 read_duckdb <- function(path) {
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = path, read_only = TRUE)
+  assert_package_installed("duckdb")
+  con <- DBI::dbConnect(duckdb::duckdb(dbdir = path, read_only = TRUE))
   on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
   DBI::dbGetQuery(con, sprintf("SELECT * from %s", DUCKDB_OUTPUT_TABLE_NAME))
 }

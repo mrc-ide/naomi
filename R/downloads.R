@@ -138,6 +138,48 @@ hintr_prepare_shipp_download <- function(output, pjnz,
   )
 }
 
+#' Prepare Datapack download
+#'
+#' @param output hintr output object
+#' @param path Path to save output file
+#' @param vmmc_file Optional file object, with path, filename and hash for
+#'   VMMC input
+#' @param ids List of naomi web app queue ids for putting into metadata
+#'
+#' @return Path to output file and metadata for file
+#' @export
+hintr_prepare_datapack_download <- function(output,
+                                            path = tempfile(fileext = ".xlsx"),
+                                            vmmc_file = NULL,
+                                            ids = NULL) {
+  assert_model_output_version(output)
+  progress <- new_simple_progress()
+  progress$update_progress("PROGRESS_DOWNLOAD_SPECTRUM")
+
+  if (!grepl("\\.xlsx$", path, ignore.case = TRUE)) {
+    path <- paste0(path, ".xlsx")
+  }
+
+  model_output <- read_hintr_output(output$model_output_path)
+  options <- yaml::read_yaml(text = model_output$info$options.yml)
+  vmmc_datapack <- datapack_read_vmmc(vmmc_file$path)
+  datapack_output <- build_datapack_output(
+    model_output$output_package,
+    model_output$output_package$fit$model_options$psnu_level,
+    vmmc_datapack)
+  datapack_metadata <- build_datapack_metadata(model_output$output_package, ids)
+  writexl::write_xlsx(list(data = datapack_output, metadata = datapack_metadata),
+                      path = path)
+  list(
+    path = path,
+    metadata = list(
+      description = build_datapack_description(options),
+      areas = options$area_scope,
+      type = "datapack"
+    )
+  )
+}
+
 build_output_description <- function(options) {
   build_description(t_("DOWNLOAD_OUTPUT_DESCRIPTION"), options)
 }
@@ -152,6 +194,10 @@ build_comparison_report_description <- function(options) {
 
 build_shipp_tool_description <- function(options) {
   build_description(t_("DOWNLOAD_SHIPP_DESCRIPTION"), options)
+}
+
+build_datapack_description <- function(options) {
+  build_description(t_("DOWNLOAD_DATAPACK_DESCRIPTION"), options)
 }
 
 build_description <- function(type_text, options) {

@@ -44,32 +44,33 @@ test_that("naomi warning handler returns empty list when no warnings", {
   expect_length(out$warnings, 0)
 })
 
-
 test_that("warning raised after false convergence", {
+
   a_fit_bad <- a_fit
   a_fit_bad$convergence <- 1
   a_fit_bad$message <- "false convergence (8)"
 
   mock_fit_tmb <- mockery::mock(a_fit_bad)
-  mock_sample_tmb <- mockery::mock(a_fit_sample)
   mock_output_package <- mockery::mock(a_output)
 
   with_mock(
     fit_tmb = mock_fit_tmb,
-    sample_tmb = mock_sample_tmb,
     output_package = mock_output_package, {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
   expect_length(out$warnings, 4)
-  expect_match(out$warnings[[1]]$text,
-               "Naomi ART current not equal to Spectrum")
-  expect_match(out$warnings[[2]]$text,
-               "Naomi ANC testing not equal to Spectrum")
-  expect_match(out$warnings[[3]]$text,
-               "Naomi ANC tested positive not equal to Spectrum")
-  expect_equal(out$warnings[[4]]$text,
-               "Convergence error: false convergence (8)")
+
+  expect_equal(
+    out$warnings[[4]]$text,
+    "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
+
+
+  msgs <- lapply(out$warnings, function(x) x$text)
+  expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
+  expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
+  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
+
 })
 
 
@@ -114,10 +115,11 @@ test_that("warning raised if outputs exceed threshold", {
 
   expect_length(out$warnings, 5)
   msgs <- lapply(out$warnings, function(x) x$text)
-  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
-  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
-  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
-                        msgs)))
+  expect_true(any(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art", msgs)))
+  expect_true(any(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art", msgs)))
+  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
+
+  print(msgs)
   expect_equal(
     out$warnings[[4]]$text,
     "HIV prevalence is higher than 50% for: March 2016, Northern, Both, 0-4")
@@ -135,38 +137,16 @@ test_that("ART warning raised if spectrum totals do not match naomi data", {
   )
 
   # National warnings for national pjnz file
-  art0 <- hintr_validate_art(data$art_number,
-                             data$shape,
-                             data$pjnz)
+  art_spec_comparison <- prepare_art_spectrum_comparison(data$art_number, data$shape, data$pjnz)
+  art <- hintr_validate_art_programme_data(art_spec_comparison)
 
-  expect_length(art0$warnings, 1)
-  expect_equal(art0$warnings[[1]]$locations,
+  expect_length(art$warnings, 1)
+  expect_equal(art$warnings[[1]]$locations,
                c("model_calibrate", "review_output"))
-  expect_true(grepl("Naomi ART current not equal to Spectrum",
-                    art0$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_999 Malawi - Demo naomi",
-                    art0$warnings[[1]]$text))
-  expect_true(grepl("and \\d+ more",
-                    art0$warnings[[1]]$text))
-
-  art1 <- hintr_validate_art(a_hintr_data$art_number,
-                            a_hintr_data$shape,
-                            a_hintr_data$pjnz)
-
-  expect_length(art1$warnings, 1)
-  expect_equal(art1$warnings[[1]]$locations,
-               c("model_calibrate", "review_output"))
-  expect_true(grepl("Naomi ART current not equal to Spectrum",
-                    art1$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_999 Northern",
-                    art1$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_999 Central",
-                    art1$warnings[[1]]$text))
-  expect_true(grepl("2018 Y000_999 Southern",
-                    art1$warnings[[1]]$text))
-  expect_true(grepl("and \\d+ more",
-                    art1$warnings[[1]]$text))
-
+  expect_true(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for",
+                    art$warnings[[1]]$text))
+  expect_true(grepl("number_on_art",
+                    art$warnings[[1]]$text))
   })
 
 test_that("ANC warning raised if spectrum totals do not match naomi data", {
@@ -178,60 +158,15 @@ test_that("ANC warning raised if spectrum totals do not match naomi data", {
   )
 
   # National warnings for national pjnz file
-  anc0 <- hintr_validate_anc(data$anc_testing,
-                             data$shape,
-                             data$pjnz)
+  anc_spec_comparison <- prepare_anc_spectrum_comparison(data$anc_testing, data$shape, data$pjnz)
+  anc <- hintr_validate_anc_programme_data(anc_spec_comparison)
 
-  expect_length(anc0$warnings, 2)
-
-  expect_equal(anc0$warnings[[1]]$locations,
+  expect_length(anc$warnings, 1)
+  expect_equal(anc$warnings[[1]]$locations,
                c("model_calibrate", "review_output"))
-  expect_true(grepl("Naomi ANC testing not equal to Spectrum",
-                    anc0$warnings[[1]]$text))
-  expect_true(grepl("2018 Malawi - Demo",
-                    anc0$warnings[[1]]$text))
-  expect_true(grepl("and \\d+ more",
-                    anc0$warnings[[1]]$text))
-
-  expect_equal(anc0$warnings[[2]]$locations,
-               c("model_calibrate", "review_output"))
-  expect_true(grepl("Naomi ANC tested positive not equal to Spectrum",
-                    anc0$warnings[[2]]$text))
-  expect_true(grepl("2018 Malawi - Demo",
-                    anc0$warnings[[2]]$text))
-  expect_true(grepl("and \\d+ more",
-                    anc0$warnings[[2]]$text))
-
-  # Sub national level warnings for national pjnz file
-  anc1 <- hintr_validate_anc(a_hintr_data$anc_testing,
-                             a_hintr_data$shape,
-                             a_hintr_data$pjnz)
-
-  expect_length(anc1$warnings, 2)
-  expect_equal(anc1$warnings[[1]]$locations,
-               c("model_calibrate", "review_output"))
-  expect_true(grepl("Naomi ANC testing not equal to Spectrum",
-                    anc1$warnings[[1]]$text))
-  expect_true(grepl("2018 Northern",
-                    anc1$warnings[[1]]$text))
-  expect_true(grepl("2018 Central",
-                    anc1$warnings[[1]]$text))
-  expect_true(grepl("2018 Southern",
-                    anc1$warnings[[1]]$text))
-  expect_true(grepl("and \\d+ more",
-                    anc1$warnings[[1]]$text))
-
-  expect_equal(anc1$warnings[[2]]$locations,
-               c("model_calibrate", "review_output"))
-  expect_true(grepl("Naomi ANC tested positive not equal to Spectrum",
-                    anc1$warnings[[2]]$text))
-  expect_true(grepl("2018 Northern",
-                    anc1$warnings[[2]]$text))
-  expect_true(grepl("2018 Central",
-                    anc1$warnings[[2]]$text))
-  expect_true(grepl("2018 Southern",
-                    anc1$warnings[[2]]$text))
-  expect_true(grepl("and \\d+ more",
-                    anc1$warnings[[2]]$text))
+  expect_true(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for",
+                    anc$warnings[[1]]$text))
+  expect_true(grepl("anc_already_art",
+                    anc$warnings[[1]]$text))
 })
 
