@@ -17,6 +17,3 @@
 ^docker$
 ^buildkite$
 ^images$
-^\.github$
-^figure$
-^cache$

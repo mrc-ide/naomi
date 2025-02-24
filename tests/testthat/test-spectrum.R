@@ -128,7 +128,7 @@ test_that("extract_pjnz_program_data() returns complete data", {
   expect_setequal(dat_old$anc_testing$spectrum_region_code, 0)
   expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2018],
                   c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_already_art"))
-  expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2019],
+  expect_setequal(dat_old$anc_testing$indicator[dat_old$anc_testing$year == 2010],
                   c("anc_already_art"))
   expect_true(all(!is.na(dat_old$anc_testing$value)))
 
@@ -146,7 +146,7 @@ test_that("extract_pjnz_program_data() returns complete data", {
   expect_setequal(dat_new$anc_testing$spectrum_region_code, 0)
   expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2018],
                   c("anc_clients", "anc_tested", "anc_tested_pos", "anc_known_pos", "anc_known_neg", "anc_already_art"))
-  expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2019],
+  expect_setequal(dat_new$anc_testing$indicator[dat_new$anc_testing$year == 2010],
                   c("anc_already_art"))
   expect_true(all(!is.na(dat_new$anc_testing$value)))
 
@@ -191,28 +191,3 @@ Using file: Malawi.zip.shiny90")
 
   expect_equal(w$shiny90new, "Malawi.zip.shiny90")
 })
-
-test_that("ART adjustments properly extracted from Spectrum", {
-
-  dp_path <- file.path("refdata/ART_adjustment_test.DP")
-
-  dp <- as.data.frame(
-    readr::read_csv(dp_path,
-                    name_repair = "minimal",
-                    col_types = readr::cols(.default = "c")))
-
-  spec_art <- read_dp_art_dec31(dp)
-  rownames(spec_art) <- seq_len(nrow(spec_art))
-
-  # Test ART adjustments correctly read from test file with
-  expect_equal(colnames(spec_art), c("sex", "age_group", "year",
-                                     "art_dec31_reported", "art_dec31_attend",
-                                     "art_dec31_reside", "art_dec31"))
-  # Adults
-  expect_setequal(spec_art[166,], c("male", "Y015_999", "2022", "450799", "387903", "377903"))
-  expect_setequal(spec_art[167,], c("female", "Y015_999", "2022", "857994", "719095", "707095"))
-  # Children
-  expect_setequal(spec_art[52,], c("both", "Y000_014", "2021", "59853", "49368", "44368"))
-
-})
-

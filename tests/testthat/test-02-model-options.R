@@ -168,9 +168,6 @@ test_that("use_survey_aggregate option affects selected data", {
   a_hintr_options <- format_options(a_hintr_options)
   options_aggregate <- a_hintr_options
   options_aggregate$use_survey_aggregate <- "true"
-  options_aggregate$survey_prevalence <- c("DEMO2016PHIA", "DEMO2015DHS")
-  options_aggregate$survey_art_coverage <- "DEMO2016PHIA"
-  options_aggregate$survey_recently_infected <- "DEMO2016PHIA"
 
   aggregate_survey <- dplyr::filter(demo_survey_hiv_indicators,
                                     age_group %in% c("Y000_014", "Y015_049"),
@@ -198,7 +195,7 @@ test_that("use_survey_aggregate option affects selected data", {
   ## Aggregate data with standard model options -- returns no data and an error.
   expect_error(
     naomi_prepare_data(input_data_aggregate, a_hintr_options),
-    "No prevalence survey data found for survey: DEMO2020PHIA. Prevalence data are required for Naomi. Check your selections."
+    "No prevalence survey data found for survey: DEMO2016PHIA, DEMO2015DHS. Prevalence data are required for Naomi. Check your selections."
   )
 
 })

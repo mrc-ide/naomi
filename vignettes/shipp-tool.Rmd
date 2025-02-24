@@ -1,0 +1,189 @@
+---
+title: "SHIPP tool"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{HIV prevention prioritization tool workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, warning = FALSE, results = 'asis'}
+library(tibble)
+library(gt)
+library(naomi)
+```
+
+## Background
+
+Many HIV prevention programmes aim to reduce new infections but it is infeasible to target all individuals living in locations with moderate to high HIV incidence. In different geographic settings, with different background incidence, sexual behaviours confer different levels of risk of HIV infection. 
+
+Recent HIV programming guidance introduces thresholds for prioritization considering both HIV incidence and sexual behaviours to reach the largest population at risk of HIV. The SHIPP tool provides the “denominator” for HIV prevention categorised by sex, age, geography, and sexual behaviour.
+
+## Data inputs
+
+These categorizations are calculated using subnational estimates of HIV prevalence and incidence by age and sex produced by the Naomi model. [Naomi](https://github.com/mrc-ide/naomi) is a small-area estimation model for estimating HIV prevalence and PLHIV, ART coverage, and new HIV infections at a district level by sex and five-year age group. The model combines district-level data about multiple outcomes from several sources in a Bayesian statistical model to produce robust indicators of subnational HIV burden. Naomi is used to update annual estimates of subnational HIV burden as part of the [UNAIDS HIV estimates process](https://www.unaids.org/en/dataanalysis/knowyourresponse/HIVdata_estimates).
+
+The tool synthesises the most recent estimates of subnational HIV prevalence and incidence with outputs from additional statistical models 
+describing subnational variation in sexual behaviour and estimates of key populations at an elevated risk of HIV infection:
+
+* We extend the **[Howes et al.](https://journals.plos.org/globalpublichealth/article?id=10.1371/journal.pgph.0001731)** spatiotemporal multinomial model of sexual behaviour proportions to both men and women aged 15-49. This model utilizes household survey data (Demographic and Health Surveys, Population-based HIV Impact Assessments, Multiple Indicator Cluster Surveys, and other country-specific surveys) to develop spatially smoothed district-level estimates of the proportion of the population in each of three behavioural group (no sex, one regular partner, non-regular partner(s)) described below. The model includes terms for age (5-year age groups), a main spatial effect, a spatial interaction term for 5-year age groups, and survey year (a temporal effect). Men's and women's behavioural data is fitted separately, though all countries are fitted in a single model stratified by sex. The models are fit using the INLA package in R using the multinomial-Poisson transformation.
+* **[Stevens et al.](https://www.medrxiv.org/content/10.1101/2022.07.27.22278071v2)** model for population size estimates (PSEs) of key populations in sub-Saharan Africa at an admin-1 level (regional), including female sex workers (FSW), men who have sex with men (MSM), and people who inject drugs (PWID).
+* **[Nguyen et al.](https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-022-13451-y)**: model for age at sexual debut in sub-Saharan Africa.
+
+The outputs of these models are stored in an external repository, [naomi-resources](http://github/mrc-ide/naomi.resources) and are updated annually to incorporate newly released survey data and to align with changes in geographic areas in country specific administrative boundaries required for planning.
+
+In addition to estimates produced by subnational models, the tool incorporates consensus estimates of KP population size and HIV incidence that are developed by national HIV estimates teams as part of the annual UNAIDS HIV estimates process. For more information on this exercise please see [14G Key Population Workbook](https://hivtools.unaids.org/hiv-estimates-training-material-en/).
+
+## Tool workflow
+
+This tool is now integrated into the [Naomi web application](https://naomi.unaids.org/login) and is generated after completing the Naomi model as described in [22G Naomi sub-national estimates: Creating subnational HIV estimates](https://hivtools.unaids.org/hiv-estimates-training-material-en/).
+
+If you are running a Naomi model fit with updated administrative boundaries, you may receive an error that the external database containing the sexual behaviour or KP PSE model is out of date:
+
+```{r, echo = FALSE, results = 'asis', warning = FALSE}
+
+cat("Error: Available KP PSE estimates for: \n",
+                     "MWI_1_1; MWI_1_2; MWI_1_3",
+                     "\n\n Do not match Naomi estimates for: \n",
+                     "MWI_1_1xc; MWI_2_25d; MWI_2_3cv",
+                     "\n\nTo update estimates, please contact Naomi support.")
+```
+
+## SHIPP Tool estimates process
+
+**1. Estimate key population sizes by district and age**: 
+
+Regional KP proportion estimates from [Stevens et al.](https://www.medrxiv.org/content/10.1101/2022.07.27.22278071v2) are disaggregated by age and district. 
+
+  * _Nationally adjusted age distributions for MSM and FSW_: For MSM and FSW, estimates for ages 15-49 are age-disaggregated using South Africa's [Thembisa](https://www.thembisa.org/content/downloadPage/Thembisa4_3) model estimates of the age distribution for FSW and MSM - Gamma(29,9) for FSW and Gamma(25,7) for MSM - then adjusted for the distribution of age at sexual debut by sex and country [(Nguyen et al.)](https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-022-13451-y) to account for differences between South Africa and the other countries included in the SHIPP tool.
+  * _Uniformly adjusted age distribution for PWID_: For age distribution of PWID, we utilize a uniform literature estimate of age distribution from [Hines et al](web) across countries (mean age 29.4, SD 7).
+  * _Calculating total KP population by age and district_: Country specific regional KP proportions from the _Stevens et al_ model are applied to district level population estimates from Naomi and adjusted by age distribution described above.
+    * This includes an assumption that a nominal number of PWID (~9%) are female who are removed from the denominator. As such, PWID are assumed as male from this point onwards.
+    
+  
+**2. Separate general population sexual behaviour groups from KP populations calculated in (1)**:
+
+```{r, echo = FALSE, results = 'asis', warning = FALSE}
+
+tibble::tribble(
+  ~"Category", ~ "HIV related risk", 
+  "No sex", "Not sexually active", 
+  "One regular", "Sexually active, one cohabiting/marital partner", 
+  "Non-regular", "Non-regular sexual partner(s)", 
+  "Key Populations", "FSW (women), MSM and PWID (men)"
+) %>%
+  gt() %>%
+  tab_header("HIV prevention priority groups") %>%
+  gt::tab_options(
+    table.align = "left",
+    heading.align = "left",
+    column_labels.font.size = "small",
+    column_labels.background.color = "grey",
+    table.font.size = "smaller",
+    data_row.padding = gt::px(3),
+    row_group.background.color = "lightgrey"
+  )
+
+```
+
+Subtract the proportion of KPs from sexual behaviour groups estimated in _Risher et al_ model:
+
+  * FSWs only subtracted from non-regular partner(s) group of females across ages.
+  * MSM and PWID subtracted proportionally from all male behaviour categories.
+
+**3. Estimate HIV prevalence by behaviour**
+
+HIV prevalence ratios by behaviour group are used to distribute PLHIV between behavioural risk groups.
+
+* Household survey data is used to estimate HIV prevalence in the no sex, one regular and non-regular partner(s) groups to calculate log odds-ratios for each behavioural category.
+* HIV prevalence ratios for KPs are based on the ratio of KP HIV prevalence from the _Stevens et al_ model to HIV prevalence among all women (FSW) or men (MSM and PWID).
+* HIV prevalence by behaviour is not explicitly presented – it is used to subtract off population sizes to present the population susceptible to HIV (HIV-negative).
+
+
+_For female KPs, HIV prevalence ratios are derived based on:_
+
+  * A linear regression through regional (admin-1 level) estimates of the ratio of KP prevalence to general population prevalence used to predict an age-district-specific FSW to general population prevalence ratio.
+  
+_For males KPs, HIV prevalence ratios are derived based on:_
+
+  * Regional (admin-1 level) estimates of the ratio of KP prevalence to general population prevalence among 15-24 year olds for MSM (due to the young age distribution of MSM) or among 15-49 year olds for PWID (due to the older age distribution of PWID) applied to all age groups among MSM and PWID in districts by region (admin-1 unit).
+  
+**4. Estimate HIV incidence rates and new HIV infections by behaviour**
+
+While maintaining age/sex/district-specific HIV incidence from Naomi, distribute HIV incidence between our 4 different behavioural groups utilizing incidence rate ratios (IRRs) from the literature:
+
+* Risk ratios for non-regular sex partner(s) relative to those with a single cohabiting/marital sex partner for females<sup>_1,2,3_</sup> and males.<sup>_1,2,4_</sup>
+* For FSW, ratio of HIV incidence among women in key populations vs general population women derived based on HIV incidence category in district and tiered risk ratio.<sup>_5_</sup>
+* For MSM and PWID, using regional (admin-1) KP prevalence estimates relative to general population prevalence<sup>_6_</sup> and estimates from systematic review & meta-regression.<sup>_7_</sup>
+* National KP new infections are scaled to consensus estimates of KP HIV incidence maintaining the relative district-level proportions associated with the above two bullet points. As such, the precise risk ratios for KPs will not necessarily match the risk ratios listed in the table below.
+
+
+Number of new infections by sexual behaviour group is derived by multiplying these estimated HIV incidence rates by behaviour times the population sizes of HIV-negative individuals by behaviour, in each of the 5-year age groups
+
+```{r, echo = FALSE, results = 'asis', warning = FALSE}
+
+tibble::tribble(
+  ~"Category", ~ "Females",  ~"Males" , 
+  "No sex", "0", "0", 
+  "One regular", "1 (reference category)", "1 (reference category)", 
+  "Non-regular",
+  "_Aged 15-24_: 1.72 <br> Aged 25-49: 2.1 <sup>_1,2,3_</sup>", 
+  "_Aged 15-24_: 1.89 <br> Aged 25-49: 2.1 <sup>_1,2,4_</sup>", 
+  "Key Populations", 
+  "**FSW**: <br> Very high: 3 <br> High: 4 <br>Moderate: 7 <br>Low: 11 <br>Very low: 17 <sup>_5_</sup>",
+  "**MSM**: 2.5-250<sup>_6,7_</sup> <br> **PWID** 2.5-55 <sup>_6_</sup>"
+) %>%
+  gt() %>%
+    gt::tab_options(
+    table.align = "left",
+    heading.align = "left",
+    column_labels.font.size = "small",
+    column_labels.background.color = "grey",
+    table.font.size = "smaller",
+    data_row.padding = gt::px(3),
+    row_group.background.color = "lightgrey"
+  ) %>%
+  fmt_markdown(columns = everything())
+
+```
+
+
+
+
+
+<sup> 1 </sup> ALPHA Network pooled analysis (Slaymaker et al. CROI 2020)
+
+<sup> 2 </sup> [Jia et al. 2022](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8743366/)
+
+<sup> 3 </sup> [Ssempijja et al. 2022](https://journals.lww.com/jaids/fulltext/2022/07010/high_rates_of_pre_exposure_prophylaxis_eligibility.7.aspx).
+
+<sup> 4 </sup> [Hoffman et al. 2022](https://journals.lww.com/jaids/Fulltext/2022/06001/Implementing_PrEP_Services_in_Diverse_Health_Care.15.aspx)
+
+<sup> 5 </sup> [Jones et al. 2023](https://www.medrxiv.org/content/10.1101/2023.10.17.23297108v2)
+
+<sup> 6 </sup> [Stevens et al. 2023](https://www.medrxiv.org/content/10.1101/2022.07.27.22278071v2)
+
+<sup> 7 </sup> [Stannah et al. 2022](https://www.medrxiv.org/content/10.1101/2022.11.14.22282329v1)
+
+
+
+## Limitations of tool
+
+Risk behaviour population size estimates at a district level have a high degree of uncertainty, which is not captured in the current version of the tool.
+
+There is uncertainty in:
+
+* KP sizes and their age and geographical disaggregation
+* Small area estimates based on survey data
+* Behavioural reports in surveys
+* Incidence rate ratios by behaviour
+* Naomi estimates
+
+As such, SHIPP tool estimates should be considered indicative rather than exact. 
+
+
+
+## Usage of tool outputs
+
+Recommendations for usage of tool outputs for prioritising groups for HIV prevention can be found [on the UNAIDS website](https://hivtools.unaids.org/pse/).
+

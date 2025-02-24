@@ -7,8 +7,7 @@ test_that("ART data can be aggregated", {
                   c("area_id", "area_name",  "area_level","area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter", "area_hierarchy",
-                    "art_current", "art_current_adjusted","art_new",
-                    "vl_tested_12mos", "vl_suppressed_12mos"))
+                    "art_current", "art_new", "vl_tested_12mos", "vl_suppressed_12mos"))
 
 
   # Time period has correct format
@@ -98,13 +97,11 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 
   ## Check that aggregated values are equal
   data_long <- data  %>%
-    tidyr::pivot_longer(c(art_current, art_current_adjusted,
-                          art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_raw = value)
 
   art_agg_long <- art_agg1  %>%
-    tidyr::pivot_longer(c(art_current, art_current_adjusted,
-                          art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
+    tidyr::pivot_longer(c(art_current, art_new, vl_tested_12mos, vl_suppressed_12mos)) %>%
     dplyr::select(area_id, sex, age_group, calendar_quarter, name, value_check = value)
 
   data_check <- art_agg_long %>%
@@ -133,7 +130,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
            dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
 
-  expect_equal(unique(check2$n), 26)
+  expect_equal(unique(check2$n), 16)
 
   # (3) Data provided at more than one level for different years
   # Expected behavior - aggregate up from lowestnlevel available at each year
@@ -155,7 +152,7 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
     dplyr::group_by(area_level_label) %>%
     dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
-  expect_equal(check3$n, c(10, 10, 6))
+  expect_equal(check1$n, c(10, 10, 6))
 
 
   # (4) Test that ART data can be aggregated with missing records
@@ -390,7 +387,7 @@ test_that("ANC data can be aggregated when avalible at different admin levels", 
     dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
 
-  expect_equal(unique(check2$n), 13)
+  expect_equal(unique(check2$n), 8)
 
   # (3) Data provided at more than one level for different years
   # Expected behavior - aggregate up from lowest  level available at each year
@@ -457,9 +454,7 @@ test_that("data can be formatted for ANC input time series", {
   expect_setequal(unique(data$plot),
                   c("anc_clients", "anc_tested", "anc_tested_pos",
                     "anc_prevalence", "anc_known_pos", "anc_known_neg",
-                    "anc_art_coverage", "births_clients_ratio",
-                    "births_facility", "anc_already_art", "anc_status",
-                    "anc_art_among_known", "anc_total_pos"))
+                    "anc_art_coverage", "births_clients_ratio", "births_facility"))
 
   # Time period has correct format
   expect_match(as.character(data$time_period), "\\d{4}")
@@ -659,8 +654,8 @@ test_that("aggregate_anc() and aggregate_art() discard additional columns", {
                   c("area_id", "area_name",  "area_level", "area_level_label",
                     "parent_area_id", "area_sort_order", "sex", "age_group",
                     "time_period", "year", "quarter", "calendar_quarter",
-                    "area_hierarchy", "art_current", "art_current_adjusted",
-                    "art_new","vl_tested_12mos", "vl_suppressed_12mos"))
+                    "area_hierarchy", "art_current", "art_new",
+                    "vl_tested_12mos", "vl_suppressed_12mos"))
 })
 
 test_that("there is metadata for every indicator", {
@@ -773,5 +768,4 @@ test_that("missing data is tagged correctly in aggregated plot data", {
 
 
 })
-
 

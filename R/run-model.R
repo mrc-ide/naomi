@@ -77,7 +77,6 @@ run_model <- function(data, options, validate) {
   }
 
   naomi_data <- naomi_prepare_data(data, options)
-
   tmb_inputs <- prepare_tmb_inputs(naomi_data)
 
   progress$complete("prepare_inputs")
@@ -90,16 +89,9 @@ run_model <- function(data, options, validate) {
                  max_iter = options$max_iterations %||% 250,
                  progress = progress)
 
-
-  if (fit$convergence != 0) {
-
-    if (fit$message == "false convergence (8)"){
-      msg <- t_("WARNING_FALSE_CONVERGENCE")
-    } else {
-      msg <- t_("WARNING_CONVERGENCE", list(msg = fit$message))
-    }
-
-    naomi_warning(msg, "model_fit")
+  if(fit$convergence != 0) {
+    naomi_warning(t_("WARNING_CONVERGENCE", list(msg = fit$message)),
+                  "model_fit")
   }
 
   progress$finalise_fit()
@@ -130,6 +122,7 @@ run_model <- function(data, options, validate) {
     naomi_data = naomi_data,
     info = info
   )
+
 }
 
 build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
@@ -156,10 +149,9 @@ hintr_save <- function(obj, file) {
       stop(paste("Trying to save invalid object as duckdb database.",
               "Only data frames can be saved as database."))
     }
-    assert_package_installed("duckdb")
-    con <- DBI::dbConnect(duckdb::duckdb(dbdir = file))
-    on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
+    con <- DBI::dbConnect(duckdb::duckdb(), dbdir = file)
     DBI::dbWriteTable(con, DUCKDB_OUTPUT_TABLE_NAME, obj)
+    DBI::dbDisconnect(con, shutdown = TRUE)
   } else {
     stop(sprintf("Cannot save as type '%s', must be 'qs' or 'duckdb'.", type))
   }
@@ -323,16 +315,13 @@ naomi_prepare_data <- function(data, options) {
 
   if (!is.null(data$art_number)) {
     art_number <- read_art_number(data$art_number$path)
-    art_spectrum_comparison <- prepare_art_spectrum_comparison(art_number, area_merged, spec_program_data)
-    art_programme_data_warning(art_spectrum_comparison)
-    art_number <- apply_art_adjustment(art_number, area_merged, art_spectrum_comparison)
+    art_spectrum_warning(art_number, area_merged, spec_program_data)
   } else {
     art_number <- NULL
   }
   if (!is.null(data$anc_testing)) {
     anc_testing <- read_anc_testing(data$anc_testing$path)
-    anc_spectrum_comparison <- prepare_anc_spectrum_comparison(anc_testing, area_merged, spec_program_data)
-    anc_programme_data_warning(anc_spectrum_comparison)
+    anc_spectrum_warning(anc_testing, area_merged, spec_program_data)
   } else {
     anc_testing <- NULL
   }

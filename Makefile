@@ -38,7 +38,7 @@ vignettes/model-workflow.Rmd: vignettes_src/model-workflow.Rmd
 
 vignettes/data-model.Rmd: vignettes_src/data-model.Rmd
 	cp $^ $@
-	mkdir -p vignettes/figure
+	mkdir vignettes/figure
 	./vignettes/script/create_data_model.R
 
 vignettes/hintr-example.Rmd: vignettes_src/hintr-example.R
@@ -51,7 +51,6 @@ vignettes:
 	rm -rf vignettes/figure
 	rm -rf vignettes_src/outputs
 	rm -f vignettes/data-model.Rmd
-	rm -f vignettes/hintr-example.Rmd
 	rm -f vignettes/model-workflow.Rmd
 	rm -f vignettes_src/model-workflow.Rmd
 	make vignettes_install

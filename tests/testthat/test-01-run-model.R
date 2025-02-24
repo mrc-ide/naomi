@@ -18,11 +18,13 @@ test_that("model can be run", {
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
   expect_equal(output$warnings$model_fit, model_run$warnings)
+
   expect_length(model_run$warnings, 3)
   msgs <- lapply(model_run$warnings, function(x) x$text)
-  expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
-  expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
-  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
+  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
+                        msgs)))
 })
 
 test_that("model can be run without programme data", {
@@ -205,13 +207,17 @@ test_that("exceeding max_iterations raises convergence warning", {
 
   expect_length(out$warnings, 4)
 
+  expect_equal(out$warnings[[1]]$text,
+               paste0("Naomi ART current not equal to Spectrum: 2018 Y000_999 Northern naomi: 78974 spectrum: 57913; 2018 Y000_999 Central naomi: 226728 spectrum: 236140; 2018 Y000_999 Southern naomi: 493159 spectrum: 496708 and 21 more"))
+
   expect_equal(out$warnings[[4]]$text,
                paste0("Convergence error: iteration limit reached without convergence (10)"))
 
   msgs <- lapply(out$warnings, function(x) x$text)
-  expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
-  expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
-  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
+  expect_true(any(grepl("Naomi ART current not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC testing not equal to Spectrum", msgs)))
+  expect_true(any(grepl("Naomi ANC tested positive not equal to Spectrum",
+                        msgs)))
 })
 
 test_that("invalid time sequencing returns an error", {
@@ -310,12 +316,12 @@ test_that("model run can be calibrated", {
   ## * 1 output time - 4 indicators   [NOT INCLUDED IN PLOT OUTPUTS]
   ##
   ## ANC indicators outputs
-  ## 4 = number or output times
+  ## 3 = number or output times
   ## 9 = number of ANC indicators
   ## 9 = number of areas
   ## 12 = number of ANC age groups
   expect_equal(nrow(calibrated_output_obj$output_package$indicators),
-               33 * 3 * 9 * (3 * 16 + 1 * 5 + 1 * 4) + 4 * 9 * 9 * 12)
+               33 * 3 * 9 * (3 * 16 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
 
   ## Plot data output: T3 and T4 indicators not included -> fewer rows
   plot_data_output <- read_hintr_output(calibrated_output$plot_data_path)
@@ -324,11 +330,7 @@ test_that("model run can be calibrated", {
 
   expect_file_different(calibrated_output$model_output_path,
                         a_hintr_output$model_output_path)
-  ## expect_length(calibrated_output$warnings, 0)
-
-  expect_match(calibrated_output$warnings[[1]]$text,
-               "^ART coverage is higher than 100%")
-
+  expect_length(calibrated_output$warnings, 0)
 
   output <- read_hintr_output(calibrated_output$model_output_path)
   expect_equal(names(output),
@@ -454,8 +456,8 @@ test_that("Model can be run without .shiny90 file", {
 
   ## Remove .shiny90 from PJNZ and set 'output_aware_plhiv = FALSE'
   temp_pjnz <- tempfile(fileext = ".pjnz")
-  file.copy(system_file("extdata/demo_mwi2024_v6.36.PJNZ"), temp_pjnz)
-  utils::zip(temp_pjnz, "Malawi.zip.shiny90", flags="-d", extras = "-q")
+  file.copy(system_file("extdata/demo_mwi2019.PJNZ"), temp_pjnz)
+  utils::zip(temp_pjnz, "malawi.zip.shiny90", flags="-d", extras = "-q")
   expect_false(assert_pjnz_shiny90(temp_pjnz))
 
   data <- a_hintr_data
@@ -504,7 +506,7 @@ test_that("Model can be run without .shiny90 file", {
   ## Check there is some data
   ## 11 indicators (5 fewer because missing awareness of status indicators)
   expect_equal(nrow(indicators_output$output_package$indicators),
-               33 * 3 * 9 * (3 * 11 + 1 * 5 + 1 * 4) + 4 * 9 * 9 * 12)
+               33 * 3 * 9 * (3 * 11 + 1 * 5 + 1 * 4) + 3 * 9 * 9 * 12)
 })
 
 test_that("hintr_run_model can skip validation", {
@@ -687,7 +689,6 @@ test_that("trying to calibrate incompatible model output returns error", {
 })
 
 test_that("calibration plot data can be saved as duckdb database", {
-  testthat::skip_if_not_installed("duckdb")
 
   ## Calibration makes no modification of existing files.
   output_hash <- tools::md5sum(a_hintr_output$model_output_path)

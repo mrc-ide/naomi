@@ -22,6 +22,10 @@ test_that("setting different rng_seed returns different output", {
   )
 })
 
+test_that("exceeding maximum iterations throws a warning", {
+  expect_warning(fit_tmb(a_tmb_inputs, outer_verbose = FALSE, max_iter = 5),
+                 "iteration limit reached")
+})
 
 test_that("model fits with differing number of ANC observations T1 and T2", {
 
@@ -86,7 +90,7 @@ test_that("model fits with different combination of ANC prevalence and ANC ART d
                                   demo_survey_hiv_indicators,
                                   anc_testing = ancdat1,
                                   demo_art_number,
-                                  prev_survey_ids = "DEMO2016PHIA",
+                                  prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
                                   artcov_survey_ids = "DEMO2016PHIA",
                                   recent_survey_ids = "DEMO2016PHIA",
                                   anc_prev_year_t1 = 2016,
@@ -152,7 +156,6 @@ test_that("model fits with missing ART and ANC data", {
 
   artdat_missing <- demo_art_number
   artdat_missing[artdat_missing$area_id == "MWI_4_1_demo" & artdat_missing$age_group == "Y000_014",]$art_current <- NA_real_
-  artdat_missing[artdat_missing$area_id == "MWI_4_1_demo" & artdat_missing$age_group == "Y000_014",]$art_current_adjusted <- NA_real_
 
   naomi_data <- select_naomi_data(a_naomi_mf,
                                   demo_survey_hiv_indicators,

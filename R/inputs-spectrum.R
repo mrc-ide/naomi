@@ -127,6 +127,8 @@ extract_pjnz_one <- function(pjnz, extract_shiny90) {
 #' @export
 #'
 extract_pjnz_program_data <- function(pjnz_list) {
+
+
   pjnz_list <- unroll_pjnz(pjnz_list)
 
   region_code <- lapply(pjnz_list, read_spectrum_region_code)
@@ -195,6 +197,7 @@ read_dp_art_dec31 <- function(dp) {
   art15plus_need <- rbind(male_15plus_needart, female_15plus_needart)
   dimnames(art15plus_need) <- list(sex = c("male", "female"), year = proj.years)
 
+
   if (any(art15plus_num[art15plus_isperc == 1] < 0 |
           art15plus_num[art15plus_isperc == 1] > 100)) {
     stop("Invalid percentage on ART entered for adult ART")
@@ -207,79 +210,26 @@ read_dp_art_dec31 <- function(dp) {
   ## * Enabled / disabled by checkbox flag ("<AdultARTAdjFactorFlag>")
   ## * Scaling factor only applies to number inputs, not percentages (John Stover email, 20 Feb 2023)
   ##   -> Even if scaling factor specified in a year with percentage input, ignore it.
-  ## ** UPDATE Spectrum 6.37 beta 18 **
-  ##
-  ## Two changes to the adult ART adjustment were implemented in Spectrum 6.37 beta 18:
-  ##
-  ## * ART adjustments were moved the main Spectrum editor and the flag variable
-  ##   "<AdultARTAdjFactorFlag>" was removed from the .DP file.
-  ## * New tag "<AdultPatsAllocToFromOtherRegion>" was added allowing for input
-  ##   of absolute count adjustment
-  ##
-  ## New logic to account for these changes:
-  ## * Initialise values to defaults 1.0 for relative adjustment and 0.0
-  ##   for absolute adjustment.
-  ## * Only check flag variable if it exists. If adjustment variable exists
-  ##   but flag variable does not exist, use the adjustment.
 
-  ## Initialise
-  adult_artadj_factor <- array(1.0, dim(art15plus_num))
-  dimnames(adult_artadj_factor) <- list(sex = c("male", "female"), year = proj.years)
-
-  adult_artadj_absolute <- array(0.0, dim(art15plus_num))
-  dimnames(adult_artadj_absolute) <- list(sex = c("male", "female"), year = proj.years)
-
-  ## Flag to use adjustment
-  use_artadj <- exists_dptag("<AdultARTAdjFactor>") &&
-    (!exists_dptag("<AdultARTAdjFactorFlag>") ||
-       (exists_dptag("<AdultARTAdjFactorFlag>") &&
-          dpsub("<AdultARTAdjFactorFlag>", 2, 4) == 1))
-
-  if (use_artadj) {
+  if (exists_dptag("<AdultARTAdjFactorFlag>") &&
+        dpsub("<AdultARTAdjFactorFlag>", 2, 4) == 1) {
 
     adult_artadj_factor <- sapply(dpsub("<AdultARTAdjFactor>", 3:4, timedat.idx), as.numeric)
 
-    if(exists_dptag("<AdultPatsAllocToFromOtherRegion>")) {
-      adult_artadj_absolute <- sapply(dpsub("<AdultPatsAllocToFromOtherRegion>", 3:4, timedat.idx), as.numeric)
-    }
-
     ## Only apply if is number (! is percentage)
     adult_artadj_factor <- adult_artadj_factor ^ as.numeric(!art15plus_isperc)
-    adult_artadj_absolute <- adult_artadj_absolute * as.numeric(!art15plus_isperc)
+
+    art15plus_num <- art15plus_num * adult_artadj_factor
   }
 
-  ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
-  art15plus_attend <- art15plus_num + adult_artadj_absolute
-  art15plus_attend <- art15plus_attend * adult_artadj_factor
-  art15plus_reside <- art15plus_attend + adult_artadj_absolute
-
-  # Covert percentage coverage to absolute numbers on ART
   art15plus_num[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_num[art15plus_isperc == 1] / 100
-  art15plus_attend[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_attend[art15plus_isperc == 1] / 100
-  art15plus_reside[art15plus_isperc == 1] <- art15plus_need[art15plus_isperc == 1] * art15plus_reside[art15plus_isperc == 1] / 100
 
-  # Reported number on ART
-  art_dec31_reported <- as.data.frame.table(art15plus_num,
-                                   responseName = "art_dec31_reported",
+  art15plus <- as.data.frame.table(art15plus_num,
+                                   responseName = "art_dec31",
                                    stringsAsFactors = FALSE)
-
-  # Adjusted number on ART (attending)
-  art_dec31_attend <- as.data.frame.table(art15plus_attend,
-                                   responseName = "art_dec31_attend",
-                                   stringsAsFactors = FALSE)
-
-  # Adjusted number on ART (residing)
-  art_dec31_reside <- as.data.frame.table(art15plus_reside,
-                                             responseName = "art_dec31_reside",
-                                             stringsAsFactors = FALSE)
-
-  art15plus <- purrr::reduce(list(art_dec31_reported,
-                                  art_dec31_attend,
-                                  art_dec31_reside), dplyr::left_join,
-                             by = dplyr::join_by(sex, year))
-
   art15plus$age_group <- "Y015_999"
   art15plus$year <- utils::type.convert(art15plus$year, as.is = TRUE)
+
 
   ## # Child number on ART
   ##
@@ -332,53 +282,32 @@ read_dp_art_dec31 <- function(dp) {
                                 child_art_isperc == 1 ~ child_art_need * child_art_0to14 / 100)
   names(child_art) <- proj.years
 
-  if (any(is.na(child_art))) {
-    stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
-  }
-
-
   ## # Child on ART adjustment factor
   ##
   ## * Implemented same as adult adjustment factor above
 
-  ## Initialise
-  child_artadj_factor <- rep(1.0, length(child_art))
-  child_artadj_absolute <- rep(0.0, length(child_art))
-
-  ## Flag to use adjustment
-  use_child_artadj <- exists_dptag("<ChildARTAdjFactor MV>") &&
-    (!exists_dptag("<ChildARTAdjFactorFlag>") ||
-       (exists_dptag("<ChildARTAdjFactorFlag>") &&
-          dpsub("<ChildARTAdjFactorFlag>", 2, 4) == 1))
-
-  if (use_child_artadj) {
+  if (exists_dptag("<ChildARTAdjFactorFlag>") &&
+        dpsub("<ChildARTAdjFactorFlag>", 2, 4) == 1) {
 
     child_artadj_factor <- as.numeric(dpsub("<ChildARTAdjFactor MV>", 2, timedat.idx))
 
-    if(exists_dptag("<ChildPatsAllocToFromOtherRegion MV>")) {
-      child_artadj_absolute <- as.numeric(dpsub("<ChildPatsAllocToFromOtherRegion MV>", 2, timedat.idx))
-    }
-
     ## Only apply if is number (! is percentage)
     child_artadj_factor <- child_artadj_factor ^ !child_art_isperc
-    child_artadj_absolute <- child_artadj_absolute ^ !child_art_isperc
+
+    child_art <- child_art * child_artadj_factor
   }
 
-  ## First add absolute adjustment, then apply scalar adjustment (Spectrum procedure)
-  child_art_attend <- child_art + child_artadj_absolute
-  child_art_attend <- child_art_attend * child_artadj_factor
-  child_art_reside <- child_art_attend + child_artadj_absolute
+
+  if (any(is.na(child_art))) {
+    stop("Something has gone wrong extracting child ART inputs; please seek troubleshooting.")
+  }
 
   child_art <- data.frame(sex = "both",
                           age_group = "Y000_014",
                           year = proj.years,
-                          art_dec31_reported = child_art,
-                          art_dec31_attend = child_art_attend,
-                          art_dec31_reside = child_art_reside)
+                          art_dec31 = child_art)
 
-  art_dec31 <- rbind(child_art, art15plus) |>
-    dplyr::mutate(dplyr::across(where(is.numeric), ~ round(., 0)),
-                  art_dec31 = art_dec31_attend)
+  art_dec31 <- rbind(child_art, art15plus)
 
   art_dec31
 }
@@ -460,9 +389,9 @@ read_dp_anc_testing <- function(dp) {
   ## Note: these values start 1 column later than other arrays in the .DP file
   ## If value is 0, interpret as not entered (NA)
   if (exists_dptag("<ARVRegimen MV2>")) {
-    anc_already_art <- dpsub("<ARVRegimen MV2>", 11, timedat.idx+1)
+    anc_already_art <- dpsub("<ARVRegimen MV2>", 13, timedat.idx+1)
   } else if (exists_dptag("<ARVRegimen MV3>")) {
-    anc_already_art <- dpsub("<ARVRegimen MV3>", 11, timedat.idx+1)
+    anc_already_art <- dpsub("<ARVRegimen MV3>", 13, timedat.idx+1)
   }
   anc_already_art <- sapply(anc_already_art, as.integer)
   anc_already_art[anc_already_art == 0] <- NA
@@ -757,10 +686,111 @@ extract_eppasm_pregprev <- function(mod, fp, years = NULL) {
   df
 }
 
+
+
 read_dp <- function(pjnz) {
   dpfile <- grep(".DP$", utils::unzip(pjnz, list = TRUE)$Name, value = TRUE)
-  as.data.frame(
-    readr::read_csv(unz(pjnz, dpfile),
-                    name_repair = "minimal",
-                    col_types = readr::cols(.default = "c")))
+  utils::read.csv(unz(pjnz, dpfile), as.is = TRUE)
+}
+
+#' Read key population summary data from PJNZ
+#'
+#' Reads key population summary data from Spectrum PJNZ.
+#'
+#' @param pjnz_list path to PJNZ file or zip of multiple PJNZ files
+#'
+#'
+#' @noRd
+#'
+
+extract_kp_workbook <- function(pjnz_list){
+
+  # Extract spectrum files
+  pjnz_list <- unroll_pjnz(pjnz_list)
+
+  # Extract .DP files
+  dp <- lapply(pjnz_list, read_dp)
+
+  # Extract kp workbook summary
+  kp <- lapply(dp, read_dp_keypop_summary)
+
+  # Filter for spectrum file with consensus estimates
+  kp_out <- kp %>%
+    dplyr::bind_rows() %>%
+    dplyr::filter(!is.na(year))
+
+  # If no consensus estimates present, return empty dataframe
+  if(nrow(kp_out) == 0){kp_out <- kp[[1]]}
+
+  # If multiple pjnz files, aggreagte consensus estimates
+  if(nrow(kp_out) > 4){
+
+    kp_out <- kp_out |>
+      dplyr::group_by(key_population, year, workbook_file) |>
+      dplyr::summarise(population_size = sum(population_size),
+                hiv_prevalence = sum(hiv_prevalence),
+                art_coverage = sum(art_coverage),
+                infections = sum(infections))
+
+  }
+
+  kp_out
+
+}
+
+
+#' Read key population summary data from PJNZ
+#'
+#' Reads key population summary data from Spectrum PJNZ.
+#'
+#' @param pjnz path to PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2019.PJNZ", package = "naomi")
+#' dp <- dp <- naomi:::read_dp(pjnz)
+#' read_dp_keypop_summary(dp)
+#'
+#' @noRd
+#'
+read_dp_keypop_summary <- function(dp) {
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+
+  kp_name <- c("FSW", "MSM", "TG", "PWID")
+
+  if (exists_dptag("<KeyPops MV>")) {
+    kp_tab <- dpsub("<KeyPops MV>", 2:5, 4:7)
+    kp_tab <- sapply(kp_tab, as.numeric)
+  } else {
+    kp_tab <- matrix(NA, 4, 4)
+  }
+
+  if (exists_dptag("<KeyPopsYear MV>")) {
+    kp_year <- as.integer(dpsub("<KeyPopsYear MV>", 2, 4))
+  } else {
+    kp_year <- NA_integer_
+  }
+
+    if (exists_dptag("<KeyPopsFName MV>")) {
+    kp_file <- as.character(dpsub("<KeyPopsFName MV>", 2, 4))
+  } else {
+    kp_file <- NA_character_
+  }
+
+  kp_summary <- data.frame(
+    key_population = kp_name,
+    year = kp_year,
+    population_size = kp_tab[1, ],
+    hiv_prevalence = kp_tab[2, ],
+    art_coverage = kp_tab[3, ],
+    infections = kp_tab[4, ],
+    workbook_file = kp_file
+  )
+
+  kp_summary
 }
