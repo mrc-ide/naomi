@@ -160,9 +160,8 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
   v
 }
 
-#' @export
-print.naomi_areas <- function(x, ...) {
-  print(x$tree, "area_name")
+print.naomi_areas <- function(areas) {
+  print(areas$tree, "area_name")
 }
 
 

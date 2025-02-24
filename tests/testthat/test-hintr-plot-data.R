@@ -54,8 +54,6 @@ test_that("there is metadata for every indicator in comparison data", {
 })
 
 test_that("hintr data can be saved and read as qs or duckdb type", {
-  testthat::skip_if_not_installed("duckdb")
-
   t_qs <- tempfile(fileext = ".qs")
   t_db <- tempfile(fileext = ".duckdb")
   t_rds <- tempfile(fileext = ".rds")

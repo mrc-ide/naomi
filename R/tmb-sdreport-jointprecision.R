@@ -105,10 +105,10 @@ sdreport_joint_precision <- function (obj, par.fixed = NULL, hessian.fixed = NUL
         else if (!ignore.parm.uncertainty) {
           G <- hessian.random %*% A
           G <- as.matrix(G)
-          M1 <- methods::cbind2(hessian.random, G)
-          M2 <- methods::cbind2(t(G), as.matrix(t(A) %*% G) +
-                                hessian.fixed)
-          M <- methods::rbind2(M1, M2)
+          M1 <- cbind2(hessian.random, G)
+          M2 <- cbind2(t(G), as.matrix(t(A) %*% G) +
+                             hessian.fixed)
+          M <- rbind2(M1, M2)
           M <- Matrix::forceSymmetric(M, uplo = "L")
           dn <- c(names(par)[r], names(par[-r]))
           dimnames(M) <- list(dn, dn)

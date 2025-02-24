@@ -35,14 +35,12 @@ data(demo_area_hierarchy)
 #'
 #' Written approval for inclusion in naomi R package provided by Thoko Kalua via email
 #' on 4 September 2019.
-#'
-#' Dataset updated through Q4 2023 on 16 November 2024.
 
 demo_anc_testing <- read_csv(here("data-raw/programme/mwi_dha_ancrt.csv"))
 
 demo_anc_testing <- demo_anc_testing %>%
   rename(area_name = district32) %>%
-  filter(year <= 2023) %>%
+  filter(year <= 2017 | year == 2018 & quarter %in% 1:3) %>%
   left_join(
     demo_area_hierarchy %>%
     filter(area_level == 4) %>%

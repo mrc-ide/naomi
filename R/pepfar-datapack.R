@@ -1,4 +1,4 @@
-PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2025.csv"
+PEPFAR_DATAPACK_FILENAME <- "pepfar_datapack_indicators_2024.csv"
 
 #' Export naomi outputs to PEPFAR Data Pack format
 #'
@@ -31,18 +31,11 @@ write_datapack_csv <- function(naomi_output,
                                psnu_level = NULL,
                                dmppt2_output = NULL) {
 
+  stopifnot(inherits(naomi_output, "naomi_output"))
+
   if (!grepl("\\.csv$", path, ignore.case = TRUE)) {
     path <- paste0(path, ".csv")
   }
-
-  datapack <- build_datapack_output(naomi_output, psnu_level, dmppt2_output)
-  naomi_write_csv(datapack, path)
-
-  path
-}
-
-build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
-  stopifnot(inherits(naomi_output, "naomi_output"))
 
   datapack_indicator_map <- naomi_read_csv(system_file("datapack", "datapack_indicator_mapping.csv"))
   datapack_age_group_map <- naomi_read_csv(system_file("datapack", "datapack_age_group_mapping.csv"))
@@ -74,17 +67,13 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
     warning("PSNU level ", psnu_level, " not included in model outputs.")
   }
 
-  ## PEPFAR Target Setting Tool 2025: select both PSNU level and national aggregates
-  ## Assume that national aggregate is level 0
-  datapack_output_levels <- c(0L, psnu_level)
-
   datapack_indicator_map$calendar_quarter <- naomi_output$meta_period$calendar_quarter[datapack_indicator_map$time]
 
   datapack_indicator_map <- datapack_indicator_map %>%
     dplyr::rename(
       indicator_code = datapack_indicator_code,
       dataelement_uid = datapack_indicator_id,
-    ) %>%
+      ) %>%
     dplyr::select(indicator, indicator_code, dataelement_uid, is_integer, calendar_quarter)
 
 
@@ -124,10 +113,9 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
 
   dat <- indicators %>%
     dplyr::rename(sex_naomi = sex) %>%
-    dplyr::inner_join(
+    dplyr::semi_join(
       naomi_output$meta_area %>%
-        dplyr::filter(area_level %in% datapack_output_levels) %>%
-        dplyr::select(area_id, area_level),
+        dplyr::filter(area_level == psnu_level),
       by = "area_id"
     ) %>%
     dplyr::left_join(
@@ -140,14 +128,13 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
       by = c("indicator", "calendar_quarter")
     ) %>%
     dplyr::filter(
-      (sex_naomi %in% datapack_sex_map$sex_naomi &
-         age_group %in% datapack_age_group_map$age_group |
-         sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
-         sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
+    (sex_naomi %in% datapack_sex_map$sex_naomi &
+       age_group %in% datapack_age_group_map$age_group |
+       sex_naomi == "both" & age_group == "Y000_999" & !anc_indicator |
+       sex_naomi == "female" & age_group == "Y015_049" & anc_indicator )
     ) %>%
     dplyr::transmute(
       area_id,
-      area_level,
       indicator,
       indicator_sort_order,
       sex_naomi,
@@ -162,7 +149,7 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
     dplyr::rename(age_sex_rse = rse) %>%
     dplyr::left_join(
       dplyr::filter(dat, age_group %in% c("Y000_999", "Y015_049")) %>%
-        dplyr::select(-area_level, -indicator_sort_order, -age_group, -sex_naomi, -value) %>%
+        dplyr::select(-indicator_sort_order, -age_group, -sex_naomi, -value) %>%
         dplyr::rename(district_rse = rse),
       by = c("area_id", "indicator", "calendar_quarter")
     ) %>%
@@ -171,7 +158,7 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
         dplyr::select(area_name, area_id),
       by = "area_id"
     ) %>%
-    dplyr::arrange(calendar_quarter, indicator_sort_order, area_level, area_id, sex_naomi, age_group)
+    dplyr::arrange(calendar_quarter, indicator_sort_order, area_id, sex_naomi, age_group)
 
 
   dat$district_rse[is.na(dat$district_rse) & dat$indicator %in% c("circ_new", "circ_ever")] <- 0.0
@@ -189,7 +176,7 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
   dat <- dplyr::left_join(dat, psnu_map, by = "area_id")
   dat$psnu <- ifelse(is.na(dat$map_name), dat$area_name, dat$map_name)
 
-  dat %>%
+  datapack <- dat %>%
     dplyr::select(
       psnu,
       psnu_uid,
@@ -205,43 +192,10 @@ build_datapack_output <- function(naomi_output, psnu_level, dmppt2_output) {
       age_sex_rse,
       district_rse
     )
-}
 
-build_datapack_metadata <- function(naomi_output, ids) {
-  cqs <- c(naomi_output$fit$model_options$calendar_quarter_t1,
-           naomi_output$fit$model_options$calendar_quarter_t2,
-           naomi_output$fit$model_options$calendar_quarter_t3,
-           naomi_output$fit$model_options$calendar_quarter_t4,
-           naomi_output$fit$model_options$calendar_quarter_t5)
-  meta_period <- data.frame(
-    c("Time point", "t1", "t2", "t3", "t4", "t5"), c("Quarter", cqs)
-  )
+  naomi_write_csv(datapack, path)
 
-  info <- attr(naomi_output, "info")
-  inputs <- read.csv(text = info$inputs.csv, header = FALSE)
-
-  version <- data.frame("Naomi Version", utils::packageVersion("naomi"))
-
-  if (!is.null(ids)) {
-    all_data <- list(version, ids, inputs, meta_period)
-  } else {
-    all_data <- list(version, inputs, meta_period)
-  }
-
-  max_cols <- max(vapply(all_data, ncol, numeric(1)))
-  col_names <- vapply(seq_len(max_cols), function(i) paste0("V", i), character(1))
-  empty_row <- data.frame(matrix("", ncol = max_cols, nrow = 1))
-  colnames(empty_row) <- col_names
-  all_data <- lapply(all_data, function(df) {
-    colnames(df) <- col_names[seq(1, ncol(df))]
-    if (ncol(df) < max_cols) {
-      df[, col_names[seq(ncol(df) + 1, max_cols)]] <- ""
-    }
-    df[] <- lapply(df, as.character)
-    rbind.data.frame(df, empty_row)
-  })
-
-  do.call(rbind.data.frame, all_data)
+  path
 }
 
 
@@ -255,7 +209,7 @@ datapack_aggregate_1to9 <- function(indicators) {
 
 
   indicators_keep <- c("plhiv", "plhiv_attend", "untreated_plhiv_attend", "infections",
-                       "population", "art_current", "art_current_residents", "aware_plhiv_num", "aware_plhiv_attend")
+                       "population", "art_current", "art_current_residents", "aware_plhiv_num")
 
   indicators1to9 <- indicators %>%
     dplyr::filter(
