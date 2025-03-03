@@ -18,7 +18,6 @@ a_hintr_options <- list(
   calendar_quarter_t2 = "CY2023Q4",
   calendar_quarter_t3 = "CY2024Q3",
   calendar_quarter_t4 = "CY2025Q3",
-  ## calendar_quarter_t5 = "CY2026Q3",  
   survey_prevalence = "DEMO2020PHIA",
   survey_art_coverage = "DEMO2020PHIA",
   survey_recently_infected = "DEMO2020PHIA",
