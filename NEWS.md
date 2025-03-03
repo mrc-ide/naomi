@@ -1,3 +1,7 @@
+# naomi 2.10.10
+
+* Remove `calendar_quarter_t5` two-year ahead projection.
+
 # naomi 2.10.9
 
 * Add two new columns to subnational ART data: 
@@ -33,6 +37,7 @@
 * Remove two-year ahead projection (`*.T2`) indicators from PEPFAR Target Setting Tool output.
 
 # naomi 2.10.7
+
 * Add example datasets for 28 district, dropping the `District + Metro` level.
   Datasets are saved in `extdata/demo-district28`.
 
