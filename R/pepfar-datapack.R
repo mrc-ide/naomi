@@ -211,10 +211,8 @@ build_datapack_metadata <- function(naomi_output, ids) {
   cqs <- c(naomi_output$fit$model_options$calendar_quarter_t1,
            naomi_output$fit$model_options$calendar_quarter_t2,
            naomi_output$fit$model_options$calendar_quarter_t3,
-           naomi_output$fit$model_options$calendar_quarter_t4) ## ,
-           ## naomi_output$fit$model_options$calendar_quarter_t5)
+           naomi_output$fit$model_options$calendar_quarter_t4)
   meta_period <- data.frame(
-    ## c("Time point", "t1", "t2", "t3", "t4", "t5"), c("Quarter", cqs)
     c("Time point", "t1", "t2", "t3", "t4"), c("Quarter", cqs)
   )
 
