@@ -96,28 +96,28 @@ get_art_metadata <- function(art) {
 get_aggregate_exprs <- function() {
   summary_exprs <- rlang::exprs(
     # ART
-    art_total = sum(art_current,  na.rm = na_rm),
-    art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm),
-    art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm),
-    art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm),
-    art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm),
+    art_total = sum(art_current,  na.rm = na_rm[[1]]),
+    art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm[[1]]),
 
-    art_new_total = sum(art_new, na.rm = na_rm),
-    art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-    art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-    art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-    art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm),
+    art_new_total = sum(art_new, na.rm = na_rm[[1]]),
+    art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm[[1]]),
 
-    vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm),
-    vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-    vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
-    vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm),
-    vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-    vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm)
+    vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm[[1]]),
+    vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm[[1]])
   )
 
   mutate_exprs <- rlang::exprs(
