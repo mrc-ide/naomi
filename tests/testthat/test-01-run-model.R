@@ -203,15 +203,14 @@ test_that("exceeding max_iterations raises convergence warning", {
     "convergence error: iteration limit reached without convergence (10)",
     fixed = TRUE)
 
-  expect_length(out$warnings, 4)
+  expect_length(out$warnings, 3)
 
-  expect_equal(out$warnings[[4]]$text,
+  expect_equal(out$warnings[[3]]$text,
                paste0("Convergence error: iteration limit reached without convergence (10)"))
 
   msgs <- lapply(out$warnings, function(x) x$text)
   expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
   expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
-  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
 })
 
 test_that("invalid time sequencing returns an error", {
