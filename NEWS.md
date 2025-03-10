@@ -1,3 +1,7 @@
+# naomi 2.10.10
+
+* Fix bug where ART adjustment was being duplicated in `apply_art_adjustment()` and `read_art_number()`
+
 # naomi 2.10.9
 
 * Add two new columns to subnational ART data: 

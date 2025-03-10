@@ -59,17 +59,12 @@ test_that("warning raised after false convergence", {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
-  expect_length(out$warnings, 4)
-
-  expect_equal(
-    out$warnings[[4]]$text,
-    "Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.")
-
+  expect_length(out$warnings, 3)
 
   msgs <- lapply(out$warnings, function(x) x$text)
+  expect_true(any(grepl("Model fitting to input data has not fully converged. Please review estimates of HIV prevalence and ART coverage across districts and the national distribution of key indicators by age and sex.", msgs)))
   expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
   expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
-  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
 
 })
 
@@ -113,18 +108,17 @@ test_that("warning raised if outputs exceed threshold", {
       out <- hintr_run_model(a_hintr_data, a_hintr_options, validate = FALSE)
     })
 
-  expect_length(out$warnings, 5)
+  expect_length(out$warnings, 4)
   msgs <- lapply(out$warnings, function(x) x$text)
   expect_true(any(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nnumber_on_art", msgs)))
   expect_true(any(grepl("Naomi subnational data not equal to Spectrum national data. Check table on review inputs tab for: \nanc_already_art", msgs)))
-  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
 
   print(msgs)
   expect_equal(
-    out$warnings[[4]]$text,
+    out$warnings[[3]]$text,
     "HIV prevalence is higher than 50% for: March 2016, Northern, Both, 0-4")
   expect_equal(
-    out$warnings[[5]]$text,
+    out$warnings[[4]]$text,
     "ART coverage is higher than 100% for: March 2016, Northern, Both, 0-4")
 })
 
