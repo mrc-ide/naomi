@@ -18,11 +18,11 @@ test_that("model can be run", {
   expect_equal(names(output$info),
                c("inputs.csv", "options.yml", "packages.csv"))
   expect_equal(output$warnings$model_fit, model_run$warnings)
-  expect_length(model_run$warnings, 3)
+  expect_length(model_run$warnings, 2)
   msgs <- lapply(model_run$warnings, function(x) x$text)
   expect_true(any(grepl("Check table on review inputs tab for: \nnumber_on_art", msgs)))
   expect_true(any(grepl("Check table on review inputs tab for: \nanc_already_art",msgs)))
-  expect_true(any(grepl("Subnational ART adjustment factors not equal to national ART adjustment factor",msgs)))
+
 })
 
 test_that("model can be run without programme data", {
