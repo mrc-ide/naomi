@@ -1,4 +1,4 @@
-# naomi 2.10.1
+# naomi 2.11.1
 
 This version implements a custom Naomi version for Malawi 2024 HIV estimates allowing
 for `art_current` reporting bias between 2020 and 2023 and incorporating ART coverage
@@ -27,11 +27,149 @@ among STI clinic clients.
   - `art_report_rel_bias`: Relative reporting bias in number on ART, defined as
     `art_report` / `art_current`.
      
-# naomi 2.10.0
+# naomi 2.11.0
 
 * Implement survey data at T1 and T2.
 
+# naomi 2.10.10
 
+* Fix bug where ART adjustment was being duplicated in `apply_art_adjustment()` and `read_art_number()`
+
+# naomi 2.10.9
+
+* Add two new columns to subnational ART data: 
+  - `art_current_adjusted`: District-level number on ART after ART adjustment.
+  - `art_adjustment_factor`:  Ratio adjusted to reported number on ART (`art_current_adjusted`:`art_current`)
+* `read_art_number()` now adds additional ART adjustment columns if not specified in input data.
+* Updated all subnational ART tests datasets with ART adjustment columns. ART adjustments were applied to adults only with a 5% reduction in 2023, interpolated back to a 0% reduction in 2018.
+* Refactor `prepare_art_spectrum_comparison()` to calculate ratios required for subnational ART adjustments and comparison table.
+* Automatically adjust subnational number on ART in Naomi to match the national adjusted number on ART entered into the Spectrum programme statistics editor:
+  1. If no subnational adjustments -> apply national adjustments in Spectrum
+  2. If subnational adjustments are specified:
+      - If national + subnational adjustments match -> do nothing
+      - If national + subnational adjustments do not match + subnational adjustments
+      have been entered for *all* districts:
+        -> Scale all subnational adjustments to match national
+      - If national + subnational adjustments do not match + subnational adjustments
+      have been entered for *some* districts:
+        -> Retain district level adjustments that have been entered and scale districts with no subnational adjustments so that sum of subnational adjustments matches national adjustments.  
+* Select adjusted number on ART for Naomi subnational ART model input.
+  Sequence of data processing:
+    - Raw data read in and adjusted in `naomi_prepare_data()` using (in sequence):
+      - `read_art_number()`
+      - `prepare_art_spectrum_comparison()`
+      - `art_programme_data_warning()`
+      - `apply_art_adjustment()`
+    - Adjusted ART prepared for model inputs in `naomi_prepare_data()` using (in sequence):
+      - `select_naomi_data()`
+      - `artnum_mf()`: Refactored this function to select adjusted number on ART instead of reported number on ART. 
+
+# naomi 2.10.8
+
+* Add national level aggregate to PEPFAR Target Setting Tool CSV. 
+* Remove two-year ahead projection (`*.T2`) indicators from PEPFAR Target Setting Tool output.
+
+# naomi 2.10.7
+* Add example datasets for 28 district, dropping the `District + Metro` level.
+  Datasets are saved in `extdata/demo-district28`.
+
+# naomi 2.10.6
+
+* Update `read_dp_art_dec31()` with new .DP file flags to ensure ART adjustment factor and ART patient reallocation counts are applied to number on ART extracted from Spectrum.
+* Ensure adjusted Spectrum number on ART is used in Spectrum-Naomi comparison table.
+* Add ART adjustment factor and ART patient reallocation counts to Spectrum-Naomi comparison table.
+
+# naomi 2.10.5
+
+* Add standalone datapack download so that users do not have to download zip and extract this manually.
+
+# naomi 2.10.4
+
+* If users upload multiple quarters in ART programme data, return only the last quarter per year for input comparison data.
+  This fixes a bug where previously they were being aggregated. issue-3 24/25
+
+# naomi 2.10.3
+
+* Return `anc_already_art`, `anc_status`, `anc_art_among_known` and `anc_total_pos` indicators from ANC input time series data.
+
+# naomi 2.10.2
+
+* Add ANC testing outputs to T4 projection period for including in PEPFAR datapack output.
+* Rename Datapack input CSV in the output ZIP folder for 2025 to `"pepfar_datapack_indicators_2025.csv"`.
+* Add ANC testing indicators to T4 projection reprsenting the end of one year COP planning
+  period. New indicators are `PMTCT_STAT*.T` and `PMTCT_ART*.T`
+
+# naomi 2.10.1
+
+* Patch error in reading `anc_already_art` from Spectrum PJNZ file (was errantly
+  reading number of women initiated ART <4 weeks before delivery).
+
+# naomi 2.10.0
+
+* Update Naomi example and test datasets to current example data for Malawi
+  - Population dataset extended from 2025 to 2030
+  - Imported final Malawi Spectrum file for 2024 UNAIDS estimates `extdata/demo_mwi2024_v6.36.PJNZ`.
+    File created with Spectrum v6.36.  
+  - Example ART and ANC programme data by district from Malawi updated through 2023 Q4
+  - Added MPHIA 2020-21 survey to example survey data.
+  - Created new example Northern / Central / Southern region Spectrum files for testing
+    and demonstration of subnational Spectrum PJNZ files.
+	- In each of these files, updated the surveillance data, refit EPP, and refit Shiny90.
+	  See the `data-raw/demo-subnational-pjnz/README.md` for more details
+	  
+  - Update vignettes with new datasets and default options.
+
+* Update Navigator checklist calendar quarter for 2025 estimates to
+  2024Q4 and 2025Q3 for current period and projection.
+
+# naomi 2.9.29
+
+* Add function to format data for Naomi-Spectrum comparison table.
+* Refactor warnings that are superseded by Naomi-Spectrum comparison table.
+* Replace deprecated dplyr functions in `aggregate_art()` and `aggregate_anc()`.
+
+# naomi 2.9.28
+
+* Suppress "some observations have no neighbours" and "neighbour object has 2 sub-graphs" warnings from `spdep` v1.3.6 see https://r-spatial.github.io/spdep/news/index.html#version-13-6-development. We expect this warning for some countries and it will make tests and output noisy to leave on.
+
+# naomi 2.9.27
+
+* Show calibration plot ratio values to nearest 0.1. 
+* Make duckdb an optional dependency
+
+# naomi 2.9.26
+
+* Change wording of false convergence error to more informative warning.
+
+# naomi 2.9.25
+
+* Suppress warning raised from duckdb shutdown
+
+# naomi 2.9.24
+
+* Migrate to github actions
+* Fix R CMD check notes
+* Unpin duckdb version
+
+
+# naomi 2.9.23
+
+* Update Datim UIDs for Ethiopia 2024 boundary division.
+
+# naomi 2.9.22
+
+* Add missing Datim UIDs for Uganda corresponding to 146 districts.
+
+# naomi 2.9.21
+
+* Fix a bug in Spectrum file generation when two surveys are selected for ART coverage (naomi troubleshooting issue #2024-122).
+* Fix a bug in comparison report generation when ANC prevalence not set for time 1.
+
+# naomi 2.9.20
+
+* Update ART aggregation code to speed up data generation.
+
+>>>>>>> origin/master
 # naomi 2.9.19
 
 * Add optional `vmmc_path` to Spectrum download function for path to DMMPT2 output Excel file.

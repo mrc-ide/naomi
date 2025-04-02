@@ -33,15 +33,15 @@ naomi_objective_function_r <- function(d, p) {
   ## fixed effects
   ## diffuse N(0.0, 5.0) prior distribution
 
-  val <- val - sum(dnorm(p$beta_rho, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_alpha, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_alpha_t2, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_lambda, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_asfr, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_anc_rho, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_anc_alpha, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_anc_rho_t2, 0.0, 5.0, TRUE))
-  val <- val - sum(dnorm(p$beta_anc_alpha_t2, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_rho, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_alpha, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_alpha_t2, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_lambda, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_asfr, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_anc_rho, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_anc_alpha, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_anc_rho_t2, 0.0, 5.0, TRUE))
+  val <- val - sum(stats::dnorm(p$beta_anc_alpha_t2, 0.0, 5.0, TRUE))
 
 
   ## * HIV prevalence model *
@@ -50,40 +50,40 @@ naomi_objective_function_r <- function(d, p) {
 
   phi_rho_x <- plogis(p$logit_phi_rho_x)
   val <- val - (log(phi_rho_x) +  log(1 - phi_rho_x))  ## change of variables: logit_phi_x ->v phi_x
-  val <- val - dbeta(phi_rho_x, 0.5, 0.5, TRUE)
+  val <- val - stats::dbeta(phi_rho_x, 0.5, 0.5, TRUE)
 
   sigma_rho_x <- exp(p$log_sigma_rho_x)
-  val <- val - (dnorm(sigma_rho_x, 0.0, 2.5, TRUE) + p$log_sigma_rho_x)
+  val <- val - (stats::dnorm(sigma_rho_x, 0.0, 2.5, TRUE) + p$log_sigma_rho_x)
 
   phi_rho_xs <- plogis(p$logit_phi_rho_xs)
   val <- val - (log(phi_rho_xs) +  log(1 - phi_rho_xs))  ## change of variables: logit_phi_xs -> phi_xs
-  val <- dbeta(phi_rho_xs, 0.5, 0.5, TRUE)
+  val <- stats::dbeta(phi_rho_xs, 0.5, 0.5, TRUE)
 
   sigma_rho_xs <- exp(p$log_sigma_rho_xs)
-  val <- val - (dnorm(sigma_rho_xs, 0.0, 2.5, TRUE) + p$log_sigma_rho_xs)
+  val <- val - (stats::dnorm(sigma_rho_xs, 0.0, 2.5, TRUE) + p$log_sigma_rho_xs)
 
-  val <- val - dnorm(p$logit_phi_rho_a, 0.0, 2.582, TRUE)  ## INLA default
+  val <- val - stats::dnorm(p$logit_phi_rho_a, 0.0, 2.582, TRUE)  ## INLA default
   phi_rho_a <- 2.0 * plogis(p$logit_phi_rho_a) - 1.0
 
   sigma_rho_a <- exp(p$log_sigma_rho_a)
-  val <- val - (dnorm(sigma_rho_a, 0.0, 2.5, TRUE) + p$log_sigma_rho_a)
+  val <- val - (stats::dnorm(sigma_rho_a, 0.0, 2.5, TRUE) + p$log_sigma_rho_a)
 
-  val <- val - dnorm(p$logit_phi_rho_as, 0.0, 2.582, TRUE)  ## INLA default
+  val <- val - stats::dnorm(p$logit_phi_rho_as, 0.0, 2.582, TRUE)  ## INLA default
   phi_rho_as <- 2.0 * plogis(p$logit_phi_rho_as) - 1.0
 
   sigma_rho_as <- exp(p$log_sigma_rho_as)
-  val <- val - (dnorm(sigma_rho_as, 0.0, 2.5, TRUE) + p$log_sigma_rho_as)
+  val <- val - (stats::dnorm(sigma_rho_as, 0.0, 2.5, TRUE) + p$log_sigma_rho_as)
 
   sigma_rho_xa <- exp(p$log_sigma_rho_xa)
-  val <- val - (dnorm(sigma_rho_xa, 0.0, 0.5, TRUE) + p$log_sigma_rho_xa)
+  val <- val - (stats::dnorm(sigma_rho_xa, 0.0, 0.5, TRUE) + p$log_sigma_rho_xa)
 
   ## latent effects
 
-  val <- val - dnorm(sum(p$us_rho_x), 0.0, 0.001 * length(p$us_rho_x), TRUE) ## soft sum-to-zero constraint
+  val <- val - stats::dnorm(sum(p$us_rho_x), 0.0, 0.001 * length(p$us_rho_x), TRUE) ## soft sum-to-zero constraint
   val <- val - bym2_conditional_lpdf(p$u_rho_x, p$us_rho_x, sigma_rho_x, phi_rho_x, d$Q_x)
 
   if (length(p$u_rho_xs) > 0) {
-    val <- val - dnorm(sum(p$us_rho_xs), 0.0, 0.001 * length(p$us_rho_xs), TRUE) ## soft sum-to-zero constraint
+    val <- val - stats::dnorm(sum(p$us_rho_xs), 0.0, 0.001 * length(p$us_rho_xs), TRUE) ## soft sum-to-zero constraint
     val <- val - bym2_conditional_lpdf(p$u_rho_xs, p$us_rho_xs, sigma_rho_xs, phi_rho_xs, d$Q_x)
   }
 
@@ -98,7 +98,7 @@ naomi_objective_function_r <- function(d, p) {
   ## }
 
   if (length(p$u_rho_xa) > 0) {
-    val <- val - dnorm(sum(p$u_rho_xa), 0.0, sigma_rho_xa * 0.001 * length(p$u_rho_xa), TRUE) ## soft sum-to-zero constraint
+    val <- val - stats::dnorm(sum(p$u_rho_xa), 0.0, sigma_rho_xa * 0.001 * length(p$u_rho_xa), TRUE) ## soft sum-to-zero constraint
 
     ## ICAR model; without contant terms
     icar_nll <- -(nrow(d$Q_x) - d$Q_x_rankdef) * p$log_sigma_rho_xa -
@@ -111,44 +111,44 @@ naomi_objective_function_r <- function(d, p) {
 
   phi_alpha_x <- plogis(p$logit_phi_alpha_x)
   val <- val - (log(phi_alpha_x) +  log(1 - phi_alpha_x))  ## change of variables: logit_phi_x -> phi_x
-  val <- val - dbeta(phi_alpha_x, 0.5, 0.5, TRUE)
+  val <- val - stats::dbeta(phi_alpha_x, 0.5, 0.5, TRUE)
 
   sigma_alpha_x <- exp(p$log_sigma_alpha_x)
-  val <- val - (dnorm(sigma_alpha_x, 0.0, 2.5, TRUE) + p$log_sigma_alpha_x)
+  val <- val - (stats::dnorm(sigma_alpha_x, 0.0, 2.5, TRUE) + p$log_sigma_alpha_x)
 
   phi_alpha_xs <- plogis(p$logit_phi_alpha_xs)
   val <- val - (log(phi_alpha_xs) +  log(1 - phi_alpha_xs))  ## change of variables: logit_phi_xs -> phi_xs
-  val <- val - dbeta(phi_alpha_xs, 0.5, 0.5, TRUE)
+  val <- val - stats::dbeta(phi_alpha_xs, 0.5, 0.5, TRUE)
 
   sigma_alpha_xs <- exp(p$log_sigma_alpha_xs)
-  val <- val - (dnorm(sigma_alpha_xs, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xs)
+  val <- val - (stats::dnorm(sigma_alpha_xs, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xs)
 
-  val <- val - dnorm(p$logit_phi_alpha_a, 0.0, 2.582, TRUE)  ## INLA default
+  val <- val - stats::dnorm(p$logit_phi_alpha_a, 0.0, 2.582, TRUE)  ## INLA default
   phi_alpha_a <- 2.0 * plogis(p$logit_phi_alpha_a) - 1.0
 
   sigma_alpha_a <- exp(p$log_sigma_alpha_a)
-  val <- val - (dnorm(sigma_alpha_a, 0.0, 2.5, TRUE) + p$log_sigma_alpha_a)
+  val <- val - (stats::dnorm(sigma_alpha_a, 0.0, 2.5, TRUE) + p$log_sigma_alpha_a)
 
-  val <- val - dnorm(p$logit_phi_alpha_as, 0.0, 2.582, TRUE)  ## INLA default
+  val <- val - stats::dnorm(p$logit_phi_alpha_as, 0.0, 2.582, TRUE)  ## INLA default
   phi_alpha_as <- 2.0 * plogis(p$logit_phi_alpha_as) - 1.0
 
   sigma_alpha_as <- exp(p$log_sigma_alpha_as)
-  val <- val - (dnorm(sigma_alpha_as, 0.0, 2.5, TRUE) + p$log_sigma_alpha_as)
+  val <- val - (stats::dnorm(sigma_alpha_as, 0.0, 2.5, TRUE) + p$log_sigma_alpha_as)
 
   sigma_alpha_xt <- exp(p$log_sigma_alpha_xt)
-  val <- val - (dnorm(sigma_alpha_xt, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xt)
+  val <- val - (stats::dnorm(sigma_alpha_xt, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xt)
 
   sigma_alpha_xa <- exp(p$log_sigma_alpha_xa)
-  val <- val - (dnorm(sigma_alpha_xa, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xa)
+  val <- val - (stats::dnorm(sigma_alpha_xa, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xa)
 
   sigma_alpha_xat <- exp(p$log_sigma_alpha_xat)
-  val <- val - (dnorm(sigma_alpha_xat, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xat)
+  val <- val - (stats::dnorm(sigma_alpha_xat, 0.0, 2.5, TRUE) + p$log_sigma_alpha_xat)
 
-  val <- val - dnorm(sum(p$us_alpha_x), 0.0, 0.001 * length(p$us_alpha_x), TRUE) ## soft sum-to-zero constraint
+  val <- val - stats::dnorm(sum(p$us_alpha_x), 0.0, 0.001 * length(p$us_alpha_x), TRUE) ## soft sum-to-zero constraint
   val <- val - bym2_conditional_lpdf(p$u_alpha_x, p$us_alpha_x, sigma_alpha_x, phi_alpha_x, d$Q_x)
 
   if (length(p$u_alpha_xs) > 0) {
-    val <- val - dnorm(sum(p$us_alpha_xs), 0.0, 0.001 * length(p$us_alpha_xs), TRUE) ## soft sum-to-zero constraint
+    val <- val - stats::dnorm(sum(p$us_alpha_xs), 0.0, 0.001 * length(p$us_alpha_xs), TRUE) ## soft sum-to-zero constraint
     val <- val - bym2_conditional_lpdf(p$u_alpha_xs, p$us_alpha_xs, sigma_alpha_xs, phi_alpha_xs, d$Q_x)
   }
 
@@ -162,69 +162,69 @@ naomi_objective_function_r <- function(d, p) {
   ##   val += SCALE(AR1(phi_alpha_as), sigma_alpha_as)(u_alpha_as);
   ## }
 
-  val <- val - sum(dnorm(p$u_alpha_xt, 0.0, sigma_alpha_xt, TRUE))
+  val <- val - sum(stats::dnorm(p$u_alpha_xt, 0.0, sigma_alpha_xt, TRUE))
 
-  val <- val - sum(dnorm(p$u_alpha_xa, 0.0, sigma_alpha_xa, TRUE))
+  val <- val - sum(stats::dnorm(p$u_alpha_xa, 0.0, sigma_alpha_xa, TRUE))
 
-  val <- val - sum(dnorm(p$u_alpha_xat, 0.0, sigma_alpha_xat, TRUE))
+  val <- val - sum(stats::dnorm(p$u_alpha_xat, 0.0, sigma_alpha_xat, TRUE))
 
   ## * HIV incidence model *
 
-  val <- val - dnorm(p$OmegaT_raw, 0.0, 1.0, TRUE)
+  val <- val - stats::dnorm(p$OmegaT_raw, 0.0, 1.0, TRUE)
   OmegaT <- d$OmegaT0 + p$OmegaT_raw * d$sigma_OmegaT
 
-  val <- val - (dnorm(exp(p$log_betaT), 0.0, 1.0, TRUE) + p$log_betaT)
+  val <- val - (stats::dnorm(exp(p$log_betaT), 0.0, 1.0, TRUE) + p$log_betaT)
   betaT <- d$betaT0 + exp(p$log_betaT) * d$sigma_betaT
 
-  val <- val - dnorm(p$logit_nu_raw, 0.0, 1.0, TRUE)
+  val <- val - stats::dnorm(p$logit_nu_raw, 0.0, 1.0, TRUE)
   nu <- plogis(d$logit_nu_mean + p$logit_nu_raw * d$logit_nu_sd)
 
   sigma_lambda_x <- exp(p$log_sigma_lambda_x)
-  val <- val - (dnorm(sigma_lambda_x, 0.0, 1.0, TRUE) + p$log_sigma_lambda_x)
+  val <- val - (stats::dnorm(sigma_lambda_x, 0.0, 1.0, TRUE) + p$log_sigma_lambda_x)
 
-  val <- val - sum(dnorm(p$ui_lambda_x, 0.0, sigma_lambda_x, TRUE))
+  val <- val - sum(stats::dnorm(p$ui_lambda_x, 0.0, sigma_lambda_x, TRUE))
 
   ## * ANC testing model *
 
   ## district ASFR random effects
   sigma_asfr_x <- exp(p$log_sigma_asfr_x)
-  val <- val - (dnorm(sigma_asfr_x, 0.0, 2.5, TRUE) + p$log_sigma_asfr_x)
+  val <- val - (stats::dnorm(sigma_asfr_x, 0.0, 2.5, TRUE) + p$log_sigma_asfr_x)
 
-  val <- val - sum(dnorm(p$ui_asfr_x, 0.0, sigma_asfr_x, TRUE))
+  val <- val - sum(stats::dnorm(p$ui_asfr_x, 0.0, sigma_asfr_x, TRUE))
 
   ## ANC prevalence and ART coverage random effects
   sigma_ancrho_x <- exp(p$log_sigma_ancrho_x)
-  val <- val - (dnorm(sigma_ancrho_x, 0.0, 2.5, TRUE) + p$log_sigma_ancrho_x)
+  val <- val - (stats::dnorm(sigma_ancrho_x, 0.0, 2.5, TRUE) + p$log_sigma_ancrho_x)
 
   sigma_ancalpha_x <- exp(p$log_sigma_ancalpha_x)
-  val <- val - (dnorm(sigma_ancalpha_x, 0.0, 2.5, TRUE) + p$log_sigma_ancalpha_x)
+  val <- val - (stats::dnorm(sigma_ancalpha_x, 0.0, 2.5, TRUE) + p$log_sigma_ancalpha_x)
 
-  val <- val - sum(dnorm(p$ui_anc_rho_x, 0.0, sigma_ancrho_x, TRUE))
+  val <- val - sum(stats::dnorm(p$ui_anc_rho_x, 0.0, sigma_ancrho_x, TRUE))
 
-  val <- val - sum(dnorm(p$ui_anc_alpha_x, 0.0, sigma_ancalpha_x, TRUE))
+  val <- val - sum(stats::dnorm(p$ui_anc_alpha_x, 0.0, sigma_ancalpha_x, TRUE))
 
   sigma_ancrho_xt <- exp(p$log_sigma_ancrho_xt)
-  val <- val - (dnorm(sigma_ancrho_xt, 0.0, 2.5, TRUE) + p$log_sigma_ancrho_xt)
+  val <- val - (stats::dnorm(sigma_ancrho_xt, 0.0, 2.5, TRUE) + p$log_sigma_ancrho_xt)
 
   sigma_ancalpha_xt <- exp(p$log_sigma_ancalpha_xt)
-  val <- val - (dnorm(sigma_ancalpha_xt, 0.0, 2.5, TRUE) + p$log_sigma_ancalpha_xt)
+  val <- val - (stats::dnorm(sigma_ancalpha_xt, 0.0, 2.5, TRUE) + p$log_sigma_ancalpha_xt)
 
-  val <- val - sum(dnorm(p$ui_anc_rho_xt, 0.0, sigma_ancrho_xt, TRUE))
+  val <- val - sum(stats::dnorm(p$ui_anc_rho_xt, 0.0, sigma_ancrho_xt, TRUE))
 
-  val <- val - sum(dnorm(p$ui_anc_alpha_xt, 0.0, sigma_ancalpha_xt, TRUE))
+  val <- val - sum(stats::dnorm(p$ui_anc_alpha_xt, 0.0, sigma_ancalpha_xt, TRUE))
 
 
   ## * ART attendance model *
 
   sigma_or_gamma <- exp(p$log_sigma_or_gamma)
-  val <- val - (dnorm(sigma_or_gamma, 0.0, 2.5, TRUE) + p$log_sigma_or_gamma)
+  val <- val - (stats::dnorm(sigma_or_gamma, 0.0, 2.5, TRUE) + p$log_sigma_or_gamma)
 
-  val <- val - sum(dnorm(p$log_or_gamma, 0.0, sigma_or_gamma, TRUE))
+  val <- val - sum(stats::dnorm(p$log_or_gamma, 0.0, sigma_or_gamma, TRUE))
 
   sigma_or_gamma_t1t2 <- exp(p$log_sigma_or_gamma_t1t2)
-  val <- val - (dnorm(sigma_or_gamma_t1t2, 0.0, 2.5, TRUE) + p$log_sigma_or_gamma_t1t2)
+  val <- val - (stats::dnorm(sigma_or_gamma_t1t2, 0.0, 2.5, TRUE) + p$log_sigma_or_gamma_t1t2)
 
-  val <- val - sum(dnorm(p$log_or_gamma_t1t2, 0.0, sigma_or_gamma_t1t2, TRUE))
+  val <- val - sum(stats::dnorm(p$log_or_gamma_t1t2, 0.0, sigma_or_gamma_t1t2, TRUE))
 
 
   ## *** Process model ***
@@ -422,7 +422,7 @@ naomi_objective_function_r <- function(d, p) {
   ## likelihood for ANC testing observations
 
   anc_clients_obs_t2 <- as.vector(d$A_anc_clients_t2 %*% anc_clients_t2) * exp(d$offset_anc_clients_t2)
-  anc_clients_obs_t2_ll <- dpois(d$x_anc_clients_t2, anc_clients_obs_t2, TRUE)
+  anc_clients_obs_t2_ll <- stats::dpois(d$x_anc_clients_t2, anc_clients_obs_t2, TRUE)
   val <- val - sum(anc_clients_obs_t2_ll)
 
   anc_rho_obs_t1 <- as.vector(d$A_anc_prev_t1 %*% anc_plhiv_t1) / as.vector(d$A_anc_prev_t1 %*% anc_clients_t1)
@@ -460,7 +460,7 @@ naomi_objective_function_r <- function(d, p) {
   sd_A_j_t1 <- d$A_artattend_t1 %*% (population_ij_t1 * prop_art_ij_t1 * (1 - prop_art_ij_t1))
   sd_A_j_t1 <- sqrt(as.vector(sd_A_j_t1))
 
-  artnum_t1_ll <- dnorm(d$x_artnum_t1, A_j_t1, sd_A_j_t1, TRUE)
+  artnum_t1_ll <- stats::dnorm(d$x_artnum_t1, A_j_t1, sd_A_j_t1, TRUE)
   val <- val - sum(artnum_t1_ll)
 
 
@@ -480,7 +480,7 @@ naomi_objective_function_r <- function(d, p) {
   sd_A_j_t2 <- d$A_artattend_t2 %*% (population_ij_t2 * prop_art_ij_t2 * (1 - prop_art_ij_t2))
   sd_A_j_t2 <- sqrt(as.vector(sd_A_j_t2))
 
-  artnum_t2_ll <- dnorm(d$x_artnum_t2, A_j_t2, sd_A_j_t2, TRUE)
+  artnum_t2_ll <- stats::dnorm(d$x_artnum_t2, A_j_t2, sd_A_j_t2, TRUE)
   val <- val - sum(artnum_t2_ll)
 
   ## **Calculate model outputs**
@@ -509,7 +509,7 @@ naomi_objective_function_r <- function(d, p) {
   unaware_plhiv_attend_ij_t1 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t1) * as.vector(d$Xart_gamma %*% gamma_art)
   unaware_plhiv_attend_t1_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t1))
   aware_plhiv_attend_t1_out <- plhiv_attend_t1_out - unaware_plhiv_attend_t1_out
-  
+
 
   infections_t1_out <- as.vector(d$A_out %*% infections_t1)
   lambda_t1_out <- infections_t1_out / (population_t1_out - plhiv_t1_out)
@@ -539,7 +539,7 @@ naomi_objective_function_r <- function(d, p) {
   unaware_plhiv_attend_ij_t2 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t2) * as.vector(d$Xart_gamma %*% gamma_art_t2)
   unaware_plhiv_attend_t2_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t2))
   aware_plhiv_attend_t2_out <- plhiv_attend_t2_out - unaware_plhiv_attend_t2_out
-  
+
   infections_t2_out <- as.vector(d$A_out %*% infections_t2)
   lambda_t2_out <- infections_t2_out / (population_t2_out - plhiv_t2_out)
 
@@ -708,7 +708,7 @@ naomi_objective_function_r <- function(d, p) {
   unaware_plhiv_attend_ij_t3 <- as.vector(d$Xart_idx %*% unaware_plhiv_num_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)
   unaware_plhiv_attend_t3_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% unaware_plhiv_attend_ij_t3))
   aware_plhiv_attend_t3_out <- plhiv_attend_t3_out - unaware_plhiv_attend_t3_out
-  
+
   infections_t3_out <- as.vector(d$A_out %*% infections_t3)
   lambda_t3_out <- infections_t3_out / (population_t3_out - plhiv_t3_out)
 
@@ -783,6 +783,26 @@ naomi_objective_function_r <- function(d, p) {
 
   infections_t4 <- lambda_t4 * (d$population_t4 - plhiv_t4)
 
+  ## Note: currently assuming same district effects parameters from t2 for t4
+  mu_anc_rho_t4 <- qlogis(rho_t4) +
+    d$logit_anc_rho_t2_offset +
+    d$X_ancrho %*% (p$beta_anc_rho + p$beta_anc_rho_t2) +
+    d$Z_ancrho_x %*% (p$ui_anc_rho_x + p$ui_anc_rho_xt)
+  mu_anc_rho_t4 <- as.vector(mu_anc_rho_t4)
+  anc_rho_t4 <- stats::plogis(mu_anc_rho_t4)
+
+  mu_anc_alpha_t4 <- mu_alpha_t4 +
+    d$logit_anc_alpha_t4_offset +
+    d$X_ancalpha %*% (p$beta_anc_alpha + p$beta_anc_alpha_t2) +
+    d$Z_ancalpha_x %*% (p$ui_anc_alpha_x + p$ui_anc_alpha_xt)
+  mu_anc_alpha_t4 <- as.vector(mu_anc_alpha_t4)
+  anc_alpha_t4 <- plogis(mu_anc_alpha_t4)
+
+  anc_clients_t4 <- d$population_t4 * exp(d$log_asfr_t4_offset + mu_asfr)
+  anc_plhiv_t4 <- anc_clients_t4 * anc_rho_t4
+  anc_already_art_t4 <- anc_plhiv_t4 * anc_alpha_t4
+  
+
   prop_art_ij_t4 <- as.vector(d$Xart_idx %*% prop_art_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
   population_ij_t4 <- as.vector(d$Xart_idx %*% d$population_t4)
   artnum_ij_t4 <- population_ij_t4 * prop_art_ij_t4
@@ -799,11 +819,31 @@ naomi_objective_function_r <- function(d, p) {
   infections_t4_out <- as.vector(d$A_out %*% infections_t4)
   lambda_t4_out <- infections_t4_out / (population_t4_out - plhiv_t4_out)
 
+  anc_clients_t4_out <- as.vector(d$A_anc_out %*% anc_clients_t4)
+  anc_plhiv_t4_out <- as.vector(d$A_anc_out %*% anc_plhiv_t4)
+  anc_already_art_t4_out <- as.vector(d$A_anc_out %*% anc_already_art_t4)
+  anc_art_new_t4_out <- anc_plhiv_t4_out - anc_already_art_t4_out
+  anc_known_pos_t4_out <- anc_already_art_t4_out
+  anc_tested_pos_t4_out <- anc_plhiv_t4_out - anc_known_pos_t4_out
+  anc_tested_neg_t4_out <- anc_clients_t4_out - anc_plhiv_t4_out
+
+  anc_rho_t4_out <- anc_plhiv_t4_out / anc_clients_t4_out
+  anc_alpha_t4_out <- anc_already_art_t4_out / anc_plhiv_t4_out
+
   report_t4 <- list(population_t4_out              = population_t4_out,
                     plhiv_t4_out                   = plhiv_t4_out,
                     plhiv_attend_t4_out            = plhiv_attend_t4_out,
                     lambda_t4_out                  = lambda_t4_out,
-                    infections_t4_out              = infections_t4_out)
+                    infections_t4_out              = infections_t4_out,
+                    anc_clients_t4_out             = anc_clients_t4_out,
+                    anc_plhiv_t4_out               = anc_plhiv_t4_out,
+                    anc_already_art_t4_out         = anc_already_art_t4_out,
+                    anc_art_new_t4_out             = anc_art_new_t4_out,
+                    anc_known_pos_t4_out           = anc_known_pos_t4_out,
+                    anc_tested_pos_t4_out          = anc_tested_pos_t4_out,
+                    anc_tested_neg_t4_out          = anc_tested_neg_t4_out,
+                    anc_rho_t4_out                 = anc_rho_t4_out,
+                    anc_alpha_t4_out               = anc_alpha_t4_out)
 
 
   ## Projection to time 5

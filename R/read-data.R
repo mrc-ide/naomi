@@ -93,10 +93,13 @@ read_art_number <- function(file, all_columns = FALSE) {
                        year = readr::col_integer(),
                        calendar_quarter = readr::col_character(),
                        art_current = readr::col_number(),
+                       art_current_adjusted = readr::col_number(),
+                       art_adjustment_factor = readr::col_number(),
                        art_new = readr::col_number(),
                        vl_tested_12mos = readr::col_number(),
                        vl_suppressed_12mos = readr::col_number()
                      )
+
   val <- read_csv_partial_cols(file, col_types = col_spec)
   readr::stop_for_problems(val)
 
@@ -124,6 +127,7 @@ read_art_number <- function(file, all_columns = FALSE) {
                calendar_quarter = dplyr::if_else(is.na(calendar_quarter), paste0("CY", year, "Q4"), calendar_quarter)
              )
   }
+
 
   ## !! TODO: check all columns are valid calendar quarters
 
@@ -218,7 +222,9 @@ read_area_merged <- function(file) {
 #'
 #' @keywords internal
 read_csv_partial_cols <- function(...){
-  suppress_one_warning(readr_read_csv(...), "The following named parsers don't match the column names")
+  suppress_conditions(
+    readr_read_csv(...),
+    warning_regexp = "The following named parsers don't match the column names")
 }
 
 drop_na_rows <- function(x) {
