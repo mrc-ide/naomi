@@ -59,7 +59,7 @@ get_art_metadata <- function(art) {
   # plot types below are derived from art_current which is always assumed
   # to be present
   plot_types <- c("art_current", get_strats_for_plot_type("art", c("adult","adult_f", "adult_m", "child")),
-                  "art_current_adjusted", get_strats_for_plot_type("art_adjusted", c("adult","adult_f", "adult_m", "child")),
+                  "art_adjusted_current", get_strats_for_plot_type("art_adjusted", c("adult","adult_f", "adult_m", "child")),
                   "art_adult_sex_ratio", "art_child_adult_ratio")
 
   if("art_new" %in% cols_keep) {
