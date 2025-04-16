@@ -51,7 +51,7 @@ utils::globalVariables(c(
   "anc_tested", "anc_tested_pos", "anc_total_pos", "area_hierarchy", "area_id",
   "area_id_out", "area_idx", "area_level", "area_level_label", "area_name",
   "area_sort_order", "art_adult", "art_adult_f", "art_adult_m", "art_child",
-  "art_coverage", "art_current", "art_current_adjusted", "art_adjusted_adult",
+  "art_coverage", "art_current_adjusted", "art_adjusted_adult",
   "art_adjusted_adult_f", "art_adjusted_adult_m", "art_adjusted_child",
   "art_current_calibrated","art_current_internal_spectrum", "art_current_raw",
   "art_current_residents","art_current_spectrum", "artdat_age_end",
