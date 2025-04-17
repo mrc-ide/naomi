@@ -1,3 +1,8 @@
+# naomi 2.10.11
+
+* Add ART adjusted to output for time series plot.
+* Change "ART total" label for number on ART to "ART Current" for time series inputs to improve consistency in variable naming.
+
 # naomi 2.10.10
 
 * Fix bug where ART adjustment was being duplicated in `apply_art_adjustment()` and `read_art_number()`
