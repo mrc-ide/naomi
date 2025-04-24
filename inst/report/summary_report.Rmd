@@ -660,7 +660,7 @@ p15 <- district_barplot(naomi_output = outputs,
                         sex_disag = "both",
                         label_format = scales::label_number(0.01, 1000), 
                         colour_palette  = "blue",
-                        x_title = t_("INCIDENCE"), 
+                        x_title = t_("INCIDENCE_DISTRICT_BARPLOT_X_AXIS_LABEL"), 
                         fig_title = t_("INCIDENCE_DISTRICT_BARPLOT_PLOT_TITLE"), 
                         legend_title = t_("INCIDENCE_LEGEND_TITLE"))
     

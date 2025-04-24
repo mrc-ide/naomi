@@ -112,6 +112,7 @@
     "PREVALENCE_DISTRICT_BARPLOT_PLOT_TITLE": "HIV Prevalence (15-49):",
     "ART_DISTRICT_BARPLOT_PLOT_TITLE": "Proportion PLHIV on ART (15+):",
     "INCIDENCE_DISTRICT_BARPLOT_PLOT_TITLE": "HIV Incidence (15-49)\nper 1000 population:",
+    "INCIDENCE_DISTRICT_BARPLOT_X_AXIS_LABEL": "HIV Incidence (per 1000)",
     "PREVALENCE_SURVEY_PREFIX": "National household survey data on HIV prevalence from",
     "ART_SURVEY_PREFIX": "National household survey data on ART coverage from",
     "INFECTIONS_SURVEY_PREFIX": "National household survey data on new HIV infections from",
