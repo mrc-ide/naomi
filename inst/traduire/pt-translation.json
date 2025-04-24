@@ -105,7 +105,7 @@
     "BELOW": "Abaixo de",
     "PREVALENCE_DISTRICT_BARPLOT_PLOT_TITLE": "Taxa de infeção pelo VIH (15-49):",
     "ART_DISTRICT_BARPLOT_PLOT_TITLE": "Proporção de PVVIH em TARV (15+):",
-    "INCIDENCE_DISTRICT_BARPLOT_PLOT_TITLE": "Incidência de VIH \n por 1000 habitantes:",
+    "INCIDENCE_DISTRICT_BARPLOT_PLOT_TITLE": "Incidência de VIH (15-49)\npor 1000 habitantes:",
     "PREVALENCE_SURVEY_PREFIX": "Dados de inquérito nacional a agregados familiares sobre prevalência de VIH a partir de ",
     "ART_SURVEY_PREFIX": "Dados de inquérito nacional a agregados familiares sobre cobertura da TARV ",
     "INFECTIONS_SURVEY_PREFIX": "Dados de inquérito nacional a agregados familiares sobre novas infeções por VIH a partir de ",

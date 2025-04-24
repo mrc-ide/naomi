@@ -104,7 +104,7 @@
     "BELOW": "En dessous",
     "PREVALENCE_DISTRICT_BARPLOT_PLOT_TITLE": "Prévalence du VIH (15-49):",
     "ART_DISTRICT_BARPLOT_PLOT_TITLE": "Proportion de PLHIV sous TARV (15+):",
-    "INCIDENCE_DISTRICT_BARPLOT_PLOT_TITLE": "Incidence du VIH \n pour 1000 habitants:",
+    "INCIDENCE_DISTRICT_BARPLOT_PLOT_TITLE": "Incidence du VIH (15-49)\npour 1000 habitants:",
     "PREVALENCE_SURVEY_PREFIX": "Données d’enquête nationale auprès des ménages sur la prévalence du VIH de",
     "ART_SURVEY_PREFIX": "Données d’enquête nationale auprès des ménages sur la couverture du TAR auprès de",
     "INFECTIONS_SURVEY_PREFIX": "Données d'enquête nationale auprès des ménages sur les nouvelles infections à VIH de",
