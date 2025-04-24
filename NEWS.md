@@ -1,3 +1,8 @@
+# naomi 2.10.12
+
+* Show summary report incidence plot x-axes label as number instead of percent
+* Add the age group into the summary report incidence plot
+
 # naomi 2.10.11
 
 * Add ART adjusted to output for time series plot.
