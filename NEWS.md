@@ -1,3 +1,7 @@
+# naomi 2.10.13
+
+* Calculate ART adjustment when generating data for time series plot.
+
 # naomi 2.10.12
 
 * Show summary report incidence plot x-axes label as number instead of percent
