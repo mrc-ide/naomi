@@ -229,7 +229,8 @@ test_that("ART data can be aggregated when avalible at different admin levels", 
 test_that("data can be formatted for ART input time series", {
 
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
-                                        a_hintr_data$shape)
+                                        a_hintr_data$shape,
+                                        a_hintr_data$pjnz)
 
   expect_true(nrow(data) > 50) ## Check that we have read out some data
   expect_setequal(colnames(data),
@@ -500,7 +501,8 @@ test_that("plots are filtered according to avalible disaggregates", {
 
   # Check data with sex aggregated, age disaggregated
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
-                                        a_hintr_data$shape)
+                                        a_hintr_data$shape,
+                                        a_hintr_data$pjnz)
   expect_setequal(unique(data$plot),
                   c( "art_current","art_adult", "art_child",
                      "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
@@ -517,7 +519,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   readr::write_csv(test1, test1_file)
 
   data1 <- prepare_input_time_series_art(test1_file,
-                                         a_hintr_data$shape)
+                                         a_hintr_data$shape,
+                                         a_hintr_data$pjnz)
   expect_setequal(unique(data1$plot),
                   c("art_current", "art_adult","art_adult_f",
                     "art_adult_m","art_child",
@@ -540,7 +543,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   readr::write_csv(test2, test2_file)
 
   data2 <- prepare_input_time_series_art(test2_file,
-                                         a_hintr_data$shape)
+                                         a_hintr_data$shape,
+                                         a_hintr_data$pjnz)
   expect_setequal(unique(data2$plot),
                   c("art_current" ,"art_adult", "art_adult_f","art_adult_m",
                     "art_current_adjusted", "art_adjusted_adult",
@@ -585,7 +589,8 @@ test_that("data can be aggregated without all indicators", {
   no_art_new$art_new <- NULL
 
   data <- prepare_input_time_series_art(no_art_new,
-                                        a_hintr_data$shape)
+                                        a_hintr_data$shape,
+                                        a_hintr_data$pjnz)
   expect_setequal(unique(data$plot),
                   c( "art_current" ,"art_adult","art_child",
                      "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
@@ -601,7 +606,8 @@ test_that("data can be aggregated without all indicators", {
   no_vls$vl_suppressed_12mos <- NULL
 
   data <- prepare_input_time_series_art(no_vls,
-                                        a_hintr_data$shape)
+                                        a_hintr_data$shape,
+                                        a_hintr_data$pjnz)
   expect_setequal(unique(data$plot),
                   c("art_current", "art_adult","art_child","art_child_adult_ratio",
                    "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
@@ -612,7 +618,8 @@ test_that("data can be aggregated without all indicators", {
   no_vls_art_new$art_new <- NULL
 
   data <- prepare_input_time_series_art(no_vls_art_new,
-                                        a_hintr_data$shape)
+                                        a_hintr_data$shape,
+                                        a_hintr_data$pjnz)
   expect_setequal(
     unique(data$plot),
     c("art_current", "art_adult", "art_child",
@@ -706,7 +713,8 @@ test_that("there is metadata for every indicator", {
   art_data <- tempfile(fileext = ".csv")
   readr::write_csv(art, art_data)
 
-  art <- prepare_input_time_series_art(art, a_hintr_data$shape)
+  art <- prepare_input_time_series_art(art, a_hintr_data$shape,
+                                       a_hintr_data$pjnz)
 
   plot_types <- unique(c(anc$plot, art$plot))
   metadata <- naomi_read_csv(
@@ -721,7 +729,7 @@ test_that("missing data is tagged correctly in aggregated plot data", {
   art <- system.file("extdata/demo_art_number.csv", package = "naomi")
   shape <- system.file("extdata/demo_areas.geojson", package = "naomi")
 
-  art_plot <- prepare_input_time_series_art(art, shape)
+  art_plot <- prepare_input_time_series_art(art, shape, a_hintr_data$pjnz)
 
   # Likoma ART data missing for 2012 in test data
   # Check that Likoma + parent areas have missing data labels corresponding to

@@ -9,9 +9,9 @@
 prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
-  if(!inherits(shape, "sf")) {
+  if(!any(inherits(shape, c("sf", "tbl")))) {
     shape <- read_area_merged(shape) |> sf::st_drop_geometry()
-    }
+  }
 
   ## Check if art is object or file path
   if(!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
