@@ -278,9 +278,10 @@ aggregate_art <- function(art, shape) {
 ##' missing_ids
 ##'
 ##' @export
-prepare_input_time_series_art <- function(art, shape) {
+prepare_input_time_series_art <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
+  ## TODO: how is this different to read_areas_merged?
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
   } else {
@@ -291,6 +292,11 @@ prepare_input_time_series_art <- function(art, shape) {
   if (!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     art <- read_art_number(art, all_columns = TRUE)
   }
+
+  spec_program_data <- extract_pjnz_program_data(pjnz)
+  art_spectrum_comparison <- prepare_art_spectrum_comparison(art, areas,
+                                                             spec_program_data)
+  art <- apply_art_adjustment(art, areas, art_spectrum_comparison)
 
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
@@ -594,7 +600,6 @@ get_plot_type_column_metadata <- function(plot_type) {
     )
   })
 }
-
 
 ##' Return the translated label & description for a set of plot types
 ##'
