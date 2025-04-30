@@ -281,7 +281,6 @@ aggregate_art <- function(art, shape) {
 prepare_input_time_series_art <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
-  ## TODO: how is this different to read_areas_merged?
   if(!inherits(shape, "sf")) {
     areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
   } else {
@@ -338,6 +337,9 @@ prepare_input_time_series_art <- function(art, shape, pjnz) {
   # at the max admin level per calendar_quarter
   missing_map <- art_plot_data_long |>
     dplyr::select(area_id, calendar_quarter, value, plot, area_level) |>
+    dplyr::filter(!(plot %in% c("art_current_adjusted", "art_adjusted_adult",
+                                "art_adjusted_child", "art_adjusted_adult_m",
+                                "art_adjusted_adult_f"))) |>
     # find NAs, also check it isn't a NaN because these can appear in some
     # derived columns where we divide by 0
     dplyr::filter(is.na(value) & !is.nan(value)) |>
