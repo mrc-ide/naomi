@@ -265,6 +265,50 @@ test_that("data can be formatted for ART input time series", {
 
 })
 
+test_that("data without adjustment columns can be formatted for ART input time series", {
+
+  ## Old data can be uploaded without the art adjustment columns, test
+  ## recreates that data and ensures it still works
+  art <- read.csv(a_hintr_data$art_number)
+  art$art_current_adjusted <- NULL
+  art$art_adjustement_factor <- NULL
+  t <- tempfile(fileext = ".csv")
+  write.csv(art, t, row.names = FALSE)
+
+  data <- prepare_input_time_series_art(t,
+                                        a_hintr_data$shape,
+                                        a_hintr_data$pjnz)
+
+  expect_true(nrow(data) > 50) ## Check that we have read out some data
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name",  "area_level", "area_level_label",
+                    "parent_area_id", "area_sort_order",  "time_period", "year",
+                    "quarter","calendar_quarter", "area_hierarchy", "plot",
+                    "value",  "missing_ids"))
+
+  # Time period has correct format
+  expect_match(as.character(data$time_period), "\\d{4}")
+
+  ## Check that there is only a single age_group, time_period + quarter value for
+  ## each area_id
+
+  dup_strata <- data %>%
+    dplyr::group_by(area_id, time_period, calendar_quarter, plot) %>%
+    dplyr::filter(dplyr::n() > 1)
+
+  expect_true(nrow(dup_strata) == 0)
+
+  ## Check that correct indicators have been formatted for time series
+  expect_setequal(unique(data$plot),
+                  c( "art_current", "art_adult", "art_child",
+                     "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
+                     "art_new_total", "art_new_adult", "art_new_child",
+                     "vl_tested_12mos_total", "vl_tested_12mos_adult", "vl_tested_12mos_child",
+                     "vl_suppressed_12mos_total", "vl_suppressed_12mos_adult", "vl_suppressed_12mos_child",
+                     "art_child_adult_ratio",
+                     "vl_coverage_total" ,"vl_coverage_adult", "vl_coverage_child",
+                     "vl_prop_suppressed_total", "vl_prop_suppressed_adult", "vl_prop_suppressed_child"))
+})
 
 test_that("ANC data can be aggregated", {
 
@@ -565,7 +609,7 @@ test_that("can get plot type descriptions from key", {
   expect_equal(ret, list(
     list(
       id = "art_current",
-      label = "ART count",
+      label = "ART number (residents)",
       description = "Number on ART at the end of calendar year",
       format = "0,0",
       accuracy = NA_integer_
@@ -806,4 +850,31 @@ test_that("missing data is tagged correctly in aggregated plot data", {
 
 })
 
+test_that("Apply Spectrum adjustment when no subnational ART adjustment specified", {
 
+  area_merged <- read_area_merged("~/Downloads/demo_areas.geojson")
+  spec_program_data <- extract_pjnz_program_data("~/Downloads/demo_mwi2024_v6.36.PJNZ")
+
+  art_number <- read_art_number("~/Downloads/demo_art_number(1).csv")
+  art_spectrum_comparison <- prepare_art_spectrum_comparison(art_number, area_merged, spec_program_data)
+  art_programme_data_warning(art_spectrum_comparison)
+  art_number <- apply_art_adjustment(art_number, area_merged, art_spectrum_comparison)
+
+  prepare_input_time_series_art("~/Downloads/demo_art_number(1).csv", "~/Downloads/demo_areas.geojson", "~/Downloads/demo_mwi2024_v6.36.PJNZ")
+
+  expect_equal(art_adjust$art_current_adjusted, rep(c(300,300,300,
+                                                      750,660,645,
+                                                      500,440,430),
+                                                    times = 32))
+
+  expect_equal(art_adjust$art_adjustment_factor, rep(c(1, 1, 1,
+                                                       1, 0.88, 0.86,
+                                                       1, 0.88, 0.86),
+                                                     times = 32))
+  subnational_summed <- art_adjust |>
+    dplyr::group_by(age_group, sex, calendar_quarter) |>
+    dplyr::summarise(naomi_art_adjusted = sum(art_current_adjusted), .groups = "drop")
+
+  expect_equal(subnational_summed$naomi_art_adjusted, x$spec_comparison$value_spectrum_adjusted)
+
+})
