@@ -849,32 +849,3 @@ test_that("missing data is tagged correctly in aggregated plot data", {
 
 
 })
-
-test_that("Apply Spectrum adjustment when no subnational ART adjustment specified", {
-
-  area_merged <- read_area_merged("~/Downloads/demo_areas.geojson")
-  spec_program_data <- extract_pjnz_program_data("~/Downloads/demo_mwi2024_v6.36.PJNZ")
-
-  art_number <- read_art_number("~/Downloads/demo_art_number(1).csv")
-  art_spectrum_comparison <- prepare_art_spectrum_comparison(art_number, area_merged, spec_program_data)
-  art_programme_data_warning(art_spectrum_comparison)
-  art_number <- apply_art_adjustment(art_number, area_merged, art_spectrum_comparison)
-
-  prepare_input_time_series_art("~/Downloads/demo_art_number(1).csv", "~/Downloads/demo_areas.geojson", "~/Downloads/demo_mwi2024_v6.36.PJNZ")
-
-  expect_equal(art_adjust$art_current_adjusted, rep(c(300,300,300,
-                                                      750,660,645,
-                                                      500,440,430),
-                                                    times = 32))
-
-  expect_equal(art_adjust$art_adjustment_factor, rep(c(1, 1, 1,
-                                                       1, 0.88, 0.86,
-                                                       1, 0.88, 0.86),
-                                                     times = 32))
-  subnational_summed <- art_adjust |>
-    dplyr::group_by(age_group, sex, calendar_quarter) |>
-    dplyr::summarise(naomi_art_adjusted = sum(art_current_adjusted), .groups = "drop")
-
-  expect_equal(subnational_summed$naomi_art_adjusted, x$spec_comparison$value_spectrum_adjusted)
-
-})
