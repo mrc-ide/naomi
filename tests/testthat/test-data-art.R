@@ -1,6 +1,4 @@
-
 test_that("Apply Spectrum adjustment when no subnational ART adjustment specified", {
-
   x <- create_mock_art_data()
   art_adjust <- apply_art_adjustment(x$art, x$shape, x$spec_comparison)
 
