@@ -128,13 +128,6 @@ read_art_number <- function(file, all_columns = FALSE) {
              )
   }
 
-  if ( !("art_current_adjusted" %in% names(val)) ) {
-    val$art_current_adjusted <- val$art_current
-  }
-
-  if ( !("art_adjustment_factor" %in% names(val)) ) {
-    val$art_adjustment_factor <- round(val$art_current_adjusted / val$art_current, 2)
-  }
 
   ## !! TODO: check all columns are valid calendar quarters
 
@@ -142,8 +135,7 @@ read_art_number <- function(file, all_columns = FALSE) {
   if (all_columns) {
     out <- val
   } else {
-    out <- dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current,
-                         art_current_adjusted, art_adjustment_factor)
+    out <- dplyr::select(val, area_id, sex, age_group, calendar_quarter, art_current)
   }
   out
 }

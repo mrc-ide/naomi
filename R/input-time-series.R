@@ -58,11 +58,14 @@ get_art_metadata <- function(art) {
 
   # plot types below are derived from art_current which is always assumed
   # to be present
-  plot_types <- c(get_strats_for_plot_type("art"), "art_adult_sex_ratio", "art_child_adult_ratio")
+  plot_types <- c("art_current", get_strats_for_plot_type("art", c("adult","adult_f", "adult_m", "child")),
+                  "art_current_adjusted", get_strats_for_plot_type("art_adjusted", c("adult","adult_f", "adult_m", "child")),
+                  "art_adult_sex_ratio", "art_child_adult_ratio")
 
   if("art_new" %in% cols_keep) {
     plot_types <- c(plot_types, get_strats_for_plot_type("art_new"))
   }
+
 
   if(any(grep("vl", cols_keep))) {
     plot_types <- c(plot_types,
@@ -96,28 +99,34 @@ get_art_metadata <- function(art) {
 get_aggregate_exprs <- function() {
   summary_exprs <- rlang::exprs(
     # ART
-    art_total = sum(art_current,  na.rm = na_rm),
-    art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm),
-    art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm),
-    art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm),
-    art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm),
+    art_current = sum(art_current,  na.rm = na_rm[[1]]),
+    art_adult = sum(art_current * as.integer(age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adult_f = sum(art_current * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adult_m = sum(art_current * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_child = sum(art_current * as.integer(age_group == "Y000_014"),  na.rm = na_rm[[1]]),
 
-    art_new_total = sum(art_new, na.rm = na_rm),
-    art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-    art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-    art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-    art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm),
+    art_current_adjusted = sum(art_current_adjusted,  na.rm = na_rm[[1]]),
+    art_adjusted_adult = sum(art_current_adjusted * as.integer(age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adjusted_adult_f = sum(art_current_adjusted * as.integer(sex == "female" & age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adjusted_adult_m = sum(art_current_adjusted * as.integer(sex == "male" & age_group == "Y015_999"),  na.rm = na_rm[[1]]),
+    art_adjusted_child = sum(art_current_adjusted * as.integer(age_group == "Y000_014"),  na.rm = na_rm[[1]]),
 
-    vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm),
-    vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-    vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm),
-    vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm),
-    vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm),
-    vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm),
-    vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm)
+    art_new_total = sum(art_new, na.rm = na_rm[[1]]),
+    art_new_adult = sum(art_new * as.integer(age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    art_new_adult_f = sum(art_new * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    art_new_adult_m = sum(art_new * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    art_new_child = sum(art_new * as.integer(age_group == "Y000_014"), na.rm = na_rm[[1]]),
+
+    vl_tested_12mos_total = sum(vl_tested_12mos, na.rm = na_rm[[1]]),
+    vl_tested_12mos_adult = sum(vl_tested_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_tested_12mos_adult_f = sum(vl_tested_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_tested_12mos_adult_m = sum(vl_tested_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_tested_12mos_child = sum(vl_tested_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_total = sum(vl_suppressed_12mos, na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_adult = sum(vl_suppressed_12mos * as.integer(age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_adult_f = sum(vl_suppressed_12mos * as.integer(sex == "female" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_adult_m = sum(vl_suppressed_12mos * as.integer(sex == "male" & age_group == "Y015_999"), na.rm = na_rm[[1]]),
+    vl_suppressed_12mos_child = sum(vl_suppressed_12mos * as.integer(age_group == "Y000_014"), na.rm = na_rm[[1]])
   )
 
   mutate_exprs <- rlang::exprs(
@@ -125,7 +134,7 @@ get_aggregate_exprs <- function() {
     art_adult_sex_ratio = art_adult_f / art_adult_m,
     art_child_adult_ratio = art_child / art_adult,
 
-    vl_coverage_total = vl_tested_12mos_total / art_total,
+    vl_coverage_total = vl_tested_12mos_total / art_current,
     vl_coverage_adult = vl_tested_12mos_adult / art_adult,
     vl_coverage_adult_f = vl_tested_12mos_adult_f / art_adult_f,
     vl_coverage_adult_m = vl_tested_12mos_adult_m / art_adult_m,

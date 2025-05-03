@@ -249,6 +249,19 @@ test_that("data can be formatted for ART input time series", {
     dplyr::filter(dplyr::n() > 1)
 
   expect_true(nrow(dup_strata) == 0)
+
+  ## Check that correct indicators have been formatted for time series
+  expect_setequal(unique(data$plot),
+                  c( "art_current", "art_adult", "art_child",
+                     "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
+                     "art_new_total", "art_new_adult", "art_new_child",
+                     "vl_tested_12mos_total", "vl_tested_12mos_adult", "vl_tested_12mos_child",
+                     "vl_suppressed_12mos_total", "vl_suppressed_12mos_adult", "vl_suppressed_12mos_child",
+                     "art_child_adult_ratio",
+                     "vl_coverage_total" ,"vl_coverage_adult", "vl_coverage_child",
+                     "vl_prop_suppressed_total", "vl_prop_suppressed_adult", "vl_prop_suppressed_child"))
+
+
 })
 
 
@@ -312,6 +325,7 @@ test_that("ANC data can be aggregated", {
     dplyr::filter(dplyr::n() > 1)
 
   expect_true(nrow(dup_strata) == 0)
+
 })
 
 test_that("ANC data can be aggregated when avalible at different admin levels", {
@@ -488,7 +502,8 @@ test_that("plots are filtered according to avalible disaggregates", {
   data <- prepare_input_time_series_art(a_hintr_data$art_number,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c( "art_total","art_adult", "art_child",
+                  c( "art_current","art_adult", "art_child",
+                     "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
                      "art_child_adult_ratio", "art_new_total",
                      "art_new_adult","art_new_child","vl_tested_12mos_total",
                      "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
@@ -504,10 +519,13 @@ test_that("plots are filtered according to avalible disaggregates", {
   data1 <- prepare_input_time_series_art(test1_file,
                                          a_hintr_data$shape)
   expect_setequal(unique(data1$plot),
-                  c("art_adult" , "art_child_adult_ratio", "art_child" ,
-                    "art_total", "art_adult_f","art_adult_m",
-                    "art_adult_sex_ratio", "art_new_total","art_new_adult",
-                    "art_new_adult_f", "art_new_adult_m", "art_new_child",
+                  c("art_current", "art_adult","art_adult_f",
+                    "art_adult_m","art_child",
+                    "art_current_adjusted", "art_adjusted_adult","art_adjusted_adult_f",
+                    "art_adjusted_adult_m","art_adjusted_child",
+                    "art_child_adult_ratio","art_adult_sex_ratio",
+                    "art_new_total","art_new_adult","art_new_adult_f",
+                    "art_new_adult_m", "art_new_child",
                     "vl_tested_12mos_total","vl_tested_12mos_adult", "vl_tested_12mos_adult_f",
                     "vl_tested_12mos_adult_m", "vl_tested_12mos_child","vl_suppressed_12mos_total",
                     "vl_suppressed_12mos_adult","vl_suppressed_12mos_adult_f","vl_suppressed_12mos_adult_m",
@@ -524,7 +542,9 @@ test_that("plots are filtered according to avalible disaggregates", {
   data2 <- prepare_input_time_series_art(test2_file,
                                          a_hintr_data$shape)
   expect_setequal(unique(data2$plot),
-                  c("art_adult" , "art_total","art_adult_f","art_adult_m",
+                  c("art_current" ,"art_adult", "art_adult_f","art_adult_m",
+                    "art_current_adjusted", "art_adjusted_adult",
+                    "art_adjusted_adult_f", "art_adjusted_adult_m",
                     "art_adult_sex_ratio","art_new_total","art_new_adult","art_new_adult_f",
                     "art_new_adult_m",  "vl_tested_12mos_total","vl_tested_12mos_adult",
                     "vl_tested_12mos_adult_f", "vl_tested_12mos_adult_m", "vl_suppressed_12mos_total",
@@ -537,10 +557,10 @@ test_that("plots are filtered according to avalible disaggregates", {
 
 
 test_that("can get plot type descriptions from key", {
-  ret <- get_plot_type_column_metadata(c("art_total", "art_child"))
+  ret <- get_plot_type_column_metadata(c("art_current", "art_child"))
   expect_equal(ret, list(
     list(
-      id = "art_total",
+      id = "art_current",
       label = "ART count",
       description = "Number on ART at the end of calendar year",
       format = "0,0",
@@ -567,7 +587,8 @@ test_that("data can be aggregated without all indicators", {
   data <- prepare_input_time_series_art(no_art_new,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c( "art_total" ,"art_adult","art_child",
+                  c( "art_current" ,"art_adult","art_child",
+                     "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
                      "art_child_adult_ratio", "vl_tested_12mos_total",
                      "vl_tested_12mos_adult","vl_tested_12mos_child","vl_suppressed_12mos_total",
                      "vl_suppressed_12mos_adult","vl_suppressed_12mos_child","vl_coverage_total",
@@ -582,7 +603,8 @@ test_that("data can be aggregated without all indicators", {
   data <- prepare_input_time_series_art(no_vls,
                                         a_hintr_data$shape)
   expect_setequal(unique(data$plot),
-                  c("art_total", "art_adult","art_child","art_child_adult_ratio",
+                  c("art_current", "art_adult","art_child","art_child_adult_ratio",
+                   "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
                     "art_new_total","art_new_adult","art_new_child"))
 
   # data with no art_new or vls indicators
@@ -593,7 +615,9 @@ test_that("data can be aggregated without all indicators", {
                                         a_hintr_data$shape)
   expect_setequal(
     unique(data$plot),
-    c("art_total", "art_adult", "art_child", "art_child_adult_ratio"))
+    c("art_current", "art_adult", "art_child",
+      "art_current_adjusted", "art_adjusted_adult", "art_adjusted_child",
+      "art_child_adult_ratio"))
 
 })
 
