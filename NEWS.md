@@ -5,6 +5,20 @@
 * Add likelihood for ANC prevalence and ANC ART coverage at T3. Change ANC clients
   reference period from T2 to T3.
 
+# naomi 2.10.12
+
+* Show summary report incidence plot x-axes label as number instead of percent
+* Add the age group into the summary report incidence plot
+
+# naomi 2.10.11
+
+* Add ART adjusted to output for time series plot.
+* Change "ART total" label for number on ART to "ART Current" for time series inputs to improve consistency in variable naming.
+
+# naomi 2.10.10
+
+* Fix bug where ART adjustment was being duplicated in `apply_art_adjustment()` and `read_art_number()`
+
 # naomi 2.10.9
 
 * Add two new columns to subnational ART data: 

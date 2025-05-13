@@ -7,7 +7,12 @@ test_that("R implementation matches C++", {
   b_pop_agesex <- read_population(a_hintr_data$population)
 
   b_survey <- read_survey_indicators(a_hintr_data$survey)
+
   b_art_number <- read_art_number(a_hintr_data$art_number)
+  b_spec_program_data <- extract_pjnz_program_data(a_hintr_data$pjnz)
+  b_art_spectrum_comparison <- prepare_art_spectrum_comparison(b_art_number, b_area_merged, b_spec_program_data)
+  b_art_number <- apply_art_adjustment(b_art_number, b_area_merged, b_art_spectrum_comparison)
+
   b_anc_testing <- read_anc_testing(a_hintr_data$anc_testing)
 
   b_naomi_mf <- naomi_model_frame(b_area_merged,
