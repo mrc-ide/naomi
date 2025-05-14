@@ -570,6 +570,7 @@ if (print_pt) {cat("### **Distribuição do VIH por idade e género**")}
 #-------------------------------------------------------------------------------
 p7 <- pop_pyramid_outputs(naomi_output = outputs,
                           indicator = "plhiv",
+                          calendar_quarter = 3,
                           colour_palette = "red",
                           x_title = t_("PLHIV"),
                           fig_title = t_("PLHIV_POP_PYRAMID_PLOT_TITLE"))
@@ -581,6 +582,7 @@ p7 <- pop_pyramid_outputs(naomi_output = outputs,
 #-------------------------------------------------------------------------------
 p8 <- pop_pyramid_outputs(naomi_output = outputs, 
                           indicator = "art_current_residents",
+                          calendar_quarter = 3,                          
                           colour_palette = "green",
                           x_title = t_("ART_POP_PYRAMID_X_AXIS"),
                           fig_title = t_("ART_POP_PYRAMID_PLOT_TITLE"))
@@ -596,6 +598,7 @@ p8 <- p8 + ggplot2::theme(
 #-------------------------------------------------------------------------------
 p9 <- pop_pyramid_outputs(naomi_output = outputs,
                           indicator = "infections",
+                          calendar_quarter = 3,                          
                           colour_palette = "blue",
                           x_title = t_("INFECTIONS_POP_PYRAMID_X_AXIS"),
                           fig_title = t_("INFECTIONS_POP_PYRAMID_PLOT_TITLE"))
@@ -639,8 +642,9 @@ if (district_count > 160) {height <- 24}
 #-----------------------------------------------------------------------------
 p13 <- district_barplot(naomi_output = outputs, 
                         indicator = "prevalence", 
-                        age = "Y015_049", 
+                        age = "Y015_049",
                         sex_disag = "both",
+                        calendar_quarter = 3,
                         label_format = scales::percent_format(1), 
                         colour_palette  = "red",
                         x_title = t_("HIV_PREVALENCE"), 
@@ -656,6 +660,7 @@ p14 <- district_barplot(naomi_output = outputs,
                         indicator = "art_coverage", 
                         age = "Y015_999", 
                         sex_disag = "both",
+                        calendar_quarter = 3,                        
                         label_format = scales::percent_format(1), 
                         colour_palette  = "green",
                         x_title = t_("ART_COVERAGE"), 
@@ -669,6 +674,7 @@ p15 <- district_barplot(naomi_output = outputs,
                         indicator = "incidence", 
                         age = "Y015_049", 
                         sex_disag = "both",
+                        calendar_quarter = 3,
                         label_format = scales::percent_format(0.01, 1000), 
                         colour_palette  = "blue",
                         x_title = t_("INCIDENCE"), 
