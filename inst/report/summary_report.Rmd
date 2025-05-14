@@ -86,9 +86,11 @@ if(grepl("\\.zip$", params$outputs)) {
 report_date <- format(Sys.Date(), "%d-%m-%Y")
 t1 <- options$calendar_quarter_t1
 t2 <- options$calendar_quarter_t2
+t3 <- options$calendar_quarter_t3
 iso <- options$area_scope
 quarter_t1 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t1,]$quarter_label
 quarter_t2 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t2,]$quarter_label
+quarter_t3 <- outputs$meta_period[outputs$meta_period$calendar_quarter == t3,]$quarter_label
 level <- as.integer(options$area_level)
 spectrum_file <- paste0(inputs[inputs$role == "pjnz",]$filename)
 
@@ -110,7 +112,7 @@ country <- paste0(outputs$meta_area$area_name[outputs$meta_area$area_id == iso],
 
 
 # Filter indicator data for area + calendar options selected in model run 
-data <- dplyr::filter(indicators, area_level == level, calendar_quarter == t2)
+data <- dplyr::filter(indicators, area_level == level, calendar_quarter == t3)
 # Number of districts in lowest area level
 district_count <- length(levels(as.factor(data$area_name)))
 
@@ -121,12 +123,18 @@ if (is.null(options$include_art_t1) || options$include_art_t1 == "") {
 if (is.null(options$include_art_t2) || options$include_art_t2 == "") {
   options$include_art_t2 <- NA
 }
+if (is.null(options$include_art_t3) || options$include_art_t3 == "") {
+  options$include_art_t3 <- NA
+}
 
 if (is.null(quarter_t1) || quarter_t1 == "") {
   quarter_t1 <- NA
 }
 if (is.null(quarter_t2) || quarter_t2 == "") {
   quarter_t2 <- NA
+}
+if (is.null(quarter_t3) || quarter_t3 == "") {
+  quarter_t3 <- NA
 }
 
 if (is.null(options[["artattend"]]) || options[["artattend"]] == "") {
@@ -135,11 +143,14 @@ if (is.null(options[["artattend"]]) || options[["artattend"]] == "") {
 if (is.null(options[["artattend_t2"]]) || options[["artattend_t2"]] == "") {
   options[["artattend_t2"]] <- NA
 }
+if (is.null(options[["artattend_t3"]]) || options[["artattend_t3"]] == "") {
+  options[["artattend_t3"]] <- NA
+}
 
 include <- tibble::tibble(
-  art = c(options$include_art_t1, options$include_art_t2),
-  art_year = c(quarter_t1, quarter_t2),
-  art_attend = c(options$artattend, options$artattend_t2)
+  art = c(options$include_art_t1, options$include_art_t2, options$include_art_t3),
+  art_year = c(quarter_t1, quarter_t2, quarter_t3),
+  art_attend = c(options$artattend, options$artattend_t2, options$artattend_t3)
 )
 
 # Select years where programme data is included
@@ -189,17 +200,17 @@ if(length(anc_prev_options)) {
 
 if (print_en) {
   cat(paste0("# ", country, " Subnational HIV Estimates \n"))
-  cat(paste0("### **", quarter_t2, "** (report ", report_date, ")"))
+  cat(paste0("### **", quarter_t3, "** (report ", report_date, ")"))
 }
 
 if (print_fr) {
   cat(paste0("# Estimations infranationales du VIH ", country, " \n"))
-  cat(paste0("### **", quarter_t2, "** (rapport ", report_date, ")"))
+  cat(paste0("### **", quarter_t3, "** (rapport ", report_date, ")"))
 }
 
 if (print_pt) {
   cat(paste0("# Estimativas subnacionais do VIH ", country, "\n"))
-  cat(paste0("### **", quarter_t2, "** (relatório ", report_date, ")"))
+  cat(paste0("### **", quarter_t3, "** (relatório ", report_date, ")"))
 }
 
 ```
@@ -447,7 +458,7 @@ if (print_pt) { cat("### **Distribuição geográfica de PVVIH**") }
 p1 <- naomi::map_outputs(indicators_geom, 
                          indicator = "plhiv",
                          age = "Y015_999", 
-                         calendar_quarter = options$calendar_quarter_t2,
+                         calendar_quarter = options$calendar_quarter_t3,
                          sex_disag = "both", 
                          colour_palette = "red",
                          fig_title = t_("PLHIV_MAP_PLOT_TITLE"),
@@ -460,7 +471,7 @@ p1 <- naomi::map_outputs(indicators_geom,
 p2 <- naomi::map_outputs(indicators_geom, 
                          indicator = "art_current_residents",
                          age = "Y015_999",                          
-                         calendar_quarter = options$calendar_quarter_t2,
+                         calendar_quarter = options$calendar_quarter_t3,
                          sex_disag = "both", 
                          colour_palette = "green",
                          fig_title = t_("ART_CURRENT_MAP_PLOT_TITLE"),
@@ -473,7 +484,7 @@ p2 <- naomi::map_outputs(indicators_geom,
 p3 <- naomi::map_outputs(indicators_geom, 
                          indicator = "infections",
                          age = "Y015_999", 
-                         calendar_quarter = options$calendar_quarter_t2,
+                         calendar_quarter = options$calendar_quarter_t3,
                          sex_disag = "both", 
                          colour_palette = "blue",
                          fig_title = t_("INFECTIONS_MAP_PLOT_TITLE"),
@@ -503,7 +514,7 @@ p4 <- naomi::map_outputs(indicators_geom,
                          indicator = "prevalence",
                          age = "Y015_049", 
                          sex_disag = "both", 
-                         calendar_quarter = options$calendar_quarter_t2,
+                         calendar_quarter = options$calendar_quarter_t3,
                          colour_palette = "red",
                          legend_label = scales::percent_format(1L), 
                          fig_title = t_("PREVALENCE_MAP_PLOT_TITLE"),
@@ -517,7 +528,7 @@ p5 <- naomi::map_outputs(indicators_geom,
                          indicator = "art_coverage",
                          age = "Y015_999", 
                          sex_disag = "both", 
-                         calendar_quarter = options$calendar_quarter_t2,
+                         calendar_quarter = options$calendar_quarter_t3,
                          colour_palette = "green",
                          legend_label = scales::percent_format(accuracy = 1L), 
                          fig_title = t_("ART_COVERAGE_MAP_PLOT_TITLE"),
@@ -532,7 +543,7 @@ p6 <- naomi::map_outputs(indicators_geom,
                          indicator = "incidence",
                          age = "Y015_049", 
                          sex_disag = "both", 
-                         calendar_quarter = options$calendar_quarter_t2,
+                         calendar_quarter = options$calendar_quarter_t3,
                          colour_palette = "blue",
                          legend_label = scales::label_number(0.1, 1000), 
                          fig_title = t_("INCIDENCE_MAP_PLOT_TITLE"),
@@ -725,7 +736,7 @@ indicators_15plus <- c("art_coverage", "plhiv", "infections",
 
 
 x1 <- indicators %>%
-  dplyr::filter(calendar_quarter == t2) %>%
+  dplyr::filter(calendar_quarter == t3) %>%
   dplyr::filter(
            sex == "both",
            age_group == "Y015_049" & indicator %in% indicators_15to49 |
