@@ -298,10 +298,10 @@ Type objective_function<Type>::operator() ()
   val -= dnorm(beta_anc_alpha_t2, 0.0, 5.0, true).sum();
 
   PARAMETER_VECTOR(beta_anc_rho_t3);
-  val -= dnorm(beta_anc_rho_t2, 0.0, 5.0, true).sum();
+  val -= dnorm(beta_anc_rho_t3, 0.0, 5.0, true).sum();
 
   PARAMETER_VECTOR(beta_anc_alpha_t3);
-  val -= dnorm(beta_anc_alpha_t2, 0.0, 5.0, true).sum();
+  val -= dnorm(beta_anc_alpha_t3, 0.0, 5.0, true).sum();
   
 
 
