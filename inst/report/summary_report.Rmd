@@ -83,7 +83,7 @@ if(grepl("\\.zip$", params$outputs)) {
 
 # Grab inputs and model options from model output zip file
 # # concatenating strings where more than one option may be selected
-report_date <- format(Sys.Date(), "%d-%m-%Y")
+report_date <- format(Sys.Date(), "%Y-%m-%d")
 t1 <- options$calendar_quarter_t1
 t2 <- options$calendar_quarter_t2
 t3 <- options$calendar_quarter_t3
@@ -160,7 +160,8 @@ if (print_fr) { collapse_and <- " et "} else if (print_pt) { collapse_and <- " e
 # ART data included
 if("true" %in% include$art) {
   df <- include %>% dplyr::filter(art == "true")
-  art_year <- paste0(df$art_year, sep = "", collapse = collapse_and)
+  ## art_year <- paste0(df$art_year, sep = "", collapse = collapse_and)
+  art_year <- paste0(df$art_year, sep = "", collapse = ", ")
 } else {
   art_year <- NA
 }
@@ -168,27 +169,30 @@ if("true" %in% include$art) {
 # ART attendance reallocation is implemented
 if("true" %in% include$art_attend ) {
   df <- include %>% dplyr::filter(art_attend == "true")
-  art_attend <- paste0(df$art_year, sep = "", collapse = collapse_and)
+  ## art_attend <- paste0(df$art_year, sep = "", collapse = collapse_and)
+  art_attend <- paste0(df$art_year, sep = "", collapse = ", ")
 } else {
   art_attend <- NA
 }
 
 # ANC ART programme data included
-anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2) 
+anc_art_options = list(options$anc_art_coverage_year1, options$anc_art_coverage_year2, options$anc_art_coverage_year3) 
 anc_art_options <- anc_art_options[!sapply(anc_art_options,is.null)]
 
 if(length(anc_art_options)) {
-  anc_art <- paste0(anc_art_options, sep = "", collapse = collapse_and)
+  ## anc_art <- paste0(anc_art_options, sep = "", collapse = collapse_and)
+  anc_art <- paste0(anc_art_options, sep = "", collapse = ", ")
 } else {
   anc_art <- NA
 }
 
 # ANC prev programme data
-anc_prev_options = list(options$anc_prevalence_year1,options$anc_prevalence_year2)
+anc_prev_options = list(options$anc_prevalence_year1, options$anc_prevalence_year2, options$anc_prevalence_year3)
 anc_prev_options <- anc_art_options[!sapply(anc_art_options,is.null)]
 
 if(length(anc_prev_options)) {
-  anc_prev <- paste0(anc_prev_options, sep = "", collapse = collapse_and)
+  ## anc_prev <- paste0(anc_prev_options, sep = "", collapse = collapse_and)
+  anc_prev <- paste0(anc_prev_options, sep = "", collapse = ", ")
 } else {
   anc_prev <- NA
 }
@@ -221,28 +225,33 @@ if (print_pt) {
 if (print_en) {
   cat(paste0("This report summarises the **", area_level_label,
              "-level** HIV indicators for **", country,
-             "** from the Naomi model", sep = "\n"))
+             "** from the Naomi model.", sep = "\n"))
 }
 
 if (print_fr) {
   cat(paste0("Ce rapport résume les **", area_level_label,
              "** indicateurs VIH pour **",country,
-             "** du modèle Naomi", sep = "\n"))
+             "** du modèle Naomi.", sep = "\n"))
 }
 
 if (print_pt) {
   cat(paste0("Este relatório resume os Indicadores de VIH **", area_level_label,
            "** para **", country,
-           "** a partir do modelo Naomi", sep = "\n"))
+           "** a partir do modelo Naomi.", sep = "\n"))
 }
 ```
+
+**This report uses a customised version of the Naomi model developed for Malawi HIV estimates.** The main customisations are: 
+
+  * The model estimates trends using the **two most recent household surveys**, rather than only the most recent survey.
+  * The model estimates district-specific **ART programme data reporting bias** for the current period.
 
 
 ```{r, echo = FALSE, results = 'asis'}
 
 if (print_en) {
   cat("Naomi is a statistical model that uses data from several sources, including:  \n")
-  cat("\nNational survey data:   \n")
+  cat("\n * National survey data:   \n")
 }
 
 if (print_fr) {
@@ -258,18 +267,18 @@ if (print_pt) {
 ```
 
 ```{r, echo = FALSE, results = 'asis'}
-survey_prev <- paste0(options$survey_prevalence, collapse = ", ")
-survey_art <- paste0(options$survey_art_coverage, collapse = ", ")
-survey_recent <- paste0(options$survey_recently_infected, collapse = ", ")
+survey_prev <- paste0(c(options$survey_prevalence_t1, options$survey_prevalence_t2), collapse = ", ")
+survey_art <- paste0(c(options$survey_art_coverage_t1, options$survey_art_coverage_t2), collapse = ", ")
+survey_recent <- paste0(c(options$survey_recently_infected_t1, options$survey_recently_infected_t2), collapse = ", ")
 
-text <- tibble::tibble(prefix = c(t_("INFECTIONS_SURVEY_PREFIX"), 
-                                  t_("PREVALENCE_SURVEY_PREFIX"), 
-                                  t_("ART_SURVEY_PREFIX")), 
-                        source = c(survey_recent,
-                                   survey_prev,
-                                   survey_art)) %>%
+text <- tibble::tibble(prefix = c(t_("PREVALENCE_SURVEY_PREFIX"),
+                                  t_("ART_SURVEY_PREFIX"),
+                                  t_("INFECTIONS_SURVEY_PREFIX")),
+                        source = c(survey_prev,
+                                   survey_art,
+                                   survey_recent)) %>%
   dplyr::filter(source != "")
-cat(paste0("* ", text$prefix, " _", text$source, "_"), sep = "\n")
+cat(paste0("    - ", text$prefix, " _", text$source, "_"), sep = "\n")
 
 
 ```
@@ -279,21 +288,21 @@ programme_data <- c(art_year, anc_prev, anc_art)
 
 if (sum(is.na(programme_data)) <3 ) {
   
-  cat(paste0("\n Operational programme data: \n", sep = "\n"))
+  cat(paste0("\n\n * Operational programme data: \n", sep = "\n"))
   
-  text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for ",
-                                  "National programme data on ANC HIV prevalence for ", 
-                                  "National programme data on ANC ART coverage for "
+  text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for: ",
+                                  "National programme data on ANC HIV prevalence for: ", 
+                                  "National programme data on ANC ART coverage for: "
                                   ), 
                        source = c(art_year,
                                   anc_prev, 
                                   anc_art)) %>% tidyr::drop_na()
 
-  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  cat(paste0("\n ",cat(paste0("    - ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
 }
 
- cat(paste0("\n and national HIV estimates from Spectrum file _", spectrum_file,"_",
+ cat(paste0("\n\n * and national HIV estimates from Spectrum file _", basename(spectrum_file),"_",
            "\n using calibration options: \n " ))
 ```
   
@@ -312,7 +321,7 @@ if (sum(is.na(programme_data)) <3 ) {
                                   anc_prev, 
                                   anc_art)) %>% tidyr::drop_na()
 
-  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  cat(paste0("\n ",cat(paste0("    - ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
 }
 
@@ -336,7 +345,7 @@ if (sum(is.na(programme_data)) <3 ) {
                                   anc_prev, 
                                   anc_art)) %>% tidyr::drop_na()
   
-  cat(paste0("\n ",cat(paste0("* ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
+  cat(paste0("\n ",cat(paste0("    - ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
 }
 
@@ -379,12 +388,12 @@ if(is.null(calibration_options$spectrum_infections_calibration_level)){
   text <- dplyr::filter(text, !grepl("infections", key)) }
 
 if(nrow(text) > 0) {
-  cat(paste0("* ", text$prefix, " _", text$values, "_"), sep = "\n")
+  cat(paste0("    - ", text$prefix, " _", text$values, "_"), sep = "\n")
 } else {
   if (print_en) {no_calibration <- "No calibration selected"}
   if (print_fr) {no_calibration <- "Aucun étalonnage sélectionné"}
   if (print_pt) {no_calibration <- "Nenhuma calibração selecionada"}
-  cat(paste0("* ", no_calibration), sep = "\n")
+  cat(paste0("     -  ", no_calibration), sep = "\n")
 }
 ```
 
@@ -395,7 +404,7 @@ if ("true" %in% include$art_attend) {
   
   cat(paste0("ART coverage is estimated accounting for patient mobility between
              neighbouring districts (for ", art_attend, ").
-             \n This takes into account 
+             This takes into account 
              where patients reside as opposed to the location of the clinic they attended.
              \n Further technical information about this allocation method
              and the Naomi model is available at the end of this report."))
