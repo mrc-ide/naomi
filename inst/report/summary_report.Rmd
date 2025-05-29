@@ -197,6 +197,18 @@ if(length(anc_prev_options)) {
   anc_prev <- NA
 }
 
+# STI ART programme data included
+sti_art_options = list(options$sti_art_coverage_year1, options$sti_art_coverage_year2, options$sti_art_coverage_year3) 
+sti_art_options <- sti_art_options[!sapply(sti_art_options,is.null)]
+
+if(length(sti_art_options)) {
+  ## sti_art <- paste0(sti_art_options, sep = "", collapse = collapse_and)
+  sti_art <- paste0(sti_art_options, sep = "", collapse = ", ")
+} else {
+  sti_art <- NA
+}
+
+
 ```
 
 
@@ -245,7 +257,7 @@ if (print_pt) {
 
   * The model estimates trends using the **two most recent household surveys**, rather than only the most recent survey.
   * The model estimates district-specific **ART programme data reporting bias** for the current period.
-
+  * The model useas **ART coverage among HIV positive STI clients** as an additional proxy for district-level ART coverage trends, similar to use of ART coverage among HIV positive pregnant women in the main Naomi model
 
 ```{r, echo = FALSE, results = 'asis'}
 
@@ -284,7 +296,7 @@ cat(paste0("    - ", text$prefix, " _", text$source, "_"), sep = "\n")
 ```
   
 ```{r, echo = FALSE, results= 'asis', include = print_en, eval = print_en}
-programme_data <- c(art_year, anc_prev, anc_art)
+programme_data <- c(art_year, anc_prev, anc_art, sti_art)
 
 if (sum(is.na(programme_data)) <3 ) {
   
@@ -292,11 +304,14 @@ if (sum(is.na(programme_data)) <3 ) {
   
   text2 <- tibble::tibble(prefix = c("National programme data on ART coverage for: ",
                                   "National programme data on ANC HIV prevalence for: ", 
-                                  "National programme data on ANC ART coverage for: "
+                                  "National programme data on ANC ART coverage for: ",
+                                  "National programme data on _STI client ART coverage_ for: "
                                   ), 
                        source = c(art_year,
                                   anc_prev, 
-                                  anc_art)) %>% tidyr::drop_na()
+                                  anc_art,
+                                  sti_art)) %>%
+    tidyr::drop_na()
 
   cat(paste0("\n ",cat(paste0("    - ", text2$prefix, "_", text2$source, "_"), sep = "\n")))
   
