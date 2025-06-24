@@ -51,7 +51,15 @@ get_art_metadata <- function(art) {
     art <- read_art_number(art, all_columns = TRUE)
   }
 
-  cols_list <- c("art_current", "art_current_adjusted","art_new", "vl_tested_12mos", "vl_suppressed_12mos")
+  cols_list <- c("art_current",
+                 "art_current_adjusted",
+                 "art_current_public",
+                 "art_current_medaid",
+                 "art_current_cashpay",
+                 "art_new",
+                 "vl_tested_12mos",
+                 "vl_suppressed_12mos")
+  
   cols_keep <- intersect(cols_list, colnames(art))
   # need to add art because art_current is abbreviated to art in plot types
   all_strat_plot_types <- c(cols_list, "vl_coverage", "vl_prop_suppressed", "art", "art_adjusted")

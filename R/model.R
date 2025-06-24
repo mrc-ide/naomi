@@ -830,13 +830,36 @@ naomi_model_frame <- function(area_merged,
 
   ## ## Foreign ART access model
 
+  ## Thembisa 4.8 applies total population immigrant proportion for 
+  ## ages 15+ population and a separate child immigrant proportion
+  ## for children age 0-14 years -- see Table B.1 in Thembisa 4.8
+  ## ProvincialModel2025.pdf (page 149).
+  ##
+  ## Therefore use these same two age groups, despite the recent
+  ## immigrant proportion for adults being the total population
+
+  recent_immigrant_params_long <- recent_immigrant_params %>%
+    dplyr::rename(
+      "Y015_999" = recent_foreign_immigrant_prop,  ## all ages intentionally used
+      "Y000_014" = recent_foreign_immigrant_prop_child
+    ) %>%
+    tidyr::pivot_longer(
+      cols = c(Y000_014, Y015_999),
+      names_to = "age_group_coarse",
+      values_to = "recent_foreign_immigrant_prop"
+    )
+
   mf_model <- mf_model %>%
+    dplyr::mutate(
+      age_group_coarse = dplyr::if_else(age15plus == 1, "Y015_999", "Y000_014")
+    ) %>%
     dplyr::left_join(
-      dplyr::select(recent_immigrant_params,
+      dplyr::select(recent_immigrant_params_long,
                     area_id,
+                    age_group_coarse,
                     recent_foreign_immigrant_prop,
                     recent_migrant_hivprev_15to49),
-      by = "area_id"
+      by = c("area_id", "age_group_coarse")
     )
 
   stopifnot(!is.na(mf_model$recent_foreign_immigrant_prop))
@@ -1647,6 +1670,9 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       sex = character(0),
       age_group = character(0),
       art_current = integer(0),
+      art_current_public = integer(0),
+      art_current_medaid = integer(0),
+      art_current_cashpay = integer(0),
       stringsAsFactors = FALSE
     )
 
@@ -1657,6 +1683,9 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
         sex = character(0),
         age_group = character(0),
         art_current = integer(0),
+        art_current_public = integer(0),
+        art_current_medaid = integer(0),
+        art_current_cashpay = integer(0),        
         calendar_quarter = character(0),
         source = character(0),
         naomi_input = character(0),
@@ -1668,6 +1697,9 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       raw_input  <- aggregate_art(art_number, naomi_mf$areas) %>%
         dplyr::mutate(
           art_current = art_current_adjusted,
+          art_current_public,
+          art_current_medaid,
+          art_current_cashpay,
           source = "programme",
           naomi_input = FALSE) %>%
         dplyr::select(area_id, sex, age_group, art_current, calendar_quarter,
@@ -1709,10 +1741,14 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::mutate(
         quarter_id = calendar_quarter_to_quarter_id(calendar_quarter),
         art_current = art_current_adjusted,
+        art_current_public,
+        art_current_medaid,
+        art_current_cashpay
       ) %>%
       dplyr::filter(!is.na(art_current))
 
-    cols <- c("area_id","sex","age_group","art_current")
+    cols <- c("area_id","sex","age_group","art_current",
+              "art_current_public", "art_current_medaid", "art_current_cashpay")
 
     # Select or interpolate ART data for all admin levels
     if (out_quarter_id %in% aggregated_artnum$quarter_id) {
@@ -1727,6 +1763,9 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
       dplyr::summarise(min_data_quarter = min(quarter_id),
                        max_data_quarter = max(quarter_id),
                        art_current = stats::approx(quarter_id, art_current, out_quarter_id, rule =2)$y,
+                       art_current_public = stats::approx(quarter_id, art_current_public, out_quarter_id, rule =2)$y,
+                       art_current_medaid = stats::approx(quarter_id, art_current_medaid, out_quarter_id, rule =2)$y,
+                       art_current_cashpay = stats::approx(quarter_id, art_current_cashpay, out_quarter_id, rule =2)$y,
                        .groups = "drop") %>%
       dplyr::filter(out_quarter_id > min_data_quarter - 4L,
                     out_quarter_id <= max_data_quarter) %>%
@@ -1759,8 +1798,9 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
 
 
     artnum_full_mf <- rbind(filtered_artnum, excluded)
-    artnum_sub <- dplyr::select(filtered_artnum,
-                                     area_id, sex, age_group, art_current)
+    artnum_sub <- filtered_artnum %>%
+      dplyr::select(area_id, sex, age_group,
+                    art_current, art_current_public, art_current_medaid, art_current_cashpay)
 
     artnum_out <- list(raw_input = artnum_full_mf,
                       model_input = artnum_sub)

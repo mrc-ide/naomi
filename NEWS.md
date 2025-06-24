@@ -1,3 +1,10 @@
+# naomi 2.11.1
+
+* ART outputs (art_current) are stratified to treatment sector (public, private through medical aid schemes, cash pay, foreign). Public, medical aid, and cash paying are calibrated to district-level data about numbers access through each sector. 
+
+* Additional outputs `plhiv_attend_public` and `aware_plhiv_attend_public`. These represent the total expected to attend public sector services in each district to fully close treatment gaps, assuming that all currently untreated people would access public sector services. They are calculated as the totals `plhiv_attend` and `aware_plhiv_attend`, respectively, minus the numbers receiving ART outside of the public sector (medical aid schemes, cash paying, and from foreign sources).
+
+  
 # naomi 2.11.0
 
 * Implement survey data at T1 and T2 (done for South Africa 2024 HIV estimates).
@@ -7,7 +14,7 @@
   
 * Implement foreign ART attendance proportion. Model is the same as Thembisa 4.8 and
   uses fixed values for the foreign ART attendance ratios. May in future add uncertainty 
-  about eta foreign ART attendance ratio parameter estimates.
+  about foreign ART attendance ratio parameter estimates (eta).
 
 # naomi 2.10.12
 

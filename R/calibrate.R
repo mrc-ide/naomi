@@ -109,7 +109,7 @@ calibrate_outputs <- function(output,
   ## Add ID columns to merge to spectrum_calibration data frame.
   val <- indicators %>%
     dplyr::filter(indicator %in%
-                    c("population", "plhiv", "art_current_residents", "art_current", "art_foreign",
+                    c("population", "plhiv", "art_current_residents", "art_current",
                       "plhiv_attend", "untreated_plhiv_attend",
                       "aware_plhiv_num", "unaware_plhiv_num",
                       "aware_plhiv_attend", "unaware_plhiv_attend",
@@ -254,14 +254,13 @@ calibrate_outputs <- function(output,
 
     ## Calibrate PLHIV attending
     ## Note: aggregate based on calibrated values for valmean_wide$plhiv
-    ##   minus the number of art_foreign
 
     plhivattend_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                                   "sex_age_group")
 
     plhivattend_target <- valmean_wide %>%
       dplyr::group_by_at(plhivattend_aggr_var) %>%
-      dplyr::summarise(plhivattend_target = sum(plhiv - art_foreign),
+      dplyr::summarise(plhivattend_target = sum(plhiv),
                        .groups = "drop")
 
     valmean_wide <- valmean_wide %>%
@@ -305,14 +304,13 @@ calibrate_outputs <- function(output,
 
     ## Calibrate number attending
     ## Note: aggregation based off calibrated values for valmean_wide$art_current_residents
-    ##   minus number of art_foreign
 
     artattend_aggr_var <- get_spectrum_aggr_var(spectrum_artnum_calibration_level,
                                                 "sex_age_group")
 
     artattend_target <- valmean_wide %>%
       dplyr::group_by_at(artattend_aggr_var) %>%
-      dplyr::summarise(artattend_target = sum(art_current_residents - art_foreign),
+      dplyr::summarise(artattend_target = sum(art_current_residents),
                        .groups = "drop")
 
     valmean_wide <- valmean_wide %>%
@@ -556,10 +554,29 @@ calibrate_outputs <- function(output,
              ratio = dplyr::if_else(raw == 0, 0, adjusted / raw),
              raw = NULL,
              adjusted = NULL
-           )
+    ) %>%
+    dplyr::rename(
+      indicator_adj = indicator
+    )
+
+  ## For art_current_residents_<sector> and art_attend_<sector>,
+  ## scale the sector-specific counts proportionally to ART total counts
+  adj_map <- c("art_current_residents_public"  = "art_current_residents",
+               "art_current_residents_medaid"  = "art_current_residents",
+               "art_current_residents_cashpay" = "art_current_residents",
+               "art_current_residents_foreign" = "art_current_residents",
+               "art_current_attend_public"  = "art_current",
+               "art_current_attend_medaid"  = "art_current",
+               "art_current_attend_cashpay" = "art_current",
+               "art_current_attend_foreign" = "art_current")
+
+  byv_adj <- dplyr::recode(byv, "indicator" = "indicator_adj")
 
   out <- indicators %>%
-    dplyr::left_join(adj_counts, by = byv) %>%
+    dplyr::mutate(
+      indicator_adj = dplyr::recode(indicator, !!!adj_map)
+    ) %>%
+    dplyr::left_join(adj_counts, by = byv_adj) %>%
     dplyr::mutate(
              ratio = tidyr::replace_na(ratio, 1.0),
              mean = mean * ratio,
@@ -572,7 +589,55 @@ calibrate_outputs <- function(output,
 
   out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
 
+  ## For public sector attending outputs, calculate adjusted totals to 
+  ## determine ratios
+  adj_attend_public <- out %>%
+    dplyr::select(area_id, sex, age_group, calendar_quarter, indicator, adjusted = mean) %>%
+    dplyr::filter(
+      indicator %in% c("plhiv_attend",
+                       "aware_plhiv_attend",
+                       "art_current_attend_medaid",
+                       "art_current_attend_cashpay",
+                       "art_current_attend_foreign")
+    ) %>%
+    tidyr::pivot_wider(names_from = indicator, values_from = adjusted) %>%
+    dplyr::mutate(
+      plhiv_attend_public = plhiv_attend - art_current_attend_medaid - art_current_attend_cashpay - art_current_attend_foreign,
+      aware_plhiv_attend_public = aware_plhiv_attend - art_current_attend_medaid - art_current_attend_cashpay - art_current_attend_foreign
+    ) %>%
+    tidyr::pivot_longer(cols = c(plhiv_attend_public, aware_plhiv_attend_public),
+                        names_to = "indicator", values_to = "adjusted") %>%
+    dplyr::select(c(tidyselect::all_of(byv), adjusted))
 
+  adj_attend_public <- adj_attend_public %>%
+    dplyr::left_join(
+      dplyr::select(indicators, tidyselect::all_of(byv), raw = mean),
+      by = byv
+    ) %>%
+    dplyr::mutate(
+      ratio = dplyr::if_else(raw == 0, 0, adjusted / raw),
+      raw = NULL,
+      adjusted = NULL
+    )
+
+  out <- out %>%
+    dplyr::left_join(adj_attend_public, by = byv) %>%
+    dplyr::mutate(
+      ratio = tidyr::replace_na(ratio, 1.0),
+      mean = mean * ratio,
+      se = se * ratio,
+      median = median * ratio,
+      mode = mode * ratio,
+      lower = lower * ratio,
+      upper = upper * ratio,
+      ratio = NULL
+    )
+
+  out <- dplyr::select(out, tidyselect::all_of(names(output$indicators)))
+
+
+  ## For proportions, calculate adjustments on the log-odds scale instead
+  ## of ratios to ensure adjusted values remain in range (0, 1)
   adj_props <- adj %>%
     tidyr::pivot_wider(names_from = indicator, values_from = adjusted) %>%
     dplyr::mutate(

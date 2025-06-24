@@ -81,8 +81,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t1_out" = "untreated_plhiv_num",
                      "plhiv_attend_t1_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t1_out" = "untreated_plhiv_attend",
-                     "artnum_foreign_t1_out" = "art_foreign",
-                     "artprop_foreign_t1_out" = "artprop_foreign",
                      "lambda_t1_out" = "incidence",
                      "infections_t1_out" = "infections")
 
@@ -94,9 +92,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "artattend_t2_out" = "art_current",
                      "untreated_plhiv_num_t2_out" = "untreated_plhiv_num",
                      "plhiv_attend_t2_out" = "plhiv_attend",
-                     "untreated_plhiv_attend_t2_out" = "untreated_plhiv_attend",
-                     "artnum_foreign_t2_out" = "art_foreign",
-                     "artprop_foreign_t2_out" = "artprop_foreign",                     
+                     "untreated_plhiv_attend_t2_out" = "untreated_plhiv_attend",       
                      "lambda_t2_out" = "incidence",
                      "infections_t2_out" = "infections")
 
@@ -109,8 +105,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t3_out" = "untreated_plhiv_num",
                      "plhiv_attend_t3_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t3_out" = "untreated_plhiv_attend",
-                     "artnum_foreign_t3_out" = "art_foreign",
-                     "artprop_foreign_t3_out" = "artprop_foreign",                     
                      "lambda_t3_out" = "incidence",
                      "infections_t3_out" = "infections")
 
@@ -123,8 +117,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t4_out" = "untreated_plhiv_num",
                      "plhiv_attend_t4_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t4_out" = "untreated_plhiv_attend",
-                     "artnum_foreign_t4_out" = "art_foreign",
-                     "artprop_foreign_t4_out" = "artprop_foreign",                     
                      "lambda_t4_out" = "incidence",
                      "infections_t4_out" = "infections")
 
@@ -137,8 +129,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t5_out" = "untreated_plhiv_num",
                      "plhiv_attend_t5_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t5_out" = "untreated_plhiv_attend",
-                     "artnum_foreign_t5_out" = "art_foreign",
-                     "artprop_foreign_t5_out" = "artprop_foreign",                     
                      "lambda_t5_out" = "incidence",
                      "infections_t5_out" = "infections")
 
@@ -151,8 +141,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "untreated_plhiv_num_t6_out" = "untreated_plhiv_num",
                      "plhiv_attend_t6_out" = "plhiv_attend",
                      "untreated_plhiv_attend_t6_out" = "untreated_plhiv_attend",
-                     "artnum_foreign_t6_out" = "art_foreign",
-                     "artprop_foreign_t6_out" = "artprop_foreign",                     
                      "lambda_t6_out" = "incidence",
                      "infections_t6_out" = "infections")
 
@@ -288,12 +276,60 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
   indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
   indicator_anc_est_t5 <- dplyr::bind_rows(indicator_anc_est_t5)
-  indicator_anc_est_t6 <- dplyr::bind_rows(indicator_anc_est_t6)  
+  indicator_anc_est_t6 <- dplyr::bind_rows(indicator_anc_est_t6)
 
   mf_anc_out <- naomi_mf$mf_areas %>%
     dplyr::transmute(area_id,
                      sex = "female",
                      age_group = "Y015_049")
+
+
+  ## ART sector outputs
+
+  indicators_art_sector_t1 <- c("artnum_public_t1_out"         = "art_current_residents_public",
+                                "artnum_medaid_t1_out"         = "art_current_residents_medaid",
+                                "artnum_cashpay_t1_out"        = "art_current_residents_cashpay",  
+                                "artnum_foreign_t1_out"        = "art_current_residents_foreign",    
+                                "artattend_public_t1_out"      = "art_current_attend_public",
+                                "artattend_medaid_t1_out"      = "art_current_attend_medaid",
+                                "artattend_cashpay_t1_out"     = "art_current_attend_cashpay",  
+                                "artattend_foreign_t1_out"     = "art_current_attend_foreign",    
+                                "artprop_public_t1_out"        = "artprop_public",
+                                "artprop_medaid_t1_out"        = "artprop_medaid",
+                                "artprop_cashpay_t1_out"       = "artprop_cashpay",  
+                                "artprop_foreign_t1_out"       = "artprop_foreign",    
+                                "artattendprop_public_t1_out"  = "artprop_attend_public",
+                                "artattendprop_medaid_t1_out"  = "artprop_attend_medaid",
+                                "artattendprop_cashpay_t1_out" = "artprop_attend_cashpay",  
+                                "artattendprop_foreign_t1_out" = "artprop_attend_foreign",
+                                "plhiv_attend_public_t1_out"   = "plhiv_attend_public",
+                                "aware_plhiv_attend_public_t1_out" = "aware_plhiv_attend_public")
+
+  indicators_art_sector_t2 <- indicators_art_sector_t1
+  indicators_art_sector_t3 <- indicators_art_sector_t1
+  indicators_art_sector_t4 <- indicators_art_sector_t1
+  indicators_art_sector_t5 <- indicators_art_sector_t1
+  indicators_art_sector_t6 <- indicators_art_sector_t1
+  
+  names(indicators_art_sector_t2) <- sub("t1", "t2", names(indicators_art_sector_t1))
+  names(indicators_art_sector_t3) <- sub("t1", "t3", names(indicators_art_sector_t1))
+  names(indicators_art_sector_t4) <- sub("t1", "t4", names(indicators_art_sector_t1))
+  names(indicators_art_sector_t5) <- sub("t1", "t5", names(indicators_art_sector_t1))
+  names(indicators_art_sector_t6) <- sub("t1", "t6", names(indicators_art_sector_t1))
+
+  indicator_art_sector_est_t1 <- Map(get_est, names(indicators_art_sector_t1), indicators_art_sector_t1, naomi_mf$calendar_quarter1)
+  indicator_art_sector_est_t2 <- Map(get_est, names(indicators_art_sector_t2), indicators_art_sector_t2, naomi_mf$calendar_quarter2)
+  indicator_art_sector_est_t3 <- Map(get_est, names(indicators_art_sector_t3), indicators_art_sector_t3, naomi_mf$calendar_quarter3)
+  indicator_art_sector_est_t4 <- Map(get_est, names(indicators_art_sector_t4), indicators_art_sector_t4, naomi_mf$calendar_quarter4)
+  indicator_art_sector_est_t5 <- Map(get_est, names(indicators_art_sector_t5), indicators_art_sector_t5, naomi_mf$calendar_quarter5)
+  indicator_art_sector_est_t6 <- Map(get_est, names(indicators_art_sector_t6), indicators_art_sector_t6, naomi_mf$calendar_quarter6)
+
+  indicator_art_sector_est_t1 <- dplyr::bind_rows(indicator_art_sector_est_t1)
+  indicator_art_sector_est_t2 <- dplyr::bind_rows(indicator_art_sector_est_t2)
+  indicator_art_sector_est_t3 <- dplyr::bind_rows(indicator_art_sector_est_t3)
+  indicator_art_sector_est_t4 <- dplyr::bind_rows(indicator_art_sector_est_t4)
+  indicator_art_sector_est_t5 <- dplyr::bind_rows(indicator_art_sector_est_t5)
+  indicator_art_sector_est_t6 <- dplyr::bind_rows(indicator_art_sector_est_t6)
 
   out <- dplyr::bind_rows(
                   indicator_est_t1,
@@ -307,7 +343,14 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t5,
                   indicator_anc_est_t5,
                   indicator_est_t6,
-                  indicator_anc_est_t6                  
+                  indicator_anc_est_t6,
+                  ##
+                  indicator_art_sector_est_t1,
+                  indicator_art_sector_est_t2,
+                  indicator_art_sector_est_t3,
+                  indicator_art_sector_est_t4,
+                  indicator_art_sector_est_t5,
+                  indicator_art_sector_est_t6
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -477,12 +520,18 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
   if(!is.null(naomi_data$full_data$artnum_full_mf)){
 
     art <- naomi_data$full_data$artnum_full_mf %>%
-      dplyr::mutate(indicator = "art_current", se = NA_real_ ,median = NA_real_ ,
-                    mode = NA_real_ , lower = NA_real_ , upper = NA_real_,
-                    year = calendar_quarter_to_year(calendar_quarter)) %>%
-      dplyr::select(mean = art_current, dplyr::everything())
+      tidyr::pivot_longer(
+        cols = c("art_current", "art_current_public", "art_current_medaid", "art_current_cashpay"),
+        names_to = "indicator", values_to = "mean"
+      ) %>%
+      dplyr::mutate(se = NA_real_,
+                    median = NA_real_,
+                    mode = NA_real_,
+                    lower = NA_real_,
+                    upper = NA_real_,
+                    year = calendar_quarter_to_year(calendar_quarter))
 
-    inputs <- rbind(inputs, art)
+    inputs <- dplyr::bind_rows(inputs, art)
   }
 
   # If ANC data provided, format ART data and add to inputs
@@ -494,8 +543,7 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
                     calendar_quarter = paste0("CY", year, "Q4")) %>%
       dplyr::select(mean = value, dplyr::everything())
 
-    inputs <- rbind(inputs, anc)
-
+    inputs <- dplyr::bind_rows(inputs, anc)
   }
 
 
@@ -1096,11 +1144,38 @@ save_output <- function(filename, dir,
     vmmc_path <- normalizePath(vmmc_path)
   }
 
+  indicators_art <- indicators %>%
+    dplyr::filter(grepl("^art", indicator)) %>%
+    dplyr::filter(!indicator == "art_coverage")
+
+  indicators_core <- indicators %>%
+    dplyr::filter(
+      !indicator %in% c("plhiv_attend_public"          ,
+                        "aware_plhiv_attend_public"    ,
+                        "art_current_attend_public"    ,
+                        "art_current_attend_medaid"    ,
+                        "art_current_attend_cashpay"   ,
+                        "art_current_attend_foreign"   ,
+                        "art_current_residents_public" ,                        
+                        "art_current_residents_medaid" ,                        
+                        "art_current_residents_cashpay",
+                        "art_current_residents_foreign",
+                        "artprop_attend_public"        ,                        
+                        "artprop_attend_medaid"        ,                        
+                        "artprop_attend_cashpay"       ,
+                        "artprop_attend_foreign"       ,
+                        "artprop_public"               ,
+                        "artprop_medaid"               ,                        
+                        "artprop_cashpay"              ,
+                        "artprop_foreign"              )
+    )
+  
   tmpd <- tempfile()
   dir.create(tmpd)
   old <- setwd(tmpd)
   on.exit(setwd(old))
-  naomi_write_csv(indicators, "indicators.csv")
+  naomi_write_csv(indicators_core, "indicators.csv")
+  naomi_write_csv(indicators_art, "indicators_art-sector.csv")  
 
   if (!is.null(notes)) {
     assert_scalar_character(notes)
@@ -1286,8 +1361,17 @@ read_output_package <- function(path) {
     fit$spectrum_calibration <- readr_read_csv(file.path(tmpd, "fit/spectrum_calibration.csv"))
   }
 
+  indicators <- readr_read_csv(file.path(tmpd, "indicators.csv"))
+  if(file.exists(file.path(tmpd, "indicators_art-sector.csv"))) {
+    indicators_art <- readr_read_csv(file.path(tmpd, "indicators_art-sector.csv"))
+    indicators_art <- indicators_art %>%
+      dplyr::filter(!indicator %in% indicators$indicator)
+    indicators <- indicators %>%
+      dplyr::bind_rows(indicators_art)
+  }
+  
   v <- list(
-    indicators = readr_read_csv(file.path(tmpd, "indicators.csv")),
+    indicators = indicators,
     art_attendance = readr_read_csv(file.path(tmpd, "art_attendance.csv")),
     meta_area = sf::read_sf(file.path(tmpd, "boundaries.geojson")),
     meta_age_group = readr_read_csv(file.path(tmpd, "meta_age_group.csv")),
@@ -1361,20 +1445,38 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::filter(age_group == age_group_0to4_id) %>%
     dplyr::mutate(age_group = NULL)
 
+  
+  ## For art_current_residents_<sector> and art_attend_<sector>,
+  ## scale the sector-specific counts proportionally to ART total counts
+  adj_map <- c("art_current_residents_public"  = "art_current_residents",
+               "art_current_residents_medaid"  = "art_current_residents",
+               "art_current_residents_cashpay" = "art_current_residents",
+               "art_current_residents_foreign" = "art_current_residents",
+               "art_current_attend_public"  = "art_current",
+               "art_current_attend_medaid"  = "art_current",
+               "art_current_attend_cashpay" = "art_current",
+               "art_current_attend_foreign" = "art_current",
+               "plhiv_attend_public" = "plhiv_attend",
+               "aware_plhiv_attend_public" = "aware_plhiv_attend")
+
   strat_mean_counts_model <- out0to4 %>%
     dplyr::filter(sex %in% c("male", "female")) %>%
+    dplyr::mutate(
+      indicator_adj = dplyr::recode(indicator, !!!adj_map)
+    ) %>%
     dplyr::left_join(
-             dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
-             by = "area_id"
-           ) %>%
+      dplyr::select(naomi_mf$mf_areas, area_id, spectrum_region_code),
+      by = "area_id"
+    ) %>%
     dplyr::inner_join(
-             naomi_mf$spectrum_0to4distribution,
-             by = c("spectrum_region_code", "calendar_quarter", "indicator"),
-             multiple = "all",
-             relationship = "many-to-many"
-           ) %>%
-    dplyr::mutate(mean_strat = mean * distribution) %>%
-    dplyr::select(area_id, sex, age_group, calendar_quarter, indicator, mean_strat)
+      naomi_mf$spectrum_0to4distribution %>%
+        dplyr::rename(indicator_adj = indicator),
+      by = c("spectrum_region_code", "calendar_quarter", "indicator_adj"),
+      multiple = "all",
+      relationship = "many-to-many"
+    ) %>%
+      dplyr::mutate(mean_strat = mean * distribution) %>%
+      dplyr::select(area_id, sex, age_group, calendar_quarter, indicator, mean_strat)
 
 
   mf_0to4_model <- dplyr::select(naomi_mf$mf_model, area_id, sex, age_group, idx_model = idx) %>%
@@ -1439,6 +1541,25 @@ disaggregate_0to4_outputs <- function(output, naomi_mf) {
     dplyr::mutate(value = value * ratio,
                   ratio = NULL) %>%
     tidyr::pivot_wider()
+
+  ## Add ART proportion distribution
+  out0to4_artprop <- out0to4 %>%
+    dplyr::filter(
+      indicator %in% c("artprop_attend_cashpay", 
+                       "artprop_attend_foreign",
+                       "artprop_attend_medaid",
+                       "artprop_attend_public",
+                       "artprop_cashpay",
+                       "artprop_foreign",
+                       "artprop_medaid",
+                       "artprop_public")
+    )
+
+  out_0to4strat_rates <- out_0to4strat_rates %>%
+    dplyr::bind_rows(
+      dplyr::mutate(out0to4_artprop, age_group = "Y000_000"),
+      dplyr::mutate(out0to4_artprop, age_group = "Y001_004")
+    )
 
   age_groups <- unique(out_0to4strat_counts$age_group)
   out_indicators <- output$indicators %>%
