@@ -1145,7 +1145,17 @@ save_output <- function(filename, dir,
   }
 
   indicators_art <- indicators %>%
-    dplyr::filter(grepl("^art", indicator)) %>%
+    dplyr::filter(
+      grepl("^art", indicator) |
+        indicator %in% c(
+          "plhiv",
+          "plhiv_attend",
+          "plhiv_attend_public",
+          "aware_plhiv",
+          "aware_plhiv_attend",
+          "aware_plhiv_attend_public"
+        )
+    ) %>%
     dplyr::filter(!indicator == "art_coverage")
 
   indicators_core <- indicators %>%
