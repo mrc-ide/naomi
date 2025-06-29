@@ -153,13 +153,25 @@ test_that("extract_pjnz_program_data() returns complete data", {
 })
 
 
-test_that("extract_pjnz_naomi(..., extract_shiny90 = FALSE) returns PLHIV - ART", {
+test_that("extract_pjnz_naomi(..., extract_shiny90 = FALSE) returns constant proportion unaware within coarse groups", {
 
   ## Test when using national Spectrum file
   pjnz_nat <- system_file("extdata/demo_mwi2019.PJNZ")
   spec <- extract_pjnz_naomi(pjnz_nat, extract_shiny90 = FALSE)
 
-  expect_equal(spec$unaware, spec$hivpop - spec$artpop)
+  spec_unaware_check <- spec %>%
+    dplyr::mutate(
+      age_group_coarse = dplyr::if_else(age < 15, "Y000_014", "Y015_999"),
+      sex_coarse = dplyr::if_else(age_group_coarse == "Y000_014", "both", sex),
+      untreated = hivpop - artpop,
+      prop_unaware = unaware / untreated
+    ) %>%
+    dplyr::summarise(
+      check_unaware = all(is.na(prop_unaware)) | all(abs(prop_unaware - prop_unaware[1]) < 1e-6),
+      .by = c(sex_coarse, age_group_coarse, year)
+    )
+                                                     
+  expect_true(all(spec_unaware_check$check_unaware))
 })
 
 
