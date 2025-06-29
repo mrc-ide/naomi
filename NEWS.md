@@ -31,6 +31,20 @@ among STI clinic clients.
 
 * Implement survey data at T1 and T2.
 
+# naomi 2.10.13
+
+* Adjust paediatric and adult first90 to match Spectrum input by age groups <15 years, female 15+ years, and male 15+ years.
+
+# naomi 2.10.12
+
+* Show summary report incidence plot x-axes label as number instead of percent
+* Add the age group into the summary report incidence plot
+
+# naomi 2.10.11
+
+* Add ART adjusted to output for time series plot.
+* Change "ART total" label for number on ART to "ART Current" for time series inputs to improve consistency in variable naming.
+
 # naomi 2.10.10
 
 * Fix bug where ART adjustment was being duplicated in `apply_art_adjustment()` and `read_art_number()`
