@@ -755,71 +755,71 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
 
 
 
-  get_samples <- function(varname) {
-    samples_list <- lapply(1:nsample, function(i) {
-      fit$obj$report(smp[i, ])[[varname]]
+  get_samples <- function(varnames) {
+    samples_list_new <- lapply(1:nsample, function(i) {
+      fit$obj$report(smp[i, ])[varnames]
     })
-    matrix(unlist(samples_list), ncol = nsample)
+    samples <- lapply(varnames, function(name) {
+      matrix(unlist(lapply(samples_list_new, `[[`, name)), ncol = nsample)
+    })
+    names(samples) <- varnames
+    samples
   }
 
 
 
-  get_est <- function(
-    varname,
-    indicator,
-    calendar_quarter,
-    mf = naomi_mf$mf_out
-  ) {
-    v <- mf |>
-      dplyr::mutate(calendar_quarter = calendar_quarter,
-                    indicator = indicator)
+  get_ests <- function(indicator_chunk) {
+    varnames <- names(indicator_chunk)
 
-    samples <- get_samples(varname)
+    samples <- get_samples(varnames)
 
-    tryCatch(
-      v <- add_stats(v, fit$mode[[varname]],
-                     samples, na.rm = FALSE),
-      "error" = function(e) {
-        stop(t_("EXTRACT_INDICATORS_SIMULATE_ERROR", list(varname = varname)))
-      }
-    )
-    v
+    ests <- lapply(varnames, function(name) {
+      tryCatch(
+        {
+          v <- naomi_mf$mf_out |>
+            dplyr::mutate(calendar_quarter = indicator_chunk[[name]]$calendar_quarter,
+                          indicator = indicator_chunk[[name]]$name)
+          v <- add_stats(v, fit$mode[[name]],
+                         samples[[name]], na.rm = FALSE)
+        },
+        "error" = function(e) {
+          stop(t_("EXTRACT_INDICATORS_SIMULATE_ERROR", list(varname = name)))
+        }
+      )
+      v
+    })
+    names(ests) <- varnames
+    ests
   }
 
+  ind_t1_cq <- lapply(names(indicators_t1), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter1)
+  })
+  names(ind_t1_cq) <- names(indicators_t1)
+  ind_t2_cq <- lapply(names(indicators_t2), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter2)
+  })
+  names(ind_t2_cq) <- names(indicators_t2)
+  ind_t3_cq <- lapply(names(indicators_t3), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter3)
+  })
+  names(ind_t3_cq) <- names(indicators_t3)
+  ind_t4_cq <- lapply(names(indicators_t4), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter4)
+  })
+  names(ind_t4_cq) <- names(indicators_t4)
+  ind_t5_cq <- lapply(names(indicators_t5), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter5)
+  })
+  names(ind_t5_cq) <- names(indicators_t5)
 
+  all_indicators <- c(ind_t1_cq, ind_t2_cq, ind_t3_cq, ind_t4_cq, ind_t5_cq)
+  chunked_indicators <- split(all_indicators,
+                              ceiling(seq_along(all_indicators) / 6))
 
-
-
-
-
-  indicator_est_t1 <- Map(get_est,
-                          names(indicators_t1),
-                          indicators_t1,
-                          naomi_mf$calendar_quarter1)
-  indicator_est_t2 <- Map(get_est,
-                          names(indicators_t2),
-                          indicators_t2,
-                          naomi_mf$calendar_quarter2)
-  indicator_est_t3 <- Map(get_est,
-                          names(indicators_t3),
-                          indicators_t3,
-                          naomi_mf$calendar_quarter3)
-  indicator_est_t4 <- Map(get_est,
-                          names(indicators_t4),
-                          indicators_t4,
-                          naomi_mf$calendar_quarter4)
-  indicator_est_t5 <- Map(get_est,
-                          names(indicators_t5),
-                          indicators_t5,
-                          naomi_mf$calendar_quarter5)
-
-
-  indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
-  indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
-  indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
-  indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
-  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)
-
+  indicator_est <- dplyr::bind_rows(
+    unlist(lapply(chunked_indicators, get_ests), recursive = FALSE)
+  )
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -861,40 +861,35 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
                          "anc_rho_t4_out" = "anc_prevalence",
                          "anc_alpha_t4_out" = "anc_art_coverage")
 
+  ind_anc_t1_cq <- lapply(names(indicators_anc_t1), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter1)
+  })
+  names(ind_anc_t1_cq) <- names(indicators_anc_t1)
+  ind_anc_t2_cq <- lapply(names(indicators_anc_t2), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter2)
+  })
+  names(ind_anc_t2_cq) <- names(indicators_anc_t2)
+  ind_anc_t3_cq <- lapply(names(indicators_anc_t3), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter3)
+  })
+  names(ind_anc_t3_cq) <- names(indicators_anc_t3)
+  ind_anc_t4_cq <- lapply(names(indicators_anc_t4), function(n) {
+    list(name = n, calendar_quarter = naomi_mf$calendar_quarter4)
+  })
+  names(ind_anc_t4_cq) <- names(indicators_anc_t4)
 
-  indicator_anc_est_t1 <- Map(
-    get_est, names(indicators_anc_t1), indicators_anc_t1,
-    naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out)
-  )
-  indicator_anc_est_t2 <- Map(
-    get_est, names(indicators_anc_t2), indicators_anc_t2,
-    naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out)
-  )
-  indicator_anc_est_t3 <- Map(
-    get_est, names(indicators_anc_t3), indicators_anc_t3,
-    naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out)
-  )
-  indicator_anc_est_t4 <- Map(
-    get_est, names(indicators_anc_t4), indicators_anc_t4,
-    naomi_mf$calendar_quarter4, list(naomi_mf$mf_anc_out)
-  )
+  all_anc_indicators <- c(ind_anc_t1_cq, ind_anc_t2_cq,
+                          ind_anc_t3_cq, ind_anc_t4_cq)
+  chunked_anc_indicators <- split(all_anc_indicators,
+                              ceiling(seq_along(all_anc_indicators) / 6))
 
-
-  indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
-  indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
-  indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
-  indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
+  indicator_anc_est <- dplyr::bind_rows(
+    unlist(lapply(chunked_anc_indicators, get_ests), recursive = FALSE)
+  )
 
   out <- dplyr::bind_rows(
-    indicator_est_t1,
-    indicator_anc_est_t1,
-    indicator_est_t2,
-    indicator_anc_est_t2,
-    indicator_est_t3,
-    indicator_anc_est_t3,
-    indicator_est_t4,
-    indicator_anc_est_t4,
-    indicator_est_t5
+    indicator_est,
+    indicator_anc_est
   )
 
   out_indicators <- dplyr::select(
@@ -959,13 +954,13 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
     m_prop_attendees_t2 <- NULL
   }
 
-  s_artattend_ij_t1 <- get_samples("artattend_ij_t1_out")
-  s_artnum_reside_t1 <- get_samples("artnum_t1_out")[v$reside_out_idx, ]
-  s_artnum_attend_t1 <- get_samples("artattend_t1_out")[v$attend_out_idx, ]
+  s_artattend_ij_t1 <- get_samples("artattend_ij_t1_out")$artattend_ij_t1_out
+  s_artnum_reside_t1 <- get_samples("artnum_t1_out")$artnum_t1_out[v$reside_out_idx, ]
+  s_artnum_attend_t1 <- get_samples("artattend_t1_out")$artattend_t1_out[v$attend_out_idx, ]
 
-  s_artattend_ij_t2 <- get_samples("artattend_ij_t2_out")
-  s_artnum_reside_t2 <- get_samples("artnum_t2_out")[v$reside_out_idx, ]
-  s_artnum_attend_t2 <- get_samples("artattend_t2_out")[v$attend_out_idx, ]
+  s_artattend_ij_t2 <- get_samples("artattend_ij_t2_out")$artattend_ij_t2_out
+  s_artnum_reside_t2 <- get_samples("artnum_t2_out")$artnum_t2_out[v$reside_out_idx, ]
+  s_artnum_attend_t2 <- get_samples("artattend_t2_out")$artattend_t2_out[v$attend_out_idx, ]
 
   if (!is.null(s_artattend_ij_t1)) {
     s_prop_residents_t1 <- s_artattend_ij_t1 / s_artnum_reside_t1
@@ -1070,7 +1065,6 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
   }
 
   if(verbose) print("Simulating outputs")
-  browser()
   sim <- apply(smp, 1, fit$obj$report)
 
   r <- fit$obj$report()
