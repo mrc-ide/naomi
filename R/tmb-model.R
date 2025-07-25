@@ -837,7 +837,7 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
     ests
   }
 
-  chunk_factor <- 12
+  chunk_factor <- 8
 
   ind_t1_cq <- lapply(names(indicators_t1), function(n) {
     list(
