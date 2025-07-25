@@ -768,7 +768,7 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
 
 
 
-  get_ests <- function(indicator_chunk) {
+  get_ests <- function(indicator_chunk, mf = naomi_mf$mf_out) {
     varnames <- names(indicator_chunk)
 
     samples <- get_samples(varnames)
@@ -776,7 +776,7 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
     ests <- lapply(varnames, function(name) {
       tryCatch(
         {
-          v <- naomi_mf$mf_out |>
+          v <- mf |>
             dplyr::mutate(calendar_quarter = indicator_chunk[[name]]$calendar_quarter,
                           indicator = indicator_chunk[[name]]$name)
           v <- add_stats(v, fit$mode[[name]],
@@ -818,7 +818,9 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
                               ceiling(seq_along(all_indicators) / 6))
 
   indicator_est <- dplyr::bind_rows(
-    unlist(lapply(chunked_indicators, get_ests), recursive = FALSE)
+    unlist(lapply(chunked_indicators, function(chunk) {
+      get_ests(chunk)
+    }), recursive = FALSE)
   )
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
@@ -884,7 +886,9 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
                                   ceiling(seq_along(all_anc_indicators) / 6))
 
   indicator_anc_est <- dplyr::bind_rows(
-    unlist(lapply(chunked_anc_indicators, get_ests), recursive = FALSE)
+    unlist(lapply(chunked_anc_indicators, function(chunk) {
+      get_ests(chunk, list(naomi_mf$mf_anc_out))
+    }), recursive = FALSE)
   )
 
   out <- dplyr::bind_rows(
