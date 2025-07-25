@@ -635,6 +635,390 @@ report_tmb <- function(naomi_fit) {
   naomi_fit
 }
 
+sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
+                        random_only = TRUE, verbose = FALSE) {
+
+  set.seed(rng_seed)
+
+  stopifnot(methods::is(fit, "naomi_fit"))
+  stopifnot(nsample > 1)
+
+  to_tape <- TMB:::isNullPointer(fit$obj$env$ADFun$ptr)
+  if (to_tape)
+    fit$obj$retape(FALSE)
+
+  if(!random_only) {
+    if(verbose) print("Calculating joint precision")
+    hess <- sdreport_joint_precision(fit$obj, fit$par.fixed)
+
+    if(verbose) print("Inverting precision for joint covariance")
+    cov <- solve(hess)
+
+    if(verbose) print("Drawing sample")
+    ## TODO: write a version of rmvnorm that uses precision instead of covariance
+    smp <- mvtnorm::rmvnorm(nsample, fit$par.full, cov)
+
+  } else {
+    r <- fit$obj$env$random
+    par_f <- fit$par.full[-r]
+
+    par_r <- fit$par.full[r]
+    hess_r <- fit$obj$env$spHess(fit$par.full, random = TRUE)
+    smp_r <- rmvnorm_sparseprec(nsample, par_r, hess_r)
+
+    smp <- matrix(0, nsample, length(fit$par.full))
+    smp[ , r] <- smp_r
+    smp[ ,-r] <- matrix(par_f, nsample, length(par_f), byrow = TRUE)
+    colnames(smp)[r] <- colnames(smp_r)
+    colnames(smp)[-r] <- names(par_f)
+  }
+
+
+
+
+
+
+
+
+
+
+
+  indicators_t1 <- c("population_t1_out" = "population",
+                     "rho_t1_out" = "prevalence",
+                     "plhiv_t1_out" = "plhiv",
+                     "alpha_t1_out" = "art_coverage",
+                     "artnum_t1_out" = "art_current_residents",
+                     "artattend_t1_out" = "art_current",
+                     "untreated_plhiv_num_t1_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t1_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t1_out" = "untreated_plhiv_attend",
+                     "lambda_t1_out" = "incidence",
+                     "infections_t1_out" = "infections")
+
+  indicators_t2 <- c("population_t2_out" = "population",
+                     "rho_t2_out" = "prevalence",
+                     "plhiv_t2_out" = "plhiv",
+                     "alpha_t2_out" = "art_coverage",
+                     "artnum_t2_out" = "art_current_residents",
+                     "artattend_t2_out" = "art_current",
+                     "untreated_plhiv_num_t2_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t2_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t2_out" = "untreated_plhiv_attend",
+                     "lambda_t2_out" = "incidence",
+                     "infections_t2_out" = "infections")
+
+  indicators_t3 <- c("population_t3_out" = "population",
+                     "rho_t3_out" = "prevalence",
+                     "plhiv_t3_out" = "plhiv",
+                     "alpha_t3_out" = "art_coverage",
+                     "artnum_t3_out" = "art_current_residents",
+                     "artattend_t3_out" = "art_current",
+                     "untreated_plhiv_num_t3_out" = "untreated_plhiv_num",
+                     "plhiv_attend_t3_out" = "plhiv_attend",
+                     "untreated_plhiv_attend_t3_out" = "untreated_plhiv_attend",
+                     "lambda_t3_out" = "incidence",
+                     "infections_t3_out" = "infections")
+
+  indicators_t4 <- c("population_t4_out" = "population",
+                     "plhiv_t4_out" = "plhiv",
+                     "plhiv_attend_t4_out" = "plhiv_attend",
+                     "infections_t4_out" = "infections",
+                     "lambda_t4_out" = "incidence")
+
+  indicators_t5 <- c("population_t5_out" = "population",
+                     "plhiv_t5_out" = "plhiv",
+                     "plhiv_attend_t5_out" = "plhiv_attend",
+                     "infections_t5_out" = "infections")
+
+  if (naomi_mf$output_aware_plhiv) {
+
+    indicators_t1 <- c(indicators_t1,
+                       "aware_plhiv_prop_t1_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t1_out" = "aware_plhiv_num",
+                       "unaware_plhiv_num_t1_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t1_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t1_out" = "unaware_plhiv_attend")
+    indicators_t2 <- c(indicators_t2,
+                       "aware_plhiv_prop_t2_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t2_out" = "aware_plhiv_num",
+                       "unaware_plhiv_num_t2_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t2_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t2_out" = "unaware_plhiv_attend")
+    indicators_t3 <- c(indicators_t3,
+                       "aware_plhiv_prop_t3_out" = "aware_plhiv_prop",
+                       "aware_plhiv_num_t3_out" = "aware_plhiv_num",
+                       "unaware_plhiv_num_t3_out" = "unaware_plhiv_num",
+                       "aware_plhiv_attend_t3_out" = "aware_plhiv_attend",
+                       "unaware_plhiv_attend_t3_out" = "unaware_plhiv_attend")
+  }
+
+
+
+
+  get_samples <- function(varname) {
+    samples_list <- lapply(1:nsample, function(i) {
+      fit$obj$report(smp[i, ])[[varname]]
+    })
+    matrix(unlist(samples_list), ncol = nsample)
+  }
+
+
+
+  get_est <- function(
+    varname,
+    indicator,
+    calendar_quarter,
+    mf = naomi_mf$mf_out
+  ) {
+    v <- mf |>
+      dplyr::mutate(calendar_quarter = calendar_quarter,
+                    indicator = indicator)
+
+    samples <- get_samples(varname)
+
+    tryCatch(
+      v <- add_stats(v, fit$mode[[varname]],
+                     samples, na.rm = FALSE),
+      "error" = function(e) {
+        stop(t_("EXTRACT_INDICATORS_SIMULATE_ERROR", list(varname = varname)))
+      }
+    )
+    v
+  }
+
+
+
+
+
+
+
+  indicator_est_t1 <- Map(get_est,
+                          names(indicators_t1),
+                          indicators_t1,
+                          naomi_mf$calendar_quarter1)
+  indicator_est_t2 <- Map(get_est,
+                          names(indicators_t2),
+                          indicators_t2,
+                          naomi_mf$calendar_quarter2)
+  indicator_est_t3 <- Map(get_est,
+                          names(indicators_t3),
+                          indicators_t3,
+                          naomi_mf$calendar_quarter3)
+  indicator_est_t4 <- Map(get_est,
+                          names(indicators_t4),
+                          indicators_t4,
+                          naomi_mf$calendar_quarter4)
+  indicator_est_t5 <- Map(get_est,
+                          names(indicators_t5),
+                          indicators_t5,
+                          naomi_mf$calendar_quarter5)
+
+
+  indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
+  indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
+  indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
+  indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
+  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)
+
+
+  indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
+                         "anc_plhiv_t1_out" = "anc_plhiv",
+                         "anc_already_art_t1_out" = "anc_already_art",
+                         "anc_art_new_t1_out" = "anc_art_new",
+                         "anc_known_pos_t1_out" = "anc_known_pos",
+                         "anc_tested_pos_t1_out" = "anc_tested_pos",
+                         "anc_tested_neg_t1_out" = "anc_tested_neg",
+                         "anc_rho_t1_out" = "anc_prevalence",
+                         "anc_alpha_t1_out" = "anc_art_coverage")
+
+  indicators_anc_t2 <- c("anc_clients_t2_out" = "anc_clients",
+                         "anc_plhiv_t2_out" = "anc_plhiv",
+                         "anc_already_art_t2_out" = "anc_already_art",
+                         "anc_art_new_t2_out" = "anc_art_new",
+                         "anc_known_pos_t2_out" = "anc_known_pos",
+                         "anc_tested_pos_t2_out" = "anc_tested_pos",
+                         "anc_tested_neg_t2_out" = "anc_tested_neg",
+                         "anc_rho_t2_out" = "anc_prevalence",
+                         "anc_alpha_t2_out" = "anc_art_coverage")
+
+  indicators_anc_t3 <- c("anc_clients_t3_out" = "anc_clients",
+                         "anc_plhiv_t3_out" = "anc_plhiv",
+                         "anc_already_art_t3_out" = "anc_already_art",
+                         "anc_art_new_t3_out" = "anc_art_new",
+                         "anc_known_pos_t3_out" = "anc_known_pos",
+                         "anc_tested_pos_t3_out" = "anc_tested_pos",
+                         "anc_tested_neg_t3_out" = "anc_tested_neg",
+                         "anc_rho_t3_out" = "anc_prevalence",
+                         "anc_alpha_t3_out" = "anc_art_coverage")
+
+  indicators_anc_t4 <- c("anc_clients_t4_out" = "anc_clients",
+                         "anc_plhiv_t4_out" = "anc_plhiv",
+                         "anc_already_art_t4_out" = "anc_already_art",
+                         "anc_art_new_t4_out" = "anc_art_new",
+                         "anc_known_pos_t4_out" = "anc_known_pos",
+                         "anc_tested_pos_t4_out" = "anc_tested_pos",
+                         "anc_tested_neg_t4_out" = "anc_tested_neg",
+                         "anc_rho_t4_out" = "anc_prevalence",
+                         "anc_alpha_t4_out" = "anc_art_coverage")
+
+
+  indicator_anc_est_t1 <- Map(
+    get_est, names(indicators_anc_t1), indicators_anc_t1,
+    naomi_mf$calendar_quarter1, list(naomi_mf$mf_anc_out)
+  )
+  indicator_anc_est_t2 <- Map(
+    get_est, names(indicators_anc_t2), indicators_anc_t2,
+    naomi_mf$calendar_quarter2, list(naomi_mf$mf_anc_out)
+  )
+  indicator_anc_est_t3 <- Map(
+    get_est, names(indicators_anc_t3), indicators_anc_t3,
+    naomi_mf$calendar_quarter3, list(naomi_mf$mf_anc_out)
+  )
+  indicator_anc_est_t4 <- Map(
+    get_est, names(indicators_anc_t4), indicators_anc_t4,
+    naomi_mf$calendar_quarter4, list(naomi_mf$mf_anc_out)
+  )
+
+
+  indicator_anc_est_t1 <- dplyr::bind_rows(indicator_anc_est_t1)
+  indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
+  indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
+  indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
+
+  out <- dplyr::bind_rows(
+    indicator_est_t1,
+    indicator_anc_est_t1,
+    indicator_est_t2,
+    indicator_anc_est_t2,
+    indicator_est_t3,
+    indicator_anc_est_t3,
+    indicator_est_t4,
+    indicator_anc_est_t4,
+    indicator_est_t5
+  )
+
+  out_indicators <- dplyr::select(
+    out, names(naomi_mf$mf_out), calendar_quarter, indicator,
+    mean, se, median, mode, lower, upper
+  )
+
+
+
+
+
+
+
+
+
+
+
+  mode <- fit$mode
+
+  mfout <- naomi_mf$mf_out %>%
+    dplyr::mutate(out_idx = dplyr::row_number())
+
+  v <- naomi_mf$mf_artattend %>%
+    dplyr::select(reside_area_id, attend_area_id) %>%
+    dplyr::mutate(sex = "both",
+                  age_group = "Y000_999") %>%
+    dplyr::left_join(
+             dplyr::rename(mfout, reside_area_id = area_id, reside_out_idx = out_idx),
+             by = c("reside_area_id", "sex", "age_group")
+           ) %>%
+    dplyr::left_join(
+             dplyr::rename(mfout, attend_area_id = area_id, attend_out_idx = out_idx),
+             by = c("attend_area_id", "sex", "age_group")
+           )
+
+  if(!is.null(mode)) {
+    m_artattend_ij_t1 <- mode$artattend_ij_t1_out
+    m_artnum_reside_t1 <- mode$artnum_t1_out[v$reside_out_idx]
+    m_artnum_attend_t1 <- mode$artattend_t1_out[v$attend_out_idx]
+
+    m_artattend_ij_t2 <- mode$artattend_ij_t2_out
+    m_artnum_reside_t2 <- mode$artnum_t2_out[v$reside_out_idx]
+    m_artnum_attend_t2 <- mode$artattend_t2_out[v$attend_out_idx]
+  } else {
+    m_artattend_ij_t1 <- NULL
+    m_artattend_ij_t2 <- NULL
+  }
+
+  if(!is.null(m_artattend_ij_t1)) {
+    m_prop_residents_t1 <- m_artattend_ij_t1 / m_artnum_reside_t1
+    m_prop_attendees_t1 <- m_artattend_ij_t1 / m_artnum_attend_t1
+  } else {
+    m_prop_residents_t1 <- NULL
+    m_prop_attendees_t1 <- NULL
+  }
+
+  if(!is.null(m_artattend_ij_t2)) {
+    m_prop_residents_t2 <- m_artattend_ij_t2 / m_artnum_reside_t2
+    m_prop_attendees_t2 <- m_artattend_ij_t2 / m_artnum_attend_t2
+  } else {
+    m_prop_residents_t2 <- NULL
+    m_prop_attendees_t2 <- NULL
+  }
+
+  s_artattend_ij_t1 <- get_samples("artattend_ij_t1_out")
+  s_artnum_reside_t1 <- get_samples("artnum_t1_out")[v$reside_out_idx, ]
+  s_artnum_attend_t1 <- get_samples("artattend_t1_out")[v$attend_out_idx, ]
+
+  s_artattend_ij_t2 <- get_samples("artattend_ij_t2_out")
+  s_artnum_reside_t2 <- get_samples("artnum_t2_out")[v$reside_out_idx, ]
+  s_artnum_attend_t2 <- get_samples("artattend_t2_out")[v$attend_out_idx, ]
+
+  if (!is.null(s_artattend_ij_t1)) {
+    s_prop_residents_t1 <- s_artattend_ij_t1 / s_artnum_reside_t1
+    s_prop_attendees_t1 <- s_artattend_ij_t1 / s_artnum_attend_t1
+  } else {
+    s_prop_residents_t1 <- NULL
+    s_prop_attendees_t1 <- NULL
+  }
+
+  if (!is.null(s_artattend_ij_t2)) {
+    s_prop_residents_t2 <- s_artattend_ij_t2 / s_artnum_reside_t2
+    s_prop_attendees_t2 <- s_artattend_ij_t2 / s_artnum_attend_t2
+  } else {
+    s_prop_residents_t2 <- NULL
+    s_prop_attendees_t2 <- NULL
+  }
+
+  v$reside_out_idx <- NULL
+  v$attend_out_idx <- NULL
+
+  v_t1 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter1)
+  v_t1 <- add_stats(
+    v_t1, m_artattend_ij_t1, s_artattend_ij_t1, "artnum_", na.rm = FALSE
+  )
+  v_t1 <- add_stats(
+    v_t1, m_prop_residents_t1, s_prop_residents_t1, "prop_residents_",
+    na.rm = FALSE
+  )
+  v_t1 <- add_stats(
+    v_t1, m_prop_attendees_t1, s_prop_attendees_t1, "prop_attendees_",
+    na.rm = FALSE
+  )
+
+  v_t2 <- dplyr::mutate(v, calendar_quarter = naomi_mf$calendar_quarter2)
+  v_t2 <- add_stats(
+    v_t2, m_artattend_ij_t2, s_artattend_ij_t2, "artnum_", na.rm = FALSE
+  )
+  v_t2 <- add_stats(
+    v_t2, m_prop_residents_t2, s_prop_residents_t2, "prop_residents_",
+    na.rm = FALSE
+  )
+  v_t2 <- add_stats(
+    v_t2, m_prop_attendees_t2, s_prop_attendees_t2, "prop_attendees_",
+    na.rm = FALSE
+  )
+
+  out_art <- dplyr::bind_rows(v_t1, v_t2)
+
+  list(
+    indicators = out_indicators,
+    art = out_art
+  )
+}
 
 
 #' Sample TMB fit
@@ -686,6 +1070,7 @@ sample_tmb <- function(fit, nsample = 1000, rng_seed = NULL,
   }
 
   if(verbose) print("Simulating outputs")
+  browser()
   sim <- apply(smp, 1, fit$obj$report)
 
   r <- fit$obj$report()
@@ -704,10 +1089,10 @@ rmvnorm_sparseprec <- function(
   n,
   mean = rep(0, nrow(prec)),
   prec = diag(length(mean))
-  ) {
+) {
 
-  z = matrix(stats::rnorm(n * length(mean)), ncol = n)
-  L_inv = Matrix::Cholesky(prec)
+  z <- matrix(stats::rnorm(n * length(mean)), ncol = n)
+  L_inv <- Matrix::Cholesky(prec)
   v <- mean + Matrix::solve(methods::as(L_inv, "pMatrix"), Matrix::solve(Matrix::t(methods::as(L_inv, "Matrix")), z))
   as.matrix(Matrix::t(v))
 }
