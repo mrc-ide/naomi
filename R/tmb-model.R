@@ -881,7 +881,7 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
   all_anc_indicators <- c(ind_anc_t1_cq, ind_anc_t2_cq,
                           ind_anc_t3_cq, ind_anc_t4_cq)
   chunked_anc_indicators <- split(all_anc_indicators,
-                              ceiling(seq_along(all_anc_indicators) / 6))
+                                  ceiling(seq_along(all_anc_indicators) / 6))
 
   indicator_anc_est <- dplyr::bind_rows(
     unlist(lapply(chunked_anc_indicators, get_ests), recursive = FALSE)
