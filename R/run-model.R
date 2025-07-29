@@ -107,15 +107,24 @@ run_model <- function(data, options, validate) {
   progress$start("uncertainty")
   progress$print()
 
-  fit <- sample_tmb(fit,
-                    nsample = options$no_of_samples,
-                    rng_seed = options$rng_seed)
+  my_dat <- sample_tmb2(fit,
+                        naomi_data,
+                        nsample = options$no_of_samples,
+                        rng_seed = options$rng_seed)
 
   progress$complete("uncertainty")
   progress$start("prepare_outputs")
   progress$print()
 
-  outputs <- output_package(fit, naomi_data)
+  outputs <- output_package(my_dat$indicators, my_dat$art, naomi_data)
+
+  # outputs <- output_package_low_memory(
+  #   fit,
+  #   naomi_data,
+  #   nsample = options$no_of_samples,
+  #   rng_seed = options$rng_seed
+  # )
+
   info <- naomi_info(data, options)
   attr(outputs, "info") <- info
   progress$complete("prepare_outputs")

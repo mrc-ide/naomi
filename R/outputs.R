@@ -48,7 +48,6 @@ add_stats <- function(df, mode = NULL, sample = NULL, prefix = "", na.rm = FALSE
 
 
 extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
-
   get_est <- function(varname,
                       indicator,
                       calendar_quarter,
@@ -209,11 +208,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_anc_est_t2 <- dplyr::bind_rows(indicator_anc_est_t2)
   indicator_anc_est_t3 <- dplyr::bind_rows(indicator_anc_est_t3)
   indicator_anc_est_t4 <- dplyr::bind_rows(indicator_anc_est_t4)
-
-  mf_anc_out <- naomi_mf$mf_areas %>%
-    dplyr::transmute(area_id,
-                     sex = "female",
-                     age_group = "Y015_049")
 
   out <- dplyr::bind_rows(
                   indicator_est_t1,
@@ -472,14 +466,9 @@ align_inputs_outputs <- function(naomi_data, indicators, meta_area){
 #' non-convergence that needs to be addressed.
 #'
 #' @export
-output_package <- function(naomi_fit, naomi_data, na.rm = FALSE) {
+output_package <- function(indicators, art_attendance, naomi_data, na.rm = FALSE) {
 
-  stopifnot(methods::is(naomi_fit, "naomi_fit"))
   stopifnot(methods::is(naomi_data, "naomi_data"))
-
-  indicators <- extract_indicators(naomi_fit, naomi_data, na.rm = na.rm)
-
-  art_attendance <- extract_art_attendance(naomi_fit, naomi_data, na.rm = na.rm)
 
   meta_area <- naomi_data$areas %>%
     dplyr::filter(area_id %in% unique(naomi_data$mf_out$area_id)) %>%
