@@ -523,6 +523,11 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
 
   data$calc_outputs <- as.integer(calc_outputs)
 
+  TMB::config(
+    optimize.instantly = 0,
+    DLL = "naomi"
+  )
+
   obj <- TMB::MakeADFun(data = data,
                         parameters = par,
                         DLL = "naomi",
