@@ -1,3 +1,7 @@
+# naomi 2.10.13
+
+* Adjust paediatric and adult first90 to match Spectrum input by age groups <15 years, female 15+ years, and male 15+ years.
+
 # naomi 2.10.12
 
 * Show summary report incidence plot x-axes label as number instead of percent

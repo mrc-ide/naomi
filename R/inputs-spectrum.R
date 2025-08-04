@@ -93,7 +93,7 @@ extract_pjnz_one <- function(pjnz, extract_shiny90) {
 
   spec <- add_dec31_art(spec, pjnz)
 
-  spec <- add_shiny90_unaware(spec, pjnz, extract_shiny90)
+  spec <- add_shiny90_unaware(spec, pjnz, extract_shiny90, specfp$projection_period)
 
 
 
@@ -479,7 +479,78 @@ read_dp_anc_testing <- function(dp) {
   anc_testing
 }
 
-add_shiny90_unaware <- function(spec, pjnz, extract_shiny90) {
+#' Read number aware of HIV positive status from PJNZ
+#'
+#' Reads the number aware of status from Spectrum/AIM
+#' "Knowledge of Status" tab in Program Data editor.
+#' Input to Spectrum is stratifid by children (0-14),
+#' adult (15+) males, and adult (15+) females.
+#'
+#' @param dp dp data from PJNZ file
+#'
+#' @examples
+#' pjnz <- system.file("extdata/demo_mwi2024_v6.36.PJNZ", package = "naomi")
+#' dp <- read_dp(pjnz)
+#' read_dp_knowledge_of_status(dp)
+#'
+#' @noRd
+#'
+read_dp_knowledge_of_status <- function(dp) {
+
+  exists_dptag <- function(tag, tagcol = 1) {
+    tag %in% dp[, tagcol]
+  }
+  dpsub <- function(tag, rows, cols, tagcol = 1) {
+    dp[which(dp[, tagcol] == tag) + rows, cols]
+  }
+  yr_start <- as.integer(dpsub("<FirstYear MV2>", 2, 4))
+  yr_end <- as.integer(dpsub("<FinalYear MV2>", 2, 4))
+  proj.years <- yr_start:yr_end
+  timedat.idx <- 4 + 1:length(proj.years) - 1
+
+  key_labels <- c("both_child", "male_15plus", "female_15plus")
+  
+  if (exists_dptag("<KnowledgeOfStatusInput MV>")) {
+    ## Spectrum 2019: input years spanned 2010:2019
+    kos_raw <- sapply(dpsub("<KnowledgeOfStatusInput MV>", 2:4, 5:13), as.numeric)
+    dimnames(kos_raw) <- list(key = key_labels, year = 2010:2018)
+    
+  } else if (exists_dptag("<KnowledgeOfStatusInput MV3>")) {
+    kos_raw <- sapply(dpsub("<KnowledgeOfStatusInput MV3>", 2:4, 5:20), as.numeric)
+    dimnames(kos_raw) <- list(key = key_labels, year = 2010:2025)
+    
+  } else if (exists_dptag("<KnowledgeOfStatusInput MV4>")) {
+    kos_raw <- sapply(dpsub("<KnowledgeOfStatusInput MV4>", 2:4, timedat.idx), as.numeric)
+    dimnames(kos_raw) <- list(key = c("both_child", "male_15plus", "female_15plus"), year = proj.years)
+  } else {
+    stop("Valid KnowledgeOfStatusInput tag not found in Spectrum .DP file.")
+  }
+  kos_raw[kos_raw == -9999] <- NA_real_
+
+  kos_df <- as.data.frame.table(kos_raw,
+                                responseName = "aware_of_status",
+                                stringsAsFactors = FALSE)
+  kos_df <- kos_df %>%
+    dplyr::mutate(
+      sex = key %>%
+        dplyr::recode("both_child" = "both",
+                      "male_15plus" = "male",
+                      "female_15plus" = "female"),
+      age_group = key %>%
+        dplyr::recode("both_child" = "Y000_014",
+                      "male_15plus" = "Y015_999",
+                      "female_15plus" = "Y015_999"),
+      year = utils::type.convert(year, as.is = TRUE)
+    )
+
+  kos_df <- kos_df %>%
+    dplyr::select(sex, age_group, year, aware_of_status)
+
+  kos_df
+}
+
+
+add_shiny90_unaware <- function(spec, pjnz, extract_shiny90, projection_period = "calendar") {
 
   if (extract_shiny90 && assert_pjnz_shiny90(pjnz)) {
     shiny90_dir <- tempfile()
@@ -516,6 +587,99 @@ add_shiny90_unaware <- function(spec, pjnz, extract_shiny90) {
     ## unaware
     spec$unaware <- spec$hivpop - spec$artpop
   }
+
+  ## Adjust awareness of status inputs to match Spectrum final awareness
+  ## of status input where they are input to Spectrum editor. This may
+  ## include for children.
+  ##
+  ## Stratified by both <15, male 15+, and female 15+.
+  ## Entry may be incomplete with only some years and age groups
+  ## represented.
+  
+  dp <- read_dp(pjnz)
+  kos_df <- read_dp_knowledge_of_status(dp)
+  kos_df <- dplyr::filter(kos_df, !is.na(aware_of_status))
+
+  ## Spectrum KOS tab will always report end-year KOS; if projection_period is
+  ## mid year (Spectrum pre 2021), adjust the KOS tab output backwards 6 months
+  ## to align with internal simulation.
+  ## This is imperfect handling, but this case does not arise in current usage
+  ## because Spectrum is calendar year aligned now.
+
+  if (projection_period == "midyear") {
+    kos_df <- kos_df %>%
+      dplyr::mutate(
+        aware_of_status = stats::approx(year, aware_of_status, year - 0.5, rule = 2)$y,
+        .by = c(sex, age_group)
+      )
+  }
+
+  spec <- spec %>%
+    dplyr::mutate(
+      age_group_coarse = dplyr::if_else(age < 15, "Y000_014", "Y015_999"),
+      sex_coarse = dplyr::if_else(age_group_coarse == "Y000_014", "both", sex)
+    )
+
+  ## Restrict calibration target for aware_of_status to be greater than
+  ## artpop and less than hivpop.
+  kos_df <- kos_df %>%
+    dplyr::rename(age_group_coarse = age_group, sex_coarse = sex) %>%
+    dplyr::left_join(
+      spec %>%
+        dplyr::summarise(dplyr::across(c(hivpop, artpop), sum),
+                         .by = c(sex_coarse, age_group_coarse, year)),
+      by = c("sex_coarse", "age_group_coarse", "year")
+    ) %>%
+    dplyr::mutate(
+      aware_of_status = pmax(aware_of_status, artpop),
+      aware_of_status = pmin(aware_of_status, hivpop),
+      hivpop = NULL,
+      artpop = NULL
+    )
+
+  spec <- spec %>%
+    dplyr::left_join(
+      kos_df,
+      by = c("sex_coarse", "age_group_coarse", "year")
+    )
+
+  spec <- spec %>%
+    dplyr::mutate(
+      untreated = hivpop - artpop,
+      prop_unaware = unaware / untreated,
+      prop_unaware = ifelse(rep(all(prop_unaware == 1.0), length(prop_unaware)), prop_unaware - 0.001, prop_unaware),
+      prop_unaware = ifelse(rep(all(prop_unaware == 0.0), length(prop_unaware)), prop_unaware + 0.001, prop_unaware),
+      .by = c(sex_coarse, age_group_coarse, year)
+    )
+
+  spec_unaware_adj <- spec %>%
+    dplyr::filter(!all(is.na(aware_of_status)) & !all(is.na(prop_unaware)),
+                  .by = c(sex_coarse, age_group_coarse, year)) %>%
+    dplyr::mutate(
+      unaware_target = sum(hivpop) - aware_of_status,,
+      .by = c(sex_coarse, age_group_coarse, year)
+    ) %>%
+    dplyr::summarise(
+      unaware_logit_adjust = calculate_logit_adjustment(prop_unaware, untreated, unaware_target),
+      .by = c(sex_coarse, age_group_coarse, year)
+    )
+
+  spec <- spec %>%
+    dplyr::left_join(spec_unaware_adj, by = c("sex_coarse", "age_group_coarse", "year"))
+
+  spec <- spec %>%
+    dplyr::group_by(sex, age) %>%
+    tidyr::fill(unaware_logit_adjust, .direction = "updown") %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(
+      unaware = untreated * plogis(qlogis(prop_unaware) + unaware_logit_adjust),
+      age_group_coarse = NULL,
+      sex_coarse = NULL,
+      aware_of_status = NULL,
+      untreated = NULL,
+      prop_unaware = NULL,
+      unaware_logit_adjust = NULL
+    ) 
 
   spec
 }

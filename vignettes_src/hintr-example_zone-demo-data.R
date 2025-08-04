@@ -102,7 +102,11 @@ pop_agesex <- read_population(hintr_data$population)
 spec <- extract_pjnz_naomi(hintr_data$pjnz)
 survey_hiv_indicators <- read_survey_indicators(hintr_data$survey)
 anc_testing <- read_anc_testing(hintr_data$anc_testing)
+
 art_number <- read_art_number(hintr_data$art_number)
+art_spectrum_comparison <- prepare_art_spectrum_comparison(art_number, area_merged, hintr_data$pjnz)
+
+art_number <- apply_art_adjustment(art_number, area_merged, art_spectrum_comparison)
 
 naomi_mf <- naomi_model_frame(area_merged,
                               pop_agesex,
