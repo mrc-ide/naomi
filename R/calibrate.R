@@ -172,7 +172,7 @@ calibrate_outputs <- function(output,
              unaware_plhiv_prop = unaware_plhiv_num / (plhiv - art_current_residents),
              incidence = infections / (population - plhiv)
            )
-  
+
   ## Calibrate PLHIV
   plhiv_aggr_var <- get_spectrum_aggr_var(spectrum_plhiv_calibration_level,
                                           spectrum_plhiv_calibration_strat)
@@ -559,7 +559,7 @@ calibrate_outputs <- function(output,
 #' @param denominator_new vector of denomin
 #' @param target_val single value for the adjusted total
 #'
-#' @description
+#' @details
 #' These functions calibrate input proportions so that
 #' `sum(proportion_adj * denominator_new) == target_val`,
 #' where `proportion_adj` is adjusted results of input
@@ -572,26 +572,26 @@ calibrate_outputs <- function(output,
 #' the first value of the vector will be used.
 #'
 #' `calculate_logit_adjustment()` returns the calculated logit
-#' adjustment value. 
-#' 
+#' adjustment value.
+#'
 #' `calibrate_logistic_one()` returns the adjusted vector (same
 #' length as `proportion_raw`.
 #'
-#' @noRd
+#' @keywords internal
 calculate_logit_adjustment <- function(proportion_raw,
                                        denominator_new,
                                        target_val) {
-    
+
   stopifnot(proportion_raw >= 0)
   stopifnot(proportion_raw <= 1)
   stopifnot(target_val == target_val[1])
   target_val <- target_val[1]
-  
+
   ## Add a small value for numerical issues
   if (target_val > (sum(denominator_new) + 1e-2)) {
     stop("Error in logistic calibration: target numerator is larger than aggregated denominator.")
   }
-  
+
   logit_p_fine <- qlogis(proportion_raw)
   optfn <- function(theta){ (sum(calibrate_logistic_adjust_numerator(theta, logit_p_fine, denominator_new)) - target_val)^2 }
   opt <- stats::optimise(optfn, c(-10, 10), tol = .Machine$double.eps^0.5)
@@ -618,22 +618,22 @@ calibrate_logistic_one <- function(proportion_raw,
 
 #' @rdname calculate_logit_adjustment
 calibrate_proportional_one <- function(value_raw, target_val) {
-  
+
   stopifnot(target_val == target_val[1])
   target_val <- target_val[1]
-  
+
   value_raw * target_val / sum(value_raw)
 }
 
 #' @rdname calculate_logit_adjustment
 calibrate_one <- function(value_raw, proportion_raw, denominator_new,
                           target_val, calibrate_method) {
-  
+
   ## Don't calibrate for T4 and T5 where some outputs not produced
   if(all(is.na(value_raw))) {
     return(value_raw)
   }
-  
+
   if (calibrate_method == "logistic") {
     val <- calibrate_logistic_one(proportion_raw, denominator_new, target_val)
   } else if (calibrate_method == "proportional") {
@@ -641,7 +641,7 @@ calibrate_one <- function(value_raw, proportion_raw, denominator_new,
   } else {
     stop(paste0("calibrate_method \"", calibrate_method, "\" not found."))
   }
-  
+
   val
 }
 
