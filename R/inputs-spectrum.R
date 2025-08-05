@@ -656,7 +656,7 @@ add_shiny90_unaware <- function(spec, pjnz, extract_shiny90, projection_period =
     dplyr::filter(!all(is.na(aware_of_status)) & !all(is.na(prop_unaware)),
                   .by = c(sex_coarse, age_group_coarse, year)) %>%
     dplyr::mutate(
-      unaware_target = sum(hivpop) - aware_of_status,,
+      unaware_target = sum(hivpop) - aware_of_status,
       .by = c(sex_coarse, age_group_coarse, year)
     ) %>%
     dplyr::summarise(
