@@ -450,11 +450,7 @@ calibrate_outputs <- function(output,
 
                   .expand(naomi_mf$calendar_quarter4, "plhiv"),
                   .expand(naomi_mf$calendar_quarter4, "plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter4, "infections"),
-
-                  .expand(naomi_mf$calendar_quarter5, "plhiv"),
-                  .expand(naomi_mf$calendar_quarter5, "plhiv_attend"),
-                  .expand(naomi_mf$calendar_quarter5, "infections")
+                  .expand(naomi_mf$calendar_quarter4, "infections")
                 )
 
   byv <- c("indicator", "area_id", "sex", "age_group", "calendar_quarter")

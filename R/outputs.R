@@ -114,11 +114,6 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                      "infections_t4_out" = "infections",
                      "lambda_t4_out" = "incidence")
 
-  indicators_t5 <- c("population_t5_out" = "population",
-                     "plhiv_t5_out" = "plhiv",
-                     "plhiv_attend_t5_out" = "plhiv_attend",
-                     "infections_t5_out" = "infections")
-
   if (naomi_mf$output_aware_plhiv) {
 
     indicators_t1 <- c(indicators_t1,
@@ -145,14 +140,11 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
   indicator_est_t2 <- Map(get_est, names(indicators_t2), indicators_t2, naomi_mf$calendar_quarter2)
   indicator_est_t3 <- Map(get_est, names(indicators_t3), indicators_t3, naomi_mf$calendar_quarter3)
   indicator_est_t4 <- Map(get_est, names(indicators_t4), indicators_t4, naomi_mf$calendar_quarter4)
-  indicator_est_t5 <- Map(get_est, names(indicators_t5), indicators_t5, naomi_mf$calendar_quarter5)
-
 
   indicator_est_t1 <- dplyr::bind_rows(indicator_est_t1)
   indicator_est_t2 <- dplyr::bind_rows(indicator_est_t2)
   indicator_est_t3 <- dplyr::bind_rows(indicator_est_t3)
   indicator_est_t4 <- dplyr::bind_rows(indicator_est_t4)
-  indicator_est_t5 <- dplyr::bind_rows(indicator_est_t5)
 
   indicators_anc_t1 <- c("anc_clients_t1_out" = "anc_clients",
                          "anc_plhiv_t1_out" = "anc_plhiv",
@@ -223,8 +215,7 @@ extract_indicators <- function(naomi_fit, naomi_mf, na.rm = FALSE) {
                   indicator_est_t3,
                   indicator_anc_est_t3,
                   indicator_est_t4,
-                  indicator_anc_est_t4,
-                  indicator_est_t5
+                  indicator_anc_est_t4
                 )
 
   dplyr::select(out, names(naomi_mf$mf_out),
@@ -964,8 +955,7 @@ save_output <- function(filename, dir,
     c(naomi_output$fit$model_options$calendar_quarter_t1,
       naomi_output$fit$model_options$calendar_quarter_t2,
       naomi_output$fit$model_options$calendar_quarter_t3,
-      naomi_output$fit$model_options$calendar_quarter_t4,
-      naomi_output$fit$model_options$calendar_quarter_t5))
+      naomi_output$fit$model_options$calendar_quarter_t4))
   naomi_output$meta_period <- meta_period
 
   if (with_labels) {
