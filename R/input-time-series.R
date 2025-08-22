@@ -278,7 +278,7 @@ aggregate_art <- function(art, shape) {
 ##' missing_ids
 ##'
 ##' @export
-prepare_input_time_series_art <- function(art, shape) {
+prepare_input_time_series_art <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
   if(!inherits(shape, "sf")) {
@@ -291,6 +291,11 @@ prepare_input_time_series_art <- function(art, shape) {
   if (!inherits(art, c("spec_tbl_df","tbl_df","tbl","data.frame" ))) {
     art <- read_art_number(art, all_columns = TRUE)
   }
+
+  spec_program_data <- extract_pjnz_program_data(pjnz)
+  art_spectrum_comparison <- prepare_art_spectrum_comparison(art, areas,
+                                                             spec_program_data)
+  art <- apply_art_adjustment(art, areas, art_spectrum_comparison)
 
   ## Recursively aggregate ART data up from lowest level of programme data provided
   # Levels to aggregate up from
@@ -332,6 +337,9 @@ prepare_input_time_series_art <- function(art, shape) {
   # at the max admin level per calendar_quarter
   missing_map <- art_plot_data_long |>
     dplyr::select(area_id, calendar_quarter, value, plot, area_level) |>
+    dplyr::filter(!(plot %in% c("art_current_adjusted", "art_adjusted_adult",
+                                "art_adjusted_child", "art_adjusted_adult_m",
+                                "art_adjusted_adult_f"))) |>
     # find NAs, also check it isn't a NaN because these can appear in some
     # derived columns where we divide by 0
     dplyr::filter(is.na(value) & !is.nan(value)) |>
@@ -594,7 +602,6 @@ get_plot_type_column_metadata <- function(plot_type) {
     )
   })
 }
-
 
 ##' Return the translated label & description for a set of plot types
 ##'

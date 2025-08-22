@@ -24,7 +24,6 @@ apply_art_adjustment <- function(art, shape, art_spectrum_comparison) {
                        dplyr::select(area_id, spectrum_region_code),
                      by = dplyr::join_by(area_id))
 
-
   spec_adjustment <- art_spectrum_comparison |>
     dplyr::mutate(
       sex = dplyr::case_when(
@@ -33,7 +32,7 @@ apply_art_adjustment <- function(art, shape, art_spectrum_comparison) {
         group == "art_adult_male" ~ "male",
         group == "art_adult_both" ~ "both",
         TRUE ~ NA_character_),
-      spec_adjustment_ratio = as.numeric(format(spec_adjustment_ratio, digits = 2)),
+      spec_adjustment_ratio = round(spec_adjustment_ratio, digits = 2),
       age_group = dplyr::if_else(group == "art_children", "Y000_014", "Y015_999")) |>
     dplyr::select(spectrum_region_code, year, sex, age_group, value_spectrum_adjusted,
                   spec_adjustment_ratio)

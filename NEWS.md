@@ -1,3 +1,7 @@
+# naomi 2.10.15
+
+* Calculate ART adjustment when generating data for time series plot.
+
 # naomi 2.10.14
 
 * Remove `calendar_quarter_t5` two-year ahead projection.
