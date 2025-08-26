@@ -314,6 +314,21 @@ prepare_input_time_series_art <- function(art, shape, pjnz) {
   summary_exprs <- exprs$summary_exprs[names(exprs$summary_exprs) %in% metadata$plot_types]
   mutate_exprs <- exprs$mutate_exprs[names(exprs$mutate_exprs) %in% metadata$plot_types]
 
+  # We have to do a bit of a gross renaming dance here, because otherwise, if
+  # one of the later expressions reuses a name from the expression it
+  # will get that updated value, instead of the value from the
+  # original data. e.g. if we output `art_current` and then have a later
+  # expression which uses `art_current` it will use new art_current from the
+  # expression, not that in the original data
+  summary_names <- names(summary_exprs)
+  mutate_names <- names(mutate_exprs)
+  temp_summary_names <- paste0("x", seq_along(summary_names))
+  temp_mutate_names <- paste0("y", seq_along(mutate_names))
+  names(summary_exprs) <- temp_summary_names
+  names(mutate_exprs) <- temp_mutate_names
+  summary_rename_map <- setNames(temp_summary_names, summary_names)
+  mutate_rename_map <- setNames(temp_mutate_names, mutate_names)
+
   art_plot_data_long <- art_long |>
     dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
                     area_sort_order,time_period, year, quarter, calendar_quarter,area_hierarchy) |>
@@ -321,7 +336,9 @@ prepare_input_time_series_art <- function(art, shape, pjnz) {
     # the splice operator, !!!, basically just puts the elements of the list
     # in as function args
     dplyr::summarise(!!!summary_exprs, .groups = "drop") |>
+    dplyr::rename(dplyr::all_of(summary_rename_map)) |>
     dplyr::mutate(!!!mutate_exprs) |>
+    dplyr::rename(dplyr::all_of(mutate_rename_map)) |>
     tidyr::pivot_longer(cols = !c(area_id, area_name, area_level, area_level_label,
                                   parent_area_id, area_sort_order, time_period,
                                   year, quarter, calendar_quarter, area_hierarchy),
