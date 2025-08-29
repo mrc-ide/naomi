@@ -523,11 +523,6 @@ make_tmb_obj <- function(data, par, calc_outputs = 1L, inner_verbose = FALSE,
 
   data$calc_outputs <- as.integer(calc_outputs)
 
-  TMB::config(
-    optimize.instantly = 0,
-    DLL = "naomi"
-  )
-
   obj <- TMB::MakeADFun(data = data,
                         parameters = par,
                         DLL = "naomi",
@@ -801,7 +796,8 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
 
   get_samples <- function(varnames) {
     samples_list_new <- lapply(1:nsample, function(i) {
-      fit$obj$report(smp[i, ])[varnames]
+      fit$obj$env$f(smp[i, ], order = 0, type = "double")
+      mget(varnames, envir = fit$obj$env$reportenv)
     })
     samples <- lapply(varnames, function(name) {
       matrix(unlist(lapply(samples_list_new, `[[`, name)), ncol = nsample)
@@ -842,7 +838,7 @@ sample_tmb2 <- function(fit, naomi_mf, nsample = 1000, rng_seed = NULL,
     ests
   }
 
-  chunk_factor <- 12
+  chunk_factor <- 10
 
   ind_t1_cq <- lapply(names(indicators_t1), function(n) {
     list(
