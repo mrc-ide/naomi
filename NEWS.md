@@ -1,3 +1,7 @@
+# naomi 2.10.16
+
+* Make ANC labels for prevalence and ART coverage consistent between time series and choropleth
+
 # naomi 2.10.15
 
 * Calculate ART adjustment when generating data for time series plot.
