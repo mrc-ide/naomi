@@ -761,9 +761,7 @@ test_that("there is metadata for every indicator", {
                                        a_hintr_data$pjnz)
 
   plot_types <- unique(c(anc$plot, art$plot))
-  metadata <- naomi_read_csv(
-    system_file("metadata", "time_series_plot_metadata.csv"),
-    col_types = readr::cols(.default = "c"))
+  metadata <- get_time_series_metadata()
   expect_setequal(plot_types, metadata$id)
 })
 
