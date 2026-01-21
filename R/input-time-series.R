@@ -597,9 +597,6 @@ get_plot_type_column_metadata <- function(plot_type) {
   meta <- get_time_series_metadata()
   meta <- meta[meta$id %in% plot_type, ]
 
-  meta$label <- traduire::translator()$replace(meta$label)
-  meta$description <- traduire::translator()$replace(meta$description)
-
   ## Remove a single leading or trailing "
   ## We quote to avoid excel changing these to e.g. to replace 0.0 with 0
   meta$format <- sub("^\"", "", meta$format)

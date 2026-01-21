@@ -133,10 +133,14 @@ read_metadata <- function() {
 get_metadata <- cache_invariant("metadata", read_metadata)
 
 read_time_series_metadata <- function() {
-  naomi_read_csv(
+  meta <- naomi_read_csv(
     system_file("metadata", "time_series_plot_metadata.csv"),
-    na = c("NA"), ## We want empty cells to be ""
     col_types = readr::cols(.default = "c"))
+  meta$accuracy <- as.numeric(meta$accuracy)
+  meta$label <- traduire::translator()$replace(meta$label)
+  meta$description <- traduire::translator()$replace(meta$description)
+
+  meta
 }
 
 get_time_series_metadata <- cache_invariant("time_series_metadata", read_time_series_metadata)
