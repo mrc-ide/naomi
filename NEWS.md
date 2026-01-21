@@ -1,3 +1,7 @@
+# naomi 2.10.18
+
+* Add metadata for showing time series aggregated data in choropleth.
+
 # naomi 2.10.17
 
 * Use 'qs2' for saving new files, 'qs' package has been deprecated. Make 'qs' an optional dependency for backwards compatibility.
