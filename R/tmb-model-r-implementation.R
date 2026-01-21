@@ -852,7 +852,7 @@ naomi_objective_function_r <- function(d, p) {
 #' @param u vector of spatial component of random effect.
 #' @param sigma marginal standard deviation (>0).
 #' @param phi proportion of marginal variance explained by spatial structured
-#'            component u (phi \in [0, 1]).
+#'            component u (phi \in \[0, 1\]).
 #' @param Q scaled structure matrix for spatial component.
 #'
 #' @return Log probability density of x and u.

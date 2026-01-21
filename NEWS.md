@@ -1,6 +1,10 @@
+# naomi 2.10.17
+
+* Use 'qs2' for saving new files, 'qs' package has been deprecated. Make 'qs' an optional dependency for backwards compatibility.
+
 # naomi 2.10.16
 
-* Make ANC labels for prevalence and ART coverage consistent between time series and choropleth
+* Make ANC labels for prevalence and ART coverage consistent between time series and choropleth.
 
 # naomi 2.10.15
 

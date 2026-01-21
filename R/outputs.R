@@ -1355,7 +1355,10 @@ get_period_metadata <- function(calendar_quarters) {
 #' @export
 read_hintr_output <- function(path) {
   type <- tolower(tools::file_ext(path))
-  if (type == "qs") {
+  if (type == "qs2") {
+    qs2::qs_read(path)
+  } else if (type == "qs") {
+    assert_package_installed("qs")
     qs::qread(path)
   } else if (type == "duckdb") {
     read_duckdb(path)
@@ -1364,7 +1367,7 @@ read_hintr_output <- function(path) {
     readRDS(path)
   } else {
     stop(sprintf(paste("Cannot read hintr data of invalid type, got '%s',",
-                       "must be one of rds, qs or duckdb."), type))
+                       "must be one of rds, qs2, qs or duckdb."), type))
   }
 }
 

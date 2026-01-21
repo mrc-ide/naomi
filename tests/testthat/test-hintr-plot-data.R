@@ -33,7 +33,7 @@ test_that("comparison plot returns useful error if run with old naomi output", {
 })
 
 test_that("comparison plot returns useful error if no input output data", {
-  t <- tempfile(fileext = ".qs")
+  t <- tempfile(fileext = ".qs2")
   output_data <- read_hintr_output(a_hintr_output$model_output_path)
   output_data$output_package$inputs_outputs <- NULL
   hintr_save(output_data, t)
@@ -55,13 +55,16 @@ test_that("there is metadata for every indicator in comparison data", {
 
 test_that("hintr data can be saved and read as qs or duckdb type", {
   testthat::skip_if_not_installed("duckdb")
+  testthat::skip_if_not_installed("qs")
 
   t_qs <- tempfile(fileext = ".qs")
+  t_qs2 <- tempfile(fileext = ".qs2")
   t_db <- tempfile(fileext = ".duckdb")
   t_rds <- tempfile(fileext = ".rds")
   d <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
 
   hintr_save(d, t_qs)
+  hintr_save(d, t_qs2)
   hintr_save(d, t_db)
   ## Can't use hintr_save for rds as we're no longer serialising as rds
   ## but we could still have historic data saved as rds so we need to
@@ -69,11 +72,12 @@ test_that("hintr data can be saved and read as qs or duckdb type", {
   saveRDS(d, t_rds)
   expect_equal(read_hintr_output(t_rds), d)
   expect_equal(read_hintr_output(t_qs), read_hintr_output(t_db))
+  expect_equal(read_hintr_output(t_qs2), read_hintr_output(t_qs))
   expect_equal(read_hintr_output(t_rds), read_hintr_output(t_qs))
 
   t <- tempfile(fileext = ".thing")
   expect_error(hintr_save(d, t),
-               "Cannot save as type 'thing', must be 'qs' or 'duckdb'.")
+               "Cannot save as type 'thing', must be 'qs2', 'qs' or 'duckdb'.")
 
   x <- list(1, 2, 3)
   expect_error(hintr_save(x, t_db),
@@ -82,5 +86,5 @@ test_that("hintr data can be saved and read as qs or duckdb type", {
 
   expect_error(read_hintr_output(t),
                paste("Cannot read hintr data of invalid type, got 'thing',",
-                     "must be one of rds, qs or duckdb."))
+                     "must be one of rds, qs2, qs or duckdb."))
 })
