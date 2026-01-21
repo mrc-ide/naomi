@@ -631,8 +631,8 @@ test_that("can generate comparison report with only 1 survey chosen", {
   options <- yaml::read_yaml(text = output$info$options.yml)
   options$survey_prevalence <- options$survey_prevalence[1]
   output$info$options.yml <- yaml::as.yaml(options)
-  out <- tempfile(fileext = ".qs")
-  model_output <- qs::qsave(output, preset = "fast", out)
+  out <- tempfile(fileext = ".qs2")
+  model_output <- qs2::qs_save(output, out)
 
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, out, quiet = TRUE)
@@ -649,8 +649,8 @@ test_that("can generate comparison report without survey ART coverage", {
   options <- yaml::read_yaml(text = output$info$options.yml)
   options$survey_art_coverage <- NULL
   output$info$options.yml <- yaml::as.yaml(options)
-  out <- tempfile(fileext = ".qs")
-  model_output <- qs::qsave(output, preset = "fast", out)
+  out <- tempfile(fileext = ".qs2")
+  model_output <- qs2::qs_save(output, out)
 
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, out, quiet = TRUE)
@@ -672,8 +672,8 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
   options <- yaml::read_yaml(text = output$info$options.yml)
   options$use_survey_aggregate <- "true"
   output$info$options.yml <- yaml::as.yaml(options)
-  out <- tempfile(fileext = ".qs")
-  model_output <- qs::qsave(output, preset = "fast", out)
+  out <- tempfile(fileext = ".qs2")
+  model_output <- qs2::qs_save(output, out)
 
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, out, quiet = TRUE)
@@ -698,8 +698,8 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
       indicator == "art_coverage" & calendar_quarter == "CY2020Q3" ~ "CY2019Q3",
       TRUE ~ calendar_quarter))
 
-  out <- tempfile(fileext = ".qs")
-  model_output <- qs::qsave(output, preset = "fast", out)
+  out <- tempfile(fileext = ".qs2")
+  model_output <- qs2::qs_save(output, out)
 
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, out, quiet = TRUE)
@@ -723,8 +723,8 @@ test_that("can generate comparison report with ANC data at T1 not macthed to mod
   options$anc_prevalence_year1 <- "2017"
   options$anc_art_coverage_year1 <- "2017"
   output$info$options.yml <- yaml::as.yaml(options)
-  out <- tempfile(fileext = ".qs")
-  model_output <- qs::qsave(output, preset = "fast", out)
+  out <- tempfile(fileext = ".qs2")
+  model_output <- qs2::qs_save(output, out)
 
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, out, quiet = TRUE)

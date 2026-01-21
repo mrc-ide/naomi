@@ -7,8 +7,8 @@
 hintr_calibrate(
   output,
   calibration_options,
-  plot_data_path = tempfile(fileext = ".qs"),
-  calibrate_output_path = tempfile(fileext = ".qs")
+  plot_data_path = tempfile(fileext = ".qs2"),
+  calibrate_output_path = tempfile(fileext = ".qs2")
 )
 }
 \arguments{

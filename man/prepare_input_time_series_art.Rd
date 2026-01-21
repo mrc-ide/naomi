@@ -4,7 +4,7 @@
 \alias{prepare_input_time_series_art}
 \title{Prepare data for ART input time series plots}
 \usage{
-prepare_input_time_series_art(art, shape)
+prepare_input_time_series_art(art, shape, pjnz)
 }
 \arguments{
 \item{art}{Path to file containing ART data or ART data object}
