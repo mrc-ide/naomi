@@ -609,7 +609,7 @@ test_that("can get plot type descriptions from key", {
   expect_equal(ret, list(
     list(
       id = "art_current",
-      label = "ART number (residents)",
+      label = "ART number (attending)",
       description = "Number on ART at the end of calendar year",
       format = "0,0",
       accuracy = NA_integer_

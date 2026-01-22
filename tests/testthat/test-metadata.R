@@ -60,6 +60,7 @@ test_that("can get plot metadata for a country", {
       "error_high_column", "indicator_column", "indicator_value", "name",
       "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
+  expect_type(metadata$accuracy, "double")
   expect_true(all(get_metadata()$indicator %in% metadata$indicator))
   expect_true(all(get_time_series_metadata()$id %in% metadata$indicator))
   expect_true(all(get_meta_indicator()$indicator %in% metadata$indicator))
@@ -84,8 +85,7 @@ test_that("can get plot metadata for missing country with defaults", {
       "anc_prevalence", "anc_art_coverage",
       "anc_clients", "anc_plhiv", "anc_already_art",
       "anc_art_new", "anc_known_pos", "anc_tested_pos",
-      "anc_tested_neg", "art_new", "vl_tested_12mos",
-      "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
+      "anc_tested_neg", "population_ratio", "plhiv_ratio",
       "infections_ratio", "art_current_ratio",
       "unaware_plhiv_num_ratio", "prevalence_ratio",
       "art_coverage_ratio", "aware_plhiv_prop_ratio",
@@ -141,8 +141,7 @@ test_that("metadata is well formed", {
     "aware_plhiv_attend", "unaware_plhiv_attend",
     "anc_prevalence", "anc_art_coverage", "anc_clients",
     "anc_plhiv", "anc_already_art", "anc_art_new", "anc_known_pos",
-    "anc_tested_pos", "anc_tested_neg", "art_new", "vl_tested_12mos",
-    "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
+    "anc_tested_pos", "anc_tested_neg", "population_ratio", "plhiv_ratio",
     "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
     "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
     "incidence_ratio", "anc_prevalence_age_matched",
@@ -167,7 +166,6 @@ test_that("metadata is well formed", {
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
                     "ANC known positive", "ANC tested positive", "ANC tested negative",
-                    "ART new", "VL tested", "VL tests suppressed",
                     "Population ratio", "PLHIV ratio", "New infections ratio",
                     "ART number (attending) ratio",
                     "Number PLHIV unaware ratio", "HIV prevalence ratio",
