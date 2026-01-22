@@ -1,7 +1,7 @@
 #' Run the model and save output
 #'
 #' This prepares the model inputs from data and options and saves output as
-#' a qs file.
+#' a qs2 file.
 #'
 #' @param data List of paths to input data files.
 #' @param options List of model run options (see details).
@@ -50,7 +50,7 @@
 #' @export
 #'
 hintr_run_model <- function(data, options,
-                            model_output_path = tempfile(fileext = ".qs"),
+                            model_output_path = tempfile(fileext = ".qs2"),
                             validate = TRUE) {
   model_run_output <- handle_naomi_warnings(
     run_model(data, options, validate))
@@ -149,7 +149,10 @@ DUCKDB_OUTPUT_TABLE_NAME <- "data"
 
 hintr_save <- function(obj, file) {
   type <- tolower(tools::file_ext(file))
-  if (type == "qs") {
+  if (type == "qs2") {
+    qs2::qs_save(obj, file)
+  } else if (type == "qs") {
+    assert_package_installed("qs")
     qs::qsave(obj, file, preset = "fast")
   } else if (type == "duckdb") {
     if (!is.data.frame(obj)) {
@@ -161,7 +164,8 @@ hintr_save <- function(obj, file) {
     on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
     DBI::dbWriteTable(con, DUCKDB_OUTPUT_TABLE_NAME, obj)
   } else {
-    stop(sprintf("Cannot save as type '%s', must be 'qs' or 'duckdb'.", type))
+    stop(sprintf("Cannot save as type '%s', must be 'qs2', 'qs' or 'duckdb'.",
+                 type))
   }
 }
 
@@ -188,8 +192,8 @@ assert_model_output_version <- function(obj, version = NULL) {
 #' @return Calibrated hintr_output object
 #' @export
 hintr_calibrate <- function(
-  output, calibration_options, plot_data_path = tempfile(fileext = ".qs"),
-  calibrate_output_path = tempfile(fileext = ".qs")) {
+  output, calibration_options, plot_data_path = tempfile(fileext = ".qs2"),
+  calibrate_output_path = tempfile(fileext = ".qs2")) {
   out <- handle_naomi_warnings(run_calibrate(output, calibration_options))
   warnings <- out$warnings
   out$calibrate_data$warnings$calibrate <- warnings

@@ -1,5 +1,5 @@
 test_that("model can be run", {
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
   model_run <- hintr_run_model(a_hintr_data,
                                a_hintr_options,
                                output_path)
@@ -43,7 +43,7 @@ test_that("model can be run without programme data", {
   options$artattend_t2 <- NULL
   options$artattend_log_gamma_offset <- NULL
 
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
   model_run <- hintr_run_model(data, options, output_path)
   expect_equal(names(model_run),
                c("plot_data_path", "model_output_path", "version", "warnings"))
@@ -81,7 +81,7 @@ test_that("model fit without survey ART and survey recency data", {
 
 test_that("progress messages are printed", {
   skip_on_covr()
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
   mockery::stub(hintr_run_model, "fit_tmb", fit, depth = 2)
   mockery::stub(hintr_run_model, "sample_tmb", sample, depth = 2)
   mockery::stub(hintr_run_model, "new_progress", MockProgress$new(), depth = 2)
@@ -132,7 +132,7 @@ test_that("progress messages are printed", {
 })
 
 test_that("model run throws error for invalid inputs", {
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
   expect_error(
     hintr_run_model(data, a_hintr_options_bad, output_path)
   )
@@ -155,19 +155,19 @@ test_that("setting rng_seed returns same output", {
   options$spectrum_infections_calibration_level <- "none"
   options$calibrate_method <- "logistic"
 
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
   model_run <- hintr_run_model(data, options, output_path)
 
   options2 <- options
   options2$rng_seed <- 17
 
-  output_path2 <- tempfile(fileext = ".qs")
+  output_path2 <- tempfile(fileext = ".qs2")
   model_run2 <- hintr_run_model(data, options2, output_path2)
 
   options3 <- options
   options3$rng_seed <- NULL
 
-  output_path3 <- tempfile(fileext = ".qs")
+  output_path3 <- tempfile(fileext = ".qs2")
   model_run3 <- hintr_run_model(data, options3, output_path3)
 
   output <- read_hintr_output(model_run$model_output_path)
@@ -197,7 +197,7 @@ test_that("exceeding max_iterations raises convergence warning", {
   options$artattend <- "false"
   options$max_iterations <- 5
 
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
   expect_warning(
     out <- hintr_run_model(data, options, output_path),
     "convergence error: iteration limit reached without convergence (10)",
@@ -280,8 +280,8 @@ test_that("model run can be calibrated", {
   output_hash <- tools::md5sum(a_hintr_output$model_output_path)
   expect_null(a_hintr_output$plot_data_path)
 
-  plot_data_path <- tempfile(fileext = ".qs")
-  calibration_output_path <- tempfile(fileext = ".qs")
+  plot_data_path <- tempfile(fileext = ".qs2")
+  calibration_output_path <- tempfile(fileext = ".qs2")
   calibrated_output <- hintr_calibrate(a_hintr_output,
                                        a_hintr_calibration_options,
                                        plot_data_path,
@@ -371,8 +371,8 @@ test_that("calibrating model with 'none' returns same results", {
     calibrate_method = "logistic"
   )
 
-  plot_data_path <- tempfile(fileext = ".qs")
-  calibration_output_path <- tempfile(fileext = ".qs")
+  plot_data_path <- tempfile(fileext = ".qs2")
+  calibration_output_path <- tempfile(fileext = ".qs2")
   calibrated_output <- hintr_calibrate(a_hintr_output,
                                        none_calibration_options,
                                        plot_data_path,
@@ -389,16 +389,16 @@ test_that("calibrating model with 'none' returns same results", {
 
 test_that("re-calibrating an already calibrated output throws error", {
 
-  plot_data_path1 <- tempfile(fileext = ".qs")
-  calibration_output_path1 <- tempfile(fileext = ".qs")
+  plot_data_path1 <- tempfile(fileext = ".qs2")
+  calibration_output_path1 <- tempfile(fileext = ".qs2")
   calibrated_output1 <- hintr_calibrate(a_hintr_output,
                                         a_hintr_calibration_options,
                                         plot_data_path1,
                                         calibration_output_path1)
 
   ## Calibrate again with same options using the outputs of calibration 1
-  plot_data_path2 <- tempfile(fileext = ".qs")
-  calibration_output_path2 <- tempfile(fileext = ".qs")
+  plot_data_path2 <- tempfile(fileext = ".qs2")
+  calibration_output_path2 <- tempfile(fileext = ".qs2")
   expect_error(hintr_calibrate(calibrated_output1,
                                a_hintr_calibration_options,
                                plot_data_path2,
@@ -466,7 +466,7 @@ test_that("Model can be run without .shiny90 file", {
   expect_true(validate_model_options(data, opts)$valid)
 
   ## Fit model without .shiny90 in PJNZ
-  output_path <- tempfile(fileext = ".qs")
+  output_path <- tempfile(fileext = ".qs2")
 
   model_run <- hintr_run_model(data,
                                opts,
@@ -669,11 +669,11 @@ test_that("can get data_type labels", {
 test_that("trying to calibrate incompatible model output returns error", {
 
   ## Calibration makes no modification of existing files.
-  plot_data_path <- tempfile(fileext = ".qs")
-  calibration_output_path <- tempfile(fileext = ".qs")
+  plot_data_path <- tempfile(fileext = ".qs2")
+  calibration_output_path <- tempfile(fileext = ".qs2")
   hintr_output <- list(
     plot_data_path = NULL,
-    model_output_path = "refdata/naomi-2.5.5/output_data_2.5.5.qs",
+    model_output_path = "refdata/naomi-2.5.5/output_data_2.5.5.qs2",
     version = "2.5.5"
   )
   class(hintr_output) <- "hintr_output"
@@ -692,7 +692,7 @@ test_that("calibration plot data can be saved as duckdb database", {
   expect_null(a_hintr_output$plot_data_path)
 
   plot_data_path <- tempfile(fileext = ".duckdb")
-  calibration_output_path <- tempfile(fileext = ".qs")
+  calibration_output_path <- tempfile(fileext = ".qs2")
   calibrated_output <- hintr_calibrate(a_hintr_output,
                                        a_hintr_calibration_options,
                                        plot_data_path,

@@ -7,7 +7,7 @@
 hintr_run_model(
   data,
   options,
-  model_output_path = tempfile(fileext = ".qs"),
+  model_output_path = tempfile(fileext = ".qs2"),
   validate = TRUE
 )
 }
@@ -26,7 +26,7 @@ Paths to output files
 }
 \description{
 This prepares the model inputs from data and options and saves output as
-a qs file.
+a qs2 file.
 }
 \details{
 The \code{data} argument must be a list specifying paths to the following:
