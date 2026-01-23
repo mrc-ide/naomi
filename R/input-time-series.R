@@ -330,8 +330,8 @@ prepare_input_time_series_art <- function(art, shape, pjnz) {
   mutate_rename_map <- setNames(temp_mutate_names, mutate_names)
 
   art_plot_data_long <- art_long |>
-    dplyr::group_by(area_id, area_name, area_level, area_level_label,parent_area_id,
-                    area_sort_order,time_period, year, quarter, calendar_quarter,area_hierarchy) |>
+    dplyr::group_by(area_id, area_name, area_level, area_level_label, parent_area_id,
+                    area_sort_order,time_period, year, quarter, calendar_quarter, area_hierarchy) |>
     dplyr::mutate(na_rm = area_level != admin_level) |>
     # the splice operator, !!!, basically just puts the elements of the list
     # in as function args
@@ -593,13 +593,9 @@ prepare_input_time_series_anc <- function(anc, shape) {
 ##'   containing id, label and description
 ##' @export
 get_plot_type_column_metadata <- function(plot_type) {
-  meta <- naomi_read_csv(
-    system_file("metadata", "time_series_plot_metadata.csv"),
-    col_types = readr::cols(.default = "c"))
+  meta <- get_metadata()
+  meta <- get_time_series_metadata()
   meta <- meta[meta$id %in% plot_type, ]
-
-  meta$label <- traduire::translator()$replace(meta$label)
-  meta$description <- traduire::translator()$replace(meta$description)
 
   ## Remove a single leading or trailing "
   ## We quote to avoid excel changing these to e.g. to replace 0.0 with 0

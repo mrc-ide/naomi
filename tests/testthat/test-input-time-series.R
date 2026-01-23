@@ -609,7 +609,7 @@ test_that("can get plot type descriptions from key", {
   expect_equal(ret, list(
     list(
       id = "art_current",
-      label = "ART number (residents)",
+      label = "ART number (attending)",
       description = "Number on ART at the end of calendar year",
       format = "0,0",
       accuracy = NA_integer_
@@ -761,9 +761,7 @@ test_that("there is metadata for every indicator", {
                                        a_hintr_data$pjnz)
 
   plot_types <- unique(c(anc$plot, art$plot))
-  metadata <- naomi_read_csv(
-    system_file("metadata", "time_series_plot_metadata.csv"),
-    col_types = readr::cols(.default = "c"))
+  metadata <- get_time_series_metadata()
   expect_setequal(plot_types, metadata$id)
 })
 

@@ -13,6 +13,44 @@
 #' get_plotting_metadata("MWI")
 get_plotting_metadata <- function(iso3) {
   metadata <- get_metadata()
+
+  # We display time series "plot" type in the choropleth too, append
+  # the metadata for time series here.
+  time_series_metadata <- get_time_series_metadata()
+  time_series_plot_metadata <- lapply(
+    seq_len(nrow(time_series_metadata)),
+    function(i) {
+      row <- time_series_metadata[i, ]
+      # It is pretty gross how we're constructing this,
+      # but the alternative is either to duplicate metadata for time series
+      # and choropleth, which could lead to inconsistencies.
+      # Really we should get rid of separate metadata and the separate
+      # meta_indicator.csv but it is a bit fiddly for now (issue #145)
+      if (startsWith(row$id, "anc") || row$id %in% c("births_clients_ratio", "births_facility")) {
+        data_type <- "anc"
+      } else {
+        data_type <- "programme"
+      }
+
+      list(
+        data_type = data_type,
+        plot_type = "choropleth",
+        indicator = row$id,
+        value_column = "value",
+        error_low_column = "",
+        error_high_column = "",
+        indicator_column = "plot",
+        indicator_value = row$id,
+        name = row$label,
+        scale = 1,
+        accuracy = row$accuracy,
+        format = row$format,
+        indicator_sort_order = i
+      )
+    }
+  )
+  metadata <- do.call(rbind.data.frame, c(time_series_plot_metadata, list(metadata)))
+
   colour_scale <- get_colour_scale(iso3)
   if (nrow(colour_scale) == 0) {
     message(sprintf(
@@ -93,6 +131,19 @@ read_metadata <- function() {
 #' @return Metadata about indicators as a list
 #' @export
 get_metadata <- cache_invariant("metadata", read_metadata)
+
+read_time_series_metadata <- function() {
+  meta <- naomi_read_csv(
+    system_file("metadata", "time_series_plot_metadata.csv"),
+    col_types = readr::cols(.default = "c"))
+  meta$accuracy <- as.numeric(meta$accuracy)
+  meta$label <- traduire::translator()$replace(meta$label)
+  meta$description <- traduire::translator()$replace(meta$description)
+
+  meta
+}
+
+get_time_series_metadata <- cache_invariant("time_series_metadata", read_time_series_metadata)
 
 #' Get 5 year age groups
 #'

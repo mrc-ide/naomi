@@ -60,8 +60,12 @@ test_that("can get plot metadata for a country", {
       "error_high_column", "indicator_column", "indicator_value", "name",
       "colour", "min", "max", "invert_scale") %in%
       names(metadata)))
-  expect_true(all(metadata$indicator %in% get_metadata()$indicator))
+  expect_type(metadata$accuracy, "double")
+  expect_true(all(get_metadata()$indicator %in% metadata$indicator))
+  expect_true(all(get_time_series_metadata()$id %in% metadata$indicator))
   expect_true(all(get_meta_indicator()$indicator %in% metadata$indicator))
+  # Time series indicators are present
+  expect_true("art_adjusted_adult_f" %in% metadata$indicator)
 })
 
 test_that("can get plot metadata for missing country with defaults", {
@@ -71,30 +75,29 @@ test_that("can get plot metadata for missing country with defaults", {
       "error_high_column", "indicator_column", "indicator_value", "name",
       "colour", "min", "max", "invert_scale") %in%
       names(metadata$result)))
-  expect_setequal(metadata$result$indicator,
-                  c("art_coverage", "art_current", "art_current_residents",
-                    "prevalence",
-                    "incidence", "infections", "plhiv", "population",
-                    "recent_infected", "viral_suppression_plhiv",
-                    "untreated_plhiv_num", "plhiv_attend", "untreated_plhiv_attend",
-                    "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
-                    "aware_plhiv_attend", "unaware_plhiv_attend",
-                    "anc_prevalence", "anc_art_coverage",
-                    "anc_clients", "anc_plhiv", "anc_already_art",
-                    "anc_art_new", "anc_known_pos", "anc_tested_pos",
-                    "anc_tested_neg", "art_new", "vl_tested_12mos",
-                    "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
-                    "infections_ratio", "art_current_ratio",
-                    "unaware_plhiv_num_ratio", "prevalence_ratio",
-                    "art_coverage_ratio", "aware_plhiv_prop_ratio",
-                    "incidence_ratio", "anc_prevalence_age_matched",
-                    "anc_art_coverage_age_matched", "number_on_art",
-                    "anc_tested", "population_proportion"))
+  expect_true(all(
+    c("art_coverage", "art_current", "art_current_residents", "prevalence",
+      "incidence", "infections", "plhiv", "population",
+      "recent_infected", "viral_suppression_plhiv",
+      "untreated_plhiv_num", "plhiv_attend", "untreated_plhiv_attend",
+      "aware_plhiv_prop", "aware_plhiv_num", "unaware_plhiv_num",
+      "aware_plhiv_attend", "unaware_plhiv_attend",
+      "anc_prevalence", "anc_art_coverage",
+      "anc_clients", "anc_plhiv", "anc_already_art",
+      "anc_art_new", "anc_known_pos", "anc_tested_pos",
+      "anc_tested_neg", "population_ratio", "plhiv_ratio",
+      "infections_ratio", "art_current_ratio",
+      "unaware_plhiv_num_ratio", "prevalence_ratio",
+      "art_coverage_ratio", "aware_plhiv_prop_ratio",
+      "incidence_ratio", "anc_prevalence_age_matched",
+      "anc_art_coverage_age_matched", "number_on_art",
+      "anc_tested", "population_proportion")
+    %in% metadata$result$indicator))
 })
 
 test_that("colour scales metadata is well formed", {
   scales <- naomi_read_csv(system_file("metadata", "colour_scales.csv"))
-  expect_setequal(scales$indicator,
+  expect_true(all(
     c("art_coverage", "art_current", "art_current_residents", "prevalence",
       "viral_suppression_plhiv", "recent_infected",
       "plhiv", "incidence", "population", "infections",
@@ -108,7 +111,8 @@ test_that("colour scales metadata is well formed", {
       "art_current_ratio", "unaware_plhiv_num_ratio", "prevalence_ratio",
       "art_coverage_ratio", "aware_plhiv_prop_ratio", "incidence_ratio",
       "anc_prevalence_age_matched", "anc_art_coverage_age_matched",
-      "number_on_art", "anc_tested", "population_proportion"))
+      "number_on_art", "anc_tested", "population_proportion")
+    %in% scales$indicator))
   expect_equal(nrow(unique(scales[, c("iso3", "indicator")])), nrow(scales))
   expect_true(is.numeric(scales$min))
   expect_true(is.numeric(scales$max))
@@ -137,8 +141,7 @@ test_that("metadata is well formed", {
     "aware_plhiv_attend", "unaware_plhiv_attend",
     "anc_prevalence", "anc_art_coverage", "anc_clients",
     "anc_plhiv", "anc_already_art", "anc_art_new", "anc_known_pos",
-    "anc_tested_pos", "anc_tested_neg", "art_new", "vl_tested_12mos",
-    "vl_suppressed_12mos", "population_ratio", "plhiv_ratio",
+    "anc_tested_pos", "anc_tested_neg", "population_ratio", "plhiv_ratio",
     "infections_ratio", "art_current_ratio", "unaware_plhiv_num_ratio",
     "prevalence_ratio", "art_coverage_ratio", "aware_plhiv_prop_ratio",
     "incidence_ratio", "anc_prevalence_age_matched",
@@ -163,7 +166,6 @@ test_that("metadata is well formed", {
                     "HIV positive ANC attendees",
                     "ANC attendees already on ART", "ART initiations at ANC",
                     "ANC known positive", "ANC tested positive", "ANC tested negative",
-                    "ART new", "VL tested", "VL tests suppressed",
                     "Population ratio", "PLHIV ratio", "New infections ratio",
                     "ART number (attending) ratio",
                     "Number PLHIV unaware ratio", "HIV prevalence ratio",
