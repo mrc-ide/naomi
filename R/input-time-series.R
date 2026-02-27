@@ -281,8 +281,8 @@ aggregate_art <- function(art, shape) {
 prepare_input_time_series_art <- function(art, shape, pjnz) {
 
   ## Check if shape is object or file path
-  if(!inherits(shape, "sf")) {
-    areas <- sf::read_sf(shape) |> sf::st_drop_geometry()
+  if(!any(inherits(shape, c("sf", "tbl")))) {
+    areas <- read_area_merged(shape) |> sf::st_drop_geometry()
   } else {
     areas <- shape |> sf::st_drop_geometry()
   }
