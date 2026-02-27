@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.10.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.10.19</span>
       </span>
     </div>
 
@@ -54,6 +54,10 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.10.19" id="naomi-21019">naomi 2.10.19<a class="anchor" aria-label="anchor" href="#naomi-21019"></a></h2>
+<ul><li>Fix issue in input time series ART data prep where “spectrum_level” read from the shape file was being used in calculation instead of a local temporary “spectrum_level” scalar. Fixed this by reading the data using the helper function, which drops the “spectrum_level” column. But also renamed the local variable for good measure.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.10.18" id="naomi-21018">naomi 2.10.18<a class="anchor" aria-label="anchor" href="#naomi-21018"></a></h2>
 <ul><li>Add metadata for showing time series aggregated data in choropleth.</li>
