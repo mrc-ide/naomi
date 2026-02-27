@@ -1,3 +1,8 @@
+# naomi 2.10.19
+
+* Fix issue in input time series ART data prep where "spectrum_level" read from the shape file was being used in calculation instead of a local temporary "spectrum_level" scalar.
+  Fixed this by reading the data using the helper function, which drops the "spectrum_level" column. But also renamed the local variable for good measure.
+
 # naomi 2.10.18
 
 * Add metadata for showing time series aggregated data in choropleth.

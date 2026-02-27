@@ -61,15 +61,17 @@ prepare_art_spectrum_comparison <- function(art, shape, pjnz) {
                   value_spectrum_adjusted, value_spectrum_reallocated)
 
   # Get spectrum level to select correct area names
+  # TODO: this bit of code reads a little odd, doing an as.integer on a boolean
+  # why do we do this? Is there a better way to write the logic below?
   spectrum_region_code <- unique(shape$spectrum_region_code)
 
-  spectrum_level <- as.integer(length(spectrum_region_code) > 1)
+  level_to_keep <- as.integer(length(spectrum_region_code) > 1)
 
   dat  <- dplyr::left_join(art_agreggated, spec_aggreagted,
                            by = c("spectrum_region_code", "year",
                                   "sex", "age_group")) |>
     dplyr::left_join(shape |>
-                       dplyr::filter(area_level == spectrum_level) |>
+                       dplyr::filter(area_level == level_to_keep) |>
                        dplyr::select(area_name, spectrum_region_code),
                      by = "spectrum_region_code")
 
