@@ -2,7 +2,7 @@
 * Fix `read_anc_testing()` to replace individual `NA` values in `anc_known_neg` with `0`. Previously only the all-`NA` case was handled; partially-populated
   columns (e.g. data available for recent years only) caused `anc_prev_n` to be `NA` for missing rows, which were then silently dropped, triggering
   a "Column `anc_prev_n` doesn't exist" error in `anc_testing_prev_mf()`.
-* Remove requirement for deprecated "disply" column in areas file
+* Remove requirement for deprecated "display" column in areas file
 * Report of mode fro T4 indicators in model fit
 
 
