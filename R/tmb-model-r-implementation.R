@@ -818,7 +818,15 @@ naomi_objective_function_r <- function(d, p) {
                     anc_tested_pos_t4_out          = anc_tested_pos_t4_out,
                     anc_tested_neg_t4_out          = anc_tested_neg_t4_out,
                     anc_rho_t4_out                 = anc_rho_t4_out,
-                    anc_alpha_t4_out               = anc_alpha_t4_out)
+                    anc_alpha_t4_out               = anc_alpha_t4_out,
+                    rho_t4_out                     = rho_t4_out,
+                    artnum_t4_out                  = artnum_t4_out,
+                    artattend_ij_t4_out            = artattend_ij_t4_out,
+                    alpha_t4_out                   = alpha_t4_out,
+                    untreated_plhiv_num_t4_out     = untreated_plhiv_num_t4_out,
+                    untreated_plhiv_attend_t4_out  = untreated_plhiv_attend_t4_out,
+                    artattend_t4_out               = artattend_t4_out)
+
 
   report_likelihood <- list(hhs_prev_ll           = hhs_prev_ll,
                             hhs_artcov_ll         = hhs_artcov_ll,
