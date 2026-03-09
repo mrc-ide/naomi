@@ -1,3 +1,11 @@
+# naomi 2.10.20
+* Fix `read_anc_testing()` to replace individual `NA` values in `anc_known_neg` with `0`. Previously only the all-`NA` case was handled; partially-populated
+  columns (e.g. data available for recent years only) caused `anc_prev_n` to be `NA` for missing rows, which were then silently dropped, triggering
+  a "Column `anc_prev_n` doesn't exist" error in `anc_testing_prev_mf()`.
+* Remove requirement for deprecated "disply" column in areas file
+* Report of mode fro T4 indicators in model fit
+
+
 # naomi 2.10.19
 
 * Fix issue in input time series ART data prep where "spectrum_level" read from the shape file was being used in calculation instead of a local temporary "spectrum_level" scalar.
