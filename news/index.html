@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">naomi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.10.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.10.19</span>
       </span>
     </div>
 
@@ -54,12 +54,6 @@
 
     </div>
 
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="2.10.20" id="naomi-21020">naomi 2.10.20<a class="anchor" aria-label="anchor" href="#naomi-21020"></a></h2>
-<ul><li>Fix <code><a href="../reference/read_population.html">read_anc_testing()</a></code> to replace individual <code>NA</code> values in <code>anc_known_neg</code> with <code>0</code>. Previously only the all-<code>NA</code> case was handled; partially-populated columns (e.g. data available for recent years only) caused <code>anc_prev_n</code> to be <code>NA</code> for missing rows, which were then silently dropped, triggering a “Column <code>anc_prev_n</code> doesn’t exist” error in <code><a href="../reference/anc_testing_prev_mf.html">anc_testing_prev_mf()</a></code>.</li>
-<li>Remove requirement for deprecated “disply” column in areas file</li>
-<li>Report of mode fro T4 indicators in model fit</li>
-</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.10.19" id="naomi-21019">naomi 2.10.19<a class="anchor" aria-label="anchor" href="#naomi-21019"></a></h2>
 <ul><li>Fix issue in input time series ART data prep where “spectrum_level” read from the shape file was being used in calculation instead of a local temporary “spectrum_level” scalar. Fixed this by reading the data using the helper function, which drops the “spectrum_level” column. But also renamed the local variable for good measure.</li>
