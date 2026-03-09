@@ -655,7 +655,6 @@ naomi_objective_function_r <- function(d, p) {
   anc_plhiv_t3 <- anc_clients_t3 * anc_rho_t3
   anc_already_art_t3 <- anc_plhiv_t3 * anc_alpha_t3
 
-
   prop_art_ij_t3 <- as.vector(d$Xart_idx %*% prop_art_t3) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
   population_ij_t3 <- as.vector(d$Xart_idx %*% d$population_t3)
   artnum_ij_t3 <- population_ij_t3 * prop_art_ij_t3
@@ -727,7 +726,6 @@ naomi_objective_function_r <- function(d, p) {
                     anc_alpha_t3_out               = anc_alpha_t3_out)
 
   ## Projection to time 4
-
   mu_alpha_t4 <- mu_alpha_t3 + d$logit_alpha_t3t4_offset
   alpha_t4 <- plogis(mu_alpha_t4)
 
@@ -739,6 +737,7 @@ naomi_objective_function_r <- function(d, p) {
   rho_t4 <- plhiv_t4 / d$population_t4
   prop_art_t4 <- rho_t4 * alpha_t4
   artnum_t4 <- d$population_t4 * prop_art_t4
+
 
   plhiv_15to49_t4 <- as.vector(d$X_15to49 %*% plhiv_t4)
   rho_15to49_t4 <- plhiv_15to49_t4 / as.vector(d$X_15to49 %*% d$population_t4)
@@ -781,15 +780,21 @@ naomi_objective_function_r <- function(d, p) {
   prop_art_ij_t4 <- as.vector(d$Xart_idx %*% prop_art_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)  ## Note: using same ART attendance as T2
   population_ij_t4 <- as.vector(d$Xart_idx %*% d$population_t4)
   artnum_ij_t4 <- population_ij_t4 * prop_art_ij_t4
+  artattend_ij_t4 <- as.vector(d$A_art_reside_attend %*% artnum_ij_t4)
 
   population_t4_out <- as.vector(d$A_out %*% d$population_t4)
   plhiv_t4_out <- as.vector(d$A_out %*% plhiv_t4)
+  rho_t4_out <- plhiv_t4_out / population_t4_out
+  artnum_t4_out <- as.vector(d$A_out %*% artnum_t4)
+  alpha_t4_out <- artnum_t4_out / plhiv_t4_out
+  artattend_t4_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% artnum_ij_t4))
+  artattend_ij_t4_out <- as.vector(d$A_art_reside_attend %*% artnum_ij_t4)
+  untreated_plhiv_num_t4_out <- plhiv_t4_out - artnum_t4_out
 
   ## Calculate number of PLHIV who would attend facility in district i
   plhiv_attend_ij_t4 <- as.vector(d$Xart_idx %*% plhiv_t4) * as.vector(d$Xart_gamma %*% gamma_art_t2)
   plhiv_attend_t4_out <- as.vector(d$A_out %*% (d$A_artattend_mf %*% plhiv_attend_ij_t4))
-
-
+  untreated_plhiv_attend_t4_out <- plhiv_attend_t4_out - artattend_t4_out
 
   infections_t4_out <- as.vector(d$A_out %*% infections_t4)
   lambda_t4_out <- infections_t4_out / (population_t4_out - plhiv_t4_out)
@@ -893,9 +898,9 @@ bym2_conditional_lpdf <- function(x, u, sigma, phi, Q) {
 #' ldbinom(c(1.2, 3, 1.9), c(7.5, 12.4, 4), c(0.3, 0.2, 0.7))
 #'
 #' ## For integer counts, returns same as dbinom(..., log = TRUE)
-#' x <- c(1, 3, 2)
+#' x <- c(1, 4, 2)
 #' size <- c(7, 12, 4)
-#' prob <- c(0.3, 0.2, 0.7)
+#' prob <- c(0.4, 0.2, 0.7)
 #' ldbinom(x, size, prob)
 #' dbinom(x, size, prob, log = TRUE)
 #'
