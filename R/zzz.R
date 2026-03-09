@@ -67,7 +67,7 @@ utils::globalVariables(c(
   ".data", "dataelement_uid", "datapack_age_group_id",
   "datapack_age_group_label", "datapack_indicator_code",
   "datapack_indicator_id", "datapack_sex_id", "datapack_sex_label",
-  "data_range", "data_type", "display", "distribution",
+  "data_range", "data_type", "distribution",
   "district_rse", "element_blank",
   "est_calibrated", "estimate", "est_raw", "female_15plus", "fit",
   "frr_already_art", "frr_plhiv", "geometry", "hivpop", "hivpop1", "hivpop2",
