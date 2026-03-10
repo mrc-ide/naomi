@@ -1046,17 +1046,17 @@ Type objective_function<Type>::operator() ()
 
     vector<Type> population_t4_out(A_out * population_t4);
     vector<Type> plhiv_t4_out(A_out * plhiv_t4);
-    // vector<Type> rho_t4_out(plhiv_t4_out / population_t4_out);
-    // vector<Type> artnum_t4_out(A_out * artnum_t4);
-    // vector<Type> alpha_t4_out(artnum_t4_out / plhiv_t4_out);
-    // vector<Type> artattend_t4_out(A_out * (A_artattend_mf * artnum_ij_t4));
-    // vector<Type> artattend_ij_t4_out(A_art_reside_attend * artnum_ij_t4);
-    // vector<Type> untreated_plhiv_num_t4_out(plhiv_t4_out - artnum_t4_out);
+    vector<Type> rho_t4_out(plhiv_t4_out / population_t4_out);
+    vector<Type> artnum_t4_out(A_out * artnum_t4);
+    vector<Type> alpha_t4_out(artnum_t4_out / plhiv_t4_out);
+    vector<Type> artattend_t4_out(A_out * (A_artattend_mf * artnum_ij_t4));
+    vector<Type> artattend_ij_t4_out(A_art_reside_attend * artnum_ij_t4);
+    vector<Type> untreated_plhiv_num_t4_out(plhiv_t4_out - artnum_t4_out);
 
     // Calculate number of PLHIV who attend facility in district i; denominator for artattend
     vector<Type> plhiv_attend_ij_t4((Xart_idx * plhiv_t4) * (Xart_gamma * gamma_art_t2));    // Note: using same ART attendance as T2
     vector<Type> plhiv_attend_t4_out(A_out * (A_artattend_mf * plhiv_attend_ij_t4));
-    // vector<Type> untreated_plhiv_attend_t4_out(plhiv_attend_t4_out - artattend_t4_out);
+    vector<Type> untreated_plhiv_attend_t4_out(plhiv_attend_t4_out - artattend_t4_out);
 
     vector<Type> infections_t4_out(A_out * infections_t4);
     vector<Type> lambda_t4_out(infections_t4_out / (population_t4_out - plhiv_t4_out));
@@ -1074,15 +1074,15 @@ Type objective_function<Type>::operator() ()
 
 
     REPORT(population_t4_out);
-    // REPORT(rho_t4_out);
+    REPORT(rho_t4_out);
     REPORT(plhiv_t4_out);
-    // REPORT(alpha_t4_out);
-    // REPORT(artnum_t4_out);
-    // REPORT(artattend_t4_out);
-    // REPORT(artattend_ij_t4_out);
-    // REPORT(untreated_plhiv_num_t4_out);
+    REPORT(alpha_t4_out);
+    REPORT(artnum_t4_out);
+    REPORT(artattend_t4_out);
+    REPORT(artattend_ij_t4_out);
+    REPORT(untreated_plhiv_num_t4_out);
     REPORT(plhiv_attend_t4_out);
-    // REPORT(untreated_plhiv_attend_t4_out);
+    REPORT(untreated_plhiv_attend_t4_out);
     REPORT(lambda_t4_out);
     REPORT(infections_t4_out);
 

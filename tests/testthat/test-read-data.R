@@ -127,4 +127,23 @@ test_that("read_anc_testing() handles data set without 'anc_known_neg' or 'birth
 
   expect_equal(calculate_anc_prevalence(raw),
                calculate_anc_prevalence(anc_na_known_neg))
+
+  ## Column anc_known_neg exists with partial NAs (e.g. only populated for
+  ## recent years). Previously the all(is.na()) guard did not catch this case,
+  ## so NAs propagated into anc_prev_n and those rows were silently dropped,
+  ## causing select("anc_prev_n") to fail in anc_testing_prev_mf().
+  new3 <- raw
+  new3$anc_tested <- raw$anc_tested + raw$anc_known_neg
+  ## Set only the first half of rows to NA, leaving the rest with real values
+  half <- floor(nrow(raw) / 2)
+  new3$anc_known_neg[seq_len(half)] <- NA_real_
+
+  f3 <- tempfile(fileext = ".csv")
+  readr::write_csv(new3, f3, na = "")
+
+  anc_partial_known_neg <- read_anc_testing(f3)
+
+  expect_equal(anc_partial_known_neg$anc_known_neg[seq_len(half)],
+               rep(0.0, half))
+  expect_true(all(!is.na(anc_partial_known_neg$anc_known_neg)))
 })

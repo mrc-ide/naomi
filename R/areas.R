@@ -36,7 +36,7 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
 
     levels <- area_merged %>%
       as.data.frame() %>%
-      dplyr::count(area_level, area_level_label, display, name = "n_areas")
+      dplyr::count(area_level, area_level_label, name = "n_areas")
     hierarchy <- area_merged %>%
       as.data.frame() %>%
       dplyr::select(area_id, area_name, area_level, parent_area_id, spectrum_region_code, area_sort_order, center_x, center_y)
@@ -145,7 +145,6 @@ create_areas <- function(levels = NULL, hierarchy = NULL, boundaries = NULL,
   tree$Set(area_id = hierarchy$area_id,
            area_level = hierarchy$area_level,
            area_level_label = hierarchy$area_level_label,
-           display_level = hierarchy$display,
            spectrum_region_code = hierarchy$spectrum_region_code,
            area_name = hierarchy$area_name,
            area_sort_order = hierarchy$area_sort_order,

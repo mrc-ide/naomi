@@ -177,9 +177,16 @@ read_anc_testing <- function(file) {
   if(length(missing_cols))
     stop(paste0("Required columns not found: ", paste(missing_cols, collapse = ", ")))
 
-  if ( !("anc_known_neg" %in% names(val)) ||
-         all(is.na(val[["anc_known_neg"]])) ) {
+  if ( !("anc_known_neg" %in% names(val)) ) {
     val[["anc_known_neg"]] <- 0
+  } else {
+    ## Replace individual NA values with 0. The column may be partially
+    ## populated (e.g. data only available for recent years) so the
+    ## all(is.na()) check is insufficient. Propagating NAs through to
+    ## anc_prev_n causes those rows to be silently dropped, which then
+    ## causes select("anc_prev_n") to fail in anc_testing_prev_mf() when
+    ## pivot_wider finds no rows for that indicator.
+    val[["anc_known_neg"]][is.na(val[["anc_known_neg"]])] <- 0
   }
 
   if ( !("births_facility" %in% names(val)) ) {
@@ -203,7 +210,7 @@ read_area_merged <- function(file) {
 
   val <- sf::read_sf(file)
   val <- dplyr::select(val, area_id, area_name, area_level, parent_area_id, spectrum_region_code, area_sort_order,
-                       center_x, center_y, area_level_label, display, geometry)
+                       center_x, center_y, area_level_label, geometry)
 
   ## !! TODO: coerce column types
   ## !! TODO: add validation asserts -- probably pull in hintr validation_asserts.R
