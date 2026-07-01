@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.10.20
+Version: 2.10.21
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -65,7 +65,6 @@ Suggests:
     lubridate,
     mockery,
     mockr,
-    qs,
     readxl,
     rvest,
     scales,
@@ -78,7 +77,6 @@ LinkingTo:
     RcppEigen,
     TMB
 Remotes:
-    bergant/datamodelr,
-    qsbase/qs
+    bergant/datamodelr
 Config/testthat/edition: 3
 Config/testthat/parallel: true

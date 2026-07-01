@@ -37,7 +37,7 @@ options(scipen=10000000)
 outputs <- params$outputs
 
 # Read files if hintr rds provided
-if(tolower(tools::file_ext(params$outputs)) %in% c("rds", "qs", "qs2")) {
+if(tolower(tools::file_ext(params$outputs)) %in% c("rds", "qs2")) {
 
   model_object <- read_hintr_output(outputs)
   outputs <- model_object$output_package

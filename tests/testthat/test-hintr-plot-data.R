@@ -53,17 +53,14 @@ test_that("there is metadata for every indicator in comparison data", {
   expect_setequal(indicators, comparison$indicator)
 })
 
-test_that("hintr data can be saved and read as qs or duckdb type", {
+test_that("hintr data can be saved and read as qs2 or duckdb type", {
   testthat::skip_if_not_installed("duckdb")
-  testthat::skip_if_not_installed("qs")
 
-  t_qs <- tempfile(fileext = ".qs")
   t_qs2 <- tempfile(fileext = ".qs2")
   t_db <- tempfile(fileext = ".duckdb")
   t_rds <- tempfile(fileext = ".rds")
   d <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
 
-  hintr_save(d, t_qs)
   hintr_save(d, t_qs2)
   hintr_save(d, t_db)
   ## Can't use hintr_save for rds as we're no longer serialising as rds
@@ -71,13 +68,12 @@ test_that("hintr data can be saved and read as qs or duckdb type", {
   ## be able to read it
   saveRDS(d, t_rds)
   expect_equal(read_hintr_output(t_rds), d)
-  expect_equal(read_hintr_output(t_qs), read_hintr_output(t_db))
-  expect_equal(read_hintr_output(t_qs2), read_hintr_output(t_qs))
-  expect_equal(read_hintr_output(t_rds), read_hintr_output(t_qs))
+  expect_equal(read_hintr_output(t_qs2), read_hintr_output(t_db))
+  expect_equal(read_hintr_output(t_rds), read_hintr_output(t_qs2))
 
   t <- tempfile(fileext = ".thing")
   expect_error(hintr_save(d, t),
-               "Cannot save as type 'thing', must be 'qs2', 'qs' or 'duckdb'.")
+               "Cannot save as type 'thing', must be 'qs2' or 'duckdb'.")
 
   x <- list(1, 2, 3)
   expect_error(hintr_save(x, t_db),
@@ -86,5 +82,5 @@ test_that("hintr data can be saved and read as qs or duckdb type", {
 
   expect_error(read_hintr_output(t),
                paste("Cannot read hintr data of invalid type, got 'thing',",
-                     "must be one of rds, qs2, qs or duckdb."))
+                     "must be one of rds, qs2 or duckdb."))
 })

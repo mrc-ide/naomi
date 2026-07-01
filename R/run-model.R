@@ -5,7 +5,7 @@
 #'
 #' @param data List of paths to input data files.
 #' @param options List of model run options (see details).
-#' @param model_output_path Path to store model output as qs. Used in
+#' @param model_output_path Path to store model output as qs2. Used in
 #'   calibrating model and producing output downloads.
 #' @param validate If FALSE validation of inputs & data will be skipped.
 #'
@@ -151,9 +151,6 @@ hintr_save <- function(obj, file) {
   type <- tolower(tools::file_ext(file))
   if (type == "qs2") {
     qs2::qs_save(obj, file)
-  } else if (type == "qs") {
-    assert_package_installed("qs")
-    qs::qsave(obj, file, preset = "fast")
   } else if (type == "duckdb") {
     if (!is.data.frame(obj)) {
       stop(paste("Trying to save invalid object as duckdb database.",
@@ -164,7 +161,7 @@ hintr_save <- function(obj, file) {
     on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
     DBI::dbWriteTable(con, DUCKDB_OUTPUT_TABLE_NAME, obj)
   } else {
-    stop(sprintf("Cannot save as type '%s', must be 'qs2', 'qs' or 'duckdb'.",
+    stop(sprintf("Cannot save as type '%s', must be 'qs2' or 'duckdb'.",
                  type))
   }
 }
@@ -186,7 +183,7 @@ assert_model_output_version <- function(obj, version = NULL) {
 #'
 #' @param output A hintr_output object.
 #' @param calibration_options A set of calibration options
-#' @param plot_data_path Path to store calibrated output indicators as a qs.
+#' @param plot_data_path Path to store calibrated output indicators as a qs2.
 #' @param calibrate_output_path Path to store data required for re-calibrating model.
 #'
 #' @return Calibrated hintr_output object

@@ -190,7 +190,7 @@ test_that("subset_output_package() saves expected output package", {
 
 })
 
-test_that("can generate summary report from a qs file", {
+test_that("can generate summary report from a qs2 file", {
   t <- tempfile(fileext = ".html")
   generate_output_summary_report(t, a_hintr_output_calibrated$model_output_path,
                                  quiet = TRUE)
@@ -602,7 +602,7 @@ test_that("output file README generated in output zip", {
   expect_true(any(grepl("The following files have been generated as part of a Naomi model fit:" , content)))
 })
 
-test_that("can generate comparison report from a qs file", {
+test_that("can generate comparison report from a qs2 file", {
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, a_hintr_output_calibrated$model_output_path,
                              quiet = TRUE)
@@ -613,7 +613,7 @@ test_that("can generate comparison report from a qs file", {
   expect_true(any(grepl("class=\"logo-naomi\"", content)))
 })
 
-test_that("can generate summary report from zip file", {
+test_that("can generate comparison report from zip file", {
   zip <- hintr_prepare_spectrum_download(a_hintr_output_calibrated)
   t <- tempfile(fileext = ".html")
   generate_comparison_report(t, zip$path, quiet = TRUE)
@@ -688,7 +688,7 @@ test_that("prevalence survey plots not drawn when using aggregate survey", {
   expect_length(rvest::html_element(html, ".art-plotly"), 2)
 })
 
-test_that("prevalence survey plots not drawn when using aggregate survey", {
+test_that("prevalence survey plots not drawn when using aggregate survey CMR", {
   ## This is to address Cameroon 2022/2023 issue #41
   ## Create a model output with different ART time to prevalence
   output <- read_hintr_output(a_hintr_output_calibrated$model_output_path)
