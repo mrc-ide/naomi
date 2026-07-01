@@ -1,3 +1,7 @@
+# naomi 2.10.21
+
+* Remove qs package, it is no longer installable in R 4.5.x
+
 # naomi 2.10.20
 
 * Fix `read_anc_testing()` to replace individual `NA` values in `anc_known_neg` with `0`. Previously only the all-`NA` case was handled; partially-populated

@@ -1344,7 +1344,7 @@ get_period_metadata <- function(calendar_quarters) {
 
 #' Read hintr output
 #'
-#' Read the hintr model output or plot data saved as a qs or an rds file.
+#' Read the hintr model output or plot data saved as a qs2, duckdb or rds file.
 #' This is the data saved from hintr_run_model or hintr_calibrate
 #' before the output zip is generated. This uses the file extension
 #' to identify the reading function to use.
@@ -1357,9 +1357,6 @@ read_hintr_output <- function(path) {
   type <- tolower(tools::file_ext(path))
   if (type == "qs2") {
     qs2::qs_read(path)
-  } else if (type == "qs") {
-    assert_package_installed("qs")
-    qs::qread(path)
   } else if (type == "duckdb") {
     read_duckdb(path)
   } else if (type == "rds") {
@@ -1367,7 +1364,7 @@ read_hintr_output <- function(path) {
     readRDS(path)
   } else {
     stop(sprintf(paste("Cannot read hintr data of invalid type, got '%s',",
-                       "must be one of rds, qs2, qs or duckdb."), type))
+                       "must be one of rds, qs2 or duckdb."), type))
   }
 }
 
