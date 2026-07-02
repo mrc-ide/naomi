@@ -1,6 +1,21 @@
+# naomi 2.10.22
+
+* Improve error message when population data area level does not match the
+  model `area_level` option. Previously this caused a non-informative
+  `stopifnot(!is.na(mf_model[["population_t1"]]))` failure; now the error
+  names both the model level and the population data level. (ETH, #43)
+* Improve ART duplicate-record error in `artnum_mf()`. Previously the error
+  named model-level aggregated areas (which could mislead users to check the
+  wrong rows); now it reports the exact input `area_id`, area name, age group,
+  sex, quarter, and duplicate count for each offending row. (ETH, #44)
+* Add validation in `select_naomi_data()` to detect when ANC already-on-ART
+  counts exceed total ANC positives. Previously this produced implausible ART
+  coverage values or a non-informative downstream error; now it stops early
+  with the affected area, area name, and year. (RWA, #28)
+
 # naomi 2.10.21
 
-* Remove qs package, it is no longer installable in R 4.5.x
+* Remove qs package, it is no longer installable in R 4.5.x.
 
 # naomi 2.10.20
 
