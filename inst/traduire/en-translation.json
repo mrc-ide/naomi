@@ -51,7 +51,7 @@
     "ANC_ART_EXCEEDS_TOTAL_POSITIVE": "Please review subnational ANC trends in the Data Review tab to identify districts with \"ANC prior on ART\" greater than 100%.\n\nANC testing on ART greater than ANC testing total positive for:\n{{details}}\n\nAny corrections to subnational data must be updated for the corresponding indicator in your Spectrum file.",
     "ART_COV_AND_VLS_SAME_SURVEY": "Do not use ART coverage and VLS data from the same survey: {{survey_ids}}",
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "Do not use ART coverage and VLS data from the same surveys: {{survey_ids}}",
-    "ART_DUPLICATED_RECORDS": "Duplicated records found in ART data for:\n{{details}}",
+    "ART_DUPLICATED_RECORDS": "Please review district level ART data.\n\nDuplicated records found in ART data for:\n{{details}}\n\nAny corrections to subnational data must be updated for the corresponding indicator in your Spectrum file.",
     "PJNZ_SHAPE_CODE_MISMATCH": "Some spectrum region code in your shape file are not in PJNZ extracts. Please update your shape file to include the correct codes",
     "SCOPE_AREAS_MISSING_HIERARCHY": "Scope area {{missing_areas}} not found in hierarchy.",
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Scope areas {{missing_areas}} not found in hierarchy.",

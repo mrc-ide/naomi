@@ -51,7 +51,7 @@
     "ANC_ART_EXCEEDS_TOTAL_POSITIVE": "Veuillez consulter les tendances CPN sous-nationales dans l'onglet Révision des données pour identifier les districts où « CPN déjà sous TARV » est supérieure à 100%.\n\nLa couverture TARV aux soins prénataux est supérieure au total de positifs pour :\n{{details}}\n\nToute correction des données sous-nationales doit être mise à jour pour l'indicateur correspondant dans votre fichier Spectrum.",
     "ART_COV_AND_VLS_SAME_SURVEY": "Ne pas utiliser la couverture TARV et les données VLS (Suppression de la charge virale) de la même enquête: {{survey_ids}}",
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "Ne pas utiliser la couverture TARV et les données VLS (Suppression de la charge virale) des mêmes enquêtes: {{survey_ids}}",
-    "ART_DUPLICATED_RECORDS": "Enregistrements dupliqués trouvés dans les données TARV pour :\n{{details}}",
+    "ART_DUPLICATED_RECORDS": "Veuillez vérifier les données TARV au niveau district.\n\nEnregistrements dupliqués trouvés dans les données TARV pour :\n{{details}}\n\nToute correction des données sous-nationales doit être mise à jour pour l'indicateur correspondant dans votre fichier Spectrum.",
     "PJNZ_SHAPE_CODE_MISMATCH": "Quelques codes Spectrum dans votre fichier de formes n'existent pas dans votre fichier PJNZ. Veuillez mettre à jour votre fichier de formes pour inclure les bons codes.",
     "SCOPE_AREAS_MISSING_HIERARCHY": "Périmètre de zone {{missing_areas}} introuvable dans la hiérarchie.",
     "SCOPE_AREAS_MISSING_HIERARCHY_PLURAL": "Périmètres de zones {{missing_areas}} introuvables dans la hiérarchie.",

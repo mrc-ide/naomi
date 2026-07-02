@@ -23,7 +23,7 @@
     "TIME_VARYING_ART_ATTENDANCE_IMPOSSIBLE": "O modelo de participação em TARV só pode ser estimado se forem utilizados dados do programa de TARV tanto no Tempo 1 quanto no Tempo 2.",
     "ART_COV_AND_VLS_SAME_SURVEY": "Não utilizar a cobertura da TARV e os dados VLS do mesmo inquérito: {{ids_inquérito}}",
     "ART_COV_AND_VLS_SAME_SURVEY_PLURAL": "Não utilizar a cobertura da TARV e os dados VLS dos mesmos inquéritos: {{ids_inquérito}}",
-    "ART_DUPLICATED_RECORDS": "Registos duplicados encontrados nos dados de TARV para:\n{{details}}",
+    "ART_DUPLICATED_RECORDS": "Por favor, reveja os dados de TARV ao nível distrital.\n\nRegistos duplicados encontrados nos dados de TARV para:\n{{details}}\n\nQuaisquer correções aos dados subnacionais devem ser atualizadas para o indicador correspondente no seu ficheiro Spectrum.",
     "ART_COVERAGE": "Cobertura da TARV",
     "ART_NUMBER": "Número de TARV",
     "ART_NUMBER_ATTENDING": "Número de TARV (frequentadores)",
