@@ -1,6 +1,10 @@
+# naomi 2.10.22
+
+* Fix version comparison in `assert_model_output_version`.
+
 # naomi 2.10.21
 
-* Remove qs package, it is no longer installable in R 4.5.x
+* Remove qs package, it is no longer installable in R 4.5.x.
 
 # naomi 2.10.20
 
@@ -56,7 +60,7 @@
 
 # naomi 2.10.9
 
-* Add two new columns to subnational ART data: 
+* Add two new columns to subnational ART data:
   - `art_current_adjusted`: District-level number on ART after ART adjustment.
   - `art_adjustment_factor`:  Ratio adjusted to reported number on ART (`art_current_adjusted`:`art_current`)
 * `read_art_number()` now adds additional ART adjustment columns if not specified in input data.
@@ -71,7 +75,7 @@
         -> Scale all subnational adjustments to match national
       - If national + subnational adjustments do not match + subnational adjustments
       have been entered for *some* districts:
-        -> Retain district level adjustments that have been entered and scale districts with no subnational adjustments so that sum of subnational adjustments matches national adjustments.  
+        -> Retain district level adjustments that have been entered and scale districts with no subnational adjustments so that sum of subnational adjustments matches national adjustments.
 * Select adjusted number on ART for Naomi subnational ART model input.
   Sequence of data processing:
     - Raw data read in and adjusted in `naomi_prepare_data()` using (in sequence):
@@ -81,11 +85,11 @@
       - `apply_art_adjustment()`
     - Adjusted ART prepared for model inputs in `naomi_prepare_data()` using (in sequence):
       - `select_naomi_data()`
-      - `artnum_mf()`: Refactored this function to select adjusted number on ART instead of reported number on ART. 
+      - `artnum_mf()`: Refactored this function to select adjusted number on ART instead of reported number on ART.
 
 # naomi 2.10.8
 
-* Add national level aggregate to PEPFAR Target Setting Tool CSV. 
+* Add national level aggregate to PEPFAR Target Setting Tool CSV.
 * Remove two-year ahead projection (`*.T2`) indicators from PEPFAR Target Setting Tool output.
 
 # naomi 2.10.7
@@ -129,14 +133,14 @@
 * Update Naomi example and test datasets to current example data for Malawi
   - Population dataset extended from 2025 to 2030
   - Imported final Malawi Spectrum file for 2024 UNAIDS estimates `extdata/demo_mwi2024_v6.36.PJNZ`.
-    File created with Spectrum v6.36.  
+    File created with Spectrum v6.36.
   - Example ART and ANC programme data by district from Malawi updated through 2023 Q4
   - Added MPHIA 2020-21 survey to example survey data.
   - Created new example Northern / Central / Southern region Spectrum files for testing
     and demonstration of subnational Spectrum PJNZ files.
 	- In each of these files, updated the surveillance data, refit EPP, and refit Shiny90.
 	  See the `data-raw/demo-subnational-pjnz/README.md` for more details
-	  
+
   - Update vignettes with new datasets and default options.
 
 * Update Navigator checklist calendar quarter for 2025 estimates to
@@ -154,7 +158,7 @@
 
 # naomi 2.9.27
 
-* Show calibration plot ratio values to nearest 0.1. 
+* Show calibration plot ratio values to nearest 0.1.
 * Make duckdb an optional dependency
 
 # naomi 2.9.26
@@ -211,7 +215,7 @@
 
 * Change programme data aggregation scripts to aggregate and tag missing data. Changes in the outputs of the following functions:
    - `aggregate_art()` and `aggregate_anc()`:  Data aggregated retaining missing values at lowest admin level and summed totals at higher admin levels.
-   - `prepare_input_time_series_art()` and `prepare_input_time_series_anc()`: New column containing a list of area_ids corresponding to missing districts included in aggreagated totals. 
+   - `prepare_input_time_series_art()` and `prepare_input_time_series_anc()`: New column containing a list of area_ids corresponding to missing districts included in aggreagated totals.
 
 # naomi 2.9.15
 
@@ -254,7 +258,7 @@
 
 # naomi 2.9.6
 
-* Fix for comparison report failing to render when ANC data included at T1 in a different year to model T1. This fix will prevent ANC comparison plots for T1 from rendering in this case. 
+* Fix for comparison report failing to render when ANC data included at T1 in a different year to model T1. This fix will prevent ANC comparison plots for T1 from rendering in this case.
 
 # naomi 2.9.5
 
@@ -367,7 +371,7 @@ No user-visible changes, only internal.
   - Data provided at multiple levels for the same years
   - Data provided at more than one level for different years
   - Data missing for some sub-national units at one time point
-  
+
 # naomi 2.8.0
 
 * Save model and calibration output from `hintr_run_model` and `hintr_calibrate` as qs files for faster reading. See https://github.com/traversc/qs.
@@ -381,17 +385,17 @@ No user-visible changes, only internal.
 
 # naomi 2.7.18
 
-Update for Spectrum v6.2 with calendar year projection period instead of mid-year 
+Update for Spectrum v6.2 with calendar year projection period instead of mid-year
 projection.
 
-* Requires `eppasm >= 0.7.0` and `first90 >= 1.6.1` which incorporate code updates 
+* Requires `eppasm >= 0.7.0` and `first90 >= 1.6.1` which incorporate code updates
   for calendar year projection.
 * Add demo PJNZ files saved in Spectrum 6.2 beta 29.
 * For Spectrum inputs parsed by function `extract_pjnz_naomi()`, add a column
   specifying to which calendar quarter the outputs correspond. This enables
   Naomi model compatibility with either mid-year projection (Spectrum version <=6.19)
   or calendar year projections (Spectrum version >=6.2).
-  
+
 * Update `read_dp_anc_testing()` for new ANC testing data input tag in .DP file `"<ANCTestingValues MV4>"`.
 
 # naomi 2.7.17
