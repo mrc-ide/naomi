@@ -135,7 +135,7 @@ run_model <- function(data, options, validate) {
 build_hintr_output <- function(plot_data_path, model_output_path, warnings) {
   out <- list(plot_data_path = plot_data_path,
               model_output_path = model_output_path,
-              version = utils::packageVersion("naomi"),
+              version = as.character(utils::packageVersion("naomi")),
               warnings = warnings)
   class(out) <- "hintr_output"
   out
@@ -170,7 +170,7 @@ assert_model_output_version <- function(obj, version = NULL) {
   if (!is_hintr_output(obj) || is.null(obj$version)) {
     stop(t_("OLD_MODEL_OUTPUT"))
   }
-  if (!is.null(version) && obj$version < version) {
+  if (!is.null(version) && utils::compareVersion(as.character(obj$version), version) == -1) {
     stop(t_("OLD_MODEL_OUTPUT"))
   }
   invisible(TRUE)

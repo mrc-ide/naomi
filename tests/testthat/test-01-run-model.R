@@ -6,7 +6,7 @@ test_that("model can be run", {
   expect_s3_class(model_run, "hintr_output")
   expect_equal(names(model_run),
                c("plot_data_path", "model_output_path", "version", "warnings"))
-  expect_equal(model_run$version, packageVersion("naomi"))
+  expect_equal(model_run$version, as.character(packageVersion("naomi")))
   expect_null(model_run$plot_data_path)
 
   output <- read_hintr_output(model_run$model_output_path)
@@ -643,6 +643,10 @@ test_that("assert_model_output_version ensures model version up to date", {
                "Model output out of date please re-run model and try again.")
   expect_true(assert_model_output_version(output, "2.5.3"))
   expect_true(assert_model_output_version(output))
+
+  output <- a_hintr_output
+  output$version <- "2.10.3"
+  expect_true(assert_model_output_version(output, "2.5.3"))
 })
 
 test_that("can get data_type labels", {
