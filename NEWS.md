@@ -1,3 +1,14 @@
+# naomi 2.10.23
+
+* Require R 4.1.0 or later because the package uses the native `|>` pipe in
+  `apply_art_adjustment()`, `prepare_art_spectrum_comparison()`,
+  `prepare_anc_spectrum_comparison()`, `aggregate_art()`,
+  `prepare_input_time_series_art()`, `aggregate_anc()`,
+  `prepare_input_time_series_anc()`, `build_hierarchy_label()`,
+  `read_dp_art_dec31()`, `art_programme_data_warning()`, and
+  `anc_programme_data_warning()`, and anonymous function shorthand (`\(x)`)
+  in `create_Lproj()`.
+
 # naomi 2.10.22
 
 * Fix version comparison in `assert_model_output_version`.
