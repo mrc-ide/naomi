@@ -1,6 +1,6 @@
 Package: naomi
 Title: Naomi Model for Subnational HIV Estimates
-Version: 2.10.22
+Version: 2.10.23
 Authors@R:
     person(given = "Jeff",
            family = "Eaton",
@@ -8,7 +8,7 @@ Authors@R:
            email = "jeffrey.eaton@imperial.ac.uk",
            comment = c(ORCID = "0000-0001-7728-728X"))
 Description: This package implements the Naomi model for subnational HIV estimates.
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

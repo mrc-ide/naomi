@@ -1,3 +1,9 @@
+# naomi 2.10.23
+
+* Require R 4.1.0 or later because the package uses the native `|>` pipe in
+  several functions, and anonymous function shorthand (`\(x)`)
+  in `create_Lproj()`.
+
 # naomi 2.10.22
 
 * Fix version comparison in `assert_model_output_version`.
