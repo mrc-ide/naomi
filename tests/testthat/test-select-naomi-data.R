@@ -120,3 +120,31 @@ test_that("Data inputs aggregated and tagged correctly", {
 
 })
 
+test_that("select_naomi_data() errors when ANC already on ART exceeds total positive", {
+  anc_bad <- demo_anc_testing
+  idx <- which(anc_bad$area_id == "MWI_4_1_demo")[1]
+  anc_bad$anc_already_art[idx] <- anc_bad$anc_known_pos[idx] + anc_bad$anc_tested_pos[idx] + 100
+
+  args <- list(a_naomi_mf,
+               demo_survey_hiv_indicators,
+               anc_testing = anc_bad,
+               demo_art_number,
+               prev_survey_ids = c("DEMO2016PHIA", "DEMO2015DHS"),
+               artcov_survey_ids = "DEMO2016PHIA",
+               recent_survey_ids = "DEMO2016PHIA")
+
+  expect_error(do.call(select_naomi_data, args),
+               "ANC testing on ART greater than ANC testing total positive for:")
+
+  reset <- naomi_set_language("fr")
+  on.exit(reset())
+  expect_error(do.call(select_naomi_data, args),
+               "La couverture TARV aux soins prénataux est supérieure au total de positifs")
+  reset()
+
+  reset <- naomi_set_language("pt")
+  on.exit(reset(), add = TRUE)
+  expect_error(do.call(select_naomi_data, args),
+               "TARV nas consultas pré-natais superior ao total de positivos")
+})
+

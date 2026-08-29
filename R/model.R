@@ -322,6 +322,33 @@ naomi_model_frame <- function(area_merged,
   ##           comparise only part of a Spectrum file, so can't address.
 
   pop_subset <- dplyr::filter(population_agesex, area_id %in% mf_areas[["area_id"]])
+
+  if (nrow(pop_subset) == 0) {
+    areas_df <- sf::st_drop_geometry(area_merged)
+
+    pop_levels <- dplyr::inner_join(
+      data.frame(area_id = unique(population_agesex$area_id), stringsAsFactors = FALSE),
+      dplyr::select(areas_df, area_id, area_level, area_level_label),
+      by = "area_id"
+    )
+
+    model_level_label <- areas_df %>%
+      dplyr::filter(area_level == level) %>%
+      dplyr::pull(area_level_label) %>%
+      unique()
+    model_level_label <- if (length(model_level_label)) model_level_label[[1]] else paste("level", level)
+
+    pop_level_label <- if (nrow(pop_levels)) {
+      paste(unique(pop_levels$area_level_label), collapse = "/")
+    } else {
+      "unknown level (area IDs not found in areas hierarchy)"
+    }
+
+    stop(t_("POPULATION_LEVEL_MISMATCH",
+            list(model_level = model_level_label,
+                 pop_level = pop_level_label)))
+  }
+
   pop_t1 <- interpolate_population_agesex(pop_subset, calendar_quarter1)
   pop_t2 <- interpolate_population_agesex(pop_subset, calendar_quarter2)
   pop_t3 <- interpolate_population_agesex(pop_subset, calendar_quarter3)
@@ -892,6 +919,29 @@ select_naomi_data <- function(
 
     anc_aggregated <- aggregate_anc(anc_testing, naomi_mf$areas) %>%
       dplyr::filter(area_id %in% naomi_mf$area_aggregation$area_id)
+
+    anc_art_check <- anc_aggregated %>%
+      dplyr::mutate(anc_total_pos = anc_known_pos + anc_tested_pos) %>%
+      dplyr::filter(!is.na(anc_already_art), !is.na(anc_total_pos),
+                    anc_total_pos > 0,
+                    anc_already_art > anc_total_pos) %>%
+      dplyr::select(-dplyr::any_of("area_name")) %>%
+      dplyr::left_join(
+        dplyr::select(sf::st_drop_geometry(naomi_mf$areas), area_id, area_name),
+        by = "area_id"
+      )
+
+    if (nrow(anc_art_check) > 0) {
+      detail_lines <- paste0(
+        "  - ", anc_art_check$area_id,
+        " (", anc_art_check$area_name, ")",
+        " in ", anc_art_check$year,
+        ": ", anc_art_check$anc_already_art, " on ART vs ",
+        anc_art_check$anc_total_pos, " total positive"
+      )
+      stop(t_("ANC_ART_EXCEEDS_TOTAL_POSITIVE",
+              list(details = paste(detail_lines, collapse = "\n"))))
+    }
 
     ## Calculate model inputs for all data provided
     anc_full_mf <- anc_aggregated %>%
@@ -1466,17 +1516,26 @@ artnum_mf <- function(calendar_quarter, art_number, naomi_mf) {
         quarter_id = calendar_quarter_to_quarter_id(calendar_quarter)
       )
 
-    art_duplicated_check <- dat %>%
+    art_duplicated_check <- art_number %>%
+      dplyr::semi_join(naomi_mf$area_aggregation, by = "area_id") %>%
+      dplyr::count(area_id, age_group, sex, calendar_quarter) %>%
+      dplyr::filter(n > 1) %>%
       dplyr::left_join(
-        naomi_mf$area_aggregation,
+        dplyr::select(sf::st_drop_geometry(naomi_mf$areas), area_id, area_name),
         by = "area_id"
-      ) %>%
-      dplyr::count(model_area_id, age_group, sex, calendar_quarter) %>%
-      dplyr::filter(n > 1)
+      )
 
     if (nrow(art_duplicated_check)) {
-      stop(paste("ART data multiply reported for some age/sex strata in areas:",
-                 paste(unique(art_duplicated_check$model_area_id), collapse = ", ")))
+      detail_lines <- paste0(
+        "  - ", art_duplicated_check$area_id,
+        " (", art_duplicated_check$area_name, ")",
+        " | ", art_duplicated_check$age_group,
+        " | sex=", art_duplicated_check$sex,
+        " | ", art_duplicated_check$calendar_quarter,
+        " | n=", art_duplicated_check$n, " records"
+      )
+      stop(t_("ART_DUPLICATED_RECORDS",
+              list(details = paste(detail_lines, collapse = "\n"))))
     }
 
 
